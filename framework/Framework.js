@@ -17,6 +17,7 @@ require('./types/Time');
 // Include these dynamically somehow
 require('./modules/server/Server');
 require('./modules/web-server/WebServer');
+require('./modules/web-server/Router');
 
 Framework = Class.extend({
 
