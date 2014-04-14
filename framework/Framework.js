@@ -1,6 +1,7 @@
 // Node
 NodeFileSystem = require('fs');
 NodeHttp = require('http');
+NodeUrl = require('url');
 
 // Framework objects (always require)
 require('./objects/Object');
@@ -17,7 +18,6 @@ require('./types/Time');
 // Include these dynamically somehow
 require('./modules/server/Server');
 require('./modules/web-server/WebServer');
-require('./modules/web-server/Router');
 
 Framework = Class.extend({
 

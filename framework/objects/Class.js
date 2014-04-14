@@ -29,7 +29,7 @@ Class.extend = function(childClassProperties) {
 			})(childClassProperty, childClassProperties[childClassProperty])
 		}
 		// If we have a generator
-		else if(childClassProperties[childClassProperty].isGenerator()) {
+		else if(childClassProperties[childClassProperty] && childClassProperties[childClassProperty].isGenerator && childClassProperties[childClassProperty].isGenerator()) {
 			childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
 		}
 		else {

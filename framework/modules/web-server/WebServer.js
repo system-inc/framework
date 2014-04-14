@@ -1,3 +1,10 @@
+require('./Browser');
+require('./Device');
+require('./OperatingSystem');
+require('./Router');
+require('./Request');
+require('./Url');
+
 WebServer = Server.extend({
 
 	construct: function() {
@@ -5,27 +12,25 @@ WebServer = Server.extend({
 
 		this.router = new Router();
 
-		this.nodeServer = NodeHttp.createServer(function(request, response) {
-			self.handleRequest(request, response);
+		this.nodeServer = NodeHttp.createServer(function(nodeRequest, nodeResponse) {
+			self.handleRequest(new Request(nodeRequest), nodeResponse);
 		});
 
 		this.listen();
 	},
 
 	listen: function() {
-		this.nodeServer.listen(8080);
+		this.nodeServer.listen(81);
 	},
 
-	handleRequest: function(request, response) {
-		//console.log(request, response);
-		response.writeHead(200, {
-			'Content-Type': 'text/plain'
-		});
+	handleRequest: function(request, nodeResponse) {
+		// Identify the route
+		//var route = this.router.getRoute();
 
-		for(header in request.headers) {
-			response.write(header+': '+request.headers[header]+'\r\n');
-		}
-		response.end(request.method+' '+request.url);
+		nodeResponse.writeHead(200, {
+			'Content-Type': 'text/json'
+		});
+		nodeResponse.end(request.toString());
 	},
 	
 });
