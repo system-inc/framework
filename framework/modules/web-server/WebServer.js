@@ -28,7 +28,7 @@ WebServer = Server.extend({
 		//var route = this.router.getRoute();
 
 		nodeResponse.writeHead(200, {
-			'Content-Type': 'text/json'
+			'Set-Cookie': 'cookie=cookie',
 		});
 		nodeResponse.end(request.toString());
 	},

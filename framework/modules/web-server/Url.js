@@ -9,7 +9,7 @@ Url = Class.extend({
 		this.query = null;
 		this.queryString = null;
 		this.hash = null;
-		//this.input = string; // Testing
+		this.input = string; // Testing
 
 		this.parse(string);	
 	},
@@ -28,7 +28,6 @@ Url = Class.extend({
 
 		var nodeUrl = NodeUrl.parse(string, true);
 
-		console.log(nodeUrl);
 		this.protocol = nodeUrl.protocol.replace(':', '');
 		this.port = nodeUrl.port;
 		this.host = nodeUrl.hostname;

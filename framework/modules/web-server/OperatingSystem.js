@@ -2,6 +2,7 @@ OperatingSystem = Class.extend({
 
 	construct: function() {
 		this.name = null;
+		this.manufacturer = null;
 		this.version = {
 			'version': null,
 			'major': null,
@@ -13,13 +14,25 @@ OperatingSystem = Class.extend({
 	constructFromUserAgent: function(userAgent) {
 		var operatingSystem = new OperatingSystem();
 
-		if(userAgent.contains('Mac OS X')) {
-			operatingSystem.name = 'Mac OS X';
+		// Get the operating system
+		if(userAgent.contains('iPhone', false) || userAgent.contains('iPad', false) || userAgent.contains('iPod', false)) {
+			operatingSystem.name = 'iOS';
+			operatingSystem.manufacturer = 'Apple';
+		}
+		else if(userAgent.contains('OS X', false)) {
+			operatingSystem.name = 'OS X';
+			operatingSystem.manufacturer = 'Apple';
+		}
+		else if(userAgent.contains('Windows', false)) {
+			operatingSystem.name = 'Windows';
+			operatingSystem.manufacturer = 'Microsoft';
+		}
+		else if(userAgent.contains('Android', false)) {
+			operatingSystem.name = 'Android';
+			operatingSystem.manufacturer = 'Google';
 		}
 
-		
-
-		return new OperatingSystem();
+		return operatingSystem;
 	}
 	
 });
