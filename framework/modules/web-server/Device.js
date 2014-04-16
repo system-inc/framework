@@ -11,6 +11,7 @@ Device = Class.extend({
 	constructFromUserAgent: function(userAgent) {
 		var device = new Device();
 
+		// Set the type, name, and manufacturer
 		if(userAgent.contains('iPhone', false)) {
 			device.type = 'mobile';
 			device.name = 'iPhone';
@@ -26,12 +27,26 @@ Device = Class.extend({
 			device.name = 'iPad';
 			device.manufacturer = 'Apple';
 		}
-		else {
-			device.type = 'desktop';
+
+		// Set the architecture
+		if(userAgent.contains('WOW64', false)) {
+			device.architecture = 'x64';
 		}
 
 		return device;
-	}
+	},
+
+	isMobile: function() {
+		return this.type == 'mobile';
+	},
+
+	isTablet: function() {
+		return this.type == 'tablet';
+	},
+
+	isDesktop: function() {
+		return this.type == 'desktop';
+	},
 	
 });
 
