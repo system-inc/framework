@@ -11,6 +11,11 @@ Device = Class.extend({
 	constructFromUserAgent: function(userAgent) {
 		var device = new Device();
 
+		// Return immediately if there is no user agent
+		if(!userAgent) {
+			return device;
+		}
+
 		// Set the type, name, and manufacturer
 		if(userAgent.contains('iPhone', false)) {
 			device.type = 'mobile';

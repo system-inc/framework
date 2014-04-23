@@ -29,7 +29,7 @@ Url = Class.extend({
 		var nodeUrl = NodeUrl.parse(string, true);
 
 		this.protocol = nodeUrl.protocol.replace(':', '');
-		this.port = nodeUrl.port;
+		this.port = (nodeUrl.port == null ? 80 : nodeUrl.port.toNumber());
 		this.host = nodeUrl.hostname;
 		this.path = nodeUrl.pathname;
 		this.query = nodeUrl.query;

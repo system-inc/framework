@@ -1,12 +1,13 @@
 // Framework
 require('./../framework/Framework.js');
 
-Project = Class.extend({
+ProjectSingleton = Class.extend({
 
 	construct: function() {
+		this.path = __dirname+'/';
 		Framework.createWebServer();
 	},
 
 });
 
-var project = new Project();
+Project = new ProjectSingleton();

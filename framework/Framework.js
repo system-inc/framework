@@ -19,9 +19,10 @@ require('./types/Time');
 require('./modules/server/Server');
 require('./modules/web-server/WebServer');
 
-Framework = Class.extend({
+FrameworkSingleton = Class.extend({
 
 	construct: function() {
+		this.path = __dirname+'/';
 	},
 
 	createWebServer: function() {
@@ -31,4 +32,6 @@ Framework = Class.extend({
 });
 
 // Static methods
-Framework.createWebServer = Framework.prototype.createWebServer;
+FrameworkSingleton.createWebServer = FrameworkSingleton.prototype.createWebServer;
+
+Framework = new FrameworkSingleton();

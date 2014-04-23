@@ -2,28 +2,24 @@ Object.prototype.isObject = function() {
 	return typeof this == 'object';
 }
 
-Object.prototype.isUndefined = function() {
-	return typeof this == 'undefined';
-}
-
-Object.prototype.isNull = function() {
-	return typeof this == 'object';
+Object.prototype.isClass = function() {
+	return Class && this instanceof Class;
 }
 
 Object.prototype.isBoolean = function() {
-	return typeof this == 'boolean';
+	return this instanceof Boolean;
 }
 
 Object.prototype.isNumber = function() {
-	return typeof this == 'number';
+	return this instanceof Number;
 }
 
 Object.prototype.isString = function() {
-	return typeof this == 'string';
+	return this instanceof String;
 }
 
 Object.prototype.isFunction = function() {
-	return typeof this == 'function';
+	return this instanceof Function;
 }
 
 Object.prototype.toStringStandard = Object.prototype.toString;
@@ -39,4 +35,25 @@ Object.prototype.toString = function() {
 	}
 
 	return string;
+}
+
+Object.prototype.getValueForKey = function(key, caseSensitive) {
+	caseSensitive = caseSensitive === false ? false : true;
+	var result = null;
+
+	if(!caseSensitive) {
+		for(var currentKey in this) {
+			if(currentKey.toLowerCase() == key.toLowerCase()) {
+				result = this[key];
+				break;
+			}
+		}
+	}
+	else {
+		if(key && this[key]) {
+			result = this[key];
+		}
+	}
+
+	return result;
 }

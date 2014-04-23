@@ -3,17 +3,17 @@ Browser = Class.extend({
 	construct: function() {
 		this.name = null;
 		this.manufacturer = null;
-		this.version = {
-			'version': null,
-			'major': null,
-			'minor': null,
-			'patch': null,
-			'patchMinor': null,
-		};
+		this.version = new Version();
 	},
 
 	constructFromUserAgent: function(userAgent) {
 		var browser = new Browser();
+
+		// Return immediately if there is no user agent
+		if(!userAgent) {
+			return browser;
+		}
+
 		var browserIndex = null;
 		var browsers = [
 			{
@@ -56,22 +56,8 @@ Browser = Class.extend({
 		// Get the version and break it out into major, minor, patch, and patch minor
 		if(browserIndex) {
 			var browserVersionMatches = userAgent.match(new RegExp('^.*'+browsers[browserIndex].userAgentString+'.+?([\\d|\\.]+).*$', 'i'));
-			if(browserVersionMatches[1]) {
-				browser.version.version = browserVersionMatches[1];
-
-				var browserVersions = browser.version.version.split('.');
-				if(browserVersions[0]) {
-					browser.version.major = browserVersions[0].toNumber();
-				}
-				if(browserVersions[1]) {
-					browser.version.minor = browserVersions[1].toNumber();
-				}
-				if(browserVersions[2]) {
-					browser.version.patch = browserVersions[2].toNumber();
-				}
-				if(browserVersions[3]) {
-					browser.version.patchMinor = browserVersions[3].toNumber();
-				}
+			if(browserVersionMatches && browserVersionMatches[1]) {
+				browser.version = new Version(browserVersionMatches[1]);
 			}
 		}
 		

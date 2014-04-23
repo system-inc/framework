@@ -13,6 +13,29 @@ String.prototype.contains = function(string, caseSensitive) {
 	return contains;
 }
 
+String.prototype.capitalize = function(capitalizeEveryWord, lowerCaseAllWordsAfterFirstWord) {
+	if(capitalizeEveryWord) {
+		return this.split(' ').map(function(currentValue, index, array) {
+			return currentValue.capitalize(lowerCaseAllWordsAfterFirstWord);
+		}, this)
+		.join(' ').split('-').map(function(currentValue, index, array) {
+			return currentValue.capitalize(false);
+		}, this)
+		.join('-');
+	}
+	else {
+		return lowerCaseAllWordsAfterFirstWord ? this.charAt(0).toUpperCase() + this.slice(1).toLowerCase() : this.charAt(0).toUpperCase() + this.slice(1);
+	}
+}
+
+String.prototype.upperCaseFirstCharacter = function() {
+	return this.capitalize();
+}
+
+String.prototype.lowerCaseFirstCharacter = function() {
+	return this.charAt(0).toLowerCase() + this.slice(1);
+}
+
 String.prototype.replaceStandard = String.prototype.replace;
 
 String.prototype.replaceFirst = function(pattern, replacement) {
@@ -32,4 +55,24 @@ String.prototype.replace = function(pattern, replacement, flags) {
 
 String.prototype.toNumber = function() {
 	return Number(this);
+}
+
+String.prototype.isJson = function() {
+	var isJson = false;
+
+	try {
+        var o = JSON.parse(jsonString);
+
+        // Handle non-exception-throwing cases:
+        // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+        // but JSON.parse(null) returns 'null', and typeof null === "object", so we must check for that, too.
+        if(o && typeof o === "object" && o !== null) {
+            return o;
+        }
+    }
+    catch(exception) {
+
+    }
+
+    return isJson;
 }

@@ -41,7 +41,7 @@ Class.extend = function(childClassProperties) {
 	function Class() {
 		// All construction is actually done in the construct method
 		if(!initializing && this.construct) {
-			this.construct.apply(this, arguments);  
+			this.construct.apply(this, arguments);
 		}
 	}
 
@@ -59,7 +59,7 @@ Class.extend = function(childClassProperties) {
 		if(typeof(parentClassPrototype[parentClassProperty]) == 'function' && parentClassProperty != 'construct' && parentClassProperty != 'constructor') {
 			Class[parentClassProperty] = parentClassPrototype[parentClassProperty];
 		}
-	}	
+	}
 
 	return Class;
 }

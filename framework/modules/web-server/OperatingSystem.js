@@ -3,16 +3,16 @@ OperatingSystem = Class.extend({
 	construct: function() {
 		this.name = null;
 		this.manufacturer = null;
-		this.version = {
-			'version': null,
-			'major': null,
-			'minor': null,
-			'patch': null,
-		};
+		this.version = new Version();
 	},
 
 	constructFromUserAgent: function(userAgent) {
 		var operatingSystem = new OperatingSystem();
+
+		// Return immediately if there is no user agent
+		if(!userAgent) {
+			return operatingSystem;
+		}
 
 		var operatingSystemIndex = null;
 		var operatingSystems = [
@@ -64,20 +64,8 @@ OperatingSystem = Class.extend({
 		if(operatingSystemIndex) {
 			var operatingSystemVersionMatches = userAgent.match(new RegExp('^.*'+operatingSystems[operatingSystemIndex].userAgentString+'.+?([\\d\\._]+).*$', 'i'));
 			//console.log(operatingSystemVersionMatches);
-			if(operatingSystemVersionMatches[1]) {
-				operatingSystemVersionMatches[1] = operatingSystemVersionMatches[1].replace('_', '.');
-				operatingSystem.version.version = operatingSystemVersionMatches[1];
-
-				var operatingSystemVersions = operatingSystem.version.version.split('.');
-				if(operatingSystemVersions[0]) {
-					operatingSystem.version.major = operatingSystemVersions[0].toNumber();
-				}
-				if(operatingSystemVersions[1]) {
-					operatingSystem.version.minor = operatingSystemVersions[1].toNumber();
-				}
-				if(operatingSystemVersions[2]) {
-					operatingSystem.version.patch = operatingSystemVersions[2].toNumber();
-				}
+			if(operatingSystemVersionMatches && operatingSystemVersionMatches[1]) {
+				operatingSystem.version = new Version(operatingSystemVersionMatches[1]);
 			}
 		}
 
@@ -100,21 +88,18 @@ OperatingSystem = Class.extend({
 				operatingSystem.version.major = 7;
 				operatingSystem.version.minor = 0;
 				operatingSystem.version.patch = null;
-				operatingSystem.version.version = operatingSystem.version.major+'.'+operatingSystem.version.minor;
 			}
 			else if(operatingSystem.version.major == 6 && operatingSystem.version.minor == 2) {
 				operatingSystem.name = 'Windows 8';
 				operatingSystem.version.major = 8;
 				operatingSystem.version.minor = 0;
 				operatingSystem.version.patch = null;
-				operatingSystem.version.version = operatingSystem.version.major+'.'+operatingSystem.version.minor;
 			}
 			else if(operatingSystem.version.major == 6 && operatingSystem.version.minor == 3) {
 				operatingSystem.name = 'Windows 8';
 				operatingSystem.version.major = 8;
 				operatingSystem.version.minor = 1;
 				operatingSystem.version.patch = null;
-				operatingSystem.version.version = operatingSystem.version.major+'.'+operatingSystem.version.minor;
 			}
 		}
 		
