@@ -2,28 +2,29 @@ Request = Class.extend({
 
 	construct: function(nodeRequest) {
 		// URL
-		this.url = new Url.constructFromNodeRequest(nodeRequest);
+		this.url = Url.constructFromNodeRequest(nodeRequest);
 
 		// Method
 		this.method = nodeRequest.method;
 
 		// Headers
-		this.headers = nodeRequest.headers;
+		this.headers = Headers.constructFromNodeRequestHeaders(nodeRequest.headers);
 
 		// IP address
 		this.ipAddress = this.connectingIpAddress = new IpAddress(nodeRequest.connection.remoteAddress);
 		
 		// Referrer
-		this.referrer = new Url(this.getHeader('referer'));
+		this.referrer = new Url(this.headers.get('referer'));
 
 		// Cookies
-		this.cookies = new Cookies(this.getHeader('cookie'));
+		this.cookies = new Cookies(this.headers.get('cookie'));
+		this.headers.cookies = this.cookies;
 
 		// Cache the user agent
-		var userAgent = this.getHeader('user-agent');
+		var userAgent = this.headers.get('user-agent');
 
 		// Revisit IP address to see if X-Forwarded-For is set
-		var xForwardedFor = this.getHeader('x-forwarded-for');
+		var xForwardedFor = this.headers.get('x-forwarded-for');
 		if(xForwardedFor) {
 			// Catch x.x.x.x,y.y.y.y format
 			if(xForwardedFor.contains(',')) {
@@ -35,17 +36,17 @@ Request = Class.extend({
 		}
 
 		// Browser identification from user agent
-		this.browser = new Browser.constructFromUserAgent(userAgent);
+		this.browser = Browser.constructFromUserAgent(userAgent);
 
 		// Device identification from user agent
-		this.device = new Device.constructFromUserAgent(userAgent);
+		this.device = Device.constructFromUserAgent(userAgent);
 
 		// Operating system identification from user agent
-		this.operatingSystem = new OperatingSystem.constructFromUserAgent(userAgent);
+		this.operatingSystem = OperatingSystem.constructFromUserAgent(userAgent);
 
 		// Geolocation (optionally provided by Cloudflare)
 		this.geolocation = new Geolocation();
-		this.geolocation.country.code = this.getHeader('cf-ipcountry');
+		this.geolocation.country.code = this.headers.get('cf-ipcountry');
 
 		// HTTP version
 		this.httpVersion = new Version({
@@ -53,9 +54,5 @@ Request = Class.extend({
 			'minor': nodeRequest.httpVersionMinor,
 		});
 	},
-
-	getHeader: function(name) {
-		return this.headers.getValueForKey(name, false);
-	}
 	
 });

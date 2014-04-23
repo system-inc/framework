@@ -8,7 +8,15 @@ Headers = Class.extend({
 	},
 
 	constructFromNodeRequestHeaders: function(nodeRequestHeaders) {
+		var headers = new Headers();
 
+		for(var key in nodeRequestHeaders) {
+			if(nodeRequestHeaders[key].isString()) {
+				headers.create(key, nodeRequestHeaders[key]);	
+			}
+		}
+
+		return headers;
 	},
 
 	parse: function(string) {
@@ -21,13 +29,48 @@ Headers = Class.extend({
 		}
 	},
 
-	get: function(key) {
+	get: function(key, caseSensitive) {
+		caseSensitive = caseSensitive === false ? false : true;
 		var header = null;
 
-		for(var i = 0; i < this.headers.length; i++) {
-			if(this.headers[i].key == key) {
-				header = this.headers[i];
-				break;
+		if(caseSensitive) {
+			for(var i = 0; i < this.headers.length; i++) {
+				if(this.headers[i].key == key) {
+					header = this.headers[i].value;
+					break;
+				}
+			}	
+		}
+		else {
+			for(var i = 0; i < this.headers.length; i++) {
+				if(this.headers[i].key.toLowerCase() == key.toLowerCase()) {
+					header = this.headers[i].value;
+					break;
+				}
+			}
+		}
+
+		return header;
+	},
+
+	getHeader: function(key, caseSensitive) {
+		caseSensitive = caseSensitive === false ? false : true;
+		var header = null;
+
+		if(caseSensitive) {
+			for(var i = 0; i < this.headers.length; i++) {
+				if(this.headers[i].key == key) {
+					header = this.headers[i].value;
+					break;
+				}
+			}	
+		}
+		else {
+			for(var i = 0; i < this.headers.length; i++) {
+				if(this.headers[i].key.toLowerCase() == key.toLowerCase()) {
+					header = this.headers[i];
+					break;
+				}
 			}
 		}
 
@@ -42,8 +85,18 @@ Headers = Class.extend({
 		return header;
 	},
 
-	update: function() {
+	update: function(key, value, caseSensitive) {
+		caseSensitive = caseSensitive === false ? false : true;
+		var header = this.getHeader(key, false);
 
+		if(header != null) {
+			header.value = value;
+		}
+		else {
+			header = this.create(key, value);
+		}
+
+		return header;
 	},	
 
 	delete: function() {
@@ -68,3 +121,6 @@ Headers = Class.extend({
 	},
 	
 });
+
+// Static methods
+Headers.constructFromNodeRequestHeaders = Headers.prototype.constructFromNodeRequestHeaders;

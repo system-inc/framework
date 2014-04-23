@@ -21,7 +21,7 @@ Cookies = Class.extend({
 
 		for(var i = 0; i < this.cookies.length; i++) {
 			if(this.cookies[i].key == key) {
-				cookie = this.cookies[i];
+				cookie = this.cookies[i].value;
 				break;
 			}
 		}

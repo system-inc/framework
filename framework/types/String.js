@@ -76,3 +76,17 @@ String.prototype.isJson = function() {
 
     return isJson;
 }
+
+String.random = function(length, characters) {
+	length = length === undefined ? 32 : length;
+	characters = characters === undefined ? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' : characters;
+
+	var maxIndex = characters.length - 1;
+	var string = '';
+
+	for(var i = 0; i < length; i++) {
+		string += characters[Number.random(0, maxIndex)];
+	}
+
+	return string;
+}

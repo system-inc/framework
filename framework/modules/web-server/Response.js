@@ -7,6 +7,10 @@ Response = Class.extend({
 		// Hold onto Node's response object
 		this.nodeResponse = nodeResponse;
 
+		// Encodings
+		this.encoding = null;
+		this.acceptedEncodings = [];
+
 		// Headers
 		this.statusCode = null;
 		this.cookies = new Cookies();
@@ -15,6 +19,25 @@ Response = Class.extend({
 
 		// Content
 		this.content = null;
+	},
+
+	setAcceptedEncodings: function(acceptEncodeHeaderString) {
+		if(acceptEncodeHeaderString && acceptEncodeHeaderString.isString()) {
+			var acceptedEncodings = acceptEncodeHeaderString.split(',');
+			for(var i = 0; i < acceptedEncodings.length; i++) {
+				this.acceptedEncodings.push(acceptedEncodings[i].trim());
+			}
+
+			// Deflate is faster than gzip
+			if(this.acceptedEncodings.contains('deflate', false)) {
+				this.encoding = 'deflate';
+			}
+			else if(this.acceptedEncodings.contains('gzip', false)) {
+				this.encoding = 'gzip';
+			}
+		}
+
+		return this.acceptedEncodings;
 	},
 
 	send: function() {
@@ -28,6 +51,11 @@ Response = Class.extend({
 			this.statusCode = 200;
 		}
 
+		// Set the content encoding header
+		if(this.encoding) {
+			this.headers.update('Content-Encoding', this.encoding);
+		}
+
 		// Track the elapsed time
 		this.stopwatch.end();
 		this.headers.create('X-Elapsed-Time-in-'+this.stopwatch.precision.capitalize(), this.stopwatch.elapsedTime);
@@ -36,7 +64,21 @@ Response = Class.extend({
 	},
 
 	sendContent: function() {
-		this.nodeResponse.end(this.content);
+		var self = this;
+
+		if(this.encoding == 'deflate') {
+			NodeZlib.deflate(new Buffer(this.content, 'utf-8'), function(error, result) {
+				self.nodeResponse.end(result);
+			});
+		} 
+		else if(this.encoding = 'gzip') {
+			NodeZlib.gzip(new Buffer(this.content, 'utf-8'), function(error, result) {
+				self.nodeResponse.end(result);
+			});
+		}
+		else {
+			this.nodeResponse.end(this.content);
+		}
 	},
 
 });

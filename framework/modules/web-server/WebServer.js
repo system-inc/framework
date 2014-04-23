@@ -41,6 +41,9 @@ WebServer = Server.extend({
 		this.requests++;
 		//console.log(this.requests, request.url.path);
 
+		// Let the response know what accepted encodings the request allows
+		response.setAcceptedEncodings(request.headers.get('accept-encoding'));
+
 		// Identify and follow the route
 		this.router.route(request, response);
 	},

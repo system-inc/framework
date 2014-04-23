@@ -2,6 +2,8 @@
 NodeFileSystem = require('fs');
 NodeHttp = require('http');
 NodeUrl = require('url');
+NodeZlib = require('zlib');
+NodeCrypto = require('crypto');
 
 // Framework objects (always require)
 require('./objects/Object');
