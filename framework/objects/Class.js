@@ -13,16 +13,16 @@ Class.extend = function(childClassProperties) {
 	for(var childClassProperty in childClassProperties) {
 		// If we are overwriting an existing function on the parent then we create a parent (super) method
 		if(typeof(childClassProperties[childClassProperty]) == 'function' && typeof(parentClassPrototype[childClassProperty]) == 'function' && functionTest.test(childClassProperties[childClassProperty])) {
-			childClassPrototype[childClassProperty] = (function(childClassProperty, fn) {
+			childClassPrototype[childClassProperty] = (function(childClassProperty, method) {
 				return function() {
-					var temp = this.parent;
+					var parent = this.parent;
 
 					// Add a new .parent() method that is the same method but on the parent-class
 					this.parent = parentClassPrototype[childClassProperty];
 
 					// The method only need to be bound temporarily, so we remove it when we're done executing
-					var ret = fn.apply(this, arguments);
-					this.parent = temp;
+					var ret = method.apply(this, arguments);
+					this.parent = parent;
 
 					return ret;
 				};
@@ -30,7 +30,36 @@ Class.extend = function(childClassProperties) {
 		}
 		// If we have a generator
 		else if(childClassProperties[childClassProperty] && childClassProperties[childClassProperty].isGenerator && childClassProperties[childClassProperty].isGenerator()) {
+			// Treat generators just like normal functions
 			childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
+			
+			// Automatically pump generators until they are finished
+			// var method = childClassProperties[childClassProperty];
+			// childClassPrototype[childClassProperty] = function() {
+			// 	// Call with this to preserve context
+			// 	var generator = method.call(this);
+
+			// 	// The last value received from the generator is the value we return
+			// 	var value = null;
+
+			// 	// Recursive method will keep running if the generator is not finished
+			//     var pump = function() {
+			//         var next = generator.next();
+			//         if(next.done) {
+			//             //console.log('Generator finished:', next);
+			//             return next.value;
+			//         }
+			//         else {
+			//         	//console.log('Generator not finished, pumping:', next);
+			//         	return pump();
+			//         }
+			//     };
+
+			//     // Run the recursive pump
+			//     value = pump();
+
+			//     return value;	
+			// }
 		}
 		else {
 			childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];

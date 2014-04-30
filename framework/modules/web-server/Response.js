@@ -18,7 +18,7 @@ Response = Class.extend({
 		this.headers.cookies = this.cookies;
 
 		// Content
-		this.content = null;
+		this.content = '';
 	},
 
 	setAcceptedEncodings: function(acceptEncodeHeaderString) {
@@ -66,16 +66,19 @@ Response = Class.extend({
 	sendContent: function() {
 		var self = this;
 
+		// Deflate
 		if(this.encoding == 'deflate') {
 			NodeZlib.deflate(new Buffer(this.content, 'utf-8'), function(error, result) {
 				self.nodeResponse.end(result);
 			});
-		} 
+		}
+		// Gzip
 		else if(this.encoding = 'gzip') {
 			NodeZlib.gzip(new Buffer(this.content, 'utf-8'), function(error, result) {
 				self.nodeResponse.end(result);
 			});
 		}
+		// Standard
 		else {
 			this.nodeResponse.end(this.content);
 		}

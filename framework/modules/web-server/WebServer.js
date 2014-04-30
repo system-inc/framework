@@ -1,4 +1,3 @@
-require('./Controllers');
 require('./Controller');
 require('./Browser');
 require('./Device');

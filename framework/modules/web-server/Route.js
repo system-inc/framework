@@ -5,7 +5,7 @@ Route = Class.extend({
 		this.response = null;
 
 		this.controllerName = 'Main';
-		this.functionName = 'main';
+		this.methodName = 'main';
 	},
 
 	setRequest: function(request) {
@@ -17,9 +17,10 @@ Route = Class.extend({
 	},
 
 	follow: function() {
-		var controller = Controllers.getController(this.controllerName, this.request, this.response);
+		var controller = Controller.getController(this.controllerName, this.request, this.response);
 		if(controller) {
-			controller[this.functionName]();
+			//this.response.content = controller[this.methodName]();
+			controller[this.methodName]();
 		}
 
 		// Send the response
