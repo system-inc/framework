@@ -1,6 +1,6 @@
 Main = Controller.extend({
 
-	main: function() {
+	main: function*() {
 		//console.log('this', this);
 		//console.log('Request:', this.request.url);
 
@@ -17,14 +17,15 @@ Main = Controller.extend({
 		// Set the content
 		//this.response.content = 'Hi';
 		//this.response.content = this.request.toString();
-		this.response.content = String.random(1024 * 1);
+		//this.response.content = String.random(1024 * 1);
 
-		//yield 'stop 1';
-		//yield 'stop 2';
-		//yield 'stop 3';
-		//yield 'stop 4';
+		yield 'stop 1';
+		yield 'stop 2';
+		yield 'stop 3';
+		yield 'stop 4';
 		//var response = String.random(1024 * 1);
-		//return response;
+		var response = '';
+		return response;
 	},
 	
 });

@@ -31,36 +31,37 @@ Class.extend = function(childClassProperties) {
 		// If we have a generator
 		else if(childClassProperties[childClassProperty] && childClassProperties[childClassProperty].isGenerator && childClassProperties[childClassProperty].isGenerator()) {
 			// Treat generators just like normal functions
-			childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
+			//childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
 			
 			// Automatically pump generators until they are finished
-			// var method = childClassProperties[childClassProperty];
-			// childClassPrototype[childClassProperty] = function() {
-			// 	// Call with this to preserve context
-			// 	var generator = method.call(this);
+			var method = childClassProperties[childClassProperty];
+			childClassPrototype[childClassProperty] = function() {
+				// Call with this to preserve context
+				var generator = method.call(this);
 
-			// 	// The last value received from the generator is the value we return
-			// 	var value = null;
+				// The last value received from the generator is the value we return
+				var value = null;
 
-			// 	// Recursive method will keep running if the generator is not finished
-			//     var pump = function() {
-			//         var next = generator.next();
-			//         if(next.done) {
-			//             //console.log('Generator finished:', next);
-			//             return next.value;
-			//         }
-			//         else {
-			//         	//console.log('Generator not finished, pumping:', next);
-			//         	return pump();
-			//         }
-			//     };
+				// Recursive method will keep running if the generator is not finished
+			    var pump = function() {
+			        var next = generator.next();
+			        if(next.done) {
+			            //console.log('Generator finished:', next);
+			            return next.value;
+			        }
+			        else {
+			        	//console.log('Generator not finished, pumping:', next);
+			        	return pump();
+			        }
+			    };
 
-			//     // Run the recursive pump
-			//     value = pump();
+			    // Run the recursive pump
+			    value = pump();
 
-			//     return value;	
-			// }
+			    return value;	
+			}
 		}
+		// All other methods
 		else {
 			childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
 		}

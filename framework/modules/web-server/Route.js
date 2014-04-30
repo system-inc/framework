@@ -19,8 +19,7 @@ Route = Class.extend({
 	follow: function() {
 		var controller = Controller.getController(this.controllerName, this.request, this.response);
 		if(controller) {
-			//this.response.content = controller[this.methodName]();
-			controller[this.methodName]();
+			this.response.content = controller[this.methodName]();
 		}
 
 		// Send the response

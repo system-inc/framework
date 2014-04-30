@@ -27,7 +27,8 @@ Object.prototype.toStringStandard = Object.prototype.toString;
 Object.prototype.toString = function() {
 	var string = null;
 
-	return string = this.toStringStandard();
+	// Debugging
+	//return string = this.toStringStandard();
 
 	if(this.isObject()) {
 		string = Json.encode(this);
