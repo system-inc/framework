@@ -19,8 +19,21 @@ Route = Class.extend({
 	follow: function() {
 		var controller = Controller.getController(this.controllerName, this.request, this.response);
 		if(controller) {
-			this.response.content = controller[this.methodName]();
+			var content = controller[this.methodName]();
+			//console.log('Route.follow content:', content);
+
+			// Make sure we have a string
+			if(content && !content.isString()) {
+				content = content.toString();
+			}
+
+			// Make sure we have content
+			if(content) {
+				this.response.content = content;	
+			}
 		}
+
+		//console.log('Output', this.response.content);
 
 		// Send the response
 		this.response.send();

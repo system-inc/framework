@@ -6,9 +6,10 @@ NodeZlib = require('zlib');
 NodeCrypto = require('crypto');
 
 // Framework objects (always require)
-require('./objects/Object');
 require('./objects/Function');
+require('./objects/Object');
 require('./objects/Class');
+require('./objects/Promise');
 
 // Framework types (always require)
 require('./types/Array');
@@ -20,6 +21,13 @@ require('./types/Time');
 // Include these dynamically somehow
 require('./modules/server/Server');
 require('./modules/web-server/WebServer');
+require('./modules/file-system/FileSystemObject');
+require('./modules/file-system/Directory');
+require('./modules/file-system/File');
+
+// Testing
+Promise = require('bluebird'); // Use Bluebird for now until I write my own (so I understand what is going on)
+PromiseFileSystem = Promise.promisifyAll(require('fs'));
 
 FrameworkSingleton = Class.extend({
 

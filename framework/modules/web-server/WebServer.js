@@ -36,6 +36,13 @@ WebServer = Server.extend({
 	},
 
 	handleRequest: function(request, response) {
+		console.log('');
+		console.log('');
+		console.log('');
+		console.log('');
+		console.log('-- Request -- ');
+		console.log('');
+
 		// Increment the requests counter
 		this.requests++;
 		//console.log(this.requests, request.url.path);

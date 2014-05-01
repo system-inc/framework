@@ -38,3 +38,5 @@ Array.prototype.last = function() {
 }
 
 Array.prototype.each = Array.prototype.forEach;
+
+Array.prototype.toString = Object.prototype.toString;

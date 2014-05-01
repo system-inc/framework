@@ -37,28 +37,56 @@ Class.extend = function(childClassProperties) {
 			var method = childClassProperties[childClassProperty];
 			childClassPrototype[childClassProperty] = function() {
 				// Call with this to preserve context
-				var generator = method.call(this);
+				var generator = method.apply(this, arguments);
 
-				// The last value received from the generator is the value we return
+				// The last value received from the generator is the value the method returns
 				var value = null;
 
 				// Recursive method will keep running if the generator is not finished
-			    var pump = function() {
-			        var next = generator.next();
+			    var pump = function(currentValue) {
+			    	// Store the result
+			    	var result = currentValue;
+
+			    	// Advance the generator
+			        var next = generator.next(currentValue);
+
+			        // If the generator has finished executing
 			        if(next.done) {
-			            //console.log('Generator finished:', next);
-			            return next.value;
+			            console.log('Generator pumping finished:', next);
+
+			            result = next.value;
 			        }
+			        // If the generator has not finished executing
 			        else {
-			        	//console.log('Generator not finished, pumping:', next);
-			        	return pump();
+			        	console.log('Generator not finished, pumping:', next);
+
+			        	// If we have an object or a function, wrap it in in a promise and bind with done()
+			        	if(Object.is(next.value) || Function.is(next.value)) {
+			        		// Wrap the current generator value in a promise
+				        	var promise = new Promise.promisifyAll(next.value);
+
+				        	// When the promise completes, pump the generator
+				        	// I NEED TO SOMEHOW WAIT UNTIL done() IS CALLED BEFORE pump() RETURNS
+				        	// DO I NEED TO YIELD HERE?
+				        	result = promise.done(function(currentValue) {
+				        		result = pump(currentValue);
+				        	});
+			        	}
+			        	// If we don't have an object or function, just pump the generator
+			        	else {
+			        		result = pump(currentValue);
+			        	}
 			        }
+
+			        return result;
 			    };
 
 			    // Run the recursive pump
 			    value = pump();
 
-			    return value;	
+			    //console.log('Finished recursion!', value, generator);
+
+			    return value;
 			}
 		}
 		// All other methods

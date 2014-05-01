@@ -2,6 +2,10 @@ Object.prototype.isObject = function() {
 	return typeof this == 'object';
 }
 
+Object.is = function(value) {
+	return typeof value == 'object';
+}
+
 Object.prototype.isClass = function() {
 	return Class && this instanceof Class;
 }

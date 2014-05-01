@@ -1,6 +1,7 @@
 Time = Class.extend({
 
-	construct: function() {
+	construct: function(string) {
+		this.time = new Date(string);
 		this.precision = 'milliseconds';
 	},
 
