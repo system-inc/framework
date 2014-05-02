@@ -7,16 +7,16 @@ them in a promise and put them inside of a generator with the yield keyword
 in front of them.
 
 Then, you need a special function that initiates the generator and calls
-generator.next() until it hits a yielding promise. As soon as it hits a promise
-it stops calling generator.next and instead attaches a callback on the .done
-method of the promise that will call generator.next when the callback is
-complete. This works beautifully and with bluebird as your promise library
+generator.next() until it hits a yielded promise. As soon as it hits a promise
+it stops calling generator.next() and instead attaches a callback on the .done()
+method of the promise that will call generator.next() when the callback is
+complete. This works beautifully and with Bluebird as your promise library
 it is very performant.
 
 My problem - I want the special function to return after all of the promises
 have been fulfilled. Specifically, I want the special function to return
-the last value found. It currently can't do this because it has to call
-generator.next from inside of the promises callback.
+the last value from the generator. It currently can't do this because it
+has to call generator.next from inside of the promises callback.
 
 Ideas
 
