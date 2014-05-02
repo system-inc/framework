@@ -2,13 +2,13 @@
 Run this test using:
 ./node.0.11.12 --harmony test.js
 
-In order to get async methods to yield until they are done, you need wrap
+In order to write async methods inline without callbacks, you need to wrap
 them in a promise and put them inside of a generator with the yield keyword
 in front of them.
 
 Then, you need a special function that initiates the generator and calls
 generator.next() until it hits a yielded promise. As soon as it hits a promise
-it stops calling generator.next() and instead attaches a callback on the .done()
+it stops calling generator.next() and instead attaches a callback with the .done()
 method of the promise that will call generator.next() when the callback is
 complete. This works beautifully and with Bluebird as your promise library
 it is very performant.
@@ -16,9 +16,9 @@ it is very performant.
 My problem - I want the special function to return after all of the promises
 have been fulfilled. Specifically, I want the special function to return
 the last value from the generator. It currently can't do this because it
-has to call generator.next from inside of the promises callback.
+has to call generator.next() from inside of the promises callback.
 
-Ideas
+Ideas:
 
 What if I put another special function in front of my other special function
 and turn my other special function into a promise?
