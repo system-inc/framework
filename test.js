@@ -10,13 +10,13 @@ Then, you need a special function that initiates the generator and calls
 generator.next() until it hits a yielded promise. As soon as it hits a promise
 it stops calling generator.next() and instead attaches a callback with the .done()
 method of the promise that will call generator.next() when the callback is
-complete. This works beautifully and with Bluebird as your promise library
-it is very performant.
+complete.
 
-My problem - I want the special function to return after all of the promises
+My problem - I want the special function to return *after* all of the promises
 have been fulfilled. Specifically, I want the special function to return
 the last value from the generator. It currently can't do this because it
-has to call generator.next() from inside of the promises callback.
+has to call generator.next() from inside of the promises callback when it
+encounters a promise.
 
 Ideas:
 
