@@ -34,59 +34,67 @@ Class.extend = function(childClassProperties) {
 			//childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
 			
 			// Automatically pump generators until they are finished
-			var method = childClassProperties[childClassProperty];
+			var generatorMethod = childClassProperties[childClassProperty];
 			childClassPrototype[childClassProperty] = function() {
-				// Call with this to preserve context
-				var generator = method.apply(this, arguments);
+				// Get the generator by calling the generator method with this (and arguments) to preserve context
+				var generator = generatorMethod.apply(this, arguments);
 
-				// The last value received from the generator is the value the method returns
-				var value = null;
+				return Function.run(generator);
 
-				// Recursive method will keep running if the generator is not finished
-			    var pump = function(currentValue) {
-			    	// Store the result
-			    	var result = currentValue;
+				// // Keep track of when we are finished
+				// var done = false;
 
-			    	// Advance the generator
-			        var next = generator.next(currentValue);
+				// // Recursive method will keep running if the generator is not finished
+			 //    var pump = function*(currentValue) {
+			 //    	// Store the result
+			 //    	var result = currentValue;
 
-			        // If the generator has finished executing
-			        if(next.done) {
-			            console.log('Generator pumping finished:', next);
+			 //    	// If we are finished, return the result
+			 //    	if(done) {
+			 //    		console.log('Ending!');
+			 //    		return result;
+			 //    	}
 
-			            result = next.value;
-			        }
-			        // If the generator has not finished executing
-			        else {
-			        	console.log('Generator not finished, pumping:', next);
+			 //    	// Advance the generator
+			 //        var next = generator.next(currentValue);
+			 //        done = next.done;
 
-			        	// If we have an object or a function, wrap it in in a promise and bind with done()
-			        	if(Object.is(next.value) || Function.is(next.value)) {
-			        		// Wrap the current generator value in a promise
-				        	var promise = new Promise.promisifyAll(next.value);
+			 //        // If the generator has finished executing
+			 //        if(next.done) {
+			 //            console.log('Generator pumping finished:', next);
 
-				        	// When the promise completes, pump the generator
-				        	// I NEED TO SOMEHOW WAIT UNTIL done() IS CALLED BEFORE pump() RETURNS
-				        	// DO I NEED TO YIELD HERE?
-				        	result = promise.done(function(currentValue) {
-				        		result = pump(currentValue);
-				        	});
-			        	}
-			        	// If we don't have an object or function, just pump the generator
-			        	else {
-			        		result = pump(currentValue);
-			        	}
-			        }
+			 //            result = next.value;
+			 //        }
+			 //        // If the generator has not finished executing
+			 //        else {
+			 //        	console.log('Generator not finished, pumping:', next);
 
-			        return result;
-			    };
+			 //        	// If we have an object or a function, wrap it in in a promise and bind with done()
+			 //        	if(Object.is(next.value) || Function.is(next.value)) {
+			 //        		// Wrap the current generator value in a promise
+				//         	var promise = yield new Promise.promisifyAll(next.value);
 
-			    // Run the recursive pump
-			    value = pump();
+				//         	// When the promise completes, pump the generator
+				//         	// I NEED TO SOMEHOW WAIT UNTIL done() IS CALLED BEFORE pump() RETURNS
+				//         	// DO I NEED TO YIELD HERE?
+				//         	promise.done(function(currentValue) {
+				//         		result = pump(currentValue);
+				//         	});
+			 //        	}
+			 //        	// If we don't have an object or function, just pump the generator
+			 //        	else {
+			 //        		result = pump(currentValue);
+			 //        	}
+			 //        }
 
-			    //console.log('Finished recursion!', value, generator);
+			 //        return result;
+			 //    };
 
-			    return value;
+			    // Get the generator for the pump
+			    var run = Function.run(pump);
+			    console.log(run);
+
+			    return run;
 			}
 		}
 		// All other methods

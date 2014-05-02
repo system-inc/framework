@@ -22,6 +22,7 @@ Directory = FileSystemObject.extend({
 
 		// Yielding async call
 		yield 'Stop 1';
+		yield 'Stop 1.5';
 		var listStringArray = yield PromiseFileSystem.readdirAsync(path);
 		console.log('Directory.list listStringArray:', listStringArray);
 		yield 'Stop 2';
