@@ -7,6 +7,7 @@ NodeCrypto = require('crypto');
 
 // Framework objects (always require)
 require('./objects/Function');
+require('./objects/Generator');
 require('./objects/Object');
 require('./objects/Class');
 require('./objects/Promise');

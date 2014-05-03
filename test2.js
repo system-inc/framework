@@ -60,18 +60,17 @@ Generator.run = function(generator) {
 				// Tell the generator to move forward
 				pump(generator, next);
 			});
+
+			// Return the promise
+			return next.value;
 		}
 		// If we don't have a promise, keep moving the generator forward
 		else {
-			return pump(generator, next);	
+			return pump(generator, next);
 		}
 	}
 
 	return pump(generator);
-}
-
-Generator.resolve = function(generator) {
-	
 }
 
 //Generator.promise = 
@@ -82,17 +81,14 @@ function* main() {
 	var result = yield new Promise(function(resolve) {
 		Generator.run(function*(variable) {
 			var a = yield 1;
-			var b = yield new Promise(function(resolve) {
-				resolve(2);
-			});
+			var b = yield new Promise(function(resolve) { resolve(2); }); // Async
 			var c = variable;
 			console.log('variable:', variable);
 			var d = a + b + c;
 
 			resolve(d);
-			//return d;
-		}(3));
-	});
+		}(3))}
+	);
 	console.log('---');
 	console.log('result:', result);
 	console.log('        ^ should be 6, not undefined');

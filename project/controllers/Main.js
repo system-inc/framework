@@ -1,6 +1,6 @@
 Main = Controller.extend({
 
-	main: function() {
+	main: function*() {
 		//console.log('this', this);
 		//console.log('Request:', this.request.url);
 
@@ -21,9 +21,9 @@ Main = Controller.extend({
 		// console.log('result:', result);
 		// return;
 
-		var list = Directory.list('/');
+		var list = yield Directory.list('/');
 		console.log('--- !!! Main.main list:', list);
-		console.log('                        ^ this should be the array of directories');
+		console.log('^ this should be the array of file system objects');
 
 		//var response = String.random(1024 * 1);
 		//var response = this.request.toString();
