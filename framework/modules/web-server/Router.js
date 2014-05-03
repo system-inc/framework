@@ -20,8 +20,9 @@ Router = Class.extend({
 		// Set the request and response
 		route.setRequest(request);
 		route.setResponse(response);
+		//console.log('Route.request:', route.request);
 
-		route.follow();
+		route.follow(route);
 	},
 	
 });

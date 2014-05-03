@@ -33,10 +33,30 @@ Class.extend = function(childClassProperties) {
 			// Treat generators just like normal functions
 			//childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
 			
-			// Automatically pump generators until they are finished
+			// Anytime a generator is called we automatically turn it into a promise and run it
 			var generatorMethod = childClassProperties[childClassProperty];
 			childClassPrototype[childClassProperty] = function() {
-			    return Generator.run(generatorMethod.apply(this, arguments));
+				// Turn the arguments into an array so we can modify it later
+				var childClassPrototypeArguments = [].splice.call(arguments, 0);
+
+				// Setup a new promise to run in the generator
+				var promise = new Promise(function(resolve) {
+					// Enable the generator to resolve the promise by passing the resolve function in as the last argument
+					childClassPrototypeArguments[childClassPrototypeArguments.length] = resolve;
+
+					// Invoke the generator with the right context and arguments
+					var generator = generatorMethod.apply(childClassPrototype, childClassPrototypeArguments);
+
+					// Run the generator, it must use the resolve function to resolve
+					Generator.run(generator);
+				});
+
+				// Run the generator that returns the promise which runs the generator which resolves the promise
+			    return Generator.run(
+			    	function*() {
+						return promise;
+			    	}
+		    	);
 			}
 		}
 		// All other methods
