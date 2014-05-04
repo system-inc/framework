@@ -12,14 +12,14 @@ FileSystemObject = Class.extend({
 		this.initializeStatus();
 	},
 
-	constructFromPath: function(path) {
+	constructFromPath: function*(path) {
 		// Make sure we have a path
 		if(!path) {
 			return false;
 		}
 
-		// Get the file object status MAKE THIS ASYNC
-		var nodeStatus = NodeFileSystem.lstatSync(path);
+		// Get the file object status
+		var nodeStatus = yield FileSystem.lstat(path);
 
 		// Make sure to always be an instance of File or Directory
 		if(nodeStatus.isFile()) {

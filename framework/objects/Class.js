@@ -21,10 +21,10 @@ Class.extend = function(childClassProperties) {
 					this.parent = parentClassPrototype[childClassProperty];
 
 					// The method only need to be bound temporarily, so we remove it when we're done executing
-					var ret = method.apply(this, arguments);
+					var methodResults = method.apply(this, arguments);
 					this.parent = parent;
 
-					return ret;
+					return methodResults;
 				};
 			})(childClassProperty, childClassProperties[childClassProperty])
 		}
@@ -33,30 +33,28 @@ Class.extend = function(childClassProperties) {
 			// Treat generators just like normal functions
 			//childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
 			
-			// Anytime a generator is called we automatically turn it into a promise and run it
+			// Keep a reference to the generator method to invoke later in the promise
 			var generatorMethod = childClassProperties[childClassProperty];
+
+			// Reassign how generator functions execute: anytime a generator is called we automatically wrap it in a promise and run it
 			childClassPrototype[childClassProperty] = function() {
-				// Turn the arguments into an array so we can modify it later
-				var childClassPrototypeArguments = [].splice.call(arguments, 0);
+				// Store the instance to apply to the generator method later in the promise
+				var childClassInstance = this;
+
+				// Store the arguments to apply to the generator method later in the promise
+				var childClassPrototypeArguments = arguments;
 
 				// Setup a new promise to run in the generator
 				var promise = new Promise(function(resolve) {
-					// Enable the generator to resolve the promise by passing the resolve function in as the last argument
-					childClassPrototypeArguments[childClassPrototypeArguments.length] = resolve;
+					// Store the resolve method on the instance
+					childClassInstance.resolve = resolve;
 
-					// Invoke the generator with the right context and arguments
-					var generator = generatorMethod.apply(childClassPrototype, childClassPrototypeArguments);
-
-					// Run the generator, it must use the resolve function to resolve
-					Generator.run(generator);
+					// Invoke and run the generator with the right context and arguments, it must use the this.resolve function to resolve
+					Generator.run(generatorMethod.apply(childClassInstance, childClassPrototypeArguments), resolve);
 				});
 
-				// Run the generator that returns the promise which runs the generator which resolves the promise
-			    return Generator.run(
-			    	function*() {
-						return promise;
-			    	}
-		    	);
+				// Return the promise which runs the generator which resolves the promise
+				return promise;
 			}
 		}
 		// All other methods

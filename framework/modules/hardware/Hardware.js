@@ -1,0 +1,5 @@
+require('./Device');
+
+Hardware = function() {
+	
+}

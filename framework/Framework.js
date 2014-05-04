@@ -12,23 +12,23 @@ require('./objects/Object');
 require('./objects/Class');
 require('./objects/Promise');
 
-// Framework types (always require)
+// Framework core types (always require)
 require('./types/Array');
 require('./types/Json');
 require('./types/Number');
 require('./types/String');
-require('./types/Time');
 
-// Include these dynamically somehow
+// Framework modules
+require('./modules/file-system/FileSystem');
+require('./modules/geolocation/Geolocation');
+require('./modules/hardware/Hardware');
+require('./modules/network/Network');
+require('./modules/operating-system/OperatingSystem');
 require('./modules/server/Server');
+require('./modules/time/Time');
+require('./modules/version-control/VersionControl');
+require('./modules/web/Web');
 require('./modules/web-server/WebServer');
-require('./modules/file-system/FileSystemObject');
-require('./modules/file-system/Directory');
-require('./modules/file-system/File');
-
-// Testing
-Promise = require('bluebird'); // Use Bluebird for now until I write my own (so I understand what is going on)
-PromiseFileSystem = Promise.promisifyAll(require('fs'));
 
 FrameworkSingleton = Class.extend({
 

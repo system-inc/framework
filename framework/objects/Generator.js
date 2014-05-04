@@ -1,7 +1,7 @@
 Generator = function() {
 };
 
-Generator.run = function(generator) {
+Generator.run = function(generator, resolve) {
 	// Make sure we are working with an invoked generator
 	if(generator instanceof Function) {
 		generator = generator();
@@ -10,6 +10,11 @@ Generator.run = function(generator) {
 	var pump = function(generator, next) {
 		// Return next.value if we are finished
 		if(next && next.done) {
+			// If a promise resolver was passed in, use it to resolve this promise now
+			if(resolve) {
+				resolve(next.value);	
+			}
+			
 			return next.value;
 		}
 
@@ -20,7 +25,7 @@ Generator.run = function(generator) {
 		next = generator.next(value); // Pass the value into the generator so it can be assigned
 		//console.log('Function.run.pump next:', next);
 
-		// Handle promises by not calling generator.next() until the promise resolves
+		// Handle promises by not calling generator.next() until the promise completes
 		if(next.value instanceof Promise) {
 			//console.log('We have a promise we need to wait for!');
 			next.value.done(function(value) {
@@ -32,9 +37,6 @@ Generator.run = function(generator) {
 				// Tell the generator to move forward
 				pump(generator, next);
 			});
-
-			// Return the first promise we encounter
-			return next.value;
 		}
 		// If we don't have a promise, keep moving the generator forward
 		else {

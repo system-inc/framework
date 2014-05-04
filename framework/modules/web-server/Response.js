@@ -1,6 +1,9 @@
 Response = Class.extend({
 
 	construct: function(nodeResponse) {
+		// Unique identifier for the response
+		this.id = null;
+
 		// Add a stopwatch to the response
 		this.stopwatch = new Stopwatch();
 		

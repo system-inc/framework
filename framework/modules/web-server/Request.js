@@ -1,6 +1,9 @@
 Request = Class.extend({
 
 	construct: function(nodeRequest) {
+		// Unique identifier for the request
+		this.id = null;
+
 		// URL
 		this.url = Url.constructFromNodeRequest(nodeRequest);
 

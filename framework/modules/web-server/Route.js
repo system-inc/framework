@@ -16,31 +16,25 @@ Route = Class.extend({
 		this.response = response;
 	},
 
-	follow: function*(route, resolve) {
-		var self = route;
-
-		var controller = Controller.getController(self.controllerName, self.request, self.response);
+	follow: function*() {
+		var controller = Controller.getController(this.controllerName, this.request, this.response);
 		if(controller) {
-			var content = yield controller[self.methodName]();
+			var content = yield controller[this.methodName]();
 
 			// Make sure we have a string
 			if(content && !content.isString()) {
 				content = content.toString();
 			}
-			console.log('Route.follow content:', content);
 
 			// Make sure we have content
 			if(content) {
-				self.response.content = content;	
+				this.response.content = content;	
 			}
 		}
 
-		//console.log('Output', self.response.content);
-
 		// Send the response
-		self.response.send();
-
-		return resolve();
+		//console.log('Sending response:', this.response.id, this.response.content);
+		this.response.send();
 	},
 	
 });

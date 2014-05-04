@@ -1,0 +1,5 @@
+require('./IpAddress');
+
+Network = function() {
+	
+}

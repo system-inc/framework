@@ -1,20 +1,13 @@
 require('./Controller');
-require('./Browser');
-require('./Device');
-require('./OperatingSystem');
-require('./Router');
-require('./Route');
+require('./Cookie');
+require('./Cookies');
+require('./Header');
+require('./Headers');
 require('./Request');
 require('./Response');
-require('./Url');
-require('./Version');
-require('./IpAddress');
-require('./Stopwatch');
-require('./Geolocation');
-require('./Cookies');
-require('./Cookie');
-require('./Headers');
-require('./Header');
+require('./Route');
+require('./Router');
+require('./View');
 
 WebServer = Server.extend({
 
@@ -36,16 +29,17 @@ WebServer = Server.extend({
 	},
 
 	handleRequest: function(request, response) {
-		console.log('');
-		console.log('');
-		console.log('');
-		console.log('');
-		console.log('-- Request -- ');
-		console.log('');
+		// console.log('');
+		// console.log('');
+		// console.log('');
+		// console.log('');
+		// console.log('-- Request -- ');
+		// console.log('');
 
 		// Increment the requests counter
+		response.id = request.id = this.requests;
 		this.requests++;
-		//console.log(this.requests, request.url.path);
+		//console.log('Received request:', request.id, request.url.path);
 
 		// Let the response know what accepted encodings the request allows
 		response.setAcceptedEncodings(request.headers.get('accept-encoding'));
