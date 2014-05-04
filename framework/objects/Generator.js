@@ -23,11 +23,13 @@ Generator.run = function(generator, resolve) {
 
 		// Move to the next yield or return
 		next = generator.next(value); // Pass the value into the generator so it can be assigned
-		//console.log('Function.run.pump next:', next);
+		//console.log('Function.run.pump next:', next);	
 
 		// Handle promises by not calling generator.next() until the promise completes
 		if(next.value instanceof Promise) {
 			//console.log('We have a promise we need to wait for!');
+
+			// Tell the promise to pump the generator what it is done
 			next.value.done(function(value) {
 				//console.log('The promise has fulfilled its duty to mankind. It returned:', value);
 				
@@ -37,6 +39,11 @@ Generator.run = function(generator, resolve) {
 				// Tell the generator to move forward
 				pump(generator, next);
 			});
+
+			// Tell the promise to log any errors it catches
+			// next.value.catch(function(error) {
+			// 	console.log('Fatal Error:', error);
+			// });
 		}
 		// If we don't have a promise, keep moving the generator forward
 		else {

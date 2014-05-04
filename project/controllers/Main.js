@@ -1,8 +1,7 @@
 Main = Controller.extend({
 
 	main: function*() {
-		//var response = yield Directory.list('/');
-		var response = yield Directory.list('/var/www/framework/framework/modules/server/');
+		var response = yield Directory.list('/123');
 
 		return response;
 	},

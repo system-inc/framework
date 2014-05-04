@@ -44,16 +44,12 @@ Class.extend = function(childClassProperties) {
 				// Store the arguments to apply to the generator method later in the promise
 				var childClassPrototypeArguments = arguments;
 
-				// Setup a new promise to run in the generator
+				// The promise which runs the generator which resolves the promise
 				var promise = new Promise(function(resolve) {
-					// Store the resolve method on the instance
-					childClassInstance.resolve = resolve;
-
-					// Invoke and run the generator with the right context and arguments, it must use the this.resolve function to resolve
+					// Invoke and run the generator with the right context and arguments
 					Generator.run(generatorMethod.apply(childClassInstance, childClassPrototypeArguments), resolve);
 				});
 
-				// Return the promise which runs the generator which resolves the promise
 				return promise;
 			}
 		}
