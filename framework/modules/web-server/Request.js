@@ -11,7 +11,7 @@ Request = Class.extend({
 		this.method = nodeRequest.method;
 
 		// Headers
-		this.headers = Headers.constructFromNodeRequestHeaders(nodeRequest.headers);
+		this.headers = Headers.constructFromNodeHeaders(nodeRequest.headers);
 
 		// IP address
 		this.ipAddress = this.connectingIpAddress = new IpAddress(nodeRequest.connection.remoteAddress);

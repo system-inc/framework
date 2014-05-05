@@ -1,3 +1,7 @@
+String.is = function(value) {
+	return typeof value == 'string';
+}
+
 String.prototype.contains = function(string, caseSensitive) {
 	caseSensitive = caseSensitive === false ? false : true;
 	var contains = false;
@@ -61,13 +65,13 @@ String.prototype.isJson = function() {
 	var isJson = false;
 
 	try {
-        var o = JSON.parse(jsonString);
+        var object = JSON.parse(this);
 
         // Handle non-exception-throwing cases:
         // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
         // but JSON.parse(null) returns 'null', and typeof null === "object", so we must check for that, too.
-        if(o && typeof o === "object" && o !== null) {
-            return o;
+        if(object && typeof object === "object" && object !== null) {
+            isJson = true;
         }
     }
     catch(exception) {

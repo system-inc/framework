@@ -10,7 +10,7 @@ Generator.run = function(generator, resolve) {
 	var pump = function(generator, next) {
 		// Return next.value if we are finished
 		if(next && next.done) {
-			// If a promise resolver was passed in, use it to resolve this promise now
+			// If a promise resolver was passed in, use it to resolve the promise now
 			if(resolve) {
 				resolve(next.value);	
 			}
@@ -41,9 +41,9 @@ Generator.run = function(generator, resolve) {
 			});
 
 			// Tell the promise to log any errors it catches
-			// next.value.catch(function(error) {
-			// 	console.log('Fatal Error:', error);
-			// });
+			next.value.catch(function(error) {
+				console.log('Fatal Error:', error);
+			});
 		}
 		// If we don't have a promise, keep moving the generator forward
 		else {

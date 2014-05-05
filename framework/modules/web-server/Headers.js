@@ -7,12 +7,12 @@ Headers = Class.extend({
 		this.parse(string);
 	},
 
-	constructFromNodeRequestHeaders: function(nodeRequestHeaders) {
+	constructFromNodeHeaders: function(nodeHeaders) {
 		var headers = new Headers();
 
-		for(var key in nodeRequestHeaders) {
-			if(nodeRequestHeaders[key].isString()) {
-				headers.create(key, nodeRequestHeaders[key]);	
+		for(var key in nodeHeaders) {
+			if(nodeHeaders[key].isString()) {
+				headers.create(key, nodeHeaders[key]);	
 			}
 		}
 
@@ -123,4 +123,4 @@ Headers = Class.extend({
 });
 
 // Static methods
-Headers.constructFromNodeRequestHeaders = Headers.prototype.constructFromNodeRequestHeaders;
+Headers.constructFromNodeHeaders = Headers.prototype.constructFromNodeHeaders;

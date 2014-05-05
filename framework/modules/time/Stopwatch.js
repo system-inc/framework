@@ -21,11 +21,15 @@ Stopwatch = Class.extend({
 
 	start: function() {
 		this.startTime = this.time.now();
+
+		return this;
 	},
 
 	end: function() {
 		this.endTime = this.time.now();
 		this.elapsedTime = this.endTime - this.startTime;
+
+		return this;
 	},
 
 	lap: function(note) {
@@ -47,6 +51,8 @@ Stopwatch = Class.extend({
 			'elapsedTimeSinceStart': now - this.starTime,
 			'elapsedTimeSinceLastLap': elapsedTimeSinceLastLap,
 		});
+
+		return this;
 	}
 
 });
