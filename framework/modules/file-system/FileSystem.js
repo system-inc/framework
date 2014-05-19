@@ -1,7 +1,3 @@
-require('./FileSystemObject');
-require('./Directory');
-require('./File');
-
 FileSystem = function() {
 }
 

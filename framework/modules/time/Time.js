@@ -1,5 +1,3 @@
-require('./Stopwatch');
-
 Time = Class.extend({
 
 	construct: function(string) {

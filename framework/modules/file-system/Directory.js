@@ -12,7 +12,6 @@ Directory = FileSystemObject.extend({
 		var list = [];
 
 		var listStringArray = yield FileSystem.list(path);
-		//console.log('listStringArray', listStringArray);
 
 		// Loop through the string array and make the directory and file objects
 		for(var i = 0; i < listStringArray.length; i++) {

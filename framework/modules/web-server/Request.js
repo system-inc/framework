@@ -13,15 +13,21 @@ Request = Class.extend({
 		// Headers
 		this.headers = Headers.constructFromNodeHeaders(nodeRequest.headers);
 
+		// Cookies
+		this.cookies = new Cookies(this.headers.get('cookie'));
+		this.headers.cookies = this.cookies;
+
+		// Content
+		// this.content = {
+		// 	'length': this.headers.get('content-length'),
+		// 	'type': this.headers.get('type'),
+		// };
+
 		// IP address
 		this.ipAddress = this.connectingIpAddress = new IpAddress(nodeRequest.connection.remoteAddress);
 		
 		// Referrer
 		this.referrer = new Url(this.headers.get('referer'));
-
-		// Cookies
-		this.cookies = new Cookies(this.headers.get('cookie'));
-		this.headers.cookies = this.cookies;
 
 		// Cache the user agent
 		var userAgent = this.headers.get('user-agent');
@@ -56,6 +62,10 @@ Request = Class.extend({
 			'major': nodeRequest.httpVersionMajor,
 			'minor': nodeRequest.httpVersionMinor,
 		});
+	},
+
+	isSecure: function() {
+		return this.url.protocol == 'https';
 	},
 	
 });

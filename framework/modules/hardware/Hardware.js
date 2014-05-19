@@ -1,5 +1,3 @@
-require('./Device');
-
 Hardware = function() {
 	
 }

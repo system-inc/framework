@@ -1,0 +1,17 @@
+{
+	"project": {
+		"title": "Project"
+	},
+	"modules": {
+		"web-server": {
+			"router": {
+				"routes": [
+					{
+						"method": "GET",
+						"expression": ".*?/"
+					}
+				]
+			}
+		}
+	}
+}

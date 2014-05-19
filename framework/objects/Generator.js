@@ -40,7 +40,12 @@ Generator.run = function(generator, resolve) {
 				pump(generator, next);
 			});
 
-			// Tell the promise to log any errors it catches
+			// Tell the promise to log any rejections
+			// next.value.error(function(error) {
+			// 	console.log('Error:', error);
+			// });
+
+			// Tell the promise to log any errors thrown
 			next.value.catch(function(error) {
 				console.log('Fatal Error:', error);
 			});

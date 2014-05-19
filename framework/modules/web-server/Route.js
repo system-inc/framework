@@ -4,6 +4,11 @@ Route = Class.extend({
 		this.request = null;
 		this.response = null;
 
+		this.expression = null;
+
+		// this.controllerName = null;
+		// this.methodName = null;
+
 		this.controllerName = 'Main';
 		this.methodName = 'main';
 	},
@@ -17,19 +22,29 @@ Route = Class.extend({
 	},
 
 	follow: function*() {
+		// Setup a variable to store the content
+		var content = null;
+
+		// Try to get the controller
 		var controller = Controller.getController(this.controllerName, this.request, this.response);
+
+		// If the controller was found, invoke the method for the route
 		if(controller) {
-			var content = yield controller[this.methodName]();
+			content = yield controller[this.methodName]();
+		}
+		// Send a 404
+		else {
+			this.response.statusCode = 404;
+		}
 
-			// Make sure we have a string
-			if(content && !content.isString()) {
-				content = content.toString();
-			}
+		// If content exists, make sure it is a string
+		if(content && !content.isString()) {
+			content = content.toString();
+		}
 
-			// Make sure we have content
-			if(content) {
-				this.response.content = content;	
-			}
+		// If content exists, put it on the response
+		if(content) {
+			this.response.content = content;
 		}
 
 		// Send the response

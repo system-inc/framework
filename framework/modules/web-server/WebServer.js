@@ -1,14 +1,3 @@
-require('./Controller');
-require('./Cookie');
-require('./Cookies');
-require('./Header');
-require('./Headers');
-require('./Request');
-require('./Response');
-require('./Route');
-require('./Router');
-require('./View');
-
 WebServer = Server.extend({
 
 	construct: function() {
@@ -39,7 +28,7 @@ WebServer = Server.extend({
 		// Increment the requests counter
 		response.id = request.id = this.requests;
 		this.requests++;
-		//console.log('Received request:', request.id, request.url.path);
+		console.log('Received request:', request.id, request.url.input);
 
 		// Let the response know what accepted encodings the request allows
 		response.setAcceptedEncodings(request.headers.get('accept-encoding'));

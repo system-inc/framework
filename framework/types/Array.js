@@ -1,3 +1,7 @@
+Array.is = function(value) {
+	return Object.prototype.toStringStandard.call(value) == '[object Array]';
+}
+
 Array.prototype.contains = function(string, caseSensitive) {
 	caseSensitive = caseSensitive === false ? false : true;
 	var contains = false;

@@ -30,9 +30,6 @@ Class.extend = function(childClassProperties) {
 		}
 		// If we have a generator
 		else if(childClassProperties[childClassProperty] && childClassProperties[childClassProperty].isGenerator && childClassProperties[childClassProperty].isGenerator()) {
-			// Treat generators just like normal functions
-			//childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
-			
 			// Keep a reference to the generator method to invoke later in the promise
 			var generatorMethod = childClassProperties[childClassProperty];
 
@@ -45,9 +42,11 @@ Class.extend = function(childClassProperties) {
 				var childClassPrototypeArguments = arguments;
 
 				// The promise which runs the generator which resolves the promise
-				var promise = new Promise(function(resolve) {
-					// Invoke and run the generator with the right context and arguments
-					Generator.run(generatorMethod.apply(childClassInstance, childClassPrototypeArguments), resolve);
+				var promise = Promise.try(function() {
+					return new Promise(function(resolve) {
+						// Invoke and run the generator with the right context and arguments
+						Generator.run(generatorMethod.apply(childClassInstance, childClassPrototypeArguments), resolve);
+					});
 				});
 
 				return promise;

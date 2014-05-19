@@ -1,7 +1,3 @@
-require('./Browser');
-require('./Url');
-require('./WebRequest');
-
 Web = function() {
 }
 
@@ -26,6 +22,19 @@ Web.request = Promise.method(function(options) {
 				'stopwatch': stopwatch.end(),
 			};
 
+			var finish = function() {
+				// Automatically decode the response body if it is JSON
+				if(Json.is(result.body)) {
+					result.body = Json.decode(result.body);
+				}
+
+				// Set the trailers
+				result.trailers = response.trailers;
+
+				// Resolve the promise
+				resolve(result);
+			}
+
 			// Build the body
 			response.on('data', function(chunk) {
 				result.body += chunk;
@@ -33,11 +42,12 @@ Web.request = Promise.method(function(options) {
 
 			// Resolve the promise when the response ends
 			response.on('end', function() {
-				if(Json.is(result.body)) {
-					result.body = Json.decode(result.body);
-				}
+				finish();
+			});
 
-				resolve(result);
+			// Resolve the promise when the response ends
+			response.on('close', function() {
+				finish();
 			});
 		});
 

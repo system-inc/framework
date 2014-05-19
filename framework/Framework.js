@@ -5,35 +5,50 @@ NodeUrl = require('url');
 NodeZlib = require('zlib');
 NodeCrypto = require('crypto');
 
-// Framework objects (always require)
+// Framework core objects
 require('./objects/Function');
 require('./objects/Generator');
 require('./objects/Object');
 require('./objects/Class');
 require('./objects/Promise');
+require('./objects/Version');
+require('./objects/Module');
 
-// Framework core types (always require)
+// Framework core types
 require('./types/Array');
 require('./types/Json');
 require('./types/Number');
 require('./types/String');
 
-// Framework modules
-require('./modules/file-system/FileSystem');
-require('./modules/geolocation/Geolocation');
-require('./modules/hardware/Hardware');
-require('./modules/network/Network');
-require('./modules/operating-system/OperatingSystem');
-require('./modules/server/Server');
-require('./modules/time/Time');
-require('./modules/version-control/VersionControl');
-require('./modules/web/Web');
-require('./modules/web-server/WebServer');
-
 FrameworkSingleton = Class.extend({
 
+	path: __dirname+'/',
+	version: 1.0,
+	settings: null,
+	coreModules: [
+		'Settings',
+		'Cryptography',
+		'FileSystem',
+		'Geolocation',
+		'Hardware',
+		'Network',
+		'OperatingSystem',
+		'Server',
+		'Time',
+		'Web',
+		'WebServer',
+	],
+
 	construct: function() {
-		this.path = __dirname+'/';
+		// Initialize the Framework core modules
+		Module.load(this.coreModules);
+
+		// Initialize the version
+		this.version = new Version(this.version);
+		console.log(this.version);
+
+		// Load the settings
+		this.settings = new Settings(this.path+'settings/settings.json');
 	},
 
 	createWebServer: function() {
@@ -45,4 +60,5 @@ FrameworkSingleton = Class.extend({
 // Static methods
 FrameworkSingleton.createWebServer = FrameworkSingleton.prototype.createWebServer;
 
+// Create the Framework singleton
 Framework = new FrameworkSingleton();

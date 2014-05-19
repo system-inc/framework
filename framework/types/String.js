@@ -46,6 +46,28 @@ String.prototype.replaceFirst = function(pattern, replacement) {
 	return this.replaceStandard(pattern, replacement);
 }
 
+String.prototype.replaceLast = function(pattern, replacement) {
+	var lastIndexOf = this.lastIndexOf(pattern);
+
+	if(lastIndexOf > -1) {
+		return this.replaceSubstring(pattern, replacement, lastIndexOf, pattern.length);
+	}
+	else {
+		return this;
+	}
+}
+
+String.prototype.replaceSubstring = function(pattern, replacement, start, length) {
+	length = length !== undefined ? length : this.length;
+
+	var result = this.slice(0, start);
+	result += replacement.substring(0, length);
+	result += replacement.slice(length);
+	result += this.slice(start + length);
+
+	return result;
+}
+
 String.prototype.replace = function(pattern, replacement, flags) {
 	// Use standard replace if they are sending in a regex pattern or flags
 	if(pattern instanceof RegExp || flags) {
@@ -55,6 +77,19 @@ String.prototype.replace = function(pattern, replacement, flags) {
 	else {
 		return this.replaceStandard(new RegExp(pattern, 'g'), replacement);	
 	}
+}
+
+String.prototype.toDashes = function() {
+	var result = this.lowerCaseFirstCharacter();
+
+	// This is assuming we have a string like 'ThisIsMyString'
+	// We should make this function intelligent and autodetect other types like 'this_is_my_string' and 'this is my string'
+	result = result.replace(/([A-Z])/g, function(match) {
+		//console.log(arguments);
+		return '-'+match.toLowerCase();
+	});
+
+	return result;
 }
 
 String.prototype.toNumber = function() {

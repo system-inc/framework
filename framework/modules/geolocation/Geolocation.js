@@ -1,5 +1,3 @@
-require('./Country');
-
 Geolocation = Class.extend({
 
 	construct: function() {
