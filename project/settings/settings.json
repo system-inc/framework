@@ -1,14 +1,16 @@
 {
-	"project": {
-		"title": "Project"
-	},
+	"title": "Example Website Project",
 	"modules": {
-		"web-server": {
+		"webServer": {
+			"protocol": "https",
+			"ports": 8080,
 			"router": {
 				"routes": [
 					{
-						"method": "GET",
-						"expression": ".*?/"
+						"protocol": "*",
+						"ports": "*",
+						"method": "*",
+						"expression": ".*"
 					}
 				]
 			}

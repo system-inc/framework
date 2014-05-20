@@ -5,7 +5,13 @@ Router = Class.extend({
 		this.routes = [];
 	},
 
+	loadRoutes: function(routes) {
+		//console.log('Loading routes', routes);
+	},
+
 	matchRoute: function(request) {
+		// ROUTES SHOULD MATCH AGAINST PROTOCOL (HTTP/HTTPS), HOST, PORT, PATH, and QUERY STRING
+
 		return new Route();
 	},
 

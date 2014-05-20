@@ -1,2 +1,2 @@
 #!/bin/bash
-supervisor --harmony --watch /var/www/framework /var/www/framework/project/Project.js
+supervisor --harmony --extensions node,js,json --watch /var/www/framework /var/www/framework/project/Project.js

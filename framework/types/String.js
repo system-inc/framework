@@ -92,6 +92,19 @@ String.prototype.toDashes = function() {
 	return result;
 }
 
+String.prototype.toSpaces = function() {
+	var result = this.lowerCaseFirstCharacter();
+
+	// This is assuming we have a string like 'ThisIsMyString'
+	// We should make this function intelligent and autodetect other types like 'this_is_my_string' and 'this is my string'
+	result = result.replace(/([A-Z])/g, function(match) {
+		//console.log(arguments);
+		return ' '+match.toLowerCase();
+	});
+
+	return result;
+}
+
 String.prototype.toNumber = function() {
 	return Number(this);
 }

@@ -1,5 +1,8 @@
 Module = Class.extend({
 
+	version: null,
+	settings: null,
+
 	construct: function() {
 	},
 
@@ -19,7 +22,7 @@ Module = Class.extend({
 	initialize: function(moduleName) {
 		// Get the module path
 		var modulePath = __dirname.replaceLast('objects', 'modules')+'/'+moduleName.toDashes()+'/'+moduleName+'Module';
-		console.log('Initializing', moduleName, modulePath);
+		console.log('Initializing', moduleName.toSpaces(), 'module...');
 
 		require(modulePath);
 	},
