@@ -6,25 +6,23 @@ Module = Class.extend({
 	construct: function() {
 	},
 
-	load: function(modules) {
-		// If we have an array of modules
-		if(Array.is(modules)) {
-			for(var i = 0; i < modules.length; i++) {
-				Module.initialize(modules[i]);
-			}
+	load: function(moduleNames) {
+		// Make sure we are working with an array of module names
+		if(!Array.is(moduleNames)) {
+			moduleNames = [moduleNames];
 		}
-		// If we just have a module name
-		else {
-			Module.initialize(modules);
+		
+		// Load each module
+		for(var i = 0; i < moduleNames.length; i++) {
+			// Get the module path
+			var moduleName = moduleNames[i];
+			var modulePath = __dirname.replaceLast('objects', 'modules')+'/'+moduleName.toDashes()+'/'+moduleName+'Module';
+			console.log('Loading', moduleName.toSpaces(), 'module...');
+			require(modulePath);
 		}
 	},
 
-	initialize: function(moduleName) {
-		// Get the module path
-		var modulePath = __dirname.replaceLast('objects', 'modules')+'/'+moduleName.toDashes()+'/'+moduleName+'Module';
-		console.log('Initializing', moduleName.toSpaces(), 'module...');
-
-		require(modulePath);
+	initialize: function(moduleNames) {
 	},
 
 });

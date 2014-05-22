@@ -46,7 +46,7 @@ WebServer = Server.extend({
 		// Increment the requests counter
 		response.id = request.id = this.requests;
 		this.requests++;
-		console.log('Received request:', request.id, request.url.input);
+		console.log('Received request', request.id+':', request.method, request.url.input);
 
 		// Let the response know what accepted encodings the request allows
 		response.setAcceptedEncodings(request.headers.get('accept-encoding'));

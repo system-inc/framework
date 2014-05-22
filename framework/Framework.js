@@ -1,9 +1,11 @@
 // Node
 NodeFileSystem = require('fs');
 NodeHttp = require('http');
+NodeHttps = require('https');
 NodeUrl = require('url');
 NodeZlib = require('zlib');
 NodeCrypto = require('crypto');
+NodeUtility = require('util');
 
 // Framework core objects
 require('./objects/Function');
@@ -26,6 +28,7 @@ FrameworkSingleton = Class.extend({
 	version: '1.0',
 	path: __dirname+'/',
 	settings: null,
+	environment: null,
 	coreModules: [
 		'Cryptography',
 		'FileSystem',
@@ -46,15 +49,20 @@ FrameworkSingleton = Class.extend({
 		console.log('-------------------------');
 		console.log('Starting Framework '+this.version+'...');
 
-		// Initialize the Framework core modules
-		Module.load(this.coreModules);
-
 		// Initialize the version
 		this.version = new Version(this.version);
 
-		// Load the settings
+		// Load the Framework core modules
+		Module.load(this.coreModules);
+
+		// Load the global Framework settings
 		console.log('Loading global Framework settings...');
 		this.settings = new Settings(this.path+'settings/settings.json');
+
+		// Initialize the environment
+		this.initializeEnvironment();
+
+		// Initialize the Framework core modules
 	},
 
 	attachProject: function(project) {
@@ -77,8 +85,19 @@ FrameworkSingleton = Class.extend({
 		}		
 	},
 
-	detatchProject: function(project) {
+	detachProject: function(project) {
 
+	},
+
+	initializeEnvironment: function() {
+		this.environment = this.settings.get('environment');
+		console.log('Initializing '+this.environment+' environment...');
+
+		// Development
+		if(this.environment == 'development') {
+			// Long stack traces imply a substantial performance penalty, around 4-5x for throughput and 0.5x for latency
+			Promise.longStackTraces();
+		}
 	},
 
 });

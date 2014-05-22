@@ -1,16 +1,22 @@
 Route = Class.extend({
 
-	construct: function() {
-		this.request = null;
-		this.response = null;
+	request: null,
+	response: null,
+	parent: null,
+	children: null,
+	controllerName: null,
+	methodName: null,
+	protocol: null,
+	ports: null,
+	method: null,
+	expression: null,
+	data: null,
+	description: null,
+	redirect: null,
 
-		this.expression = null;
-
-		// this.controllerName = null;
-		// this.methodName = null;
-
-		this.controllerName = 'Main';
-		this.methodName = 'main';
+	construct: function(route, parent) {
+		this.parent = parent !== undefined ? parent : null;
+		this.children = route['children'] !== undefined ? route.children : null;
 	},
 
 	setRequest: function(request) {
@@ -35,6 +41,7 @@ Route = Class.extend({
 		// Send a 404
 		else {
 			this.response.statusCode = 404;
+			this.response.content = this.controllerName+'.'+this.methodName+' does not exist.';
 		}
 
 		// If content exists, make sure it is a string

@@ -12,6 +12,7 @@ Main = Controller.extend({
 		//var response = yield String.random(1024 * 5);
 		var response = this.request;
 		//var response = yield Cryptography.random();
+		//var response = 'Hi!';
 
 		return response;
 	},

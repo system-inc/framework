@@ -1,9 +1,12 @@
-Project = Class.extend({
+ProjectSingleton = Class.extend({
 
 	path: null,
 	settings: null,
 
-	construct: function() {
+	construct: function(path) {
+		// Set the path
+		this.path = path;
+
 		// Load the settings
 		console.log('Loading project settings...');
 		this.settings = new Settings(this.path+'settings/settings.json');
@@ -18,4 +21,4 @@ Project = Class.extend({
 });
 
 // Static methods
-Project.load = Project.prototype.load;
+ProjectSingleton.load = ProjectSingleton.prototype.load;

@@ -1,10 +1,4 @@
 // Framework
 require('./../framework/Framework.js');
 
-ExampleWebsiteProjectSingleton = Project.extend({
-
-	path: __dirname+'/',
-
-});
-
-ExampleWebsiteProject = new ExampleWebsiteProjectSingleton();
+Project = new ProjectSingleton(__dirname+'/');

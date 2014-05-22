@@ -1,5 +1,5 @@
 {
-	"title": "Example Website Project",
+	"title": "Project",
 	"modules": {
 		"webServer": {
 			"protocol": "https",
@@ -7,6 +7,8 @@
 			"router": {
 				"routes": [
 					{
+						"controllerName": "Main",
+						"methodName": "main",
 						"protocol": "*",
 						"ports": "*",
 						"method": "*",
