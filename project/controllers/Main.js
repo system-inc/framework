@@ -9,12 +9,24 @@ Main = Controller.extend({
 		//var response = yield new WebRequest('http://www.increase.com').execute();
 		//var response = yield new WebRequest('http://localhost/').execute();
 		//var response = yield Directory.list('/');
-		//var response = yield String.random(1024 * 5);
-		var response = this.request;
+		//var response = yield String.random(1024 * 1, '01');
+		//var response = this.request;
 		//var response = yield Cryptography.random();
-		//var response = 'Hi!';
+		var response = 'Main';
 
 		return response;
+	},
+
+	contact: function() {
+		return 'Contact';
+	},
+
+	legal: function() {
+		return 'Legal';
+	},
+
+	legalTermsOfService: function() {
+		return 'Legal - Terms of Service';
 	},
 	
 });

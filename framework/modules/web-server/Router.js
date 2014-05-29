@@ -6,18 +6,20 @@ Router = Class.extend({
 	},
 
 	loadRoutes: function(routes, project) {
-		console.log('Loading routes', routes);
+		//console.log('Loading routes', routes);
 
 		for(var i = 0; i < routes.length; i++) {
 			var route = new Route(routes[i]);
+			this.routes.push(route);
 		}
 
-		this.routes = routes;
+		Route.log(this.routes[0]);
 	},
 
 	matchRoute: function(request) {
 		// ROUTES SHOULD MATCH AGAINST PROTOCOL (HTTP/HTTPS), HOST, PORT, (PATH, and QUERY STRING == expression)
-		return new Route();
+		return this.routes[0];
+		//return new Route();
 	},
 
 	route: function(request, response) {

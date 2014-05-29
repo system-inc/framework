@@ -10,9 +10,25 @@
 						"controllerName": "Main",
 						"methodName": "main",
 						"protocol": "*",
-						"ports": "*",
+						"port": "*",
 						"method": "*",
-						"expression": ".*"
+						"expression": ".*",
+						"children": [
+							{
+								"methodName": "contact",
+								"expression": "contact/?"
+							},
+							{
+								"methodName": "legal",
+								"expression": "legal/?",
+								"children": [
+									{
+										"methodName": "legalTermsOfService",
+										"expression": "terms-of-service/?"
+									}
+								]
+							}
+						]
 					}
 				]
 			}
