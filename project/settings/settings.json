@@ -2,7 +2,7 @@
 	"title": "Project",
 	"modules": {
 		"webServer": {
-			"protocol": "https",
+			"protocol": "http",
 			"ports": 8080,
 			"router": {
 				"routes": [

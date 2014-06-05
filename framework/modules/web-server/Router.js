@@ -8,11 +8,11 @@ Router = Class.extend({
 	loadRoutes: function(routes, project) {
 		//console.log('Loading routes', routes);
 
-		for(var i = 0; i < routes.length; i++) {
-			var route = new Route(routes[i]);
-			this.routes.push(route);
-		}
+		routes.each(function(routeJson) {
+			this.routes.push(new Route(routeJson));
+		}, this);
 
+		// console.log(this.routes);
 		Route.log(this.routes[0]);
 	},
 

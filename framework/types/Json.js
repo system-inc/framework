@@ -4,21 +4,7 @@ Json = Class.extend({
 	},
 
 	encode: function(object) {
-		function censor(censor) {
-			var i = 0;
-
-			return function(key, value) {
-				if(i !== 0 && typeof(censor) === 'object' && typeof(value) == 'object' && censor == value) 
-					return '[Circular]'; 
-				if(i >= 999) // seems to be a harded maximum of 30 serialized objects?
-					return '[Unknown]';
-				++i; // so we know we aren't using the original object anymore
-
-				return value;  
-			}
-		}
-
-		return JSON.stringify(object, censor(object));
+		return JSON.stringify(object);
 	},
 
 	decode: function(string) {

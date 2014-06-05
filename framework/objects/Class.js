@@ -52,14 +52,35 @@ Class.extend = function(childClassProperties) {
 				return promise;
 			}
 		}
-		// All other methods
-		else {
+		// Copy any methods over to the class prototype
+		else if(typeof(childClassProperties[childClassProperty]) == 'function') {
 			childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
+		}
+		// All other class variables (anything not a function) are initialized in the Class() method below
+		else {
+
 		}
 	}
 
 	// The class constructor
 	function Class() {
+		// Assign any class variables that are not functions
+		for(var childClassProperty in childClassProperties) {
+			// Initialize all class variables (anything not a function)
+			if(typeof(childClassProperties[childClassProperty]) != 'function') {
+				// Clone arrays to localize them to this instantiated object
+				// TODO: I need to turn this into a deep copy
+				if(Array.is(childClassProperties[childClassProperty])) {
+					this[childClassProperty] = childClassProperties[childClassProperty].slice();
+				}
+				// TODO: I need to clone objects to localize them to the instantiated object
+				// Assign anything else where the reference will not be stored
+				else {
+					this[childClassProperty] = childClassProperties[childClassProperty];
+				}
+			}
+		}
+
 		// All construction is actually done in the construct method
 		if(!initializing && this.construct) {
 			this.construct.apply(this, arguments);
