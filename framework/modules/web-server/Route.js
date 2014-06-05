@@ -11,6 +11,7 @@ Route = Class.extend({
 	port: null,
 	method: null,
 	expression: null,
+	fullExpression: null,
 	data: null,
 	description: null,
 
@@ -25,10 +26,11 @@ Route = Class.extend({
 			this.port = (route.port === undefined ? null : route.port);
 			this.method = (route.method === undefined ? null : route.method);
 			this.expression = (route.expression === undefined ? null : route.expression);
-			this.data = (route.data === undefined ? null : route.data);
+			this.fullExpression = this.getFullExpression();
+			this.data = (route.data === undefined ? {} : route.data);
 			this.description = (route.description === undefined ? null : route.description);
 
-			// Inherit parent attributes for null variables
+			// Inherit parent attributes
 			if(this.parent) {
 				this.controllerName = (this.controllerName === null ? parent.controllerName : this.controllerName);
 				this.methodName = (this.methodName === null ? parent.methodName : this.methodName);
@@ -37,8 +39,9 @@ Route = Class.extend({
 				this.port = (this.port === null ? parent.port : this.port);
 				this.method = (this.method === null ? parent.method : this.method);
 				this.expression = (this.expression === null ? parent.expression : this.expression);
-				this.data = (this.data === null ? parent.data : this.data);
 				this.description = (this.description === null ? parent.description : this.description);
+
+				this.data = (this.data === null ? parent.data : this.data);
 			}
 
 			// Create the children if they exist
@@ -48,6 +51,90 @@ Route = Class.extend({
 				}, this);
 			}
 		}
+	},
+
+	match: function(request) {
+		var match = null;
+		this.matches = {
+			'partial': false,
+			'complete': false,
+		};
+
+		// Check the request's expression against the route's fullExpression
+		var requestExpression = request.url.path;
+		console.log("\n"+'Checking if request expression', requestExpression, 'matches with route full expression', this.fullExpression);
+
+		this.matches.partial = requestExpression.match(new RegExp(this.fullExpression));
+		if(this.matches.partial) {
+			console.log('Partially!');
+		}
+		this.matches.complete = requestExpression.match(new RegExp('^'+this.fullExpression+'$'));
+		if(this.matches.complete) {
+			match = this;
+			console.log('Completely!');
+		}
+		
+		// If we have a partial match
+		if(this.matches.partial) {
+			// Recursively match againt descendants
+			var recurse = true;
+			var currentRoute = this;
+			while(recurse) {
+				// Go through all of the children
+				var childRouteMatch = null;
+				for(var i = 0; i < currentRoute.children.length; i++) {
+					// Set the current child route
+					var currentChildRoute = this.children[i];
+					var currentChildRouteMatch = currentChildRoute.match(request);
+
+					// If we have a match
+					if(currentChildRouteMatch) {
+						match = childRouteMatch = currentChildRouteMatch;
+						break;
+					}
+				}
+
+				// If we matched a child run the while loop again with the current route being set the matched child
+				if(childRouteMatch) {
+					currentRoute = childRouteMatch;
+				}
+				// If we didn't match anything, break out of the while loop
+				else {
+					recurse = false;
+				}
+			}
+		}
+
+		// If we do not completely match
+		if(match && !match.matches.complete) {
+			match = null;
+		}
+
+		return match;
+	},
+
+	getFullExpression: function() {
+		var fullExpression = '';
+
+		if(this.parent) {
+			fullExpression += this.parent.fullExpression;
+		}
+
+		fullExpression += this.expression;
+
+		return fullExpression;
+	},
+
+	getParents: function() {
+		var parents = [];
+
+		var currentParent = this.parent;
+		while(currentParent) {
+			parents.push(currentParent);
+			currentParent = currentParent.parent;
+		}
+
+		return parents;
 	},
 
 	setRequest: function(request) {
@@ -63,7 +150,7 @@ Route = Class.extend({
 		var content = null;
 
 		// Try to get the controller
-		var controller = Controller.getController(this.controllerName, this.request, this.response);
+		var controller = Controller.getController(this.controllerName, this.request, this.response, this);
 
 		// If the controller was found, invoke the method for the route
 		if(controller) {
@@ -72,7 +159,8 @@ Route = Class.extend({
 		// Send a 404
 		else {
 			this.response.statusCode = 404;
-			this.response.content = this.controllerName+'.'+this.methodName+' does not exist.';
+			this.response.content = this.request.method+' '+this.request.url.path+' not found.';
+			this.response.content += ' Controller '+this.controllerName+' with method '+this.methodName+' does not exist.';
 		}
 
 		// If content exists, make sure it is a string
@@ -90,72 +178,41 @@ Route = Class.extend({
 		this.response.send();
 	},
 
-	log: function(route) {
-		console.log("------------------------")
-		console.log("LEVEL 1 Route:")
+	log: function(route, children, level) {
+		level = (level === undefined ? 0 : level);
+		children = (children === undefined ? true : false);
+
+		var indent = '';
+		for(var i = 0; i < level; i++) {
+			indent += "\t";
+		}
+
+		console.log(indent+"------------------------")
+		console.log(indent+"Invoke:\t\t\t", route.controllerName+'.'+route.methodName);
+		console.log(indent+"Controller name:\t", route.controllerName);
+		console.log(indent+"Method name:\t\t", route.methodName);
+		console.log(indent+"Redirect:\t\t", route.redirect);
+		console.log(indent+"Protocol:\t\t", route.protocol);
+		console.log(indent+"Port:\t\t\t", route.port);
+		console.log(indent+"Method:\t\t\t", route.method);
+		console.log(indent+"Expression:\t\t", route.expression);
+		console.log(indent+"Full expression:\t", route.fullExpression);
+		console.log(indent+"Data:\t\t\t", route.data);
+		console.log(indent+"Description:\t\t", route.description);
 		if(route.parent) {
-			console.log("Parent:\t", route.parent.controllerName+'.'+route.parent.methodName);
+			console.log(indent+"Parent:\t\t\t", route.parent.controllerName+'.'+route.parent.methodName);
 		}
-		console.log("Controller name:\t", route.controllerName);
-		console.log("Method name:\t\t", route.methodName);
-		console.log("Redirect:\t\t", route.redirect);
-		console.log("Protocol:\t\t", route.protocol);
-		console.log("Port:\t\t\t", route.port);
-		console.log("Method:\t\t\t", route.method);
-		console.log("Expression:\t\t", route.expression);
-		console.log("Data:\t\t\t", route.data);
-		console.log("Description:\t\t", route.description);
+		else {
+			console.log(indent+"Parent:\t\t\t", 'null');
+		}
 		if(route.children) {
-			console.log("Children:\t\t", route.children.length);	
+			console.log(indent+"Children:\t\t", route.children.length);	
 		}
-		
-		//Route.log(route.children[0]);
 
-		//this.children[0].log();
-
-		for(var i = 0; i < route.children.length; i++) {
-			//route.children[i].log();
-			console.log("\t------------------------")
-			console.log("\tLEVEL 2 Route:")
-			if(route.children[i].parent) {
-				console.log("\tParent:\t", route.children[i].parent.expression);	
-			}
-			console.log("\tController name:\t", route.children[i].controllerName);
-			console.log("\tMethod name:\t\t", route.children[i].methodName);
-			console.log("\tRedirect:\t\t", route.children[i].redirect);
-			console.log("\tProtocol:\t\t", route.children[i].protocol);
-			console.log("\tPort:\t\t\t", route.children[i].port);
-			console.log("\tMethod:\t\t\t", route.children[i].method);
-			console.log("\tExpression:\t\t", route.children[i].expression);
-			console.log("\tData:\t\t\t", route.children[i].data);
-			console.log("\tDescription:\t\t", route.children[i].description);
-			if(route.children[i].children) {
-				console.log("\tChildren:\t\t", route.children[i].children.length);	
-			}
-			
-			if(route.children[i].children) {
-				for(var k = 0; k < route.children[i].children.length; k++) {
-					//route.children[i].log();
-					console.log("\t\t------------------------")
-					console.log("\t\tLEVEL 3 Route:")
-					if(route.children && route.children[i].children && route.children[i].children[k].parent) {
-						console.log("\t\tParent:\t", route.children[i].children[k].parent.expression);	
-					}
-					console.log("\t\tController name:\t", route.children[i].children[k].controllerName);
-					console.log("\t\tMethod name:\t\t", route.children[i].children[k].methodName);
-					console.log("\t\tRedirect:\t\t", route.children[i].children[k].redirect);
-					console.log("\t\tProtocol:\t\t", route.children[i].children[k].protocol);
-					console.log("\t\tPort:\t\t\t", route.children[i].children[k].port);
-					console.log("\t\tMethod:\t\t\t", route.children[i].children[k].method);
-					console.log("\t\tExpression:\t\t", route.children[i].children[k].expression);
-					console.log("\t\tData:\t\t\t", route.children[i].children[k].data);
-					console.log("\t\tDescription:\t\t", route.children[i].children[k].description);
-					if(route.children[i].children[k].children) {
-						console.log("\t\tChildren:\t\t", route.children[i].children[k].children.length);	
-					}
-				}
-			}
-			
+		if(children) {
+			route.children.each(function(childRoute) {
+				Route.log(childRoute, children, level + 1);
+			});	
 		}
 	},
 	

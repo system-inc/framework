@@ -12,11 +12,17 @@
 						"protocol": "*",
 						"port": "*",
 						"method": "*",
-						"expression": ".*",
+						"expression": "/",
+						"data": {
+							"rootData": "root!"
+						},
 						"children": [
 							{
 								"methodName": "contact",
-								"expression": "contact/?"
+								"expression": "contact/?",
+								"data": {
+									"contactData": "contact!"
+								}
 							},
 							{
 								"methodName": "legal",

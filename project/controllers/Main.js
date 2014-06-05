@@ -13,20 +13,30 @@ Main = Controller.extend({
 		//var response = this.request;
 		//var response = yield Cryptography.random();
 		var response = 'Main';
+		response += "\nData:\n"+Json.encode(this.route.data);
 
 		return response;
 	},
 
 	contact: function() {
-		return 'Contact';
+		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
+		response += "\nData:\n"+Json.encode(this.route.data);
+
+		return response;
 	},
 
 	legal: function() {
-		return 'Legal';
+		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
+		response += "\nData:\n"+Json.encode(this.route.data);
+
+		return response;
 	},
 
 	legalTermsOfService: function() {
-		return 'Legal - Terms of Service';
+		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
+		response += "\nData:\n"+Json.encode(this.route.data);
+
+		return response;
 	},
 	
 });
