@@ -9,7 +9,7 @@
 					{
 						"controllerName": "Main",
 						"methodName": "main",
-						"host": "*.server",
+						"host": "server",
 						"protocol": "*",
 						"port": "*",
 						"method": "*",
@@ -20,7 +20,7 @@
 						},
 						"children": [
 							{
-								"expression": "user/(.+?)/?",
+								"expression": "users/(.+?)/?",
 								"data": {
 									"view": "user",
 									"1": "username"
@@ -65,7 +65,17 @@
 										"data": {
 											"legalTermsOfServiceData": "legalTermsOfService",
 											"view": "legalTermsOfService"
-										}
+										},
+										"children": [
+											{
+												"methodName": "legalTermsOfServiceIOs",
+												"expression": "ios/?",
+												"data": {
+													"legalTermsOfServiceIOsData": "legalTermsOfServiceIOs",
+													"view": "legalTermsOfServiceIOs"
+												}
+											}
+										]
 									}
 								]
 							}

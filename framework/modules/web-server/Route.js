@@ -8,6 +8,7 @@ Route = Class.extend({
 	methodName: null,
 	redirect: null,
 	protocol: null,
+	host: null,
 	port: null,
 	method: null,
 	expression: null,
@@ -23,6 +24,7 @@ Route = Class.extend({
 			this.methodName = (route.methodName === undefined ? null : route.methodName);
 			this.redirect = (route.redirect === undefined ? null : route.redirect);
 			this.protocol = (route.protocol === undefined ? null : route.protocol);
+			this.host = (route.host === undefined ? null : route.host);
 			this.port = (route.port === undefined ? null : route.port);
 			this.method = (route.method === undefined ? null : route.method);
 			this.expression = (route.expression === undefined ? null : route.expression);
@@ -36,6 +38,7 @@ Route = Class.extend({
 				this.methodName = (this.methodName === null ? parent.methodName : this.methodName);
 				this.redirect = (this.redirect === null ? parent.redirect : this.redirect);
 				this.protocol = (this.protocol === null ? parent.protocol : this.protocol);
+				this.host = (this.host === null ? parent.host : this.host);
 				this.port = (this.port === null ? parent.port : this.port);
 				this.method = (this.method === null ? parent.method : this.method);
 				this.expression = (this.expression === null ? parent.expression : this.expression);
@@ -101,7 +104,7 @@ Route = Class.extend({
 					}
 				}
 
-				// If we matched a child run the while loop again with the current route being set the matched child
+				// If we matched a child run the while loop again with the current route being set as the matched child
 				if(childRouteMatch) {
 					currentRoute = childRouteMatch;
 				}
@@ -111,12 +114,16 @@ Route = Class.extend({
 				}
 			}
 		}
-		else {
-			console.log('No match!', match);
-		}
 
 		// If we have a match
 		if(match) {
+			// Check the method
+			//console.log('Comparing method '+match.method+' against '+request.method+'.');
+			if(match && match.method != '*' && !match.method.contains(request.method)) {
+				//console.log('Method match failed!');
+				match = null;
+			}
+
 			// Check the protocol
 			//console.log('Comparing protocol '+match.protocol+' against '+request.url.protocol+'.');
 			if(match && match.protocol != '*' && !request.url.protocol.contains(match.protocol)) {
@@ -124,10 +131,10 @@ Route = Class.extend({
 				match = null;
 			}
 
-			// Check the method
-			//console.log('Comparing method '+match.method+' against '+request.method+'.');
-			if(match && match.method != '*' && !match.method.contains(request.method)) {
-				//console.log('Method match failed!');
+			// Check the host
+			//console.log('Comparing host '+request.url.host+' against '+match.host+'.');
+			if(match && match.host != '*' && !request.url.host.match(new RegExp('^'+match.host+'$'))) {
+				//console.log('Host match failed!');
 				match = null;
 			}
 
@@ -227,6 +234,7 @@ Route = Class.extend({
 		console.log(indent+"Method name:\t\t", route.methodName);
 		console.log(indent+"Redirect:\t\t", route.redirect);
 		console.log(indent+"Protocol:\t\t", route.protocol);
+		console.log(indent+"Host:\t\t\t", route.host);
 		console.log(indent+"Port:\t\t\t", route.port);
 		console.log(indent+"Method:\t\t\t", route.method);
 		console.log(indent+"Expression:\t\t", route.expression);
