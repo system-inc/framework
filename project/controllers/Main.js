@@ -12,7 +12,7 @@ Main = Controller.extend({
 		//var response = yield String.random(1024 * 1, '01');
 		//var response = this.request;
 		//var response = yield Cryptography.random();
-		var response = 'Main';
+		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
 		response += "\nData:\n"+Json.encode(this.route.data);
 
 		return response;

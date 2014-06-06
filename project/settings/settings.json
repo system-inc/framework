@@ -9,28 +9,63 @@
 					{
 						"controllerName": "Main",
 						"methodName": "main",
+						"host": "*.server",
 						"protocol": "*",
 						"port": "*",
 						"method": "*",
 						"expression": "/",
 						"data": {
-							"rootData": "root!"
+							"rootData": "root!",
+							"view": "root"
 						},
 						"children": [
+							{
+								"expression": "user/(.+?)/?",
+								"data": {
+									"view": "user",
+									"1": "username"
+								},
+								"children": [
+									{
+										"expression": "story/(.*)",
+										"data": {
+											"view": "userStory",
+											"1": "story"
+										}
+									}
+								]
+							},
+							{
+								"method": "PUT",
+								"methodName": "main",
+								"expression": "putOnly/?",
+								"data": {
+									"view": "putOnly"
+								}
+							},
 							{
 								"methodName": "contact",
 								"expression": "contact/?",
 								"data": {
-									"contactData": "contact!"
+									"contactData": "contact!",
+									"view": "contact"
 								}
 							},
 							{
 								"methodName": "legal",
 								"expression": "legal/?",
+								"data": {
+									"legalData": "legal",
+									"view": "legal"
+								},
 								"children": [
 									{
 										"methodName": "legalTermsOfService",
-										"expression": "terms-of-service/?"
+										"expression": "terms-of-service/?",
+										"data": {
+											"legalTermsOfServiceData": "legalTermsOfService",
+											"view": "legalTermsOfService"
+										}
 									}
 								]
 							}

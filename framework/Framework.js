@@ -91,7 +91,7 @@ FrameworkSingleton = Class.extend({
 
 	initializeEnvironment: function() {
 		this.environment = this.settings.get('environment');
-		console.log('Initializing '+this.environment+' environment...');
+		console.log('Initializing environment ('+this.environment+')...');
 
 		// Development
 		if(this.environment == 'development') {

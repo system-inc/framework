@@ -19,9 +19,7 @@ Router = Class.extend({
 
 		for(var i = 0; i < this.routes.length; i++) {
 			var currentRoute = this.routes[i];
-
 			route = currentRoute.match(request);
-
 			if(route) {
 				break;
 			}
@@ -32,7 +30,6 @@ Router = Class.extend({
 			route = new Route();
 		}
 
-		console.log('Got route!');
 		Route.log(route, false);
 		
 		return route;

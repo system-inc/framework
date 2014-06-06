@@ -1,3 +1,23 @@
+Object.prototype.merge = function() {
+    var objectsToMerge = [];
+
+    // Gather the objects to merge
+    for(var i = 0; i < arguments.length; i++) {
+    	objectsToMerge.push(arguments[i]);
+    };
+
+    // "this" merges any properties from the objects to merge that it does not already have
+    objectsToMerge.each(function(objectToMerge) {
+    	for(var property in objectToMerge) {
+    		if(this[property] === undefined) {
+    			this[property] = objectToMerge[property];
+    		}
+    	}
+    }, this);
+
+    return this;
+}
+
 Object.prototype.isObject = function() {
 	return typeof this == 'object';
 }

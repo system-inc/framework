@@ -41,7 +41,14 @@ Route = Class.extend({
 				this.expression = (this.expression === null ? parent.expression : this.expression);
 				this.description = (this.description === null ? parent.description : this.description);
 
-				this.data = (this.data === null ? parent.data : this.data);
+				// If we have data, merge it with the parent's data object
+				if(this.data) {
+					this.data = this.data.merge(this.parent.data)	
+				}
+				// If we do not have any data, just inherit the parent's data
+				else {
+					this.data = parent.data;
+				}
 			}
 
 			// Create the children if they exist
@@ -104,10 +111,37 @@ Route = Class.extend({
 				}
 			}
 		}
+		else {
+			console.log('No match!', match);
+		}
 
-		// If we do not completely match
-		if(match && !match.matches.complete) {
-			match = null;
+		// If we have a match
+		if(match) {
+			// Check the protocol
+			//console.log('Comparing protocol '+match.protocol+' against '+request.url.protocol+'.');
+			if(match && match.protocol != '*' && !request.url.protocol.contains(match.protocol)) {
+				//console.log('Protocol match failed!');
+				match = null;
+			}
+
+			// Check the method
+			//console.log('Comparing method '+match.method+' against '+request.method+'.');
+			if(match && match.method != '*' && !match.method.contains(request.method)) {
+				//console.log('Method match failed!');
+				match = null;
+			}
+
+			// Check the port
+			//console.log('Comparing port '+match.port+' against '+request.url.port+'.');
+			if(match && match.port != '*' && !match.port.contains(request.url.port)) {
+				//console.log('Port match failed!');
+				match = null;
+			}
+			
+			// If we do not completely match
+			if(match && !match.matches.complete) {
+				match = null;
+			}
 		}
 
 		return match;
