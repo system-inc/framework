@@ -38,5 +38,12 @@ Main = Controller.extend({
 
 		return response;
 	},
+
+	legalTermsOfServiceIOs: function() {
+		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
+		response += "\nData:\n"+Json.encode(this.route.data);
+
+		return response;
+	},
 	
 });

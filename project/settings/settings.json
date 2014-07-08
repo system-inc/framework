@@ -20,14 +20,14 @@
 						},
 						"children": [
 							{
-								"expression": "users/(.+?)/?",
+								"expression": "users/(\\w+?)/?",
 								"data": {
 									"view": "user",
 									"1": "username"
 								},
 								"children": [
 									{
-										"expression": "story/(.*)",
+										"expression": "story/(\\w+?)/?",
 										"data": {
 											"view": "userStory",
 											"1": "story"

@@ -81,36 +81,22 @@ Route = Class.extend({
 		this.matches.complete = requestExpression.match(new RegExp('^'+this.fullExpression+'$'));
 		if(this.matches.complete) {
 			match = this;
-			console.log('Completely!');
+			console.log('Completely - setting match');
 		}
-		
-		// If we have a partial match
+
+		// If we have a partial match (the match may be complete as well)
 		if(this.matches.partial) {
-			// Recursively match againt descendants
-			var recurse = true;
-			var currentRoute = this;
-			while(recurse) {
-				// Go through all of the children
-				var childRouteMatch = null;
-				for(var i = 0; i < currentRoute.children.length; i++) {
-					// Set the current child route
-					var currentChildRoute = this.children[i];
-					var currentChildRouteMatch = currentChildRoute.match(request);
+			// Go through all of the children and see if we have a partial or complete match
+			var childRouteMatch = null;
+			for(var i = 0; i < this.children.length; i++) {
+				// Set the current child route
+				var currentChildRoute = this.children[i];
+				var currentChildRouteMatch = currentChildRoute.match(request);
 
-					// If we have a match
-					if(currentChildRouteMatch) {
-						match = childRouteMatch = currentChildRouteMatch;
-						break;
-					}
-				}
-
-				// If we matched a child run the while loop again with the current route being set as the matched child
-				if(childRouteMatch) {
-					currentRoute = childRouteMatch;
-				}
-				// If we didn't match anything, break out of the while loop
-				else {
-					recurse = false;
+				// If we have a match
+				if(currentChildRouteMatch) {
+					match = currentChildRouteMatch;
+					break;
 				}
 			}
 		}
@@ -120,33 +106,34 @@ Route = Class.extend({
 			// Check the method
 			//console.log('Comparing method '+match.method+' against '+request.method+'.');
 			if(match && match.method != '*' && !match.method.contains(request.method)) {
-				//console.log('Method match failed!');
+				console.log('Method match failed!');
 				match = null;
 			}
 
 			// Check the protocol
 			//console.log('Comparing protocol '+match.protocol+' against '+request.url.protocol+'.');
 			if(match && match.protocol != '*' && !request.url.protocol.contains(match.protocol)) {
-				//console.log('Protocol match failed!');
+				console.log('Protocol match failed!');
 				match = null;
 			}
 
 			// Check the host
 			//console.log('Comparing host '+request.url.host+' against '+match.host+'.');
 			if(match && match.host != '*' && !request.url.host.match(new RegExp('^'+match.host+'$'))) {
-				//console.log('Host match failed!');
+				console.log('Host match failed!');
 				match = null;
 			}
 
 			// Check the port
 			//console.log('Comparing port '+match.port+' against '+request.url.port+'.');
 			if(match && match.port != '*' && !match.port.contains(request.url.port)) {
-				//console.log('Port match failed!');
+				console.log('Port match failed!');
 				match = null;
 			}
 			
 			// If we do not completely match
 			if(match && !match.matches.complete) {
+				console.log('We do not have a complete match!');
 				match = null;
 			}
 		}
