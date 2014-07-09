@@ -13,35 +13,35 @@ Main = Controller.extend({
 		//var response = this.request;
 		//var response = yield Cryptography.random();
 		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
-		response += "\nData:\n"+Json.encode(this.route.data);
+		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
 	contact: function() {
 		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
-		response += "\nData:\n"+Json.encode(this.route.data);
+		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
 	legal: function() {
 		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
-		response += "\nData:\n"+Json.encode(this.route.data);
+		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
 	legalTermsOfService: function() {
 		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
-		response += "\nData:\n"+Json.encode(this.route.data);
+		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
 	legalTermsOfServiceIOs: function() {
 		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
-		response += "\nData:\n"+Json.encode(this.route.data);
+		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},

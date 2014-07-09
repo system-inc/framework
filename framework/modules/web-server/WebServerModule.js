@@ -6,6 +6,7 @@ require('./Headers');
 require('./Request');
 require('./Response');
 require('./Route');
+require('./RouteMatch');
 require('./Router');
 require('./View');
 require('./WebServer');

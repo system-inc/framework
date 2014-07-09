@@ -1,3 +1,20 @@
+Object.prototype.sort = function() {
+	var sorted = {};
+
+	Object.keys(this).sort().each(function(key) {
+		sorted[key] = this[key];
+	}, this);
+
+	return sorted;
+}
+
+Object.prototype.each = function(callback, context) {
+	var self = this;
+	Object.keys(this).each(function(key) {
+		callback.apply(context, [key, self[key]]);
+	});
+}
+
 Object.prototype.merge = function() {
     var objectsToMerge = [];
 
@@ -36,6 +53,10 @@ Object.prototype.isBoolean = function() {
 
 Object.prototype.isNumber = function() {
 	return this instanceof Number;
+}
+
+Object.prototype.isInteger = function() {
+	return /^\+?(0|[1-9]\d*)$/.test(this);
 }
 
 Object.prototype.isString = function() {

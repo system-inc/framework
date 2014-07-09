@@ -1,12 +1,13 @@
 Controller = Class.extend({
 
-	construct: function(request, response, route) {
+	construct: function(request, response, route, data) {
 		this.request = request ? request : null;
 		this.response = response ? response : null;
 		this.route = route ? route : null;
+		this.data = data ? data : null;
 	},
 
-	getController: function(controllerName, request, response, route) {
+	getController: function(controllerName, request, response, route, data) {
 		//console.log(controllerName);
 		var controller = null;
 
@@ -23,7 +24,7 @@ Controller = Class.extend({
 		// Load the controller if we have it
 		if(global[controllerName]) {
 			//console.log('Controller '+controllerName+' is loaded.');
-			controller = new global[controllerName](request, response, route);
+			controller = new global[controllerName](request, response, route, data);
 		}
 
 		return controller;

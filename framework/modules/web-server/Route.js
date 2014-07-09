@@ -1,7 +1,5 @@
 Route = Class.extend({
 
-	request: null,
-	response: null,
 	parent: null,
 	children: [],
 	controllerName: null,
@@ -64,28 +62,25 @@ Route = Class.extend({
 	},
 
 	match: function(request) {
-		var match = null;
-		this.matches = {
-			'partial': false,
-			'complete': false,
-		};
+		// Use the RouteMatch data structure to be able to keep track of match meta data without running into concurrency issues that would happen as a result of storing data on the route object
+		var routeMatch = new RouteMatch();
 
 		// Check the request's expression against the route's fullExpression
 		var requestExpression = request.url.path;
-		console.log("\n"+'Checking if request expression', requestExpression, 'matches with route full expression', this.fullExpression);
+		//console.log("\n"+'Checking if request expression', requestExpression, 'matches with route full expression', this.fullExpression);
 
-		this.matches.partial = requestExpression.match(new RegExp(this.fullExpression));
-		if(this.matches.partial) {
-			console.log('Partially!');
+		routeMatch.partial = requestExpression.match(new RegExp(this.fullExpression));
+		if(routeMatch.partial) {
+			//console.log('Partially!');
 		}
-		this.matches.complete = requestExpression.match(new RegExp('^'+this.fullExpression+'$'));
-		if(this.matches.complete) {
-			match = this;
-			console.log('Completely - setting match');
+		routeMatch.complete = requestExpression.match(new RegExp('^'+this.fullExpression+'$'));
+		if(routeMatch.complete) {
+			routeMatch.route = this;
+			//console.log('Completely! Setting match.');
 		}
 
 		// If we have a partial match (the match may be complete as well)
-		if(this.matches.partial) {
+		if(routeMatch.partial) {
 			// Go through all of the children and see if we have a partial or complete match
 			var childRouteMatch = null;
 			for(var i = 0; i < this.children.length; i++) {
@@ -94,51 +89,51 @@ Route = Class.extend({
 				var currentChildRouteMatch = currentChildRoute.match(request);
 
 				// If we have a match
-				if(currentChildRouteMatch) {
-					match = currentChildRouteMatch;
+				if(currentChildRouteMatch.route) {
+					routeMatch = currentChildRouteMatch;
 					break;
 				}
 			}
 		}
 
 		// If we have a match
-		if(match) {
+		if(routeMatch.route) {
 			// Check the method
-			//console.log('Comparing method '+match.method+' against '+request.method+'.');
-			if(match && match.method != '*' && !match.method.contains(request.method)) {
-				console.log('Method match failed!');
-				match = null;
+			//console.log('Comparing method '+routeMatch.method+' against '+request.method+'.');
+			if(routeMatch.route && routeMatch.route.method != '*' && !routeMatch.route.method.contains(request.method)) {
+				//console.log('Method match failed!');
+				routeMatch.route = null;
 			}
 
 			// Check the protocol
-			//console.log('Comparing protocol '+match.protocol+' against '+request.url.protocol+'.');
-			if(match && match.protocol != '*' && !request.url.protocol.contains(match.protocol)) {
-				console.log('Protocol match failed!');
-				match = null;
+			//console.log('Comparing protocol '+routeMatch.protocol+' against '+request.url.protocol+'.');
+			if(routeMatch.route && routeMatch.route.protocol != '*' && !request.url.protocol.contains(routeMatch.route.protocol)) {
+				//console.log('Protocol match failed!');
+				routeMatch.route = null;
 			}
 
 			// Check the host
-			//console.log('Comparing host '+request.url.host+' against '+match.host+'.');
-			if(match && match.host != '*' && !request.url.host.match(new RegExp('^'+match.host+'$'))) {
-				console.log('Host match failed!');
-				match = null;
+			//console.log('Comparing host '+request.url.host+' against '+routeMatch.host+'.');
+			if(routeMatch.route && routeMatch.route.host != '*' && !request.url.host.match(new RegExp('^'+routeMatch.route.host+'$'))) {
+				//console.log('Host match failed!');
+				routeMatch.route = null;
 			}
 
 			// Check the port
-			//console.log('Comparing port '+match.port+' against '+request.url.port+'.');
-			if(match && match.port != '*' && !match.port.contains(request.url.port)) {
-				console.log('Port match failed!');
-				match = null;
+			//console.log('Comparing port '+routeMatch.port+' against '+request.url.port+'.');
+			if(routeMatch.route && routeMatch.route.port != '*' && !routeMatch.route.port.contains(request.url.port)) {
+				//console.log('Port match failed!');
+				routeMatch.route = null;
 			}
 			
 			// If we do not completely match
-			if(match && !match.matches.complete) {
-				console.log('We do not have a complete match!');
-				match = null;
+			if(routeMatch.route && !routeMatch.complete) {
+				//console.log('We do not have a complete match!');
+				routeMatch.route = null;
 			}
 		}
 
-		return match;
+		return routeMatch;
 	},
 
 	getFullExpression: function() {
@@ -163,47 +158,6 @@ Route = Class.extend({
 		}
 
 		return parents;
-	},
-
-	setRequest: function(request) {
-		this.request = request;
-	},
-
-	setResponse: function(response) {
-		this.response = response;
-	},
-
-	follow: function*() {
-		// Setup a variable to store the content
-		var content = null;
-
-		// Try to get the controller
-		var controller = Controller.getController(this.controllerName, this.request, this.response, this);
-
-		// If the controller was found, invoke the method for the route
-		if(controller) {
-			content = yield controller[this.methodName]();
-		}
-		// Send a 404
-		else {
-			this.response.statusCode = 404;
-			this.response.content = this.request.method+' '+this.request.url.path+' not found.';
-			this.response.content += ' Controller '+this.controllerName+' with method '+this.methodName+' does not exist.';
-		}
-
-		// If content exists, make sure it is a string
-		if(content && !content.isString()) {
-			content = content.toString();
-		}
-
-		// If content exists, put it on the response
-		if(content) {
-			this.response.content = content;
-		}
-
-		// Send the response
-		//console.log('Sending response:', this.response.id, this.response.content);
-		this.response.send();
 	},
 
 	log: function(route, children, level) {

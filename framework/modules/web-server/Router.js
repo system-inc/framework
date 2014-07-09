@@ -15,39 +15,40 @@ Router = Class.extend({
 	},
 
 	matchRoute: function(request) {
-		var route = null;
+		var routeMatch = null;
 
 		for(var i = 0; i < this.routes.length; i++) {
 			var currentRoute = this.routes[i];
-			route = currentRoute.match(request);
-			if(route) {
+			currentRouteMatch = currentRoute.match(request);
+
+			// If we get a RouteMatch back that has a valid route
+			if(currentRouteMatch.route) {
+				routeMatch = currentRouteMatch;
+				//Route.log(routeMatch.route, false);
 				break;
 			}
-		}
-
-		// TODO: Setup 404 route
-		if(!route) {
-			route = new Route();
-		}
-
-		Route.log(route, false);
+		}		
 		
-		return route;
+		return routeMatch;
 	},
 
 	route: function(request, response) {
-		var route = this.matchRoute(request);
+		var routeMatch = this.matchRoute(request);
+		//console.log(routeMatch);
 
 		// Handle no route found
-		if(!route) {
-			//route = this.getMissingRoute;
+		if(!routeMatch) {
+			// Change this to getting error routes
+			// routeMatch = new RouteMatch();
+			// routeMatch.route = new Route();
 		}
 
 		// Set the request and response
-		route.setRequest(request);
-		route.setResponse(response);
+		routeMatch.setRequest(request);
+		routeMatch.setResponse(response);
 
-		route.follow();
+		// Follow the route match
+		routeMatch.follow();
 	},
 	
 });
