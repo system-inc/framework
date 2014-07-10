@@ -6,41 +6,42 @@ Main = Controller.extend({
 		//var response = yield new WebRequest('http://cloudflare.server.home.kirkouimet.com/hi.html').execute();
 		//var response = yield new WebRequest('http://server.home.kirkouimet.com/').execute();
 		//var response = yield new WebRequest('http://www.socwall.com').execute();
-		//var response = yield new WebRequest('http://www.increase.com').execute();
+		//var response = Json.encode(yield new WebRequest('http://www.increase.com').execute());
 		//var response = yield new WebRequest('http://localhost/').execute();
-		//var response = yield Directory.list('/');
+		//var response = Json.encode(yield Directory.list('/'));
+		//var response = Json.encode(yield Directory.list('/var/www/framework/project/views/images/'));
 		//var response = yield String.random(1024 * 1, '01');
-		//var response = this.request;
+		var response = Json.encode(this.request);
 		//var response = yield Cryptography.random();
-		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
-		response += "\nData:\n"+Json.encode(this.data);
+		//var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.controllerMethodName+')';
+		//response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
 	contact: function() {
-		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
+		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.controllerMethodName+')';
 		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
 	legal: function() {
-		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
+		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.controllerMethodName+')';
 		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
 	legalTermsOfService: function() {
-		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
+		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.controllerMethodName+')';
 		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
 	legalTermsOfServiceIOs: function() {
-		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.methodName+')';
+		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.controllerMethodName+')';
 		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;

@@ -7,8 +7,9 @@
 			"router": {
 				"routes": [
 					{
+						"type": "controller",
 						"controllerName": "Main",
-						"methodName": "main",
+						"controllerMethodName": "main",
 						"host": "server",
 						"protocol": "*",
 						"port": "*",
@@ -19,6 +20,16 @@
 							"view": "root"
 						},
 						"children": [
+							{
+								"type": "redirect",
+								"redirectStatusCode": 301,
+								"redirectLocation": "http://www.google.com/",
+								"expression": "google/?"
+							},
+							{
+								"type": "file",
+								"expression": "images/(.*)"
+							},
 							{
 								"expression": "users/(\\w+?)/?",
 								"data": {
@@ -37,14 +48,14 @@
 							},
 							{
 								"method": "PUT",
-								"methodName": "main",
+								"controllerMethodName": "main",
 								"expression": "putOnly/?",
 								"data": {
 									"view": "putOnly"
 								}
 							},
 							{
-								"methodName": "contact",
+								"controllerMethodName": "contact",
 								"expression": "contact/?",
 								"data": {
 									"contactData": "contact!",
@@ -52,7 +63,7 @@
 								}
 							},
 							{
-								"methodName": "legal",
+								"controllerMethodName": "legal",
 								"expression": "legal/?",
 								"data": {
 									"legalData": "legal",
@@ -60,7 +71,7 @@
 								},
 								"children": [
 									{
-										"methodName": "legalTermsOfService",
+										"controllerMethodName": "legalTermsOfService",
 										"expression": "terms-of-service/?",
 										"data": {
 											"legalTermsOfServiceData": "legalTermsOfService",
@@ -68,7 +79,7 @@
 										},
 										"children": [
 											{
-												"methodName": "legalTermsOfServiceIOs",
+												"controllerMethodName": "legalTermsOfServiceIOs",
 												"expression": "ios/?",
 												"data": {
 													"legalTermsOfServiceIOsData": "legalTermsOfServiceIOs",

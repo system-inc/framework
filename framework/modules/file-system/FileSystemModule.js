@@ -2,6 +2,7 @@ require('./FileSystem');
 require('./FileSystemObject');
 require('./Directory');
 require('./File');
+require('./FileFormats');
 
 FileSystemModule = Module.extend({
 

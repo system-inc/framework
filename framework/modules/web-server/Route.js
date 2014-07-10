@@ -1,10 +1,19 @@
 Route = Class.extend({
-
-	parent: null,
-	children: [],
+	
+	// Type is controller
 	controllerName: null,
-	methodName: null,
-	redirect: null,
+	controllerMethodName: null,
+
+	// Type is redirect
+	redirectStatusCode: null,
+	redirectLocation: null,
+
+	// Type is file
+
+
+	// Any type
+	type: null, // controller, redirect, file, or proxy
+	context: null, // project or framework
 	protocol: null,
 	host: null,
 	port: null,
@@ -13,14 +22,29 @@ Route = Class.extend({
 	fullExpression: null,
 	data: null,
 	description: null,
+	parent: null,
+	children: [],
 
 	construct: function(route, parent) {
 		this.parent = (parent === undefined ? null : parent);
+		this.data = {};
 
 		if(route) {
+			this.type = (route.type === undefined ? null : route.type);
+			this.context = (route.context === undefined ? null : route.context);
+
+			// Type is controller
 			this.controllerName = (route.controllerName === undefined ? null : route.controllerName);
-			this.methodName = (route.methodName === undefined ? null : route.methodName);
-			this.redirect = (route.redirect === undefined ? null : route.redirect);
+			this.controllerMethodName = (route.controllerMethodName === undefined ? null : route.controllerMethodName);
+
+			// Type is redirect
+			this.redirectStatusCode = (route.redirectStatusCode === undefined ? null : route.redirectStatusCode);
+			this.redirectLocation = (route.redirectLocation === undefined ? null : route.redirectLocation);
+
+			// Type is file
+
+
+			// Any type
 			this.protocol = (route.protocol === undefined ? null : route.protocol);
 			this.host = (route.host === undefined ? null : route.host);
 			this.port = (route.port === undefined ? null : route.port);
@@ -32,9 +56,25 @@ Route = Class.extend({
 
 			// Inherit parent attributes
 			if(this.parent) {
-				this.controllerName = (this.controllerName === null ? parent.controllerName : this.controllerName);
-				this.methodName = (this.methodName === null ? parent.methodName : this.methodName);
-				this.redirect = (this.redirect === null ? parent.redirect : this.redirect);
+				this.type = (this.type === null ? parent.type : this.type);
+				this.context = (this.context === null ? parent.context : this.context);
+
+				// Type is controller
+				if(this.type == 'controller') {
+					this.controllerName = (this.controllerName === null ? parent.controllerName : this.controllerName);
+					this.controllerMethodName = (this.controllerMethodName === null ? parent.controllerMethodName : this.controllerMethodName);	
+				}				
+
+				// Type is redirect
+				if(this.type == 'redirect') {
+					this.redirectStatusCode = (this.redirectStatusCode === null ? parent.redirectStatusCode : this.redirectStatusCode);
+					this.redirectLocation = (this.redirectLocation === null ? parent.redirectLocation : this.redirectLocation);
+				}
+
+				// Type is file
+				
+
+				// Any type
 				this.protocol = (this.protocol === null ? parent.protocol : this.protocol);
 				this.host = (this.host === null ? parent.host : this.host);
 				this.port = (this.port === null ? parent.port : this.port);
@@ -50,6 +90,14 @@ Route = Class.extend({
 				else {
 					this.data = parent.data;
 				}
+			}
+
+			// Make sure we have a type and context
+			if(this.type == null) {
+				this.type = 'controller';
+			}
+			if(this.context == null) {
+				this.context = 'project';
 			}
 
 			// Create the children if they exist
@@ -170,10 +218,13 @@ Route = Class.extend({
 		}
 
 		console.log(indent+"------------------------")
-		console.log(indent+"Invoke:\t\t\t", route.controllerName+'.'+route.methodName);
+		console.log(indent+"Type:\t\t\t", route.type);
+		console.log(indent+"Context:\t\t", route.context);
+		console.log(indent+"Invoke:\t\t\t", route.controllerName+'.'+route.controllerMethodName);
 		console.log(indent+"Controller name:\t", route.controllerName);
-		console.log(indent+"Method name:\t\t", route.methodName);
-		console.log(indent+"Redirect:\t\t", route.redirect);
+		console.log(indent+"Method name:\t\t", route.controllerMethodName);
+		console.log(indent+"Redirect status code:\t", route.redirectStatusCode);
+		console.log(indent+"Redirect location:\t", route.redirectLocation);
 		console.log(indent+"Protocol:\t\t", route.protocol);
 		console.log(indent+"Host:\t\t\t", route.host);
 		console.log(indent+"Port:\t\t\t", route.port);
@@ -183,7 +234,7 @@ Route = Class.extend({
 		console.log(indent+"Data:\t\t\t", route.data);
 		console.log(indent+"Description:\t\t", route.description);
 		if(route.parent) {
-			console.log(indent+"Parent:\t\t\t", route.parent.controllerName+'.'+route.parent.methodName);
+			console.log(indent+"Parent:\t\t\t", route.parent.controllerName+'.'+route.parent.controllerMethodName);
 		}
 		else {
 			console.log(indent+"Parent:\t\t\t", 'null');

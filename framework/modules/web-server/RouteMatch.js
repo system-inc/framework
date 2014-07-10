@@ -67,24 +67,53 @@ RouteMatch = Class.extend({
 		// Setup a variable to store the content
 		var content = null;
 
-		// Try to get the controller
-		var controller = Controller.getController(this.route.controllerName, this.request, this.response, this.route, this.data);
+		// Route type is controller
+		if(this.route.type == 'controller') {
+			// Try to get the controller
+			var controller = Controller.getController(this.route.controllerName, this.request, this.response, this.route, this.data);
 
-		// If the controller was found, invoke the method for the route
-		if(controller) {
-			content = yield controller[this.route.methodName]();
+			// If the controller was found, invoke the method for the route
+			if(controller) {
+				content = yield controller[this.route.controllerMethodName]();
+			}
+			// Send a 404
+			else {
+				this.response.statusCode = 404;
+				content = this.request.method+' '+this.request.url.path+' not found.';
+				content += ' Controller '+this.route.controllerName+' with method '+this.route.controllerMethodName+' does not exist.';
+			}	
 		}
-		// Send a 404
-		else {
-			this.response.statusCode = 404;
-			this.response.content = this.request.method+' '+this.request.url.path+' not found.';
-			this.response.content += ' Controller '+this.route.controllerName+' with method '+this.route.methodName+' does not exist.';
+		else if(this.route.type == 'redirect') {
+			this.response.statusCode = this.route.redirectStatusCode;
+			this.response.headers.set('Location', this.route.redirectLocation);
 		}
+		else if(this.route.type == 'file') {
+			// Build the file path
+			var path = Project.path+'views'+this.request.url.path;
 
-		// If content exists, make sure it is a string
-		if(content && !content.isString()) {
-			content = content.toString();
-		}
+			// Check if the file exists
+			if(yield File.exists(path)) {
+				// Set the Content-Type header
+				var contentType = File.getContentType(path);
+				this.response.headers.set('Content-Type', contentType);
+				
+				// Read the file
+				var file = yield File.read(path);
+
+				// Set the response content
+				content = file;
+			}
+			// If the file doesn't exist, send a 404
+			else {
+				this.response.statusCode = 404;
+				content = this.request.url.path+' not found.';
+			}
+		}		
+
+		// If content exists, make sure it is a string - THIS BREAKS IMAGES
+		// if(content && !content.isString()) {
+		// 	content = content.toString();
+		// }
 
 		// If content exists, put it on the response
 		if(content) {

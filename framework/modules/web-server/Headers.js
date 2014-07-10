@@ -97,7 +97,11 @@ Headers = Class.extend({
 		}
 
 		return header;
-	},	
+	},
+
+	set: function(key, value, caseSensitive) {
+		return this.update(key, value, caseSensitive);
+	},
 
 	delete: function() {
 

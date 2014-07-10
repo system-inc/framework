@@ -39,8 +39,8 @@ Router = Class.extend({
 		// Handle no route found
 		if(!routeMatch) {
 			// Change this to getting error routes
-			// routeMatch = new RouteMatch();
-			// routeMatch.route = new Route();
+			routeMatch = new RouteMatch();
+			routeMatch.route = new Route();
 		}
 
 		// Set the request and response
