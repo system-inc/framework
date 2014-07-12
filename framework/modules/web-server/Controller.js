@@ -8,7 +8,7 @@ Controller = Class.extend({
 	},
 
 	getController: function(controllerName, request, response, route, data) {
-		//console.log(controllerName);
+		//Log.log(controllerName);
 		var controller = null;
 
 		// If we don't have the controller load it
@@ -16,14 +16,14 @@ Controller = Class.extend({
 			// Look in the project controllers directory
 			var controllerPath = Project.path+'controllers/'+controllerName+'.js';
 			if(File.synchronous.exists(controllerPath)) {
-				//console.log('Controller '+controllerPath+' exists.');
+				//Log.log('Controller '+controllerPath+' exists.');
 				require(controllerPath);
 			}
 		}
 		
 		// Load the controller if we have it
 		if(global[controllerName]) {
-			//console.log('Controller '+controllerName+' is loaded.');
+			//Log.log('Controller '+controllerName+' is loaded.');
 			controller = new global[controllerName](request, response, route, data);
 		}
 

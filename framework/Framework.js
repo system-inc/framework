@@ -17,6 +17,10 @@ require('./objects/Version');
 require('./objects/Module');
 require('./objects/Project');
 
+// TODO: Need to rethink this
+require('./modules/log/Log');
+require('./modules/time/Time');
+
 // Framework core types
 require('./types/Array');
 require('./types/Json');
@@ -34,6 +38,7 @@ FrameworkSingleton = Class.extend({
 		'FileSystem',
 		'Geolocation',
 		'Hardware',
+		'Log',
 		'Network',
 		'OperatingSystem',
 		'Server',
@@ -46,8 +51,7 @@ FrameworkSingleton = Class.extend({
 
 	construct: function() {
 		// Announce loading
-		console.log('-------------------------');
-		console.log('Starting Framework '+this.version+'...');
+		Log.log('Starting Framework '+this.version+'...');
 
 		// Initialize the version
 		this.version = new Version(this.version);
@@ -56,7 +60,7 @@ FrameworkSingleton = Class.extend({
 		Module.load(this.coreModules);
 
 		// Load the global Framework settings
-		console.log('Loading global Framework settings...');
+		Log.log('Loading global Framework settings...');
 		this.settings = new Settings(this.path+'settings/settings.json');
 
 		// Initialize the environment
@@ -66,11 +70,11 @@ FrameworkSingleton = Class.extend({
 	},
 
 	attachProject: function(project) {
-		console.log('Attaching project "'+project.settings.get('title')+'" to Framework...');
+		Log.log('Attaching project "'+project.settings.get('title')+'" to Framework...');
 
 		// Inspect the project settings to see if they want a web server
 		var webServerSettings = project.settings.get('modules.webServer');
-		//console.log('webServerSettings', webServerSettings);
+		//Log.log('webServerSettings', webServerSettings);
 		if(webServerSettings) {
 			// Create a web server if we need one and don't have one already
 			if(!this.webServer) {
@@ -91,7 +95,7 @@ FrameworkSingleton = Class.extend({
 
 	initializeEnvironment: function() {
 		this.environment = this.settings.get('environment');
-		console.log('Initializing environment ('+this.environment+')...');
+		Log.log('Initializing environment ('+this.environment+')...');
 
 		// Development
 		if(this.environment == 'development') {

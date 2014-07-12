@@ -2,7 +2,7 @@ Settings = Class.extend({
 
 	construct: function(settingsFilePath) {
 		this.settings = this.loadSettingsFromFile(settingsFilePath);
-		//console.log('Settings this.settings', this.settings.toString());
+		//Log.log('Settings this.settings', this.settings.toString());
 	},
 
 	loadSettingsFromFile: function(settingsFilePath) {

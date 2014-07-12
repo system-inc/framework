@@ -173,7 +173,7 @@ Async.prototype._consumeLateBuffer = function Async$_consumeLateBuffer() {
             }
             else {
                 //console.log('Fatal Error:', res.e);
-                throw res.e;
+                //throw res.e;
             }
         }
     }

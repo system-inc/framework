@@ -121,7 +121,7 @@ RouteMatch = Class.extend({
 		}
 
 		// Send the response
-		//console.log('Sending response:', this.response.id, this.response.content);
+		//Log.log('Sending response:', this.response.id, this.response.content);
 		this.response.send();
 	}
 

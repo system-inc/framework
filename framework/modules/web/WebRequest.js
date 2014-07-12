@@ -11,7 +11,7 @@ WebRequest = Class.extend({
 			port: this.url.port,
 			path: this.url.path,
 		});
-		//console.log(response);
+		//Log.log(response);
 
 		return response;
 	},

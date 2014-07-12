@@ -10,7 +10,7 @@
 						"type": "controller",
 						"controllerName": "Main",
 						"controllerMethodName": "main",
-						"host": "server",
+						"host": "*",
 						"protocol": "*",
 						"port": "*",
 						"method": "*",

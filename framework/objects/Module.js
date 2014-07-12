@@ -17,7 +17,7 @@ Module = Class.extend({
 			// Get the module path
 			var moduleName = moduleNames[i];
 			var modulePath = __dirname.replaceLast('objects', 'modules')+'/'+moduleName.toDashes()+'/'+moduleName+'Module';
-			console.log('Loading', moduleName.toSpaces(), 'module...');
+			Log.log('Loading', moduleName.toSpaces(), 'module...');
 			require(modulePath);
 		}
 	},

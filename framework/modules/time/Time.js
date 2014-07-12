@@ -1,8 +1,15 @@
 Time = Class.extend({
 
+	time: null,
+	precision: 'milliseconds',
+
 	construct: function(string) {
-		this.time = new Date(string);
-		this.precision = 'milliseconds';
+		if(string != undefined) {
+			this.time = new Date(string);
+		}
+		else {
+			this.time = new Date();
+		}
 	},
 
 	setPrecision: function(precision) {
@@ -64,6 +71,75 @@ Time = Class.extend({
 		}
 
 		return  now;
+	},
+
+	getYear: function() {
+		return this.time.getFullYear();
+	},
+
+	getMonth: function() {
+		return this.time.getMonth() + 1;
+	},
+
+	getMonthPadded: function() {
+		return ('0'+(this.time.getMonth() + 1)).slice(-2);
+	},
+
+	getMonthName: function() {
+		var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		return monthNames[this.time.getMonth()];
+	},
+
+	getDay: function() {
+		return this.time.getDate();
+	},
+
+	getDayPadded: function() {
+		return ('0'+this.time.getDate()).slice(-2);
+	},
+
+	getDayName: function() {
+		var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+		return dayNames[this.time.getDay()];
+	},
+
+	getWeekDay: function() {
+		return this.time.getDay() + 1;
+	},
+
+	getHour: function() {
+		return this.time.getHours() + 1;
+	},
+
+	getHourPadded: function() {
+		return ('0'+(this.time.getHours() + 1)).slice(-2);
+	},
+
+	getMinute: function() {
+		return this.time.getMinutes() + 1;
+	},
+
+	getMinutePadded: function() {
+		return ('0'+(this.time.getMinutes() + 1)).slice(-2);
+	},
+
+	getSecond: function() {
+		return this.time.getSeconds() + 1;
+	},
+
+	getSecondPadded: function() {
+		return ('0'+(this.time.getSeconds() + 1)).slice(-2);
+	},
+
+	getDateTime: function() {
+		var dateTime = this.getYear();
+		dateTime += '-'+this.getMonthPadded();
+		dateTime += '-'+this.getDayPadded();
+		dateTime += ' '+this.getHourPadded();
+		dateTime += ':'+this.getMinutePadded();
+		dateTime += ':'+this.getSecondPadded();
+
+		return dateTime;
 	},
 
 });

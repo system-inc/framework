@@ -53,7 +53,7 @@ Web.request = Promise.method(function(options) {
 
 		// Handle errors
 		request.on('error', function(error) {
-			console.log('Problem with request:', error.message);
+			Log.log('Problem with request:', error.message);
 			reject(error);
 		});
 

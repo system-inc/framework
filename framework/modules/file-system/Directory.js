@@ -13,10 +13,17 @@ Directory = FileSystemObject.extend({
 
 		var listStringArray = yield FileSystem.list(path);
 
-		// Loop through the string array and make the directory and file objects
-		for(var i = 0; i < listStringArray.length; i++) {
-			list.push(yield FileSystemObject.constructFromPath(path+listStringArray[i]));
+		// If list call works
+		if(listStringArray) {
+			// Loop through the string array and make the directory and file objects
+			for(var i = 0; i < listStringArray.length; i++) {
+				list.push(yield FileSystemObject.constructFromPath(path+listStringArray[i]));
+			}
 		}
+		// If list call does not work
+		else {
+			list = false;
+		}		
 
 		return list;
 	},

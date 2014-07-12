@@ -19,12 +19,12 @@ WebServer = Server.extend({
 		for(var i = 0; i < ports.length; i++) {
 			// If we are already listening on that port
 			if(this.listeners[ports[i]]) {
-				console.log('Could not create an web server listener on port '+ports[i]+', the port is already in use.');
+				Log.log('Could not create an web server listener on port '+ports[i]+', the port is already in use.');
 			}
 			// If the port is free
 			else {
 				// Create the web server
-				console.log('Listening on port '+ports[i]+'.');
+				Log.log('Listening on port '+ports[i]+'.');
 				this.listeners[ports[i]] = NodeHttp.createServer(function(nodeRequest, nodeResponse) {
 					self.handleRequest(new Request(nodeRequest), new Response(nodeResponse));
 				});
@@ -36,17 +36,17 @@ WebServer = Server.extend({
 	},
 
 	handleRequest: function(request, response) {
-		// console.log('');
-		// console.log('');
-		// console.log('');
-		// console.log('');
-		// console.log('-- Request -- ');
-		// console.log('');
+		// Log.log('');
+		// Log.log('');
+		// Log.log('');
+		// Log.log('');
+		// Log.log('-- Request -- ');
+		// Log.log('');
 
 		// Increment the requests counter
 		response.id = request.id = this.requests;
 		this.requests++;
-		console.log('Received request', request.id+':', request.method, request.url.input);
+		Log.log('Received request', request.id+':', request.method, request.url.input);
 
 		// Let the response know what accepted encodings the request allows
 		response.setAcceptedEncodings(request.headers.get('accept-encoding'));

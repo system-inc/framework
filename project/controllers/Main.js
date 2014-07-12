@@ -3,15 +3,32 @@ Main = Controller.extend({
 	main: function*() {
 		//return this.request;
 
+		var response = 'Test';
+
+		Log.log('hey there');
+		
+		//var response = yield new WebRequest('http://www.google.com/').execute();
+		//var response = yield Directory.list('/');
+
+		//var response = 'hey';
+
+		// var test = yield Directory.list('/noexist');
+		// Log.log('test', test);
+
+		// var badWebRequest = yield new WebRequest('http://www.socwall123.com').execute();
+		// Log.log('badWebRequest', badWebRequest);
+
+		//var response = 'hey';
+		//var response = Json.encode(badWebRequest);
 		//var response = yield new WebRequest('http://cloudflare.server.home.kirkouimet.com/hi.html').execute();
 		//var response = yield new WebRequest('http://server.home.kirkouimet.com/').execute();
-		//var response = yield new WebRequest('http://www.socwall.com').execute();
+		//var response = Json.encode(yield new WebRequest('http://www.socwall.com').execute());
 		//var response = Json.encode(yield new WebRequest('http://www.increase.com').execute());
 		//var response = yield new WebRequest('http://localhost/').execute();
 		//var response = Json.encode(yield Directory.list('/'));
 		//var response = Json.encode(yield Directory.list('/var/www/framework/project/views/images/'));
 		//var response = yield String.random(1024 * 1, '01');
-		var response = Json.encode(this.request);
+		//var response = Json.encode(this.request);
 		//var response = yield Cryptography.random();
 		//var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.controllerMethodName+')';
 		//response += "\nData:\n"+Json.encode(this.data);
