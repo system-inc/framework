@@ -1,4 +1,6 @@
-Log = Class.extend({
+LogClass = Class.extend({
+
+	buffer: '',
 
 	log: function() {
 		var message = '';
@@ -80,10 +82,43 @@ Log = Class.extend({
 	    	console.log(error.stack);
 	    }
 
+	    Log.write(log);
+
 		return this;
+	},
+
+	write: function*(string) {
+		// Make sure we have something to write
+		if(!string) {
+			return;
+		}
+
+		// Add a line break at the end of every log string
+		string += "\n";
+
+		// If there is no file and the LogModule is initialized
+		if(!this.file && global['LogModule']) {
+			var path = LogModule.settings.get('file.path');
+			this.file = yield File.open(path, 'a');
+		}
+		// If we have no log file or the LogModule is not initialized, store messages in a buffer to be written when we have a file to write to
+		else {
+			this.buffer += string;
+		}
+
+		// If we have a file
+		if(this.file) {
+			// If we have data in the buffer
+			if(this.buffer) {
+				string = this.buffer + string;
+				this.buffer = null;
+			}
+
+			File.write(this.file, string);
+		}
 	}
 
 });
 
-// Static methods
-Log.log = Log.prototype.log;
+// Create the global log
+Log = new LogClass();

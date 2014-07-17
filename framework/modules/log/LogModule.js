@@ -8,9 +8,10 @@ LogModuleClass = Module.extend({
 		this.parent(settings);
 
 		// Log settings 
+		// Need default settings that can be overwritten by user specified settings
 		// Like access log settings, error log settings, etc.
-		//this.settings.set('paths', {Project.path+'logs/');
-		//Log.log(this.settings);
+		this.settings.set('file.path', Project.path+'logs/log.log');
+		Log.log(this.settings);
 	},
 	
 });

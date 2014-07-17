@@ -23,6 +23,8 @@ File.exists = Promise.method(function(path) {
     });
 });
 File.read = Promise.promisify(NodeFileSystem.readFile);
+File.open = Promise.promisify(NodeFileSystem.open);
+File.write = Promise.promisify(NodeFileSystem.write);
 File.synchronous = {};
 File.synchronous.exists = NodeFileSystem.existsSync;
 File.synchronous.read = NodeFileSystem.readFileSync;

@@ -16,15 +16,15 @@ require('./objects/Class');
 require('./objects/Version');
 require('./objects/Module');
 
-// TODO: Need to rethink this
-require('./modules/log/Log');
-require('./modules/time/Time');
-
 // Framework core types
 require('./types/Array');
 require('./types/Json');
 require('./types/Number');
 require('./types/String');
+
+// TODO: Need to rethink this
+require('./modules/log/Log');
+require('./modules/time/Time');
 
 Framework = Class.extend({
 

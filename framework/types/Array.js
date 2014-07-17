@@ -2,6 +2,24 @@ Array.is = function(value) {
 	return Object.prototype.toStringStandard.call(value) == '[object Array]';
 }
 
+Array.prototype.merge = function() {
+    // Gather the arrays to merge
+    var arraysToMerge = [];
+    for(var i = 0; i < arguments.length; i++) {
+    	arraysToMerge.push(arguments[i]);
+    };
+
+    arraysToMerge.each(function(arrayToMerge) {
+    	arrayToMerge.each(function(arrayValue) {
+    		if(!this.contains(arrayValue)) {
+    			this.push(arrayValue);
+    		}
+    	}, this);
+    }, this);
+
+    return this;
+}
+
 Array.prototype.contains = function(string, caseSensitive) {
 	caseSensitive = caseSensitive === false ? false : true;
 	var contains = false;

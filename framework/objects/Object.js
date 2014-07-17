@@ -24,11 +24,20 @@ Object.prototype.merge = function() {
 
     // "this" merges any properties from the objects to merge that it does not already have
     objectsToMerge.each(function(objectToMerge) {
-    	for(var property in objectToMerge) {
-    		if(this[property] === undefined) {
-    			this[property] = objectToMerge[property];
+    	objectToMerge.each(function(objectToMergeKey, objectToMergeValue) {
+    		// Overwrite any primitives
+    		if(this[objectToMergeKey] !== undefined && Object.isPrimitive(this[objectToMergeKey])) {
+    			this[objectToMergeKey] = objectToMergeValue;
     		}
-    	}
+    		// Recursively merge non-primitives
+    		else if(this[objectToMergeKey] !== undefined && !Object.isPrimitive(this[objectToMergeKey])) {
+    			this[objectToMergeKey] = this[objectToMergeKey].merge(objectToMergeValue);
+    		}
+    		// Add any new keys not existing on "this"
+    		else if(this[objectToMergeKey] === undefined) {
+    			this[objectToMergeKey] = objectToMergeValue;
+    		}
+    	}, this);
     }, this);
 
     return this;
@@ -40,6 +49,10 @@ Object.prototype.isObject = function() {
 
 Object.is = function(value) {
 	return typeof value == 'object';
+}
+
+Object.isPrimitive = function(value) {
+	return value !== Object(value);
 }
 
 Object.prototype.isClass = function() {
