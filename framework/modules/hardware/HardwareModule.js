@@ -1,7 +1,7 @@
 require('./Device');
 require('./Hardware');
 
-HardwareModule = Module.extend({
+HardwareModuleClass = Module.extend({
 
 	version: new Version('1.0'),
 
@@ -9,3 +9,6 @@ HardwareModule = Module.extend({
 	},
 	
 });
+
+// Initialize the module
+HardwareModule = new HardwareModuleClass();

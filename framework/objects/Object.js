@@ -9,10 +9,9 @@ Object.prototype.sort = function() {
 }
 
 Object.prototype.each = function(callback, context) {
-	var self = this;
 	Object.keys(this).each(function(key) {
-		callback.apply(context, [key, self[key]]);
-	});
+		callback.apply(context, [key, this[key]]);
+	}.bind(this));	
 }
 
 Object.prototype.merge = function() {
@@ -67,6 +66,14 @@ Object.prototype.isFunction = function() {
 	return this instanceof Function;
 }
 
+Object.prototype.isArray = function() {
+	return this instanceof Array;
+}
+
+Object.prototype.isEmpty = function() {
+    return Object.keys(this).length === 0;
+}
+
 Object.prototype.toStringStandard = Object.prototype.toString;
 
 Object.prototype.toString = function() {
@@ -83,6 +90,16 @@ Object.prototype.toString = function() {
 	}
 
 	return string;
+}
+
+Object.prototype.toArray = function() {
+	// Wrap strings and numbers in an array
+	if(this.isString() || this.isNumber()) {
+		return [this.toString()];
+	}
+	else {
+		return this;	
+	}
 }
 
 Object.prototype.getValueForKey = function(key, caseSensitive) {

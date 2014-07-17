@@ -1,4 +1,3 @@
-// Framework
 require('./../framework/Framework.js');
-
-Project = new ProjectSingleton(__dirname+'/');
+Project = new Framework(__dirname+'/');
+Project.initialize();

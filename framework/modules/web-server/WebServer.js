@@ -8,31 +8,24 @@ WebServer = Server.extend({
 	},
 
 	listen: function(ports) {
-		var self = this;
-
-		// Make sure we are working with an array of ports
-		if(!Array.is(ports)) {
-			ports = [ports];
-		}
-
 		// Create a server for each port they want to listen on
-		for(var i = 0; i < ports.length; i++) {
+		ports.toArray().each(function(port) {
 			// If we are already listening on that port
-			if(this.listeners[ports[i]]) {
-				Log.log('Could not create an web server listener on port '+ports[i]+', the port is already in use.');
+			if(this.listeners[port]) {
+				Log.log('Could not create an web server listener on port '+port+', the port is already in use.');
 			}
 			// If the port is free
 			else {
 				// Create the web server
-				Log.log('Listening on port '+ports[i]+'.');
-				this.listeners[ports[i]] = NodeHttp.createServer(function(nodeRequest, nodeResponse) {
-					self.handleRequest(new Request(nodeRequest), new Response(nodeResponse));
-				});
+				Log.log('Listening on port '+port+'.');
+				this.listeners[port] = NodeHttp.createServer(function(nodeRequest, nodeResponse) {
+					this.handleRequest(new Request(nodeRequest), new Response(nodeResponse));
+				}.bind(this));
 
 				// Make the web server listen on the port
-				this.listeners[ports[i]].listen(ports[i]);	
+				this.listeners[port].listen(port);	
 			}
-		}
+		}, this);
 	},
 
 	handleRequest: function(request, response) {

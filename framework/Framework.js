@@ -11,11 +11,10 @@ NodeUtility = require('util');
 require('./objects/Function');
 require('./objects/Generator');
 require('./objects/Object');
-require('./objects/Class');
 require('./objects/Promise');
+require('./objects/Class');
 require('./objects/Version');
 require('./objects/Module');
-require('./objects/Project');
 
 // TODO: Need to rethink this
 require('./modules/log/Log');
@@ -27,10 +26,13 @@ require('./types/Json');
 require('./types/Number');
 require('./types/String');
 
-FrameworkSingleton = Class.extend({
+Framework = Class.extend({
 
 	version: '1.0',
-	path: __dirname+'/',
+	framework: {
+		path: __dirname+'/',
+	},
+	path: null,
 	settings: null,
 	environment: null,
 	coreModules: [
@@ -47,11 +49,13 @@ FrameworkSingleton = Class.extend({
 		'Web',
 		'WebServer',
 	],
-	webServer: null,
 
-	construct: function() {
+	construct: function(path) {
 		// Announce loading
 		Log.log('Starting Framework '+this.version+'...');
+
+		// Set the project path
+		this.path = path;
 
 		// Initialize the version
 		this.version = new Version(this.version);
@@ -59,38 +63,22 @@ FrameworkSingleton = Class.extend({
 		// Load the Framework core modules
 		Module.load(this.coreModules);
 
-		// Load the global Framework settings
-		Log.log('Loading global Framework settings...');
-		this.settings = new Settings(this.path+'settings/settings.json');
+		// Load the project settings
+		Log.log('Loading project settings...');
+		this.settings = Settings.constructFromFile(this.path+'settings/settings.json');
+		//Log.log(this.settings);
+
+		// Merge the environment settings
+		this.settings.mergeSettingsFromFile(this.path+'settings/environment.json');
+		//Log.log(this.settings);
 
 		// Initialize the environment
 		this.initializeEnvironment();
+	},
 
+	initialize: function() {
 		// Initialize the Framework core modules
-	},
-
-	attachProject: function(project) {
-		Log.log('Attaching project "'+project.settings.get('title')+'" to Framework...');
-
-		// Inspect the project settings to see if they want a web server
-		var webServerSettings = project.settings.get('modules.webServer');
-		//Log.log('webServerSettings', webServerSettings);
-		if(webServerSettings) {
-			// Create a web server if we need one and don't have one already
-			if(!this.webServer) {
-				this.webServer = new WebServer();		
-			}
-
-			// Listen on the ports specified
-			this.webServer.listen(webServerSettings.ports);
-
-			// Load the project's routes in the web server's router
-			this.webServer.router.loadRoutes(webServerSettings.router.routes);
-		}		
-	},
-
-	detachProject: function(project) {
-
+		Module.initialize(this.coreModules);
 	},
 
 	initializeEnvironment: function() {
@@ -100,14 +88,11 @@ FrameworkSingleton = Class.extend({
 		// Development
 		if(this.environment == 'development') {
 			// Long stack traces imply a substantial performance penalty, around 4-5x for throughput and 0.5x for latency
-			Promise.longStackTraces();
+			//Promise.longStackTraces();
 		}
 	},
 
 });
 
 // Static methods
-FrameworkSingleton.createWebServer = FrameworkSingleton.prototype.createWebServer;
-
-// Create the Framework singleton
-Framework = new FrameworkSingleton();
+Framework.createWebServer = Framework.prototype.createWebServer;

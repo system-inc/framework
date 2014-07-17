@@ -40,7 +40,18 @@ Time = Class.extend({
 	},
 
 	nowInMilliseconds: function() {
-		return new Date().getTime();
+		var now = null;
+
+		// If we have Node's hrtime
+		if(process && process.hrtime) {
+			var nodeHighResolutionTime = process.hrtime();
+			now = nodeHighResolutionTime[0] * 1000 + nodeHighResolutionTime[1] / 1000000;
+		}
+		else {
+			now = new Date().getTime();
+		}
+
+		return now;
 	},
 
 	nowInMicroseconds: function() {
@@ -49,13 +60,13 @@ Time = Class.extend({
 		// If we have Node's hrtime
 		if(process && process.hrtime) {
 			var nodeHighResolutionTime = process.hrtime();
-			now = nodeHighResolutionTime[0] * 1000000000 + nodeHighResolutionTime[1] / 1000;
+			now = nodeHighResolutionTime[0] * 1000000 + nodeHighResolutionTime[1] / 1000;
 		}
 		else {
 			now = new Date().getTime() * 1000;
 		}
 
-		return  now;
+		return now;
 	},
 
 	nowInNanoseconds: function() {

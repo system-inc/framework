@@ -3,27 +3,33 @@ Module = Class.extend({
 	version: null,
 	settings: null,
 
-	construct: function() {
+	construct: function(settings) {
+		// TODO: Fix this kludge and find out why require() on a module is invoking it's constructor
+		// Create settings if we are intializing and not loading - not sure why .construct() is being called when I require() a module
+		if(global['Settings']) {
+			this.settings = Settings.constructFromObject(settings);
+		}
 	},
 
 	load: function(moduleNames) {
-		// Make sure we are working with an array of module names
-		if(!Array.is(moduleNames)) {
-			moduleNames = [moduleNames];
-		}
-		
 		// Load each module
-		for(var i = 0; i < moduleNames.length; i++) {
-			// Get the module path
-			var moduleName = moduleNames[i];
-			var modulePath = __dirname.replaceLast('objects', 'modules')+'/'+moduleName.toDashes()+'/'+moduleName+'Module';
+		moduleNames.toArray().each(function(moduleName) {
 			Log.log('Loading', moduleName.toSpaces(), 'module...');
+			var modulePath = __dirname.replaceLast('objects', 'modules')+'/'+moduleName.toDashes()+'/'+moduleName+'Module';
 			require(modulePath);
-		}
+		}, this);
 	},
 
 	initialize: function(moduleNames) {
-	},
+		// Initializing is necessary to do separate of .load because module code may be interdependent and require other code to be loaded first
+		moduleNames.toArray().each(function(moduleName) {
+			//Log.log('Initializing', moduleName.toSpaces(), 'module...');
+
+			// Get the module settings from the project
+			var settings = Project.settings.get('modules.'+moduleName.lowerCaseFirstCharacter());
+			global[moduleName+'Module'] = new global[moduleName+'ModuleClass'](settings);
+		}, this);
+	}
 
 });
 

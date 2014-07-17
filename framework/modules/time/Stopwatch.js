@@ -5,7 +5,7 @@ Stopwatch = Class.extend({
 			this.precision = options.precision;
 		}
 		else {
-			this.precision = 'microseconds';
+			this.precision = 'milliseconds';
 		}
 
 		this.startTime = null;

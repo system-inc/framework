@@ -41,6 +41,15 @@ Array.prototype.last = function() {
 	return last;
 }
 
+Array.prototype.get = function(index) {
+	if(this[index]) {
+		return this[index];
+	}
+	else {
+		return null;
+	}
+}
+
 Array.prototype.each = Array.prototype.forEach;
 
 Array.prototype.toString = Object.prototype.toString;
