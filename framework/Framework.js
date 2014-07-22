@@ -27,8 +27,10 @@ require('./types/Number');
 require('./types/String');
 
 // TODO: Need to rethink this
-require('./modules/log/Log');
-require('./modules/time/Time');
+require('./modules/file-system/FileSystemModule');
+require('./modules/log/LogModule');
+require('./modules/console/ConsoleModule');
+require('./modules/time/TimeModule');
 
 Framework = Class.extend({
 
@@ -65,15 +67,15 @@ Framework = Class.extend({
 		this.version = new Version('1.0');
 
 		// Announce loading
-		Log.log('Starting Framework '+this.version+'...');
+		Console.out('Starting Framework '+this.version+'...');
 
 		// Load the Framework core modules
 		Module.load(this.coreModules);
 
 		// Load the project settings
-		Log.log('Loading project settings...');
+		Console.out('Loading project settings...');
 		this.settings = Settings.constructFromFile(this.directory+'settings/settings.json');
-		//Log.log(this.settings);
+		//Console.out(this.settings);
 
 		// Set the title
 		var title = this.settings.get('title');
@@ -91,12 +93,12 @@ Framework = Class.extend({
 		}
 
 		// Anounce project title
-		Log.log('Loaded settings for project "'+this.title+'".');
+		Console.out('Loaded settings for project "'+this.title+'".');
 
 		// Merge the environment settings
-		Log.log('Merging environment settings...')
+		Console.out('Merging environment settings...')
 		this.settings.mergeSettingsFromFile(this.directory+'settings/environment.json');
-		//Log.log(this.settings);
+		//Console.out(this.settings);
 
 		// Initialize the environment
 		this.initializeEnvironment();
@@ -109,7 +111,7 @@ Framework = Class.extend({
 
 	initializeEnvironment: function() {
 		this.environment = this.settings.get('environment');
-		Log.log('Initializing environment ('+this.environment+')...');
+		Console.out('Initializing environment ('+this.environment+')...');
 
 		// Development
 		if(this.environment == 'development') {

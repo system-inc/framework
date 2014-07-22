@@ -23,7 +23,7 @@ Settings = Class.extend({
 
 	mergeSettingsFromFile: function(path) {
 		var settings = File.synchronous.readJson(path);
-		//Log.log('Settings from', path, 'to merge:', settings);
+		//Console.out('Settings from', path, 'to merge:', settings);
 		this.settings.merge(settings);
 	},
 

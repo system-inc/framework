@@ -4,6 +4,7 @@ File = FileSystemObject.extend({
 	fileWithoutExtension: null, // The full path the file without the extension
 	nameWithoutExtension: null,
 	extension: null,
+	handle: null,
 
 	construct: function(path) {
 		this.super(path);
@@ -24,17 +25,20 @@ File = FileSystemObject.extend({
 		return contentType;
 	},
 
+	open: function*() {
+		this.handle = yield File.open(this.file, 'a');
+
+		return this.handle;
+	},
+
+	write: function*(data) {
+		yield File.write(this.file, data);
+	},
+
 });
 
 // Static methods
 File.getContentType = File.prototype.getContentType;
-File.exists = Promise.method(function(file) {
-    return new Promise(function(resolve, reject) {
-    	NodeFileSystem.exists(file, function(exists) {
-    		resolve(exists);
-    	});
-    });
-});
 File.read = Promise.promisify(NodeFileSystem.readFile);
 File.open = Promise.promisify(NodeFileSystem.open);
 File.write = Promise.promisify(NodeFileSystem.write);

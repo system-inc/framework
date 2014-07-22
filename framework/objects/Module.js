@@ -14,7 +14,7 @@ Module = Class.extend({
 	load: function(moduleNames) {
 		// Load each module
 		moduleNames.toArray().each(function(moduleName) {
-			Log.log('Loading', moduleName.toSpaces(), 'module...');
+			Console.out('Loading', moduleName.toSpaces(), 'module...');
 			var modulePath = __dirname.replaceLast('objects', 'modules')+'/'+moduleName.toDashes()+'/'+moduleName+'Module';
 			require(modulePath);
 		}, this);
@@ -23,7 +23,7 @@ Module = Class.extend({
 	initialize: function(moduleNames) {
 		// Initializing is necessary to do separate of .load because module code may be interdependent and require other code to be loaded first
 		moduleNames.toArray().each(function(moduleName) {
-			//Log.log('Initializing', moduleName.toSpaces(), 'module...');
+			//Console.out('Initializing', moduleName.toSpaces(), 'module...');
 
 			// Get the module settings from the project
 			var settings = Project.settings.get('modules.'+moduleName.lowercaseFirstCharacter());

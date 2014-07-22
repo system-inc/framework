@@ -13,7 +13,7 @@ WebRequest = Class.extend({
 			port: this.url.port,
 			path: this.url.path,
 		});
-		//Log.log(response);
+		//Console.out(response);
 
 		return response;
 	},

@@ -114,16 +114,16 @@ Route = Class.extend({
 
 		// Check the request's expression against the route's fullExpression
 		var requestExpression = request.url.path;
-		//Log.log("\n"+'Checking if request expression', requestExpression, 'matches with route full expression', this.fullExpression);
+		//Console.out("\n"+'Checking if request expression', requestExpression, 'matches with route full expression', this.fullExpression);
 
 		routeMatch.partial = requestExpression.match(new RegExp(this.fullExpression));
 		if(routeMatch.partial) {
-			//Log.log('Partially!');
+			//Console.out('Partially!');
 		}
 		routeMatch.complete = requestExpression.match(new RegExp('^'+this.fullExpression+'$'));
 		if(routeMatch.complete) {
 			routeMatch.route = this;
-			//Log.log('Completely! Setting match.');
+			//Console.out('Completely! Setting match.');
 		}
 
 		// If we have a partial match (the match may be complete as well)
@@ -146,36 +146,36 @@ Route = Class.extend({
 		// If we have a match
 		if(routeMatch.route) {
 			// Check the method
-			//Log.log('Comparing method '+routeMatch.method+' against '+request.method+'.');
+			//Console.out('Comparing method '+routeMatch.method+' against '+request.method+'.');
 			if(routeMatch.route && routeMatch.route.method != '*' && !routeMatch.route.method.contains(request.method)) {
-				//Log.log('Method match failed!');
+				//Console.out('Method match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the protocol
-			//Log.log('Comparing protocol '+routeMatch.protocol+' against '+request.url.protocol+'.');
+			//Console.out('Comparing protocol '+routeMatch.protocol+' against '+request.url.protocol+'.');
 			if(routeMatch.route && routeMatch.route.protocol != '*' && !request.url.protocol.contains(routeMatch.route.protocol)) {
-				//Log.log('Protocol match failed!');
+				//Console.out('Protocol match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the host
-			//Log.log('Comparing host '+request.url.host+' against '+routeMatch.host+'.');
+			//Console.out('Comparing host '+request.url.host+' against '+routeMatch.host+'.');
 			if(routeMatch.route && routeMatch.route.host != '*' && !request.url.host.match(new RegExp('^'+routeMatch.route.host+'$'))) {
-				//Log.log('Host match failed!');
+				//Console.out('Host match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the port
-			//Log.log('Comparing port '+routeMatch.port+' against '+request.url.port+'.');
+			//Console.out('Comparing port '+routeMatch.port+' against '+request.url.port+'.');
 			if(routeMatch.route && routeMatch.route.port != '*' && !routeMatch.route.port.contains(request.url.port)) {
-				//Log.log('Port match failed!');
+				//Console.out('Port match failed!');
 				routeMatch.route = null;
 			}
 			
 			// If we do not completely match
 			if(routeMatch.route && !routeMatch.complete) {
-				//Log.log('We do not have a complete match!');
+				//Console.out('We do not have a complete match!');
 				routeMatch.route = null;
 			}
 		}
@@ -216,30 +216,30 @@ Route = Class.extend({
 			indent += "\t";
 		}
 
-		Log.log(indent+"------------------------")
-		Log.log(indent+"Type:\t\t\t", route.type);
-		Log.log(indent+"Context:\t\t", route.context);
-		Log.log(indent+"Invoke:\t\t\t", route.controllerName+'.'+route.controllerMethodName);
-		Log.log(indent+"Controller name:\t", route.controllerName);
-		Log.log(indent+"Method name:\t\t", route.controllerMethodName);
-		Log.log(indent+"Redirect status code:\t", route.redirectStatusCode);
-		Log.log(indent+"Redirect location:\t", route.redirectLocation);
-		Log.log(indent+"Protocol:\t\t", route.protocol);
-		Log.log(indent+"Host:\t\t\t", route.host);
-		Log.log(indent+"Port:\t\t\t", route.port);
-		Log.log(indent+"Method:\t\t\t", route.method);
-		Log.log(indent+"Expression:\t\t", route.expression);
-		Log.log(indent+"Full expression:\t", route.fullExpression);
-		Log.log(indent+"Data:\t\t\t", route.data);
-		Log.log(indent+"Description:\t\t", route.description);
+		Console.out(indent+"------------------------")
+		Console.out(indent+"Type:\t\t\t", route.type);
+		Console.out(indent+"Context:\t\t", route.context);
+		Console.out(indent+"Invoke:\t\t\t", route.controllerName+'.'+route.controllerMethodName);
+		Console.out(indent+"Controller name:\t", route.controllerName);
+		Console.out(indent+"Method name:\t\t", route.controllerMethodName);
+		Console.out(indent+"Redirect status code:\t", route.redirectStatusCode);
+		Console.out(indent+"Redirect location:\t", route.redirectLocation);
+		Console.out(indent+"Protocol:\t\t", route.protocol);
+		Console.out(indent+"Host:\t\t\t", route.host);
+		Console.out(indent+"Port:\t\t\t", route.port);
+		Console.out(indent+"Method:\t\t\t", route.method);
+		Console.out(indent+"Expression:\t\t", route.expression);
+		Console.out(indent+"Full expression:\t", route.fullExpression);
+		Console.out(indent+"Data:\t\t\t", route.data);
+		Console.out(indent+"Description:\t\t", route.description);
 		if(route.parent) {
-			Log.log(indent+"Parent:\t\t\t", route.parent.controllerName+'.'+route.parent.controllerMethodName);
+			Console.out(indent+"Parent:\t\t\t", route.parent.controllerName+'.'+route.parent.controllerMethodName);
 		}
 		else {
-			Log.log(indent+"Parent:\t\t\t", 'null');
+			Console.out(indent+"Parent:\t\t\t", 'null');
 		}
 		if(route.children) {
-			Log.log(indent+"Children:\t\t", route.children.length);	
+			Console.out(indent+"Children:\t\t", route.children.length);	
 		}
 
 		if(children) {

@@ -11,7 +11,7 @@ Main = Controller.extend({
 		//var response = Json.encode(yield new WebRequest('http://www.increase.com').execute());
 		//var response = yield new WebRequest('http://localhost/').execute();
 		//var response = Json.encode(yield Directory.list('/var/www/'));
-		//Log.log(response);
+		//Console.out(response);
 		//var response = Json.encode(yield Directory.list('/var/www/framework/project/views/images/'));
 		//var response = yield String.random(1024 * 1, '01');
 		//var response = Json.encode(this.request);

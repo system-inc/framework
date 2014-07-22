@@ -22,7 +22,7 @@ FileSystemObject = Class.extend({
 		this.path = (path === undefined) ? this.path : path;
 
 		// Make sure we have a path
-		if(path) {
+		if(this.path) {
 			// Figure out the name
 			var name = this.path;
 			if(this.path.endsWith(NodePath.sep)) {
@@ -30,9 +30,9 @@ FileSystemObject = Class.extend({
 			}
 			this.name = name.substr(name.lastIndexOf(NodePath.sep) + 1, name.length);
 
-			// Populate class variables from status
+			// Populate class variables from a stat call
 			this.initializeStatus();
-		}		
+		}
 	},
 
 	constructFromPath: function*(path) {
@@ -41,36 +41,43 @@ FileSystemObject = Class.extend({
 			return false;
 		}
 
-		// Get the file object status
-		var nodeStatus = yield FileSystem.lstat(path);
+		// Check to see if the file exists
+		if(yield FileSystemObject.exists(path)) {
+			// Get the file object status
+			var nodeStatus = yield FileSystem.lstat(path);
 
-		// Make sure to always be an instance of File or Directory
-		if(nodeStatus.isFile()) {
-			return new File(path);
+			// Make sure to always be an instance of File or Directory
+			if(nodeStatus.isFile()) {
+				return new File(path);
+			}
+			else if(nodeStatus.isDirectory()) {
+				return new Directory(path);
+			}
 		}
-		else if(nodeStatus.isDirectory()) {
-			return new Directory(path);
-		}
+
+		return false;
 	},
 
-	initializeStatus: function() {
-		// Get the file object status MAKE THIS ASYNC
-		this.nodeStatus = NodeFileSystem.lstatSync(this.path);
+	initializeStatus: function*() {
+		if(yield FileSystemObject.exists(this.path)) {
+			// Get the file object status MAKE THIS ASYNC
+			this.nodeStatus = yield FileSystem.lstat(this.path);
 
-		// Set the class variables
-		this.size = this.nodeStatus.size;
-		this.mode = this.nodeStatus.mode;
-		this.userId = this.nodeStatus.uid;
-		this.groupId = this.nodeStatus.gid;
-		this.blocks = this.nodeStatus.blocks;
-		this.blockSize = this.nodeStatus.blksize;
-		this.deviceId = this.nodeStatus.dev;
-		this.specialDeviceId = this.nodeStatus.rdev;
-		this.indexNode = this.nodeStatus.ino;
-		this.hardLinks = this.nodeStatus.nlink;
-		this.timeAccessed = new Time(this.nodeStatus.atime);
-		this.timeModified = new Time(this.nodeStatus.mtime);
-		this.timeStatusChanged = new Time(this.nodeStatus.ctime);
+			// Set the class variables
+			this.size = this.nodeStatus.size;
+			this.mode = this.nodeStatus.mode;
+			this.userId = this.nodeStatus.uid;
+			this.groupId = this.nodeStatus.gid;
+			this.blocks = this.nodeStatus.blocks;
+			this.blockSize = this.nodeStatus.blksize;
+			this.deviceId = this.nodeStatus.dev;
+			this.specialDeviceId = this.nodeStatus.rdev;
+			this.indexNode = this.nodeStatus.ino;
+			this.hardLinks = this.nodeStatus.nlink;
+			this.timeAccessed = new Time(this.nodeStatus.atime);
+			this.timeModified = new Time(this.nodeStatus.mtime);
+			this.timeStatusChanged = new Time(this.nodeStatus.ctime);
+		}
 	},
 
 	sizeInBits: function() {
@@ -145,3 +152,10 @@ FileSystemObject = Class.extend({
 
 // Static methods
 FileSystemObject.constructFromPath = FileSystemObject.prototype.constructFromPath;
+FileSystemObject.exists = Promise.method(function(file) {
+    return new Promise(function(resolve, reject) {
+    	NodeFileSystem.exists(file, function(exists) {
+    		resolve(exists);
+    	});
+    });
+});

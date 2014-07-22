@@ -52,7 +52,7 @@ OperatingSystem = Class.extend({
 		// Detect the operating system
 		for(var key in operatingSystems) {
 			var userAgentMatch = userAgent.match(new RegExp('^.*'+operatingSystems[key].userAgentString+'.*$', 'i'));
-			//Log.log(operatingSystems[key].name, userAgentMatch);
+			//Console.out(operatingSystems[key].name, userAgentMatch);
 			if(userAgentMatch) {
 				operatingSystem.name = operatingSystems[key].name;
 				operatingSystem.manufacturer = operatingSystems[key].manufacturer;
@@ -64,7 +64,7 @@ OperatingSystem = Class.extend({
 		// Get the version and break it out into major, minor, patch, and patch minor
 		if(operatingSystemIndex) {
 			var operatingSystemVersionMatches = userAgent.match(new RegExp('^.*'+operatingSystems[operatingSystemIndex].userAgentString+'.+?([\\d\\._]+).*$', 'i'));
-			//Log.log(operatingSystemVersionMatches);
+			//Console.out(operatingSystemVersionMatches);
 			if(operatingSystemVersionMatches && operatingSystemVersionMatches[1]) {
 				operatingSystem.version = new Version(operatingSystemVersionMatches[1]);
 			}

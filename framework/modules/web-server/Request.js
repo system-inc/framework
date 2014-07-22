@@ -34,7 +34,7 @@ Request = Class.extend({
 		// };
 
 		// IP address
-		//Log.log(Json.encode(nodeRequest.connection.remoteAddress));
+		//Console.out(Json.encode(nodeRequest.connection.remoteAddress));
 		this.ipAddress = this.connectingIpAddress = new IpAddress(nodeRequest.connection.remoteAddress);
 		
 		// Referrer

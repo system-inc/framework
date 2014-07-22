@@ -34,7 +34,7 @@ Router = Class.extend({
 
 	route: function(request, response) {
 		var routeMatch = this.matchRoute(request);
-		//Log.log(routeMatch);
+		//Console.out(routeMatch);
 
 		// Handle no route found
 		if(!routeMatch) {

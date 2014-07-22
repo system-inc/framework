@@ -72,7 +72,7 @@ Class.extend = function(childClassProperties) {
 					// We can only clone simple arrays [] and simple objects {} that do not contain references to any classes
 					var isInstanceOfClass = childClassProperties[childClassProperty].constructor.toString().startsWith('function Class()');
 					if(!isInstanceOfClass) {
-						//Log.log('Cloning non-primitive, simple object:', childClassProperty, childClassProperties[childClassProperty]);
+						//Console.out('Cloning assumed non-primitive, simple object:', childClassProperty, childClassProperties[childClassProperty]);
 						this[childClassProperty] = Object.clone(childClassProperties[childClassProperty]);
 					}
 					else {
