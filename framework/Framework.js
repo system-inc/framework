@@ -3,6 +3,7 @@ NodeCrypto = require('crypto');
 NodeFileSystem = require('fs');
 NodeHttp = require('http');
 NodeHttps = require('https');
+NodePath = require('path');
 NodeProcess = process;
 NodeStandardIn = NodeProcess.stdin;
 NodeStandardOut = NodeProcess.stdout;

@@ -1,10 +1,35 @@
 FileSystemObject = Class.extend({
 
+	name: null, // The name of the file (with extension) or directory
+	path: null, // The full path to the file or directory, e.g., /directory/file.extension
+	directory: null, // The directory containing the file system object
+	size: null, // The size of the file system object in bytes
+	mode: null,
+	userId: null,
+	groupId: null,
+	blocks: null,
+	blockSize: null,
+	deviceId: null,
+	specialDeviceId: null,
+	indexNode: null,
+	hardLinks: null,
+	timeAccessed: null,
+	timeModified: null,
+	timeStatusChanged: null,
+	nodeStatus: null,
+	
 	construct: function(path) {
-		this.path = (path === undefined) ? null : path;
+		this.path = (path === undefined) ? this.path : path;
 
 		// Make sure we have a path
 		if(path) {
+			// Figure out the name
+			var name = this.path;
+			if(this.path.endsWith(NodePath.sep)) {
+				name = name.replaceLast(NodePath.sep, '');
+			}
+			this.name = name.substr(name.lastIndexOf(NodePath.sep) + 1, name.length);
+
 			// Populate class variables from status
 			this.initializeStatus();
 		}		
@@ -33,7 +58,7 @@ FileSystemObject = Class.extend({
 		this.nodeStatus = NodeFileSystem.lstatSync(this.path);
 
 		// Set the class variables
-		this.sizeInBytes = this.nodeStatus.size;
+		this.size = this.nodeStatus.size;
 		this.mode = this.nodeStatus.mode;
 		this.userId = this.nodeStatus.uid;
 		this.groupId = this.nodeStatus.gid;
@@ -43,9 +68,49 @@ FileSystemObject = Class.extend({
 		this.specialDeviceId = this.nodeStatus.rdev;
 		this.indexNode = this.nodeStatus.ino;
 		this.hardLinks = this.nodeStatus.nlink;
-		this.accessed = new Time(this.nodeStatus.atime);
-		this.modified = new Time(this.nodeStatus.mtime);
-		this.statusChanged = new Time(this.nodeStatus.ctime);
+		this.timeAccessed = new Time(this.nodeStatus.atime);
+		this.timeModified = new Time(this.nodeStatus.mtime);
+		this.timeStatusChanged = new Time(this.nodeStatus.ctime);
+	},
+
+	sizeInBits: function() {
+		return this.size * 8;
+	},
+
+	sizeInBytes: function() {
+		return this.size;
+	},
+
+	sizeInKilobytes: function() {
+		return this.size / 1000;
+	},
+
+	sizeInKibibytes: function() {
+		return this.size / 1024;
+	},
+
+	sizeInMegabytes: function() {
+		return this.sizeInKilobytes() / 1000;
+	},
+
+	sizeInMebibytes: function() {
+		return this.sizeInKibibytes() / 1024;
+	},
+
+	sizeInGigabytes: function() {
+		return this.sizeInMegabytes() / 1000;
+	},
+
+	sizeInGigibytes: function() {
+		return this.sizeInMebibytes() / 1024;
+	},
+
+	sizeInTerabytes: function() {
+		return this.sizeInTerabytes() / 1000;
+	},
+
+	sizeInTebibytes: function() {
+		return this.sizeInGigibytes() / 1024;
 	},
 
 	isFile: function() {

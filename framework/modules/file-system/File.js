@@ -1,18 +1,24 @@
 File = FileSystemObject.extend({
 
 	file: null, // The full path to the file, e.g., /directory/file.extension; same as path
+	fileWithoutExtension: null, // The full path the file without the extension
+	nameWithoutExtension: null,
+	extension: null,
 
 	construct: function(path) {
 		this.super(path);
-		this.file = (path === undefined ? null : path);
+		this.file = (path === undefined ? this.path : path);
+
+		this.fileWithoutExtension = this.file.substr(0, this.file.lastIndexOf('.'));
+		this.nameWithoutExtension = this.name.substr(0, this.name.lastIndexOf('.'));
+		this.extension = this.file.split('.').reverse()[0];
 	},
 
 	getContentType: function(file) {
 		var contentType = 'application/octet-stream';
-		var extension = file.split('.').reverse()[0];
 		
-		if(FileFormats[extension]) {
-			contentType = FileFormats[extension].type;
+		if(FileFormats[this.extension]) {
+			contentType = FileFormats[this.extension].type;
 		}
 
 		return contentType;
