@@ -3,10 +3,11 @@ require('./Stopwatch');
 
 TimeModuleClass = Module.extend({
 
-	version: new Version('1.0'),
+	version: null,
 
-	construct: function() {
-		this.super();
+	construct: function(settings) {
+		this.super(settings);
+		this.version = new Version('1.0');
 	},
 	
 });

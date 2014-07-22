@@ -2,6 +2,10 @@ String.is = function(value) {
 	return typeof value == 'string';
 }
 
+String.prototype.empty = function() {
+    return (this.length === 0 || !this.trim());
+};
+
 String.prototype.contains = function(string, caseSensitive) {
 	caseSensitive = caseSensitive === false ? false : true;
 	var contains = false;

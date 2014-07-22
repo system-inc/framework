@@ -2,10 +2,11 @@ require('./Log');
 
 LogModuleClass = Module.extend({
 
-	version: new Version('1.0'),
+	version: null,
 
 	construct: function(settings) {
 		this.super(settings);
+		this.version = new Version('1.0');
 
 		// Log settings 
 		// Need default settings that can be overwritten by user specified settings

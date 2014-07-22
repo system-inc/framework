@@ -3,26 +3,62 @@ Cookies = Class.extend({
 	cookies: [],
 
 	construct: function(string) {
-		this.parse(string);
-	},
-
-	parse: function(string) {
-		var self = this;
 		if(string) {
-			string.split(';').forEach(function(cookie) {
-		        var parts = cookie.split('=');
-		        self.cookies.push(new Cookie(parts.shift().trim(), unescape(parts.join('='))));
-	    	});
+			this.parse(string);	
 		}
 	},
 
-	get: function(key) {
+	parse: function(string) {
+		string.split(';').each(function(cookie) {
+			if(!cookie.empty()) {
+				var parts = cookie.split('=');
+	        	this.cookies.push(new Cookie(parts.shift().trim(), unescape(parts.join('='))));
+			}
+		}, this);
+	},
+
+	get: function(key, caseSensitive) {
+		caseSensitive = caseSensitive === false ? false : true;
 		var cookie = null;
 
-		for(var i = 0; i < this.cookies.length; i++) {
-			if(this.cookies[i].key == key) {
-				cookie = this.cookies[i].value;
-				break;
+		if(caseSensitive) {
+			for(var i = 0; i < this.cookies.length; i++) {
+				if(this.cookies[i].key == key) {
+					cookie = this.cookies[i].value;
+					break;
+				}
+			}	
+		}
+		else {
+			for(var i = 0; i < this.cookies.length; i++) {
+				if(this.cookies[i].key.toLowerCase() == key.toLowerCase()) {
+					cookie = this.cookies[i].value;
+					break;
+				}
+			}
+		}
+
+		return cookie;
+	},
+
+	getCookie: function(key, caseSensitive) {
+		caseSensitive = caseSensitive === false ? false : true;
+		var cookie = null;
+
+		if(caseSensitive) {
+			for(var i = 0; i < this.cookies.length; i++) {
+				if(this.cookies[i].key == key) {
+					cookie = this.cookies[i].value;
+					break;
+				}
+			}	
+		}
+		else {
+			for(var i = 0; i < this.cookies.length; i++) {
+				if(this.cookies[i].key.toLowerCase() == key.toLowerCase()) {
+					cookie = this.cookies[i];
+					break;
+				}
 			}
 		}
 
@@ -37,10 +73,23 @@ Cookies = Class.extend({
 		return cookie;
 	},
 
-	update: function() {
-
+	set: function(key, value, caseSensitive) {
+		return this.update(key, value, caseSensitive);
 	},
 
+	update: function(key, value, caseSensitive) {
+		caseSensitive = caseSensitive === false ? false : true;
+		var cookie = this.getCookie(key, false);
+
+		if(cookie != null) {
+			cookie.value = value;
+		}
+		else {
+			cookie = this.create(key, value);
+		}
+
+		return cookie;
+	},
 
 	delete: function() {
 

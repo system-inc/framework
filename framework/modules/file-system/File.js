@@ -4,7 +4,6 @@ File = FileSystemObject.extend({
 
 	construct: function(path) {
 		this.super(path);
-		
 		this.file = (path === undefined ? null : path);
 	},
 

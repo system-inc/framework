@@ -69,8 +69,15 @@ Class.extend = function(childClassProperties) {
 			if(typeof(childClassProperties[childClassProperty]) != 'function') {
 				// Clone non-primitives to localize them to this instantiated object
 				if(!Object.isPrimitive(childClassProperties[childClassProperty])) {
-					//console.log('Cloning non-primitive:', childClassProperty);
-					this[childClassProperty] = Object.clone(childClassProperties[childClassProperty]);
+					// We can only clone simple arrays [] and simple objects {} that do not contain references to any classes
+					var isInstanceOfClass = childClassProperties[childClassProperty].constructor.toString().startsWith('function Class()');
+					if(!isInstanceOfClass) {
+						//Log.log('Cloning non-primitive, simple object:', childClassProperty, childClassProperties[childClassProperty]);
+						this[childClassProperty] = Object.clone(childClassProperties[childClassProperty]);
+					}
+					else {
+						console.log('Error: Simple arrays [] and objects {} may be declared as class variables, but you may not instantiate an instance of class in a class variable definition. Any construction of a new class as a class variable must occur in the construct() method. Move the instantiation of "'+childClassProperty+'"" to the construct() methood.');
+					}
 				}
 				// All primitives can be assigned directly
 				else {

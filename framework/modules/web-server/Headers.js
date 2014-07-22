@@ -1,10 +1,8 @@
 Headers = Class.extend({
 
 	headers: [],
-	cookies: null,
 
 	construct: function(string) {
-		this.parse(string);
 	},
 
 	constructFromNodeHeaders: function(nodeHeaders) {
@@ -17,16 +15,6 @@ Headers = Class.extend({
 		}
 
 		return headers;
-	},
-
-	parse: function(string) {
-		var self = this;
-		if(string) {
-			string.split(';').forEach(function(header) {
-		        var parts = cookie.split('=');
-		        self.cookies.push(new Cookie(parts.shift().trim(), unescape(parts.join('='))));
-	    	});
-		}
 	},
 
 	get: function(key, caseSensitive) {
@@ -107,19 +95,18 @@ Headers = Class.extend({
 
 	},
 
+	addCookies: function(cookies) {
+		cookies.cookies.each(function(cookie) {
+			this.create('Set-Cookie', cookie.toHeaderString());
+		}, this);
+	},
+
 	toArray: function() {
 		var array = [];
 
-		for(var i = 0; i < this.headers.length; i++) {
-			array.push([this.headers[i].key, this.headers[i].value]);
-		}
-
-		// Handle cookies
-		if(this.cookies.cookies.length > 0) {
-			for(var i = 0; i < this.cookies.cookies.length; i++) {
-				array.push(['Set-Cookie', this.cookies.cookies[i].toHeaderString()]);
-			}			
-		}
+		this.headers.each(function(header) {
+			array.push([header.key, header.value]);
+		}, this);
 
 		return array;
 	},

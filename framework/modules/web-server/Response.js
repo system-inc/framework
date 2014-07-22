@@ -10,9 +10,10 @@ Response = Class.extend({
 
 	// Headers
 	statusCode: null,
-	headers: new Headers(),
-	cookies: new Cookies(),	
+	headers: null,
+	cookies: null,
 
+	// Content
 	content: '',
 
 	construct: function(nodeResponse) {
@@ -22,8 +23,9 @@ Response = Class.extend({
 		// Hold onto Node's response object
 		this.nodeResponse = nodeResponse;
 
-		// Connect Cookies to Headers
-		this.headers.cookies = this.cookies;
+		// Instantiate and connect Cookies to Headers
+		this.headers = new Headers();
+		this.cookies = new Cookies();
 	},
 
 	setAcceptedEncodings: function(acceptEncodeHeaderString) {
@@ -65,6 +67,10 @@ Response = Class.extend({
 		this.stopwatch.end();
 		this.headers.create('X-Elapsed-Time-in-'+this.stopwatch.precision.capitalize(), this.stopwatch.elapsedTime);
 
+		// Add the response cookies to the headers
+		this.headers.addCookies(this.cookies);
+
+		// Write the headers out
 		this.nodeResponse.writeHead(this.statusCode, this.headers.toArray());
 	},
 

@@ -6,6 +6,7 @@ Request = Class.extend({
 	headers: null,
 	cookies: null,
 	ipAddress: null,
+	connectingIpAddress: null,
 	referrer: null,
 	browser: null,
 	device: null,
@@ -25,7 +26,6 @@ Request = Class.extend({
 
 		// Cookies
 		this.cookies = new Cookies(this.headers.get('cookie'));
-		this.headers.cookies = this.cookies;
 
 		// Content
 		// this.content = {
@@ -34,6 +34,7 @@ Request = Class.extend({
 		// };
 
 		// IP address
+		//Log.log(Json.encode(nodeRequest.connection.remoteAddress));
 		this.ipAddress = this.connectingIpAddress = new IpAddress(nodeRequest.connection.remoteAddress);
 		
 		// Referrer

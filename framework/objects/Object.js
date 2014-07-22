@@ -20,6 +20,7 @@ Object.clone = function(object) {
     if(object && typeof object === 'object') {
         clone = Object.prototype.toString.call(object) === '[object Array]' ? [] : {};
         for(var key in object) {
+        	// This code 
         	if(object.hasOwnProperty(key)) {
         		clone[key] = Object.clone(object[key]);	
         	}

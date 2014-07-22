@@ -13,11 +13,12 @@ require('./WebServer');
 
 WebServerModuleClass = Module.extend({
 
-	version: new Version('1.0'),
+	version: null,
 	webServers: {},
 
 	construct: function(settings) {
 		this.super(settings);
+		this.version = new Version('1.0');
 
 		// Inspect the settings to see if they want a web server
 		var webServersSettings = this.settings.get('webServers');
