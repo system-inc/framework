@@ -4,12 +4,10 @@ FileSystemObject = Class.extend({
 		this.path = (path === undefined) ? null : path;
 
 		// Make sure we have a path
-		if(!path) {
-			return false;
-		}
-
-		// Populate class variables from status
-		this.initializeStatus();
+		if(path) {
+			// Populate class variables from status
+			this.initializeStatus();
+		}		
 	},
 
 	constructFromPath: function*(path) {

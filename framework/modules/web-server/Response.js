@@ -1,27 +1,29 @@
 Response = Class.extend({
 
-	construct: function(nodeResponse) {
-		// Unique identifier for the response
-		this.id = null;
+	id: null, // Unique identifier for the response
+	stopwatch: null,
+	nodeResponse: null,
 
+	// Encodings
+	encoding: null,
+	acceptedEncodings: [],
+
+	// Headers
+	statusCode: null,
+	headers: new Headers(),
+	cookies: new Cookies(),	
+
+	content: '',
+
+	construct: function(nodeResponse) {
 		// Add a stopwatch to the response
 		this.stopwatch = new Stopwatch();
 		
 		// Hold onto Node's response object
 		this.nodeResponse = nodeResponse;
 
-		// Encodings
-		this.encoding = null;
-		this.acceptedEncodings = [];
-
-		// Headers
-		this.statusCode = null;
-		this.cookies = new Cookies();
-		this.headers = new Headers();
+		// Connect Cookies to Headers
 		this.headers.cookies = this.cookies;
-
-		// Content
-		this.content = '';
 	},
 
 	setAcceptedEncodings: function(acceptEncodeHeaderString) {

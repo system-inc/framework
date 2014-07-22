@@ -1,9 +1,10 @@
 OperatingSystem = Class.extend({
 
+	name: null,
+	manufacturer: null,
+	version: null,
+
 	construct: function() {
-		this.name = null;
-		this.manufacturer = null;
-		this.version = new Version();
 	},
 
 	constructFromUserAgent: function(userAgent) {

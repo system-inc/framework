@@ -1,90 +1,94 @@
 {
-	"title": "Project",
+	"title": "Test Project",
 	"modules": {
 		"webServer": {
-			"protocol": "http",
-			"ports": 8080,
-			"router": {
-				"routes": [
-					{
-						"type": "controller",
-						"controllerName": "Main",
-						"controllerMethodName": "main",
-						"host": "*",
-						"protocol": "*",
-						"port": "*",
-						"method": "*",
-						"expression": "/",
-						"data": {
-							"rootData": "root!",
-							"view": "root"
-						},
-						"children": [
+			"webServers": [
+				{
+					"protocol": "http",
+					"ports": 8080,
+					"router": {
+						"routes": [
 							{
-								"type": "redirect",
-								"redirectStatusCode": 301,
-								"redirectLocation": "http://www.google.com/",
-								"expression": "google/?"
-							},
-							{
-								"type": "file",
-								"expression": "images/(.*)"
-							},
-							{
-								"expression": "users/(\\w+?)/?",
-								"data": {
-									"view": "user",
-									"1": "username"
-								},
-								"children": [
-									{
-										"expression": "story/(\\w+?)/?",
-										"data": {
-											"view": "userStory",
-											"1": "story"
-										}
-									}
-								]
-							},
-							{
-								"method": "PUT",
+								"type": "controller",
+								"controllerName": "Main",
 								"controllerMethodName": "main",
-								"expression": "putOnly/?",
+								"host": "*",
+								"protocol": "*",
+								"port": "*",
+								"method": "*",
+								"expression": "/",
 								"data": {
-									"view": "putOnly"
-								}
-							},
-							{
-								"controllerMethodName": "contact",
-								"expression": "contact/?",
-								"data": {
-									"contactData": "contact!",
-									"view": "contact"
-								}
-							},
-							{
-								"controllerMethodName": "legal",
-								"expression": "legal/?",
-								"data": {
-									"legalData": "legal",
-									"view": "legal"
+									"rootData": "root!",
+									"view": "root"
 								},
 								"children": [
 									{
-										"controllerMethodName": "legalTermsOfService",
-										"expression": "terms-of-service/?",
+										"type": "redirect",
+										"redirectStatusCode": 301,
+										"redirectLocation": "http://www.google.com/",
+										"expression": "google/?"
+									},
+									{
+										"type": "file",
+										"expression": "images/(.*)"
+									},
+									{
+										"expression": "users/(\\w+?)/?",
 										"data": {
-											"legalTermsOfServiceData": "legalTermsOfService",
-											"view": "legalTermsOfService"
+											"view": "user",
+											"1": "username"
 										},
 										"children": [
 											{
-												"controllerMethodName": "legalTermsOfServiceIOs",
-												"expression": "ios/?",
+												"expression": "story/(\\w+?)/?",
 												"data": {
-													"legalTermsOfServiceIOsData": "legalTermsOfServiceIOs",
-													"view": "legalTermsOfServiceIOs"
+													"view": "userStory",
+													"1": "story"
 												}
+											}
+										]
+									},
+									{
+										"method": "PUT",
+										"controllerMethodName": "main",
+										"expression": "putOnly/?",
+										"data": {
+											"view": "putOnly"
+										}
+									},
+									{
+										"controllerMethodName": "contact",
+										"expression": "contact/?",
+										"data": {
+											"contactData": "contact!",
+											"view": "contact"
+										}
+									},
+									{
+										"controllerMethodName": "legal",
+										"expression": "legal/?",
+										"data": {
+											"legalData": "legal",
+											"view": "legal"
+										},
+										"children": [
+											{
+												"controllerMethodName": "legalTermsOfService",
+												"expression": "terms-of-service/?",
+												"data": {
+													"legalTermsOfServiceData": "legalTermsOfService",
+													"view": "legalTermsOfService"
+												},
+												"children": [
+													{
+														"controllerMethodName": "legalTermsOfServiceIOs",
+														"expression": "ios/?",
+														"data": {
+															"legalTermsOfServiceIOsData": "legalTermsOfServiceIOs",
+															"view": "legalTermsOfServiceIOs"
+														}
+													}
+												]
 											}
 										]
 									}
@@ -92,8 +96,8 @@
 							}
 						]
 					}
-				]
-			}
+				}
+			]
 		}
 	}
 }

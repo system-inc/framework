@@ -1,14 +1,24 @@
 WebServer = Server.extend({
 
+	identifier: null,
 	requests: 0,
-	router: new Router(),
+	settings: null,
+	router: null,
 	listeners: {},
+	
+	construct: function(settings) {
+		this.settings = Settings.constructFromObject(settings);
+		
+		// Load the routes into the router
+		this.router = new Router();
+		this.router.loadRoutes(this.settings.get('router.routes'));
 
-	construct: function() {
+		// Start listening
+		this.listen(this.settings.get('ports'));
 	},
 
 	listen: function(ports) {
-		// Create a server for each port they want to listen on
+		// Create a listener for each port they want to listen on
 		ports.toArray().each(function(port) {
 			// If we are already listening on that port
 			if(this.listeners[port]) {
@@ -23,19 +33,12 @@ WebServer = Server.extend({
 				}.bind(this));
 
 				// Make the web server listen on the port
-				this.listeners[port].listen(port);	
+				this.listeners[port].listen(port);
 			}
 		}, this);
 	},
 
 	handleRequest: function(request, response) {
-		// Log.log('');
-		// Log.log('');
-		// Log.log('');
-		// Log.log('');
-		// Log.log('-- Request -- ');
-		// Log.log('');
-
 		// Increment the requests counter
 		response.id = request.id = this.requests;
 		this.requests++;

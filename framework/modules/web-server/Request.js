@@ -1,9 +1,19 @@
 Request = Class.extend({
 
-	construct: function(nodeRequest) {
-		// Unique identifier for the request
-		this.id = null;
+	id: null, // Unique identifier for the request
+	url: null,
+	method: null,
+	headers: null,
+	cookies: null,
+	ipAddress: null,
+	referrer: null,
+	browser: null,
+	device: null,
+	operatingSystem: null,
+	geolocation: null,
+	httpVersion: null,
 
+	construct: function(nodeRequest) {
 		// URL
 		this.url = Url.constructFromNodeRequest(nodeRequest);
 
@@ -55,6 +65,7 @@ Request = Class.extend({
 
 		// Geolocation (optionally provided by Cloudflare)
 		this.geolocation = new Geolocation();
+		this.geolocation.country = new Country();
 		this.geolocation.country.code = this.headers.get('cf-ipcountry');
 
 		// HTTP version

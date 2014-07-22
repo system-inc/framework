@@ -1,17 +1,16 @@
 Stopwatch = Class.extend({
 
+	precision: 'milliseconds',
+	starTime: null,
+	endTime: null,
+	elapsedTime: null,
+	laps: [],
+	time: null,
+
 	construct: function(options) {
 		if(options && options.precision) {
 			this.precision = options.precision;
 		}
-		else {
-			this.precision = 'milliseconds';
-		}
-
-		this.startTime = null;
-		this.endTime = null;
-		this.elapsedTime = null;
-		this.laps = [];
 
 		this.time = new Time();
 		this.time.setPrecision(this.precision);

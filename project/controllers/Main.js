@@ -1,9 +1,9 @@
 Main = Controller.extend({
 
 	main: function*() {
-		//return this.request;
+		return Json.encode(this.request);
 
-		var response = 'hey';
+		//var response = 'hey';
 		//var response = Json.encode(badWebRequest);
 		//var response = yield new WebRequest('http://cloudflare.server.home.kirkouimet.com/hi.html').execute();
 		//var response = yield new WebRequest('http://server.home.kirkouimet.com/').execute();

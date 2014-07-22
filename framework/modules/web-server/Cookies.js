@@ -1,8 +1,8 @@
 Cookies = Class.extend({
 
-	construct: function(string) {
-		this.cookies = [];
+	cookies: [],
 
+	construct: function(string) {
 		this.parse(string);
 	},
 

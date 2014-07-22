@@ -8,8 +8,8 @@ FileSystemModuleClass = Module.extend({
 
 	version: new Version('1.0'),
 
-	construct: function() {
-		this.parent();
+	construct: function(settings) {
+		this.super(settings);
 	},
 	
 });

@@ -1,16 +1,17 @@
 Url = Class.extend({
 
-	construct: function(string) {
-		this.url = null;
-		this.protocol = null;
-		this.host = null;
-		this.port = null;
-		this.path = null;
-		this.query = null;
-		this.queryString = null;
-		this.hash = null;
-		this.input = string; // Testing
+	url: null,
+	protocol: null,
+	host: null,
+	port: null,
+	path: null,
+	query: null,
+	queryString: null,
+	hash: null,
+	input: null,
 
+	construct: function(string) {
+		this.input = string;
 		this.parse(string);	
 	},
 

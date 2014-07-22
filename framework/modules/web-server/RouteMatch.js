@@ -89,7 +89,7 @@ RouteMatch = Class.extend({
 		}
 		else if(this.route.type == 'file') {
 			// Build the file path
-			var path = Project.path+'views'+this.request.url.path;
+			var path = Project.directory+'views'+this.request.url.path;
 
 			// Check if the file exists
 			if(yield File.exists(path)) {

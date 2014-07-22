@@ -1,11 +1,14 @@
 // Node
+NodeCrypto = require('crypto');
 NodeFileSystem = require('fs');
 NodeHttp = require('http');
 NodeHttps = require('https');
+NodeProcess = process;
+NodeStandardIn = NodeProcess.stdin;
+NodeStandardOut = NodeProcess.stdout;
 NodeUrl = require('url');
-NodeZlib = require('zlib');
-NodeCrypto = require('crypto');
 NodeUtility = require('util');
+NodeZlib = require('zlib');
 
 // Framework core objects
 require('./objects/Function');
@@ -28,14 +31,17 @@ require('./modules/time/Time');
 
 Framework = Class.extend({
 
-	version: '1.0',
+	title: 'Project',
+	identifier: 'project',
+	version: null,
 	framework: {
-		path: __dirname+'/',
+		directory: __dirname+'/',
 	},
-	path: null,
+	directory: null,
 	settings: null,
 	environment: null,
 	coreModules: [
+		'Console',
 		'Cryptography',
 		'FileSystem',
 		'Geolocation',
@@ -50,26 +56,45 @@ Framework = Class.extend({
 		'WebServer',
 	],
 
-	construct: function(path) {
-		// Announce loading
-		Log.log('Starting Framework '+this.version+'...');
-
-		// Set the project path
-		this.path = path;
+	construct: function(directory) {
+		// Set the project directory
+		this.directory = directory;
 
 		// Initialize the version
-		this.version = new Version(this.version);
+		this.version = new Version('1.0');
+
+		// Announce loading
+		Log.log('Starting Framework '+this.version+'...');
 
 		// Load the Framework core modules
 		Module.load(this.coreModules);
 
 		// Load the project settings
 		Log.log('Loading project settings...');
-		this.settings = Settings.constructFromFile(this.path+'settings/settings.json');
+		this.settings = Settings.constructFromFile(this.directory+'settings/settings.json');
 		//Log.log(this.settings);
 
+		// Set the title
+		var title = this.settings.get('title');
+		if(title) {
+			this.title = title;
+		}
+
+		// Set the identifier
+		var identifier = this.settings.get('identifier');
+		if(identifier) {
+			this.identifier = identifier;
+		}
+		else {
+			this.identifier = this.title.toDashes();
+		}
+
+		// Anounce project title
+		Log.log('Loaded settings for project "'+this.title+'".');
+
 		// Merge the environment settings
-		this.settings.mergeSettingsFromFile(this.path+'settings/environment.json');
+		Log.log('Merging environment settings...')
+		this.settings.mergeSettingsFromFile(this.directory+'settings/environment.json');
 		//Log.log(this.settings);
 
 		// Initialize the environment
@@ -93,6 +118,3 @@ Framework = Class.extend({
 	},
 
 });
-
-// Static methods
-Framework.createWebServer = Framework.prototype.createWebServer;

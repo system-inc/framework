@@ -26,7 +26,7 @@ Module = Class.extend({
 			//Log.log('Initializing', moduleName.toSpaces(), 'module...');
 
 			// Get the module settings from the project
-			var settings = Project.settings.get('modules.'+moduleName.lowerCaseFirstCharacter());
+			var settings = Project.settings.get('modules.'+moduleName.lowercaseFirstCharacter());
 			global[moduleName+'Module'] = new global[moduleName+'ModuleClass'](settings);
 		}, this);
 	}

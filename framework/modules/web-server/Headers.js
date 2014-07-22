@@ -1,9 +1,9 @@
 Headers = Class.extend({
 
-	construct: function(string) {
-		this.headers = [];
-		this.cookies = null;
+	headers: [],
+	cookies: null,
 
+	construct: function(string) {
 		this.parse(string);
 	},
 

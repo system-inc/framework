@@ -14,6 +14,21 @@ Object.prototype.each = function(callback, context) {
 	}.bind(this));	
 }
 
+Object.clone = function(object) {
+	var clone = object;
+ 
+    if(object && typeof object === 'object') {
+        clone = Object.prototype.toString.call(object) === '[object Array]' ? [] : {};
+        for(var key in object) {
+        	if(object.hasOwnProperty(key)) {
+        		clone[key] = Object.clone(object[key]);	
+        	}
+        }
+    }
+ 
+    return clone;
+}
+
 Object.prototype.merge = function() {
     var objectsToMerge = [];
 

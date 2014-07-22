@@ -101,10 +101,6 @@ LogClass = Class.extend({
 			var path = LogModule.settings.get('file.path');
 			this.file = yield File.open(path, 'a');
 		}
-		// If we have no log file or the LogModule is not initialized, store messages in a buffer to be written when we have a file to write to
-		else {
-			this.buffer += string;
-		}
 
 		// If we have a file
 		if(this.file) {
@@ -115,6 +111,10 @@ LogClass = Class.extend({
 			}
 
 			File.write(this.file, string);
+		}
+		// If we have no log file store messages in a buffer to be written when we have a file to write to
+		else {
+			this.buffer += string;
 		}
 	}
 

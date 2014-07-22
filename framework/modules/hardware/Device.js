@@ -1,11 +1,12 @@
 Device = Class.extend({
 
+	type: null, // mobile, tablet, desktop, robot
+	name: null,
+	model: null,
+	manufacturer: null,
+	architecture: null,
+
 	construct: function() {
-		this.type = null; // mobile, tablet, desktop, robot
-		this.name = null;
-		this.model = null;
-		this.manufacturer = null;
-		this.architecture = null;
 	},
 
 	constructFromUserAgent: function(userAgent) {

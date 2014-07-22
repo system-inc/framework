@@ -1,6 +1,6 @@
 Settings = Class.extend({
 
-	settings: null,
+	settings: {},
 
 	construct: function() {
 	},
@@ -17,9 +17,6 @@ Settings = Class.extend({
 		if(object) {
 			settings.settings = object;	
 		}
-		else {
-			settings.settings = {};
-		}		
 		
 		return settings;
 	},

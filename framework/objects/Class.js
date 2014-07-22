@@ -1,7 +1,7 @@
 Class = function() {};
 Class.extend = function(childClassProperties) {
 	var initializing = false;
-	var functionTest = /xyz/.test(function() {xyz;}) ? /\bparent\b/ : /.*/;
+	var functionTest = /xyz/.test(function() {xyz;}) ? /\bsuper\b/ : /.*/;
 	var parentClassPrototype = this.prototype;
 
 	// Instantiate a base class (but only create the instance, don't run the constructor)
@@ -11,18 +11,19 @@ Class.extend = function(childClassProperties) {
 
 	// Copy the childClassProperties over onto the new childClassPrototype
 	for(var childClassProperty in childClassProperties) {
-		// If we are overwriting an existing function on the parent then we create a parent (super) method
+		// If we are overwriting an existing function on the parent then we create a super method
 		if(typeof(childClassProperties[childClassProperty]) == 'function' && typeof(parentClassPrototype[childClassProperty]) == 'function' && functionTest.test(childClassProperties[childClassProperty])) {
 			childClassPrototype[childClassProperty] = (function(childClassProperty, method) {
 				return function() {
-					var parent = this.parent;
+					// Have to store it as superMethod here because super is a reserved word when not in a class context
+					var superMethod = this.super;
 
-					// Add a new .parent() method that is the same method but on the parent-class
-					this.parent = parentClassPrototype[childClassProperty];
+					// Add a new .super() method that is the same method but on the parent-class
+					this.super = parentClassPrototype[childClassProperty];
 
 					// The method only need to be bound temporarily, so we remove it when we're done executing
 					var methodResults = method.apply(this, arguments);
-					this.parent = parent;
+					this.super = superMethod;
 
 					return methodResults;
 				};
@@ -66,13 +67,12 @@ Class.extend = function(childClassProperties) {
 		for(var childClassProperty in childClassProperties) {
 			// Initialize all class variables (anything not a function)
 			if(typeof(childClassProperties[childClassProperty]) != 'function') {
-				// Clone arrays to localize them to this instantiated object
-				// TODO: I need to turn this into a deep copy
-				if(Array.is(childClassProperties[childClassProperty])) {
-					this[childClassProperty] = childClassProperties[childClassProperty].slice();
+				// Clone non-primitives to localize them to this instantiated object
+				if(!Object.isPrimitive(childClassProperties[childClassProperty])) {
+					//console.log('Cloning non-primitive:', childClassProperty);
+					this[childClassProperty] = Object.clone(childClassProperties[childClassProperty]);
 				}
-				// TODO: I need to clone objects to localize them to the instantiated object
-				// Assign anything else where the reference will not be stored
+				// All primitives can be assigned directly
 				else {
 					this[childClassProperty] = childClassProperties[childClassProperty];
 				}

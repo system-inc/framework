@@ -1,5 +1,7 @@
 IpAddress = Class.extend({
 
+	address: null,
+
 	construct: function(address) {
 		this.address = address;
 	},

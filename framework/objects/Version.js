@@ -1,11 +1,11 @@
 Version = Class.extend({
 
-	construct: function(options) {
-		this.major = null;
-		this.minor = null;
-		this.patch = null;
-		this.patchMinor = null;
+	major: null,
+	minor: null,
+	path: null,
+	patchMinor: null,
 
+	construct: function(options) {
 		// Construct from a string
 		if(options && options.isString()) {
 			var versions = options.replace('_', '.').split('.');

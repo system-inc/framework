@@ -20,14 +20,13 @@ Route = Class.extend({
 	method: null,
 	expression: null,
 	fullExpression: null,
-	data: null,
+	data: {},
 	description: null,
 	parent: null,
 	children: [],
 
 	construct: function(route, parent) {
 		this.parent = (parent === undefined ? null : parent);
-		this.data = {};
 
 		if(route) {
 			this.type = (route.type === undefined ? null : route.type);
@@ -51,7 +50,7 @@ Route = Class.extend({
 			this.method = (route.method === undefined ? null : route.method);
 			this.expression = (route.expression === undefined ? null : route.expression);
 			this.fullExpression = this.getFullExpression();
-			this.data = (route.data === undefined ? {} : route.data);
+			this.data = (route.data === undefined ? this.data : route.data);
 			this.description = (route.description === undefined ? null : route.description);
 
 			// Inherit parent attributes

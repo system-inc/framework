@@ -1,9 +1,10 @@
 Geolocation = Class.extend({
 
+	latitude: null,
+	longitude: null,
+	country: null,
+
 	construct: function() {
-		this.latitude = null;
-		this.longitude = null;
-		this.country = new Country();
 	},
 
 });

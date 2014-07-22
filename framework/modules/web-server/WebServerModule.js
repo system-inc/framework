@@ -14,23 +14,33 @@ require('./WebServer');
 WebServerModuleClass = Module.extend({
 
 	version: new Version('1.0'),
-	webServer: null,
+	webServers: {},
 
 	construct: function(settings) {
-		this.parent(settings);
+		this.super(settings);
 
 		// Inspect the settings to see if they want a web server
-		if(!this.settings.isEmpty()) {
-			// Create a web server if we need one and don't have one already
-			if(!this.webServer) {
-				this.webServer = new WebServer();		
-			}
+		var webServersSettings = this.settings.get('webServers');
+		if(webServersSettings) {
+			var webServerCount = 0;
+			webServersSettings.each(function(webServerSettings) {
+				// Create a web server
+				var webServer = new WebServer(webServerSettings);
 
-			// Listen on the ports specified
-			this.webServer.listen(this.settings.get('ports'));
+				// Make sure the web server has an identifier
+				if(!webServer.identifier) {
+					var webServerIdentifier = Project.identifier+'-web-server';
+					if(webServerCount > 0) {
+						webServerIdentifier += '-'+webServerCount;
+					}
+					webServer.identifier = webServerIdentifier;
+				}
 
-			// Load the project's routes in the web server's router
-			this.webServer.router.loadRoutes(this.settings.get('router.routes'));
+				// Add the web server to WebServerModule
+				this.webServers[webServer.identifier] = webServer;
+
+				webServerCount++;
+			}, this);
 		}
 	},
 	

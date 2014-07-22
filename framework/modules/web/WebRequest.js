@@ -1,5 +1,7 @@
 WebRequest = Class.extend({
 
+	url: null,
+
 	construct: function(url) {
 		this.url = new Url(url);
 	},

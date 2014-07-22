@@ -17,10 +17,10 @@ String.prototype.contains = function(string, caseSensitive) {
 	return contains;
 }
 
-String.prototype.capitalize = function(capitalizeEveryWord, lowerCaseAllWordsAfterFirstWord) {
+String.prototype.capitalize = function(capitalizeEveryWord, lowercaseAllWordsAfterFirstWord) {
 	if(capitalizeEveryWord) {
 		return this.split(' ').map(function(currentValue, index, array) {
-			return currentValue.capitalize(lowerCaseAllWordsAfterFirstWord);
+			return currentValue.capitalize(lowercaseAllWordsAfterFirstWord);
 		}, this)
 		.join(' ').split('-').map(function(currentValue, index, array) {
 			return currentValue.capitalize(false);
@@ -28,17 +28,20 @@ String.prototype.capitalize = function(capitalizeEveryWord, lowerCaseAllWordsAft
 		.join('-');
 	}
 	else {
-		return lowerCaseAllWordsAfterFirstWord ? this.charAt(0).toUpperCase() + this.slice(1).toLowerCase() : this.charAt(0).toUpperCase() + this.slice(1);
+		return lowercaseAllWordsAfterFirstWord ? this.charAt(0).toUpperCase() + this.slice(1).toLowerCase() : this.charAt(0).toUpperCase() + this.slice(1);
 	}
 }
 
-String.prototype.upperCaseFirstCharacter = function() {
+String.prototype.uppercaseFirstCharacter = function() {
 	return this.capitalize();
 }
 
-String.prototype.lowerCaseFirstCharacter = function() {
+String.prototype.lowercaseFirstCharacter = function() {
 	return this.charAt(0).toLowerCase() + this.slice(1);
 }
+
+String.prototype.lowercase = String.prototype.toLowerCase;
+String.prototype.uppercase = String.prototype.toUpperCase;
 
 String.prototype.replaceStandard = String.prototype.replace;
 
@@ -80,20 +83,32 @@ String.prototype.replace = function(pattern, replacement, flags) {
 }
 
 String.prototype.toDashes = function() {
-	var result = this.lowerCaseFirstCharacter();
+	// Just lowercase the first character for now
+	var result = this.lowercaseFirstCharacter();
 
-	// This is assuming we have a string like 'ThisIsMyString'
-	// We should make this function intelligent and autodetect other types like 'this_is_my_string' and 'this is my string'
-	result = result.replace(/([A-Z])/g, function(match) {
-		//Log.log(arguments);
-		return '-'+match.toLowerCase();
-	});
+	// If we have a string with spaces 'This Is My String';
+	if(result.contains(' ')) {
+		result = result.replace(/\s+/g, '-');
+	}
+	// If we have a string with underscore 'This Is My String';
+	else if(result.contains('_')) {
+		result = result.replace(/_+/g, '-');
+	}
+	// Assume we have a string like 'ThisIsMyString' (no spaces)
+	else {
+		result = result.replace(/([A-Z])/g, function(match) {
+			return '-'+match.toLowerCase();
+		});
+	}
+
+	// Lowercase the entire result
+	result = result.lowercase();
 
 	return result;
 }
 
 String.prototype.toSpaces = function() {
-	var result = this.lowerCaseFirstCharacter();
+	var result = this.lowercaseFirstCharacter();
 
 	// This is assuming we have a string like 'ThisIsMyString'
 	// We should make this function intelligent and autodetect other types like 'this_is_my_string' and 'this is my string'
