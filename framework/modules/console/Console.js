@@ -10,18 +10,32 @@ ConsoleClass = Class.extend({
 		this.listen();
 	},
 
-	out: function() {
-		// Prepare the message
-		var message = Console.prepareMessage(arguments);
-
+	write: function(message) {
 		// Write the message to the console
-		//console.log.apply(this, arguments); // This invokes the stock console.log method
 		console.log(message);
 		
 		// If we have a log, write the message to it
 		if(this.log) {
 			this.log.write(message+"\n");
 		}
+	},
+
+	out: function() {
+		// Prepare the message
+		var message = Console.prepareMessage(arguments);
+		//console.log.apply(this, arguments); // This invokes the stock console.log method
+
+		this.write(message);
+	},
+
+	highlight: function() {
+		// Prepare the message
+		var message = Console.prepareMessage(arguments);
+
+		// Wrap the message in ASCII
+		message = "\n\n                                                |>>>\r\n                                                |\r\n                                            _  _|_  _\r\n                                           |;|_|;|_|;|\r\n                                           \\\\.    .  \/\r\n                                            \\\\:  .  \/\r\n                                             ||:   |\r\n                                             ||:.  |\r\n                                             ||:  .|\r\n                                             ||:   |       \\,\/\r\n                                             ||: , |            \/`\\\r\n                                             ||:   |\r\n                                             ||: . |\r\n              __                            _||_   |\r\n     ____--`~    \'--~~__            __ ----~    ~`---,              ___\r\n-~--~                   ~---__ ,--~\'                  ~~----_____-~\'   `~----~~\n\n\n\n\n" + message + "\n\n\n\n\n-------------------------------------------------------------------------------\n";
+
+		this.write(message);
 	},
 
 	attachLog: function(directory) {

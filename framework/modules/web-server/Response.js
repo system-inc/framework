@@ -65,7 +65,7 @@ Response = Class.extend({
 
 		// Track the elapsed time
 		this.stopwatch.end();
-		this.headers.create('X-Elapsed-Time-in-'+this.stopwatch.precision.capitalize(), this.stopwatch.elapsedTime);
+		this.headers.create('X-Processing-Time-in-'+this.stopwatch.precision.capitalize(), this.stopwatch.elapsedTime);
 
 		// Add the response cookies to the headers
 		this.headers.addCookies(this.cookies);
