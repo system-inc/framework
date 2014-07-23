@@ -17,25 +17,28 @@ WebServerModuleClass = Module.extend({
 	webServers: {},
 
 	construct: function(settings) {
-		this.super(settings);
 		this.version = new Version('1.0');
+		this.super(settings);		
 
 		// Inspect the settings to see if they want a web server
 		var webServersSettings = this.settings.get('webServers');
 		if(webServersSettings) {
 			var webServerCount = 0;
-			webServersSettings.each(function(webServerSettings) {
-				// Create a web server
-				var webServer = new WebServer(webServerSettings);
+			webServersSettings.each(function(webServerSettingsObject) {
+				// Get an instance of class Settings to localize to the web server
+				var webServerSettings = Settings.constructFromObject(webServerSettingsObject);
+				var webServerIdentifier = webServerSettings.get('identifier');
 
 				// Make sure the web server has an identifier
-				if(!webServer.identifier) {
-					var webServerIdentifier = Project.identifier+'-web-server';
+				if(!webServerIdentifier) {
+					webServerIdentifier = Project.identifier;
 					if(webServerCount > 0) {
 						webServerIdentifier += '-'+webServerCount;
 					}
-					webServer.identifier = webServerIdentifier;
 				}
+
+				// Create the web server
+				var webServer = new WebServer(webServerIdentifier, webServerSettings);
 
 				// Add the web server to WebServerModule
 				this.webServers[webServer.identifier] = webServer;

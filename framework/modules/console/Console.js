@@ -1,9 +1,12 @@
 ConsoleClass = Class.extend({
 
+	identifier: null,
 	log: null,
 
-	construct: function() {
-		this.log = new Log('/var/www/framework/project/logs/', 'console');
+	construct: function(identifier) {
+		this.identifier = (identifier === undefined ? this.identifier : identifier);
+
+		// Listen for incoming commands from standard in
 		this.listen();
 	},
 
@@ -15,8 +18,14 @@ ConsoleClass = Class.extend({
 		//console.log.apply(this, arguments); // This invokes the stock console.log method
 		console.log(message);
 		
-		// Write the message to the log
-		this.log.write(message);
+		// If we have a log, write the message to it
+		if(this.log) {
+			this.log.write(message+"\n");
+		}
+	},
+
+	attachLog: function(directory) {
+		this.log = new Log(directory, this.identifier);
 	},
 
 	prepareMessage: function(passedArguments) {
@@ -127,4 +136,4 @@ ConsoleClass = Class.extend({
 });
 
 // Instantiate a global console
-Console = new ConsoleClass();
+Console = new ConsoleClass('console');

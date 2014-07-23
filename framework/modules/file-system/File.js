@@ -44,6 +44,21 @@ File.getContentType = File.prototype.getContentType;
 File.read = Promise.promisify(NodeFileSystem.readFile);
 File.open = Promise.promisify(NodeFileSystem.open);
 File.write = Promise.promisify(NodeFileSystem.write);
+File.createWriteStream = Promise.method(function() {
+	var storedContext = this;
+	var storedArguments = arguments;
+
+    return new Promise(function(resolve, reject) {
+    	var writeStream = NodeFileSystem.createWriteStream.apply(storedContext, storedArguments);
+    	writeStream.on('open', function(fileDescriptor) {
+    		resolve(writeStream);
+    	});
+    	writeStream.on('error', function(error) {
+    		console.log(error);
+    		reject(error);
+    	});
+    });
+});
 File.synchronous = {};
 File.synchronous.exists = NodeFileSystem.existsSync;
 File.synchronous.read = NodeFileSystem.readFileSync;

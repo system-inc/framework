@@ -1,9 +1,22 @@
 {
 	"title": "Test Project",
 	"modules": {
+		"console": {
+			"log": {
+				"enabled": true
+			}
+		},
 		"webServer": {
 			"webServers": [
 				{
+					"logs": {
+						"general": {
+							"enabled": true
+						},
+						"requests": {
+							"enabled": true
+						}
+					},
 					"protocol": "http",
 					"ports": 8080,
 					"router": {

@@ -13,8 +13,12 @@ Request = Class.extend({
 	operatingSystem: null,
 	geolocation: null,
 	httpVersion: null,
+	time: null,
 
 	construct: function(nodeRequest) {
+		// Time
+		this.time = new Time();
+
 		// URL
 		this.url = Url.constructFromNodeRequest(nodeRequest);
 

@@ -66,11 +66,11 @@ Framework = Class.extend({
 	],
 
 	construct: function(directory) {
-		// Set the project directory
-		this.directory = directory;
-
 		// Initialize the version
 		this.version = new Version('1.0');
+
+		// Set the project directory
+		this.directory = directory;
 
 		// Announce loading
 		Console.out('Starting Framework '+this.version+'...');

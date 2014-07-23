@@ -5,9 +5,38 @@ WebServer = Server.extend({
 	settings: null,
 	router: null,
 	listeners: {},
+	logs: {
+		general: null,
+		requests: null,
+	},
 	
-	construct: function(settings) {
-		this.settings = Settings.constructFromObject(settings);
+	construct: function(identifier, settings) {
+		this.identifier = identifier;
+		this.settings = (settings === undefined ? new Settings() : settings);
+		this.settings.default({
+			'logs': {
+				'general': {
+					'enabled': true,
+					'directory': Project.directory+'logs/',
+					'nameWithoutExtension': 'web-server-'+this.identifier,
+				},
+				'requests': {
+					'enabled': true,
+					'directory': Project.directory+'logs/',
+					'nameWithoutExtension': 'web-server-'+this.identifier+'-requests',
+				},
+			}
+		});
+
+		// Conditionally attach the general log
+		if(this.settings.get('logs.general.enabled')) {
+			this.logs.general = new Log(this.settings.get('logs.general.directory'), this.settings.get('logs.general.nameWithoutExtension'));
+		}
+
+		// Conditionally attach the requests log
+		if(this.settings.get('logs.requests.enabled')) {
+			this.logs.requests = new Log(this.settings.get('logs.requests.directory'), this.settings.get('logs.requests.nameWithoutExtension'));
+		}
 		
 		// Load the routes into the router
 		this.router = new Router();
@@ -42,13 +71,27 @@ WebServer = Server.extend({
 		// Increment the requests counter
 		response.id = request.id = this.requests;
 		this.requests++;
-		Console.out('Received request', request.id+':', request.method, request.url.input);
+		
+		// Get the requests log entry
+		var requestsLogEntry = this.prepareRequestsLogEntry(request);
+		Console.out(this.identifier+': '+requestsLogEntry);
+
+		// Conditionally log the request
+		if(this.logs.requests) {
+			this.logs.requests.write(requestsLogEntry+"\n")
+		}		
 
 		// Let the response know what accepted encodings the request allows
 		response.setAcceptedEncodings(request.headers.get('accept-encoding'));
 
 		// Identify and follow the route
 		this.router.route(request, response);
+	},
+
+	prepareRequestsLogEntry: function(request) {
+		var requestsLogEntry = '"'+request.id+'","'+request.time.getDateTime()+'","'+request.ipAddress.address+'","'+request.method+'","'+request.url.input+'"';
+
+		return requestsLogEntry;
 	},
 	
 });
