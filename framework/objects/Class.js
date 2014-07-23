@@ -31,25 +31,24 @@ Class.extend = function(childClassProperties) {
 		}
 		// If we have a generator
 		else if(childClassProperties[childClassProperty] && childClassProperties[childClassProperty].isGenerator && childClassProperties[childClassProperty].isGenerator()) {
-			// Keep a reference to the generator method to invoke later in the promise
-			var generatorMethod = childClassProperties[childClassProperty];
+			// Use a closure to generate a new, unique anonymous function which returns a promise which will resolve when the method completes execution
+			childClassPrototype[childClassProperty] = (function(childClassProperty, generatorMethod) {
+				return function() {
+					// Store the instance to apply to the generator method later in the promise
+					var childClassInstance = this;
 
-			// Reassign how generator functions execute: anytime a generator is called we automatically wrap it in a promise and run it
-			childClassPrototype[childClassProperty] = function() {
-				// Store the instance to apply to the generator method later in the promise
-				var childClassInstance = this;
+					// Store the arguments to apply to the generator method later in the promise
+					var childClassPrototypeArguments = arguments;
 
-				// Store the arguments to apply to the generator method later in the promise
-				var childClassPrototypeArguments = arguments;
+					var promise = new Promise(function(resolve) {
+						// Invoke and run the generator with the right context and arguments
+						Generator.run(generatorMethod.apply(childClassInstance, childClassPrototypeArguments), resolve);
+					});
 
-				// The promise which runs the generator which resolves the promise
-				var promise = new Promise(function(resolve) {
-					// Invoke and run the generator with the right context and arguments
-					Generator.run(generatorMethod.apply(childClassInstance, childClassPrototypeArguments), resolve);
-				});
-
-				return promise;
-			}
+					// All generators return a promise
+					return promise;
+				};
+			})(childClassProperty, childClassProperties[childClassProperty])
 		}
 		// Copy any methods over to the class prototype
 		else if(typeof(childClassProperties[childClassProperty]) == 'function') {

@@ -43,7 +43,8 @@ Generator.run = function(generator, resolve) {
 			// Catch any and all errors
 			next.value.catch(function(error) {
 				// Log the error
-				Console.out(error);
+				//Console.out(error);
+				console.log(error);
 
 				// Set next.value to false
 				next.value = false;

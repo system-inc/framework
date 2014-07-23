@@ -3,15 +3,20 @@ ConsoleClass = Class.extend({
 	log: null,
 
 	construct: function() {
-		this.listen();
-		
 		this.log = new Log('/var/www/framework/project/logs/', 'console');
+		this.listen();
 	},
 
 	out: function() {
-		//console.log.apply(this, arguments);
+		// Prepare the message
 		var message = Console.prepareMessage(arguments);
+
+		// Write the message to the console
+		//console.log.apply(this, arguments); // This invokes the stock console.log method
 		console.log(message);
+		
+		// Write the message to the log
+		this.log.write(message);
 	},
 
 	prepareMessage: function(passedArguments) {

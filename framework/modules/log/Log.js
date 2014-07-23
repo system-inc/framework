@@ -3,7 +3,6 @@ Log = Class.extend({
 	directory: null,
 	nameWithoutExtension: null,
 	file: null,
-	handle: null,
 
 	construct: function(directory, nameWithoutExtension) {
 		this.directory = directory;
@@ -13,20 +12,23 @@ Log = Class.extend({
 	},
 
 	write: function*(data) {
-		// Make sure we have something to write
-		if(!data) {
-			return;
-		}
+		//// Open a file handle if we don't have one
+		//if(!this.file.handle) {
+		//	//console.log('No this.file.handle, calling this.file.open()')
+		//	var handle = yield this.file.open('a');
+		//	//console.log('this.file.handle', this.file.handle);
+		//}
 
-		// Add a line break at the end of every log data
-		data += "\n";
+		//// Make sure we have something to write
+		//if(!data) {
+		//	return;
+		//}
 
-		// If we don't have an open file handle
-		if(!this.file.handle) {
-			yield this.file.open();
-		}
+		//// Add a line break at the end of every log data
+		//data += "\n";
 
-		yield this.file.write(data);
+		//// Write to the log
+		//this.file.write(data); // No need to yield here since we aren't doing anything with the results
 	}
 
 });
