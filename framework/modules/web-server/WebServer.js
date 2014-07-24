@@ -85,7 +85,20 @@ WebServer = Server.extend({
 		response.setAcceptedEncodings(request.headers.get('accept-encoding'));
 
 		// Identify and follow the route
-		this.router.route(request, response);
+		try {
+			//throw(500);
+			this.router.route(request, response);
+		}
+		catch(exception) {
+			this.handleException(request, response, exception);
+		}
+	},
+
+	handleException: function(request, response, exception) {
+		console.log('handling exception!', exception);
+		response.statusCode = exception;
+		response.content = 'Customize this!';
+		response.send();
 	},
 
 	prepareRequestsLogEntry: function(request) {

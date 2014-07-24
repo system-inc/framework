@@ -44,7 +44,7 @@ Generator.run = function(generator, resolve) {
 			next.value.catch(function(error) {
 				// Log the error
 				//Console.out(error);
-				console.log(error);
+				console.log('Caught exception at Generator.js:', error);
 
 				// Set next.value to false
 				next.value = false;

@@ -61,6 +61,7 @@ RouteMatch = Class.extend({
 	},
 
 	follow: function*() {
+		//throw(502);
 		// Finalize route data
 		this.finalizeRouteData();
 

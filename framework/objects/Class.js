@@ -45,6 +45,10 @@ Class.extend = function(childClassProperties) {
 						Generator.run(generatorMethod.apply(childClassInstance, childClassPrototypeArguments), resolve);
 					});
 
+					promise.catch(function(exception) {
+						console.log('Caught exception at Class.js:', exception);
+					});
+
 					// All generators return a promise
 					return promise;
 				};
