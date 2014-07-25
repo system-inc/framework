@@ -62,7 +62,7 @@ File.createWriteStream = Promise.method(function() {
 File.synchronous = {};
 File.synchronous.exists = NodeFileSystem.existsSync;
 File.synchronous.read = NodeFileSystem.readFileSync;
-File.synchronous.readJson = function(file) {
+File.synchronous.read.json = function(file) {
 	var result = {};
 
 	if(File.synchronous.exists(file)) {

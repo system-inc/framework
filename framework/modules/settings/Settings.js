@@ -7,7 +7,7 @@ Settings = Class.extend({
 
 	constructFromFile: function(path) {
 		var settings = new Settings();
-		settings.settings = File.synchronous.readJson(path);
+		settings.settings = File.synchronous.read.json(path);
 
 		return settings;
 	},
@@ -26,7 +26,7 @@ Settings = Class.extend({
 	},
 
 	mergeSettingsFromFile: function(path) {
-		var settings = File.synchronous.readJson(path);
+		var settings = File.synchronous.read.json(path);
 		//Console.out('Settings from', path, 'to merge:', settings);
 		this.settings.merge(settings);
 	},
