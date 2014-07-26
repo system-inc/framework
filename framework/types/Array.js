@@ -68,6 +68,32 @@ Array.prototype.get = function(index) {
 	}
 }
 
-Array.prototype.each = Array.prototype.forEach;
+// Takes either a normal callback function or a generator callback function
+Array.prototype.each = function(callback, context) {
+	// If the callback is not a generator, use the standard .forEach
+	if(!callback.isGenerator()) {
+		Array.prototype.forEach.apply(this, arguments)
+	}
+	// If the callback is a generator, work some inception magic
+	else {
+		// Keep track of the array
+		var array = this;
+
+		// This top level promise resolves after all array elements have been looped over
+	    return new Promise(function(resolve) {
+	    	// Run an anonymous generator function which loops over each array element, allowing me to yield on a sub promise
+	    	Generator.run(function*() {
+	    		// Use a for loop here instead of .each so I can use yield below
+		    	for(var i = 0; i < array.length; i++) {
+		    		// Yield on a sub promise which resolves when the generator callback for the current array element completes
+		   			yield new Promise(function(subResolve) {
+		   				// Invoke and run the generator callback for the current array element, resolve the sub promise when complete
+						Generator.run(callback.apply(context, [array[i]]), subResolve);
+					});
+		    	}
+	    	}, resolve);
+	    });
+	}
+}
 
 Array.prototype.toString = Object.prototype.toString;

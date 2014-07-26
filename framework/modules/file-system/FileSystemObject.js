@@ -147,15 +147,18 @@ FileSystemObject = Class.extend({
 	isSocket: function() {
 		return this.nodeStatus.isSocket();
 	},
+
+	exists: Promise.method(function(fileSystemObject) {
+	    return new Promise(function(resolve, reject) {
+	    	NodeFileSystem.exists(fileSystemObject, function(exists) {
+	    		//console.log(fileSystemObject, exists);
+	    		resolve(exists);
+	    	});
+	    });
+	}),
 	
 });
 
 // Static methods
 FileSystemObject.constructFromPath = FileSystemObject.prototype.constructFromPath;
-FileSystemObject.exists = Promise.method(function(file) {
-    return new Promise(function(resolve, reject) {
-    	NodeFileSystem.exists(file, function(exists) {
-    		resolve(exists);
-    	});
-    });
-});
+FileSystemObject.exists = FileSystemObject.prototype.exists;

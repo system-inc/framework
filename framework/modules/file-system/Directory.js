@@ -28,7 +28,36 @@ Directory = FileSystemObject.extend({
 		return list;
 	},
 
+	create: function*(directory, mode) {
+		// Normalize the path for the operating system
+		var directory = NodePath.normalize(directory);
+		
+		// Remove any beginning separators
+		if(directory.startsWith(NodePath.sep)) {
+			directory = directory.replaceFirst(NodePath.sep, '');
+		}
+		//Console.out(directory);
+
+		var directories = directory.split(NodePath.sep);
+		//Console.out(directories);
+
+		var currentFullDirectory = '/';
+		yield directories.each(function*(currentDirectory) {
+			currentFullDirectory = currentFullDirectory+currentDirectory+NodePath.sep;
+
+			// Check if the directory exists
+			if(yield Directory.exists(currentFullDirectory)) {
+				console.log(currentFullDirectory, 'exists');
+			}
+			else {
+				console.log(currentFullDirectory, 'DOES NOT exist');
+			}
+		});
+	},
+
 });
 
 // Static methods
 Directory.list = Directory.prototype.list;
+Directory.create = Directory.prototype.create;
+Directory.make = Promise.promisify(NodeFileSystem.mkdir);
