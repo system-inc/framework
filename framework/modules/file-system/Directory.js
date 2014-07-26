@@ -36,21 +36,29 @@ Directory = FileSystemObject.extend({
 		if(directory.startsWith(NodePath.sep)) {
 			directory = directory.replaceFirst(NodePath.sep, '');
 		}
+		// Remove any ending separators
+		if(directory.endsWith(NodePath.sep)) {
+			directory = directory.replaceLast(NodePath.sep, '');
+		}
 		//Console.out(directory);
 
 		var directories = directory.split(NodePath.sep);
 		//Console.out(directories);
 
+		// Loop through each directory starting at root and make sure the directory exists and if it doesn't create it
 		var currentFullDirectory = '/';
 		yield directories.each(function*(currentDirectory) {
 			currentFullDirectory = currentFullDirectory+currentDirectory+NodePath.sep;
 
 			// Check if the directory exists
 			if(yield Directory.exists(currentFullDirectory)) {
-				console.log(currentFullDirectory, 'exists');
+				//console.log(currentFullDirectory, 'exists');
 			}
+			// If the directory does not exist, create it
 			else {
-				console.log(currentFullDirectory, 'DOES NOT exist');
+				//console.log(currentFullDirectory, 'DOES NOT exist, creating');
+				yield Directory.make(currentFullDirectory, mode);
+				Console.out('Created directory', currentFullDirectory);
 			}
 		});
 	},

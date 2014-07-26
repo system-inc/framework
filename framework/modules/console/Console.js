@@ -119,7 +119,7 @@ ConsoleClass = Class.extend({
 	    message = '['+new Time().getDateTime()+'] ('+fileName+':'+lineNumber+") "+message;
 
 		if(!className) {
-	    	message = error.stack;
+	    	//message = error.stack;
 	    }
 
 	    return message;

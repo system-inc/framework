@@ -33,6 +33,9 @@ Log = Class.extend({
 		// If we do not have a write stream and are not initializing one, or if the current write stream is not writeable
 		//if((!this.writeStream && !this.initializingWriteStream) || (this.writeStream && !this.writeStream.writable)) {
 		if(!this.writeStream && !this.initializingWriteStream) {
+			// Make sure the directory for the log exists
+			yield Directory.create(this.directory);
+
 			// Prevent other calls to .write() from creating more write streams
 			this.initializingWriteStream = true;
 

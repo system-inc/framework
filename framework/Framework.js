@@ -113,8 +113,6 @@ Framework = Class.extend({
 	initialize: function() {
 		// Initialize the Framework core modules
 		Module.initialize(this.coreModules);
-
-		Directory.create(Project.directory+'/logs/test');
 	},
 
 	initializeEnvironment: function() {
