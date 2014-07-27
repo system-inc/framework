@@ -79,14 +79,14 @@ WebServer = Server.extend({
 		// Conditionally log the request
 		if(this.logs.requests) {
 			this.logs.requests.write(requestsLogEntry+"\n")
-		}		
+		}
 
 		// Let the response know what accepted encodings the request allows
 		response.setAcceptedEncodings(request.headers.get('accept-encoding'));
 
-		// Identify and follow the route
+		// Try crashing the program
 		try {
-			//throw(500);
+			// Identify and follow the route
 			this.router.route(request, response);
 		}
 		catch(exception) {
@@ -96,7 +96,7 @@ WebServer = Server.extend({
 
 	handleException: function(request, response, exception) {
 		console.log('handling exception!', exception);
-		response.statusCode = exception;
+		response.statusCode = 500;
 		response.content = 'Customize this!';
 		response.send();
 	},

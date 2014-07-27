@@ -2,7 +2,7 @@ Version = Class.extend({
 
 	major: null,
 	minor: null,
-	path: null,
+	patch: null,
 	patchMinor: null,
 
 	construct: function(options) {

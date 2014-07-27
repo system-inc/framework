@@ -40,9 +40,12 @@ Class.extend = function(childClassProperties) {
 					// Store the arguments to apply to the generator method later in the promise
 					var childClassPrototypeArguments = arguments;
 
-					var promise = new Promise(function(resolve) {
-						// Invoke and run the generator with the right context and arguments
-						Generator.run(generatorMethod.apply(childClassInstance, childClassPrototypeArguments), resolve);
+					// Invoke the generator with the right context and arguments
+					var invokedGenerator = generatorMethod.apply(childClassInstance, childClassPrototypeArguments);
+
+					var promise = new Promise(function(resolve, reject) {
+						// Run the invoked generator
+						Generator.run(invokedGenerator, resolve, reject);
 					});
 
 					promise.catch(function(exception) {

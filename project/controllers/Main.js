@@ -1,9 +1,7 @@
 Main = Controller.extend({
 
 	main: function*() {
-		
-
-		//throw(503);		
+		//throw('Main.main*()');
 
 		return Json.encode(this.request);
 

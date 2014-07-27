@@ -7,6 +7,8 @@ Router = Class.extend({
 	},
 
 	loadRoutes: function(routes, project) {
+		Console.out('Loading routes...')
+
 		routes.each(function(routeJson) {
 			this.routes.push(new Route(routeJson));
 		}, this);
@@ -33,7 +35,6 @@ Router = Class.extend({
 	},
 
 	route: function(request, response) {
-		//throw(501);
 		var routeMatch = this.matchRoute(request);
 		//Console.out(routeMatch);
 

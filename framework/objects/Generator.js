@@ -1,7 +1,7 @@
 Generator = function() {
 };
 
-Generator.run = function(generator, resolve) {
+Generator.run = function(generator, resolve, reject) {
 	// Make sure we are working with an invoked generator
 	if(generator instanceof Function) {
 		generator = generator();
@@ -23,7 +23,7 @@ Generator.run = function(generator, resolve) {
 
 		// Move to the next yield or return
 		next = generator.next(value); // Pass the value into the generator so it can be assigned
-		//Console.out('Function.run.pump next:', next);	
+		//Console.out('Function.run.pump next:', next);
 
 		// Handle promises by not calling generator.next() until the promise completes
 		if(next.value instanceof Promise) {
@@ -41,16 +41,17 @@ Generator.run = function(generator, resolve) {
 			});
 
 			// Catch any and all errors
-			next.value.catch(function(error) {
-				// Log the error
-				//Console.out(error);
-				console.log('Caught exception at Generator.js:', error);
+			next.value.catch(function(exception) {
+				// Log the exception
+				//Console.out(exception);
+				console.log('Caught exception at Generator.js:', exception);
 
 				// Set next.value to false
-				next.value = false;
+				next.value = exception;
 
 				// Pump the generator
-				pump(generator, next);
+				//pump(generator, next);
+				generator.throw(exception);
 			});
 		}
 		// If we don't have a promise, keep moving the generator forward

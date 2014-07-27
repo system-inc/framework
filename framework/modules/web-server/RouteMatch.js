@@ -61,7 +61,8 @@ RouteMatch = Class.extend({
 	},
 
 	follow: function*() {
-		//throw(502);
+		throw 'RouteMatch.follow*()';
+
 		// Finalize route data
 		this.finalizeRouteData();
 
@@ -82,7 +83,7 @@ RouteMatch = Class.extend({
 				this.response.statusCode = 404;
 				content = this.request.method+' '+this.request.url.path+' not found.';
 				content += ' Controller '+this.route.controllerName+' with method '+this.route.controllerMethodName+' does not exist.';
-			}	
+			}
 		}
 		else if(this.route.type == 'redirect') {
 			this.response.statusCode = this.route.redirectStatusCode;

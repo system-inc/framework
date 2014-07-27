@@ -3,6 +3,7 @@ console.log("\x1B[90m        ____________\r\n       \/\\  ________ \\\r\n      \
 
 // Node
 NodeCrypto = require('crypto');
+NodeDomain = require('domain');
 NodeFileSystem = require('fs');
 NodeHttp = require('http');
 NodeHttps = require('https');
@@ -76,6 +77,7 @@ Framework = Class.extend({
 		Console.out('Starting Framework '+this.version+'...');
 
 		// Load the Framework core modules
+		Console.out('Loading modules...');
 		Module.load(this.coreModules);
 
 		// Load the project settings
