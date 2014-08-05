@@ -26,7 +26,7 @@
 								"controllerName": "Main",
 								"controllerMethodName": "main",
 								"host": "*",
-								"protocol": "*",
+								"protocol": "http",
 								"port": "*",
 								"method": "*",
 								"expression": "/",

@@ -1,11 +1,12 @@
 Response = Class.extend({
 
 	id: null, // Unique identifier for the response
+	request: null,
 	stopwatch: null,
 	nodeResponse: null,
 
 	// Encodings
-	encoding: null,
+	encoding: 'identity',
 	acceptedEncodings: [],
 
 	// Headers
@@ -16,12 +17,15 @@ Response = Class.extend({
 	// Content
 	content: '',
 
-	construct: function(nodeResponse) {
+	construct: function(nodeResponse, request) {
 		// Add a stopwatch to the response
 		this.stopwatch = new Stopwatch();
 		
 		// Hold onto Node's response object
 		this.nodeResponse = nodeResponse;
+
+		// Reference the request
+		this.request = request;
 
 		// Instantiate and connect Cookies to Headers
 		this.headers = new Headers();
@@ -48,6 +52,9 @@ Response = Class.extend({
 	},
 
 	send: function() {
+		// Let the response know what accepted encodings the request allows
+		this.setAcceptedEncodings(this.request.headers.get('accept-encoding'));
+
 		this.sendHeaders();
 		this.sendContent();
 	},
@@ -59,9 +66,7 @@ Response = Class.extend({
 		}
 
 		// Set the content encoding header
-		if(this.encoding) {
-			this.headers.update('Content-Encoding', this.encoding);
-		}
+		this.headers.update('Content-Encoding', this.encoding);
 
 		// Track the elapsed time
 		this.stopwatch.end();
@@ -75,19 +80,22 @@ Response = Class.extend({
 	},
 
 	sendContent: function() {
-		var self = this;
+		//console.log(this.content);
+		//console.log(this.acceptedEncodings);
 
 		// Deflate
 		if(this.encoding == 'deflate') {
+			//console.log('deflate!');
 			NodeZlib.deflate(new Buffer(this.content, 'utf-8'), function(error, result) {
-				self.nodeResponse.end(result);
-			});
+				this.nodeResponse.end(result);
+			}.bind(this));
 		}
 		// Gzip
 		else if(this.encoding = 'gzip') {
+			//console.log('gzip!');
 			NodeZlib.gzip(new Buffer(this.content, 'utf-8'), function(error, result) {
-				self.nodeResponse.end(result);
-			});
+				this.nodeResponse.end(result);
+			}.bind(this));
 		}
 		// Standard
 		else {

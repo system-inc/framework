@@ -34,23 +34,19 @@ Class.extend = function(childClassProperties) {
 			// Use a closure to generate a new, unique anonymous function which returns a promise which will resolve when the method completes execution
 			childClassPrototype[childClassProperty] = (function(childClassProperty, generatorMethod) {
 				return function() {
-					// Store the instance to apply to the generator method later in the promise
-					var childClassInstance = this;
-
-					// Store the arguments to apply to the generator method later in the promise
-					var childClassPrototypeArguments = arguments;
-
 					// Invoke the generator with the right context and arguments
-					var invokedGenerator = generatorMethod.apply(childClassInstance, childClassPrototypeArguments);
+					var invokedGeneratorMethod = generatorMethod.apply(this, arguments);
 
 					var promise = new Promise(function(resolve, reject) {
 						// Run the invoked generator
-						Generator.run(invokedGenerator, resolve, reject);
+						Generator.run(invokedGeneratorMethod, resolve, reject);
 					});
 
-					promise.catch(function(exception) {
-						console.log('Caught exception at Class.js:', exception);
-					});
+					// Catch and rethrow any errors
+					//promise.catch(function(error) {
+					//	Console.out('Caught error at Class.js:', error.message);
+					//	throw(error);
+					//});
 
 					// All generators return a promise
 					return promise;

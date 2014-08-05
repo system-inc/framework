@@ -60,8 +60,8 @@ FileSystemObject = Class.extend({
 
 	initializeStatus: function*() {
 		if(yield FileSystemObject.exists(this.path)) {
-			// Get the file object status MAKE THIS ASYNC
-			this.nodeStatus = yield FileSystem.lstat(this.path);
+			// Get the file object status
+			this.nodeStatus = yield FileSystem.stat(this.path);
 
 			// Set the class variables
 			this.size = this.nodeStatus.size;

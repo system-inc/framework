@@ -68,4 +68,16 @@ Directory = FileSystemObject.extend({
 // Static methods
 Directory.list = Directory.prototype.list;
 Directory.create = Directory.prototype.create;
-Directory.make = Promise.promisify(NodeFileSystem.mkdir);
+//Directory.make = Promise.promisify(NodeFileSystem.mkdir);
+Directory.make = Promise.method(function(path, mode) {
+    return new Promise(function(resolve, reject) {
+    	NodeFileSystem.mkdir(function(error) {
+    		if(error) {
+    			reject(error);
+    		}
+    		else {
+    			resolve(true);
+    		}
+    	});
+    });
+});

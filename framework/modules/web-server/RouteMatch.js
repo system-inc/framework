@@ -1,12 +1,17 @@
 RouteMatch = Class.extend({
 
 	route: null,
+	webServer: null,
 	request: null,
 	response: null,
 	partial: false,
 	complete: false,
 	data: {},
 	errors: [],
+
+	setWebServer: function(webServer) {
+		this.webServer = webServer;
+	},
 
 	setRequest: function(request) {
 		this.request = request;
@@ -61,8 +66,6 @@ RouteMatch = Class.extend({
 	},
 
 	follow: function*() {
-		throw 'RouteMatch.follow*()';
-
 		// Finalize route data
 		this.finalizeRouteData();
 
@@ -110,7 +113,7 @@ RouteMatch = Class.extend({
 				this.response.statusCode = 404;
 				content = this.request.url.path+' not found.';
 			}
-		}		
+		}
 
 		// If content exists, make sure it is a string - THIS BREAKS IMAGES
 		// if(content && !content.isString()) {

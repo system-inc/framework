@@ -39,7 +39,7 @@ WebServer = Server.extend({
 		}
 		
 		// Load the routes into the router
-		this.router = new Router();
+		this.router = new Router(this);
 		this.router.loadRoutes(this.settings.get('router.routes'));
 
 		// Start listening
@@ -58,7 +58,18 @@ WebServer = Server.extend({
 				// Create the web server
 				Console.out('Listening on port '+port+'.');
 				this.listeners[port] = NodeHttp.createServer(function(nodeRequest, nodeResponse) {
-					this.handleRequest(new Request(nodeRequest), new Response(nodeResponse));
+					// Create Framework request and response objects
+					var request = new Request(nodeRequest);
+					var response = new Response(nodeResponse, request);
+
+					// Handle the request
+					try {
+						this.handleRequest(request, response);
+					}
+					// Send any errors to this.handleError
+					catch(error) {
+						this.handleError(request, response, error);
+					}
 				}.bind(this));
 
 				// Make the web server listen on the port
@@ -72,7 +83,7 @@ WebServer = Server.extend({
 		response.id = request.id = this.requests;
 		this.requests++;
 		
-		// Get the requests log entry
+		// Show the request in the console
 		var requestsLogEntry = this.prepareRequestsLogEntry(request);
 		Console.out(this.identifier+': '+requestsLogEntry);
 
@@ -81,23 +92,22 @@ WebServer = Server.extend({
 			this.logs.requests.write(requestsLogEntry+"\n")
 		}
 
-		// Let the response know what accepted encodings the request allows
-		response.setAcceptedEncodings(request.headers.get('accept-encoding'));
-
-		// Try crashing the program
-		try {
-			// Identify and follow the route
-			this.router.route(request, response);
-		}
-		catch(exception) {
-			this.handleException(request, response, exception);
-		}
+		// Use this to troubleshoot race conditions
+		//var randomMilliseconds = Number.random(100, 3000);
+		//console.log('waiting '+randomMilliseconds+' milliseconds');
+		//Function.delay(randomMilliseconds, function() {
+		//	this.router.route(request, response);
+		//}.bind(this));
+		
+		// Identify and follow the route
+		this.router.route(request, response);
 	},
 
-	handleException: function(request, response, exception) {
-		console.log('handling exception!', exception);
+	handleError: function(request, response, error) {
+		//console.log('WebServer.handleError()', error);
+		console.log('Handling error for', request.id);
 		response.statusCode = 500;
-		response.content = 'Customize this!';
+		response.content = 'Error!'+"\n"+error.message;
 		response.send();
 	},
 

@@ -41,9 +41,52 @@ File = FileSystemObject.extend({
 
 // Static methods
 File.getContentType = File.prototype.getContentType;
-File.read = Promise.promisify(NodeFileSystem.readFile);
-File.open = Promise.promisify(NodeFileSystem.open);
-File.write = Promise.promisify(NodeFileSystem.write);
+
+//File.read = Promise.promisify(NodeFileSystem.readFile);
+File.read = Promise.method(function(fileName, options) {
+    return new Promise(function(resolve, reject) {
+    	NodeFileSystem.readFile(fileName, options, function(error, data) {
+    		if(error) {
+    			reject(error);
+    		}
+    		else {
+    			resolve(data);
+    		}
+    	});
+    });
+});
+
+//File.open = Promise.promisify(NodeFileSystem.open);
+File.open = Promise.method(function(path, flags, mode) {
+    return new Promise(function(resolve, reject) {
+    	NodeFileSystem.open(path, flags, mode, function(error, fileDescriptor) {
+    		if(error) {
+    			reject(error);
+    		}
+    		else {
+    			resolve(fileDescriptor);
+    		}
+    	});
+    });
+});
+
+//File.write = Promise.promisify(NodeFileSystem.write);
+File.write = Promise.method(function(fileDescriptor, buffer, offset, length, position) {
+    return new Promise(function(resolve, reject) {
+    	NodeFileSystem.write(fileDescriptor, buffer, offset, length, position, function(error, written, buffer) {
+    		if(error) {
+    			reject(error);
+    		}
+    		else {
+    			resolve({
+    				'written': written,
+    				'buffer': buffer,
+    			});
+    		}
+    	});
+    });
+});
+
 File.createWriteStream = Promise.method(function() {
 	var storedContext = this;
 	var storedArguments = arguments;
@@ -59,9 +102,13 @@ File.createWriteStream = Promise.method(function() {
     	});
     });
 });
+
 File.synchronous = {};
+
 File.synchronous.exists = NodeFileSystem.existsSync;
+
 File.synchronous.read = NodeFileSystem.readFileSync;
+
 File.synchronous.read.json = function(file) {
 	var result = {};
 

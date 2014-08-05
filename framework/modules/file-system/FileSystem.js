@@ -1,5 +1,16 @@
 FileSystem = function() {
 }
 
-FileSystem.list = Promise.promisify(NodeFileSystem.readdir);
-FileSystem.lstat = Promise.promisify(NodeFileSystem.lstat);
+// Static methods
+FileSystem.stat = Promise.method(function(path) {
+    return new Promise(function(resolve, reject) {
+    	NodeFileSystem.stat(path, function(error, stats) {
+    		if(error) {
+    			reject(error);
+    		}
+    		else {
+    			resolve(stats);
+    		}
+    	});
+    });
+});

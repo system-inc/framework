@@ -1,9 +1,10 @@
 Router = Class.extend({
 
+	webServer: null,
 	routes: [],
 
-	construct: function() {
-		// TODO Load available routes from settings
+	construct: function(webServer) {
+		this.webServer = webServer;
 	},
 
 	loadRoutes: function(routes, project) {
@@ -29,12 +30,14 @@ Router = Class.extend({
 				//Route.log(routeMatch.route, false);
 				break;
 			}
-		}		
+		}
 		
 		return routeMatch;
 	},
 
 	route: function(request, response) {
+		//throw new Error(500);
+
 		var routeMatch = this.matchRoute(request);
 		//Console.out(routeMatch);
 
@@ -45,7 +48,8 @@ Router = Class.extend({
 			routeMatch.route = new Route();
 		}
 
-		// Set the request and response
+		// Set the web server, the request, and the response
+		routeMatch.setWebServer(this.webServer);
 		routeMatch.setRequest(request);
 		routeMatch.setResponse(response);
 

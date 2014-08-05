@@ -99,6 +99,10 @@ Object.prototype.isArray = function() {
 	return this instanceof Array;
 }
 
+Object.prototype.isError = function() {
+	return this instanceof Error;
+}
+
 Object.prototype.isEmpty = function() {
     return Object.keys(this).length === 0;
 }
