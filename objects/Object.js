@@ -110,19 +110,13 @@ Object.prototype.isEmpty = function() {
 Object.prototype.toStringStandard = Object.prototype.toString;
 
 Object.prototype.toString = function() {
-	var string = null;
-
 	// Debugging
-	return string = this.toStringStandard();
-
-	if(this.isObject()) {
-		string = Json.encode(this);
+	if(this.toStringStandard) {
+		return this.toStringStandard();	
 	}
 	else {
-		string = this.toStringStandard();
+		return this.toString();
 	}
-
-	return string;
 }
 
 Object.prototype.toArray = function() {

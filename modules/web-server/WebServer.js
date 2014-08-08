@@ -98,16 +98,20 @@ WebServer = Server.extend({
 		//Function.delay(randomMilliseconds, function() {
 		//	this.router.route(request, response);
 		//}.bind(this));
+
+		//throw new InternalServerError('Testing!');
+		//throw new Error('Testing!');
 		
 		// Identify and follow the route
 		this.router.route(request, response);
 	},
 
 	handleError: function(request, response, error) {
-		//console.log('WebServer.handleError()', error);
-		console.log('Handling error for', request.id);
-		response.statusCode = 500;
-		response.content = 'Error!'+"\n"+error.message;
+		console.log('WebServer.handleError()', error);
+		//console.log('Handling error for', request.id);
+		response.statusCode = error.code;
+		response.content = 'Error!';
+		//response.content = 'Error!'+"\n"+error.message;
 		response.send();
 	},
 

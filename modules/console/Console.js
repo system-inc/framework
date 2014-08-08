@@ -43,6 +43,7 @@ ConsoleClass = Class.extend({
 	},
 
 	prepareMessage: function(passedArguments) {
+		// Build the message
 		var message = '';
 		for(var i = 0; i < passedArguments.length; i++) {
 			// If we have an object JSON encode it
@@ -65,62 +66,18 @@ ConsoleClass = Class.extend({
 	    Error.captureStackTrace(error, passedArguments.callee);
 
 	    // Format the stack trace
-	    var stackTraceLines = error.stack.split("\n");
-	    var className = '';
-		var methodName = '';
-		var filePath = '';
-		var fileName = '';
-		var lineNumber = '';
-		var columnNumber = '';
-	    if(stackTraceLines[1]) {
-		    className = stackTraceLines[1].match(/at\s(.*?)\s/);
-		    if(className) {
-		    	className = className[1];
-		    }
+		var lineNumber = error.stack.callSites.first().getLineNumber();
+		var columnNumber = error.stack.callSites.first().getColumnNumber();
+		var fileName = error.stack.callSites.first().getFileName();
+		if(fileName) {
+			fileName = fileName.split('/').reverse()[0];
+		}
 
-		    methodName = stackTraceLines[1].match(/at\s(.*?)\s/);
-		    if(methodName) {
-		    	methodName = methodName[1].split('.').reverse()[0];
-		    }
-
-		    filePath = stackTraceLines[1].match(/.*\s(.*?):/);
-		    if(filePath) {
-		    	filePath = filePath[1];
-		    }
-
-		    fileName = stackTraceLines[1].match(/.*\s(.*?):/);
-	    	if(fileName) {
-				fileName = fileName[1].split('/').reverse()[0];
-	    	}
-
-		    lineNumber = stackTraceLines[1].match(/:(.*?):/);
-		    if(lineNumber) {
-		    	lineNumber = lineNumber[1];
-		    }
-
-		    columnNumber = stackTraceLines[1].match(/:\d+:(\d+)/);	
-		    if(columnNumber) {
-		    	columnNumber = columnNumber[1];
-		    }
-	    }
-
-	    // Handle classes extending Class
-	    if(className && className.startsWith('Class')) {
-	    	className = fileName.replace('.js', '');
-	    }
-
-	    //Console.log('Class Name'+': '+className);
-	    //Console.log('Method Name'+': '+methodName);
-	    //Console.log('File Path'+': '+filePath);
-	    //Console.log('File Name'+': '+fileName);
-	    //Console.log('Line Number'+': '+lineNumber);
-	    //Console.log('Column Number'+': '+columnNumber);
+	    //console.log('Line Number'+': '+lineNumber);
+	    //console.log('Column Number'+': '+columnNumber);
+	    //console.log('File Name'+': '+fileName);
 
 	    message = '['+new Time().getDateTime()+'] ('+fileName+':'+lineNumber+") "+message;
-
-		if(!className) {
-	    	//message = error.stack;
-	    }
 
 	    return message;
 	},

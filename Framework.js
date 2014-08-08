@@ -24,6 +24,7 @@ require('./objects/Promise');
 	// Long stack traces imply a substantial performance penalty, around 4-5x for throughput and 0.5x for latency
 	//Promise.longStackTraces();
 require('./objects/Class');
+require('./objects/Error');
 require('./objects/Version');
 require('./objects/Module');
 
