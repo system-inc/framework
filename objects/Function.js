@@ -2,6 +2,13 @@ Function.prototype.isGenerator = function() {
 	return /^function\s*\*/.test(this.toString());
 }
 
+Function.prototype.getArguments = function() {
+	return this.toString()
+	  .replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s))/mg,'')
+	  .match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1]
+	  .split(/,/);
+}
+
 Function.is = function(value) {
 	return value instanceof Function;
 }

@@ -5,6 +5,8 @@ Request = Class.extend({
 	method: null,
 	headers: null,
 	cookies: null,
+	body: '',
+	bodyObject: null,
 	ipAddress: null,
 	connectingIpAddress: null,
 	referrer: null,
@@ -14,8 +16,12 @@ Request = Class.extend({
 	geolocation: null,
 	httpVersion: null,
 	time: null,
+	nodeRequest: null,
 
 	construct: function(nodeRequest) {
+		// Hold onto Node's request object
+		this.nodeRequest = nodeRequest;
+
 		// Time
 		this.time = new Time();
 
@@ -78,10 +84,42 @@ Request = Class.extend({
 			'major': nodeRequest.httpVersionMajor,
 			'minor': nodeRequest.httpVersionMinor,
 		});
+		
 	},
 
 	isSecure: function() {
 		return this.url.protocol == 'https';
 	},
+
+	processBody: function() {
+		if(Json.is(this.body)) {
+			this.bodyObject = Json.decode(this.body);
+		}
+	},
 	
+});
+
+Request.receiveNodeRequest = Promise.method(function(request) {
+    return new Promise(function(resolve, reject) {
+    	// Build the request body
+		request.nodeRequest.on('data', function(chunk) {
+			// Append the chunk to the body
+			request.body += chunk;
+
+            // If there is too much data in the body, kill the connection
+            // TO DO: this is a magic number, need to make this an option that can be overwritten
+            if(request.body.sizeInBytes() > 100000000) { // 100000000 bytes == 100 megabytes
+            	resolve(new RequestEntityTooLargeError('The request failed because it was larger than 100 MB.'));
+            }
+		});
+
+		// When the nodeRequest finishes, resolve the promise
+		request.nodeRequest.on('end', function() {
+			// Process the completed body
+			request.processBody();
+
+			// Resolve the nodeRequest
+			resolve(request.nodeRequest);
+		});
+    });
 });

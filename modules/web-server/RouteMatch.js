@@ -41,6 +41,11 @@ RouteMatch = Class.extend({
 			}
 		});
 
+		// Merge request.bodyObject into data
+		if(this.request.bodyObject) {
+			finalizedRouteData = finalizedRouteData.merge(this.request.bodyObject);
+		}
+
 		// Sort the data by keys
 		finalizedRouteData = finalizedRouteData.sort();
 
@@ -79,7 +84,20 @@ RouteMatch = Class.extend({
 
 			// If the controller was found, invoke the method for the route
 			if(controller) {
-				content = yield controller[this.route.controllerMethodName]();
+				// Use a reflection technique to find the argument names of the controller method and build an arguments array to send in
+				var controllerMethodArguments = [];
+				var controllerMethodArgumentNames = controller[this.route.controllerMethodName].getArguments();
+				controllerMethodArgumentNames.each(function(controllerMethodArgumentName) {
+					if(this.data[controllerMethodArgumentName]) {
+						controllerMethodArguments.push(this.data[controllerMethodArgumentName]);
+					}
+					else {
+						controllerMethodArguments.push(undefined);
+					}
+				}, this);
+
+				// Invoke the controller method and pass in the arguments array
+				content = yield controller[this.route.controllerMethodName].apply(controller, controllerMethodArguments);
 			}
 			// Send a 404
 			else {
@@ -115,10 +133,11 @@ RouteMatch = Class.extend({
 			}
 		}
 
-		// If content exists, make sure it is a string - THIS BREAKS IMAGES
-		// if(content && !content.isString()) {
-		// 	content = content.toString();
-		// }
+		// If content exists, make sure it is a string
+		// THIS BREAKS IMAGES?
+		if(content && !String.is(content)) {
+			content = Json.encode(content);
+		}
 
 		// If content exists, put it on the response
 		if(content) {

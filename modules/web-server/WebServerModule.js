@@ -10,7 +10,7 @@ require('./RouteMatch');
 require('./Router');
 require('./View');
 require('./WebServer');
-require('./errors/InternalServerError');
+require('./errors/HttpError');
 
 WebServerModuleClass = Module.extend({
 

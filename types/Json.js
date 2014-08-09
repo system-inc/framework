@@ -18,7 +18,12 @@ Json = Class.extend({
 	indent: function(object, replacer, indentation) {
 		indentation = (indentation === undefined ? 4 : indentation);
 
-		return Json.encode(object, replacer, indentation);
+		var indentedJson = Json.encode(object, replacer, indentation);
+
+		// Replace escaped new line characters with real new line characters and indentation
+		indentedJson = indentedJson.replace(/\\n/g, "\n    ");
+
+		return indentedJson;
 	},
 
 });

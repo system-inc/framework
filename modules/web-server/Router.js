@@ -44,8 +44,7 @@ Router = Class.extend({
 		// Handle no route found
 		if(!routeMatch) {
 			// Change this to getting error routes
-			routeMatch = new RouteMatch();
-			routeMatch.route = new Route();
+			throw new NotFoundError(request.method+' '+request.url.input+' did not match any routes.');
 		}
 
 		// Set the web server, the request, and the response

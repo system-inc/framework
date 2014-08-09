@@ -1,3 +1,72 @@
+// Allow Error to be extended
+Error.extend = Class.extend;
+
+// Set the stack trace limit
+Error.stackTraceLimit = 100;
+
+// Return an array of CallSite objects instead of a string when error.stack is accessed
+Error.prepareStackTrace = function(error, callSites) {
+	return new StackTrace(error, callSites);
+}
+
+// Declare the properties of the Error prototype
+Error.prototype.code = null;
+Error.prototype.identifier = null;
+Error.prototype.message = null;
+Error.prototype.url = null;
+Error.prototype.stack = null;
+Error.prototype.stackTrace = null;
+
+// Create a custom constructor for Error
+Error.prototype.construct = function() {
+	// Create a new error and capture the stack trace
+	//var error = this;
+	var error = Error.apply(this, arguments);
+	Error.captureStackTrace(error, arguments.callee);
+
+	this.code = 0;
+
+	if(error.name) {
+		this.identifier = error.name;
+	}
+	else {
+		this.identifier =  null;
+	}
+
+	this.message = error.message;
+	this.url = null;
+	this.stack = error.stack;
+
+	// Remove the first three callsites in the stack as they are just about error creation
+	this.stack.shift(3);
+	
+	this.stackTrace = error.stack.toString();
+}
+
+Error.prototype.toObject = function(verbose) {
+	var object = {
+		'code': this.code,
+		'identifier': this.identifier,
+		'message': this.message,
+		'url': this.url,
+	};
+
+	// Use name for identifier if an identifier is not set
+	if(!object.identifier && this.name) {
+		object.identifier = this.name;
+	}
+
+	if(verbose) {
+		object.stackTrace = this.stack.toString();
+	}
+
+	return object;
+}
+
+Error.prototype.toJson = function() {
+	return Json.encode(this.toObject());
+}
+
 StackTrace = Class.extend({
 
 	error: null,
@@ -22,9 +91,16 @@ StackTrace = Class.extend({
 		this.callSites = callSites;
 	},
 
-	toString: function() {
-		var string = '';
+	shift: function(count) {
+		for(var i = 0; i < count; i++) {
+			this.callSites.shift();
+		}
+	},
 
+	// WARNING: This method is super fragile and any changes could cause the app to crash and it is super hard to figure out why if this is broken
+	toString: function() {
+		var string = '[Framework] ';
+		
 		// The error name
 		if(this.error && this.error.name) {
 			string += this.error.name+': ';
@@ -35,13 +111,25 @@ StackTrace = Class.extend({
 			var message = this.error.message.split("\n");
 			string += message[message.length - 1]+"\n";
 		}
+
+		// Add a new line if we need one
+		if(string[string.length - 1] && string[string.length - 1] != "\n") {
+			string += "\n";	
+		}		
 		
 		// Generate the stack track string
 		for(var i = 0; i< this.callSites.length; i++) {
 			var callSite = this.callSites[i];
-		
+
 			string += "    at ";
-			string += callSite.getTypeName()+'.';
+
+			// Calling callSite.getTypeName() can sometimes throw an error for reasons I don't know, so I use this try catch block to fix it
+			try {
+				string += callSite.getTypeName()+'.';	
+			}
+			catch(error) {
+				string += '<unknown>.';
+			}			
 
 			if(callSite.getFunctionName()) {
 				string += callSite.getFunctionName()+' ';
@@ -49,11 +137,11 @@ StackTrace = Class.extend({
 			else {
 				string += '<anonymous>'+' ';
 			}
-			
+		
 			if(callSite.getMethodName() && callSite.getFunctionName() && callSite.getMethodName() != callSite.getFunctionName() && !(callSite.getFunctionName().indexOf('.'+callSite.getMethodName(), callSite.getFunctionName().length - ('.'+callSite.getMethodName()).length) !== -1)) {
 				string += '[as '+callSite.getMethodName()+'] ';
 			}
-			
+
 			string += '(';
 			string += callSite.getFileName()+':';
 			string += callSite.getLineNumber()+':';
@@ -66,36 +154,3 @@ StackTrace = Class.extend({
 	},
 
 });
-
-// Set the stack trace limit
-Error.stackTraceLimit = 100;
-
-// Return an array of CallSite objects instead of a string when error.stack is accessed
-Error.prepareStackTrace = function(error, callSites) {
-	return new StackTrace(error, callSites);
-}
-
-// Create a custom constructor for Error
-Error.prototype.construct = function() {
-	// Create a new error and capture the stack trace
-	//var error = this;
-	var error = Error.apply(this, arguments);
-	Error.captureStackTrace(error, arguments.callee);
-
-	this.code = 0;
-
-	if(error.name) {
-		this.identifier = error.name;
-	}
-	else {
-		this.identifier =  null;
-	}
-
-	this.message = error.message;
-	this.url = null;
-	this.stack = error.stack;
-	this.stackTrace = error.stack.toString();
-}
-
-// Allow Error to be extended
-Error.extend = Class.extend;

@@ -109,6 +109,10 @@ Object.prototype.isEmpty = function() {
 
 Object.prototype.toStringStandard = Object.prototype.toString;
 
+Object.prototype.toJson = function() {
+	return Json.encode(this);
+}
+
 Object.prototype.toString = function() {
 	// Debugging
 	if(this.toStringStandard) {
@@ -148,4 +152,10 @@ Object.prototype.getValueForKey = function(key, caseSensitive) {
 	}
 
 	return result;
+}
+
+Object.prototype.throwIfError = function() {
+	if(this.isError()) {
+		throw this;
+	}
 }

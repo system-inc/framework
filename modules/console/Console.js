@@ -46,8 +46,12 @@ ConsoleClass = Class.extend({
 		// Build the message
 		var message = '';
 		for(var i = 0; i < passedArguments.length; i++) {
-			// If we have an object JSON encode it
-			if(passedArguments[i] && !passedArguments[i].isString() && passedArguments[i].isObject()) {
+			// If we have an instance of an Error object
+			if(passedArguments[i] && passedArguments[i].isError()) {
+				message += "\n"+Json.indent(passedArguments[i].toObject(true));
+			}
+			// If we have an non-string object encode it into Json and indent it
+			else if(passedArguments[i] && !passedArguments[i].isString() && passedArguments[i].isObject()) {
 				message += "\n"+Json.indent(passedArguments[i]);
 			}
 			else {
@@ -77,7 +81,7 @@ ConsoleClass = Class.extend({
 	    //console.log('Column Number'+': '+columnNumber);
 	    //console.log('File Name'+': '+fileName);
 
-	    message = '['+new Time().getDateTime()+'] ('+fileName+':'+lineNumber+") "+message;
+	    message = '['+new Time().getDateTime()+'] ('+fileName+':'+lineNumber+') '+message;
 
 	    return message;
 	},

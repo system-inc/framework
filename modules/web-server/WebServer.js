@@ -56,63 +56,92 @@ WebServer = Server.extend({
 			// If the port is free
 			else {
 				// Create the web server
-				Console.out('Listening on port '+port+'.');
-				this.listeners[port] = NodeHttp.createServer(function(nodeRequest, nodeResponse) {
-					// Create Framework request and response objects
-					var request = new Request(nodeRequest);
-					var response = new Response(nodeResponse, request);
-
-					// Handle the request
-					try {
-						this.handleRequest(request, response);
-					}
-					// Send any errors to this.handleError
-					catch(error) {
-						this.handleError(request, response, error);
-					}
-				}.bind(this));
+				this.listeners[port] = NodeHttp.createServer(this.handleRequestConnection.bind(this));
 
 				// Make the web server listen on the port
 				this.listeners[port].listen(port);
+				Console.out('Listening on port '+port+'.');
 			}
 		}, this);
 	},
 
-	handleRequest: function(request, response) {
-		// Increment the requests counter
-		response.id = request.id = this.requests;
-		this.requests++;
-		
-		// Show the request in the console
-		var requestsLogEntry = this.prepareRequestsLogEntry(request);
-		Console.out(this.identifier+': '+requestsLogEntry);
-
-		// Conditionally log the request
-		if(this.logs.requests) {
-			this.logs.requests.write(requestsLogEntry+"\n")
+	handleRequestConnection: function(nodeRequest, nodeResponse) {
+		try {
+			// Create the request and response objects which wrap node's request and response objects
+			var request = new Request(nodeRequest);
+			var response = new Response(nodeResponse, request);
+		}
+		catch(error) {
+			this.handleInternalServerError(error, nodeResponse);
 		}
 
-		// Use this to troubleshoot race conditions
-		//var randomMilliseconds = Number.random(100, 3000);
-		//console.log('waiting '+randomMilliseconds+' milliseconds');
-		//Function.delay(randomMilliseconds, function() {
-		//	this.router.route(request, response);
-		//}.bind(this));
+		// Set the request and response id's and increment the requests counter
+		response.id = request.id = this.requests;
+		this.requests++;
 
-		//throw new InternalServerError('Testing!');
-		//throw new Error('Testing!');
-		
-		// Identify and follow the route
-		this.router.route(request, response);
+		// Invoke the generator that handles the request
+		this.handleRequest(request, response);
 	},
 
+	handleRequest: function*(request, response) {
+		try {
+			// Wait for the node request to finish
+			var nodeRequest = yield Request.receiveNodeRequest(request);
+			nodeRequest.throwIfError();
+		
+			// Show the request in the console
+			var requestsLogEntry = this.prepareRequestsLogEntry(request);
+			Console.out(this.identifier+': '+requestsLogEntry);
+
+			// Conditionally log the request
+			if(this.logs.requests) {
+				this.logs.requests.write(requestsLogEntry+"\n")
+			}
+
+			// Use this to troubleshoot race conditions
+			//var randomMilliseconds = Number.random(100, 3000);
+			//console.log('waiting '+randomMilliseconds+' milliseconds');
+			//Function.delay(randomMilliseconds, function() {
+			//	this.router.route(request, response);
+			//}.bind(this));
+						
+			// Identify and follow the route
+			yield this.router.route(request, response);
+		}
+		catch(error) {
+			this.handleError(request, response, error);
+		}
+	},
+
+	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
 	handleError: function(request, response, error) {
-		console.log('WebServer.handleError()', error);
-		//console.log('Handling error for', request.id);
-		response.statusCode = error.code;
-		response.content = 'Error!';
-		//response.content = 'Error!'+"\n"+error.message;
+		Console.out('WebServer.handleError() called on '+request.id+'. Error:', error);
+
+		// Mark the response as handled
+		response.handled = true;
+
+		// Set the status code
+		if(!error.code) {
+			response.statusCode = 500;
+		}
+		else {
+			response.statusCode = error.code;
+		}
+
+		// Set the content
+		response.content = Json.encode({
+			errors: [error.toObject()],
+		});
+
+		// Send the response
 		response.send();
+	},
+
+	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
+	handleInternalServerError: function(error, nodeResponse) {
+		Console.out('WebServer.handleInternalServerError() called. Error:', error);
+		nodeResponse.writeHead(500, [['Content-Type', 'application/json']]);
+		nodeResponse.end(Json.encode({'errors':[new InternalServerError().toObject()]}));
 	},
 
 	prepareRequestsLogEntry: function(request) {

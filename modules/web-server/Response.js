@@ -17,13 +17,16 @@ Response = Class.extend({
 	// Content
 	content: '',
 
+	// Keep track of whether or not the request has been handled (is sending or has been sent)
+	handled: false,
+
 	construct: function(nodeResponse, request) {
-		// Add a stopwatch to the response
-		this.stopwatch = new Stopwatch();
-		
 		// Hold onto Node's response object
 		this.nodeResponse = nodeResponse;
 
+		// Add a stopwatch to the response
+		this.stopwatch = new Stopwatch();
+		
 		// Reference the request
 		this.request = request;
 
@@ -52,6 +55,8 @@ Response = Class.extend({
 	},
 
 	send: function() {
+		this.handled = true;
+
 		// Let the response know what accepted encodings the request allows
 		this.setAcceptedEncodings(this.request.headers.get('accept-encoding'));
 
