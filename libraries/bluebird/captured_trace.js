@@ -95,7 +95,7 @@ function CapturedTrace$PossiblyUnhandledRejection(reason) {
             console.error(message);
         } else if (typeof console.log === "function" ||
             typeof console.log === "object") {
-            console.log(message);
+            Console.out(message);
         }
     }
 };
@@ -155,15 +155,15 @@ var captureStackTrace = (function stackDetection() {
         typeof Error.captureStackTrace === "function") {
         rtraceline = /^\s*at\s*/;
         formatStack = function(stack, error) {
-            if (typeof stack === "string") return stack;
+            Console.out(error);
 
-            if (error.name !== void 0 &&
-                error.message !== void 0) {
-                return error.name + ". " + error.message;
-            }
-            return formatNonError(error);
+            //if (typeof stack === "string") return stack;
 
-
+            //if (error.name !== void 0 &&
+            //    error.message !== void 0) {
+            //    return error.name + ". " + error.message;
+            //}
+            //return formatNonError(error);
         };
         var captureStackTrace = Error.captureStackTrace;
         return function CapturedTrace$_captureStackTrace(

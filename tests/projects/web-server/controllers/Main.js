@@ -1,6 +1,7 @@
 Main = Controller.extend({
 
 	main: function*() {
+		return 'hi';
 		return Json.encode(this.request);
 
 		//var response = 'hey';
