@@ -25,7 +25,9 @@ WebServer = Server.extend({
 					'directory': Project.directory+'logs/',
 					'nameWithoutExtension': 'web-server-'+this.identifier+'-requests',
 				},
-			}
+			},
+			'responseTimeoutInMilliseconds': 5000, // 5 seconds
+			'maximumRequestBodySizeInBytes': 20000000, // 20 megabytes
 		});
 
 		// Conditionally attach the general log
@@ -66,10 +68,15 @@ WebServer = Server.extend({
 	},
 
 	handleRequestConnection: function(nodeRequest, nodeResponse) {
+		// Set a timeout on building the response
+		nodeResponse.setTimeout(this.settings.get('responseTimeoutInMilliseconds'), function() {
+			this.handleInternalServerError(new InternalServerError('Timed out after '+this.settings.get('responseTimeoutInMilliseconds')+' milliseconds while building a response.'), nodeResponse);
+		}.bind(this));
+
 		try {
 			// Create the request and response objects which wrap node's request and response objects
 			var request = new Request(nodeRequest);
-			var response = new Response(nodeResponse, request);
+			var response = new Response(nodeResponse, request, this);
 		}
 		catch(error) {
 			this.handleInternalServerError(error, nodeResponse);
@@ -85,18 +92,19 @@ WebServer = Server.extend({
 
 	handleRequest: function*(request, response) {
 		try {
-			// Wait for the node request to finish
-			var nodeRequest = yield Request.receiveNodeRequest(request);
-			nodeRequest.throwIfError();
-		
 			// Show the request in the console
 			var requestsLogEntry = this.prepareRequestsLogEntry(request);
-			Console.out(this.identifier+': '+requestsLogEntry);
+			Console.out(this.identifier+' request: '+requestsLogEntry);
 
 			// Conditionally log the request
 			if(this.logs.requests) {
 				this.logs.requests.write(requestsLogEntry+"\n")
 			}
+
+			// Wait for the node request to finish
+			var nodeRequest = yield Request.receiveNodeRequest(request, this.settings.get('maximumRequestBodySizeInBytes'));
+			nodeRequest.throwIfError();
+			
 
 			// Use this to troubleshoot race conditions
 			//var randomMilliseconds = Number.random(100, 3000);
@@ -141,7 +149,12 @@ WebServer = Server.extend({
 	handleInternalServerError: function(error, nodeResponse) {
 		Console.out('WebServer.handleInternalServerError() called. Error:', error);
 		nodeResponse.writeHead(500, [['Content-Type', 'application/json']]);
-		nodeResponse.end(Json.encode({'errors':[new InternalServerError().toObject()]}));
+
+		if(error.code != 500) {
+			error = new InternalServerError();
+		}
+
+		nodeResponse.end(Json.encode({'errors':[error.toObject()]}));
 	},
 
 	prepareRequestsLogEntry: function(request) {

@@ -2,6 +2,7 @@ Response = Class.extend({
 
 	id: null, // Unique identifier for the response
 	request: null,
+	webServer: null,
 	stopwatch: null,
 	nodeResponse: null,
 
@@ -20,15 +21,16 @@ Response = Class.extend({
 	// Keep track of whether or not the request has been handled (is sending or has been sent)
 	handled: false,
 
-	construct: function(nodeResponse, request) {
+	construct: function(nodeResponse, request, webServer) {
 		// Hold onto Node's response object
 		this.nodeResponse = nodeResponse;
 
 		// Add a stopwatch to the response
 		this.stopwatch = new Stopwatch();
 		
-		// Reference the request
+		// Reference the associated request and and web server
 		this.request = request;
+		this.webServer = webServer;
 
 		// Instantiate and connect Cookies to Headers
 		this.headers = new Headers();
@@ -55,13 +57,29 @@ Response = Class.extend({
 	},
 
 	send: function() {
+		// Mark the response as handled
 		this.handled = true;
 
 		// Let the response know what accepted encodings the request allows
 		this.setAcceptedEncodings(this.request.headers.get('accept-encoding'));
 
+		// Send the headers
 		this.sendHeaders();
 		this.sendContent();
+
+		// Wrap things up
+		this.sent();
+	},
+
+	sent: function() {
+		// Show the request in the console
+		var requestsLogEntry = 'got one'; //this.webServer.prepareRequestsLogEntry(request);
+		Console.out(this.webServer.identifier+' response: '+requestsLogEntry);
+
+		// Conditionally log the request
+		//if(this.logs.requests) {
+		//	this.logs.requests.write(requestsLogEntry+"\n")
+		//}
 	},
 
 	sendHeaders: function() {

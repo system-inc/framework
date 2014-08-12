@@ -1,8 +1,12 @@
 Main = Controller.extend({
 
 	main: function*() {
-		return 'hi';
-		return Json.encode(this.request);
+		//return 'hi';
+
+		//kjl
+		//yield Function.delay(2000);
+
+		return this.request;
 
 		//var response = 'hey';
 		//var response = Json.encode(badWebRequest);

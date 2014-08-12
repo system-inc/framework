@@ -157,13 +157,13 @@ var captureStackTrace = (function stackDetection() {
         formatStack = function(stack, error) {
             Console.out(error);
 
-            //if (typeof stack === "string") return stack;
+            if (typeof stack === "string") return stack;
 
-            //if (error.name !== void 0 &&
-            //    error.message !== void 0) {
-            //    return error.name + ". " + error.message;
-            //}
-            //return formatNonError(error);
+            if (error.name !== void 0 &&
+                error.message !== void 0) {
+                return error.name + ". " + error.message;
+            }
+            return formatNonError(error);
         };
         var captureStackTrace = Error.captureStackTrace;
         return function CapturedTrace$_captureStackTrace(

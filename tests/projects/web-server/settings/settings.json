@@ -9,6 +9,8 @@
 		"webServer": {
 			"webServers": [
 				{
+					"maximumRequestBodySizeInBytes": 20000,
+					"responseTimeoutInMilliseconds": 10000,
 					"logs": {
 						"general": {
 							"enabled": true

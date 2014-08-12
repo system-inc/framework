@@ -4,7 +4,48 @@ Json = Class.extend({
 	},
 
 	encode: function(object, replacer, indentation) {
-		return JSON.stringify(object, replacer, indentation);
+		//return NodeUtility.inspect(object);
+
+		var keyCache = [];
+		var objectCache = [];
+
+		if(replacer === undefined) {
+
+
+			// NOTES
+			// Check out cycle and decycle
+			// Allow an object to be printed multiple (3) times before calling circular on it
+
+
+			// Prevent "TypeError: Converting circular structure to JSON"
+			replacer = function(key, value) {
+				// Always permit the root element
+				if(key == '') {
+					return value;
+				}
+				// Always permit primitives
+				else if(Object.isPrimitive(value)) {
+					return value;
+				}
+				// Check non-primitives
+				else if(objectCache.indexOf(value) !== -1) {
+					return '[Already Printed]';
+				}
+				else {
+					objectCache.push(value);
+
+					return value;
+				}
+			}
+		}
+		
+		var encodedJson = JSON.stringify(object, replacer, indentation);
+
+		// Allow caches to be garbage collected
+		keyCache = null;
+		objectCache = null;
+
+		return encodedJson;
 	},
 
 	decode: function(string) {

@@ -99,7 +99,7 @@ Request = Class.extend({
 	
 });
 
-Request.receiveNodeRequest = Promise.method(function(request) {
+Request.receiveNodeRequest = Promise.method(function(request, maximumRequestBodySizeInBytes) {
     return new Promise(function(resolve, reject) {
     	// Build the request body
 		request.nodeRequest.on('data', function(chunk) {
@@ -107,9 +107,8 @@ Request.receiveNodeRequest = Promise.method(function(request) {
 			request.body += chunk;
 
             // If there is too much data in the body, kill the connection
-            // TO DO: this is a magic number, need to make this an option that can be overwritten
-            if(request.body.sizeInBytes() > 100000000) { // 100000000 bytes == 100 megabytes
-            	resolve(new RequestEntityTooLargeError('The request failed because it was larger than 100 MB.'));
+            if(request.body.sizeInBytes() > maximumRequestBodySizeInBytes) {
+            	resolve(new RequestEntityTooLargeError('The request failed because it was larger than '+maximumRequestBodySizeInBytes+' bytes.'));
             }
 		});
 
