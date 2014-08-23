@@ -9,6 +9,11 @@ Web.request = Promise.method(function(options) {
     	});
 
 		var request = NodeHttp.request(options, function(response) {
+			// Set the encoding
+			if(options && options.encoding) {
+				response.setEncoding(options.encoding);
+			}			
+
 			// Bundle the result
 			var result = {
 				'statusCode': response.statusCode,

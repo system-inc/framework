@@ -35,7 +35,9 @@ Object.prototype.merge = function() {
 
     // Gather the objects to merge
     for(var i = 0; i < arguments.length; i++) {
-    	objectsToMerge.push(arguments[i]);
+    	if(arguments[i]) {
+    		objectsToMerge.push(arguments[i]);	
+    	}
     };
 
     // "this" merges any properties from the objects to merge that it does not already have

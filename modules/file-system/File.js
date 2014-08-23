@@ -87,6 +87,19 @@ File.write = Promise.method(function(fileDescriptor, buffer, offset, length, pos
     });
 });
 
+File.create = Promise.method(function(file, data, options) {
+    return new Promise(function(resolve, reject) {
+        NodeFileSystem.writeFile(file, data, options, function(error) {
+            if(error) {
+                reject(error);
+            }
+            else {
+                resolve(true);
+            }
+        });
+    });
+});
+
 File.createWriteStream = Promise.method(function() {
 	var storedContext = this;
 	var storedArguments = arguments;
