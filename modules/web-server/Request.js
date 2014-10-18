@@ -108,6 +108,7 @@ Request.receiveNodeRequest = Promise.method(function(request, maximumRequestBody
 
             // If there is too much data in the body, kill the connection
             if(request.body.sizeInBytes() > maximumRequestBodySizeInBytes) {
+            	//throw new RequestEntityTooLargeError('The request failed because it was larger than '+maximumRequestBodySizeInBytes+' bytes.');
             	resolve(new RequestEntityTooLargeError('The request failed because it was larger than '+maximumRequestBodySizeInBytes+' bytes.'));
             }
 		});

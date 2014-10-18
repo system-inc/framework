@@ -104,7 +104,6 @@ WebServer = Server.extend({
 			// Wait for the node request to finish
 			var nodeRequest = yield Request.receiveNodeRequest(request, this.settings.get('maximumRequestBodySizeInBytes'));
 			nodeRequest.throwIfError();
-			
 
 			// Use this to troubleshoot race conditions
 			//var randomMilliseconds = Number.random(100, 3000);
