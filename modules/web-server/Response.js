@@ -73,8 +73,8 @@ Response = Class.extend({
 
 	sent: function() {
 		// Show the request in the console
-		var requestsLogEntry = 'got one'; //this.webServer.prepareRequestsLogEntry(request);
-		Console.out(this.webServer.identifier+' response: '+requestsLogEntry);
+		//var requestsLogEntry = 'got one'; //this.webServer.prepareRequestsLogEntry(request);
+		//Console.out(this.webServer.identifier+' response: '+requestsLogEntry);
 
 		// Conditionally log the request
 		//if(this.logs.requests) {
@@ -102,28 +102,17 @@ Response = Class.extend({
 		this.nodeResponse.writeHead(this.statusCode, this.headers.toArray());
 	},
 
-	sendContent: function() {
+	sendContent: function*() {
 		//console.log(this.content);
 		//console.log(this.acceptedEncodings);
 
-		// Deflate
-		if(this.encoding == 'deflate') {
-			//console.log('deflate!');
-			NodeZlib.deflate(new Buffer(this.content, 'utf-8'), function(error, result) {
-				this.nodeResponse.end(result);
-			}.bind(this));
+		// If the client Accept-Encoding is gzip or deflate
+		if(this.encoding == 'gzip' || this.encoding == 'deflate') {
+			this.content = yield Data.decode(this.content, this.encoding);
 		}
-		// Gzip
-		else if(this.encoding = 'gzip') {
-			//console.log('gzip!');
-			NodeZlib.gzip(new Buffer(this.content, 'utf-8'), function(error, result) {
-				this.nodeResponse.end(result);
-			}.bind(this));
-		}
-		// Standard
-		else {
-			this.nodeResponse.end(this.content);
-		}
+
+		// End the response
+		this.nodeResponse.end(this.content);
 	},
 
 });

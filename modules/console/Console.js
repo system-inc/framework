@@ -51,7 +51,7 @@ ConsoleClass = Class.extend({
 				message += "\n"+Json.indent(passedArguments[i].toObject(true));
 			}
 			// If we have an non-string object encode it into Json and indent it
-			else if(passedArguments[i] && !passedArguments[i].isString() && passedArguments[i].isObject()) {
+			else if(passedArguments[i] && !String.is(passedArguments[i]) && Object.is(passedArguments[i])) {
 				message += "\n"+Json.indent(passedArguments[i]);
 			}
 			else {

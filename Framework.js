@@ -63,6 +63,7 @@ Framework = Class.extend({
 		'Server',
 		'Settings',
 		'Time',
+		'Data',
 		'Web',
 		'WebServer',
 	],
