@@ -153,6 +153,54 @@ Time = Class.extend({
 		return dateTime;
 	},
 
+	getTimePosted: function() {
+        var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var now = new Date();
+        var timePosted = '';
+        var hours = this.time.getHours();
+        var minutes = this.time.getMinutes();
+        var period = 'am';
+        if(hours > 11) {
+            hours = hours - 12;
+            period = 'pm';
+        }
+        if(hours == 0) {
+            hours = 12;
+        }
+        if(minutes < 10) {
+            minutes = '0'+minutes;
+        }
+
+        // If today, put in 2:30 pm format
+        if(
+            now.getFullYear() == this.time.getFullYear() &&
+            now.getMonth() == this.time.getMonth() &&
+            now.getDate() == this.time.getDate()
+        ) {
+            timePosted = hours+':'+minutes+' '+period;
+        }
+        else {
+            timeDifference = (((new Date(now.getFullYear(), now.getMonth(), now.getDate())).getTime() - new Date(this.time.getFullYear(), this.time.getMonth(), this.time.getDate()).getTime()) / 1000),
+            dayDifference = Math.floor(timeDifference / 86400);    
+
+            if(dayDifference == 1) {
+                timePosted = 'Yesterday';
+            }
+            else if(dayDifference < 7) {
+                timePosted = dayNames[this.time.getDay()];
+            }
+            else if(dayDifference < 14) {
+                timePosted = 'Last '+dayNames[this.time.getDay()];
+            }
+            else if(dayDifference >= 14) {
+                timePosted = monthNames[this.time.getMonth()]+' '+this.time.getDate()+', '+this.time.getFullYear();
+            }
+        }
+
+        return timePosted;
+	},
+
 });
 
 // Static methods

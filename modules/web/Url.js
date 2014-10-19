@@ -55,6 +55,26 @@ Url = Class.extend({
 		return null;
 	},
 
+	setQueryParameter: function(key, value) {
+		// Copy and pasted this code, can probably clean this up
+		var newAdditionalUrl = '';
+	    var tempArray = this.url.split('?');
+	    var baseUrl = tempArray[0];
+	    var additionalUrl = tempArray[1];
+	    var temp = '';
+	    if(additionalUrl) {
+	        tempArray = additionalUrl.split('&');
+	        for(var i = 0; i < tempArray.length; i++){
+	            if(tempArray[i].split('=')[0] != key) {
+	                newAdditionalUrl += temp + tempArray[i];
+	                temp = '&';
+	            }
+	        }
+	    }
+	    var rows_txt = temp + '' + key + '=' + value ;
+	    this.construct(baseUrl + '?' + newAdditionalUrl + rows_txt);
+	},
+
 });
 
 // Static methods

@@ -87,12 +87,14 @@ ConsoleClass = Class.extend({
 	},
 
 	listen: function() {
-		//NodeStandardIn.setRawMode(true); // Takes input character by character
-		NodeStandardIn.resume();
-		NodeStandardIn.setEncoding('utf8');
-		NodeStandardIn.on('data', function(data) {
-			this.handleCommand(data);
-		}.bind(this));
+		if(global['NodeStandardIn']) {
+			//NodeStandardIn.setRawMode(true); // Takes input character by character
+			NodeStandardIn.resume();
+			NodeStandardIn.setEncoding('utf8');
+			NodeStandardIn.on('data', function(data) {
+				this.handleCommand(data);
+			}.bind(this));	
+		}
 	},
 
 	handleCommand: function(command) {

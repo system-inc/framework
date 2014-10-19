@@ -68,6 +68,12 @@ Array.prototype.get = function(index) {
 	}
 }
 
+Array.prototype.delete = function(index) {
+	this.splice(index, 1);
+
+	return this;
+};
+
 // Takes either a normal callback function or a generator callback function
 Array.prototype.each = function(callback, context) {
 	// If the callback is not a generator, use the standard .forEach

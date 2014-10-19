@@ -10,8 +10,8 @@ Object.prototype.sort = function() {
 
 Object.prototype.each = function(callback, context) {
 	Object.keys(this).each(function(key) {
-		callback.apply(context, [key, this[key]]);
-	}.bind(this));	
+		callback.apply(context, [key, this[key]]);	
+	}.bind(this));
 }
 
 Object.clone = function(object) {
@@ -90,11 +90,19 @@ Object.prototype.isInteger = function() {
 }
 
 Object.prototype.isString = function() {
-	return this instanceof String;
+	return typeof value == 'string';
+}
+
+Object.isString = function(value) {
+	return typeof value == 'string';
 }
 
 Object.prototype.isFunction = function() {
 	return this instanceof Function;
+}
+
+Object.isFunction = function(value) {
+	return value instanceof Function;
 }
 
 Object.prototype.isArray = function() {

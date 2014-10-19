@@ -8,12 +8,14 @@ Headers = Class.extend({
 	constructFromNodeHeaders: function(nodeHeaders) {
 		var headers = new Headers();
 
-		for(var key in nodeHeaders) {
-			if(nodeHeaders[key].isString()) {
-				headers.create(key, nodeHeaders[key]);	
-			}
+		if(nodeHeaders) {
+			for(var key in nodeHeaders) {
+				if(Object.isString(nodeHeaders[key])) {
+					headers.create(key, nodeHeaders[key]);	
+				}
+			}	
 		}
-
+		
 		return headers;
 	},
 
