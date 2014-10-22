@@ -17,6 +17,9 @@
 						},
 						"requests": {
 							"enabled": true
+						},
+						"responses": {
+							"enabled": true
 						}
 					},
 					"protocol": "http",

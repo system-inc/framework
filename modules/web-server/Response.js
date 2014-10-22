@@ -21,6 +21,9 @@ Response = Class.extend({
 	// Keep track of whether or not the request has been handled (is sending or has been sent)
 	handled: false,
 
+	// The time the request is completely sent
+	time: null,
+
 	construct: function(nodeResponse, request, webServer) {
 		// Hold onto Node's response object
 		this.nodeResponse = nodeResponse;
@@ -71,17 +74,6 @@ Response = Class.extend({
 		this.sent();
 	},
 
-	sent: function() {
-		// Show the request in the console
-		//var requestsLogEntry = 'got one'; //this.webServer.prepareRequestsLogEntry(request);
-		//Console.out(this.webServer.identifier+' response: '+requestsLogEntry);
-
-		// Conditionally log the request
-		//if(this.logs.requests) {
-		//	this.logs.requests.write(requestsLogEntry+"\n")
-		//}
-	},
-
 	sendHeaders: function() {
 		// Default statusCode is 200
 		if(!this.statusCode) {
@@ -113,6 +105,25 @@ Response = Class.extend({
 
 		// End the response
 		this.nodeResponse.end(this.content);
+	},
+
+	sent: function() {
+		this.time = new Time();
+
+		// Show the request in the console
+		var responsesLogEntry = this.prepareLogEntry();
+		Console.out(this.webServer.identifier+' response: '+responsesLogEntry);
+
+		// Conditionally log the request
+		if(this.webServer.logs.responses) {
+			this.webServer.logs.responses.write(responsesLogEntry+"\n")
+		}
+	},
+
+	prepareLogEntry: function() {
+		var responsesLogEntry = '"'+this.id+'","'+this.time.getDateTime()+'","'+this.statusCode+'","'+this.stopwatch.precision+'","'+this.stopwatch.elapsedTime+'"';
+
+		return responsesLogEntry;
 	},
 
 });

@@ -1,26 +1,37 @@
 Request = Class.extend({
 
 	id: null, // Unique identifier for the request
-	url: null,
+
 	method: null,
+	url: null,
 	headers: null,
 	cookies: null,
 	body: '',
 	bodyObject: null,
+
 	ipAddress: null,
 	connectingIpAddress: null,
+
 	referrer: null,
 	browser: null,
 	device: null,
 	operatingSystem: null,
 	geolocation: null,
+
 	httpVersion: null,
 	time: null,
-	nodeRequest: null,
 
-	construct: function(nodeRequest) {
+	nodeRequest: null,
+	webServer: null,
+	
+	construct: function(nodeRequest, webServer) {
 		// Hold onto Node's request object
 		this.nodeRequest = nodeRequest;
+
+		// Reference the associated web server
+		if(webServer != undefined) {
+			this.webServer = webServer;
+		}
 
 		// Time
 		this.time = new Time();
@@ -95,6 +106,36 @@ Request = Class.extend({
 		if(Json.is(this.body)) {
 			this.bodyObject = Json.decode(this.body);
 		}
+	},
+
+	received: function() {
+		// Show the request in the console
+		var requestsLogEntry = this.prepareLogEntry();
+		Console.out(this.webServer.identifier+' request: '+requestsLogEntry);
+
+		// Conditionally log the request
+		if(this.webServer.logs.requests) {
+			this.webServer.logs.requests.write(requestsLogEntry+"\n")
+		}
+	},
+
+	prepareLogEntry: function() {
+		var requestsLogEntry = '"'+this.id+'","'+this.time.getDateTime()+'","'+this.ipAddress.address+'","'+this.method+'","'+this.url.input+'","'+this.referrer.input+'"';
+
+		return requestsLogEntry;
+	},
+
+	getPublicErrorData: function() {
+		return {
+			'id': this.id,
+			'method': this.method,
+			'url': this.url.input,
+			'headers': this.headers.headers,
+			'cookies': this.cookies.cookies,
+			'ipAddress': this.ipAddress.address,
+			'connectingIpAddress': this.connectingIpAddress.address,
+			'time': this.time.time,
+		};
 	},
 	
 });

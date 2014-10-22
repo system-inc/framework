@@ -8,6 +8,7 @@ WebServer = Server.extend({
 	logs: {
 		general: null,
 		requests: null,
+		responses: null,
 	},
 	
 	construct: function(identifier, settings) {
@@ -25,7 +26,14 @@ WebServer = Server.extend({
 					'directory': Project.directory+'logs/',
 					'nameWithoutExtension': 'web-server-'+this.identifier+'-requests',
 				},
+				'responses': {
+					'enabled': true,
+					'directory': Project.directory+'logs/',
+					'nameWithoutExtension': 'web-server-'+this.identifier+'-responses',
+				},
 			},
+			'serverTimeoutInMilliseconds': 60000, // 60 seconds DO I NEED THIS?
+			'requestTimeoutInMilliseconds': 5000, // 5 seconds DO I NEED THIS?
 			'responseTimeoutInMilliseconds': 5000, // 5 seconds
 			'maximumRequestBodySizeInBytes': 20000000, // 20 megabytes
 		});
@@ -38,6 +46,11 @@ WebServer = Server.extend({
 		// Conditionally attach the requests log
 		if(this.settings.get('logs.requests.enabled')) {
 			this.logs.requests = new Log(this.settings.get('logs.requests.directory'), this.settings.get('logs.requests.nameWithoutExtension'));
+		}
+
+		// Conditionally attach the responses log
+		if(this.settings.get('logs.responses.enabled')) {
+			this.logs.responses = new Log(this.settings.get('logs.responses.directory'), this.settings.get('logs.responses.nameWithoutExtension'));
 		}
 		
 		// Load the routes into the router
@@ -57,8 +70,10 @@ WebServer = Server.extend({
 			}
 			// If the port is free
 			else {
+				var nodeServer = NodeHttp.createServer(this.handleRequestConnection.bind(this));
+
 				// Create the web server
-				this.listeners[port] = NodeHttp.createServer(this.handleRequestConnection.bind(this));
+				this.listeners[port] = nodeServer;
 
 				// Make the web server listen on the port
 				this.listeners[port].listen(port);
@@ -68,23 +83,33 @@ WebServer = Server.extend({
 	},
 
 	handleRequestConnection: function(nodeRequest, nodeResponse) {
+		// Increment the requests counter right away in case of crashes
+		this.requests++;
+
 		// Set a timeout on building the response
-		nodeResponse.setTimeout(this.settings.get('responseTimeoutInMilliseconds'), function() {
+		nodeResponse.setTimeout(this.settings.get('responseTimeoutInMilliseconds'), function(socket) {
 			this.handleInternalServerError(new InternalServerError('Timed out after '+this.settings.get('responseTimeoutInMilliseconds')+' milliseconds while building a response.'), nodeResponse);
 		}.bind(this));
 
+		// Create the request object which wrap node's request object
 		try {
-			// Create the request and response objects which wrap node's request and response objects
-			var request = new Request(nodeRequest);
-			var response = new Response(nodeResponse, request, this);
+			var request = new Request(nodeRequest, this);
+			request.id = this.requests - 1; // Subtract one because we already incremented above outside of the try catch
 		}
 		catch(error) {
 			this.handleInternalServerError(error, nodeResponse);
+			return;
 		}
-
-		// Set the request and response id's and increment the requests counter
-		response.id = request.id = this.requests;
-		this.requests++;
+		
+		// Create the response object which wrap node's response object
+		try {
+			var response = new Response(nodeResponse, request, this);
+			response.id = request.id; // Match the responses ID to the request's ID
+		}
+		catch(error) {
+			this.handleInternalServerError(error, nodeResponse, request);
+			return;
+		}
 
 		// Invoke the generator that handles the request
 		this.handleRequest(request, response);
@@ -92,14 +117,8 @@ WebServer = Server.extend({
 
 	handleRequest: function*(request, response) {
 		try {
-			// Show the request in the console
-			var requestsLogEntry = this.prepareRequestsLogEntry(request);
-			Console.out(this.identifier+' request: '+requestsLogEntry);
-
-			// Conditionally log the request
-			if(this.logs.requests) {
-				this.logs.requests.write(requestsLogEntry+"\n")
-			}
+			// Mark the request as received
+			request.received();
 
 			// Wait for the node request to finish
 			var nodeRequest = yield Request.receiveNodeRequest(request, this.settings.get('maximumRequestBodySizeInBytes'));
@@ -138,6 +157,7 @@ WebServer = Server.extend({
 		// Set the content
 		response.content = Json.encode({
 			errors: [error.toObject()],
+			request: request.getPublicErrorData(),
 		});
 
 		// Send the response
@@ -145,21 +165,30 @@ WebServer = Server.extend({
 	},
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
-	handleInternalServerError: function(error, nodeResponse) {
+	handleInternalServerError: function(error, nodeResponse, request) {
 		Console.out('WebServer.handleInternalServerError() called. Error:', error);
 		nodeResponse.writeHead(500, [['Content-Type', 'application/json']]);
 
+		// Make sure we are working with an error object
 		if(error.code != 500) {
 			error = new InternalServerError();
 		}
 
-		nodeResponse.end(Json.encode({'errors':[error.toObject()]}));
-	},
+		// The content to return in the request
+		var content = {
+			errors: [error.toObject()],
+		};
 
-	prepareRequestsLogEntry: function(request) {
-		var requestsLogEntry = '"'+request.id+'","'+request.time.getDateTime()+'","'+request.ipAddress.address+'","'+request.method+'","'+request.url.input+'"';
+		// Add request data to the content if we have it
+		if(request != undefined) {
+			content.request = request.getPublicErrorData();
+		}
 
-		return requestsLogEntry;
+		// Encode the content
+		content = Json.encode(content);
+
+		// Send the content and end the response
+		nodeResponse.end(content);
 	},
 	
 });

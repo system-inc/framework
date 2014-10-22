@@ -1,1 +1,2 @@
 tests/projects/web-server/logs/*
+.DS_Store

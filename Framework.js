@@ -20,9 +20,6 @@ require('./objects/Function');
 require('./objects/Generator');
 require('./objects/Object');
 require('./objects/Promise');
-	// TODO Move this
-	// Long stack traces imply a substantial performance penalty, around 4-5x for throughput and 0.5x for latency
-	//Promise.longStackTraces();
 require('./objects/Class');
 require('./objects/Error');
 require('./objects/Version');

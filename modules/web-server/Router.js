@@ -36,8 +36,6 @@ Router = Class.extend({
 	},
 
 	route: function(request, response) {
-		//throw new Error(500);
-
 		var routeMatch = this.matchRoute(request);
 		//Console.out(routeMatch);
 
