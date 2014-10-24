@@ -30,7 +30,7 @@ Data.encode = Promise.method(function(data, encoding) {
 					reject(error);
 				}
 				else {
-					resolve(result.toString());
+					resolve(result);
 				}
 			});
 		}

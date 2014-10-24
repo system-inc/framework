@@ -7,7 +7,7 @@ Version = Class.extend({
 
 	construct: function(options) {
 		// Construct from a string
-		if(options && options.isString()) {
+		if(options && String.is(options)) {
 			var versions = options.replace('_', '.').split('.');
 			if(versions[0]) {
 				this.major = versions[0].toNumber();

@@ -2,7 +2,8 @@ Main = Controller.extend({
 
 	main: function*() {
 		//yield Function.delay(250);
-		return this.request.ipAddress;
+		//return 'Hello';
+		return String.random(1024 * 1);
 
 		return this.request;
 

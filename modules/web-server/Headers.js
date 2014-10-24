@@ -10,7 +10,7 @@ Headers = Class.extend({
 
 		if(nodeHeaders) {
 			for(var key in nodeHeaders) {
-				if(Object.isString(nodeHeaders[key])) {
+				if(String.is(nodeHeaders[key])) {
 					headers.create(key, nodeHeaders[key]);	
 				}
 			}	

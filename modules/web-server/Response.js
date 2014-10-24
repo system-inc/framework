@@ -41,7 +41,7 @@ Response = Class.extend({
 	},
 
 	setAcceptedEncodings: function(acceptEncodeHeaderString) {
-		if(acceptEncodeHeaderString && acceptEncodeHeaderString.isString()) {
+		if(acceptEncodeHeaderString && String.is(acceptEncodeHeaderString)) {
 			var acceptedEncodings = acceptEncodeHeaderString.split(',');
 			for(var i = 0; i < acceptedEncodings.length; i++) {
 				this.acceptedEncodings.push(acceptedEncodings[i].trim());
@@ -105,8 +105,9 @@ Response = Class.extend({
 
 		// If the client Accept-Encoding is gzip or deflate
 		if(this.encoding == 'gzip' || this.encoding == 'deflate') {
-			this.content = yield Data.decode(this.content, this.encoding);
+			this.content = yield Data.encode(this.content, this.encoding);
 		}
+		//console.log(this.content);
 
 		// End the response
 		this.nodeResponse.end(this.content);

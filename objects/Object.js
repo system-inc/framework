@@ -90,7 +90,7 @@ Object.prototype.isInteger = function() {
 }
 
 Object.prototype.isString = function() {
-	return typeof value == 'string';
+	return typeof this == 'string';
 }
 
 Object.isString = function(value) {
@@ -135,7 +135,7 @@ Object.prototype.toString = function() {
 
 Object.prototype.toArray = function() {
 	// Wrap strings and numbers in an array
-	if(this.isString() || this.isNumber()) {
+	if(String.is(this) || Number.is(this)) {
 		return [this.toString()];
 	}
 	else {

@@ -19,3 +19,7 @@ Number.random = function(minimum, maximum, precision) {
 
     return Number(random.toFixed(precision));
 }
+
+Number.is = function(value) {
+	return value instanceof Number;
+}
