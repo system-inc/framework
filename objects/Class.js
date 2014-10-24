@@ -66,12 +66,12 @@ Class.extend = function(childClassProperties) {
 
 	// The class constructor
 	function Class() {
-		// Make class variables from the parent show on this class instance (they are already on the prototype but we want to assign them to make them visible to Json.encode)
+		// Make class variables from the parent show on this class instance (they are already on this instance's prototype but we want to assign them to make them visible to Json.encode)
 		for(var childClassPrototypeProperty in childClassPrototype) { // Loop through the inherited class prototype (came from the parent)
-			// Check if we have a property on the inherited class prototype that is not in the properties they passed in (this means the parent class had the variable exposed but the child class will not)
-			if(!childClassProperties[childClassPrototypeProperty] && Object.isPrimitive(childClassPrototype[childClassPrototypeProperty])) {
-				// Make the assignment, now the variable will appear when this object is encoded with Json.encode
-				this[childClassPrototypeProperty] = childClassPrototype[childClassPrototypeProperty];
+			// Check if we have a property on the inherited parent class prototype that is not in the child class properties (this means the parent class had the variable exposed but the child class will not yet)
+			if(!childClassProperties[childClassPrototypeProperty] && typeof(childClassPrototype[childClassPrototypeProperty]) != 'function') {
+				// Clone the property to this instance, now the property will appear when this object is encoded with Json.encode
+				this[childClassPrototypeProperty] = cloneProperty(childClassPrototype[childClassPrototypeProperty]);
 			}
 		}
 
@@ -79,28 +79,34 @@ Class.extend = function(childClassProperties) {
 		for(var childClassProperty in childClassProperties) {
 			// Initialize all class variables (anything not a function)
 			if(typeof(childClassProperties[childClassProperty]) != 'function') {
-				// Clone non-primitives to localize them to this instantiated object
-				if(!Object.isPrimitive(childClassProperties[childClassProperty])) {
-					// We can only clone simple arrays [] and simple objects {} that do not contain references to any classes
-					var isInstanceOfClass = childClassProperties[childClassProperty].constructor.toString().startsWith('function Class()');
-					if(!isInstanceOfClass) {
-						//Console.out('Cloning assumed non-primitive, simple object:', childClassProperty, childClassProperties[childClassProperty]);
-						this[childClassProperty] = Object.clone(childClassProperties[childClassProperty]);
-					}
-					else {
-						console.log('Error: Simple arrays [] and objects {} may be declared as class variables, but you may not instantiate an instance of class in a class variable definition. Any construction of a new class as a class variable must occur in the construct() method. Move the instantiation of "'+childClassProperty+'"" to the construct() methood.');
-					}
-				}
-				// All primitives can be assigned directly
-				else {
-					this[childClassProperty] = childClassProperties[childClassProperty];
-				}
+				this[childClassProperty] = cloneProperty(childClassProperties[childClassProperty]);
 			}
 		}
 
 		// All construction is actually done in the construct method
 		if(!classInitializing && this.construct) {
 			return this.construct.apply(this, arguments); // The return here allows a construct method to return a new Object other than itself
+		}
+	}
+
+	// Use this to clone class variables to localize them to an instantiated object
+	function cloneProperty(property) {
+		// Clone non-primitives to localize them to this instantiated object
+		if(!Object.isPrimitive(property)) {
+			// We can only clone simple arrays [] and simple objects {} that do not contain references to any classes
+			var isInstanceOfClass = property.constructor.toString().startsWith('function Class()');
+			if(!isInstanceOfClass) {
+				//Console.out('Cloning assumed non-primitive, simple object:', childClassProperty, property);
+				return Object.clone(property);
+			}
+			else {
+				console.log('Error: Simple arrays [] and objects {} may be declared as class variables, but you may not instantiate an instance of class in a class variable definition. Any construction of a new class as a class variable must occur in the construct() method. Move the instantiation of "'+childClassProperty+'"" to the construct() methood.');
+				return undefined;
+			}
+		}
+		// All primitives can be assigned directly
+		else {
+			return property;
 		}
 	}
 
