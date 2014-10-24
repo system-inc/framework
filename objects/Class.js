@@ -1,13 +1,13 @@
 Class = function() {};
+var classInitializing = false; // This must stay outside of the extend method
 Class.extend = function(childClassProperties) {
-	var initializing = false;
 	var functionTest = /xyz/.test(function() {xyz;}) ? /\bsuper\b/ : /.*/;
 	var parentClassPrototype = this.prototype;
 
 	// Instantiate a base class (but only create the instance, don't run the constructor)
-	initializing = true;
+	classInitializing = true;
 	var childClassPrototype = new this();
-	initializing = false;
+	classInitializing = false;
 
 	// Copy the childClassProperties over onto the new childClassPrototype
 	for(var childClassProperty in childClassProperties) {
@@ -57,15 +57,25 @@ Class.extend = function(childClassProperties) {
 		else if(typeof(childClassProperties[childClassProperty]) == 'function') {
 			childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
 		}
-		// All other class variables (anything not a function) are initialized in the Class() method below
+		// Set a placeholder for all other class variables
 		else {
-
+			// These will be initialized in the Class() method below,
+			childClassPrototype[childClassProperty] = childClassProperties[childClassProperty];
 		}
 	}
 
 	// The class constructor
 	function Class() {
-		// Assign any class variables that are not functions
+		// Make class variables from the parent show on this class instance (they are already on the prototype but we want to assign them to make them visible to Json.encode)
+		for(var childClassPrototypeProperty in childClassPrototype) { // Loop through the inherited class prototype (came from the parent)
+			// Check if we have a property on the inherited class prototype that is not in the properties they passed in (this means the parent class had the variable exposed but the child class will not)
+			if(!childClassProperties[childClassPrototypeProperty] && Object.isPrimitive(childClassPrototype[childClassPrototypeProperty])) {
+				// Make the assignment, now the variable will appear when this object is encoded with Json.encode
+				this[childClassPrototypeProperty] = childClassPrototype[childClassPrototypeProperty];
+			}
+		}
+
+		// Handle class variables declared outside of the construct function, assign any class variables that are not functions
 		for(var childClassProperty in childClassProperties) {
 			// Initialize all class variables (anything not a function)
 			if(typeof(childClassProperties[childClassProperty]) != 'function') {
@@ -89,8 +99,8 @@ Class.extend = function(childClassProperties) {
 		}
 
 		// All construction is actually done in the construct method
-		if(!initializing && this.construct) {
-			this.construct.apply(this, arguments);
+		if(!classInitializing && this.construct) {
+			return this.construct.apply(this, arguments); // The return here allows a construct method to return a new Object other than itself
 		}
 	}
 
@@ -103,9 +113,9 @@ Class.extend = function(childClassProperties) {
 	// And make this class extendable
 	Class.extend = arguments.callee;
 
-	// Copy over any static methods from the parent class to the child class
+	// Copy over any static methods from the parent class to the child class that don't already exist
 	for(var parentClassProperty in parentClassPrototype) {
-		if(typeof(parentClassPrototype[parentClassProperty]) == 'function' && parentClassProperty != 'construct' && parentClassProperty != 'constructor') {
+		if(!Class[parentClassProperty] && typeof(parentClassPrototype[parentClassProperty]) == 'function' && parentClassProperty != 'construct' && parentClassProperty != 'constructor') {
 			Class[parentClassProperty] = parentClassPrototype[parentClassProperty];
 		}
 	}

@@ -1,8 +1,8 @@
 Main = Controller.extend({
 
 	main: function*() {
-		//yield Function.delay(2000);
-		return {'hey': 'there'};
+		//yield Function.delay(250);
+		return this.request.ipAddress;
 
 		return this.request;
 

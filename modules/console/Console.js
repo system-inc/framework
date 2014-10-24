@@ -26,6 +26,8 @@ ConsoleClass = Class.extend({
 		//console.log.apply(this, arguments); // This invokes the stock console.log method
 
 		this.write(message);
+
+		return message;
 	},
 
 	highlight: function() {

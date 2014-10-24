@@ -1,5 +1,5 @@
 {
-	"title": "Web Server",
+	"title": "Test Web Server",
 	"modules": {
 		"console": {
 			"log": {
@@ -9,8 +9,6 @@
 		"webServer": {
 			"webServers": [
 				{
-					"maximumRequestBodySizeInBytes": 20000,
-					"responseTimeoutInMilliseconds": 10000,
 					"logs": {
 						"general": {
 							"enabled": true

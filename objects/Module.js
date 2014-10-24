@@ -23,7 +23,7 @@ Module = Class.extend({
 	initialize: function(moduleNames) {
 		// Initializing is necessary to do separate of .load because module code may be interdependent and require other code to be loaded first
 		moduleNames.toArray().each(function(moduleName) {
-			//Console.out('Initializing', moduleName.toSpaces(), 'module...');
+			//console.log('Initializing', moduleName.toSpaces(), 'module...');
 
 			// Get the module settings from the project
 			var settings = Project.settings.get('modules.'+moduleName.lowercaseFirstCharacter());

@@ -1,9 +1,15 @@
 IpAddress = Class.extend({
 
 	address: null,
+	version: null,
 
 	construct: function(address) {
-		this.address = address;
+		if(address.contains(':')) {
+			return new IpV6Address(address);
+		}
+		else {
+			return new IpV4Address(address);
+		}
 	},
 
 	//http://en.wikipedia.org/wiki/IP_address

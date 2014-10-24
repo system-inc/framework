@@ -59,7 +59,12 @@ Response = Class.extend({
 		return this.acceptedEncodings;
 	},
 
-	send: function() {
+	send: function(evenIfHandled) {
+		// Don't send the request if it is already handled unless forced
+		if(this.handled && !evenIfHandled) {
+			return;
+		}
+
 		// Mark the response as handled
 		this.handled = true;
 

@@ -1,6 +1,6 @@
 require('./IpAddress');
-require('./Ipv4Address');
-require('./Ipv6Address');
+require('./IpV4Address');
+require('./IpV6Address');
 require('./Network');
 
 NetworkModuleClass = Module.extend({

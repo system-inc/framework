@@ -32,8 +32,8 @@ WebServer = Server.extend({
 					'nameWithoutExtension': 'web-server-'+this.identifier+'-responses',
 				},
 			},
-			'serverTimeoutInMilliseconds': 60000, // 60 seconds DO I NEED THIS?
-			'requestTimeoutInMilliseconds': 5000, // 5 seconds DO I NEED THIS?
+			'serverTimeoutInMilliseconds': 60000, // 60 seconds
+			'requestTimeoutInMilliseconds': 5000, // 5 seconds
 			'responseTimeoutInMilliseconds': 5000, // 5 seconds
 			'maximumRequestBodySizeInBytes': 20000000, // 20 megabytes
 		});
@@ -72,6 +72,9 @@ WebServer = Server.extend({
 			else {
 				var nodeServer = NodeHttp.createServer(this.handleRequestConnection.bind(this));
 
+				// Set a timeout on server connections
+				nodeServer.setTimeout(this.settings.get('serverTimeoutInMilliseconds'));
+
 				// Create the web server
 				this.listeners[port] = nodeServer;
 
@@ -85,11 +88,6 @@ WebServer = Server.extend({
 	handleRequestConnection: function(nodeRequest, nodeResponse) {
 		// Increment the requests counter right away in case of crashes
 		this.requests++;
-
-		// Set a timeout on building the response
-		nodeResponse.setTimeout(this.settings.get('responseTimeoutInMilliseconds'), function(socket) {
-			this.handleInternalServerError(new InternalServerError('Timed out after '+this.settings.get('responseTimeoutInMilliseconds')+' milliseconds while building a response.'), nodeResponse);
-		}.bind(this));
 
 		// Create the request object which wrap node's request object
 		try {
@@ -110,6 +108,16 @@ WebServer = Server.extend({
 			this.handleInternalServerError(error, nodeResponse, request);
 			return;
 		}
+
+		// Set a timeout on handling the request
+		nodeRequest.setTimeout(this.settings.get('requestTimeoutInMilliseconds'), function(socket) {
+			this.handleError(request, response, new InternalServerError('Timed out after '+this.settings.get('requestTimeoutInMilliseconds')+' milliseconds while receiving the request.'));
+		}.bind(this));
+
+		// Set a timeout on building the response
+		nodeResponse.setTimeout(this.settings.get('responseTimeoutInMilliseconds'), function(socket) {
+			this.handleError(request, response, new InternalServerError('Timed out after '+this.settings.get('responseTimeoutInMilliseconds')+' milliseconds while building a response.'));
+		}.bind(this));
 
 		// Invoke the generator that handles the request
 		this.handleRequest(request, response);
@@ -141,7 +149,7 @@ WebServer = Server.extend({
 
 	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
 	handleError: function(request, response, error) {
-		Console.out('WebServer.handleError() called on '+request.id+'. Error:', error);
+		var logEntry = Console.out('WebServer.handleError() called on request '+request.id+'. Error:', error);
 
 		// Mark the response as handled
 		response.handled = true;
@@ -161,12 +169,17 @@ WebServer = Server.extend({
 		});
 
 		// Send the response
-		response.send();
+		response.send(true);
+
+		// Conditionally log the failed request to the general log
+		if(this.logs.general) {
+			this.logs.general.write(logEntry+"\n");
+		}
 	},
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
 	handleInternalServerError: function(error, nodeResponse, request) {
-		Console.out('WebServer.handleInternalServerError() called. Error:', error);
+		var logEntry = Console.out('WebServer.handleInternalServerError() called. Error:', error);
 		nodeResponse.writeHead(500, [['Content-Type', 'application/json']]);
 
 		// Make sure we are working with an error object
@@ -189,6 +202,11 @@ WebServer = Server.extend({
 
 		// Send the content and end the response
 		nodeResponse.end(content);
+
+		// Conditionally log the failed request to the general log
+		if(this.logs.general) {
+			this.logs.general.write(logEntry+"\n");
+		}
 	},
 	
 });
