@@ -1,0 +1,3 @@
+FileRoute = Route.extend({
+
+});

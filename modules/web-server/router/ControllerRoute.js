@@ -1,0 +1,3 @@
+ControllerRoute = Route.extend({
+
+});

@@ -34,7 +34,7 @@ WebServer = Server.extend({
 			},
 			'serverTimeoutInMilliseconds': 60000, // 60 seconds
 			'requestTimeoutInMilliseconds': 5000, // 5 seconds
-			'responseTimeoutInMilliseconds': 5000, // 5 seconds
+			'responseTimeoutInMilliseconds': 1, // 5 seconds
 			'maximumRequestBodySizeInBytes': 20000000, // 20 megabytes
 		});
 
@@ -149,7 +149,7 @@ WebServer = Server.extend({
 
 	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
 	handleError: function(request, response, error) {
-		var logEntry = Console.out('WebServer.handleError() called on request '+request.id+'. Error:', error);
+		var logEntry = Console.out('WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData());
 
 		// Mark the response as handled
 		response.handled = true;

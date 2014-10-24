@@ -1,0 +1,3 @@
+ProxyRoute = Route.extend({
+
+});

@@ -1,0 +1,3 @@
+RedirectRoute = Route.extend({
+
+});

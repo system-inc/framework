@@ -1,14 +1,7 @@
 require('./Controller');
-require('./Cookie');
-require('./Cookies');
-require('./Header');
-require('./Headers');
 require('./Request');
 require('./Response');
-require('./Route');
-require('./RouteMatch');
-require('./Router');
-require('./View');
+require('./router/Router');
 require('./WebServer');
 require('./errors/HttpError');
 

@@ -1,3 +1,10 @@
+require('./Route');
+require('./ControllerRoute');
+require('./FileRoute');
+require('./ProxyRoute');
+require('./RedirectRoute');
+require('./RouteMatch');
+
 Router = Class.extend({
 
 	webServer: null,

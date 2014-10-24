@@ -1,4 +1,8 @@
 require('./Browser');
+require('./Cookie');
+require('./Cookies');
+require('./Header');
+require('./Headers');
 require('./Url');
 require('./WebRequest');
 require('./Web');
