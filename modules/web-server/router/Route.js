@@ -1,16 +1,5 @@
 Route = Class.extend({
 	
-	// Type is controller
-	controllerName: null,
-	controllerMethodName: null,
-
-	// Type is redirect
-	redirectStatusCode: null,
-	redirectLocation: null,
-
-	// Type is file
-
-
 	// Any type
 	type: null, // controller, redirect, file, or proxy
 	context: null, // project or framework
@@ -26,86 +15,80 @@ Route = Class.extend({
 	children: [],
 
 	construct: function(route, parent) {
-		this.parent = (parent === undefined ? null : parent);
+		// Instantiate a subclass of route to handle specific routing behavior
+		var routeSubclassToReturn = null;
 
-		if(route) {
-			this.type = (route.type === undefined ? null : route.type);
-			this.context = (route.context === undefined ? null : route.context);
+		// Make sure child routes without types are subclassed the same as their parent
+		if(!route.type && parent && parent.type) {
+			route.type = parent.type;
+		}
 
-			// Type is controller
-			this.controllerName = (route.controllerName === undefined ? null : route.controllerName);
-			this.controllerMethodName = (route.controllerMethodName === undefined ? null : route.controllerMethodName);
+		// RedirectRoute
+		if(route.type == 'redirect') {
+			var redirectStatusCode = (route.redirectStatusCode ? route.redirectStatusCode : (parent && parent.redirectStatusCode ? parent.redirectStatusCode : null));
+			var redirectLocation = (route.redirectLocation ? route.redirectLocation : (parent && parent.redirectLocation ? parent.redirectLocation : null));
+			routeSubclassToReturn = new RedirectRoute(redirectStatusCode, redirectLocation);
+		}
+		// FileRoute
+		else if(route.type == 'file') {
+			routeSubclassToReturn = new FileRoute();
+		}
+		// ProxyRoute
+		else if(route.type == 'proxy') {
+			routeSubclassToReturn = new ProxyRoute();
+		}
+		// ControllerRoute is the default subclass
+		else {
+			var controllerName = (route.controllerName ? route.controllerName : (parent && parent.controllerName ? parent.controllerName : null));
+			var controllerMethodName = (route.controllerMethodName ? route.controllerName : (parent && parent.controllerMethodName ? parent.controllerMethodName : null));
+			routeSubclassToReturn = new ControllerRoute(controllerName, controllerMethodName);
+		}
 
-			// Type is redirect
-			this.redirectStatusCode = (route.redirectStatusCode === undefined ? null : route.redirectStatusCode);
-			this.redirectLocation = (route.redirectLocation === undefined ? null : route.redirectLocation);
+		// Set the instance variables
+		routeSubclassToReturn.parent = (parent === undefined ? null : parent);
+		routeSubclassToReturn.context = (route.context === undefined ? null : route.context);
+		routeSubclassToReturn.protocol = (route.protocol === undefined ? null : route.protocol);
+		routeSubclassToReturn.host = (route.host === undefined ? null : route.host);
+		routeSubclassToReturn.port = (route.port === undefined ? null : route.port);
+		routeSubclassToReturn.method = (route.method === undefined ? null : route.method);
+		routeSubclassToReturn.expression = (route.expression === undefined ? null : route.expression);
+		routeSubclassToReturn.fullExpression = routeSubclassToReturn.getFullExpression();
+		routeSubclassToReturn.data = (route.data === undefined ? routeSubclassToReturn.data : route.data);
+		routeSubclassToReturn.description = (route.description === undefined ? null : route.description);
 
-			// Type is file
+		// Inherit parent attributes
+		if(routeSubclassToReturn.parent) {
+			routeSubclassToReturn.context = (routeSubclassToReturn.context === null ? routeSubclassToReturn.parent.context : routeSubclassToReturn.context);
+			routeSubclassToReturn.protocol = (routeSubclassToReturn.protocol === null ? routeSubclassToReturn.parent.protocol : routeSubclassToReturn.protocol);
+			routeSubclassToReturn.host = (routeSubclassToReturn.host === null ? routeSubclassToReturn.parent.host : routeSubclassToReturn.host);
+			routeSubclassToReturn.port = (routeSubclassToReturn.port === null ? routeSubclassToReturn.parent.port : routeSubclassToReturn.port);
+			routeSubclassToReturn.method = (routeSubclassToReturn.method === null ? routeSubclassToReturn.parent.method : routeSubclassToReturn.method);
+			routeSubclassToReturn.expression = (routeSubclassToReturn.expression === null ? routeSubclassToReturn.parent.expression : routeSubclassToReturn.expression);
+			routeSubclassToReturn.description = (routeSubclassToReturn.description === null ? routeSubclassToReturn.parent.description : routeSubclassToReturn.description);
 
-
-			// Any type
-			this.protocol = (route.protocol === undefined ? null : route.protocol);
-			this.host = (route.host === undefined ? null : route.host);
-			this.port = (route.port === undefined ? null : route.port);
-			this.method = (route.method === undefined ? null : route.method);
-			this.expression = (route.expression === undefined ? null : route.expression);
-			this.fullExpression = this.getFullExpression();
-			this.data = (route.data === undefined ? this.data : route.data);
-			this.description = (route.description === undefined ? null : route.description);
-
-			// Inherit parent attributes
-			if(this.parent) {
-				this.type = (this.type === null ? parent.type : this.type);
-				this.context = (this.context === null ? parent.context : this.context);
-
-				// Type is controller
-				if(this.type == 'controller') {
-					this.controllerName = (this.controllerName === null ? parent.controllerName : this.controllerName);
-					this.controllerMethodName = (this.controllerMethodName === null ? parent.controllerMethodName : this.controllerMethodName);	
-				}				
-
-				// Type is redirect
-				if(this.type == 'redirect') {
-					this.redirectStatusCode = (this.redirectStatusCode === null ? parent.redirectStatusCode : this.redirectStatusCode);
-					this.redirectLocation = (this.redirectLocation === null ? parent.redirectLocation : this.redirectLocation);
-				}
-
-				// Type is file
-				
-
-				// Any type
-				this.protocol = (this.protocol === null ? parent.protocol : this.protocol);
-				this.host = (this.host === null ? parent.host : this.host);
-				this.port = (this.port === null ? parent.port : this.port);
-				this.method = (this.method === null ? parent.method : this.method);
-				this.expression = (this.expression === null ? parent.expression : this.expression);
-				this.description = (this.description === null ? parent.description : this.description);
-
-				// If we have data, merge it with the parent's data object
-				if(this.data) {
-					this.data = this.data.merge(this.parent.data)	
-				}
-				// If we do not have any data, just inherit the parent's data
-				else {
-					this.data = parent.data;
-				}
+			// If we have data, merge it with the parent's data object
+			if(routeSubclassToReturn.data) {
+				routeSubclassToReturn.data = routeSubclassToReturn.data.merge(routeSubclassToReturn.parent.data)	
 			}
-
-			// Make sure we have a type and context
-			if(this.type == null) {
-				this.type = 'controller';
-			}
-			if(this.context == null) {
-				this.context = 'project';
-			}
-
-			// Create the children if they exist
-			if(route.children) {
-				route.children.each(function(childRoute) {
-					this.children.push(new Route(childRoute, this));
-				}, this);
+			// If we do not have any data, just inherit the parent's data
+			else {
+				routeSubclassToReturn.data = routeSubclassToReturn.parent.data;
 			}
 		}
+
+		// Make sure we have a context
+		if(routeSubclassToReturn.context == null) {
+			routeSubclassToReturn.context = 'project';
+		}
+
+		// Create the children if they exist
+		if(route.children) {
+			route.children.each(function(childRoute) {
+				routeSubclassToReturn.children.push(new Route(childRoute, routeSubclassToReturn));
+			}, this);
+		}
+
+		return routeSubclassToReturn;
 	},
 
 	match: function(request) {

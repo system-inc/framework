@@ -15,12 +15,13 @@ Router = Class.extend({
 	},
 
 	loadRoutes: function(routes, project) {
-		Console.out('Loading routes...')
+		Console.out('Loading routes...');
 
 		routes.each(function(routeJson) {
 			this.routes.push(new Route(routeJson));
 		}, this);
 
+		Console.out(this.routes);
 		//Route.log(this.routes[0]);
 	},
 

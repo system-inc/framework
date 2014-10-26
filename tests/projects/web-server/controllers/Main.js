@@ -1,7 +1,7 @@
 Main = Controller.extend({
 
 	main: function*() {
-		yield Function.delay(100);
+		//yield Function.delay(100);
 		//return 'Hello';
 		return String.random(1024 * 1);
 

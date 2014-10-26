@@ -34,7 +34,7 @@ WebServer = Server.extend({
 			},
 			'serverTimeoutInMilliseconds': 60000, // 60 seconds
 			'requestTimeoutInMilliseconds': 5000, // 5 seconds
-			'responseTimeoutInMilliseconds': 1, // 5 seconds
+			'responseTimeoutInMilliseconds': 5000, // 5 seconds
 			'maximumRequestBodySizeInBytes': 20000000, // 20 megabytes
 		});
 
@@ -140,7 +140,7 @@ WebServer = Server.extend({
 			//}.bind(this));
 						
 			// Identify and follow the route
-			yield this.router.route(request, response);
+			this.router.route(request, response);
 		}
 		catch(error) {
 			this.handleError(request, response, error);
