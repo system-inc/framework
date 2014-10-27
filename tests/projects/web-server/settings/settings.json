@@ -20,7 +20,7 @@
 							"enabled": true
 						}
 					},
-					"protocol": "http",
+					"protocols": "http",
 					"ports": 8080,
 					"router": {
 						"routes": [
@@ -28,16 +28,20 @@
 								"type": "controller",
 								"controllerName": "Main",
 								"controllerMethodName": "main",
-								"host": "*",
-								"protocol": "http",
-								"port": "*",
-								"method": "*",
+								"hosts": "*",
+								"protocols": "http",
+								"ports": "*",
+								"methods": "*",
 								"expression": "/",
 								"data": {
 									"rootData": "root!",
 									"view": "root"
 								},
 								"children": [
+									{
+										"type": "proxy",
+										"expression": "yougetsignal/?"
+									},
 									{
 										"type": "redirect",
 										"redirectStatusCode": 301,
@@ -54,6 +58,7 @@
 											"view": "user",
 											"1": "username"
 										},
+										"description": "Users!",
 										"children": [
 											{
 												"expression": "story/(\\w+?)/?",
@@ -65,7 +70,7 @@
 										]
 									},
 									{
-										"method": "PUT",
+										"methods": "PUT",
 										"controllerMethodName": "main",
 										"expression": "putOnly/?",
 										"data": {

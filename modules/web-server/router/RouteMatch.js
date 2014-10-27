@@ -104,11 +104,15 @@ RouteMatch = Class.extend({
 				this.response.statusCode = 404;
 				content = this.request.method+' '+this.request.url.path+' not found.';
 				content += ' Controller '+this.route.controllerName+' with method '+this.route.controllerMethodName+' does not exist.';
+				//TODO: throw new NotFoundError(this.request.url.path+' not found.');
 			}
 		}
 		else if(this.route.type == 'redirect') {
 			this.response.statusCode = this.route.redirectStatusCode;
 			this.response.headers.set('Location', this.route.redirectLocation);
+		}
+		else if(this.route.type == 'proxy') {
+			
 		}
 		else if(this.route.type == 'file') {
 			// Build the file path
@@ -130,12 +134,12 @@ RouteMatch = Class.extend({
 			else {
 				this.response.statusCode = 404;
 				content = this.request.url.path+' not found.';
+				//TODO: throw new NotFoundError(this.request.url.path+' not found.');
 			}
 		}
 
-		// If content exists, make sure it is a string
-		// THIS BREAKS IMAGES?
-		if(content && !String.is(content)) {
+		// If content exists, make sure it is a string or a buffer
+		if(content && !String.is(content) && !Object.isBuffer(content)) {
 			content = Json.encode(content);
 		}
 

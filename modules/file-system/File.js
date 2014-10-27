@@ -16,10 +16,19 @@ File = FileSystemObject.extend({
 	},
 
 	getContentType: function(file) {
+        var context = this;
+
+        // If this method is being invoked statically
+        if(file) {
+            context = new File(file);
+        }
+
+        // Set the default content type
 		var contentType = 'application/octet-stream';
-		
-		if(FileFormats[this.extension]) {
-			contentType = FileFormats[this.extension].type;
+
+        // Check if the extension is defined in our file formats
+		if(FileFormats[context.extension]) {
+			contentType = FileFormats[context.extension].type;
 		}
 
 		return contentType;

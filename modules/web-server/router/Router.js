@@ -21,8 +21,7 @@ Router = Class.extend({
 			this.routes.push(new Route(routeJson));
 		}, this);
 
-		Console.out(this.routes);
-		//Route.log(this.routes[0]);
+		//Console.out(this.routes);
 	},
 
 	matchRoute: function(request) {

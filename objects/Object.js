@@ -97,6 +97,14 @@ Object.isString = function(value) {
 	return typeof value == 'string';
 }
 
+Object.prototype.isBuffer = function() {
+	return this instanceof Buffer;
+}
+
+Object.isBuffer = function(value) {
+	return value instanceof Buffer;
+}
+
 Object.prototype.isFunction = function() {
 	return this instanceof Function;
 }
