@@ -36,6 +36,12 @@ Route = Class.extend({
 		// ProxyRoute
 		else if(routeSettings.type == 'proxy') {
 			route = new ProxyRoute();
+			route.inheritProperty('proxyUrl', routeSettings, parent);
+			// Make sure we are working with a URL object
+			if(route.proxyUrl) {
+				route.proxyUrl = new Url(route.proxyUrl);
+			}
+			route.inheritProperty('proxyHeaders', routeSettings, parent);
 		}
 		// ControllerRoute is the default subclass
 		else {

@@ -40,7 +40,8 @@
 								"children": [
 									{
 										"type": "proxy",
-										"expression": "yougetsignal/?"
+										"proxyUrl": "http://www.yougetsignal.com",
+										"expression": "yougetsignal(.*?)"
 									},
 									{
 										"type": "redirect",

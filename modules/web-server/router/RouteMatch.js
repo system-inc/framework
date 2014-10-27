@@ -77,7 +77,7 @@ RouteMatch = Class.extend({
 		// Setup a variable to store the content
 		var content = null;
 
-		// Route type is controller
+		// ControllerRoute
 		if(this.route.type == 'controller') {
 			// Try to get the controller
 			var controller = Controller.getController(this.route.controllerName, this.request, this.response, this.route, this.data);
@@ -107,13 +107,24 @@ RouteMatch = Class.extend({
 				//TODO: throw new NotFoundError(this.request.url.path+' not found.');
 			}
 		}
+		// RedirectRoute
 		else if(this.route.type == 'redirect') {
 			this.response.statusCode = this.route.redirectStatusCode;
 			this.response.headers.set('Location', this.route.redirectLocation);
 		}
+		// ProxyRoute
 		else if(this.route.type == 'proxy') {
-			
+			// Build a web request for the proxy
+			//Console.out(this.route);
+			var webRequest = new WebRequest(this.route.getFullProxyUrl(this.request.url).url);
+			var webResponse = yield webRequest.execute();
+			//Console.out(webResponse);
+
+			this.response.statusCode = webResponse.statusCode;
+			this.response.headers = webResponse.headers;
+			content = webResponse.body;
 		}
+		// FileRoute
 		else if(this.route.type == 'file') {
 			// Build the file path
 			var path = Project.directory+'views'+this.request.url.path;
