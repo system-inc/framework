@@ -17,7 +17,7 @@ Object.prototype.each = function(callback, context) {
 Object.clone = function(object) {
 	var clone = object;
  
-    if(object && typeof object === 'object') {
+    if(object && typeof(object) === 'object') {
         clone = Object.prototype.toString.call(object) === '[object Array]' ? [] : {};
         for(var key in object) {
         	// This code 
@@ -62,11 +62,11 @@ Object.prototype.merge = function() {
 }
 
 Object.prototype.isObject = function() {
-	return typeof this == 'object';
+	return typeof(this) == 'object';
 }
 
 Object.is = function(value) {
-	return typeof value == 'object';
+	return typeof(value) == 'object';
 }
 
 Object.isPrimitive = function(value) {
@@ -82,7 +82,7 @@ Object.prototype.isBoolean = function() {
 }
 
 Object.prototype.isNumber = function() {
-	return this instanceof Number;
+	return Number.is(this);
 }
 
 Object.prototype.isInteger = function() {
@@ -90,11 +90,11 @@ Object.prototype.isInteger = function() {
 }
 
 Object.prototype.isString = function() {
-	return typeof this == 'string';
+	return String.is(this);
 }
 
 Object.isString = function(value) {
-	return typeof value == 'string';
+	return String.is(value);
 }
 
 Object.prototype.isBuffer = function() {
@@ -103,6 +103,10 @@ Object.prototype.isBuffer = function() {
 
 Object.isBuffer = function(value) {
 	return value instanceof Buffer;
+}
+
+Object.isRegularExpression = function(value) {
+	return value instanceof RegExp;
 }
 
 Object.prototype.isFunction = function() {
@@ -114,7 +118,7 @@ Object.isFunction = function(value) {
 }
 
 Object.prototype.isArray = function() {
-	return this instanceof Array;
+	return Array.is(this);
 }
 
 Object.prototype.isError = function() {
@@ -142,12 +146,31 @@ Object.prototype.toString = function() {
 }
 
 Object.prototype.toArray = function() {
-	// Wrap strings and numbers in an array
-	if(String.is(this) || Number.is(this)) {
-		return [this.toString()];
+	// Wrap anything not in an array in an array
+	if(!Array.is(this)) {
+		if(this.isString()) {
+			return [this.toString()]; // Do this to make sure we are working with string literals and not "String" objects
+		}
+		else {
+			return [this];
+		}
 	}
 	else {
 		return this;	
+	}
+}
+
+Object.toArray = function(value) {
+	if(!Array.is(value)) {
+		if(value.isString()) {
+			return [value.toString()];
+		}
+		else {
+			return [value];
+		}
+	}
+	else {
+		return value;
 	}
 }
 

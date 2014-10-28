@@ -79,7 +79,7 @@ WebServer = Server.extend({
 				this.listeners[port] = nodeServer;
 
 				// Make the web server listen on the port
-				this.listeners[port].listen(port);
+				this.listeners[port].listen(port.toString()); // Ports must be strings
 				Console.out('Listening on port '+port+'.');
 			}
 		}, this);

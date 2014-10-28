@@ -21,5 +21,5 @@ Number.random = function(minimum, maximum, precision) {
 }
 
 Number.is = function(value) {
-	return value instanceof Number;
+	return typeof(value) == 'number' || value instanceof Number;
 }

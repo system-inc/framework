@@ -25,11 +25,24 @@
 					"router": {
 						"routes": [
 							{
+								"type": "redirect",
+								"redirectStatusCode": 301,
+								"redirectHost": "server",
+								"hosts": [
+									"www.server",
+									"192.168.1.40"
+								],
+								"protocols": "*",
+								"ports": "*",
+								"methods": "*",
+								"expression": ".*"
+							},
+							{
 								"type": "controller",
 								"controllerName": "Main",
 								"controllerMethodName": "main",
-								"hosts": "*",
-								"protocols": "http",
+								"hosts": "server",
+								"protocols": ["http", "https"],
 								"ports": "*",
 								"methods": "*",
 								"expression": "/",

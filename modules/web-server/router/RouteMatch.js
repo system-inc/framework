@@ -110,7 +110,30 @@ RouteMatch = Class.extend({
 		// RedirectRoute
 		else if(this.route.type == 'redirect') {
 			this.response.statusCode = this.route.redirectStatusCode;
-			this.response.headers.set('Location', this.route.redirectLocation);
+
+			// If it is a host redirect
+			if(this.route.redirectHost) {
+				// Clone the request URL
+				var url = new Url(this.request.url.input);
+
+				// Replace the host with the desired host
+				url.host = this.route.redirectHost;
+
+				Console.highlight('Redirecting to', url.getUrl());
+
+				// Redirect the client to the URL with the new host
+				this.response.headers.set('Location', url.getUrl());
+			}
+			// If it is a location redirect
+			else if(this.route.redirectLocation) {
+				// Redirect the client to specific location
+				this.response.headers.set('Location', this.route.redirectLocation);
+			}
+			// If not configured properly
+			else {
+				this.response.statusCode = 500;
+				content = 'No redirect host or location configured.';
+			}
 		}
 		// ProxyRoute
 		else if(this.route.type == 'proxy') {

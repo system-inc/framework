@@ -37,22 +37,11 @@ Url = Class.extend({
 		this.queryString = nodeUrl.search;
 		this.hash = nodeUrl.hash;
 
-		this.url = this.protocol+'://'+this.host+(this.port != 80 ? ':'+this.port : '')+this.path+this.queryString+(this.hash ? '#'+this.hash : '');
+		this.url = this.getUrl();
 	},
 
-	getHostFromString: function(string) {
-
-	},
-
-	// var host = ( nodeRequest.headers.host.match(/:/g) ) ? nodeRequest.headers.host.slice( 0, nodeRequest.headers.host.indexOf(":") ) : nodeRequest.headers.host;
-	// var port = ( nodeRequest.headers.host.match(/:/g) ) ? nodeRequest.headers.host.slice( 1, nodeRequest.headers.host.indexOf(":") ) : nodeRequest.headers.host;
-
-	getTopLevelDomain: function() {
-		return null;
-	},
-
-	getBaseDomain: function() {
-		return null;
+	getUrl: function() {
+		return this.protocol+'://'+this.host+(this.port != 80 ? ':'+this.port : '')+this.path+this.queryString+(this.hash ? '#'+this.hash : '');
 	},
 
 	setQueryParameter: function(key, value) {

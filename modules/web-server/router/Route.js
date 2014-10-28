@@ -27,6 +27,7 @@ Route = Class.extend({
 		if(routeSettings.type == 'redirect') {
 			route = new RedirectRoute();
 			route.inheritProperty('redirectStatusCode', routeSettings, parent);
+			route.inheritProperty('redirectHost', routeSettings, parent);
 			route.inheritProperty('redirectLocation', routeSettings, parent);
 		}
 		// FileRoute
@@ -132,30 +133,28 @@ Route = Class.extend({
 		// If we have a match
 		if(routeMatch.route) {
 			// Check the methods
-			//Console.out('Comparing methods '+routeMatch.methods+' against '+request.method+'.');
+			//Console.out('Comparing methods', routeMatch.route.methods, 'against', request.method);
 			if(routeMatch.route && routeMatch.route.methods != '*' && !routeMatch.route.methods.contains(request.method)) {
 				//Console.out('Method match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the protocols
-			//Console.out('Comparing protocols '+routeMatch.protocols+' against '+request.url.protocol+'.');
-			// TODO: Need to make this handle if protocols is an array
-			if(routeMatch.route && routeMatch.route.protocols != '*' && !request.url.protocol.contains(routeMatch.route.protocols)) {
+			//Console.out('Comparing protocols', routeMatch.route.protocols, 'against', request.url.protocol);
+			if(routeMatch.route && routeMatch.route.protocols != '*' && !routeMatch.route.protocols.contains(request.url.protocol)) {
 				//Console.out('Protocol match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the host
-			//Console.out('Comparing host '+request.url.host+' against '+routeMatch.hosts+'.');
-			// TODO: Need to make this handle if hosts is an array
-			if(routeMatch.route && routeMatch.route.hosts != '*' && !request.url.host.match(new RegExp('^'+routeMatch.route.hosts+'$'))) {
+			//Console.out('Comparing hosts', routeMatch.route.hosts.toArray(), 'against', request.url.host);
+			if(routeMatch.route && routeMatch.route.hosts != '*' && !routeMatch.route.hosts.toArray().contains(request.url.host, false, 'either')) {
 				//Console.out('Host match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the ports
-			//Console.out('Comparing ports '+routeMatch.ports+' against '+request.url.port+'.');
+			//Console.out('Comparing ports', routeMatch.route.ports, 'against', request.url.port);
 			if(routeMatch.route && routeMatch.route.ports != '*' && !routeMatch.route.ports.contains(request.url.port)) {
 				//Console.out('Port match failed!');
 				routeMatch.route = null;

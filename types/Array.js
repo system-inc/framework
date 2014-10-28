@@ -20,20 +20,83 @@ Array.prototype.merge = function() {
     return this;
 }
 
-Array.prototype.contains = function(string, caseSensitive) {
+// Regular expression location can be:
+// null (no regular expression will be used)
+// 'search' (the search term is a regular expression)
+// 'array' (the array itself contains regular expression(s) to be used to match against the search term)
+// 'either' (both 'search' and 'array' methods above will be used to find a match)
+Array.prototype.contains = function(search, caseSensitive, regularExpressionLocation) {
 	caseSensitive = caseSensitive === false ? false : true;
 	var contains = false;
 
-	if(!caseSensitive) {
-		for(var key in this) {
-			if(String.is(this[key]) && string.toLowerCase() == this[key].toLowerCase()) {
+	// If not using a regular expression and not case sensitive
+	if(!regularExpressionLocation && !caseSensitive) {
+		for(var i = 0; i < this.length; i++) {
+			if(String.is(this[i]) && search.toLowerCase() == this[i].toLowerCase()) {
 				contains = true;
 				break;
 			}
 		}
 	}
+	// If using a regular expression
+	else if(regularExpressionLocation) {
+		var searchRegularExpression;
+		var modifiers = '';
+		if(!caseSensitive) {
+			modifiers = 'i'; // Case insensitive
+		}
+
+		// If search is a regular expression, use it, otherwise create a regular expression
+		if(regularExpressionLocation == 'search' || regularExpressionLocation == 'either') {
+			if(Object.isRegularExpression(search)) {
+				searchRegularExpression = search;
+			}
+			else {
+				searchRegularExpression = new RegExp('^'+search+'$', modifiers);
+			}	
+		}
+
+		// Loop through the array
+		for(var i = 0; i < this.length; i++) {
+			// Conditionally perform the search regular expression match
+			if(regularExpressionLocation == 'search' || regularExpressionLocation == 'either') {
+				// Perform the match check
+				if(String.is(this[i]) && this[i].match(searchRegularExpression)) {
+					//Console.out(this[i], 'MATCHED against the regular expression', searchRegularExpression.source);
+					contains = true;
+					break;
+				}
+				else {
+					//Console.out(this[i], 'DID NOT MATCH against the regular expression', searchRegularExpression.source);
+				}
+			}
+
+			// Conditionally perform the array regular expression match
+			if(regularExpressionLocation == 'array' || regularExpressionLocation == 'either') {
+				// If the current array item is a regular expression, use it, otherwise create a regular expression
+				var arrayRegularExpression;
+				if(Object.isRegularExpression(this[i])) {
+					arrayRegularExpression = this[i];
+				}
+				else {
+					arrayRegularExpression = new RegExp('^'+this[i]+'$', modifiers);
+				}
+
+				// Perform the match check
+				if(String.is(search) && search.match(arrayRegularExpression)) {
+					//Console.out(search, 'MATCHED against the regular expression', arrayRegularExpression.source);
+					contains = true;
+					break;
+				}
+				else {
+					//Console.out(search, 'DID NOT MATCH against the regular expression', arrayRegularExpression.source);
+				}
+			}
+		}
+	}
+	// If case sensitive and no regular expression
 	else {
-		contains = this.indexOf(string) != -1;
+		contains = this.indexOf(search) != -1;
 	}
 
 	return contains;
