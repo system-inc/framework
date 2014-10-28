@@ -119,7 +119,7 @@ RouteMatch = Class.extend({
 				// Replace the host with the desired host
 				url.host = this.route.redirectHost;
 
-				Console.highlight('Redirecting to', url.getUrl());
+				//Console.highlight('Redirecting to', url.getUrl());
 
 				// Redirect the client to the URL with the new host
 				this.response.headers.set('Location', url.getUrl());

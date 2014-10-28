@@ -29,7 +29,6 @@
 								"redirectStatusCode": 301,
 								"redirectHost": "server",
 								"hosts": [
-									"www.server",
 									"192.168.1.40"
 								],
 								"protocols": "*",
@@ -41,7 +40,7 @@
 								"type": "controller",
 								"controllerName": "Main",
 								"controllerMethodName": "main",
-								"hosts": "server",
+								"hosts": "(.*?\\.?)server",
 								"protocols": ["http", "https"],
 								"ports": "*",
 								"methods": "*",

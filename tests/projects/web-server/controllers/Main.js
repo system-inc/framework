@@ -2,6 +2,9 @@ Main = Controller.extend({
 
 	main: function*() {
 		//yield Function.delay(100);
+
+		Console.highlight(this.route.hosts);
+
 		return 'Hello';
 
 		return String.random(1024 * 1);
