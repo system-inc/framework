@@ -42,7 +42,7 @@ Router = Class.extend({
 		return routeMatch;
 	},
 
-	route: function(request, response) {
+	route: function*(request, response) {
 		var routeMatch = this.matchRoute(request);
 		//Console.out(routeMatch);
 
@@ -58,7 +58,7 @@ Router = Class.extend({
 		routeMatch.setResponse(response);
 
 		// Follow the route match
-		routeMatch.follow();
+		yield routeMatch.follow();
 	},
 	
 });

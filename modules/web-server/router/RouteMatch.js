@@ -41,9 +41,9 @@ RouteMatch = Class.extend({
 			}
 		});
 
-		// Merge request.bodyObject into data
-		if(this.request.bodyObject) {
-			finalizedRouteData = finalizedRouteData.merge(this.request.bodyObject);
+		// Merge request.data into data
+		if(this.request.data) {
+			finalizedRouteData = finalizedRouteData.merge(this.request.data);
 		}
 
 		// Sort the data by keys

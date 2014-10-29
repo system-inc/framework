@@ -119,18 +119,35 @@ WebServer = Server.extend({
 			this.handleError(request, response, new InternalServerError('Timed out after '+this.settings.get('responseTimeoutInMilliseconds')+' milliseconds while building a response.'));
 		}.bind(this));
 
-		// Invoke the generator that handles the request
+		// Handle the request
 		this.handleRequest(request, response);
 	},
 
 	handleRequest: function*(request, response) {
+		// Create a domain for the request
+		var domain = NodeDomain.create();
+
+		// Must add the node request and response to the domain since they were created before the domain
+		domain.add(request.nodeRequest);
+		domain.add(response.nodeResponse);
+
+		// Add an event listener to listen for errors on the domain
+		domain.on('error', function(error) {
+			Console.highlight('--- Request', request.id, 'caught in domain .on(\'error\')!');
+			this.handleError(request, response, error);
+			domain.exit();
+		}.bind(this));
+
+		// Enter the domain
+		domain.enter();
+
+		// Process the request
 		try {
 			// Mark the request as received
 			request.received();
 
 			// Wait for the node request to finish
 			var nodeRequest = yield Request.receiveNodeRequest(request, this.settings.get('maximumRequestBodySizeInBytes'));
-			nodeRequest.throwIfError();
 
 			// Use this to troubleshoot race conditions
 			//var randomMilliseconds = Number.random(100, 3000);
@@ -140,10 +157,16 @@ WebServer = Server.extend({
 			//}.bind(this));
 						
 			// Identify and follow the route
-			this.router.route(request, response);
+			yield this.router.route(request, response);
+			
+			// Exit the domain
+			domain.exit();
 		}
 		catch(error) {
 			this.handleError(request, response, error);
+
+			// Exit the domain
+			domain.exit();
 		}
 	},
 

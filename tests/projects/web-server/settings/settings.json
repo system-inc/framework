@@ -40,7 +40,10 @@
 								"type": "controller",
 								"controllerName": "Main",
 								"controllerMethodName": "main",
-								"hosts": "(.*?\\.?)server",
+								"hosts": [
+									"server",
+									"localhost"
+								],
 								"protocols": ["http", "https"],
 								"ports": "*",
 								"methods": "*",
