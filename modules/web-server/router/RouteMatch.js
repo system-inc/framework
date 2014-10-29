@@ -83,7 +83,7 @@ RouteMatch = Class.extend({
 			var controller = Controller.getController(this.route.controllerName, this.request, this.response, this.route, this.data);
 
 			// If the controller was found, invoke the method for the route
-			if(controller) {
+			if(controller && controller[this.route.controllerMethodName]) {
 				// Use a reflection technique to find the argument names of the controller method and build an arguments array to send in
 				var controllerMethodArguments = [];
 				var controllerMethodArgumentNames = controller[this.route.controllerMethodName].getArguments();
@@ -101,10 +101,7 @@ RouteMatch = Class.extend({
 			}
 			// Send a 404
 			else {
-				this.response.statusCode = 404;
-				content = this.request.method+' '+this.request.url.path+' not found.';
-				content += ' Controller '+this.route.controllerName+' with method '+this.route.controllerMethodName+' does not exist.';
-				//TODO: throw new NotFoundError(this.request.url.path+' not found.');
+				throw new NotFoundError(this.request.method+' '+this.request.url.path+' not found. Controller "'+this.route.controllerName+'" with method "'+this.route.controllerMethodName+'" does not exist.');
 			}
 		}
 		// RedirectRoute
@@ -131,8 +128,7 @@ RouteMatch = Class.extend({
 			}
 			// If not configured properly
 			else {
-				this.response.statusCode = 500;
-				content = 'No redirect host or location configured.';
+				throw new InternalServerError('No redirect host or location configured.');
 			}
 		}
 		// ProxyRoute
@@ -166,9 +162,7 @@ RouteMatch = Class.extend({
 			}
 			// If the file doesn't exist, send a 404
 			else {
-				this.response.statusCode = 404;
-				content = this.request.url.path+' not found.';
-				//TODO: throw new NotFoundError(this.request.url.path+' not found.');
+				throw new NotFoundError(this.request.url.path+' not found.');
 			}
 		}
 

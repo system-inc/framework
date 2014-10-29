@@ -133,8 +133,9 @@ WebServer = Server.extend({
 
 		// Add an event listener to listen for errors on the domain
 		domain.on('error', function(error) {
-			Console.highlight('--- Request', request.id, 'caught in domain .on(\'error\')!');
 			this.handleError(request, response, error);
+
+			// Exit the domain
 			domain.exit();
 		}.bind(this));
 
@@ -150,11 +151,9 @@ WebServer = Server.extend({
 			var nodeRequest = yield Request.receiveNodeRequest(request, this.settings.get('maximumRequestBodySizeInBytes'));
 
 			// Use this to troubleshoot race conditions
-			//var randomMilliseconds = Number.random(100, 3000);
-			//console.log('waiting '+randomMilliseconds+' milliseconds');
-			//Function.delay(randomMilliseconds, function() {
-			//	this.router.route(request, response);
-			//}.bind(this));
+			//var randomMilliseconds = Number.random(1, 100);
+			//Console.out('Waiting '+randomMilliseconds+' milliseconds...');
+			//yield Function.delay(randomMilliseconds);
 						
 			// Identify and follow the route
 			yield this.router.route(request, response);

@@ -9,9 +9,9 @@ Main = Controller.extend({
 
 		//Console.highlight(this.route.hosts);
 
-		//return 'Hello';
+		return this.request.id;
 
-		return String.random(1024 * 1, '01');
+		//return String.random(1024 * 1, '01');
 
 		return this.request;
 
@@ -34,28 +34,30 @@ Main = Controller.extend({
 		return response;
 	},
 
-	contact: function*() {
+	contact: function() {
+		//throw new NotFoundError('oops!');
+
 		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.controllerMethodName+')';
 		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
-	legal: function*() {
+	legal: function() {
 		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.controllerMethodName+')';
 		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
-	legalTermsOfService: function*() {
+	legalTermsOfService: function() {
 		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.controllerMethodName+')';
 		response += "\nData:\n"+Json.encode(this.data);
 
 		return response;
 	},
 
-	legalTermsOfServiceIOs: function*() {
+	legalTermsOfServiceIOs: function() {
 		var response = this.request.method+' '+this.request.url.path+' ('+this.route.controllerName+'.'+this.route.controllerMethodName+')';
 		response += "\nData:\n"+Json.encode(this.data);
 
