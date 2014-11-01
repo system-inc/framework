@@ -25,10 +25,10 @@ FileSystemObject = Class.extend({
 		if(this.path) {
 			// Figure out the name
 			var name = this.path;
-			if(this.path.endsWith(NodePath.sep)) {
-				name = name.replaceLast(NodePath.sep, '');
+			if(this.path.endsWith(Node.Path.sep)) {
+				name = name.replaceLast(Node.Path.sep, '');
 			}
-			this.name = name.substr(name.lastIndexOf(NodePath.sep) + 1, name.length);
+			this.name = name.substr(name.lastIndexOf(Node.Path.sep) + 1, name.length);
 
 			// Populate class variables from a stat call
 			this.initializeStatus();
@@ -150,7 +150,7 @@ FileSystemObject = Class.extend({
 
 	exists: Promise.method(function(fileSystemObject) {
 	    return new Promise(function(resolve, reject) {
-	    	NodeFileSystem.exists(fileSystemObject, function(exists) {
+	    	Node.FileSystem.exists(fileSystemObject, function(exists) {
 	    		//console.log(fileSystemObject, exists);
 	    		resolve(exists);
 	    	});

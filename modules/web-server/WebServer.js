@@ -70,7 +70,7 @@ WebServer = Server.extend({
 			}
 			// If the port is free
 			else {
-				var nodeServer = NodeHttp.createServer(this.handleRequestConnection.bind(this));
+				var nodeServer = Node.Http.createServer(this.handleRequestConnection.bind(this));
 
 				// Set a timeout on server connections
 				nodeServer.setTimeout(this.settings.get('serverTimeoutInMilliseconds'));
@@ -125,7 +125,7 @@ WebServer = Server.extend({
 
 	handleRequest: function*(request, response) {
 		// Create a domain for the request
-		var domain = NodeDomain.create();
+		var domain = Node.Domain.create();
 
 		// Must add the node request and response to the domain since they were created before the domain
 		domain.add(request.nodeRequest);

@@ -51,10 +51,10 @@ File = FileSystemObject.extend({
 // Static methods
 File.getContentType = File.prototype.getContentType;
 
-//File.read = Promise.promisify(NodeFileSystem.readFile);
+//File.read = Promise.promisify(Node.FileSystem.readFile);
 File.read = Promise.method(function(fileName, options) {
     return new Promise(function(resolve, reject) {
-    	NodeFileSystem.readFile(fileName, options, function(error, data) {
+    	Node.FileSystem.readFile(fileName, options, function(error, data) {
     		if(error) {
     			reject(error);
     		}
@@ -65,10 +65,10 @@ File.read = Promise.method(function(fileName, options) {
     });
 });
 
-//File.open = Promise.promisify(NodeFileSystem.open);
+//File.open = Promise.promisify(Node.FileSystem.open);
 File.open = Promise.method(function(path, flags, mode) {
     return new Promise(function(resolve, reject) {
-    	NodeFileSystem.open(path, flags, mode, function(error, fileDescriptor) {
+    	Node.FileSystem.open(path, flags, mode, function(error, fileDescriptor) {
     		if(error) {
     			reject(error);
     		}
@@ -79,10 +79,10 @@ File.open = Promise.method(function(path, flags, mode) {
     });
 });
 
-//File.write = Promise.promisify(NodeFileSystem.write);
+//File.write = Promise.promisify(Node.FileSystem.write);
 File.write = Promise.method(function(fileDescriptor, buffer, offset, length, position) {
     return new Promise(function(resolve, reject) {
-    	NodeFileSystem.write(fileDescriptor, buffer, offset, length, position, function(error, written, buffer) {
+    	Node.FileSystem.write(fileDescriptor, buffer, offset, length, position, function(error, written, buffer) {
     		if(error) {
     			reject(error);
     		}
@@ -98,7 +98,7 @@ File.write = Promise.method(function(fileDescriptor, buffer, offset, length, pos
 
 File.create = Promise.method(function(file, data, options) {
     return new Promise(function(resolve, reject) {
-        NodeFileSystem.writeFile(file, data, options, function(error) {
+        Node.FileSystem.writeFile(file, data, options, function(error) {
             if(error) {
                 reject(error);
             }
@@ -114,7 +114,7 @@ File.createWriteStream = Promise.method(function() {
 	var storedArguments = arguments;
 
     return new Promise(function(resolve, reject) {
-    	var writeStream = NodeFileSystem.createWriteStream.apply(storedContext, storedArguments);
+    	var writeStream = Node.FileSystem.createWriteStream.apply(storedContext, storedArguments);
     	writeStream.on('open', function(fileDescriptor) {
     		resolve(writeStream);
     	});
@@ -127,9 +127,9 @@ File.createWriteStream = Promise.method(function() {
 
 File.synchronous = {};
 
-File.synchronous.exists = NodeFileSystem.existsSync;
+File.synchronous.exists = Node.FileSystem.existsSync;
 
-File.synchronous.read = NodeFileSystem.readFileSync;
+File.synchronous.read = Node.FileSystem.readFileSync;
 
 File.synchronous.read.json = function(file) {
 	var result = {};

@@ -4,7 +4,7 @@ Json = Class.extend({
 	},
 
 	encode: function(object, replacer, indentation) {
-		//return NodeUtility.inspect(object);
+		//return Node.Utility.inspect(object);
 		return JSON.stringify(Json.decycle(object), replacer, indentation);
 	},
 

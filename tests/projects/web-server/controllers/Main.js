@@ -9,7 +9,7 @@ Main = Controller.extend({
 
 		//Console.highlight(this.route.hosts);
 
-		return this.request.id;
+		return this.request.id.toString();
 
 		//return String.random(1024 * 1, '01');
 

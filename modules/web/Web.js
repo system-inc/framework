@@ -8,7 +8,7 @@ Web.request = Promise.method(function(options) {
     		precision: 'milliseconds',
     	});
 
-		var request = NodeHttp.request(options, function(response) {
+		var request = Node.Http.request(options, function(response) {
 			// Set the encoding
 			if(options && options.encoding) {
 				response.setEncoding(options.encoding);

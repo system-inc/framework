@@ -1,0 +1,3 @@
+TestGroup = Class.extend({
+	
+});

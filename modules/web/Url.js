@@ -27,7 +27,7 @@ Url = Class.extend({
 			return;
 		}
 
-		var nodeUrl = NodeUrl.parse(string, true);
+		var nodeUrl = Node.Url.parse(string, true);
 
 		this.protocol = nodeUrl.protocol.replace(':', '');
 		this.port = (nodeUrl.port == null ? 80 : nodeUrl.port.toNumber());

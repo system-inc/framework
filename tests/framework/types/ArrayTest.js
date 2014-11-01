@@ -1,0 +1,5 @@
+ArrayTest = Class.extend({
+
+
+
+});

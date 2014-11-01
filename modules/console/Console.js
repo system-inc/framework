@@ -89,11 +89,11 @@ ConsoleClass = Class.extend({
 	},
 
 	listen: function() {
-		if(global['NodeStandardIn']) {
-			//NodeStandardIn.setRawMode(true); // Takes input character by character
-			NodeStandardIn.resume();
-			NodeStandardIn.setEncoding('utf8');
-			NodeStandardIn.on('data', function(data) {
+		if(global['Node.StandardIn']) {
+			//Node.StandardIn.setRawMode(true); // Takes input character by character
+			Node.StandardIn.resume();
+			Node.StandardIn.setEncoding('utf8');
+			Node.StandardIn.on('data', function(data) {
 				this.handleCommand(data);
 			}.bind(this));	
 		}
@@ -102,14 +102,14 @@ ConsoleClass = Class.extend({
 	handleCommand: function(command) {
 		//console.log(command);
 		if(command.trim() == 'hi') {
-			NodeStandardOut.write('hello');
+			Node.StandardOut.write('hello');
 		}
 		else {
-			NodeStandardOut.write("\n\n");
+			Node.StandardOut.write("\n\n");
 		}
 
 		// Always write a line break
-		NodeStandardOut.write("\n");
+		Node.StandardOut.write("\n");
 	},
 
 });

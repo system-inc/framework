@@ -30,25 +30,25 @@ Directory = FileSystemObject.extend({
 
 	create: function*(directory, mode) {
 		// Normalize the path for the operating system
-		var directory = NodePath.normalize(directory);
+		var directory = Node.Path.normalize(directory);
 		
 		// Remove any beginning separators
-		if(directory.startsWith(NodePath.sep)) {
-			directory = directory.replaceFirst(NodePath.sep, '');
+		if(directory.startsWith(Node.Path.sep)) {
+			directory = directory.replaceFirst(Node.Path.sep, '');
 		}
 		// Remove any ending separators
-		if(directory.endsWith(NodePath.sep)) {
-			directory = directory.replaceLast(NodePath.sep, '');
+		if(directory.endsWith(Node.Path.sep)) {
+			directory = directory.replaceLast(Node.Path.sep, '');
 		}
 		//Console.out(directory);
 
-		var directories = directory.split(NodePath.sep);
+		var directories = directory.split(Node.Path.sep);
 		//Console.out(directories);
 
 		// Loop through each directory starting at root and make sure the directory exists and if it doesn't create it
 		var currentFullDirectory = '/';
 		yield directories.each(function*(currentDirectory) {
-			currentFullDirectory = currentFullDirectory+currentDirectory+NodePath.sep;
+			currentFullDirectory = currentFullDirectory+currentDirectory+Node.Path.sep;
 
 			// Check if the directory exists
 			if(yield Directory.exists(currentFullDirectory)) {
@@ -68,10 +68,10 @@ Directory = FileSystemObject.extend({
 // Static methods
 Directory.list = Directory.prototype.list;
 Directory.create = Directory.prototype.create;
-//Directory.make = Promise.promisify(NodeFileSystem.mkdir);
+//Directory.make = Promise.promisify(Node.FileSystem.mkdir);
 Directory.make = Promise.method(function(path, mode) {
     return new Promise(function(resolve, reject) {
-    	NodeFileSystem.mkdir(path, mode, function(error) {
+    	Node.FileSystem.mkdir(path, mode, function(error) {
     		if(error) {
     			reject(error);
     		}
