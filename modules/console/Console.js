@@ -2,6 +2,8 @@ ConsoleClass = Class.extend({
 
 	identifier: null,
 	log: null,
+	showTime: true,
+	showFile: true,
 
 	construct: function(identifier) {
 		this.identifier = (identifier === undefined ? this.identifier : identifier);
@@ -45,8 +47,9 @@ ConsoleClass = Class.extend({
 	},
 
 	prepareMessage: function(passedArguments) {
-		// Build the message
 		var message = '';
+
+		// Build the message
 		for(var i = 0; i < passedArguments.length; i++) {
 			// If we have an instance of an Error object
 			if(passedArguments[i] && passedArguments[i].isError()) {
@@ -83,7 +86,13 @@ ConsoleClass = Class.extend({
 	    //console.log('Column Number'+': '+columnNumber);
 	    //console.log('File Name'+': '+fileName);
 
-	    message = '['+new Time().getDateTime()+'] ('+fileName+':'+lineNumber+') '+message;
+	    if(this.showFile) {
+	    	message = '('+fileName+':'+lineNumber+') '+message;
+	    }
+
+	    if(this.showTime) {
+	    	message = '['+new Time().getDateTime()+'] '+message;
+	    }
 
 	    return message;
 	},

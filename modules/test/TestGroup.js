@@ -1,3 +1,0 @@
-TestGroup = Class.extend({
-	
-});

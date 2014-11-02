@@ -1,7 +1,6 @@
 require('./Assert');
 require('./Test');
-require('./TestGroup');
-require('./TestReporter');
+require('./Proctor');
 
 TestModuleClass = Module.extend({
 

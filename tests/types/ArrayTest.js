@@ -1,4 +1,4 @@
-ArrayTest = Class.extend({
+ArrayTest = Test.extend({
 
 	testEquality: function() {
 		Assert.equal('1', 1, 'The string "1" should be equal to the number 1.');

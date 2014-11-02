@@ -1,39 +1,16 @@
-// Require Framework
+// Usage
+// "Test.js" - find all of the Tests in the tests folder and run them all
+// "Test.js" types" - run all of the tests in tests/types
+// "Test.js" types/ArrayTest" - run all of the tests for ArrayTest
+// "Test.js" types/ArrayTest testContains" - run the testContains test in ArrayTest
+
+// Framework
 require('./../Framework.js');
+Project = new Framework();
 
 // Initialize the test module
 Module.load('Test');
 Module.initialize('Test');
 
-var passes = 0;
-var failures = 0;
-var path = (Node.Process.argv[2] ? Node.Process.argv[2] : null);
-
-// Find the test they want to run
-require('./../tests/framework/types/ArrayTest');
-
-
-
-
-
-// Start the stopwatch
-var stopwatch = new Stopwatch();
-
-var test = new ArrayTest();
-
-try {
-	test.testEquality();
-	passes++;
-}
-catch(error) {
-	failures++;
-}
-
-// Stop the stopwatch
-stopwatch.stop();
-
-// Notify the user of how many tests passed and failed
-Console.out(passes+' passed, '+failures+' failed ('+Number.round(stopwatch.elapsedTime)+' '+stopwatch.time.precision+')');
-
-// Exit the process
-Node.Process.exit();
+// Create a Proctor to oversee all of the tests as they run
+new Proctor();

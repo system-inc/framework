@@ -1,0 +1,3 @@
+ClassTest = Test.extend({
+
+});
