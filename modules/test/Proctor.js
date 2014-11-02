@@ -1,67 +1,146 @@
 Proctor = Class.extend({
 
+	testMethods: [],
+	testClasses: {},
+
 	passes: 0,
 	failures: 0,
 
-	path: Project.framework.directory,
+	/*
+	get the tests the user wants to run
+		this is going to be an array of
+			test method name
+			test class name
+			test file name
+			test directory name
 
+		tell the test reporter how many tests we are going to run
+	
+	run the tests
+		tell the test reporter which test we are now running
+		when the test finishes, send results (fail, pass, elapsed time) to the test reporter
+
+	tell the reporter we finished and how long it took
+
+	*/
+	
 	construct: function() {
 		// Configure the console
 		//Console.showTime = false;
-		Console.showFile = false;
-
-		// Handle passed arguments
-		var requestedPath = (Node.Process.argv[2] ? Node.Process.argv[2] : null);
-		var requestedTest = (Node.Process.argv[3] ? Node.Process.argv[3] : null);
-
-		this.run();
+		//Console.showFile = false;
 	},
 
-	run: function*() {
-		// If the requested a path that does not start with /, then assume we are testing Framework
-		if(requestedPath && !requestedPath.startsWith('/')) {
-			path += '/'+requestedPath;
+	resolvePath: function(path) {
+		// If the path does not exist, we are in the default Framework tests directory
+		if(!path) {
+			path = Project.framework.directory+'tests/';
 		}
-		// If path starts with /, then we are probably testing a Project
-		else if(requestedPath) {
-			path = requestedPath;
+		// If the path does not start with a slash, we are in the default Framework tests directory
+		else if(!path.startsWith('/')) {
+			path = Project.framework.directory+'tests/'+path;
 		}
 
-		Console.out(this.path);
+		// If the path does not end with .js, we are looking for a directory of tests which will always terminate with a slash
+		if(!path.endsWith('.js')) {
+			if(!path.endsWith('/')) {
+				path = path+'/';
+			}
+		}
 
-		Directory.is()
+		return path;
+	},
 
-		// Check if the path is a folder
+	getTestMethod: function(methodName, className, classFileName, directory) {
+		return {
+			methodName: methodName,
+			className: className,
+			classFileName: classFileName,
+			directory: directory,
+		}
+	},
 
-		// Find all of the tests in the path
+	getAndRunTestMethods: function*(path, testMethodName) {
+		yield this.getTestMethods(path, testMethodName);
+		yield this.runTestMethods();
+	},
 
-		// Find the test they want to run
-		require(this.path+'/tests/types/ArrayTest');
+	getTestMethods: function*(path, testMethodName) {
+		// Resolve the path
+		path = this.resolvePath(path);
+		
+		// If we are working with a directory of tests
+		if(path.endsWith('/')) {
 
+		}
+		// If we are working with a single test file
+		else {
+			// Instantiate a file object for the test class file
+			var testClassFile = new File(path);
+			
+			// If the test class file exists
+			var fileExists = yield File.exists(testClassFile.file);
+			if(fileExists) {
+				// Require the test class file
+				require(testClassFile.file);
 
+				// Instantiate the test class
+				var testClass = this.testClasses[testClassFile.nameWithoutExtension];
+				// Cache the test class if we don't have it already instantiated
+				if(!testClass) {
+					testClass = new global[testClassFile.nameWithoutExtension]();
+					this.testClasses[testClassFile.nameWithoutExtension] = testClass;
+				}
+				
+				// If they passed a testMethodName and it exists on the test class
+				if(testMethodName && testClass[testMethodName]) {
+					this.testMethods.push(this.getTestMethod(testMethodName, testClassFile.nameWithoutExtension, testClassFile.name, testClassFile.directory));
+				}
+				// If the passed testMethod name does not exist on the test class
+				else {
+					this.exit('The test class "'+testClassFile.nameWithoutExtension+'" does not have the method "'+testMethodName+'", aborting.');
+				}
+			}
+			// If the test class file does not exists
+			else {
+				this.exit('The file '+testClassFile.file+' does not exist, aborting.');
+			}
+		}
 
-		Console.out('Running tests...');
+		return this.testMethods;
+	},
+
+	runTestMethods: function*() {
+		Console.out('Running '+this.testMethods.length+' tests...');
 
 		// Start the stopwatch
 		var stopwatch = new Stopwatch();
 
-		var test = new ArrayTest();
+		for(var i = 0; i < this.testMethods.length; i++) {
+			// Set the current test method
+			var currentTestMethod = this.testMethods[i];
 
-		try {
-			test.testEquality();
-			this.passes++;
-		}
-		catch(error) {
-			this.failures++;
+			// Get the instantiated test class
+			var testClass = this.testClasses[currentTestMethod.className];
+
+			try {
+				yield testClass[currentTestMethod.methodName]();
+				this.passes++;
+			}
+			catch(error) {
+				Console.out(error);
+				this.failures++;
+			}
 		}
 
 		// Stop the stopwatch
 		stopwatch.stop();
 
-		// Notify the user of how many tests passed and failed
-		Console.out(this.passes+' passed, '+this.failures+' failed ('+Number.round(stopwatch.elapsedTime)+' '+stopwatch.time.precision+')');
-
 		// Exit the process
+		this.exit(this.passes+' passed, '+this.failures+' failed ('+Number.round(stopwatch.elapsedTime)+' '+stopwatch.time.precision+')');
+	},
+
+	exit: function(message) {
+		Console.out(message);
 		Node.Process.exit();
 	},
 

@@ -30,8 +30,8 @@ FileSystemObject = Class.extend({
 			}
 			this.name = name.substr(name.lastIndexOf(Node.Path.sep) + 1, name.length);
 
-			// Populate class variables from a stat call
-			this.initializeStatus();
+			// Figure out the directory
+			this.directory = this.path.substr(0, this.path.lastIndexOf(Node.Path.sep) + 1);
 		}
 	},
 
