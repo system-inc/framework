@@ -89,7 +89,7 @@ Response = Class.extend({
 		this.headers.update('Content-Encoding', this.encoding);
 
 		// Track the elapsed time
-		this.stopwatch.end();
+		this.stopwatch.stop();
 		this.headers.create('X-Processing-Time-in-'+this.stopwatch.precision.capitalize(), this.stopwatch.elapsedTime);
 
 		// Add the response cookies to the headers

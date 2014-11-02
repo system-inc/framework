@@ -1,0 +1,1 @@
+Assert = Node.Assert = require('assert');

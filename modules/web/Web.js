@@ -56,7 +56,7 @@ Web.request = Promise.method(function(options) {
 				result.trailers = response.trailers;
 
 				// Stop and attach the stopwatch
-				result.stopwatch = stopwatch.end();
+				result.stopwatch = stopwatch.stop();
 
 				//console.log('Web request finished:', result);
 

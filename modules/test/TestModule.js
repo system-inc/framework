@@ -1,3 +1,8 @@
+require('./Assert');
+require('./Test');
+require('./TestGroup');
+require('./TestReporter');
+
 TestModuleClass = Module.extend({
 
 	version: null,

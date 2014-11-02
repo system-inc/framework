@@ -1,2 +1,2 @@
 #!/bin/bash
-node --harmony tests/Test.js
+node --harmony tests/Test.js "$@"

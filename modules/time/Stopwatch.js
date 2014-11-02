@@ -1,8 +1,8 @@
 Stopwatch = Class.extend({
 
 	precision: 'milliseconds',
-	starTime: null,
-	endTime: null,
+	startTime: null,
+	stopTime: null,
 	elapsedTime: null,
 	laps: [],
 	time: null,
@@ -24,9 +24,9 @@ Stopwatch = Class.extend({
 		return this;
 	},
 
-	end: function() {
-		this.endTime = this.time.now();
-		this.elapsedTime = this.endTime - this.startTime;
+	stop: function() {
+		this.stopTime = this.time.now();
+		this.elapsedTime = this.stopTime - this.startTime;
 
 		return this;
 	},
@@ -47,7 +47,7 @@ Stopwatch = Class.extend({
 		this.laps.push({
 			'note': note,
 			'time': now,
-			'elapsedTimeSinceStart': now - this.starTime,
+			'elapsedTimeSinceStart': now - this.startTime,
 			'elapsedTimeSinceLastLap': elapsedTimeSinceLastLap,
 		});
 

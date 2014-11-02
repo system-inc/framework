@@ -23,3 +23,5 @@ Number.random = function(minimum, maximum, precision) {
 Number.is = function(value) {
 	return typeof(value) == 'number' || value instanceof Number;
 }
+
+Number.round = Math.round;
