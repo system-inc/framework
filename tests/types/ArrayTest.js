@@ -1,13 +1,23 @@
 ArrayTest = Test.extend({
 
-	is: function() {
+	testIs: function*() {
 		Assert.true(Array.is([]));
 		Assert.false(Array.is('[]'));
 		Assert.true(Array.is('string'.toArray()));
+		yield Function.delay(250);
 	},
 
-	merge: function() {
+	testMerge: function*() {
 		Assert.equal(Json.encode([1,2,3]), Json.encode([1].merge([2,3])));
+		yield Function.delay(250);
+	},
+
+	testFirst: function*() {
+		yield Function.delay(250);
+	},
+
+	testLast: function*() {
+		yield Function.delay(250);
 	},
 
 });

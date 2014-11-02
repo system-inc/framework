@@ -26,8 +26,12 @@ Proctor = Class.extend({
 	
 	construct: function() {
 		// Configure the console
-		//Console.showTime = false;
-		//Console.showFile = false;
+		Console.showTime = false;
+		Console.showFile = false;
+
+		// Clear the screen
+		Console.write('\033[2J');
+		Console.write('\033[H');
 	},
 
 	resolvePath: function(path) {
@@ -56,7 +60,7 @@ Proctor = Class.extend({
 			className: className,
 			classFileName: classFileName,
 			directory: directory,
-		}
+		};
 	},
 
 	getAndRunTestMethods: function*(path, testMethodName) {
@@ -91,13 +95,31 @@ Proctor = Class.extend({
 					this.testClasses[testClassFile.nameWithoutExtension] = testClass;
 				}
 				
-				// If they passed a testMethodName and it exists on the test class
-				if(testMethodName && testClass[testMethodName]) {
-					this.testMethods.push(this.getTestMethod(testMethodName, testClassFile.nameWithoutExtension, testClassFile.name, testClassFile.directory));
+				// If they want to run all tests in the class
+				if(!testMethodName) {
+					// Loop through all of the class properties
+					for(var key in testClass) {
+						// All tests must start with "test" and be a function
+						if(key.startsWith('test') && Function.is(testClass[key])) {
+							this.testMethods.push(this.getTestMethod(key, testClassFile.nameWithoutExtension, testClassFile.name, testClassFile.directory));		
+						}
+					}
 				}
-				// If the passed testMethod name does not exist on the test class
 				else {
-					this.exit('The test class "'+testClassFile.nameWithoutExtension+'" does not have the method "'+testMethodName+'", aborting.');
+					var expandedTestMethodName = 'test'+testMethodName.uppercaseFirstCharacter();
+
+					// If they want to run a specific method in the class
+					if(testMethodName && testClass[testMethodName]) {
+						this.testMethods.push(this.getTestMethod(testMethodName, testClassFile.nameWithoutExtension, testClassFile.name, testClassFile.directory));
+					}
+					// If they want to run a specific method in the class using a shorthand testMethodName
+					else if(testMethodName && testClass[expandedTestMethodName]) {
+						this.testMethods.push(this.getTestMethod(expandedTestMethodName, testClassFile.nameWithoutExtension, testClassFile.name, testClassFile.directory));
+					}
+					// If the passed testMethod name does not exist on the test class
+					else {
+						this.exit('The test class "'+testClassFile.nameWithoutExtension+'" does not have the method "'+testMethodName+'", aborting.');
+					}
 				}
 			}
 			// If the test class file does not exists
@@ -109,23 +131,47 @@ Proctor = Class.extend({
 		return this.testMethods;
 	},
 
+	getElapsedTimeString: function(elapsedTime, precision) {
+		return '\x1B[90m('+Number.addCommas(Number.round(elapsedTime, 3))+' '+precision+')\x1B[39m';
+	},
+
 	runTestMethods: function*() {
-		Console.out('Running '+this.testMethods.length+' tests...');
+		Console.out('Running '+this.testMethods.length+' tests...'+"\n");
 
 		// Start the stopwatch
 		var stopwatch = new Stopwatch();
+
+		// Keep track of the last test class
+		var lastTestClassName;
 
 		for(var i = 0; i < this.testMethods.length; i++) {
 			// Set the current test method
 			var currentTestMethod = this.testMethods[i];
 
+			// Get the current test class
+			var currentTestClassName = currentTestMethod.className;
+
+			// Print out the current class
+			if(currentTestClassName != lastTestClassName) {
+				Console.out('  '+currentTestClassName.replaceLast('Test', '')+"\n");
+				lastTestClassName = currentTestClassName;
+			}
+
 			// Get the instantiated test class
 			var testClass = this.testClasses[currentTestMethod.className];
 
+			// Time the test
+			var testMethodStopwatch = new Stopwatch();
+
+			// Run the test
 			try {
 				yield testClass[currentTestMethod.methodName]();
+				testMethodStopwatch.stop();
+
+				Console.out('    \x1B[32m✓\x1B[39m '+currentTestMethod.methodName.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(testMethodStopwatch.elapsedTime, testMethodStopwatch.time.precision));
 				this.passes++;
 			}
+			// If the test fails
 			catch(error) {
 				Console.out(error);
 				this.failures++;
@@ -136,11 +182,11 @@ Proctor = Class.extend({
 		stopwatch.stop();
 
 		// Exit the process
-		this.exit(this.passes+' passed, '+this.failures+' failed ('+Number.round(stopwatch.elapsedTime)+' '+stopwatch.time.precision+')');
+		this.exit("\n"+this.passes+' passed, '+this.failures+' failed '+this.getElapsedTimeString(stopwatch.elapsedTime, stopwatch.time.precision));
 	},
 
 	exit: function(message) {
-		Console.out(message);
+		Console.out(message+"\n");
 		Node.Process.exit();
 	},
 

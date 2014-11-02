@@ -24,4 +24,16 @@ Number.is = function(value) {
 	return typeof(value) == 'number' || value instanceof Number;
 }
 
-Number.round = Math.round;
+Number.round = function(number, precision) {
+	precision = (precision === undefined ? 0 : precision);
+
+	return number.toFixed(precision);
+}
+
+Number.addCommas = function(number) {
+	while(/(\d+)(\d{3})/.test(number.toString())) {
+      number = number.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+    }
+
+    return number;
+}
