@@ -9,7 +9,7 @@ ArrayTest = Test.extend({
 
 	testMerge: function*() {
 		Assert.equal(Json.encode([1,2,3]), Json.encode([1].merge([2,3])));
-		yield Function.delay(1);
+		yield Function.delay(50);
 	},
 
 	testFirst: function*() {

@@ -83,6 +83,11 @@ Framework = Class.extend({
 		// Load the project settings
 		Console.out('Loading project settings...');
 		this.settings = Settings.constructFromFile(this.directory+'settings/settings.json');
+
+		// Set the default settings
+		this.settings.default({
+			environment: 'development',
+		})
 		//Console.out(this.settings);
 
 		// Set the title

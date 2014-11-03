@@ -14,7 +14,8 @@ ConsoleClass = Class.extend({
 
 	write: function(message) {
 		// Write the message to the console
-		console.log(message);
+		Node.StandardOut.write(message);
+		//console.log(message);
 		
 		// If we have a log, write the message to it
 		if(this.log) {
@@ -27,7 +28,7 @@ ConsoleClass = Class.extend({
 		var message = Console.prepareMessage(arguments);
 		//console.log.apply(this, arguments); // This invokes the stock console.log method
 
-		this.write(message);
+		this.write(message+"\n");
 
 		return message;
 	},
@@ -37,7 +38,7 @@ ConsoleClass = Class.extend({
 		var message = Console.prepareMessage(arguments);
 
 		// Wrap the message in ASCII
-		message = "\x1B[90m\n\n                                                |>>>\r\n                                                |\r\n                                            _  _|_  _\r\n                                           |;|_|;|_|;|\r\n                                           \\\\.    .  \/\r\n                                            \\\\:  .  \/\r\n                                             ||:   |\r\n                                             ||:.  |\r\n                                             ||:  .|\r\n                                             ||:   |       \\,\/\r\n                                             ||: , |            \/`\\\r\n                                             ||:   |\r\n                                             ||: . |\r\n              __                            _||_   |\r\n     ____--`~    \'--~~__            __ ----~    ~`---,              ___\r\n-~--~                   ~---__ ,--~\'                  ~~----_____-~\'   `~----~~\n\n\n\n\x1B[39m"+"\x1B[32m"+message+"\x1B[39m"+"\n\n";
+		message = Terminal.style("\n\n                                                |>>>\r\n                                                |\r\n                                            _  _|_  _\r\n                                           |;|_|;|_|;|\r\n                                           \\\\.    .  \/\r\n                                            \\\\:  .  \/\r\n                                             ||:   |\r\n                                             ||:.  |\r\n                                             ||:  .|\r\n                                             ||:   |       \\,\/\r\n                                             ||: , |            \/`\\\r\n                                             ||:   |\r\n                                             ||: . |\r\n              __                            _||_   |\r\n     ____--`~    \'--~~__            __ ----~    ~`---,              ___\r\n-~--~                   ~---__ ,--~\'                  ~~----_____-~\'   `~----~~\n\n\n\n", 'gray')+Terminal.style(message+"\n\n", 'green');
 
 		this.write(message);
 	},

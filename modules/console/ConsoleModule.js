@@ -1,4 +1,5 @@
 require('./Console');
+require('./Terminal');
 
 ConsoleModuleClass = Module.extend({
 

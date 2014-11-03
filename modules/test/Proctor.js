@@ -114,11 +114,22 @@ Proctor = Class.extend({
 	},
 
 	getElapsedTimeString: function(elapsedTime, precision) {
-		return '\x1B[90m('+Number.addCommas(Number.round(elapsedTime, 3))+' '+precision+')\x1B[39m';
+		var elapsedTimeString = '('+Number.addCommas(Number.round(elapsedTime, 3))+' '+precision+')';
+		var style = 'gray';
+
+		// If we are slower than 30 milliseconds
+		if(elapsedTime > 30) {
+			style = 'red';
+		}
+
+		return Terminal.style(elapsedTimeString, style);
 	},
 
 	runTestMethods: function*() {
-		Console.out("\n"+'Running '+this.testMethods.length+' tests...'+"\n");
+		Terminal.clear();
+		Console.out('Running '+this.testMethods.length+' tests...'+"\n");
+
+		Console.highlight(Terminal.width(), Terminal.height());
 
 		// Start the stopwatch
 		var stopwatch = new Stopwatch();
@@ -150,7 +161,7 @@ Proctor = Class.extend({
 				yield testClass[currentTestMethod.methodName]();
 				testMethodStopwatch.stop();
 
-				Console.out('    \x1B[32m✓\x1B[39m '+currentTestMethod.methodName.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(testMethodStopwatch.elapsedTime, testMethodStopwatch.time.precision));
+				Console.out('    '+Terminal.style('✓', 'green')+' '+currentTestMethod.methodName.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(testMethodStopwatch.elapsedTime, testMethodStopwatch.time.precision));
 				this.passes++;
 			}
 			// If the test fails
