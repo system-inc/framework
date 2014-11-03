@@ -36,15 +36,6 @@ Proctor = Class.extend({
 		return path;
 	},
 
-	getTestMethod: function(methodName, className, classFileName, directory) {
-		return {
-			methodName: methodName,
-			className: className,
-			classFileName: classFileName,
-			directory: directory,
-		};
-	},
-
 	getAndRunTests: function*(path, testMethodName) {
 		yield this.getTests(path, testMethodName);
 		yield this.runTests();
@@ -76,7 +67,41 @@ Proctor = Class.extend({
 		
 		// If we are working with a directory of tests
 		if(path.endsWith('/')) {
+			// Recursively get all of the file system objects in the path
+			var fileSystemObjects = yield FileSystem.list(path, true);
 
+			// Loop through each of the file system objects
+			fileSystemObjects.each(function(index, fileSystemObject) {
+				// If we have a file
+				if(fileSystemObject.is(File)) {
+					// We need to see if this is a test class file, if the file is not "Test.js" but ends with "Test.js" it should be
+					if(fileSystemObject.name != 'Test.js' && fileSystemObject.name.endsWith('Test.js')) {
+						// Require the test class file
+						require(fileSystemObject.file);
+
+						var testClassName = fileSystemObject.nameWithoutExtension;
+
+						// Add the test class to tests
+						this.addTest(testClassName, fileSystemObject.name, fileSystemObject.directory);
+
+						// Instantiate the test class
+						var testClass = this.testClasses[testClassName];
+						// Cache the test class if we don't have it already instantiated
+						if(!testClass) {
+							testClass = new global[testClassName]();
+							this.testClasses[testClassName] = testClass;
+						}
+
+						// Loop through all of the class properties
+						for(var key in testClass) {
+							// All tests must start with "test" and be a function
+							if(key.startsWith('test') && Function.is(testClass[key])) {
+								this.tests[testClassName].methods.push(key);
+							}
+						}
+					}
+				}
+			}, this);
 		}
 		// If we are working with a single test file
 		else {
@@ -170,7 +195,7 @@ Proctor = Class.extend({
 		Terminal.clear();
 		var testCount = this.getTestCount();
 		var testMethodCount = this.getTestMethodCount();
-		Console.out('Running '+testMethodCount+' '+(testMethodCount == 1 ? 'test' : 'tests')+' in '+testCount+' test '+(testCount == 1 ? 'class' : 'classes')+'...'+"\n");
+		Console.out('Running '+testMethodCount+' '+(testMethodCount == 1 ? 'test' : 'tests')+' in '+testCount+' test '+(testCount == 1 ? 'class' : 'classes')+'...');
 
 		// Start the stopwatch
 		var stopwatch = new Stopwatch();
@@ -184,7 +209,7 @@ Proctor = Class.extend({
 			var testClassStopwatch = new Stopwatch();
 
 			// Print out the current class
-			Console.out('  '+testClassName.replaceLast('Test', '')+"\n");
+			Console.out("\n"+'  '+testClassName.replaceLast('Test', '')+"\n");
 
 			// Loop through all of the test methods
 			yield test.methods.each(function*(testMethodNameIndex, testMethodName) {

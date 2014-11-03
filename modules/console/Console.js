@@ -54,11 +54,11 @@ ConsoleClass = Class.extend({
 		for(var i = 0; i < passedArguments.length; i++) {
 			// If we have an instance of an Error object
 			if(passedArguments[i] && passedArguments[i].isError()) {
-				message += "\n"+Json.indent(passedArguments[i].toObject(true));
+				message += Json.indent(passedArguments[i].toObject(true));
 			}
 			// If we have an non-string object encode it into Json and indent it
 			else if(passedArguments[i] && !String.is(passedArguments[i]) && Object.is(passedArguments[i])) {
-				message += "\n"+Json.indent(passedArguments[i]);
+				message += Json.indent(passedArguments[i]);
 			}
 			else {
 				message += passedArguments[i];	

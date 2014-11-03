@@ -26,15 +26,14 @@ Array.prototype.merge = function() {
 // 'array' (the array itself contains regular expression(s) to be used to match against the search term)
 // 'either' (both 'search' and 'array' methods above will be used to find a match)
 Array.prototype.contains = function(search, caseSensitive, regularExpressionLocation) {
-	caseSensitive = caseSensitive === false ? false : true;
-	var contains = false;
+	caseSensitive = (caseSensitive === undefined ? false : caseSensitive);
+	var contains = 0;
 
 	// If not using a regular expression and not case sensitive
 	if(!regularExpressionLocation && !caseSensitive) {
 		for(var i = 0; i < this.length; i++) {
 			if(String.is(this[i]) && search.toLowerCase() == this[i].toLowerCase()) {
-				contains = true;
-				break;
+				contains++;
 			}
 		}
 	}
@@ -63,8 +62,7 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 				// Perform the match check
 				if(String.is(this[i]) && this[i].match(searchRegularExpression)) {
 					//Console.out(this[i], 'MATCHED against the regular expression', searchRegularExpression.source);
-					contains = true;
-					break;
+					contains++;
 				}
 				else {
 					//Console.out(this[i], 'DID NOT MATCH against the regular expression', searchRegularExpression.source);
@@ -85,8 +83,7 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 				// Perform the match check
 				if(String.is(search) && search.match(arrayRegularExpression)) {
 					//Console.out(search, 'MATCHED against the regular expression', arrayRegularExpression.source);
-					contains = true;
-					break;
+					contains++;
 				}
 				else {
 					//Console.out(search, 'DID NOT MATCH against the regular expression', arrayRegularExpression.source);
@@ -96,7 +93,11 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 	}
 	// If case sensitive and no regular expression
 	else {
-		contains = this.indexOf(search) != -1;
+		this.each(function(index, value) {
+			if(value == search) {
+				contains++;
+			}
+		});
 	}
 
 	return contains;
@@ -141,7 +142,7 @@ Array.prototype.delete = function(index) {
 
 // Takes either a normal callback function or a generator callback function
 Array.prototype.each = function(callback, context) {
-	// If the callback is not a generator, use the standard .forEach
+	// If the callback is not a generator, use a standard for loop
 	if(!Function.isGenerator(callback)) {
 		//Array.prototype.forEach.apply(this, arguments)
 		for(var i = 0; i < this.length; i++) {

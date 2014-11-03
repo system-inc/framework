@@ -9,7 +9,7 @@ Object.prototype.sort = function() {
 }
 
 Object.prototype.each = function(callback, context) {
-	// If the callback is not a generator, use the standard .forEach
+	// If the callback is not a generator, use a standard for loop
 	if(!Function.isGenerator(callback)) {
 		var objectKeys = Object.keys(this);
 		for(var i = 0; i < objectKeys.length; i++) {
@@ -103,6 +103,10 @@ Object.prototype.isObject = function() {
 
 Object.is = function(value) {
 	return typeof(value) == 'object';
+}
+
+Object.prototype.is = function(classType) {
+	return this instanceof classType;
 }
 
 Object.isPrimitive = function(value) {

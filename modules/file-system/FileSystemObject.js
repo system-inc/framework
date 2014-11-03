@@ -44,14 +44,18 @@ FileSystemObject = Class.extend({
 		// Check to see if the file exists
 		if(yield FileSystemObject.exists(path)) {
 			// Get the file object status
-			var nodeStatus = yield FileSystem.lstat(path);
+			var nodeStatus = yield FileSystem.stat(path);
 
 			// Make sure to always be an instance of File or Directory
 			if(nodeStatus.isFile()) {
-				return new File(path);
+				var file = new File(path);
+				yield file.initializeStatus();
+				return file;
 			}
 			else if(nodeStatus.isDirectory()) {
-				return new Directory(path);
+				var directory = new Directory(path);
+				yield directory.initializeStatus();
+				return directory;
 			}
 		}
 
