@@ -5,24 +5,6 @@ Proctor = Class.extend({
 
 	passes: 0,
 	failures: 0,
-
-	/*
-	get the tests the user wants to run
-		this is going to be an array of
-			test method name
-			test class name
-			test file name
-			test directory name
-
-		tell the test reporter how many tests we are going to run
-	
-	run the tests
-		tell the test reporter which test we are now running
-		when the test finishes, send results (fail, pass, elapsed time) to the test reporter
-
-	tell the reporter we finished and how long it took
-
-	*/
 	
 	construct: function() {
 		// Configure the console
@@ -30,8 +12,8 @@ Proctor = Class.extend({
 		Console.showFile = false;
 
 		// Clear the screen
-		Console.write('\033[2J');
-		Console.write('\033[H');
+		//Console.write('\033[2J');
+		//Console.write('\033[H');
 	},
 
 	resolvePath: function(path) {
@@ -136,7 +118,7 @@ Proctor = Class.extend({
 	},
 
 	runTestMethods: function*() {
-		Console.out('Running '+this.testMethods.length+' tests...'+"\n");
+		Console.out("\n"+'Running '+this.testMethods.length+' tests...'+"\n");
 
 		// Start the stopwatch
 		var stopwatch = new Stopwatch();
