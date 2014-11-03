@@ -1,7 +1,3 @@
-Function.prototype.isGenerator = function() {
-	return /^function\s*\*/.test(this.toString());
-}
-
 Function.prototype.getArguments = function() {
 	return this.toString()
 	  .replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s))/mg,'')
@@ -11,6 +7,25 @@ Function.prototype.getArguments = function() {
 
 Function.is = function(value) {
 	return value instanceof Function;
+}
+
+Function.prototype.isGenerator = function() {
+	return Function.isGenerator(this);
+}
+
+Function.isGenerator = function(fn) {
+	var isGenerator = false;
+
+	// Faster method first
+	if(fn.constructor.name === 'GeneratorFunction') {
+		isGenerator = true;
+	}
+	// Slower method second
+	else if(/^function\s*\*/.test(fn.toString())) {
+		isGenerator = true;
+	}
+
+	return isGenerator;
 }
 
 Function.delay = function(milliseconds, callback) {

@@ -1,5 +1,18 @@
 ArrayTest = Test.extend({
 
+	testContains: function() {
+		var array = [
+			'aa',
+			'bb',
+			'cc',
+			'aa',
+			'bb',
+			'cc',
+		];
+
+		Console.out(array.contains('a'));
+	},
+
 	testIs: function*() {
 		Assert.true(Array.is([]));
 		Assert.false(Array.is('[]'));
@@ -13,7 +26,7 @@ ArrayTest = Test.extend({
 	},
 
 	testFirst: function*() {
-		yield Function.delay(1);
+		yield Function.delay(10);
 	},
 
 	testLast: function*() {

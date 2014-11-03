@@ -1,6 +1,6 @@
 Proctor = Class.extend({
 
-	testMethods: [],
+	tests: {},
 	testClasses: {},
 
 	passes: 0,
@@ -45,12 +45,32 @@ Proctor = Class.extend({
 		};
 	},
 
-	getAndRunTestMethods: function*(path, testMethodName) {
-		yield this.getTestMethods(path, testMethodName);
-		yield this.runTestMethods();
+	getAndRunTests: function*(path, testMethodName) {
+		yield this.getTests(path, testMethodName);
+		yield this.runTests();
 	},
 
-	getTestMethods: function*(path, testMethodName) {
+	getTestCount: function() {
+		var count = 0;
+
+		this.tests.each(function(key, value) {
+			count++;
+		});
+
+		return count;
+	},
+
+	getTestMethodCount: function() {
+		var count = 0;
+
+		this.tests.each(function(key, value) {
+			count = count + value.methods.length;
+		});
+
+		return count;
+	},
+
+	getTests: function*(path, testMethodName) {
 		// Resolve the path
 		path = this.resolvePath(path);
 		
@@ -69,12 +89,17 @@ Proctor = Class.extend({
 				// Require the test class file
 				require(testClassFile.file);
 
+				var testClassName = testClassFile.nameWithoutExtension;
+
+				// Add the test class to tests
+				this.addTest(testClassName, testClassFile.name, testClassFile.directory);
+
 				// Instantiate the test class
-				var testClass = this.testClasses[testClassFile.nameWithoutExtension];
+				var testClass = this.testClasses[testClassName];
 				// Cache the test class if we don't have it already instantiated
 				if(!testClass) {
-					testClass = new global[testClassFile.nameWithoutExtension]();
-					this.testClasses[testClassFile.nameWithoutExtension] = testClass;
+					testClass = new global[testClassName]();
+					this.testClasses[testClassName] = testClass;
 				}
 				
 				// If they want to run all tests in the class
@@ -83,7 +108,7 @@ Proctor = Class.extend({
 					for(var key in testClass) {
 						// All tests must start with "test" and be a function
 						if(key.startsWith('test') && Function.is(testClass[key])) {
-							this.testMethods.push(this.getTestMethod(key, testClassFile.nameWithoutExtension, testClassFile.name, testClassFile.directory));		
+							this.tests[testClassName].methods.push(key);
 						}
 					}
 				}
@@ -92,15 +117,15 @@ Proctor = Class.extend({
 
 					// If they want to run a specific method in the class
 					if(testMethodName && testClass[testMethodName]) {
-						this.testMethods.push(this.getTestMethod(testMethodName, testClassFile.nameWithoutExtension, testClassFile.name, testClassFile.directory));
+						this.tests[testClassName].methods.push(testMethodName);
 					}
 					// If they want to run a specific method in the class using a shorthand testMethodName
 					else if(testMethodName && testClass[expandedTestMethodName]) {
-						this.testMethods.push(this.getTestMethod(expandedTestMethodName, testClassFile.nameWithoutExtension, testClassFile.name, testClassFile.directory));
+						this.tests[testClassName].methods.push(expandedTestMethodName);
 					}
 					// If the passed testMethod name does not exist on the test class
 					else {
-						this.exit('The test class "'+testClassFile.nameWithoutExtension+'" does not have the method "'+testMethodName+'", aborting.');
+						this.exit('The test class "'+testClassName+'" does not have the method "'+testMethodName+'", aborting.');
 					}
 				}
 			}
@@ -110,66 +135,95 @@ Proctor = Class.extend({
 			}
 		}
 
-		return this.testMethods;
+		return this;
 	},
 
-	getElapsedTimeString: function(elapsedTime, precision) {
+	addTest: function(name, fileName, directory) {
+		if(!this.tests[name]) {
+			this.tests[name] = {
+				'name': name,
+				'fileName': fileName,
+				'directory': directory,
+				'methods': [],
+			};
+		}
+	},
+
+	getElapsedTimeString: function(elapsedTime, precision, useThresholds, warningThreshold, errorThreshhold) {
 		var elapsedTimeString = '('+Number.addCommas(Number.round(elapsedTime, 3))+' '+precision+')';
 		var style = 'gray';
 
-		// If we are slower than 30 milliseconds
-		if(elapsedTime > 30) {
+		// Color warning thresholds
+		if(useThresholds && elapsedTime > warningThreshold) {
+			style = 'yellow';
+		}
+
+		// Color error thresholds
+		if(useThresholds && elapsedTime > errorThreshhold) {
 			style = 'red';
 		}
 
 		return Terminal.style(elapsedTimeString, style);
 	},
 
-	runTestMethods: function*() {
+	runTests: function*() {
 		Terminal.clear();
-		Console.out('Running '+this.testMethods.length+' tests...'+"\n");
-
-		Console.highlight(Terminal.width(), Terminal.height());
+		var testCount = this.getTestCount();
+		var testMethodCount = this.getTestMethodCount();
+		Console.out('Running '+testMethodCount+' '+(testMethodCount == 1 ? 'test' : 'tests')+' in '+testCount+' test '+(testCount == 1 ? 'class' : 'classes')+'...'+"\n");
 
 		// Start the stopwatch
 		var stopwatch = new Stopwatch();
 
-		// Keep track of the last test class
-		var lastTestClassName;
+		// Loop through all of the test classes
+		yield this.tests.each(function*(testClassName, test) {
+			// Count the completed test methods
+			var completedTestMethodsCount = 0;
 
-		for(var i = 0; i < this.testMethods.length; i++) {
-			// Set the current test method
-			var currentTestMethod = this.testMethods[i];
-
-			// Get the current test class
-			var currentTestClassName = currentTestMethod.className;
+			// Time all of the tests in the class
+			var testClassStopwatch = new Stopwatch();
 
 			// Print out the current class
-			if(currentTestClassName != lastTestClassName) {
-				Console.out('  '+currentTestClassName.replaceLast('Test', '')+"\n");
-				lastTestClassName = currentTestClassName;
+			Console.out('  '+testClassName.replaceLast('Test', '')+"\n");
+
+			// Loop through all of the test methods
+			yield test.methods.each(function*(testMethodNameIndex, testMethodName) {
+				// Get the instantiated test class
+				var testClass = this.testClasses[testClassName];
+
+				// Time the test
+				var testMethodStopwatch = new Stopwatch();
+
+				// Put a try catch block around the test
+				try {
+					// Run the test
+					yield testClass[testMethodName]();
+
+					// Stop the stopwatch for the test
+					testMethodStopwatch.stop();
+
+					// Count the number of assertions
+					var assertions = 'x';
+
+					// Report the test
+					Console.out('    '+Terminal.style('✓', 'green')+' '+testMethodName.replaceFirst('test', '').lowercaseFirstCharacter()+' ('+assertions+' assertions) '+this.getElapsedTimeString(testMethodStopwatch.elapsedTime, testMethodStopwatch.time.precision, true, 5, 30));
+					this.passes++;
+				}
+				// If the test fails
+				catch(error) {
+					Console.out(error);
+					this.failures++;
+				}
+
+				completedTestMethodsCount++;
+			}, this);
+
+			// Stop the test class stopwatch and report
+			testClassStopwatch.stop();
+			if(completedTestMethodsCount > 1) {
+				Console.out("\n"+'    '+this.getElapsedTimeString(testClassStopwatch.elapsedTime, testClassStopwatch.time.precision));	
 			}
-
-			// Get the instantiated test class
-			var testClass = this.testClasses[currentTestMethod.className];
-
-			// Time the test
-			var testMethodStopwatch = new Stopwatch();
-
-			// Run the test
-			try {
-				yield testClass[currentTestMethod.methodName]();
-				testMethodStopwatch.stop();
-
-				Console.out('    '+Terminal.style('✓', 'green')+' '+currentTestMethod.methodName.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(testMethodStopwatch.elapsedTime, testMethodStopwatch.time.precision));
-				this.passes++;
-			}
-			// If the test fails
-			catch(error) {
-				Console.out(error);
-				this.failures++;
-			}
-		}
+		}, this);
 
 		// Stop the stopwatch
 		stopwatch.stop();

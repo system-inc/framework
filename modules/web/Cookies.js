@@ -9,7 +9,7 @@ Cookies = Class.extend({
 	},
 
 	parse: function(string) {
-		string.split(';').each(function(cookie) {
+		string.split(';').each(function(index, cookie) {
 			if(!cookie.empty()) {
 				var parts = cookie.split('=');
 	        	this.cookies.push(new Cookie(parts.shift().trim(), unescape(parts.join('='))));

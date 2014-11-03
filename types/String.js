@@ -7,19 +7,20 @@ String.prototype.empty = function() {
 };
 
 String.prototype.contains = function(string, caseSensitive) {
-	caseSensitive = caseSensitive === false ? false : true;
-	var contains = false;
+	caseSensitive = caseSensitive === undefined ? false : caseSensitive;
+	var count = 0;
 
-	if(!caseSensitive) {
-		var regularExpression = new RegExp(string, 'i');
-		contains = regularExpression.test(this);
+	if(caseSensitive) {
+		count = (this.match(new RegExp(string, 'g')) || []).length
 	}
 	else {
-		contains = this.indexOf(string) != -1;
+		count = (this.match(new RegExp(string, 'gi')) || []).length
 	}
 
-	return contains;
+	return count;
 }
+
+String.prototype.count = String.prototype.contains;
 
 String.prototype.capitalize = function(capitalizeEveryWord, lowercaseAllWordsAfterFirstWord) {
 	if(capitalizeEveryWord) {

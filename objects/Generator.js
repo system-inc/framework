@@ -1,5 +1,4 @@
-Generator = function() {
-};
+Generator = {};
 
 Generator.run = function(generator, resolve, reject) {
 	// Make sure we are working with an invoked generator
@@ -56,3 +55,5 @@ Generator.run = function(generator, resolve, reject) {
 
 	return pump(generator);
 }
+
+Generator.is = Function.isGenerator;

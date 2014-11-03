@@ -18,7 +18,7 @@ WebServerModuleClass = Module.extend({
 		var webServersSettings = this.settings.get('webServers');
 		if(webServersSettings) {
 			var webServerCount = 0;
-			webServersSettings.each(function(webServerSettingsObject) {
+			webServersSettings.each(function(index, webServerSettingsObject) {
 				// Get an instance of class Settings to localize to the web server
 				var webServerSettings = Settings.constructFromObject(webServerSettingsObject);
 				var webServerIdentifier = webServerSettings.get('identifier');

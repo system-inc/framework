@@ -9,12 +9,12 @@ Terminal.color = function(string, colorName) {
 Terminal.style = function(string, stylesString) {
 	// Get all of the styles from the stylesString
 	styles = [];
-	stylesString.split(',').each(function(style) {
+	stylesString.split(',').each(function(index, style) {
 		styles.push(style.trim());
 	});
 
 	// Wrap the string in the styles
-	styles.each(function(style) {
+	styles.each(function(index, style) {
 		if(Terminal.ansiStyles[style]) {
 			string = Terminal.ansiStyles[style].open+string+Terminal.ansiStyles[style].close;
 		}

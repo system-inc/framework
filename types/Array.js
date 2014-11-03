@@ -9,8 +9,8 @@ Array.prototype.merge = function() {
     	arraysToMerge.push(arguments[i]);
     };
 
-    arraysToMerge.each(function(arrayToMerge) {
-    	arrayToMerge.each(function(arrayValue) {
+    arraysToMerge.each(function(arrayToMergeIndex, arrayToMerge) {
+    	arrayToMerge.each(function(arrayValueIndex, arrayValue) {
     		if(!this.contains(arrayValue)) {
     			this.push(arrayValue);
     		}
@@ -102,6 +102,8 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 	return contains;
 }
 
+Array.prototype.count = Array.prototype.contains;
+
 Array.prototype.first = function() {
 	var first = null;
 
@@ -140,8 +142,16 @@ Array.prototype.delete = function(index) {
 // Takes either a normal callback function or a generator callback function
 Array.prototype.each = function(callback, context) {
 	// If the callback is not a generator, use the standard .forEach
-	if(!callback.isGenerator()) {
-		Array.prototype.forEach.apply(this, arguments)
+	if(!Function.isGenerator(callback)) {
+		//Array.prototype.forEach.apply(this, arguments)
+		for(var i = 0; i < this.length; i++) {
+			var advance = callback.apply(context, [i, this[i], this]);
+
+			// If the callback returns false, break out of the for loop
+			if(advance === false) {
+				break;
+			}
+		}
 	}
 	// If the callback is a generator, work some inception magic
 	else {
@@ -155,10 +165,15 @@ Array.prototype.each = function(callback, context) {
 	    		// Use a for loop here instead of .each so I can use yield below
 		    	for(var i = 0; i < array.length; i++) {
 		    		// Yield on a sub promise which resolves when the generator callback for the current array element completes
-		   			yield new Promise(function(subResolve) {
+		   			var advance = yield new Promise(function(subResolve) {
 		   				// Invoke and run the generator callback for the current array element, resolve the sub promise when complete
-						Generator.run(callback.apply(context, [array[i]]), subResolve);
+						Generator.run(callback.apply(context, [i, array[i], array]), subResolve);
 					});
+
+					// If the callback returns false, break out of the for loop
+					if(advance === false) {
+						break;
+					}
 		    	}
 	    	}, resolve);
 	    });

@@ -63,7 +63,7 @@ WebServer = Server.extend({
 
 	listen: function(ports) {
 		// Create a listener for each port they want to listen on
-		ports.toArray().each(function(port) {
+		ports.toArray().each(function(index, port) {
 			// If we are already listening on that port
 			if(this.listeners[port]) {
 				Console.out('Could not create an web server listener on port '+port+', the port is already in use.');

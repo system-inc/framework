@@ -47,7 +47,7 @@ Directory = FileSystemObject.extend({
 
 		// Loop through each directory starting at root and make sure the directory exists and if it doesn't create it
 		var currentFullDirectory = '/';
-		yield directories.each(function*(currentDirectory) {
+		yield directories.each(function*(index, currentDirectory) {
 			currentFullDirectory = currentFullDirectory+currentDirectory+Node.Path.sep;
 
 			// Check if the directory exists

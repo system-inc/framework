@@ -26,7 +26,7 @@ RouteMatch = Class.extend({
 
 		// Go through each capture group named in the route and its parents and assign the proper key and value for the capture group name and its matches
 		var count = 1;
-		this.getCaptureGroupNames().each(function(captureGroupName) {
+		this.getCaptureGroupNames().each(function(index, captureGroupName) {
 			finalizedRouteData[captureGroupName] = this.complete[count];
 			count++;
 		}, this);
@@ -59,7 +59,7 @@ RouteMatch = Class.extend({
 		var routeArray = this.route.getParents();
 		routeArray.push(this.route);
 
-		routeArray.each(function(route) {
+		routeArray.each(function(index, route) {
 			route.data.each(function(dataKey, dataValue) {
 				if(dataKey.isInteger()) {
 					captureGroupNames.push(dataValue);
@@ -87,7 +87,7 @@ RouteMatch = Class.extend({
 				// Use a reflection technique to find the argument names of the controller method and build an arguments array to send in
 				var controllerMethodArguments = [];
 				var controllerMethodArgumentNames = controller[this.route.controllerMethodName].getArguments();
-				controllerMethodArgumentNames.each(function(controllerMethodArgumentName) {
+				controllerMethodArgumentNames.each(function(index, controllerMethodArgumentName) {
 					if(this.data[controllerMethodArgumentName]) {
 						controllerMethodArguments.push(this.data[controllerMethodArgumentName]);
 					}

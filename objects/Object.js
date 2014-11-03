@@ -1,7 +1,7 @@
 Object.prototype.sort = function() {
 	var sorted = {};
 
-	Object.keys(this).sort().each(function(key) {
+	Object.keys(this).sort().each(function(index, key) {
 		sorted[key] = this[key];
 	}, this);
 
@@ -9,9 +9,45 @@ Object.prototype.sort = function() {
 }
 
 Object.prototype.each = function(callback, context) {
-	Object.keys(this).each(function(key) {
-		callback.apply(context, [key, this[key]]);	
-	}.bind(this));
+	// If the callback is not a generator, use the standard .forEach
+	if(!Function.isGenerator(callback)) {
+		var objectKeys = Object.keys(this);
+		for(var i = 0; i < objectKeys.length; i++) {
+			var advance = callback.apply(context, [objectKeys[i], this[objectKeys[i]], this]);
+
+			// If the callback returns false, break out of the for loop
+			if(advance === false) {
+				break;
+			}
+		}
+	}
+	// If the callback is a generator, work some inception magic
+	else {
+		// Keep track of the object
+		var object = this;
+
+		// This top level promise resolves after all object keys have been looped over
+	    return new Promise(function(resolve) {
+	    	// Run an anonymous generator function which loops over each object key, allowing me to yield on a sub promise
+	    	Generator.run(function*() {
+	    		var objectKeys = Object.keys(object);
+
+	    		// Use a for loop here instead of .each so I can use yield below
+		    	for(var i = 0; i < objectKeys.length; i++) {
+		    		// Yield on a sub promise which resolves when the generator callback for the current object key completes
+		   			var advance = yield new Promise(function(subResolve) {
+		   				// Invoke and run the generator callback for the current object key, resolve the sub promise when complete
+						Generator.run(callback.apply(context, [objectKeys[i], object[objectKeys[i]], object]), subResolve);
+					});
+
+					// If the callback returns false, break out of the for loop
+					if(advance === false) {
+						break;
+					}
+		    	}
+	    	}, resolve);
+	    });
+	}	
 }
 
 Object.clone = function(object) {
@@ -41,7 +77,7 @@ Object.prototype.merge = function() {
     };
 
     // "this" merges any properties from the objects to merge that it does not already have
-    objectsToMerge.each(function(objectToMerge) {
+    objectsToMerge.each(function(objectToMergeIndex, objectToMerge) {
     	objectToMerge.each(function(objectToMergeKey, objectToMergeValue) {
     		// Overwrite any primitives
     		if(this[objectToMergeKey] !== undefined && Object.isPrimitive(this[objectToMergeKey])) {

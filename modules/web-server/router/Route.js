@@ -87,7 +87,7 @@ Route = Class.extend({
 
 		// Create route children if they exist
 		if(routeSettings.children) {
-			routeSettings.children.each(function(childRoute) {
+			routeSettings.children.each(function(index, childRoute) {
 				route.children.push(new Route(childRoute, route));
 			}, this);
 		}
