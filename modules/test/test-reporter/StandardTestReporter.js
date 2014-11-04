@@ -50,10 +50,10 @@ StandardTestReporter = TestReporter.extend({
 		// Print out the assertions
 		this.currentAssertions.each(function(index, assertionData) {
 			if(assertionData.status == 'passed') {
-				Console.out('      '+Terminal.style('✓', 'green')+' Assert.'+assertionData.assertion+Terminal.style((assertionData.message ? ' ('+assertionData.message+')' : ''), 'gray'));
+				Console.out('      '+Terminal.style('✓', 'green')+' Assert.'+assertionData.assertion+Terminal.style((assertionData.message ? ' ('+assertionData.message+')' : ' (no message)'), 'gray'));
 			}
 			else if(assertionData.status == 'failed') {
-				Console.out('      '+Terminal.style('✗ Assert.'+assertionData.assertion+(assertionData.message ? ' ('+assertionData.message+')' : ')'), 'red'));
+				Console.out('      '+Terminal.style('✗ Assert.'+assertionData.assertion+(assertionData.message ? ' ('+assertionData.message+')' : ' (no message)'), 'red'));
 				Console.out('      '+Terminal.style('  '+assertionData.errorObject.data.actual+' '+assertionData.errorObject.data.operator+' '+assertionData.errorObject.data.expected, 'red'));
 				Console.out('      '+Terminal.style('  '+assertionData.errorObject.location, 'red'));
 				
