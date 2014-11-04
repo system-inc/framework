@@ -13,9 +13,12 @@ Error.prepareStackTrace = function(error, callSites) {
 Error.prototype.code = null;
 Error.prototype.identifier = null;
 Error.prototype.message = null;
+Error.prototype.location = null;
+Error.prototype.data = null;
 Error.prototype.url = null;
 Error.prototype.stack = null;
 Error.prototype.stackTrace = null;
+Error.prototype.callSite = null;
 
 // Create a custom constructor for Error
 Error.prototype.construct = function() {
@@ -34,6 +37,8 @@ Error.prototype.construct = function() {
 	}
 
 	this.message = error.message;
+	this.location = null;
+	this.data = null;
 	this.url = null;
 	this.stack = error.stack;
 
@@ -41,14 +46,20 @@ Error.prototype.construct = function() {
 	this.stack.shift(3);
 	
 	this.stackTrace = error.stack.toString();
+
+	this.callSite = null;
 }
 
 Error.prototype.toObject = function(verbose) {
 	var object = {
-		'code': this.code,
-		'identifier': this.identifier,
-		'message': this.message,
-		'url': this.url,
+		code: this.code,
+		identifier: this.identifier,
+		message: this.message,
+		location: this.location,
+		data: this.data,
+		url: this.url,
+		stackTrace: null,
+		callSite: this.callSite,
 	};
 
 	// Use name for identifier if an identifier is not set
@@ -56,9 +67,35 @@ Error.prototype.toObject = function(verbose) {
 		object.identifier = this.name;
 	}
 
+	// Automatically add any non-standard fields on this error object to error.data
+	if(!object.data) {
+		object.data = {};
+
+		for(var key in this) {
+			if(
+				key != 'code' &&
+				key != 'name' &&
+				key != 'identifier' &&
+				key != 'message' &&
+				key != 'location' &&
+				key != 'data' &&
+				key != 'url' &&
+				key != 'callSite' &&
+				this.hasOwnProperty(key) &&
+				Object.isPrimitive(this[key])
+			) {
+				object.data[key] = this[key];
+			}
+		}
+	}
+	
 	if(verbose) {
 		object.stackTrace = this.stack.toString();
 	}
+
+	// Add data from the first callsite to the error for convenience
+	object.callSite = this.stack.getCallSiteData(0);
+	object.location = object.callSite.file+':'+object.callSite.lineNumber+':'+object.callSite.columnNumber;
 
 	return object;
 }
@@ -95,6 +132,41 @@ StackTrace = Class.extend({
 		for(var i = 0; i < count; i++) {
 			this.callSites.shift();
 		}
+	},
+
+	// WARNING: This method is super fragile and any changes could cause the app to crash and it is super hard to figure out why if this is broken
+	getCallSiteData: function(index) {
+		var callSiteData = {};
+
+		var callSite = this.callSites[index];
+
+		// Calling callSite.getTypeName() can sometimes throw an error for reasons I don't know, so I use this try catch block to fix it
+		try {
+			var typeName = callSite.getTypeName();
+			callSiteData.typeName = typeName;
+		}
+		catch(error) {
+			callSiteData.typeName = 'unknown';
+		}			
+
+		if(callSite.getFunctionName()) {
+			var functionName = callSite.getFunctionName();
+			callSiteData.functionName = functionName;
+		}
+		else {
+			callSiteData.functionName = anonymous;
+		}
+	
+		if(callSite.getMethodName() && callSite.getFunctionName() && callSite.getMethodName() != callSite.getFunctionName() && !(callSite.getFunctionName().indexOf('.'+callSite.getMethodName(), callSite.getFunctionName().length - ('.'+callSite.getMethodName()).length) !== -1)) {
+			callSiteData.methodName = callSite.getMethodName();
+		}
+
+		callSiteData.file = callSite.getFileName();
+		callSiteData.fileName = callSiteData.file.substr(callSiteData.file.lastIndexOf(Node.Path.sep) + 1, callSiteData.file.length);
+		callSiteData.lineNumber = callSite.getLineNumber();
+		callSiteData.columnNumber = callSite.getColumnNumber();
+
+		return callSiteData;
 	},
 
 	// WARNING: This method is super fragile and any changes could cause the app to crash and it is super hard to figure out why if this is broken

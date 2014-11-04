@@ -11,11 +11,10 @@ ArrayTest = Test.extend({
 			'cc',
 		];
 
-		Assert.equal(array.contains('aa'), 2);
-		Assert.equal(array.contains('AA'), 2);
-		Assert.equal(array.contains('AA', true), 0);
-		Assert.false(array.contains('AA', true));
-		//Assert.true(array.contains('AA', true));
+		Assert.equal(array.contains('aa'), 2, 'Returns integer');
+		Assert.equal(array.contains('AA'), 2, 'Case insensitive by default');
+		Assert.equal(array.contains('AA', true), 0, 'Case sensitivity');
+		Assert.false(array.contains('AA', true), 'No matches is falsey');
 	},
 
 	testIs: function() {

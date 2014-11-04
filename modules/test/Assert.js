@@ -10,11 +10,16 @@ Assert.true = function(value, message) {
 		});
 	}
 	catch(error) {
+		Error.captureStackTrace(error, arguments.callee);
+		
 		Framework.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'true',
 			message: message,
+			errorObject: error.toObject(),
+			error: error,
 		});
+
 		throw error;
 	}
 };
@@ -29,11 +34,16 @@ Assert.false = function(value, message) {
 		});
 	}
 	catch(error) {
+		Error.captureStackTrace(error, arguments.callee);
+
 		Framework.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'false',
 			message: message,
+			errorObject: error.toObject(),
+			error: error,
 		});
+
 		throw error;
 	}
 }

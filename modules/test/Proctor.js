@@ -263,6 +263,7 @@ Proctor = Class.extend({
 					this.failedTests.push({
 						'test': test,
 						'method': testMethodName,
+						'errorObject': error.toObject(),
 						'error': error,
 					});
 
@@ -276,6 +277,7 @@ Proctor = Class.extend({
 					status: testMethodStatus,
 					name: testMethodName,
 					stopwatch: testMethodStopwatch,
+					failedTests: this.failedTests,
 				});
 			}, this);
 			
