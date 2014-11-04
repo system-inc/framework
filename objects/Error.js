@@ -40,7 +40,7 @@ Error.prototype.construct = function() {
 	// Remove the first three callsites in the stack as they are just about error creation
 	this.stack.shift(3);
 	
-	this.stackTrace = this.stack.toString();
+	this.stackTrace = error.stack.toString();
 }
 
 Error.prototype.toObject = function(verbose) {
@@ -95,10 +95,6 @@ StackTrace = Class.extend({
 		for(var i = 0; i < count; i++) {
 			this.callSites.shift();
 		}
-	},
-
-	getCallSite: function(index) {
-		return this.callSites[index];
 	},
 
 	// WARNING: This method is super fragile and any changes could cause the app to crash and it is super hard to figure out why if this is broken
