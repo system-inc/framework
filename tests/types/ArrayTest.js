@@ -15,7 +15,7 @@ ArrayTest = Test.extend({
 		Assert.equal(array.contains('AA'), 2);
 		Assert.equal(array.contains('AA', true), 0);
 		Assert.false(array.contains('AA', true));
-		Assert.true(array.contains('AA', true));
+		//Assert.true(array.contains('AA', true));
 	},
 
 	testIs: function() {

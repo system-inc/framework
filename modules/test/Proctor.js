@@ -6,15 +6,20 @@ Proctor = Class.extend({
 
 	passes: 0,
 	failures: 0,
+
+	testReporter: null,
 	
 	construct: function() {
 		// Configure the console
 		Console.showTime = false;
 		Console.showFile = false;
 
-		// Clear the screen
-		//Console.write('\033[2J');
-		//Console.write('\033[H');
+		// Instantiate a test reporter
+		this.testReporter = new StandardTestReporter();
+	},
+
+	emit: function(eventName, data) {
+		Framework.emit(eventName, data);
 	},
 
 	resolvePath: function(path) {
@@ -193,19 +198,25 @@ Proctor = Class.extend({
 	},
 
 	runTests: function*() {
-		// Clear the terminal
-		Terminal.clear();
-
-		// Tell the user what we are doing
+		// Get the totals
 		var testCount = this.getTestCount();
 		var testMethodCount = this.getTestMethodCount();
-		Console.out('Running '+testMethodCount+' '+(testMethodCount == 1 ? 'test' : 'tests')+' in '+testCount+' test '+(testCount == 1 ? 'class' : 'classes')+'...');
+
+		// Started running tests
+		this.emit('TestReporter.startedRunningTests', {
+			testCount: testCount,
+			testMethodCount: testMethodCount,
+		});
 
 		// Start the stopwatch
 		var stopwatch = new Stopwatch();
 
 		// Loop through all of the test classes
 		yield this.tests.each(function*(testClassName, test) {
+			this.emit('TestReporter.startedRunningTest', {
+				name: testClassName,
+			});
+
 			// Get the instantiated test class
 			var testClass = this.testClasses[testClassName];
 
@@ -215,91 +226,89 @@ Proctor = Class.extend({
 			// Time all of the tests in the class
 			var testClassStopwatch = new Stopwatch();
 
-			// Print out the current class
-			Console.out("\n"+'  '+testClassName.replaceLast('Test', '')+"\n");
+			// Loop through all of the test methods
+			yield test.methods.each(function*(testMethodNameIndex, testMethodName) {
+				this.emit('TestReporter.startedRunningTestMethod', {
+					name: testMethodName,
+				});
 
-			// If there are no test methods
-			if(test.methods.length == 0) {
-				Console.out(Terminal.style('    No test methods found. Make sure to prefix test method names with "test", e.g., "testMethod".', 'gray'));
-			}
-			else {
-				// Loop through all of the test methods
-				yield test.methods.each(function*(testMethodNameIndex, testMethodName) {
-					// Run .beforeEach on the test class
-					yield testClass.beforeEach();
+				// Run .beforeEach on the test class
+				yield testClass.beforeEach();
 
-					// Time the test
-					var testMethodStopwatch = new Stopwatch();
+				var testMethodStatus;
 
-					// Put a try catch block around the test
-					try {
-						// Run the test
-						yield testClass[testMethodName]();
+				// Time the test
+				var testMethodStopwatch = new Stopwatch();
 
-						// Stop the stopwatch for the test
-						testMethodStopwatch.stop();
+				// Put a try catch block around the test
+				try {
+					// Run the test
+					yield testClass[testMethodName]();
 
-						// Record the pass
-						this.passes++;
+					// Stop the stopwatch for the test
+					testMethodStopwatch.stop();
 
-						// Count the number of assertions
-						var assertions = 'x';
+					// Record the pass
+					this.passes++;
 
-						// Report the test
-						Console.out('    '+Terminal.style('✓', 'green')+' '+testMethodName.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(testMethodStopwatch.elapsedTime, testMethodStopwatch.time.precision, true, 5, 30));
-					}
-					// If the test fails
-					catch(error) {
-						// Stop the stopwatch for the test
-						testMethodStopwatch.stop();
+					testMethodStatus = 'passed';
+				}
+				// If the test fails
+				catch(error) {
+					// Stop the stopwatch for the test
+					testMethodStopwatch.stop();
 
-						// Record the failure
-						this.failures++;
-						this.failedTests.push({
-							'test': test,
-							'method': testMethodName,
-							'error': error,
-						});
+					// Record the failure
+					this.failures++;
+					this.failedTests.push({
+						'test': test,
+						'method': testMethodName,
+						'error': error,
+					});
 
-						// Report the test
-						Console.out('    '+Terminal.style('✗ ('+this.failedTests.length+') '+testMethodName.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(testMethodStopwatch.elapsedTime, testMethodStopwatch.time.precision, true, 5, 30), 'red'));
-					}
+					testMethodStatus = 'failed';
+				}
 
-					// Run .afterEach on the test class
-					yield testClass.afterEach();
-				}, this);
-			}
+				// Run .afterEach on the test class
+				yield testClass.afterEach();
+
+				this.emit('TestReporter.finishedRunningTestMethod', {
+					status: testMethodStatus,
+					name: testMethodName,
+					stopwatch: testMethodStopwatch,
+				});
+			}, this);
 			
 			// Stop the test class stopwatch and report
 			testClassStopwatch.stop();
-			//Console.out("\n"+'    '+this.getElapsedTimeString(testClassStopwatch.elapsedTime, testClassStopwatch.time.precision));	
 
 			// Run .after on the test class
 			yield testClass.after();
+
+			this.emit('TestReporter.finishedRunningTest', {
+				name: testClassName.replaceLast('Test', ''),
+			});
 		}, this);
 
 		// Stop the stopwatch
 		stopwatch.stop();
 
-		// Report totals
-		Console.out(Terminal.style("\n"+this.passes+' passing', 'green')+' '+this.getElapsedTimeString(stopwatch.elapsedTime, stopwatch.time.precision));
-		
-		if(this.failures > 0) {
-			Console.out(Terminal.style(this.failures+' failing', 'red'));
-
-			this.failedTests.each(function(index, failedTest) {
-				Console.out("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() '+Terminal.style('('+failedTest.test.directory+failedTest.test.fileName+')', 'gray')+"\n");
-				Console.out(Terminal.style(Console.prepareMessage.call(this, [failedTest.error]), 'gray'));
-			});
-		}
-		//, '+this.failures+' failed '+);
+		// Finished running tests
+		this.emit('TestReporter.finishedRunningTests', {
+			passes: this.passes,
+			failures: this.failures,
+			stopwatch: stopwatch,
+			failedTests: this.failedTests,
+		});
 
 		// Exit the process
-		Console.out('');
 		Node.Process.exit();
 	},
 
 	exit: function(message) {
+		// Finished running tests
+		this.emit('TestReporter.finishedRunningTests');
+
 		Console.out(message+"\n");
 		Node.Process.exit();
 	},

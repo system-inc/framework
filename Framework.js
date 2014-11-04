@@ -5,6 +5,8 @@ console.log("\x1B[90m        ____________\r\n       \/\\  ________ \\\r\n      \
 Node = {};
 Node.Crypto = require('crypto');
 Node.Domain = require('domain');
+Node.Events = require('events');
+EventEmitter = Node.EventEmitter = Node.Events.EventEmitter;
 Node.FileSystem = require('fs');
 Node.Http = require('http');
 Node.Https = require('https');
@@ -132,3 +134,12 @@ Framework = Class.extend({
 	},
 
 });
+
+// Static methods
+Framework.eventEmitter = new EventEmitter();
+Framework.emit = function(eventName, data) {
+	Framework.eventEmitter.emit(eventName, data);
+}
+Framework.on = function(eventName, callback) {
+	Framework.eventEmitter.on(eventName, callback);
+};
