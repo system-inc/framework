@@ -9,13 +9,24 @@ Proctor = Class.extend({
 
 	testReporter: null,
 	
-	construct: function() {
+	construct: function(testReporterIdentifier) {
 		// Configure the console
 		Console.showTime = false;
 		Console.showFile = false;
 
 		// Instantiate a test reporter
-		this.testReporter = new StandardTestReporter();
+		if(testReporterIdentifier === undefined) {
+			this.testReporter = new StandardTestReporter();
+		}
+		else if(testReporterIdentifier == 'standard') {
+			this.testReporter = new DotTestReporter();
+		}
+		else if(testReporterIdentifier == 'dot') {
+			this.testReporter = new DotTestReporter();
+		}
+		else {
+			this.testReporter = new StandardTestReporter();
+		}
 	},
 
 	emit: function(eventName, data) {

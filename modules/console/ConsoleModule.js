@@ -1,3 +1,4 @@
+require('./Arguments');
 require('./Console');
 require('./Terminal');
 

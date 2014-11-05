@@ -107,7 +107,7 @@ Object.prototype.isEmpty = function() {
 
 Object.prototype.toStringStandard = Object.prototype.toString;
 
-// 2014-11-05 - This doesn't seem to be doing anything, remove if everything still works after all tests are written
+// TODO: 2014-11-05 - This doesn't seem to be doing anything, remove if everything still works after all tests are written
 // If we do remove prototype.toString, then we can go rename all instances of prototype.toStringStandard to just prototype.toString
 // and the "Object.prototype.toStringStandard = Object.prototype.toString;" line above
 
