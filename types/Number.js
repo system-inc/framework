@@ -24,6 +24,14 @@ Number.is = function(value) {
 	return typeof(value) == 'number' || value instanceof Number;
 }
 
+Number.prototype.isInteger = function() {
+	return Number.isInteger(this);
+}
+
+Number.isInteger = function(value) {
+	return /^\+?(0|[1-9]\d*)$/.test(value);
+}
+
 Number.round = function(number, precision) {
 	precision = (precision === undefined ? 0 : precision);
 

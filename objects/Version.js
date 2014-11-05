@@ -23,7 +23,7 @@ Version = Class.extend({
 			}
 		}
 		// Construct from an object
-		else if(options && options.isObject()) {
+		else if(options && Object.is(options)) {
 			if(options.major) {
 				this.major = options.major;
 			}

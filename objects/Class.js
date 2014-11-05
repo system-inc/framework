@@ -96,7 +96,7 @@ Class.extend = function(childClassProperties) {
 			return; // return undefined
 		}
 		// Clone non-primitives to localize them to this instantiated object
-		else if(!Object.isPrimitive(property)) {
+		else if(!Primitive.is(property)) {
 			// We can only clone simple arrays [] and simple objects {} that do not contain references to any classes
 			var isInstanceOfClass = property.constructor.toString().startsWith('function Class()');
 			if(!isInstanceOfClass) {
@@ -131,4 +131,18 @@ Class.extend = function(childClassProperties) {
 	}
 
 	return Class;
+}
+
+Class.is = function(value, classType) {
+	var is = false;
+
+	// If they are just checking to see if is Class
+	if(classType === undefined) {
+		is = value instanceof Class;
+	}
+	else {
+		is = value instanceof classType;
+	}
+
+	return is;
 }

@@ -103,11 +103,11 @@ Route = Class.extend({
 		var requestExpression = request.url.path;
 		//Console.out("\n"+'Checking if request expression', requestExpression, 'matches with route full expression', this.fullExpression);
 
-		routeMatch.partial = requestExpression.match(new RegExp(this.fullExpression));
+		routeMatch.partial = requestExpression.match(new RegularExpression(this.fullExpression));
 		if(routeMatch.partial) {
 			//Console.out('Partially!');
 		}
-		routeMatch.complete = requestExpression.match(new RegExp('^'+this.fullExpression+'$'));
+		routeMatch.complete = requestExpression.match(new RegularExpression('^'+this.fullExpression+'$'));
 		if(routeMatch.complete) {
 			routeMatch.route = this;
 			//Console.out('Completely! Setting match.');

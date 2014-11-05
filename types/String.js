@@ -11,10 +11,10 @@ String.prototype.contains = function(string, caseSensitive) {
 	var count = 0;
 
 	if(caseSensitive) {
-		count = (this.match(new RegExp(string, 'g')) || []).length
+		count = (this.match(new RegularExpression(string, 'g')) || []).length
 	}
 	else {
-		count = (this.match(new RegExp(string, 'gi')) || []).length
+		count = (this.match(new RegularExpression(string, 'gi')) || []).length
 	}
 
 	return count;
@@ -78,12 +78,12 @@ String.prototype.replaceSubstring = function(pattern, replacement, start, length
 
 String.prototype.replace = function(pattern, replacement, flags) {
 	// Use standard replace if they are sending in a regex pattern or flags
-	if(pattern instanceof RegExp || flags) {
+	if(pattern instanceof RegularExpression || flags) {
 		return this.replaceStandard(pattern, replacement, flags);	
 	}
 	// Make replace behave like replaceAll by default
 	else {
-		return this.replaceStandard(new RegExp(pattern, 'g'), replacement);	
+		return this.replaceStandard(new RegularExpression(pattern, 'g'), replacement);	
 	}
 }
 

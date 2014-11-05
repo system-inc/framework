@@ -47,11 +47,11 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 
 		// If search is a regular expression, use it, otherwise create a regular expression
 		if(regularExpressionLocation == 'search' || regularExpressionLocation == 'either') {
-			if(Object.isRegularExpression(search)) {
+			if(RegularExpression.is(search)) {
 				searchRegularExpression = search;
 			}
 			else {
-				searchRegularExpression = new RegExp('^'+search+'$', modifiers);
+				searchRegularExpression = new RegularExpression('^'+search+'$', modifiers);
 			}	
 		}
 
@@ -73,11 +73,11 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 			if(regularExpressionLocation == 'array' || regularExpressionLocation == 'either') {
 				// If the current array item is a regular expression, use it, otherwise create a regular expression
 				var arrayRegularExpression;
-				if(Object.isRegularExpression(this[i])) {
+				if(RegularExpression.is(this[i])) {
 					arrayRegularExpression = this[i];
 				}
 				else {
-					arrayRegularExpression = new RegExp('^'+this[i]+'$', modifiers);
+					arrayRegularExpression = new RegularExpression('^'+this[i]+'$', modifiers);
 				}
 
 				// Perform the match check

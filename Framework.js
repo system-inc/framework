@@ -30,8 +30,12 @@ require('./objects/Module');
 
 // Framework core types
 require('./types/Array');
+require('./types/Boolean');
+require('./types/Buffer');
 require('./types/Json');
 require('./types/Number');
+require('./types/Primitive');
+require('./types/RegularExpression');
 require('./types/String');
 
 // TODO: Need to rethink this

@@ -56,7 +56,7 @@ Browser = Class.extend({
 
 		// Get the version and break it out into major, minor, patch, and patch minor
 		if(browserIndex) {
-			var browserVersionMatches = userAgent.match(new RegExp('^.*'+browsers[browserIndex].userAgentString+'.+?([\\d|\\.]+).*$', 'i'));
+			var browserVersionMatches = userAgent.match(new RegularExpression('^.*'+browsers[browserIndex].userAgentString+'.+?([\\d|\\.]+).*$', 'i'));
 			if(browserVersionMatches && browserVersionMatches[1]) {
 				browser.version = new Version(browserVersionMatches[1]);
 			}

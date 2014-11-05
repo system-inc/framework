@@ -38,7 +38,7 @@ FileSystem.list = Promise.method(function(path, recursive) {
                 var fileSystemObject = yield FileSystemObject.constructFromPath(path+fileName);
 
                 // Handle recursion
-                if(recursive && fileSystemObject.is(Directory)) {
+                if(recursive && Class.is(fileSystemObject, Directory)) {
                     // Get the directory listing of any directories
                     var directoryList = yield fileSystemObject.list(true);
 

@@ -9,6 +9,10 @@ Error.prepareStackTrace = function(error, callSites) {
 	return new StackTrace(error, callSites);
 }
 
+Error.is = function(value) {
+	return value instanceof Error;
+}
+
 // Declare the properties of the Error prototype
 Error.prototype.code = null;
 Error.prototype.identifier = null;
@@ -82,7 +86,7 @@ Error.prototype.toObject = function(verbose) {
 				key != 'url' &&
 				key != 'callSite' &&
 				this.hasOwnProperty(key) &&
-				Object.isPrimitive(this[key])
+				Primitive.is(this[key])
 			) {
 				object.data[key] = this[key];
 			}

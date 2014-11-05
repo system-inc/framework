@@ -12,7 +12,7 @@ StringTest = Test.extend({
 
 	testGenerator: function*() {
 		Assert.true(true);
-		Assert.true(false);	
+		//Assert.true(false);	
 	},
 
 });

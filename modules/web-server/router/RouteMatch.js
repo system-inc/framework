@@ -36,7 +36,7 @@ RouteMatch = Class.extend({
 
 		// Strip out all of the capture group integer keys
 		finalizedRouteData.each(function(key, value) {
-			if(key.isInteger()) {
+			if(Number.isInteger(key)) {
 				delete finalizedRouteData[key];
 			}
 		});
@@ -61,7 +61,7 @@ RouteMatch = Class.extend({
 
 		routeArray.each(function(index, route) {
 			route.data.each(function(dataKey, dataValue) {
-				if(dataKey.isInteger()) {
+				if(Number.isInteger(dataKey)) {
 					captureGroupNames.push(dataValue);
 				}
 			});
@@ -167,7 +167,7 @@ RouteMatch = Class.extend({
 		}
 
 		// If content exists, make sure it is a string or a buffer
-		if(content && !String.is(content) && !Object.isBuffer(content)) {
+		if(content && !String.is(content) && !Buffer.is(content)) {
 			content = Json.encode(content);
 		}
 

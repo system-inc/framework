@@ -1,5 +1,0 @@
-require('./Version');
-
-VersionControl = function() {
-	
-}

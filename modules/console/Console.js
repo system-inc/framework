@@ -53,7 +53,7 @@ ConsoleClass = Class.extend({
 		// Build the message
 		for(var i = 0; i < passedArguments.length; i++) {
 			// If we have an instance of an Error object
-			if(passedArguments[i] && passedArguments[i].isError()) {
+			if(passedArguments[i] && Error.is(passedArguments[i])) {
 				message += Json.indent(passedArguments[i].toObject(true));
 			}
 			// If we have an non-string object encode it into Json and indent it

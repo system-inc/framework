@@ -79,7 +79,7 @@ Proctor = Class.extend({
 			// Loop through each of the file system objects
 			fileSystemObjects.each(function(index, fileSystemObject) {
 				// If we have a file
-				if(fileSystemObject.is(File)) {
+				if(Class.is(fileSystemObject, File)) {
 					// We need to see if this is a test class file, if the file is not "Test.js" but ends with "Test.js" it should be
 					if(fileSystemObject.name != 'Test.js' && fileSystemObject.name.endsWith('Test.js')) {
 						// Require the test class file
