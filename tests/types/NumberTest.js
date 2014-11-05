@@ -4,29 +4,29 @@ NumberTest = Test.extend({
 		Assert.true(Number.is(0), '0');
 		Assert.false(Number.is(null), 'null');
 		Assert.true(Number.is(1), '1');
-		Assert.false(Number.is('1'), 'The string "1"');
+		Assert.false(Number.is('1'), 'the string "1"');
 	},
 
 	testIsInteger: function() {
 		Assert.true(Number.isInteger(0), '0');
 		Assert.false(Number.isInteger(null), 'null');
 		Assert.true(Number.isInteger(1), '1');
-		Assert.true(Number.isInteger('1'), 'The string "1"');
+		Assert.true(Number.isInteger('1'), 'the string "1"');
 		Assert.true(Number.isInteger(-1), '-1');
-		Assert.true(Number.isInteger('-1'), 'The string "-1"');
+		Assert.true(Number.isInteger('-1'), 'the string "-1"');
 		Assert.false(Number.isInteger(1.1), '1.1');
-		Assert.false(Number.isInteger('1.1'), 'The string "1.1"');
+		Assert.false(Number.isInteger('1.1'), 'the string "1.1"');
 	},
 
 	testPrototypeIsInteger: function() {
 		Assert.true(new Number(0).isInteger(), '0');
 		Assert.true(new Number(null).isInteger(), 'new Number(null) is actually the integer 0');
 		Assert.true(new Number(1).isInteger(), '1');
-		Assert.true(new Number('1').isInteger(), 'The string "1"');
+		Assert.true(new Number('1').isInteger(), 'the string "1"');
 		Assert.true(new Number(-1).isInteger(), '-1');
-		Assert.true(new Number('-1').isInteger(), 'The string "-1"');
+		Assert.true(new Number('-1').isInteger(), 'the string "-1"');
 		Assert.false(new Number(1.1).isInteger(), '1.1');
-		Assert.false(new Number("1.1").isInteger(), 'The string "1.1"');
+		Assert.false(new Number("1.1").isInteger(), 'the string "1.1"');
 	},
 
 	testToInteger: function() {

@@ -22,6 +22,12 @@ String.prototype.contains = function(string, caseSensitive) {
 
 String.prototype.count = String.prototype.contains;
 
+String.prototype.uppercase = String.prototype.toUpperCase;
+
+String.prototype.uppercaseFirstCharacter = function() {
+	return this.capitalize();
+}
+
 String.prototype.capitalize = function(capitalizeEveryWord, lowercaseAllWordsAfterFirstWord) {
 	if(capitalizeEveryWord) {
 		return this.split(' ').map(function(currentValue, index, array) {
@@ -35,12 +41,6 @@ String.prototype.capitalize = function(capitalizeEveryWord, lowercaseAllWordsAft
 	else {
 		return lowercaseAllWordsAfterFirstWord ? this.charAt(0).toUpperCase() + this.slice(1).toLowerCase() : this.charAt(0).toUpperCase() + this.slice(1);
 	}
-}
-
-String.prototype.uppercase = String.prototype.toUpperCase;
-
-String.prototype.uppercaseFirstCharacter = function() {
-	return this.capitalize();
 }
 
 String.prototype.lowercase = String.prototype.toLowerCase;
@@ -70,15 +70,15 @@ String.prototype.replaceLast = function(pattern, replacement) {
 	var lastIndexOf = this.lastIndexOf(pattern);
 
 	if(lastIndexOf > -1) {
-		return this.replaceSubstring(pattern, replacement, lastIndexOf, pattern.length);
+		return this.replaceSubstring(pattern, replacement, lastIndexOf);
 	}
 	else {
 		return this;
 	}
 }
 
-String.prototype.replaceSubstring = function(pattern, replacement, start, length) {
-	length = length !== undefined ? length : this.length;
+String.prototype.replaceSubstring = function(pattern, replacement, start) {
+	length = pattern.length;
 
 	var result = this.slice(0, start);
 	result += replacement.substring(0, length);
@@ -86,6 +86,14 @@ String.prototype.replaceSubstring = function(pattern, replacement, start, length
 	result += this.slice(start + length);
 
 	return result;
+}
+
+String.prototype.toNumber = function() {
+	return Number(this);
+}
+
+String.prototype.toInteger = function() {
+	return new Number(this).toInteger();
 }
 
 String.prototype.toDashes = function() {
@@ -124,14 +132,6 @@ String.prototype.toSpaces = function() {
 	});
 
 	return result;
-}
-
-String.prototype.toNumber = function() {
-	return Number(this);
-}
-
-String.prototype.toInteger = function() {
-	return new Number(this).toInteger();
 }
 
 String.random = function(length, characters) {

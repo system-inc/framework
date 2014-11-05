@@ -1,14 +1,14 @@
 ArrayTest = Test.extend({
 
 	testIs: function() {
-		Assert.true(Array.is([]), 'An array literal ([]) is an array');
-		Assert.false(Array.is('[]'), 'A JSON array "[]" is not an array');
-		Assert.false(Array.is({}), 'An object literal ({}) is not an array');
+		Assert.true(Array.is([]), 'array literal ([]) is an array');
+		Assert.false(Array.is('[]'), 'JSON array "[]" is not an array');
+		Assert.false(Array.is({}), 'object literal ({}) is not an array');
 	},
 
 	testMerge: function() {
-		Assert.deepEqual([1,2,3], [1].merge([2,3]), 'An array of primitives');
-		Assert.deepEqual([], [].merge([]), 'Two empty arrays');
+		Assert.deepEqual([1,2,3], [1].merge([2,3]), 'array of primitives');
+		Assert.deepEqual([], [].merge([]), 'two empty arrays');
 
 		var a = [
 			{
@@ -47,7 +47,7 @@ ArrayTest = Test.extend({
 				'thirdKey': 'thirdValue',
 			},
 		];
-		Assert.deepEqual(actual, expected, 'An array of objects');
+		Assert.deepEqual(actual, expected, 'array of objects');
 	},
 
 	testContains: function() {
@@ -61,10 +61,10 @@ ArrayTest = Test.extend({
 			'cc',
 		];
 
-		Assert.equal(array.contains('aa'), 2, 'Returns integer');
-		Assert.equal(array.contains('AA'), 2, 'Case insensitive by default');
-		Assert.equal(array.contains('AA', true), 0, 'Case sensitivity');
-		Assert.false(array.contains('AA', true), 'No matches is falsey');
+		Assert.equal(array.contains('aa'), 2, 'returns integer');
+		Assert.equal(array.contains('AA'), 2, 'case insensitive by default');
+		Assert.equal(array.contains('AA', true), 0, 'case sensitive');
+		Assert.false(array.contains('AA', true), 'no matches is falsey');
 	},
 
 	testCount: function() {
@@ -78,10 +78,10 @@ ArrayTest = Test.extend({
 			'cc',
 		];
 
-		Assert.equal(array.count('aa'), 2, 'Returns integer');
-		Assert.equal(array.count('AA'), 2, 'Case insensitive by default');
-		Assert.equal(array.count('AA', true), 0, 'Case sensitivity');
-		Assert.false(array.count('AA', true), 'No matches is falsey');
+		Assert.equal(array.count('aa'), 2, 'returns integer');
+		Assert.equal(array.count('AA'), 2, 'case insensitive by default');
+		Assert.equal(array.count('AA', true), 0, 'case sensitivity');
+		Assert.false(array.count('AA', true), 'no matches is falsey');
 	},
 
 	testFirst: function() {
@@ -91,9 +91,9 @@ ArrayTest = Test.extend({
 			'c',
 		];
 
-		Assert.equal(array.first(), 'a', 'Returns element at index 0');
+		Assert.equal(array.first(), 'a', 'returns element at index 0');
 
-		Assert.strictEqual([].first(), null, 'Empty array returns null');
+		Assert.strictEqual([].first(), null, 'empty array returns null');
 	},
 
 	testLast: function() {
@@ -103,9 +103,9 @@ ArrayTest = Test.extend({
 			'c',
 		];
 
-		Assert.equal(array.last(), 'c', 'Returns element at last index');
+		Assert.equal(array.last(), 'c', 'returns element at last index');
 
-		Assert.strictEqual([].last(), null, 'Empty array returns null');
+		Assert.strictEqual([].last(), null, 'empty array returns null');
 	},
 
 	testGet: function() {
@@ -115,9 +115,9 @@ ArrayTest = Test.extend({
 			'c',
 		];
 
-		Assert.equal(array.get(1), 'b', 'Returns element at specified index');
-		Assert.strictEqual(array.get(10), null, 'Non-existent index returns null');
-		Assert.strictEqual([].get(0), null, 'Empty array returns null');
+		Assert.equal(array.get(1), 'b', 'returns element at specified index');
+		Assert.strictEqual(array.get(10), null, 'non-existent index returns null');
+		Assert.strictEqual([].get(0), null, 'empty array returns null');
 	},
 
 	testDelete: function() {
@@ -131,7 +131,7 @@ ArrayTest = Test.extend({
 			'a',
 			'c',
 		];
-		Assert.deepEqual(actual, expected, 'Delete at specified index');
+		Assert.deepEqual(actual, expected, 'delete at specified index');
 
 		array = [
 			'a',
@@ -144,7 +144,7 @@ ArrayTest = Test.extend({
 			'b',
 			'c',
 		];
-		Assert.deepEqual(actual, expected, 'Delete at non-existent index does nothing');
+		Assert.deepEqual(actual, expected, 'delete at non-existent index does nothing');
 	},
 
 	testEach: function() {
@@ -159,7 +159,7 @@ ArrayTest = Test.extend({
 			string += index+element;
 		});
 
-		Assert.equal(string, '0a1b2c', 'Index and element are passed in the correct order');
+		Assert.equal(string, '0a1b2c', 'index and element are passed in the correct order');
 	},
 
 	testEachWithGenerator: function*() {
@@ -174,7 +174,7 @@ ArrayTest = Test.extend({
 			string += index+element;
 		});
 
-		Assert.equal(string, '0a1b2c', 'Index and element are passed in the correct order');
+		Assert.equal(string, '0a1b2c', 'index and element are passed in the correct order');
 	},
 
 });
