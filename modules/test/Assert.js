@@ -329,6 +329,114 @@ Assert.notStrictEqual = function(actual, expected, message) {
 	}
 }
 
+Assert.greaterThan = function(actual, minimum, message) {
+	try {
+		if(actual <= minimum) {
+			Assert.fail(actual, minimum, message, '>');
+		}
+		
+		Framework.emit('Assert.finished', {
+			status: 'passed',
+			assertion: 'greaterThan',
+			message: message,
+		});
+	}
+	catch(error) {
+		Error.captureStackTrace(error, arguments.callee);
+
+		Framework.emit('Assert.finished', {
+			status: 'failed',
+			assertion: 'greaterThan',
+			message: message,
+			errorObject: error.toObject(),
+			error: error,
+		});
+
+		throw error;
+	}
+}
+
+Assert.greaterThanOrEqualTo = function(actual, minimum, message) {
+	try {
+		if(actual < minimum) {
+			Assert.fail(actual, minimum, message, '>=');
+		}
+		
+		Framework.emit('Assert.finished', {
+			status: 'passed',
+			assertion: 'greaterThanOrEqualTo',
+			message: message,
+		});
+	}
+	catch(error) {
+		Error.captureStackTrace(error, arguments.callee);
+
+		Framework.emit('Assert.finished', {
+			status: 'failed',
+			assertion: 'greaterThanOrEqualTo',
+			message: message,
+			errorObject: error.toObject(),
+			error: error,
+		});
+
+		throw error;
+	}
+}
+
+Assert.lessThan = function(actual, maximum, message) {
+	try {
+		if(actual >= minimum) {
+			Assert.fail(actual, maximum, message, '<');
+		}
+		
+		Framework.emit('Assert.finished', {
+			status: 'passed',
+			assertion: 'lessThan',
+			message: message,
+		});
+	}
+	catch(error) {
+		Error.captureStackTrace(error, arguments.callee);
+
+		Framework.emit('Assert.finished', {
+			status: 'failed',
+			assertion: 'lessThan',
+			message: message,
+			errorObject: error.toObject(),
+			error: error,
+		});
+
+		throw error;
+	}
+}
+
+Assert.lessThanOrEqualTo = function(actual, maximum, message) {
+	try {
+		if(actual > maximum) {
+			Assert.fail(actual, maximum, message, '<=');
+		}
+		
+		Framework.emit('Assert.finished', {
+			status: 'passed',
+			assertion: 'lessThanOrEqualTo',
+			message: message,
+		});
+	}
+	catch(error) {
+		Error.captureStackTrace(error, arguments.callee);
+
+		Framework.emit('Assert.finished', {
+			status: 'failed',
+			assertion: 'lessThanOrEqualTo',
+			message: message,
+			errorObject: error.toObject(),
+			error: error,
+		});
+
+		throw error;
+	}
+}
+
 Assert.doesThrow = function(shouldThrow, block, expected, message) {
 	var actual;
 

@@ -1,7 +1,45 @@
-Number.prototype.toInteger = function() {
-	return parseInt(this, 10);
+Number.is = function(value) {
+	return typeof(value) == 'number' || value instanceof Number;
 }
 
+Number.isInteger = function(value) {
+	return /^\+?-?(0|[1-9]\d*)$/.test(value);
+}
+
+Number.prototype.isInteger = function() {
+	return Number.isInteger(this);
+}
+
+Number.toInteger = function(value) {
+	if(!value) {
+		return 0;
+	}
+
+	return parseInt(value, 10);
+}
+
+Number.prototype.toInteger = function() {
+	return Number.toInteger(this);
+}
+
+Number.round = function(number, precision) {
+	precision = (precision === undefined ? 0 : precision);
+
+	return number.toFixed(precision);
+}
+
+Number.addCommas = function(number) {
+	if(number === undefined) {
+		return '';
+	}
+
+	var parts = number.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    return parts.join('.');
+}
+
+// Minimum and maximum are both inclusive
 Number.random = function(minimum, maximum, precision) {
 	minimum = minimum === undefined ? 0 : minimum;
 	maximum = maximum === undefined ? 9007199254740992 : maximum;
@@ -18,30 +56,4 @@ Number.random = function(minimum, maximum, precision) {
 	var random = Math.random() * (maximum - minimum) + minimum;
 
     return Number(random.toFixed(precision));
-}
-
-Number.is = function(value) {
-	return typeof(value) == 'number' || value instanceof Number;
-}
-
-Number.prototype.isInteger = function() {
-	return Number.isInteger(this);
-}
-
-Number.isInteger = function(value) {
-	return /^\+?(0|[1-9]\d*)$/.test(value);
-}
-
-Number.round = function(number, precision) {
-	precision = (precision === undefined ? 0 : precision);
-
-	return number.toFixed(precision);
-}
-
-Number.addCommas = function(number) {
-	while(/(\d+)(\d{3})/.test(number.toString())) {
-      number = number.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
-    }
-
-    return number;
 }

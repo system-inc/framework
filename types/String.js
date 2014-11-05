@@ -37,18 +37,30 @@ String.prototype.capitalize = function(capitalizeEveryWord, lowercaseAllWordsAft
 	}
 }
 
+String.prototype.uppercase = String.prototype.toUpperCase;
+
 String.prototype.uppercaseFirstCharacter = function() {
 	return this.capitalize();
 }
+
+String.prototype.lowercase = String.prototype.toLowerCase;
 
 String.prototype.lowercaseFirstCharacter = function() {
 	return this.charAt(0).toLowerCase() + this.slice(1);
 }
 
-String.prototype.lowercase = String.prototype.toLowerCase;
-String.prototype.uppercase = String.prototype.toUpperCase;
-
 String.prototype.replaceStandard = String.prototype.replace;
+
+String.prototype.replace = function(pattern, replacement, flags) {
+	// Use standard replace if they are sending in a regex pattern or flags
+	if(pattern instanceof RegularExpression || flags) {
+		return this.replaceStandard(pattern, replacement, flags);	
+	}
+	// Make replace behave like replaceAll by default
+	else {
+		return this.replaceStandard(new RegularExpression(pattern, 'g'), replacement);	
+	}
+}
 
 String.prototype.replaceFirst = function(pattern, replacement) {
 	return this.replaceStandard(pattern, replacement);
@@ -74,17 +86,6 @@ String.prototype.replaceSubstring = function(pattern, replacement, start, length
 	result += this.slice(start + length);
 
 	return result;
-}
-
-String.prototype.replace = function(pattern, replacement, flags) {
-	// Use standard replace if they are sending in a regex pattern or flags
-	if(pattern instanceof RegularExpression || flags) {
-		return this.replaceStandard(pattern, replacement, flags);	
-	}
-	// Make replace behave like replaceAll by default
-	else {
-		return this.replaceStandard(new RegularExpression(pattern, 'g'), replacement);	
-	}
 }
 
 String.prototype.toDashes = function() {
@@ -129,24 +130,8 @@ String.prototype.toNumber = function() {
 	return Number(this);
 }
 
-String.prototype.isJson = function() {
-	var isJson = false;
-
-	try {
-        var object = JSON.parse(this);
-
-        // Handle non-exception-throwing cases:
-        // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
-        // but JSON.parse(null) returns 'null', and typeof(null) === "object", so we must check for that, too.
-        if(object && typeof(object) === "object" && object !== null) {
-            isJson = true;
-        }
-    }
-    catch(exception) {
-
-    }
-
-    return isJson;
+String.prototype.toInteger = function() {
+	return new Number(this).toInteger();
 }
 
 String.random = function(length, characters) {
