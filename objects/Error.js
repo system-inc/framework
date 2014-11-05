@@ -154,7 +154,7 @@ StackTrace = Class.extend({
 			callSiteData.functionName = functionName;
 		}
 		else {
-			callSiteData.functionName = anonymous;
+			callSiteData.functionName = 'anonymous';
 		}
 	
 		if(callSite.getMethodName() && callSite.getFunctionName() && callSite.getMethodName() != callSite.getFunctionName() && !(callSite.getFunctionName().indexOf('.'+callSite.getMethodName(), callSite.getFunctionName().length - ('.'+callSite.getMethodName()).length) !== -1)) {

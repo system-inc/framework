@@ -10,4 +10,9 @@ StringTest = Test.extend({
 		Assert.equal('aabbccaabbcc'.contains('A', true), 0);
 	},
 
+	testGenerator: function*() {
+		Assert.true(true);
+		Assert.true(false);	
+	},
+
 });

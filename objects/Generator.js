@@ -30,9 +30,11 @@ Generator.run = function(generator, resolve, reject) {
 
 			// This needs to be called before .done for reasons I don't fully understand when using Function.delay
 			//next.value.catch(function(error) {
-			//	// Log the error
-			//	Console.out('Caught error at Generator.js:', error);
-			//	throw(error);
+				// Log the error
+				//Console.out('Caught error at Generator.js:', error);
+				//throw(error);
+				//reject(error);
+				//resolve(error);
 			//});
 
 			// Tell the promise to pump the generator what it is done

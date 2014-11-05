@@ -235,7 +235,22 @@ Proctor = Class.extend({
 				// Run .beforeEach on the test class
 				yield testClass.beforeEach();
 
+				// Store the test method status
 				var testMethodStatus;
+
+				// Create a domain for the test
+				var domain = Node.Domain.create();
+
+				// Add an event listener to listen for errors on the domain
+				domain.on('error', function(error) {
+					Console.out('Caught unhandled domain error!', error);
+
+					// Exit the domain
+					domain.exit();
+				}.bind(this));
+
+				// Enter the domain
+				domain.enter();
 
 				// Time the test
 				var testMethodStopwatch = new Stopwatch();
@@ -252,6 +267,9 @@ Proctor = Class.extend({
 					this.passes++;
 
 					testMethodStatus = 'passed';
+
+					// Exit the domain
+					domain.exit();
 				}
 				// If the test fails
 				catch(error) {
@@ -268,6 +286,9 @@ Proctor = Class.extend({
 					});
 
 					testMethodStatus = 'failed';
+
+					// Exit the domain
+					domain.exit();
 				}
 
 				// Run .afterEach on the test class
