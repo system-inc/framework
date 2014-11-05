@@ -5,6 +5,8 @@ StandardTestReporter = TestReporter.extend({
 	currentTestMethodCount: 0,
 	currentTestMethodAssertionCount: 0,
 	currentAssertions: [],
+	passedAssertionCount: 0,
+	failedAssertionCount: 0,
 
 	construct: function() {
 		this.on('TestReporter.startedRunningTests', this.startedRunningTests.bind(this));
@@ -37,6 +39,13 @@ StandardTestReporter = TestReporter.extend({
 	finishedAssert: function(data) {
 		this.currentAssertions.push(data);
 		this.currentTestMethodAssertionCount++;
+		
+		if(data.status == 'passed') {
+			this.passedAssertionCount++;
+		}
+		else if(data.status == 'failed') {
+			this.failedAssertionCount++;
+		}
 	},
 
 	finishedRunningTestMethod: function(data) {
@@ -54,7 +63,13 @@ StandardTestReporter = TestReporter.extend({
 			}
 			else if(assertionData.status == 'failed') {
 				Console.out('      '+Terminal.style('✗ Assert.'+assertionData.assertion+(assertionData.message ? ' ('+assertionData.message+')' : ' (no message)'), 'red'));
-				Console.out('      '+Terminal.style('  '+assertionData.errorObject.data.actual+' '+assertionData.errorObject.data.operator+' '+assertionData.errorObject.data.expected, 'red'));
+				if(!assertionData.errorObject.data.actual) {
+					Console.out('      '+Terminal.style('  '+assertionData.errorObject.message, 'red'));
+				}
+				else {
+					Console.out('      '+Terminal.style('  '+assertionData.errorObject.data.actual+' '+assertionData.errorObject.data.operator+' '+assertionData.errorObject.data.expected, 'red'));
+				}
+				
 				Console.out('      '+Terminal.style('  '+assertionData.errorObject.location, 'red'));
 				
 			}
@@ -75,14 +90,20 @@ StandardTestReporter = TestReporter.extend({
 	},	
 
 	finishedRunningTests: function(data) {
-		Console.out(Terminal.style("\n"+data.passes+' passing', 'green')+' '+this.getElapsedTimeString(data.stopwatch.elapsedTime, data.stopwatch.time.precision));
+		Console.out(Terminal.style("\n"+data.passes+' passing ('+this.passedAssertionCount+' assertions)', 'green')+' '+this.getElapsedTimeString(data.stopwatch.elapsedTime, data.stopwatch.time.precision));
 		
 		if(data.failures > 0) {
-			Console.out(Terminal.style(data.failures+' failing', 'red'));
+			Console.out(Terminal.style(data.failures+' failing ('+this.failedAssertionCount+' assertions)', 'red'));
 
 			data.failedTests.each(function(index, failedTest) {
 				Console.out("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+failedTest.errorObject.identifier+' '+Terminal.style('('+failedTest.errorObject.message+')', 'gray'));
-				Console.out('    '+Terminal.style(failedTest.errorObject.data.actual+' '+failedTest.errorObject.data.operator+' '+failedTest.errorObject.data.expected, 'red'));
+				if(!failedTest.errorObject.data.actual) {
+					Console.out('    '+Terminal.style(failedTest.errorObject.message, 'red'));
+				}
+				else {
+					Console.out('    '+Terminal.style(failedTest.errorObject.data.actual+' '+failedTest.errorObject.data.operator+' '+failedTest.errorObject.data.expected, 'red'));
+				}
+				
 				Console.out('    '+failedTest.errorObject.location);
 
 				var stackTrace = Console.prepareMessage.call(this, [failedTest.error]);
