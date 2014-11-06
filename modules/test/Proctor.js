@@ -1,13 +1,26 @@
 Proctor = Class.extend({
 
 	tests: {},
-	failedTests: [],
+	testQueue: [],
 	testClasses: {},
 
+	previousTest: null,
+	currentTest: null,
+	currentTestClass: null,
+	nextTest: null,
+
+	failedTests: [],
+	
 	passes: 0,
 	failures: 0,
 
 	testReporter: null,
+
+	stopwatch: null,
+	currentTestClassStopwatch: null,
+	currentTestMethodStopwatch: null,
+
+	currentTestMethodStatus: null,
 	
 	construct: function(testReporterIdentifier) {
 		// Configure the console
@@ -208,10 +221,34 @@ Proctor = Class.extend({
 		return Terminal.style(elapsedTimeString, style);
 	},
 
+	buildTestQueue: function() {
+		this.tests.each(function(testClassName, test) {
+			test.methods.each(function(testMethodNameIndex, testMethodName) {
+				// Build a new structure for tests in the test queue
+				var testToAddToQueue = {
+					method: testMethodName,
+				};
+
+				// Bring in all of the properties of the test
+				testToAddToQueue.merge(test.clone());
+
+				// Except for the methods property
+				delete testToAddToQueue['methods'];
+
+				// Add the test to the queue
+				this.testQueue.push(testToAddToQueue);
+			}.bind(this));
+		}.bind(this));
+	},
+
 	runTests: function*() {
 		// Get the totals
 		var testCount = this.getTestCount();
 		var testMethodCount = this.getTestMethodCount();
+
+		// Build the test queue
+		this.buildTestQueue();
+		//Console.out(this.testQueue);
 
 		// Started running tests
 		this.emit('TestReporter.startedRunningTests', {
@@ -220,116 +257,167 @@ Proctor = Class.extend({
 		});
 
 		// Start the stopwatch
-		var stopwatch = new Stopwatch();
+		this.stopwatch = new Stopwatch();
 
-		// Loop through all of the test classes
-		yield this.tests.each(function*(testClassName, test) {
-			this.emit('TestReporter.startedRunningTest', test);
+		// Run the next test
+		this.runNextTest();
+	},
 
-			// Get the instantiated test class
-			var testClass = this.testClasses[testClassName];
+	runNextTest: function*() {
+		// Set the first test
+		if(!this.currentTest && !this.testQueue.isEmpty()) {
+			this.previousTest = null;
+			this.currentTest = this.testQueue.first();
+			this.nextTest = this.testQueue.get(1);
+		}
+		// If we aren't on the first test, move on to the next test
+		else if(this.currentTest) {
+			this.previousTest = this.currentTest;
 
-			// Run .before on the test class
-			yield testClass.before();
+			// Remove the first test off of the test queue
+			this.testQueue.shift();
 
-			// Time all of the tests in the class
-			var testClassStopwatch = new Stopwatch();
+			this.currentTest = this.testQueue.first();
+			this.nextTest = this.testQueue.get(1);
+		}
 
-			// Loop through all of the test methods
-			yield test.methods.each(function*(testMethodNameIndex, testMethodName) {
-				this.emit('TestReporter.startedRunningTestMethod', {
-					name: testMethodName,
-				});
+		// If we are out of tests
+		if(!this.currentTest) {
+			return this.noMoreTests();
+		}
 
-				// Run .beforeEach on the test class
-				yield testClass.beforeEach();
+		// If we are on a new test
+		if(!this.previousTest || (this.previousTest && this.previousTest.fileName != this.currentTest.fileName)) {
+			this.onNewTestClass();
+		}
 
-				// Store the test method status
-				var testMethodStatus;
+		this.emit('TestReporter.startedRunningTestMethod', {
+			name: this.currentTest.method,
+		});
 
-				// Create a domain for the test
-				var domain = Node.Domain.create();
+		// Run .beforeEach on the test class
+		yield this.currentTestClass.beforeEach();
 
-				// Add an event listener to listen for errors on the domain
-				domain.on('error', function(error) {
-					Console.out('Caught unhandled domain error!', error);
+		// Create a domain for the test
+		var domain = Node.Domain.create();
 
-					// Exit the domain
-					domain.exit();
-				}.bind(this));
+		// Add an event listener to listen for errors on the domain
+		domain.on('error', function(error) {
+			//Console.out('Caught unhandled domain error!', error);
 
-				// Enter the domain
-				domain.enter();
+			// Stop the stopwatch for the test
+			this.currentTestMethodStopwatch.stop();
 
-				// Time the test
-				var testMethodStopwatch = new Stopwatch();
+			// Record the failure
+			this.failures++;
+			this.failedTests.push({
+				'test': this.tests[this.currentTest.name],
+				'method': this.currentTest.method,
+				'errorObject': error.toObject(),
+				'error': error,
+			});
 
-				// Put a try catch block around the test
-				try {
-					// Run the test
-					yield testClass[testMethodName]();
+			this.currentTestMethodStatus = 'failed';
 
-					// Stop the stopwatch for the test
-					testMethodStopwatch.stop();
+			this.finishedRunningNextTest(domain);
+		}.bind(this));
 
-					// Record the pass
-					this.passes++;
+		// Enter the domain
+		domain.enter();
 
-					testMethodStatus = 'passed';
+		// Time the test
+		this.currentTestMethodStopwatch = new Stopwatch();
 
-					// Exit the domain
-					domain.exit();
-				}
-				// If the test fails
-				catch(error) {
-					// Stop the stopwatch for the test
-					testMethodStopwatch.stop();
+		// Put a try catch block around the test
+		try {
+			// Run the test
+			yield this.currentTestClass[this.currentTest.method]();
 
-					// Record the failure
-					this.failures++;
-					this.failedTests.push({
-						'test': test,
-						'method': testMethodName,
-						'errorObject': error.toObject(),
-						'error': error,
-					});
+			// Stop the stopwatch for the test
+			this.currentTestMethodStopwatch.stop();
 
-					testMethodStatus = 'failed';
+			// Record the pass
+			this.passes++;
 
-					// Exit the domain
-					domain.exit();
-				}
+			this.currentTestMethodStatus = 'passed';
 
-				// Run .afterEach on the test class
-				yield testClass.afterEach();
+			this.finishedRunningNextTest(domain);
+		}
+		// If the test fails
+		catch(error) {
+			// Stop the stopwatch for the test
+			this.currentTestMethodStopwatch.stop();
 
-				this.emit('TestReporter.finishedRunningTestMethod', {
-					status: testMethodStatus,
-					name: testMethodName,
-					stopwatch: testMethodStopwatch,
-					failedTests: this.failedTests,
-				});
-			}, this);
-			
+			// Record the failure
+			this.failures++;
+			this.failedTests.push({
+				'test': this.tests[this.currentTest.name],
+				'method': this.currentTest.method,
+				'errorObject': error.toObject(),
+				'error': error,
+			});
+
+			this.currentTestMethodStatus = 'failed';
+
+			this.finishedRunningNextTest(domain);
+		}
+	},
+
+	finishedRunningNextTest: function*(domain) {
+		// Exit the domain
+		domain.exit();
+
+		// Run .afterEach on the test class
+		yield this.currentTestClass.afterEach();
+
+		this.emit('TestReporter.finishedRunningTestMethod', {
+			status: this.currentTestMethodStatus,
+			name: this.currentTest.method,
+			stopwatch: this.currentTestMethodStopwatch,
+			failedTests: this.failedTests,
+		});
+
+		//yield Function.delay(50);
+
+		this.runNextTest();
+	},
+
+	onNewTestClass: function*() {
+		// Close out the previous test if we aren't on the very first test
+		if(this.currentTestClassStopwatch) {
 			// Stop the test class stopwatch and report
-			testClassStopwatch.stop();
+			this.currentTestClassStopwatch.stop();
 
 			// Run .after on the test class
-			yield testClass.after();
+			yield this.currentTestClass.after();
 
 			this.emit('TestReporter.finishedRunningTest', {
-				name: testClassName.replaceLast('Test', ''),
+				name: this.previousTest.name.replaceLast('Test', ''),
 			});
-		}, this);
+		}
 
+		// Start up the new test
+		this.emit('TestReporter.startedRunningTest', this.tests[this.currentTest.name]);
+
+		// Get the instantiated test class
+		this.currentTestClass = this.testClasses[this.currentTest.name];
+
+		// Run .before on the test class
+		yield this.currentTestClass.before();
+
+		// Time all of the tests in the class
+		this.currentTestClassStopwatch = new Stopwatch();
+	},
+
+	noMoreTests: function() {
 		// Stop the stopwatch
-		stopwatch.stop();
+		this.stopwatch.stop();
 
 		// Finished running tests
 		this.emit('TestReporter.finishedRunningTests', {
 			passes: this.passes,
 			failures: this.failures,
-			stopwatch: stopwatch,
+			stopwatch: this.stopwatch,
 			failedTests: this.failedTests,
 		});
 

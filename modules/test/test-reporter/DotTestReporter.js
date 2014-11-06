@@ -2,6 +2,7 @@ DotTestReporter = TestReporter.extend({
 
 	currentTestName: null,
 	currentTestMethod: null,
+	totalTestMethodCount: 0,
 	currentTestMethodCount: 0,
 	currentTestMethodAssertionCount: 0,
 	currentAssertions: [],
@@ -42,6 +43,11 @@ DotTestReporter = TestReporter.extend({
 	},
 
 	finishedRunningTestMethod: function(data) {
+		// Line break at every 80 characters
+		if(this.totalTestMethodCount && this.totalTestMethodCount % 80 === 0)  {
+			Console.write("\n");
+		}
+
 		if(data.status == 'passed') {
 			Console.write(Terminal.style('●', 'white'));
 		}
@@ -49,6 +55,7 @@ DotTestReporter = TestReporter.extend({
 			Console.write(Terminal.style('●', 'red'));
 		}
 
+		this.totalTestMethodCount++;
 		this.currentTestMethodCount++;
 		this.currentTestMethodAssertionCount = 0;
 		this.currentAssertions = [];
