@@ -1,5 +1,7 @@
 Generator = {};
 
+Generator.is = Function.isGenerator;
+
 Generator.run = function(generator, resolve, reject) {
 	// Make sure we are working with an invoked generator
 	if(generator instanceof Function) {

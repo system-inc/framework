@@ -182,3 +182,17 @@ Array.prototype.each = function(callback, context) {
 }
 
 Array.prototype.toString = Object.prototype.toString;
+
+Array.toObject = function(array) {
+	var object = {};
+
+	for(var i = 0; i < array.length; i++) {
+		object[i] = array[i];
+	}
+
+	return object;
+}
+
+Array.prototype.toObject = function() {
+	return Array.toObject(this);
+}

@@ -39,6 +39,7 @@ require('./types/RegularExpression');
 require('./types/String');
 
 // TODO: Need to rethink this
+require('./modules/settings/SettingsModule');
 require('./modules/file-system/FileSystemModule');
 require('./modules/log/LogModule');
 require('./modules/console/ConsoleModule');
@@ -83,11 +84,11 @@ Framework = Class.extend({
 		Console.out('Starting Framework '+this.version+'...');
 
 		// Load the Framework core modules
-		Console.out('Loading modules...');
+		//Console.out('Loading modules...');
 		Module.load(this.coreModules);
 
 		// Load the project settings
-		Console.out('Loading project settings...');
+		//Console.out('Loading project settings...');
 		this.settings = Settings.constructFromFile(this.directory+'settings/settings.json');
 
 		// Set the default settings
@@ -115,7 +116,7 @@ Framework = Class.extend({
 		Console.out('Loaded settings for project "'+this.title+'".');
 
 		// Merge the environment settings
-		Console.out('Merging environment settings...')
+		//Console.out('Merging environment settings...')
 		this.settings.mergeSettingsFromFile(this.directory+'settings/environment.json');
 		//Console.out(this.settings);
 
@@ -130,11 +131,12 @@ Framework = Class.extend({
 
 	initializeEnvironment: function() {
 		this.environment = this.settings.get('environment');
-		Console.out('Initializing environment ('+this.environment+')...');
-
+		
 		// Development
 		if(this.environment == 'development') {
 		}
+
+		Console.out('Initialized environment ('+this.environment+')...');
 	},
 
 });

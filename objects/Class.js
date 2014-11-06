@@ -1,7 +1,23 @@
 Class = function() {};
+
+Class.is = function(value, classType) {
+	var is = false;
+
+	// If they are just checking to see if is Class
+	if(classType === undefined) {
+		is = value instanceof Class;
+	}
+	else {
+		is = value instanceof classType;
+	}
+
+	return is;
+}
+
 var classInitializing = false; // This must stay outside of the extend method
 Class.extend = function(childClassProperties) {
 	var functionTest = /xyz/.test(function() {xyz;}) ? /\bsuper\b/ : /.*/;
+	var parentClass = this;
 	var parentClassPrototype = this.prototype;
 
 	// Instantiate a base class (but only create the instance, don't run the constructor)
@@ -69,7 +85,7 @@ Class.extend = function(childClassProperties) {
 		// Make class variables from the parent show on this class instance (they are already on this instance's prototype but we want to assign them to make them visible to Json.encode)
 		for(var childClassPrototypeProperty in childClassPrototype) { // Loop through the inherited class prototype (came from the parent)
 			// Check if we have a property on the inherited parent class prototype that is not in the child class properties (this means the parent class had the variable exposed but the child class will not yet)
-			if(!childClassProperties[childClassPrototypeProperty] && typeof(childClassPrototype[childClassPrototypeProperty]) != 'function') {
+			if(childClassProperties[childClassPrototypeProperty] === undefined && typeof(childClassPrototype[childClassPrototypeProperty]) != 'function') {
 				// Clone the property to this instance, now the property will appear when this object is encoded with Json.encode
 				this[childClassPrototypeProperty] = cloneProperty(childClassPrototype[childClassPrototypeProperty], childClassPrototypeProperty);
 			}
@@ -123,26 +139,19 @@ Class.extend = function(childClassProperties) {
 	// And make this class extendable
 	Class.extend = arguments.callee;
 
-	// Copy over any static methods from the parent class to the child class that don't already exist
+	// Copy over any static methods from the parent class prototype to the child class that don't already exist
 	for(var parentClassProperty in parentClassPrototype) {
-		if(!Class[parentClassProperty] && typeof(parentClassPrototype[parentClassProperty]) == 'function' && parentClassProperty != 'construct' && parentClassProperty != 'constructor') {
+		if(Class[parentClassProperty] === undefined && typeof(parentClassPrototype[parentClassProperty]) == 'function' && parentClassProperty != 'construct' && parentClassProperty != 'constructor') {
 			Class[parentClassProperty] = parentClassPrototype[parentClassProperty];
 		}
 	}
 
+	// Copy over any static methods from the parent class to the child class that don't already exist
+	for(var parentClassProperty in parentClass) {
+		if(Class[parentClassProperty] === undefined && typeof(parentClass[parentClassProperty]) == 'function' && parentClassProperty != 'construct' && parentClassProperty != 'constructor') {
+			Class[parentClassProperty] = parentClass[parentClassProperty];
+		}
+	}
+
 	return Class;
-}
-
-Class.is = function(value, classType) {
-	var is = false;
-
-	// If they are just checking to see if is Class
-	if(classType === undefined) {
-		is = value instanceof Class;
-	}
-	else {
-		is = value instanceof classType;
-	}
-
-	return is;
 }

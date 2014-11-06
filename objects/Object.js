@@ -1,11 +1,46 @@
-Object.prototype.sort = function() {
-	var sorted = {};
+Object.is = function(value) {
+	return Object.prototype.toStringStandard.call(value) == '[object Object]';
+}
 
-	Object.keys(this).sort().each(function(index, key) {
-		sorted[key] = this[key];
-	}, this);
+Object.isEmpty = function(object) {
+	if(Array.is(object) || String.is(object)) {
+    	return object.length === 0;
+    }
 
-	return sorted;
+    return Object.keys(object).length === 0;
+}
+
+Object.prototype.isEmpty = function() {
+	return Object.isEmpty(this);   
+}
+
+Object.hasKey = function(object, key) {
+	return key in object;
+}
+
+Object.prototype.hasKey = function(key) {
+	return Object.hasKey(this, key);
+}
+
+Object.prototype.getValueForKey = function(key, caseSensitive) {
+	caseSensitive = caseSensitive === false ? false : true;
+	var result = null;
+
+	if(!caseSensitive) {
+		for(var currentKey in this) {
+			if(currentKey.toLowerCase() == key.toLowerCase()) {
+				result = this[key];
+				break;
+			}
+		}
+	}
+	else {
+		if(key && this[key] !== undefined) {
+			result = this[key];
+		}
+	}
+
+	return result;
 }
 
 Object.prototype.each = function(callback, context) {
@@ -66,6 +101,10 @@ Object.clone = function(object) {
     return clone;
 }
 
+Object.prototype.clone = function() {
+	return Object.clone(this);
+}
+
 Object.prototype.merge = function() {
     var objectsToMerge = [];
 
@@ -97,12 +136,14 @@ Object.prototype.merge = function() {
     return this;
 }
 
-Object.is = function(value) {
-	return typeof(value) == 'object';
-}
+Object.prototype.sort = function() {
+	var sorted = {};
 
-Object.prototype.isEmpty = function() {
-    return Object.keys(this).length === 0;
+	Object.keys(this).sort().each(function(index, key) {
+		sorted[key] = this[key];
+	}, this);
+
+	return sorted;
 }
 
 Object.prototype.toStringStandard = Object.prototype.toString;
@@ -125,10 +166,6 @@ Object.prototype.toJson = function() {
 	return Json.encode(this);
 }
 
-Object.prototype.toArray = function() {
-	return Object.toArray(this);
-}
-
 Object.toArray = function(value) {
 	// Wrap anything not in an array in an array
 	if(!Array.is(value)) {
@@ -144,23 +181,6 @@ Object.toArray = function(value) {
 	}
 }
 
-Object.prototype.getValueForKey = function(key, caseSensitive) {
-	caseSensitive = caseSensitive === false ? false : true;
-	var result = null;
-
-	if(!caseSensitive) {
-		for(var currentKey in this) {
-			if(currentKey.toLowerCase() == key.toLowerCase()) {
-				result = this[key];
-				break;
-			}
-		}
-	}
-	else {
-		if(key && this[key]) {
-			result = this[key];
-		}
-	}
-
-	return result;
+Object.prototype.toArray = function() {
+	return Object.toArray(this);
 }

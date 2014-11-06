@@ -4,17 +4,13 @@ Module = Class.extend({
 	settings: null,
 
 	construct: function(settings) {
-		// TODO: Fix this kludge and find out why require() on a module is invoking it's constructor
-		// Create settings if we are intializing and not loading - not sure why .construct() is being called when I require() a module
-		if(global['Settings']) {
-			this.settings = Settings.constructFromObject(settings);
-		}
+		this.settings = Settings.constructFromObject(settings);
 	},
 
 	load: function(moduleNames) {
 		// Load each module
 		moduleNames.toArray().each(function(index, moduleName) {
-			Console.out('Loading', moduleName.toSpaces(), 'module...');
+			//Console.out('Loading', moduleName.toSpaces(), 'module...');
 			var modulePath = __dirname.replaceLast('objects', 'modules')+'/'+moduleName.toDashes()+'/'+moduleName+'Module';
 			require(modulePath);
 		}, this);

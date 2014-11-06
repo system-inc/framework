@@ -177,4 +177,29 @@ ArrayTest = Test.extend({
 		Assert.equal(string, '0a1b2c', 'index and element are passed in the correct order');
 	},
 
+	testToObject: function() {
+		var array = [
+			'a',
+			'b',
+			'c',
+		];
+		object = Array.toObject(array);
+
+		var actual = object.toJson();
+		var expected = '{"0":"a","1":"b","2":"c"}';
+		Assert.equal(actual, expected, 'turned into object');
+	},
+
+	testPrototypeToObject: function() {
+		var array = [
+			'a',
+			'b',
+			'c',
+		].toObject();
+
+		var actual = array.toJson();
+		var expected = '{"0":"a","1":"b","2":"c"}';
+		Assert.equal(actual, expected, 'turned into object');
+	},
+
 });
