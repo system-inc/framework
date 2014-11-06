@@ -224,9 +224,7 @@ Proctor = Class.extend({
 
 		// Loop through all of the test classes
 		yield this.tests.each(function*(testClassName, test) {
-			this.emit('TestReporter.startedRunningTest', {
-				name: testClassName,
-			});
+			this.emit('TestReporter.startedRunningTest', test);
 
 			// Get the instantiated test class
 			var testClass = this.testClasses[testClassName];

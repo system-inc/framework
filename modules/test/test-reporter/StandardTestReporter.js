@@ -29,7 +29,9 @@ StandardTestReporter = TestReporter.extend({
 	startedRunningTest: function(data) {
 		this.currentTestName = data.name;
 
-		Console.out("\n"+'  '+data.name.replaceLast('Test', '')+"\n");
+		var testLocation = data.directory.replace(Project.framework.directory+'tests'+Node.Path.sep, '')+data.fileName;
+
+		Console.out("\n"+'  '+data.name.replaceLast('Test', '')+' '+Terminal.style('('+testLocation+')', 'gray')+"\n");
 	},
 
 	startedRunningTestMethod: function(data) {
