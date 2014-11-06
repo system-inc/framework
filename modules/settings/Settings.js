@@ -43,7 +43,7 @@ Settings = Class.extend({
 		// Search for they key they specified
 		for(var i = 0; i < keys.length; i++) {
 			// If the key exists assign it
-			if(current[keys[i]]) {
+			if(current[keys[i]] !== undefined) {
 				current = current[keys[i]];
 			}
 			// If the key does not exist, exit the loop
@@ -88,3 +88,12 @@ Settings = Class.extend({
 // Static methods
 Settings.constructFromFile = Settings.prototype.constructFromFile;
 Settings.constructFromObject = Settings.prototype.constructFromObject;
+Settings.default = function(defaultSettings, settings) {
+	// Create a settings object from the settings they provided
+	var settings = Settings.constructFromObject(settings);
+
+	// Merge in the defaults
+	settings.default(defaultSettings);
+
+	return settings;
+}

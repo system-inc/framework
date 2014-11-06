@@ -1,0 +1,2 @@
+DatabaseConnection = Class.extend({
+});
