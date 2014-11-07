@@ -86,7 +86,8 @@ RouteMatch = Class.extend({
 			if(controller && controller[this.route.controllerMethodName]) {
 				// Use a reflection technique to find the argument names of the controller method and build an arguments array to send in
 				var controllerMethodArguments = [];
-				var controllerMethodArgumentNames = controller[this.route.controllerMethodName].getArguments();
+				var controllerMethodArgumentNames = controller[this.route.controllerMethodName].getParameters();
+
 				controllerMethodArgumentNames.each(function(index, controllerMethodArgumentName) {
 					if(this.data[controllerMethodArgumentName]) {
 						controllerMethodArguments.push(this.data[controllerMethodArgumentName]);

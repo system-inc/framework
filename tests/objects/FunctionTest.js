@@ -36,18 +36,28 @@ FunctionTest = Test.extend({
 		Assert.true(generator.bind(this).isGenerator(), 'generator function with .bind(this) called on it');
 	},
 
-	testGetArguments: function() {
+	testGetParameters: function() {
 		var fn = function(apple, banana, cherry) {
 		}
-
-		var actual = fn.getArguments();
+		var actual = fn.getParameters();
 		var expected = [
 			'apple',
 			'banana',
 			'cherry',
 		];
+		Assert.deepEqual(actual, expected, 'parameters are returned as an array')
 
-		Assert.deepEqual(actual, expected, 'arguments are returned as an array')
+		var SpecialTestClass = Class.extend({
+			generatorFunction: function*(parameter1, parameter2) {
+			},
+		});
+		var specialTestClassInstance = new SpecialTestClass();
+		var actual = specialTestClassInstance.generatorFunction.getParameters();
+		var expected = [
+			'parameter1',
+			'parameter2',
+		];
+		Assert.deepEqual(actual, expected, 'parameters in generator functions defined in classes')
 	},
 
 	testDelay: function*() {

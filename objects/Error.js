@@ -85,6 +85,7 @@ Error.prototype.toObject = function(verbose) {
 				key != 'data' &&
 				key != 'url' &&
 				key != 'callSite' &&
+				key != 'stackTrace' &&
 				this.hasOwnProperty(key) &&
 				Primitive.is(this[key])
 			) {
@@ -100,6 +101,17 @@ Error.prototype.toObject = function(verbose) {
 	// Add data from the first callsite to the error for convenience
 	object.callSite = this.stack.getCallSiteData(0);
 	object.location = object.callSite.file+':'+object.callSite.lineNumber+':'+object.callSite.columnNumber;
+
+	return object;
+}
+
+Error.prototype.getPublicData = function() {
+	var object = this.toObject();
+
+	delete object['data'];
+	delete object['location'];
+	delete object['stackTrace'];
+	delete object['callSite'];
 
 	return object;
 }

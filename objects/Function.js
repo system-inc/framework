@@ -25,11 +25,22 @@ Function.prototype.isGenerator = function() {
 	return Function.isGenerator(this);
 }
 
-Function.prototype.getArguments = function() {
-	return this.toString()
-	  .replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s))/mg,'')
-	  .match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1]
-	  .split(/,/);
+Function.prototype.getParameters = function() {
+	var parameters;
+
+	// We store parameters in a function for generator functions that are defined in a Class
+	if(this.parameters !== undefined) {
+		parameters = this.parameters;
+	}
+	// Use regular expressions to get parameter names from a function
+	else {
+		parameters = this.toString()
+			.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s))/mg,'')
+			.match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1]
+			.split(/,/);
+	}
+
+	return parameters;
 }
 
 Function.delay = function(milliseconds, callback) {

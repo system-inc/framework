@@ -59,6 +59,7 @@ Framework = Class.extend({
 	coreModules: [
 		'Console',
 		'Cryptography',
+		'Database',
 		'FileSystem',
 		'Geolocation',
 		'Hardware',
