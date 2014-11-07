@@ -117,8 +117,8 @@ Framework = Class.extend({
 		Console.out('Loaded settings for project "'+this.title+'".');
 
 		// Merge the environment settings
-		//Console.out('Merging environment settings...')
-		this.settings.mergeSettingsFromFile(this.directory+'settings/environment.json');
+		//Console.out('Integrating environment settings...')
+		this.settings.integrateSettingsFromFile(this.directory+'settings/environment.json');
 		//Console.out(this.settings);
 
 		// Initialize the environment

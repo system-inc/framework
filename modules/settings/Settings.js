@@ -31,6 +31,12 @@ Settings = Class.extend({
 		this.settings.merge(settings);
 	},
 
+	integrateSettingsFromFile: function(path) {
+		var settings = File.synchronous.read.json(path);
+		//Console.out('Settings from', path, 'to integrate:', settings);
+		this.settings.integrate(settings);
+	},
+
 	isEmpty: function() {
 		return this.settings.isEmpty();
 	},

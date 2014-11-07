@@ -136,6 +136,67 @@ Object.prototype.merge = function() {
     return this;
 }
 
+// The difference between integrate and merge is how arrays are handled.
+// With merge, if you have a key which points to an array, merging the same key name pointing to
+// a different array will just push that different onto one array.
+// Integrate on the other hand, looks are objects in the array to be merged and merges those
+// objects with the corresponding object on the same array index.
+Object.prototype.integrate = function() {
+    var objectsToIntegrate = [];
+
+    // Gather the objects to merge
+    for(var i = 0; i < arguments.length; i++) {
+    	if(arguments[i]) {
+    		objectsToIntegrate.push(arguments[i]);	
+    	}
+    };
+
+    // "this" merges any properties from the objects to merge that it does not already have
+    objectsToIntegrate.each(function(objectToIntegrateIndex, objectToIntegrate) {
+    	objectToIntegrate.each(function(objectToIntegrateKey, objectToIntegrateValue) {
+    		// Overwrite any primitives
+    		if(this[objectToIntegrateKey] !== undefined && Primitive.is(this[objectToIntegrateKey])) {
+    			this[objectToIntegrateKey] = objectToIntegrateValue;
+    		}
+    		// Special case with handling keys pointing to arrays
+    		else if(this[objectToIntegrateKey] !== undefined && Array.is(this[objectToIntegrateKey])) {
+    			var integratedArray = [];
+
+    			for(var i = 0; i < this[objectToIntegrateKey].length; i++) {
+    				// If the array being integrated has a matching index to this array
+    				if(objectToIntegrateValue[i]) {
+	    				var integratedObject = this[objectToIntegrateKey][i].integrate(objectToIntegrateValue[i]);
+	    				integratedArray.push(integratedObject);	
+    				}
+    				// If the array being integrated does not have a matching index, just use this array element at the current index
+    				else {
+    					integratedArray.push(this[objectToIntegrateKey][i]);
+    				}
+    			}
+
+    			// If there are more array elements in the object we are coalescing in add them
+    			if(this[objectToIntegrateKey].length < objectToIntegrateValue.length) {
+    				for(var i = this[objectToIntegrateKey].length; i < objectToIntegrateValue.length; i++) {
+    					integratedArray.push(objectToIntegrateValue[i]);
+    				}
+    			}
+
+    			this[objectToIntegrateKey] = integratedArray;
+    		}
+    		// Recursively merge other non-primitives
+    		else if(this[objectToIntegrateKey] !== undefined && !Primitive.is(this[objectToIntegrateKey])) {
+    			this[objectToIntegrateKey] = this[objectToIntegrateKey].integrate(objectToIntegrateValue);
+    		}
+    		// Add any new keys not existing on "this"
+    		else if(this[objectToIntegrateKey] === undefined) {
+    			this[objectToIntegrateKey] = objectToIntegrateValue;
+    		}
+    	}, this);
+    }, this);
+
+    return this;
+}
+
 Object.prototype.sort = function() {
 	var sorted = {};
 

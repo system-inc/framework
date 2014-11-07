@@ -75,6 +75,16 @@ WebServer = Server.extend({
 				// Set a timeout on server connections
 				nodeServer.setTimeout(this.settings.get('serverTimeoutInMilliseconds'));
 
+				// Add an event listener for port collisions
+				nodeServer.on('error', function(error) {
+					if(error.code == 'EADDRINUSE') {
+						Console.out(Terminal.style('Could not listen on port '+port+', the port is already in use.', 'red'));
+					}
+					else {
+						throw error;
+					}
+				});
+
 				// Create the web server
 				this.listeners[port] = nodeServer;
 
