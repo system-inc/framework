@@ -31,11 +31,14 @@ Proctor = Class.extend({
 		if(testReporterIdentifier === undefined) {
 			this.testReporter = new StandardTestReporter();
 		}
-		else if(testReporterIdentifier == 'standard') {
+		else if(testReporterIdentifier.lowercase() == 'standard') {
 			this.testReporter = new DotTestReporter();
 		}
-		else if(testReporterIdentifier == 'dot') {
+		else if(testReporterIdentifier.lowercase() == 'dot') {
 			this.testReporter = new DotTestReporter();
+		}
+		else if(testReporterIdentifier.lowercase() == 'concise') {
+			this.testReporter = new ConciseTestReporter();
 		}
 		else {
 			this.testReporter = new StandardTestReporter();

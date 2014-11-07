@@ -3,6 +3,7 @@ require('./Test');
 require('./Proctor');
 require('./test-reporter/TestReporter');
 require('./test-reporter/StandardTestReporter');
+require('./test-reporter/ConciseTestReporter');
 require('./test-reporter/DotTestReporter');
 
 TestModuleClass = Module.extend({
