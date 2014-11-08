@@ -152,35 +152,44 @@ StackTrace = Class.extend({
 
 	// WARNING: This method is super fragile and any changes could cause the app to crash and it is super hard to figure out why if this is broken
 	getCallSiteData: function(index) {
-		var callSiteData = {};
+		var callSiteData = {
+			typeName: null,
+			functionName: null,
+			methodName: null,
+			file: null,
+			fileName: null,
+			lineNumber: null,
+			columnNumber: null,
+		};
 
 		var callSite = this.callSites[index];
+		if(callSite) {
+			// Calling callSite.getTypeName() can sometimes throw an error for reasons I don't know, so I use this try catch block to fix it
+			try {
+				var typeName = callSite.getTypeName();
+				callSiteData.typeName = typeName;
+			}
+			catch(error) {
+				callSiteData.typeName = 'unknown';
+			}			
 
-		// Calling callSite.getTypeName() can sometimes throw an error for reasons I don't know, so I use this try catch block to fix it
-		try {
-			var typeName = callSite.getTypeName();
-			callSiteData.typeName = typeName;
-		}
-		catch(error) {
-			callSiteData.typeName = 'unknown';
-		}			
+			if(callSite.getFunctionName) {
+				var functionName = callSite.getFunctionName();
+				callSiteData.functionName = functionName;
+			}
+			else {
+				callSiteData.functionName = 'anonymous';
+			}
+		
+			if(callSite.getMethodName && callSite.getFunctionName && callSite.getMethodName() != callSite.getFunctionName() && !(callSite.getFunctionName().indexOf('.'+callSite.getMethodName(), callSite.getFunctionName().length - ('.'+callSite.getMethodName()).length) !== -1)) {
+				callSiteData.methodName = callSite.getMethodName();
+			}
 
-		if(callSite.getFunctionName()) {
-			var functionName = callSite.getFunctionName();
-			callSiteData.functionName = functionName;
+			callSiteData.file = callSite.getFileName();
+			callSiteData.fileName = callSiteData.file.substr(callSiteData.file.lastIndexOf(Node.Path.sep) + 1, callSiteData.file.length);
+			callSiteData.lineNumber = callSite.getLineNumber();
+			callSiteData.columnNumber = callSite.getColumnNumber();
 		}
-		else {
-			callSiteData.functionName = 'anonymous';
-		}
-	
-		if(callSite.getMethodName() && callSite.getFunctionName() && callSite.getMethodName() != callSite.getFunctionName() && !(callSite.getFunctionName().indexOf('.'+callSite.getMethodName(), callSite.getFunctionName().length - ('.'+callSite.getMethodName()).length) !== -1)) {
-			callSiteData.methodName = callSite.getMethodName();
-		}
-
-		callSiteData.file = callSite.getFileName();
-		callSiteData.fileName = callSiteData.file.substr(callSiteData.file.lastIndexOf(Node.Path.sep) + 1, callSiteData.file.length);
-		callSiteData.lineNumber = callSite.getLineNumber();
-		callSiteData.columnNumber = callSite.getColumnNumber();
 
 		return callSiteData;
 	},
