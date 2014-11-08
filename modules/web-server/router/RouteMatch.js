@@ -6,7 +6,6 @@ RouteMatch = Class.extend({
 	response: null,
 	partial: false,
 	complete: false,
-	data: {},
 	errors: [],
 
 	setWebServer: function(webServer) {
@@ -32,7 +31,7 @@ RouteMatch = Class.extend({
 		}, this);
 
 		// Merge what we have so far with the route data
-		finalizedRouteData = this.route.data.merge(finalizedRouteData);
+		finalizedRouteData = this.route.data.clone().merge(finalizedRouteData);
 
 		// Strip out all of the capture group integer keys
 		finalizedRouteData.each(function(key, value) {
@@ -49,7 +48,7 @@ RouteMatch = Class.extend({
 		// Sort the data by keys
 		finalizedRouteData = finalizedRouteData.sort();
 
-		this.data = finalizedRouteData;
+		return finalizedRouteData;
 	},
 
 	getCaptureGroupNames: function() {
@@ -72,7 +71,7 @@ RouteMatch = Class.extend({
 
 	follow: function*() {
 		// Finalize route data
-		this.finalizeRouteData();
+		var finalizedRouteData = this.finalizeRouteData();
 
 		// Setup a variable to store the content
 		var content = null;
@@ -80,7 +79,7 @@ RouteMatch = Class.extend({
 		// ControllerRoute
 		if(this.route.type == 'controller') {
 			// Try to get the controller
-			var controller = Controller.getController(this.route.controllerName, this.request, this.response, this.route, this.data);
+			var controller = Controller.getController(this.route.controllerName, this.request, this.response, this.route, finalizedRouteData);
 
 			// If the controller was found, invoke the method for the route
 			if(controller && controller[this.route.controllerMethodName]) {
@@ -89,8 +88,8 @@ RouteMatch = Class.extend({
 				var controllerMethodArgumentNames = controller[this.route.controllerMethodName].getParameters();
 
 				controllerMethodArgumentNames.each(function(index, controllerMethodArgumentName) {
-					if(this.data[controllerMethodArgumentName]) {
-						controllerMethodArguments.push(this.data[controllerMethodArgumentName]);
+					if(finalizedRouteData[controllerMethodArgumentName]) {
+						controllerMethodArguments.push(finalizedRouteData[controllerMethodArgumentName]);
 					}
 					else {
 						controllerMethodArguments.push(undefined);

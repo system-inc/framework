@@ -6,10 +6,10 @@ Controller = Class.extend({
 	data: null,
 
 	construct: function(request, response, route, data) {
-		this.request = request ? request : this.request;
-		this.response = response ? response : this.response;
-		this.route = route ? route : this.route;
-		this.data = data ? data : this.data;
+		this.request = request !== undefined ? request : this.request;
+		this.response = response !== undefined ? response : this.response;
+		this.route = route !== undefined ? route : this.route;
+		this.data = data !== undefined ? data : this.data;
 	},
 
 	getController: function(controllerName, request, response, route, data) {

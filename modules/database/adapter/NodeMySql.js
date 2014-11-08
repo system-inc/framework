@@ -31,7 +31,9 @@ Node.MySql.Adapter.reformFields = function(fields) {
 
 Node.MySql.Adapter.query = function(connection, query, values) {
     return new Promise(function(resolve, reject) {
-		connection.query(query, values, function(error, rows, fields) {
+		var queryResults = connection.query(query, values, function(error, rows, fields) {
+			//Console.out(queryResults.sql);
+
 			if(error) {
 				reject(error);
 			}
@@ -39,10 +41,13 @@ Node.MySql.Adapter.query = function(connection, query, values) {
 				//var result = {
 				//	rows: rows,
 				//	fields: Node.MySql.Adapter.reformFields(fields),
+				//	sql: queryResults.sql,
 				//};
 
 				resolve(rows);
 			}
 		});
+
+
     });
 }
