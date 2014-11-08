@@ -47,35 +47,8 @@ Class.extend = function(childClassProperties) {
 		}
 		// If we have a generator
 		else if(childClassProperties[childClassProperty] && childClassProperties[childClassProperty].isGenerator && childClassProperties[childClassProperty].isGenerator()) {
-			// Keep track of the original generator function parameters before we overwrite the generator function
-			var originalChildClassGeneratorParameters = childClassProperties[childClassProperty].getParameters();
-
-			// Use a closure to generate a new, unique anonymous function which returns a promise which will resolve when the method completes execution
-			childClassPrototype[childClassProperty] = (function(childClassProperty, generatorMethod) {
-				var fn = function() {
-					// Invoke the generator with the right context and arguments
-					var invokedGeneratorMethod = generatorMethod.apply(this, arguments);
-
-					var promise = new Promise(function(resolve, reject) {
-						// Run the invoked generator
-						Generator.run(invokedGeneratorMethod, resolve, reject);
-					});
-
-					// Catch and rethrow any errors
-					//promise.catch(function(error) {
-					//	Console.out('Caught error at Class.js:', error.message);
-					//	throw(error);
-					//});
-
-					// All generators return a promise
-					return promise;
-				};
-
-				// You'll judge me for this in the future, but this is the only way I can store parameters for generator functions
-				fn.parameters = originalChildClassGeneratorParameters;
-
-				return fn;
-			})(childClassProperty, childClassProperties[childClassProperty])
+			// Turn the generator into a promise
+			childClassPrototype[childClassProperty] = childClassProperties[childClassProperty].toPromise();
 		}
 		// Copy any methods over to the class prototype
 		else if(typeof(childClassProperties[childClassProperty]) == 'function') {

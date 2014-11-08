@@ -3,13 +3,12 @@ Cryptography = function() {
 
 Cryptography.random = Promise.method(function() {
 	return new Promise(function(resolve) {
-		Node.Crypto.randomBytes(4, function(ex, buffer) {
+		Node.Crypto.randomBytes(16, function(ex, buffer) {
 			var hex = buffer.toString('hex');
 			var integer = parseInt(hex, 16);
-			var random = integer / (0xffffffffffffffff+1);
+			var random = integer / (0xffffffffffffffffffffffffffffffff);
 
 			resolve(random);
-			return random;
 		});
 	});
 });

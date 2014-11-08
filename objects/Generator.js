@@ -60,4 +60,28 @@ Generator.run = function(generator, resolve, reject) {
 	return pump(generator);
 }
 
-Generator.is = Function.isGenerator;
+Generator.toPromise = function(generatorFunction) {
+	// Keep track of the original generator function parameters before we overwrite the generator function
+	var originalGeneratorParameters = generatorFunction.getParameters();
+
+	// Use a closure to generate a new, unique anonymous function which returns a promise which will resolve when the method completes execution
+	return (function(generatorFunction) {
+		var fn = function() {
+			// Invoke the generator with the right context and arguments
+			var invokedGeneratorFunction = generatorFunction.apply(this, arguments);
+
+			var promise = new Promise(function(resolve, reject) {
+				// Run the invoked generator
+				Generator.run(invokedGeneratorFunction, resolve, reject);
+			});
+
+			// Return a promise
+			return promise;
+		};
+
+		// You'll judge me for this in the future, but this is the only way I can store parameters for generator functions
+		fn.parameters = originalGeneratorParameters;
+
+		return fn;
+	})(generatorFunction);
+}

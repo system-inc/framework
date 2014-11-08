@@ -88,6 +88,19 @@ String.prototype.replaceSubstring = function(pattern, replacement, start) {
 	return result;
 }
 
+String.prototype.replaceRange = function(start, end, replacement) {
+    return this.substring(0, start) + replacement + this.substring(end);
+}
+
+String.prototype.insert = function(index, string) {
+    if(index > 0) {
+        return this.substring(0, index) + string + this.substring(index, this.length);
+    }
+    else {
+        return string + this;
+    }
+};
+
 String.prototype.toNumber = function() {
 	return Number(this);
 }
@@ -147,6 +160,21 @@ String.random = function(length, characters) {
 
 	return string;
 }
+
+String.cryptographicRandom = function*(length, characters) {
+	length = length === undefined ? 32 : length;
+	characters = characters === undefined ? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' : characters;
+
+	var maxIndex = characters.length - 1;
+	var string = '';
+
+	for(var i = 0; i < length; i++) {
+		var cryptographicRandom = yield Number.cryptographicRandom(0, maxIndex);
+		string += characters[cryptographicRandom];
+	}
+
+	return string;
+}.toPromise();
 
 String.prototype.sizeInBytes = function() {
 	var bytes = 0;

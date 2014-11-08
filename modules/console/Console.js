@@ -13,9 +13,15 @@ ConsoleClass = Class.extend({
 	},
 
 	write: function(message) {
-		// Write the message to the console
-		Node.StandardOut.write(message);
-		//console.log(message);
+		// If we are not in the browser
+		if(Node.StandardIn) {
+			// Write the message to standard out
+			Node.StandardOut.write(message);
+		}
+		else {
+			// Use the console
+			console.log(message);
+		}
 		
 		// If we have a log, write the message to it
 		if(this.log) {

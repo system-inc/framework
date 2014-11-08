@@ -25,6 +25,15 @@ Function.prototype.isGenerator = function() {
 	return Function.isGenerator(this);
 }
 
+Function.prototype.toPromise = function() {
+	if(this.isGenerator()) {
+		return Generator.toPromise(this);
+	}
+	else {
+		throw new Error('Only generator functions can be turned into promises.');
+	}
+}
+
 Function.prototype.getParameters = function() {
 	var parameters;
 
