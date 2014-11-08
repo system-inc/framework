@@ -29,7 +29,7 @@ Node.MySql.Adapter.reformFields = function(fields) {
 	return reformedFields;
 }
 
-Node.MySql.Adapter.query = Promise.method(function(connection, query, values) {
+Node.MySql.Adapter.query = function(connection, query, values) {
     return new Promise(function(resolve, reject) {
 		connection.query(query, values, function(error, rows, fields) {
 			if(error) {
@@ -45,4 +45,4 @@ Node.MySql.Adapter.query = Promise.method(function(connection, query, values) {
 			}
 		});
     });
-});
+}

@@ -1,7 +1,7 @@
 Cryptography = function() {
 }
 
-Cryptography.random = Promise.method(function() {
+Cryptography.random = function() {
 	return new Promise(function(resolve) {
 		Node.Crypto.randomBytes(16, function(ex, buffer) {
 			var hex = buffer.toString('hex');
@@ -11,4 +11,4 @@ Cryptography.random = Promise.method(function() {
 			resolve(random);
 		});
 	});
-});
+}

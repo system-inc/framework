@@ -385,7 +385,7 @@ Assert.greaterThanOrEqualTo = function(actual, minimum, message) {
 
 Assert.lessThan = function(actual, maximum, message) {
 	try {
-		if(actual >= minimum) {
+		if(actual >= maximum) {
 			Assert.fail(actual, maximum, message, '<');
 		}
 		

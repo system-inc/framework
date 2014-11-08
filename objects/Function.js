@@ -68,7 +68,7 @@ Function.delay = function(milliseconds, callback) {
 // Calling .bind() on a generator function does not return a generator
 // This fixes it, inspiraed by https://www.npmjs.org/package/generator-bind
 Function.prototype.standardBind = Function.prototype.bind;
-Function.prototype.bind = function polyfillBind(context) {
+Function.prototype.bind = function(context) {
 	var args = [context, this].concat(Array.prototype.slice.call(arguments, 1));
 
 	function bind(context, fn) {
@@ -89,4 +89,4 @@ Function.prototype.bind = function polyfillBind(context) {
 	}
 
 	return bind.apply(null, args);
-};
+}

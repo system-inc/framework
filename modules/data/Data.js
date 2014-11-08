@@ -2,7 +2,7 @@ Data = Class.extend({
 });
 
 // Static methods
-Data.decode = Promise.method(function(data, encoding) {
+Data.decode = function(data, encoding) {
     return new Promise(function(resolve, reject) {
     	// Gzip
 		if(encoding == 'gzip') {
@@ -19,9 +19,9 @@ Data.decode = Promise.method(function(data, encoding) {
 			reject(encoding+' is an unsupported encoding type.');
 		}
     });
-});
+}
 
-Data.encode = Promise.method(function(data, encoding) {
+Data.encode = function(data, encoding) {
     return new Promise(function(resolve, reject) {
     	// Gzip
 		if(encoding == 'gzip' || encoding == 'deflate') {
@@ -38,4 +38,4 @@ Data.encode = Promise.method(function(data, encoding) {
 			reject(encoding+' is an unsupported encoding type.');
 		}
     });
-});
+}

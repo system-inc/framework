@@ -140,7 +140,7 @@ Request = Class.extend({
 	
 });
 
-Request.receiveNodeRequest = Promise.method(function(request, maximumRequestBodySizeInBytes) {
+Request.receiveNodeRequest = function(request, maximumRequestBodySizeInBytes) {
     return new Promise(function(resolve, reject) {
     	// Build the request body
 		request.nodeRequest.on('data', function(chunk) {
@@ -162,4 +162,4 @@ Request.receiveNodeRequest = Promise.method(function(request, maximumRequestBody
 			resolve(request.nodeRequest);
 		});
     });
-});
+}

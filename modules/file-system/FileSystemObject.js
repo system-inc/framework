@@ -152,14 +152,14 @@ FileSystemObject = Class.extend({
 		return this.nodeStatus.isSocket();
 	},
 
-	exists: Promise.method(function(fileSystemObject) {
+	exists: function(fileSystemObject) {
 	    return new Promise(function(resolve, reject) {
 	    	Node.FileSystem.exists(fileSystemObject, function(exists) {
 	    		//console.log(fileSystemObject, exists);
 	    		resolve(exists);
 	    	});
 	    });
-	}),
+	},
 	
 });
 

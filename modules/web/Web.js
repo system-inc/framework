@@ -1,7 +1,7 @@
 Web = function() {
 }
 
-Web.request = Promise.method(function(options) {
+Web.request = function(options) {
     return new Promise(function(resolve, reject) {
     	// Time the request
     	var stopwatch = new Stopwatch({
@@ -101,4 +101,4 @@ Web.request = Promise.method(function(options) {
 		// Must always call .end() even if there is no data being written to the request body
 		request.end();
     });
-});
+}

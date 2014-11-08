@@ -52,7 +52,7 @@ File = FileSystemObject.extend({
 File.getContentType = File.prototype.getContentType;
 
 //File.read = Promise.promisify(Node.FileSystem.readFile);
-File.read = Promise.method(function(fileName, options) {
+File.read = function(fileName, options) {
     return new Promise(function(resolve, reject) {
     	Node.FileSystem.readFile(fileName, options, function(error, data) {
     		if(error) {
@@ -63,10 +63,10 @@ File.read = Promise.method(function(fileName, options) {
     		}
     	});
     });
-});
+}
 
 //File.open = Promise.promisify(Node.FileSystem.open);
-File.open = Promise.method(function(path, flags, mode) {
+File.open = function(path, flags, mode) {
     return new Promise(function(resolve, reject) {
     	Node.FileSystem.open(path, flags, mode, function(error, fileDescriptor) {
     		if(error) {
@@ -77,10 +77,10 @@ File.open = Promise.method(function(path, flags, mode) {
     		}
     	});
     });
-});
+}
 
 //File.write = Promise.promisify(Node.FileSystem.write);
-File.write = Promise.method(function(fileDescriptor, buffer, offset, length, position) {
+File.write = function(fileDescriptor, buffer, offset, length, position) {
     return new Promise(function(resolve, reject) {
     	Node.FileSystem.write(fileDescriptor, buffer, offset, length, position, function(error, written, buffer) {
     		if(error) {
@@ -94,9 +94,9 @@ File.write = Promise.method(function(fileDescriptor, buffer, offset, length, pos
     		}
     	});
     });
-});
+}
 
-File.create = Promise.method(function(file, data, options) {
+File.create = function(file, data, options) {
     return new Promise(function(resolve, reject) {
         Node.FileSystem.writeFile(file, data, options, function(error) {
             if(error) {
@@ -107,9 +107,9 @@ File.create = Promise.method(function(file, data, options) {
             }
         });
     });
-});
+}
 
-File.createWriteStream = Promise.method(function() {
+File.createWriteStream = function() {
 	var storedContext = this;
 	var storedArguments = arguments;
 
@@ -123,7 +123,7 @@ File.createWriteStream = Promise.method(function() {
     		reject(error);
     	});
     });
-});
+}
 
 File.synchronous = {};
 

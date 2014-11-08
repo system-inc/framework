@@ -111,4 +111,18 @@ NumberTest = Test.extend({
 		Assert.lessThanOrEqualTo(randomNumber, 100000, '10000, 100000 returns a number less than or equal to 100000');
 	},
 
+	testCryptographicRandom: function*() {
+		var randomNumber = yield Number.cryptographicRandom(0, 1);
+		Assert.greaterThanOrEqualTo(randomNumber, 0, '0, 1 returns a number greater than or equal to 0');
+		Assert.lessThanOrEqualTo(randomNumber, 1, '0, 1 returns a number less than or equal to 1');
+
+		randomNumber = yield Number.cryptographicRandom(0, .9, 1);
+		Assert.greaterThanOrEqualTo(randomNumber, 0, '0, .9, 1 returns a number greater than or equal to 0');
+		Assert.lessThanOrEqualTo(randomNumber, .9, '0, .9, 1 returns a number less than or equal to .9');
+
+		randomNumber = yield Number.cryptographicRandom(10000, 100000);
+		Assert.greaterThanOrEqualTo(randomNumber, 10000, '10000, 100000 returns a number greater than or equal to 10000');
+		Assert.lessThanOrEqualTo(randomNumber, 100000, '10000, 100000 returns a number less than or equal to 100000');
+	},
+
 });

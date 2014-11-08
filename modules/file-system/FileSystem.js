@@ -1,7 +1,7 @@
 FileSystem = {};
 
 // Static methods
-FileSystem.stat = Promise.method(function(path) {
+FileSystem.stat = function(path) {
     return new Promise(function(resolve, reject) {
     	Node.FileSystem.stat(path, function(error, stats) {
     		if(error) {
@@ -12,9 +12,9 @@ FileSystem.stat = Promise.method(function(path) {
     		}
     	});
     });
-});
+}
 
-FileSystem.listFileNames = Promise.method(function(path) {
+FileSystem.listFileNames = function(path) {
     return new Promise(function(resolve, reject) {
         Node.FileSystem.readdir(path, function(error, files) {
             if(error) {
@@ -25,9 +25,9 @@ FileSystem.listFileNames = Promise.method(function(path) {
             }
         });
     });
-});
+}
 
-FileSystem.list = Promise.method(function(path, recursive) {
+FileSystem.list = function(path, recursive) {
     return new Promise(function(resolve, reject) {
         Generator.run(function*() {
             var list = [];
@@ -54,4 +54,4 @@ FileSystem.list = Promise.method(function(path, recursive) {
             return list;
         }, resolve);
     });
-});
+}
