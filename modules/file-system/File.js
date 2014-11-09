@@ -51,7 +51,6 @@ File = FileSystemObject.extend({
 // Static methods
 File.getContentType = File.prototype.getContentType;
 
-//File.read = Promise.promisify(Node.FileSystem.readFile);
 File.read = function(fileName, options) {
     return new Promise(function(resolve, reject) {
     	Node.FileSystem.readFile(fileName, options, function(error, data) {
@@ -65,7 +64,6 @@ File.read = function(fileName, options) {
     });
 }
 
-//File.open = Promise.promisify(Node.FileSystem.open);
 File.open = function(path, flags, mode) {
     return new Promise(function(resolve, reject) {
     	Node.FileSystem.open(path, flags, mode, function(error, fileDescriptor) {
@@ -79,7 +77,6 @@ File.open = function(path, flags, mode) {
     });
 }
 
-//File.write = Promise.promisify(Node.FileSystem.write);
 File.write = function(fileDescriptor, buffer, offset, length, position) {
     return new Promise(function(resolve, reject) {
     	Node.FileSystem.write(fileDescriptor, buffer, offset, length, position, function(error, written, buffer) {
