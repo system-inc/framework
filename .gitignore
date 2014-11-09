@@ -1,2 +1,3 @@
 tests/projects/web-server/logs/*
 .DS_Store
+npm-debug.log
