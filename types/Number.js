@@ -39,6 +39,20 @@ Number.addCommas = function(number) {
     return parts.join('.');
 }
 
+Number.toMoney = function(number, precision) {
+	precision = (precision === undefined ?  2 : precision);
+
+	var formatted;
+	if(number < 0) {
+		formatted = '-$'+Math.abs(Number.addCommas(number.toFixed(precision)));
+	}
+	else {
+		formatted = '$'+Number.addCommas(number.toFixed(precision));
+	}
+
+	return formatted;
+};
+
 // Minimum and maximum are both inclusive
 Number.random = function(minimum, maximum, precision) {
 	minimum = minimum === undefined ? 0 : minimum;

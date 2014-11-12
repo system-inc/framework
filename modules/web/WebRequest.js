@@ -33,7 +33,7 @@ WebRequest = Class.extend({
 		}
 
 		// Set the Content-Length header
-		this.options.headers['Content-Length'] = this.options.body && this.options.body.length ? this.options.body.length : 0;
+		this.options.headers['Content-Length'] = this.options.body ? this.options.body.sizeInBytes() : 0;
 		
 		// Accept gzip encoding by default
 		this.options.headers['Accept-Encoding'] = 'gzip';

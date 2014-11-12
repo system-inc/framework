@@ -40,48 +40,65 @@ Time = Class.extend({
 	},
 
 	nowInMilliseconds: function() {
-		var now = null;
-
-		// If we have Node's hrtime
-		if(process && process.hrtime) {
-			var nodeHighResolutionTime = process.hrtime();
-			now = nodeHighResolutionTime[0] * 1000 + nodeHighResolutionTime[1] / 1000000;
-		}
-		else {
-			now = new Date().getTime();
-		}
+		var now = new Date().getTime();
 
 		return now;
 	},
 
 	nowInMicroseconds: function() {
-		var now = null;
-
-		// If we have Node's hrtime
-		if(process && process.hrtime) {
-			var nodeHighResolutionTime = process.hrtime();
-			now = nodeHighResolutionTime[0] * 1000000 + nodeHighResolutionTime[1] / 1000;
-		}
-		else {
-			now = new Date().getTime() * 1000;
-		}
+		var now = new Date().getTime() * 1000;
 
 		return now;
 	},
 
 	nowInNanoseconds: function() {
-		var now = null;
-
-		// If we have Node's hrtime
-		if(process && process.hrtime) {
-			var nodeHighResolutionTime = process.hrtime();
-			now = nodeHighResolutionTime[0] * 1000000000 + nodeHighResolutionTime[1];
-		}
-		else {
-			now = new Date().getTime() * 1000000;
-		}
+		var now = new Date().getTime() * 1000000;
 
 		return  now;
+	},
+
+	getShortTime: function() {
+		var shortTime = '';
+
+		shortTime += this.getHour12Padded();
+		shortTime += ':'+this.getMinutePadded();
+		shortTime += ' '+this.getPeriod();
+
+		return shortTime;
+	},
+
+	getLongTime: function() {
+		var longTime = '';
+
+		longTime += this.getHour12Padded();
+		longTime += ':'+this.getMinutePadded();
+		longTime += ':'+this.getSecondPadded();
+		longTime += ' '+this.getPeriod();
+
+		return longTime;
+	},
+
+	getPeriod: function() {
+		var period = 'AM';
+
+		var hours = this.time.getHours();
+        if(hours > 11) {
+            period = 'PM';
+        }
+
+        return period;
+	},
+
+	getDayWithDate: function() {
+		// Monday, January 1, 2014
+		var dayWithDate = '';
+
+		dayWithDate += this.getDayName()+', ';
+		dayWithDate += this.getMonthName()+' ';
+		dayWithDate += this.getDay()+', ';
+		dayWithDate += this.getYear();
+
+		return dayWithDate;
 	},
 
 	getYear: function() {
@@ -118,6 +135,23 @@ Time = Class.extend({
 		return this.time.getDay() + 1;
 	},
 
+	getHour12: function() {
+		var hour = this.time.getHours();
+
+		if(hour > 11) {
+            hour = hour - 12;
+        }
+        if(hour == 0) {
+            hour = 12;
+        }
+
+        return hour;
+	},
+
+	getHour12Padded: function() {
+        return ('0'+this.getHour12()).slice(-2);
+	},
+
 	getHour: function() {
 		return this.time.getHours() + 1;
 	},
@@ -127,11 +161,11 @@ Time = Class.extend({
 	},
 
 	getMinute: function() {
-		return this.time.getMinutes() + 1;
+		return this.time.getMinutes();
 	},
 
 	getMinutePadded: function() {
-		return ('0'+(this.time.getMinutes() + 1)).slice(-2);
+		return ('0'+(this.time.getMinutes())).slice(-2);
 	},
 
 	getSecond: function() {
@@ -151,6 +185,16 @@ Time = Class.extend({
 		dateTime += ':'+this.getSecondPadded();
 
 		return dateTime;
+	},
+
+	// The number of seconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
+	getUnixTime: function() {
+		return this.nowInSeconds().toFixed(0);
+	},
+
+	// The number of milliseconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
+	getUnixTimeInMilliseconds: function() {
+		return this.nowInMilliseconds().toFixed(0);
 	},
 
 	getTimePosted: function() {
