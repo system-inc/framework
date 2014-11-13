@@ -16,8 +16,12 @@ Url = Class.extend({
 	},
 
 	constructFromNodeRequest: function(nodeRequest) {
-		// Hard coded for http for now
-		var urlString = 'http://'+nodeRequest.headers.host+nodeRequest.url;
+		var protocol = 'http';
+		if(nodeRequest.connection.encrypted) {
+			protocol = 'https';
+		}
+
+		var urlString = protocol+'://'+nodeRequest.headers.host+nodeRequest.url;
 
 		return new Url(urlString);
 	},
@@ -29,19 +33,43 @@ Url = Class.extend({
 
 		var nodeUrl = Node.Url.parse(string, true);
 
+		// Set the protocol
 		this.protocol = nodeUrl.protocol.replace(':', '');
-		this.port = (nodeUrl.port == null ? 80 : nodeUrl.port.toNumber());
+
+		// Set the port
+		if(nodeUrl.port == null) {
+			if(this.protocol == 'http')	{
+				this.port = 80;
+			}
+			else if(this.protocol == 'https')	{
+				this.port = 443;
+			}
+		}
+		else {
+			this.port = nodeUrl.port.toNumber();
+		}
+
+		// Set the host
 		this.host = nodeUrl.hostname;
+
+		// Set the path
 		this.path = nodeUrl.pathname;
+
+		// Set the query
 		this.query = nodeUrl.query;
+
+		// Set the query string
 		this.queryString = nodeUrl.search;
+
+		// Set the hash
 		this.hash = nodeUrl.hash;
 
+		// Set the complete URL
 		this.url = this.getUrl();
 	},
 
 	getUrl: function() {
-		return this.protocol+'://'+this.host+(this.port != 80 ? ':'+this.port : '')+this.path+this.queryString+(this.hash ? '#'+this.hash : '');
+		return this.protocol+'://'+this.host+(this.port != 80 && this.port != 443 ? ':'+this.port : '')+this.path+this.queryString+(this.hash ? '#'+this.hash : '');
 	},
 
 	setQueryParameter: function(key, value) {

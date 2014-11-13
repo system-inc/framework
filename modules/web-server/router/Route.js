@@ -85,6 +85,26 @@ Route = Class.extend({
 			route.context = 'project';
 		}
 
+		// Make sure we have default methods
+		if(route.methods == null) {
+			route.methods = '*';
+		}
+
+		// Make sure we have default protocols
+		if(route.protocols == null) {
+			route.protocols = '*';
+		}
+
+		// Make sure we have default hosts
+		if(route.hosts == null) {
+			route.hosts = '*';
+		}
+
+		// Make sure we have default ports
+		if(route.ports == null) {
+			route.ports = '*';
+		}
+
 		// Create route children if they exist
 		if(routeSettings.children) {
 			routeSettings.children.each(function(index, childRoute) {

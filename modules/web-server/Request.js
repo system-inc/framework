@@ -120,7 +120,13 @@ Request = Class.extend({
 	},
 
 	prepareLogEntry: function() {
-		var requestsLogEntry = '"'+this.id+'","'+this.time.getDateTime()+'","'+this.ipAddress.address+'","'+this.method+'","'+this.url.input+'","'+this.referrer.input+'"';
+		var requestsLogEntry = '';
+		requestsLogEntry += '"'+this.id+'"';
+		requestsLogEntry += ',"'+this.time.getDateTime()+'"';
+		requestsLogEntry += ',"'+this.ipAddress.address+'"';
+		requestsLogEntry += ',"'+this.method+'"';
+		requestsLogEntry += ',"'+this.url.url+'"';
+		requestsLogEntry += ',"'+this.referrer.url+'"';
 
 		return requestsLogEntry;
 	},

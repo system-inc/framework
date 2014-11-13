@@ -127,7 +127,13 @@ Response = Class.extend({
 	},
 
 	prepareLogEntry: function() {
-		var responsesLogEntry = '"'+this.id+'","'+this.time.getDateTime()+'","'+this.statusCode+'","'+this.stopwatch.precision+'","'+this.stopwatch.elapsedTime+'"';
+		var responsesLogEntry = '';
+
+		responsesLogEntry += '"'+this.id+'"';
+		responsesLogEntry += ',"'+this.time.getDateTime()+'"';
+		responsesLogEntry += ',"'+this.statusCode+'"';
+		responsesLogEntry += ',"'+this.stopwatch.precision+'"';
+		responsesLogEntry += ',"'+this.stopwatch.elapsedTime+'"';
 
 		return responsesLogEntry;
 	},

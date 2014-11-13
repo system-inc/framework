@@ -32,11 +32,14 @@ WebServer = Server.extend({
 					nameWithoutExtension: 'web-server-'+this.identifier+'-responses',
 				},
 			},
-			protocols: 'http',
-			ports: null,
-			https: {
-				keyFile: null,
-				certificateFile: null,
+			protocols: {
+				http: {
+					ports: [],
+				},
+				https: {
+					keyFile: null,
+					certificateFile: null,
+				},
 			},
 			serverTimeoutInMilliseconds: 60000, // 60 seconds
 			requestTimeoutInMilliseconds: 5000, // 5 seconds
@@ -64,57 +67,61 @@ WebServer = Server.extend({
 		this.router.loadRoutes(this.settings.get('router.routes'));
 
 		// Start listening
-		this.listen(this.settings.get('ports'));
+		this.listen(this.settings.get('protocols'));
 	},
 
-	listen: function(ports) {
-		// Create a listener for each port they want to listen on
-		ports.toArray().each(function(index, port) {
-			// If we are already listening on that port
-			if(this.listeners[port]) {
-				Console.out('Could not create an web server listener on port '+port+', the port is already in use.');
-			}
-			// If the port is free
-			else {
-				var nodeServer
-
-				// HTTPS
-				if(this.settings.get('protocols').contains('https')) {
-					var httpsSettings = {
-						key: File.synchronous.read(this.settings.get('https.keyFile')).toString(),
-						cert: File.synchronous.read(this.settings.get('https.certificateFile')).toString(),
-					};
-
-					Console.out(httpsSettings);
-
-					nodeServer = Node.Https.createServer(httpsSettings, this.handleRequestConnection.bind(this));
-				}
-				// HTTP
-				else {
-					nodeServer = Node.Http.createServer(this.handleRequestConnection.bind(this));
-				}
-
-				// Set a timeout on server connections
-				nodeServer.setTimeout(this.settings.get('serverTimeoutInMilliseconds'));
-
-				// Add an event listener for port collisions
-				nodeServer.on('error', function(error) {
-					if(error.code == 'EADDRINUSE') {
-						Console.out(Terminal.style('Could not listen on port '+port+', the port is already in use.', 'red'));
+	listen: function(protocols) {
+		// Loop through the protocols (http/https)
+		protocols.each(function(protocol, protocolSettings) {
+			// Create a listener for each port they want to listen on
+			if(protocolSettings.ports) {
+				protocolSettings.ports.toArray().each(function(portIndex, port) {
+					// If we are already listening on that port
+					if(this.listeners[port]) {
+						Console.out('Could not create an web server listener on port '+port+', the port is already in use.');
 					}
+					// If the port is free
 					else {
-						throw error;
+						var nodeServer;
+
+						// HTTPS
+						if(protocol == 'https') {
+							var httpsServerSettings = {
+								key: File.synchronous.read(protocolSettings.keyFile).toString(),
+								cert: File.synchronous.read(protocolSettings.certificateFile).toString(),
+							};
+							//Console.out(httpsServerSettings);
+
+							nodeServer = Node.Https.createServer(httpsServerSettings, this.handleRequestConnection.bind(this));
+						}
+						// HTTP
+						else if(protocol == 'http') {
+							nodeServer = Node.Http.createServer(this.handleRequestConnection.bind(this));
+						}
+
+						// Set a timeout on server connections
+						nodeServer.setTimeout(this.settings.get('serverTimeoutInMilliseconds'));
+
+						// Add an event listener for port collisions
+						nodeServer.on('error', function(error) {
+							if(error.code == 'EADDRINUSE') {
+								Console.out(Terminal.style('Could not listen to '+protocol.uppercase()+' requests on port '+port+', the port is already in use.', 'red'));
+							}
+							else {
+								throw error;
+							}
+						});
+
+						// Create the web server
+						this.listeners[port] = nodeServer;
+
+						// Make the web server listen on the port
+						this.listeners[port].listen(port.toString()); // Ports must be strings
+						Console.out('Listening for '+protocol.uppercase()+' requests on port '+port+'.');
 					}
-				});
-
-				// Create the web server
-				this.listeners[port] = nodeServer;
-
-				// Make the web server listen on the port
-				this.listeners[port].listen(port.toString()); // Ports must be strings
-				Console.out('Listening on port '+port+'.');
+				}.bind(this));
 			}
-		}, this);
+		}.bind(this));
 	},
 
 	handleRequestConnection: function(nodeRequest, nodeResponse) {
