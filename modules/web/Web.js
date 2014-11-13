@@ -8,7 +8,15 @@ Web.request = function(options) {
     		precision: 'milliseconds',
     	});
 
-		var request = Node.Http.request(options, function(response) {
+    	// Use either Node.Http or Node.Https
+    	var nodeHttpLibraryName = options.protocol.capitalize();
+
+    	// Reform protocol, it expects it to end with a colon
+    	if(!options.protocol.endsWith(':')) {
+    		options.protocol = options.protocol + ':';
+    	}
+
+		var request = Node[nodeHttpLibraryName].request(options, function(response) {
 			// Set the encoding
 			if(options && options.encoding) {
 				response.setEncoding(options.encoding);

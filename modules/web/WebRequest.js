@@ -14,6 +14,7 @@ WebRequest = Class.extend({
 		
 		this.options = {
 			method: 'GET',
+			protocol: this.url.protocol,
 			host: this.url.host,
 			port: this.url.port,
 			path: this.url.path+this.url.queryString,
