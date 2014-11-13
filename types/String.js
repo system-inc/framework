@@ -49,6 +49,26 @@ String.prototype.lowercaseFirstCharacter = function() {
 	return this.charAt(0).toLowerCase() + this.slice(1);
 }
 
+String.prototype.trimLeft = function(characters) {
+	if(characters === undefined) {
+		characters = "\s";		
+	}
+
+	return this.replace(new RegExp("^[" + characters + "]+"), '');
+}
+
+String.prototype.trimRight = function(characters) {
+	if(characters === undefined) {
+		characters = "\s";		
+	}
+
+	return this.replace(new RegExp("[" + characters + "]+$"), '');
+}
+
+String.prototype.trim = function(characters) {
+	return this.trimLeft(characters).trimRight(characters);
+};
+
 String.prototype.replaceStandard = String.prototype.replace;
 
 String.prototype.replace = function(pattern, replacement, flags) {
