@@ -19,13 +19,13 @@ DatabaseTest = Test.extend({
 	},
 
 	testDatabase: function*() {
-		//var actual = yield FrameworkTestDatabase.query('SELECT * FROM user');
+		var actual = yield FrameworkTestDatabase.query('SELECT * FROM user');
 		//Console.out(actual);
 	},
 
 	testManualDatabase: function*() {
-		//var frameworkTestDatabase = new Database(this.databaseSettings);
-		//var actual = yield frameworkTestDatabase.query('SELECT * FROM user');
+		var frameworkTestDatabase = new Database(this.databaseSettings);
+		var actual = yield frameworkTestDatabase.query('SELECT * FROM user');
 		//Console.out(actual);
 	},
 

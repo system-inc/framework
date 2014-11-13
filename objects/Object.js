@@ -122,6 +122,9 @@ Object.prototype.merge = function() {
     		if(this[objectToMergeKey] !== undefined && Primitive.is(this[objectToMergeKey])) {
     			this[objectToMergeKey] = objectToMergeValue;
     		}
+            else if(this[objectToMergeKey] !== undefined && !Primitive.is(this[objectToMergeKey])) {
+                this[objectToMergeKey] = this[objectToMergeKey].merge(objectToMergeValue);
+            }
     		// Recursively merge non-primitives
     		else if(this[objectToMergeKey] !== undefined && !Primitive.is(this[objectToMergeKey])) {
     			this[objectToMergeKey] = this[objectToMergeKey].merge(objectToMergeValue);

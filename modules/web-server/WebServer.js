@@ -15,27 +15,33 @@ WebServer = Server.extend({
 		this.identifier = identifier;
 		this.settings = (settings === undefined ? new Settings() : settings);
 		this.settings.default({
-			'logs': {
-				'general': {
-					'enabled': true,
-					'directory': Project.directory+'logs/',
-					'nameWithoutExtension': 'web-server-'+this.identifier,
+			logs: {
+				general: {
+					enabled: true,
+					directory: Project.directory+'logs/',
+					nameWithoutExtension: 'web-server-'+this.identifier,
 				},
-				'requests': {
-					'enabled': true,
-					'directory': Project.directory+'logs/',
-					'nameWithoutExtension': 'web-server-'+this.identifier+'-requests',
+				requests: {
+					enabled: true,
+					directory: Project.directory+'logs/',
+					nameWithoutExtension: 'web-server-'+this.identifier+'-requests',
 				},
-				'responses': {
-					'enabled': true,
-					'directory': Project.directory+'logs/',
-					'nameWithoutExtension': 'web-server-'+this.identifier+'-responses',
+				responses: {
+					enabled: true,
+					directory: Project.directory+'logs/',
+					nameWithoutExtension: 'web-server-'+this.identifier+'-responses',
 				},
 			},
-			'serverTimeoutInMilliseconds': 60000, // 60 seconds
-			'requestTimeoutInMilliseconds': 5000, // 5 seconds
-			'responseTimeoutInMilliseconds': 5000, // 5 seconds
-			'maximumRequestBodySizeInBytes': 20000000, // 20 megabytes
+			protocols: 'http',
+			ports: null,
+			https: {
+				keyFile: null,
+				certificateFile: null,
+			},
+			serverTimeoutInMilliseconds: 60000, // 60 seconds
+			requestTimeoutInMilliseconds: 5000, // 5 seconds
+			responseTimeoutInMilliseconds: 5000, // 5 seconds
+			maximumRequestBodySizeInBytes: 20000000, // 20 megabytes
 		});
 
 		// Conditionally attach the general log
@@ -70,7 +76,23 @@ WebServer = Server.extend({
 			}
 			// If the port is free
 			else {
-				var nodeServer = Node.Http.createServer(this.handleRequestConnection.bind(this));
+				var nodeServer
+
+				// HTTPS
+				if(this.settings.get('protocols').contains('https')) {
+					var httpsSettings = {
+						key: File.synchronous.read(this.settings.get('https.keyFile')).toString(),
+						cert: File.synchronous.read(this.settings.get('https.certificateFile')).toString(),
+					};
+
+					Console.out(httpsSettings);
+
+					nodeServer = Node.Https.createServer(httpsSettings, this.handleRequestConnection.bind(this));
+				}
+				// HTTP
+				else {
+					nodeServer = Node.Http.createServer(this.handleRequestConnection.bind(this));
+				}
 
 				// Set a timeout on server connections
 				nodeServer.setTimeout(this.settings.get('serverTimeoutInMilliseconds'));

@@ -2,7 +2,7 @@ Database = Class.extend({
 
 	settings: null,
 
-	databaseConnectionPool: null,	
+	databaseConnectionPool: null,
 
 	construct: function(settings) {
 		this.settings = Settings.default({

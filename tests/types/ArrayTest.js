@@ -6,6 +6,24 @@ ArrayTest = Test.extend({
 		Assert.false(Array.is({}), 'object literal ({}) is not an array');
 	},
 
+	testUnique: function() {
+		var actual = [
+			'apple',
+			'banana',
+			'banana',
+			'cherry',
+		].unique();
+		//Console.out(actual);
+
+		var expected = [
+			'apple',
+			'banana',
+			'cherry',
+		];
+
+		Assert.deepEqual(actual, expected, 'Removes duplicate elements');
+	},
+
 	testMerge: function() {
 		Assert.deepEqual([1,2,3], [1].merge([2,3]), 'array of primitives');
 		Assert.deepEqual([], [].merge([]), 'two empty arrays');

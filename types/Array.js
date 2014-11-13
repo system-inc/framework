@@ -2,6 +2,39 @@ Array.is = function(value) {
 	return Object.prototype.toStringStandard.call(value) == '[object Array]';
 }
 
+Array.isPrimitive = function(array) {
+	var isPrimitive = true;
+
+	array.each(function(index, element) {
+		if(!Primitive.is(element)) {
+			isPrimitive = false;
+			return false; // break out of the .each
+		}
+	});
+
+	return isPrimitive;
+}
+
+Array.unique = function(array) {
+	var uniqueArray = [];
+
+	array.each(function(index, element) {
+		if(uniqueArray.indexOf(element) == -1) {
+			uniqueArray.push(element);
+		}
+	});
+
+	return uniqueArray;
+}
+
+Array.prototype.unique = function() {
+	return Array.unique(this);
+}
+
+Array.prototype.isPrimitive = function() {
+	return Array.isPrimitive(this);
+}
+
 Array.prototype.merge = function() {
     // Gather the arrays to merge
     var arraysToMerge = [];
