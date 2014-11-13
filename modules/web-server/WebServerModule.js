@@ -31,7 +31,7 @@ WebServerModuleClass = Module.extend({
 					}
 				}
 
-				Console.out('Initializing web server...');
+				//Console.out('Initializing web server...');
 
 				// Create the web server
 				var webServer = new WebServer(webServerIdentifier, webServerSettings);

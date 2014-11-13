@@ -51,18 +51,18 @@ String.prototype.lowercaseFirstCharacter = function() {
 
 String.prototype.trimLeft = function(characters) {
 	if(characters === undefined) {
-		characters = "\s";		
+		characters = '\\s';
 	}
 
-	return this.replace(new RegExp("^[" + characters + "]+"), '');
+	return this.replace(new RegExp('^['+characters+']+'), '');
 }
 
 String.prototype.trimRight = function(characters) {
 	if(characters === undefined) {
-		characters = "\s";		
+		characters = '\\s';		
 	}
 
-	return this.replace(new RegExp("[" + characters + "]+$"), '');
+	return this.replace(new RegExp('['+characters+']+$'), '');
 }
 
 String.prototype.trim = function(characters) {
