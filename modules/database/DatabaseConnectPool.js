@@ -1,0 +1,5 @@
+DatabaseConnectionPool = Class.extend({
+
+	databaseConnections: [],
+
+});

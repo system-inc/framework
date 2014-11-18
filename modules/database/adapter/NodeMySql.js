@@ -5,46 +5,47 @@ Node.MySql = require('mysql');
 
 Node.MySql.Adapter = {};
 
-Node.MySql.Adapter.reformFields = function(fields) {
-	var reformedFields = {};
+Node.MySql.Adapter.reformColumns = function(columns) {
+	var reformedColumns = {};
 
-	fields.each(function(index, field) {
-		reformedFields[field.name] = {
-			catalog: field.catalog,
-            database: field.db,
-            table: field.table,
-            originalTable: field.orgTable,
-            name: field.name,
-            originalName: field.orgName,
-            characterSetId: field.charsetNr,
-            length: field.length,
-            type: field.type,
-            flags: field.flags,
-            decimals: field.decimals,
-            zeroFill: field.zeroFill,
-            protocol41: field.protocol41,
+	columns.each(function(index, column) {
+		reformedColumns[column.name] = {
+			catalog: column.catalog,
+            database: column.db,
+            table: column.table,
+            originalTable: column.orgTable,
+            name: column.name,
+            originalName: column.orgName,
+            characterSetId: column.charsetNr,
+            length: column.length,
+            type: column.type,
+            flags: column.flags,
+            decimals: column.decimals,
+            zeroFill: column.zeroFill,
+            protocol41: column.protocol41,
 		};
 	});
 
-	return reformedFields;
+	return reformedColumns;
 }
 
 Node.MySql.Adapter.query = function(connection, query, values) {
     return new Promise(function(resolve, reject) {
-		var queryResults = connection.query(query, values, function(error, rows, fields) {
+		var queryResults = connection.query(query, values, function(error, rows, columns) {
 			//Console.out(queryResults.sql);
 
 			if(error) {
 				reject(error);
 			}
 			else {
-				//var result = {
-				//	rows: rows,
-				//	fields: Node.MySql.Adapter.reformFields(fields),
-				//	sql: queryResults.sql,
-				//};
+				var result = {
+					sql: queryResults.sql,
+					//values: queryResults.values,
+					rows: rows,
+					columns: Node.MySql.Adapter.reformColumns(columns),
+				};
 
-				resolve(rows);
+				resolve(result);
 			}
 		});
 

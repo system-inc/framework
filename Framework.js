@@ -2,21 +2,7 @@
 console.log("\x1B[90m        ____________\r\n       \/\\  ________ \\\r\n      \/  \\ \\______\/\\ \\\r\n     \/ \/\\ \\ \\  \/ \/\\ \\ \\\r\n    \/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\r\n   \/ \/ \/__\\ \\ \\\/_\/__\\_\\ \\__________\r\n  \/ \/_\/____\\ \\__________  ________ \\\r\n  \\ \\ \\____\/ \/ ________\/\\ \\______\/\\ \\\r\n   \\ \\ \\  \/ \/ \/\\ \\  \/ \/\\ \\ \\  \/ \/\\ \\ \\\r\n    \\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\r\n     \\ \\\/ \/ \/__\\_\\\/ \/ \/__\\ \\ \\\/_\/__\\_\\ \\\r\n      \\  \/_\/______\\\/_\/____\\ \\___________\\\r\n      \/  \\ \\______\/\\ \\____\/ \/ ________  \/\r\n     \/ \/\\ \\ \\  \/ \/\\ \\ \\  \/ \/ \/\\ \\  \/ \/ \/\r\n    \/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\r\n   \/ \/ \/__\\ \\ \\\/_\/__\\_\\\/ \/ \/__\\_\\\/ \/ \/\r\n  \/ \/_\/____\\ \\_________\\\/ \/______\\\/ \/\r\n  \\ \\ \\____\/ \/ ________  __________\/\r\n   \\ \\ \\  \/ \/ \/\\ \\  \/ \/ \/\r\n    \\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\r\n     \\ \\\/ \/ \/__\\_\\\/ \/ \/\r\n      \\  \/ \/______\\\/ \/\r\n       \\\/___________\/  \u00A9 "+new Date().getFullYear()+" framework.app\n\x1B[39m");
 
 // Node
-Node = {};
-Node.Crypto = require('crypto');
-Node.Domain = require('domain');
-Node.Events = require('events');
-EventEmitter = Node.EventEmitter = Node.Events.EventEmitter;
-Node.FileSystem = require('fs');
-Node.Http = require('http');
-Node.Https = require('https');
-Node.Path = require('path');
-Node.Process = process;
-Node.StandardIn = Node.Process.stdin;	
-Node.StandardOut = Node.Process.stdout;
-Node.Url = require('url');
-Node.Utility = require('util');
-Node.Zlip = require('zlib');
+require('./Node');
 
 // Framework core objects
 require('./objects/Function');
@@ -60,6 +46,7 @@ Framework = Class.extend({
 		'Console',
 		'Cryptography',
 		'Database',
+		'Email',
 		'FileSystem',
 		'Geolocation',
 		'Hardware',

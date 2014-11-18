@@ -1,6 +1,7 @@
 require('./Assert');
 require('./Test');
 require('./Proctor');
+require('./Fixture');
 require('./test-reporter/TestReporter');
 require('./test-reporter/StandardTestReporter');
 require('./test-reporter/ConciseTestReporter');

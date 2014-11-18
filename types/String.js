@@ -49,6 +49,14 @@ String.prototype.lowercaseFirstCharacter = function() {
 	return this.charAt(0).toLowerCase() + this.slice(1);
 }
 
+String.prototype.isLowercase = function() {
+	return this == this.lowercase();
+}
+
+String.prototype.isUppercase = function() {
+	return this == this.uppercase();
+}
+
 String.prototype.trimLeft = function(characters) {
 	if(characters === undefined) {
 		characters = '\\s';
@@ -130,8 +138,16 @@ String.prototype.toInteger = function() {
 }
 
 String.prototype.toDashes = function() {
-	// Just lowercase the first character for now
-	var result = this.lowercaseFirstCharacter();
+	var result;
+
+	// If we are all caps then turn the whole string to lowercase
+	if(this.isUppercase()) {
+		result = this.lowercase();
+	}
+	// If we aren't all caps, just lowercase the first character
+	else {
+		result = this.lowercaseFirstCharacter();
+	}
 
 	// If we have a string with spaces 'This Is My String';
 	if(result.contains(' ')) {
@@ -152,6 +168,22 @@ String.prototype.toDashes = function() {
 	result = result.lowercase();
 
 	return result;
+}
+
+String.prototype.toCamelCase = function(uppercaseFirstCharacter) {
+	var string = this.toDashes();
+
+	if(string.contains('-')) {
+		string = string.replace(/-(.)/g, function(match, group1) {
+	        return group1.toUpperCase();
+	    });
+	}
+
+	if(uppercaseFirstCharacter) {
+		string = string.uppercaseFirstCharacter();
+	}
+
+	return string;
 }
 
 String.prototype.toSpaces = function() {

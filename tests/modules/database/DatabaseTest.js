@@ -18,15 +18,20 @@ DatabaseTest = Test.extend({
 		Module.initialize('Database');
 	},
 
-	testDatabase: function*() {
+	testQueryOnDatabaseGeneratedBySettings: function*() {
 		var actual = yield FrameworkTestDatabase.query('SELECT * FROM user');
 		//Console.out(actual);
 	},
 
-	testManualDatabase: function*() {
+	testQueryOnDatabaseCreatedManually: function*() {
 		var frameworkTestDatabase = new Database(this.databaseSettings);
 		var actual = yield frameworkTestDatabase.query('SELECT * FROM user');
 		//Console.out(actual);
+	},
+
+	testGetSchema: function*() {
+		var schema = yield FrameworkTestDatabase.getSchema();
+		//Console.out(schema);
 	},
 
 });

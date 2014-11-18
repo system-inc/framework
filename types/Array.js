@@ -141,17 +141,37 @@ Array.prototype.count = Array.prototype.contains;
 Array.prototype.first = function() {
 	var first = null;
 
-	if(this[0]) {
+	if(this[0] !== undefined) {
 		first = this[0];
 	}
 	
 	return first;
 }
 
+Array.prototype.second = function() {
+	var second = null;
+
+	if(this[1] !== undefined) {
+		second = this[1];
+	}
+	
+	return second;
+}
+
+Array.prototype.secondToLast = function() {
+	var secondToLast = null;
+
+	if(this[this.length - 2] !== undefined) {
+		secondToLast = this[this.length - 2];
+	}
+	
+	return secondToLast;
+}
+
 Array.prototype.last = function() {
 	var last = null;
 
-	if(this[this.length - 1]) {
+	if(this[this.length - 1] !== undefined) {
 		last = this[this.length - 1];
 	}
 	
@@ -165,6 +185,35 @@ Array.prototype.get = function(index) {
 	else {
 		return null;
 	}
+}
+
+Array.prototype.getObjectWithKeyValue = function(key, value) {
+	var object = null;
+
+	this.each(function(index, element) {
+		if(Object.is(element)) {
+			if(element[key] !== undefined && element[key] == value) {
+				object = element;
+				return false; // Break out of the loop
+			}
+		}
+	});
+
+	return object;
+}
+
+Array.prototype.getObjectsWithKeyValue = function(key, value) {
+	var objects = [];
+
+	this.each(function(index, element) {
+		if(Object.is(element)) {
+			if(element[key] !== undefined && element[key] == value) {
+				objects.push(element);
+			}
+		}
+	});
+
+	return objects;
 }
 
 Array.prototype.delete = function(index) {
