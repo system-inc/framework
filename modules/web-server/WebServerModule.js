@@ -27,7 +27,7 @@ WebServerModuleClass = Module.extend({
 				if(!webServerIdentifier) {
 					webServerIdentifier = Project.identifier;
 					if(webServerCount > 0) {
-						webServerIdentifier += '-'+webServerCount;
+						webServerIdentifier += ''+webServerCount;
 					}
 				}
 

@@ -138,7 +138,6 @@ DatabaseTable = Class.extend({
 		schema.engine = this.engine;
 		schema.rowFormat = this.rowFormat;
 		schema.autoIncrement = this.autoIncrement;
-		schema.checksum = this.checksum;
 		schema.createOptions = this.createOptions;
 		schema.comment = this.comment;
 		schema.characterSet = this.characterSet;
@@ -153,8 +152,22 @@ DatabaseTable = Class.extend({
 		// Set the columns
 		schema.columns = [];
 		yield this.columns.each(function*(index, column) {
-			var columnSchema = yield column.getSchema();
-			schema.columns.push(columnSchema);
+			//var columnSchema = yield column.getSchema();
+			//schema.columns.push(columnSchema);
+		}, this);
+
+		// Set the indexes
+		schema.indexes = [];
+		yield this.indexes.each(function*(indexIndex, index) {
+			var indexSchema = yield index.getSchema();
+			schema.indexes.push(indexSchema);
+		}, this);
+
+		// Set the relationships
+		schema.relationships = [];
+		yield this.relationships.each(function*(index, relationship) {
+			var relationshipSchema = yield relationship.getSchema();
+			schema.relationships.push(relationshipSchema);
 		}, this);
 
 		return schema;

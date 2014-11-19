@@ -186,7 +186,9 @@ StackTrace = Class.extend({
 			}
 
 			callSiteData.file = callSite.getFileName();
-			callSiteData.fileName = callSiteData.file.substr(callSiteData.file.lastIndexOf(Node.Path.sep) + 1, callSiteData.file.length);
+			if(callSiteData.file) {
+				callSiteData.fileName = callSiteData.file.substr(callSiteData.file.lastIndexOf(Node.Path.sep) + 1, callSiteData.file.length);	
+			}
 			callSiteData.lineNumber = callSite.getLineNumber();
 			callSiteData.columnNumber = callSite.getColumnNumber();
 		}

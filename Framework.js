@@ -97,7 +97,7 @@ Framework = Class.extend({
 			this.identifier = identifier;
 		}
 		else {
-			this.identifier = this.title.toDashes();
+			this.identifier = this.title.toCamelCase();
 		}
 
 		// Anounce project title

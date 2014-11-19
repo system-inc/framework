@@ -44,7 +44,9 @@ Json.indent = function(object, replacer, indentation) {
 	var indentedJson = Json.encode(object, replacer, indentation);
 
 	// Replace escaped new line characters with real new line characters and indentation
-	indentedJson = indentedJson.replace(/\\n/g, "\n    ");
+	if(indentedJson) {
+		indentedJson = indentedJson.replace(/\\n/g, "\n    ");	
+	}	
 
 	return indentedJson;
 }

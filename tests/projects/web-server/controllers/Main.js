@@ -8,8 +8,16 @@ Main = Controller.extend({
 		//return this.request;
 
 		//Console.highlight(this.route.hosts);
-
-		return this.request.id.toString();
+		
+		var frameworkTestDatabase = new Database({
+			host: 'localhost',
+			username: 'framework_test',
+			password: 'framework_test',
+			databaseName: 'framework_test',
+		});
+		var response = yield frameworkTestDatabase.query('SELECT * FROM `user`');
+		//var response = yield frameworkTestDatabase.getSchema();
+		return response;
 
 		//return String.random(1024 * 1, '01');
 

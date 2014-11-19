@@ -8,7 +8,7 @@ Terminal.color = function(string, colorName) {
 
 Terminal.style = function(string, stylesString) {
 	// Get all of the styles from the stylesString
-	styles = [];
+	var styles = [];
 	stylesString.split(',').each(function(index, style) {
 		styles.push(style.trim());
 	});
@@ -48,6 +48,18 @@ Terminal.eraseDisplay = function() {
 };
 
 Terminal.clear = Terminal.reset = Terminal.eraseDisplay;
+
+Terminal.clearLine = function() {
+    Console.write('\033[2K');
+}
+
+Terminal.clearLineFromCursor = function() {
+    Console.write('\033[1K');
+}
+
+Terminal.cursorToBeginningOfLine = function() {
+    Console.write('\033b');
+};
 
 Terminal.cursorUp = function(distance) {
 	distance = (distance === undefined ? 1 : distance);

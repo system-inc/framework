@@ -31,6 +31,19 @@ Array.prototype.unique = function() {
 	return Array.unique(this);
 }
 
+Array.prototype.sortByLength = function(descending) {
+	descending = (descending === undefined ? false : descending);
+
+	this.sort(function(a, b) {
+		if(descending) {
+			return b.length - a.length;	
+		}
+		else {
+			return a.length - b.length;	
+		}
+	});
+}
+
 Array.prototype.isPrimitive = function() {
 	return Array.isPrimitive(this);
 }

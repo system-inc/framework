@@ -49,7 +49,7 @@ DatabaseTableColumn = Class.extend({
 		
 		this.default = properties.default;
 		this.primaryKey = (properties.key.contains('pri') > 0);
-		this.nullable = (properties.null == 'YES') ;
+		this.nullable = (properties.null.lowercase() == 'yes') ;
 		this.unsigned = (properties.type.contains('unsigned') > 0);
 		this.autoIncrement = (properties.extra.contains('auto_increment') > 0);
 		this.zeroFill = (properties.type.contains('zerofill') > 0);

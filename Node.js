@@ -15,6 +15,9 @@ Node.Utility = require('util');
 Node.Zlip = require('zlib');
 
 Node.exit = function() {
-	Console.out(Terminal.style(Console.prepareMessage.call(this, arguments), 'red'));
+	if(arguments.length) {
+		Console.out(Terminal.style(Console.prepareMessage.call(this, arguments), 'red'));	
+	}
+	
 	Node.Process.exit();
 }

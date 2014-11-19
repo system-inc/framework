@@ -33,9 +33,20 @@ Url = Class.extend({
 
 		var nodeUrl = Node.Url.parse(string, true);
 
-		// Set the protocol
-		this.protocol = nodeUrl.protocol.replace(':', '');
+		// Fix Node's URL parser
+		if(nodeUrl.host === null && nodeUrl.path !== null) {
+			nodeUrl.host = nodeUrl.hostname = nodeUrl.path;
+			nodeUrl.path = nodeUrl.pathname = '';
+		}
 
+		// Set the protocol
+		if(!nodeUrl.protocol) {
+			this.protocol = 'http';
+		}
+		else {
+			this.protocol = nodeUrl.protocol.replace(':', '');	
+		}
+		
 		// Set the port
 		if(nodeUrl.port == null) {
 			if(this.protocol == 'http')	{

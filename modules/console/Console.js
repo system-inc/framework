@@ -5,6 +5,10 @@ ConsoleClass = Class.extend({
 	showTime: true,
 	showFile: true,
 
+	commandHistory: [],
+	currentCommandHistoryIndex: 0,
+	currentCommandString: '',
+
 	construct: function(identifier) {
 		this.identifier = (identifier === undefined ? this.identifier : identifier);
 
@@ -105,27 +109,225 @@ ConsoleClass = Class.extend({
 	},
 
 	listen: function() {
-		if(global['Node.StandardIn']) {
-			//Node.StandardIn.setRawMode(true); // Takes input character by character
+		// Make sure we have Node.StandardIn
+		if(global['Node'] && global['Node']['StandardIn']) {
+			Node.StandardIn.setRawMode(true); // Takes input character by character
 			Node.StandardIn.resume();
 			Node.StandardIn.setEncoding('utf8');
-			Node.StandardIn.on('data', function(data) {
-				this.handleCommand(data);
-			}.bind(this));	
+			Node.StandardIn.on('data', function(key) {
+				this.handleKey(key);
+			}.bind(this));
 		}
 	},
 
-	handleCommand: function(command) {
-		//console.log(command);
-		if(command.trim() == 'hi') {
-			Node.StandardOut.write('hello');
+	handleKey: function(key) {
+		
+		// ctrl-c
+		if(key == '\u0003') {
+			Node.Process.exit(0);
 		}
+		// up
+		else if(key == '\u001b[A') {
+			Console.out('up');
+		}
+		// down
+		else if(key == '\u001b[B') {
+			Console.out('down');
+		}
+		// left
+		else if(key == '\u001b[D') {
+			Terminal.cursorLeft();
+			//Console.out('left');
+		}
+		// right
+		else if(key == '\u001b[C') {
+			Terminal.cursorRight();
+			//Console.out('right');
+		}
+		// tab
+		else if(key == "\t") {
+			//Console.out('tab');
+			this.assistCommand(this.currentCommandString);
+		}
+		// enter
+		else if(key == "\n" || key == "\r") {
+			//Console.out('enter');
+			this.handleCommand(this.currentCommandString);
+			this.currentCommandString = '';
+		}
+		// backspace
+		else if(key.charCodeAt(0) === 127) {
+			// Remove the last character
+			this.currentCommandString = this.currentCommandString.substring(0, this.currentCommandString.length - 1);
+			Console.write(key);
+		}
+		// anything else
 		else {
-			Node.StandardOut.write("\n\n");
+			this.currentCommandString += key;
+			Console.write(key);
 		}
 
-		// Always write a line break
-		Node.StandardOut.write("\n");
+		//this.handleCommand(data);
+	},
+
+	assistCommand: function(command) {
+		command = command.trim();
+
+		// The thing we are going to print out
+		var response;
+
+		// Get the current context
+		var variableArray = command.split('.');
+
+		// The fragment of the command
+		var commandFragment = variableArray.pop();
+
+		// Find the context
+		if(variableArray.length > 0) {
+			var current = global;
+			variableArray.each(function(index, variable) {
+				if(current[variable] !== undefined) {
+					current = current[variable];
+				}
+				else {
+					return false; // break
+				}
+			});
+			context = current;
+		}
+		// If there are no "."'s then the context is global
+		else {
+			context = global;
+		}
+		
+		// See if the command fragment exists in the context
+		var commandMatch = (context[commandFragment] !== undefined);
+
+		// Get all of the available commands for the context
+		var availableCommandArray = Object.keys(context);
+
+		// Find all of the commands that potentially match
+		var partialMatchArray = [];
+		availableCommandArray.each(function(index, key) {
+			if(key.startsWith(commandFragment)) {
+				partialMatchArray.push(key);
+			}
+		});
+
+		// Sort the partial match array
+		partialMatchArray.sort();
+		
+		// Command matches and is the only match
+		if(commandMatch && partialMatchArray.length == 1) {
+			// Add a period
+			if(!command.endsWith('.')) {
+				Console.write('.');
+				this.currentCommandString += '.';
+			}
+
+			// Nothing happens
+			return;
+		}
+		// Exact match, there are potentially longer matches
+		else if(commandMatch && partialMatchArray.length > 1) {
+			response = partialMatchArray;
+		}
+		// No exact matches, there are potential matches
+		else if(!commandMatch && partialMatchArray.length > 0) {
+			// Sort the partial match array by length
+			partialMatchArray.sortByLength();
+
+			// Print out characters to where all possible matches meet up
+			var currentPartialMatchCharacterIndex = commandFragment.length;
+			var maximumPartialMatchCharacterIndex = partialMatchArray.first().length;
+			var charactersWritten = 0;
+
+			for(var i = currentPartialMatchCharacterIndex; i < maximumPartialMatchCharacterIndex; i++) {
+				var currentCharacterToTest = partialMatchArray.first()[i];
+				var currentCharacterToTestMatches = true;
+				partialMatchArray.each(function(index, partialMatch) {
+					if(partialMatch[i] != currentCharacterToTest) {
+						currentCharacterToTestMatches = false;
+						return false;
+					}
+				});
+
+				if(currentCharacterToTestMatches) {
+					charactersWritten++;
+					Console.write(currentCharacterToTest);
+					this.currentCommandString += currentCharacterToTest;
+				}
+				else {
+					break;
+				}
+			}
+
+			if(!charactersWritten) {
+				response = partialMatchArray.sort();
+			}
+			else {
+				return;	
+			}
+		}
+		// No matches
+		else {
+			// Show nothing
+		}
+
+		if(response) {
+			Console.showTime = false;
+			Console.showFile = false;
+			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, [response]), 'cyan'));
+			Console.showTime = true;
+			Console.showFile = true;
+		}
+
+		this.currentCommandString = command;
+		Terminal.clearLine();
+		Console.write(this.currentCommandString);
+	},
+
+	handleCommand: function(command) {
+		command = command.trim();
+
+		// Strip any trailing periods
+		if(command.endsWith('.')) {
+			command = command.substring(0, command.length - 1);
+		}
+
+		//Console.out('Command:', command);
+
+		var response;
+
+		if(global[command] !== undefined) {
+			response = global[command];
+		}
+		else if(command.lowercase() == 'hi') {
+			response = 'Hello.';
+		}
+		else {
+			try {
+				response = eval(command);
+			}
+			catch(error) {
+				response = error;
+			}
+		}
+
+		Console.showTime = false;
+		Console.showFile = false;
+
+		if(Function.is(response)) {
+			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, ['function '+command+'() { ... }']), 'cyan'));	
+		}
+		else if(!command.isEmpty()) {
+			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, [response]), 'cyan'));	
+		}
+		
+		Console.showTime = true;
+		Console.showFile = true;
+
+		return;
 	},
 
 });

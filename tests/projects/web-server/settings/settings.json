@@ -20,8 +20,13 @@
 							"enabled": true
 						}
 					},
-					"protocols": "http",
-					"ports": 8080,
+					"protocols": {
+						"http": {
+							"ports": [
+								8080
+							]
+						}
+					},
 					"router": {
 						"routes": [
 							{
@@ -31,8 +36,6 @@
 								"hosts": [
 									"192.168.1.40"
 								],
-								"protocols": "*",
-								"ports": "*",
 								"methods": "*",
 								"expression": ".*"
 							},
@@ -44,9 +47,6 @@
 									"server",
 									"localhost"
 								],
-								"protocols": ["http", "https"],
-								"ports": "*",
-								"methods": "*",
 								"expression": "/",
 								"data": {
 									"rootData": "root!",
