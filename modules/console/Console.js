@@ -6,8 +6,10 @@ ConsoleClass = Class.extend({
 	showFile: true,
 
 	commandHistory: [],
-	currentCommandHistoryIndex: 0,
+	currentCommandHistoryIndex: -1,
 	currentCommandString: '',
+	currentCommandCursorIndex: 0,
+	commandColor: 'cyan',
 
 	construct: function(identifier) {
 		this.identifier = (identifier === undefined ? this.identifier : identifier);
@@ -121,53 +123,141 @@ ConsoleClass = Class.extend({
 	},
 
 	handleKey: function(key) {
-		
-		// ctrl-c
+		// Ctrl-c
 		if(key == '\u0003') {
 			Node.Process.exit(0);
 		}
-		// up
+		// Up
 		else if(key == '\u001b[A') {
-			Console.out('up');
+			//Console.out('up');
+
+			if(this.currentCommandHistoryIndex < this.commandHistory.length - 1) {
+				this.currentCommandHistoryIndex++;
+			}
+
+			//Console.out(this.currentCommandHistoryIndex, this.commandHistory);
+
+			if(this.commandHistory[this.currentCommandHistoryIndex] !== undefined) {
+				this.currentCommandString = this.commandHistory[this.currentCommandHistoryIndex];	
+			}
+
+			// Clear the line
+			Terminal.clearLine();
+
+			// Move to the beginning of the line
+			var moveLeft = 0;
+			if(this.currentCommandCursorIndex > 0) {
+				moveLeft = this.currentCommandCursorIndex;
+			}
+			Terminal.cursorLeft(moveLeft);
+
+			this.currentCommandCursorIndex = this.currentCommandString.length;
+
+			// Write the current string (this moves the cursor right)
+			Console.write(this.currentCommandString);
 		}
-		// down
+		// Down
 		else if(key == '\u001b[B') {
-			Console.out('down');
+			//Console.out('down');
+
+			if(this.currentCommandHistoryIndex > -1) {
+				this.currentCommandHistoryIndex--;
+			}
+
+			//Console.out(this.currentCommandHistoryIndex, this.commandHistory);
+
+			if(this.currentCommandHistoryIndex == -1) {
+				this.currentCommandString = '';
+			}
+			else if(this.commandHistory[this.currentCommandHistoryIndex] !== undefined) {
+				this.currentCommandString = this.commandHistory[this.currentCommandHistoryIndex];	
+			}
+
+			// Clear the line
+			Terminal.clearLine();
+
+			// Move to the beginning of the line
+			var moveLeft = 0;
+			if(this.currentCommandCursorIndex > 0) {
+				moveLeft = this.currentCommandCursorIndex;
+			}
+			Terminal.cursorLeft(moveLeft);
+
+			this.currentCommandCursorIndex = this.currentCommandString.length;
+
+			// Write the current string (this moves the cursor right)
+			Console.write(this.currentCommandString);
 		}
-		// left
+		// Left
 		else if(key == '\u001b[D') {
-			Terminal.cursorLeft();
-			//Console.out('left');
+			if(this.currentCommandCursorIndex == 0) {
+				Terminal.beep();
+			}
+			else {
+				this.currentCommandCursorIndex--;
+				Terminal.cursorLeft();
+			}
 		}
-		// right
+		// Right
 		else if(key == '\u001b[C') {
-			Terminal.cursorRight();
-			//Console.out('right');
+			if(this.currentCommandCursorIndex == this.currentCommandString.length) {
+				Terminal.beep();
+			}
+			else {
+				this.currentCommandCursorIndex++;
+				Terminal.cursorRight();
+			}
 		}
-		// tab
+		// Tab
 		else if(key == "\t") {
-			//Console.out('tab');
+			var rightCount = this.currentCommandString.length - this.currentCommandCursorIndex;
+			this.currentCommandCursorIndex = this.currentCommandString.length;
+			Terminal.cursorRight(rightCount);
+
 			this.assistCommand(this.currentCommandString);
 		}
-		// enter
+		// Enter
 		else if(key == "\n" || key == "\r") {
+			if(this.currentCommandString) {
+				this.commandHistory.unshift(this.currentCommandString);
+				this.currentCommandHistoryIndex = -1;
+			}
+
 			//Console.out('enter');
 			this.handleCommand(this.currentCommandString);
 			this.currentCommandString = '';
+			this.currentCommandCursorIndex = 0;
 		}
-		// backspace
+		// Backspace
 		else if(key.charCodeAt(0) === 127) {
 			// Remove the last character
 			this.currentCommandString = this.currentCommandString.substring(0, this.currentCommandString.length - 1);
-			Console.write(key);
-		}
-		// anything else
-		else {
-			this.currentCommandString += key;
-			Console.write(key);
-		}
 
-		//this.handleCommand(data);
+			// I have to do all of this stuff because Mac OS X terminal demands it of me
+			Terminal.clearLine();
+			Terminal.cursorLeft(this.currentCommandString.length + 1);
+			if(this.currentCommandCursorIndex > 0) {
+				this.currentCommandCursorIndex--;
+			}
+			Console.write(this.currentCommandString);
+		}
+		// Any other key
+		else {
+			this.currentCommandString = this.currentCommandString.insert(this.currentCommandCursorIndex, key);
+			this.currentCommandCursorIndex++;
+
+			// Clear the line
+			Terminal.clearLine();
+
+			// Move to the beginning of the line
+			Terminal.cursorLeft(this.currentCommandCursorIndex - 1);
+
+			// Write the current string (this moves the cursor right)
+			Console.write(this.currentCommandString);
+
+			// Move back to where the cursor should be
+			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
+		}
 	},
 
 	assistCommand: function(command) {
@@ -182,21 +272,55 @@ ConsoleClass = Class.extend({
 		// The fragment of the command
 		var commandFragment = variableArray.pop();
 
+		// The context of the command
+		var context = undefined;
+
 		// Find the context
-		if(variableArray.length > 0) {
-			var current = global;
-			variableArray.each(function(index, variable) {
-				if(current[variable] !== undefined) {
-					current = current[variable];
+		var current = global;
+		variableArray.each(function(index, variable) {
+			if(current[variable] !== undefined) {
+				current = current[variable];
+			}
+			else {
+				return false; // break
+			}
+		});
+		context = current;
+
+		// If the context is still global, do some more work to see if we are working with a command that is not an object path
+		if(context === global) {
+			context = undefined;
+
+			// Try to eval the statement and get an object back to get context
+			var commandToEval = command;
+			if(commandToEval.endsWith('.')) {
+				commandToEval = commandToEval.replaceLast('.', '');
+			}
+
+			// Try to run the command as is (without a trailing period)
+			try {
+				context = eval(commandToEval);
+				//Console.out('got context!', command, commandToEval);
+			}
+			catch(error) {
+				context = undefined;
+			}
+
+			// If we got nothing, try to run the command prior to the last fragment
+			if(context === undefined) {
+				try {
+					commandToEval = variableArray.join('.');
+					context = eval(commandToEval);
+					//Console.out('got context!', command, commandToEval);
 				}
-				else {
-					return false; // break
+				catch(error) {
+					context = undefined;
 				}
-			});
-			context = current;
+			}
 		}
-		// If there are no "."'s then the context is global
-		else {
+
+		// If we still have no context then just use global as the context
+		if(context === undefined) {
 			context = global;
 		}
 		
@@ -204,7 +328,18 @@ ConsoleClass = Class.extend({
 		var commandMatch = (context[commandFragment] !== undefined);
 
 		// Get all of the available commands for the context
-		var availableCommandArray = Object.keys(context);
+		var availableCommandArray = [];
+		var availableFunctionsArray = [];
+		var availablePropertiesArray = [];
+		for(var key in context) {
+			if(Function.is(context[key])) {
+				availableFunctionsArray.push(key+'()');
+			}
+			else {
+				availablePropertiesArray.push(key);
+			}
+		}
+		availableCommandArray = availablePropertiesArray.sort().concatenate(availableFunctionsArray.sort());
 
 		// Find all of the commands that potentially match
 		var partialMatchArray = [];
@@ -213,16 +348,14 @@ ConsoleClass = Class.extend({
 				partialMatchArray.push(key);
 			}
 		});
-
-		// Sort the partial match array
-		partialMatchArray.sort();
 		
 		// Command matches and is the only match
 		if(commandMatch && partialMatchArray.length == 1) {
 			// Add a period
 			if(!command.endsWith('.')) {
-				Console.write('.');
+				this.currentCommandCursorIndex++;
 				this.currentCommandString += '.';
+				Console.write('.');
 			}
 
 			// Nothing happens
@@ -235,17 +368,17 @@ ConsoleClass = Class.extend({
 		// No exact matches, there are potential matches
 		else if(!commandMatch && partialMatchArray.length > 0) {
 			// Sort the partial match array by length
-			partialMatchArray.sortByLength();
+			var sortedPartialMatchArray = partialMatchArray.clone().sortByLength();
 
 			// Print out characters to where all possible matches meet up
 			var currentPartialMatchCharacterIndex = commandFragment.length;
-			var maximumPartialMatchCharacterIndex = partialMatchArray.first().length;
+			var maximumPartialMatchCharacterIndex = sortedPartialMatchArray.first().length;
 			var charactersWritten = 0;
 
 			for(var i = currentPartialMatchCharacterIndex; i < maximumPartialMatchCharacterIndex; i++) {
-				var currentCharacterToTest = partialMatchArray.first()[i];
+				var currentCharacterToTest = sortedPartialMatchArray.first()[i];
 				var currentCharacterToTestMatches = true;
-				partialMatchArray.each(function(index, partialMatch) {
+				sortedPartialMatchArray.each(function(index, partialMatch) {
 					if(partialMatch[i] != currentCharacterToTest) {
 						currentCharacterToTestMatches = false;
 						return false;
@@ -254,8 +387,9 @@ ConsoleClass = Class.extend({
 
 				if(currentCharacterToTestMatches) {
 					charactersWritten++;
-					Console.write(currentCharacterToTest);
+					this.currentCommandCursorIndex++;
 					this.currentCommandString += currentCharacterToTest;
+					Console.write(currentCharacterToTest);
 				}
 				else {
 					break;
@@ -263,7 +397,7 @@ ConsoleClass = Class.extend({
 			}
 
 			if(!charactersWritten) {
-				response = partialMatchArray.sort();
+				response = partialMatchArray;
 			}
 			else {
 				return;	
@@ -271,19 +405,38 @@ ConsoleClass = Class.extend({
 		}
 		// No matches
 		else {
-			// Show nothing
+			if(partialMatchArray.length > 0) {
+				response = partialMatchArray;
+			}
+			//if(context) {
+			//	// Add a period
+			//	if(!command.endsWith('.')) {
+			//		this.currentCommandCursorIndex++;
+			//		this.currentCommandString += '.';
+			//		Console.write('.');
+			//	}
+
+			//	return;
+			//}
+			else {
+				// Show nothing
+				Terminal.beep();
+				return;
+			}
 		}
 
 		if(response) {
 			Console.showTime = false;
 			Console.showFile = false;
-			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, [response]), 'cyan'));
+			Console.out("\n"+Terminal.style("\n"+'   '+response.join("\n   ")+"\n", this.commandColor));
 			Console.showTime = true;
 			Console.showFile = true;
 		}
 
+		this.currentCommandCursorIndex = this.currentCommandString.length;
 		this.currentCommandString = command;
 		Terminal.clearLine();
+		Terminal.cursorLeft(this.currentCommandString.length + 1);
 		Console.write(this.currentCommandString);
 	},
 
@@ -317,11 +470,17 @@ ConsoleClass = Class.extend({
 		Console.showTime = false;
 		Console.showFile = false;
 
-		if(Function.is(response)) {
-			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, ['function '+command+'() { ... }']), 'cyan'));	
+		if(Generator.is(response)) {
+			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, ['function '+command+'*() { ... }']), this.commandColor));	
+		}
+		else if(Function.is(response)) {
+			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, ['function '+command+'() { ... }']), this.commandColor));	
 		}
 		else if(!command.isEmpty()) {
-			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, [response]), 'cyan'));	
+			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, [response]), this.commandColor));	
+		}
+		else {
+			Console.write("\n");
 		}
 		
 		Console.showTime = true;

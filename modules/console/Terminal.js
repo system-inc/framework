@@ -62,16 +62,28 @@ Terminal.cursorToBeginningOfLine = function() {
 };
 
 Terminal.cursorUp = function(distance) {
+    if(distance === 0) {
+        return;
+    }
+    
 	distance = (distance === undefined ? 1 : distance);
 	Console.write('\x1b['+distance+'A');
 };
 
 Terminal.cursorDown = function(distance) {
+    if(distance === 0) {
+        return;
+    }
+    
 	distance = (distance === undefined ? 1 : distance);
 	Console.write('\x1b['+distance+'B');
 };
 
 Terminal.cursorLeft = function(distance) {
+    if(distance === 0) {
+        return;
+    }
+    
 	distance = (distance === undefined ? 1 : distance);
 	Console.write('\x1b['+distance+'D');
 };
@@ -79,6 +91,10 @@ Terminal.cursorLeft = function(distance) {
 Terminal.cursorBack = Terminal.cursorLeft;
 
 Terminal.cursorRight = function(distance) {
+    if(distance === 0) {
+        return;
+    }
+    
 	distance = (distance === undefined ? 1 : distance);
 	Console.write('\x1b['+distance+'C');
 };
@@ -108,18 +124,18 @@ Terminal.scrollUp = function(distance) {
 Terminal.move = function(x, y) {
 	// Move left or right
 	if(x > 0) {
-		Terminal.right(x);
+		Terminal.cursorRight(x);
 	}
 	else {
-		Terminal.left(x);
+		Terminal.cursorLeft(x);
 	}
 
 	// Move up or down
 	if(y > 0) {
-		Terminal.down(y);
+		Terminal.cursorDown(y);
 	}
 	else {
-		Terminal.up(-y);
+		Terminal.cursorUp(-y);
 	}
 };
 

@@ -15,6 +15,14 @@ Array.isPrimitive = function(array) {
 	return isPrimitive;
 }
 
+Array.clone = function(array) {
+	return array.slice(0);
+}
+
+Array.prototype.clone = function() {
+	return Array.clone(this);
+};
+
 Array.unique = function(array) {
 	var uniqueArray = [];
 
@@ -42,11 +50,15 @@ Array.prototype.sortByLength = function(descending) {
 			return a.length - b.length;	
 		}
 	});
+
+	return this;
 }
 
 Array.prototype.isPrimitive = function() {
 	return Array.isPrimitive(this);
 }
+
+Array.prototype.concatenate = Array.prototype.concat;
 
 Array.prototype.merge = function() {
     // Gather the arrays to merge

@@ -89,7 +89,7 @@ Object.clone = function(object) {
 	var clone = object;
  
     if(object && typeof(object) === 'object') {
-        clone = Object.prototype.toString.call(object) === '[object Array]' ? [] : {};
+        clone = Object.prototype.toStringStandard.call(object) === '[object Array]' ? [] : {};
         for(var key in object) {
         	// This code 
         	if(object.hasOwnProperty(key)) {
