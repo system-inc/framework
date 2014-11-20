@@ -288,6 +288,10 @@ Array.prototype.each = function(callback, context) {
 	}
 }
 
+Array.prototype.append = Array.prototype.push;
+
+Array.prototype.prepend = Array.prototype.unshift;
+
 Array.prototype.toString = Object.prototype.toString;
 
 Array.toObject = function(array) {

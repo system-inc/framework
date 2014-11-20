@@ -125,7 +125,7 @@ ConsoleClass = Class.extend({
 	handleKey: function(key) {
 		// Ctrl-c
 		if(key == '\u0003') {
-			Node.Process.exit(0);
+			Node.exit();
 		}
 		// Up
 		else if(key == '\u001b[A') {
@@ -274,11 +274,13 @@ ConsoleClass = Class.extend({
 
 		// The context of the command
 		var context = undefined;
+		var parentContext = global;
 
 		// Find the context
 		var current = global;
 		variableArray.each(function(index, variable) {
 			if(current[variable] !== undefined) {
+				parentContext = current;
 				current = current[variable];
 			}
 			else {
@@ -288,7 +290,7 @@ ConsoleClass = Class.extend({
 		context = current;
 
 		// If the context is still global, do some more work to see if we are working with a command that is not an object path
-		if(context === global) {
+		if(context === global && command.endsWith('.')) {
 			context = undefined;
 
 			// Try to eval the statement and get an object back to get context
@@ -340,6 +342,7 @@ ConsoleClass = Class.extend({
 			}
 		}
 		availableCommandArray = availablePropertiesArray.sort().concatenate(availableFunctionsArray.sort());
+		//Console.out(availableCommandArray);
 
 		// Find all of the commands that potentially match
 		var partialMatchArray = [];
@@ -457,6 +460,10 @@ ConsoleClass = Class.extend({
 		}
 		else if(command.lowercase() == 'hi') {
 			response = 'Hello.';
+		}
+		else if(command.lowercase() == 'clear' || command.lowercase() == 'cls') {
+			Terminal.clear();
+			return;
 		}
 		else {
 			try {

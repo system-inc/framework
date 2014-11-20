@@ -65,7 +65,7 @@ Terminal.cursorUp = function(distance) {
     if(distance === 0) {
         return;
     }
-    
+
 	distance = (distance === undefined ? 1 : distance);
 	Console.write('\x1b['+distance+'A');
 };
@@ -74,7 +74,7 @@ Terminal.cursorDown = function(distance) {
     if(distance === 0) {
         return;
     }
-    
+
 	distance = (distance === undefined ? 1 : distance);
 	Console.write('\x1b['+distance+'B');
 };
@@ -83,7 +83,7 @@ Terminal.cursorLeft = function(distance) {
     if(distance === 0) {
         return;
     }
-    
+
 	distance = (distance === undefined ? 1 : distance);
 	Console.write('\x1b['+distance+'D');
 };
@@ -94,7 +94,7 @@ Terminal.cursorRight = function(distance) {
     if(distance === 0) {
         return;
     }
-    
+
 	distance = (distance === undefined ? 1 : distance);
 	Console.write('\x1b['+distance+'C');
 };
@@ -121,7 +121,7 @@ Terminal.scrollUp = function(distance) {
 	Console.write('\x1b['+distance+'S');
 };
 
-Terminal.move = function(x, y) {
+Terminal.moveCursor = function(x, y) {
 	// Move left or right
 	if(x > 0) {
 		Terminal.cursorRight(x);
@@ -139,7 +139,7 @@ Terminal.move = function(x, y) {
 	}
 };
 
-Terminal.moveTo = function(x, y) {
+Terminal.moveCursorTo = function(x, y) {
 	Console.write('\x1b[' + y + ';' + x + 'H');
 };
 

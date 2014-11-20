@@ -19,5 +19,5 @@ Node.exit = function() {
 		Console.out(Terminal.style(Console.prepareMessage.call(this, arguments), 'red'));	
 	}
 	
-	Node.Process.exit();
+	Node.Process.exit(1);
 }
