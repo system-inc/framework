@@ -19,17 +19,17 @@ WebServer = Server.extend({
 				general: {
 					enabled: true,
 					directory: Project.directory+'logs/',
-					nameWithoutExtension: 'web-server-'+this.identifier,
+					nameWithoutExtension: 'web-server-'+this.identifier.toDashes(),
 				},
 				requests: {
 					enabled: true,
 					directory: Project.directory+'logs/',
-					nameWithoutExtension: 'web-server-'+this.identifier+'-requests',
+					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-requests',
 				},
 				responses: {
 					enabled: true,
 					directory: Project.directory+'logs/',
-					nameWithoutExtension: 'web-server-'+this.identifier+'-responses',
+					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-responses',
 				},
 			},
 			protocols: {

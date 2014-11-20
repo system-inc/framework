@@ -5,6 +5,7 @@ ConsoleClass = Class.extend({
 	showTime: true,
 	showFile: true,
 
+	commandHistoryFile: null,
 	commandHistory: [],
 	currentCommandHistoryIndex: -1,
 	currentCommandString: '',
@@ -57,6 +58,39 @@ ConsoleClass = Class.extend({
 
 	attachLog: function(directory) {
 		this.log = new Log(directory, this.identifier);
+	},
+
+	loadCommandHistory: function*(directory, fileNameWithoutExtension) {
+		//Console.out('Loading history...', directory, fileNameWithoutExtension);
+
+		var file = directory+fileNameWithoutExtension+'.log';
+
+		var commandHistory;
+		if(File.synchronous.exists(file)) {
+			commandHistory = File.synchronous.read(file);
+		}
+		//Console.out(commandHistory);
+
+		if(!commandHistory) {
+			//Console.out('No history found.');
+			this.commandHistory = [];
+		}
+		else {
+			//Console.out(commandHistory.toString());
+			commandHistory.toString().split("\n").each(function(index, string) {
+				if(string) {
+					this.commandHistory.prepend(string);
+				}
+			}.bind(this));
+		}
+
+		//Console.out('this.commandHistory', this.commandHistory);
+
+		this.commandHistoryFile = new File(file);
+
+		//Console.out('this.commandHistoryFile', this.commandHistoryFile);
+
+		yield this.commandHistoryFile.open('a+');
 	},
 
 	prepareMessage: function(passedArguments) {
@@ -208,6 +242,28 @@ ConsoleClass = Class.extend({
 				Terminal.cursorRight();
 			}
 		}
+		// Home
+		else if(key == '\u001b[1~') {
+			// Move to the beginning of the line
+			var moveLeft = 0;
+			if(this.currentCommandCursorIndex > 0) {
+				moveLeft = this.currentCommandCursorIndex;
+			}
+			Terminal.cursorLeft(moveLeft);
+
+			this.currentCommandCursorIndex = 0;
+		}
+		// End
+		else if(key == '\u001b[4~') {
+			// Move to the end of the line
+			var moveRight = 0;
+			if(this.currentCommandCursorIndex < this.currentCommandString.length) {
+				moveRight = this.currentCommandString.length - this.currentCommandCursorIndex;
+			}
+			Terminal.cursorRight(moveRight);
+
+			this.currentCommandCursorIndex = this.currentCommandString.length;
+		}
 		// Tab
 		else if(key == "\t") {
 			var rightCount = this.currentCommandString.length - this.currentCommandCursorIndex;
@@ -221,6 +277,11 @@ ConsoleClass = Class.extend({
 			if(this.currentCommandString) {
 				this.commandHistory.unshift(this.currentCommandString);
 				this.currentCommandHistoryIndex = -1;
+
+				// Write the history to disk
+				if(this.commandHistoryFile) {
+					this.commandHistoryFile.write(this.currentCommandString+"\n");
+				}
 			}
 
 			//Console.out('enter');
@@ -230,21 +291,49 @@ ConsoleClass = Class.extend({
 		}
 		// Backspace
 		else if(key.charCodeAt(0) === 127) {
-			// Remove the last character
-			this.currentCommandString = this.currentCommandString.substring(0, this.currentCommandString.length - 1);
+			// Remove the character prior to the cursor
+			this.currentCommandString = this.currentCommandString.substring(0, this.currentCommandCursorIndex - 1)+this.currentCommandString.substring(this.currentCommandCursorIndex);
 
-			// I have to do all of this stuff because Mac OS X terminal demands it of me
-			Terminal.clearLine();
-			Terminal.cursorLeft(this.currentCommandString.length + 1);
+			// Move the cursor index back one
 			if(this.currentCommandCursorIndex > 0) {
 				this.currentCommandCursorIndex--;
 			}
+
+			// Clear the line
+			Terminal.clearLine();
+
+			// Move the cursor to the beginning of the line
+			Terminal.cursorLeft(this.currentCommandCursorIndex + 1);
+			
+			// Write the new string, this moves the cursor right
 			Console.write(this.currentCommandString);
+
+			// Move back to where the cursor should be
+			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
+		}
+		// Delete
+		else if(key == '\u001b[3~') {
+			// Remove the character the cursor is on
+			this.currentCommandString = this.currentCommandString.substring(0, this.currentCommandCursorIndex)+this.currentCommandString.substring(this.currentCommandCursorIndex + 1);
+
+			// Clear the line
+			Terminal.clearLine();
+
+			// Move the cursor to the beginning of the line
+			Terminal.cursorLeft(this.currentCommandCursorIndex);
+			
+			// Write the new string, this moves the cursor right
+			Console.write(this.currentCommandString);
+
+			// Move back to where the cursor should be
+			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
 		}
 		// Any other key
 		else {
+			//Console.out(key);
+			//Console.out(key.charCodeAt(0));
 			this.currentCommandString = this.currentCommandString.insert(this.currentCommandCursorIndex, key);
-			this.currentCommandCursorIndex++;
+			this.currentCommandCursorIndex += key.length;
 
 			// Clear the line
 			Terminal.clearLine();
@@ -482,6 +571,18 @@ ConsoleClass = Class.extend({
 		}
 		else if(Function.is(response)) {
 			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, ['function '+command+'() { ... }']), this.commandColor));	
+		}
+		else if(Promise.is(response)) {
+			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, [response]), this.commandColor));	
+
+			response.then(function() {
+				Console.showTime = false;
+				Console.showFile = false;
+				Console.out(Terminal.style(Console.prepareMessage.call(this, ['Promise completed:']), this.commandColor));	
+				Console.out(Terminal.style(Console.prepareMessage.call(this, arguments), this.commandColor));	
+				Console.showTime = true;
+				Console.showFile = true;
+			}.bind(this));
 		}
 		else if(!command.isEmpty()) {
 			Console.out("\n"+Terminal.style(Console.prepareMessage.call(this, [response]), this.commandColor));	

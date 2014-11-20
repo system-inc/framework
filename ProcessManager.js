@@ -11,7 +11,6 @@ var ignoredPaths = {};
 var forceWatchFlag = false;
 var log = console.log;
 
-
 // Run
 // ----------------------------------
 var path = require("path")

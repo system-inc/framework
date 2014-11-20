@@ -35,14 +35,14 @@ File = FileSystemObject.extend({
 	},
 
 	open: function*(flags) {
-		console.log('Running file.open on ', this.file, 'with flags', flags);
+		//console.log('Running file.open on', this.file, 'with flags', flags);
 		this.handle = yield File.open(this.file, flags);
 
 		return this.handle;
 	},
 
 	write: function*(data) {
-		console.log('Running file.write', 'with handle', this.handle, data);
+		//console.log('Running file.write', 'with handle', this.handle, data);
 		File.write(this.handle, data);
 	},
 

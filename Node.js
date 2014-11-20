@@ -2,7 +2,7 @@ Node = {};
 Node.Cryptography = require('crypto');
 Node.Domain = require('domain');
 Node.Events = require('events');
-EventEmitter = Node.EventEmitter = Node.Events.EventEmitter;
+Node.EventEmitter = EventEmitter = Node.Events.EventEmitter;
 Node.FileSystem = require('fs');
 Node.Http = require('http');
 Node.Https = require('https');
