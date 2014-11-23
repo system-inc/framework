@@ -89,10 +89,10 @@ Database = Class.extend({
 	loadTables: function*() {
 		var tables = [];
 
-		var fullTables = yield this.query('SHOW FULL TABLES FROM `'+this.name+'` WHERE `table_type` = "BASE TABLE"');
+		var fullTables = yield this.query('SHOW TABLE STATUS');
 		yield fullTables.rows.each(function*(index, value) {
-			var table = new DatabaseTable(value['tablesIn'+this.name.toCamelCase(true)], this);
-			yield table.loadProperties();
+			var table = new DatabaseTable(value.name, this);
+			yield table.loadProperties(value);
 
 			tables.push(table);
 		}, this);
@@ -130,7 +130,7 @@ Database = Class.extend({
 		schema.name = this.name;
 
 		// Set the variables
-		var variables = yield this.query('SHOW VARIABLES');
+		var variables = yield this.query('SHOW VARIABLES WHERE `Variable_name` = ? OR `Variable_name` = ?', ['character_set_database', 'collation_database']);
 		schema.defaultCharacterSet = variables.rows.getObjectWithKeyValue('variableName', 'character_set_database').value;
 		schema.defaultCollation = variables.rows.getObjectWithKeyValue('variableName', 'collation_database').value;
 

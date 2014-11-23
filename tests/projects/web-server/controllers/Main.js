@@ -15,8 +15,8 @@ Main = Controller.extend({
 			password: 'framework_test',
 			databaseName: 'framework_test',
 		});
-		var response = yield frameworkTestDatabase.query('SELECT * FROM `user`');
-		//var response = yield frameworkTestDatabase.getSchema();
+		//var response = yield frameworkTestDatabase.query('SELECT * FROM `user`');
+		var response = yield frameworkTestDatabase.getSchema();
 		return response;
 
 		//return String.random(1024 * 1, '01');

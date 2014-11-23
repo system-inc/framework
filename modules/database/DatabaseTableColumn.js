@@ -31,9 +31,11 @@ DatabaseTableColumn = Class.extend({
 		this.databaseName = this.table.database.name;
 	},
 
-	loadProperties: function*() {
-		var propertiesQuery = yield this.database.query('SHOW FULL COLUMNS FROM `'+this.table.name+'`');
-		var properties = propertiesQuery.rows.getObjectWithKeyValue('field', this.name);
+	loadProperties: function*(properties) {
+		if(properties === undefined) {
+			var propertiesQuery = yield this.database.query('SHOW FULL COLUMNS FROM `'+this.table.name+'`');
+			properties = propertiesQuery.rows.getObjectWithKeyValue('field', this.name);
+		}
 		
 		// Get the data type from the type
 		this.dataType = properties.type.match(/^(\w+)/).first();

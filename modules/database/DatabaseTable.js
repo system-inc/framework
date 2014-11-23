@@ -52,9 +52,11 @@ DatabaseTable = Class.extend({
 		this.databaseName = database.name;
 	},
 
-	loadProperties: function*() {
-		var propertiesQuery = yield this.database.query('SHOW TABLE STATUS WHERE NAME = ?', this.name);
-		var properties = propertiesQuery.rows.first();
+	loadProperties: function*(properties) {
+		if(properties === undefined) {
+			var propertiesQuery = yield this.database.query('SHOW TABLE STATUS WHERE NAME = ?', this.name);
+			properties = propertiesQuery.rows.first();
+		}
 
 		this.autoIncrement = properties.autoIncrement;
         this.averageRowSizeInBytes = properties.avgRowLength;
@@ -66,7 +68,7 @@ DatabaseTable = Class.extend({
         this.timeCreated = properties.createTime;
         this.freeDataSizeInBytes = properties.dataFree;
         this.dataSizeInBytes = properties.dataLength;
-        this.engine = properties.engine.lowercase();
+        this.engine = properties.engine;
         this.indexSizeInBytes = properties.indexLength;
         this.maximumDataSizeInBytes = properties.maxDataLength;
         this.rowFormat = properties.rowFormat.lowercase();
@@ -80,19 +82,61 @@ DatabaseTable = Class.extend({
 	},
 
 	loadColumns: function*() {
-		var columns = [];
-
 		var fullColumns = yield this.database.query('SHOW FULL FIELDS FROM `'+this.name+'`');
-		yield fullColumns.rows.each(function*(index, value) {
-			var column = new DatabaseTableColumn(value.field, this);
-			yield column.loadProperties();
+		yield fullColumns.rows.each(function*(index, row) {
+			var column = new DatabaseTableColumn(row.field, this);
+			yield column.loadProperties(row);
 
-			columns.push(column);
+			this.columns.push(column);
 		}, this);
 
-		this.columns = columns;
-
 		return this.columns;
+	},
+
+	loadIndexes: function*() {
+		var indexesQuery = yield this.database.query('SHOW INDEXES FROM `'+this.name+'`');
+
+		yield indexesQuery.rows.each(function*(index, row) {
+			// If we already have the index add the column
+			var hasIndex = this.hasIndex(row.keyName);
+			if(hasIndex) {
+				hasIndex.columns.push(row.columnName);
+			}
+			// If we don't already have the index
+			else {
+				var index = new DatabaseTableIndex(row.keyName, this);
+				yield index.loadProperties(row);
+				this.indexes.push(index);
+			}
+		}, this);
+
+		return this.indexes;
+	},
+
+	hasIndex: function(name) {
+		var hasIndex = false;
+
+		this.indexes.each(function(index, value) {
+			if(value.name == name) {
+				hasIndex = value;
+				return false; // break
+			}
+		});
+
+		return hasIndex;
+	},
+
+	loadRelationships: function*() {
+		var relationshipsQuery = yield this.database.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.database.name, this.name]);
+		//Node.exit(relationshipsQuery);
+		yield relationshipsQuery.rows.each(function*(index, row) {
+			var relationship = new DatabaseTableRelationship(row.constraintName, this);
+			yield relationship.loadProperties(row);
+
+			this.relationships.push(relationship);
+		}, this);
+
+		return this.relationships;
 	},
 
 	search: function() {
@@ -146,15 +190,18 @@ DatabaseTable = Class.extend({
 		schema.indexes = this.indexes;
 		schema.relationships = this.relationships;
 
-		// Get the columns
-		yield this.loadColumns();
+		// Load the columns
+		//yield this.loadColumns();
 
 		// Set the columns
 		schema.columns = [];
 		yield this.columns.each(function*(index, column) {
-			//var columnSchema = yield column.getSchema();
-			//schema.columns.push(columnSchema);
+			var columnSchema = yield column.getSchema();
+			schema.columns.push(columnSchema);
 		}, this);
+
+		// Load the indexes
+		//yield this.loadIndexes();
 
 		// Set the indexes
 		schema.indexes = [];
@@ -162,6 +209,9 @@ DatabaseTable = Class.extend({
 			var indexSchema = yield index.getSchema();
 			schema.indexes.push(indexSchema);
 		}, this);
+
+		// Load the relationships
+		yield this.loadRelationships();
 
 		// Set the relationships
 		schema.relationships = [];
