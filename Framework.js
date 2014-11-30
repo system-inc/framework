@@ -63,7 +63,7 @@ Framework = Class.extend({
 
 	construct: function(directory) {
 		// Initialize the version
-		this.version = new Version('1.0');
+		this.version = new Version('.2');
 
 		// Set the project directory
 		this.directory = directory;
