@@ -25,13 +25,13 @@ FileSystemObject = Class.extend({
 		if(this.path) {
 			// Figure out the name
 			var name = this.path;
-			if(this.path.endsWith(Node.Path.sep)) {
-				name = name.replaceLast(Node.Path.sep, '');
+			if(this.path.endsWith(Node.Path.separator)) {
+				name = name.replaceLast(Node.Path.separator, '');
 			}
-			this.name = name.substr(name.lastIndexOf(Node.Path.sep) + 1, name.length);
+			this.name = name.substr(name.lastIndexOf(Node.Path.separator) + 1, name.length);
 
 			// Figure out the directory
-			this.directory = this.path.substr(0, this.path.lastIndexOf(Node.Path.sep) + 1);
+			this.directory = this.path.substr(0, this.path.lastIndexOf(Node.Path.separator) + 1);
 		}
 	},
 

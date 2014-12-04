@@ -4,8 +4,8 @@ Directory = FileSystemObject.extend({
 		this.super.apply(this, arguments);
 
 		// Make sure directories always end with a separator
-		if(!this.path.endsWith(Node.Path.sep)) {
-			this.path = this.path+Node.Path.sep
+		if(!this.path.endsWith(Node.Path.separator)) {
+			this.path = this.path+Node.Path.separator
 		}
 	},
 
@@ -16,26 +16,37 @@ Directory = FileSystemObject.extend({
 	},
 
 	create: function*(directory, mode) {
+		//Console.out('Creating directory: ', directory);
+
 		// Normalize the path for the operating system
 		var directory = Node.Path.normalize(directory);
 		
 		// Remove any beginning separators
-		if(directory.startsWith(Node.Path.sep)) {
-			directory = directory.replaceFirst(Node.Path.sep, '');
+		if(directory.startsWith(Node.Path.separator)) {
+			directory = directory.replaceFirst(Node.Path.separator, '');
 		}
 		// Remove any ending separators
-		if(directory.endsWith(Node.Path.sep)) {
-			directory = directory.replaceLast(Node.Path.sep, '');
+		if(directory.endsWith(Node.Path.separator)) {
+			directory = directory.replaceLast(Node.Path.separator, '');
 		}
 		//Console.out(directory);
 
-		var directories = directory.split(Node.Path.sep);
-		//Console.out(directories);
+		var directories = directory.split(Node.Path.separator);
+
+		// Start at root
+		var currentFullDirectory = Node.Path.separator;
+
+		// Handle drive lettes in Windows ("C:")
+		var firstDirectory = directories.first();
+		if(firstDirectory.contains(':')) {
+			currentFullDirectory = firstDirectory+Node.Path.separator;
+			directories.shift();
+		}
 
 		// Loop through each directory starting at root and make sure the directory exists and if it doesn't create it
-		var currentFullDirectory = '/';
 		yield directories.each(function*(index, currentDirectory) {
-			currentFullDirectory = currentFullDirectory+currentDirectory+Node.Path.sep;
+			currentFullDirectory = currentFullDirectory+currentDirectory+Node.Path.separator;
+			//Console.out(currentFullDirectory);
 
 			// Check if the directory exists
 			if(yield Directory.exists(currentFullDirectory)) {
@@ -45,7 +56,7 @@ Directory = FileSystemObject.extend({
 			else {
 				//console.log(currentFullDirectory, 'DOES NOT exist, creating');
 				yield Directory.make(currentFullDirectory, mode);
-				Console.out('Created directory', currentFullDirectory);
+				//Console.out('Created directory', currentFullDirectory);
 			}
 		});
 	},
@@ -59,7 +70,13 @@ Directory.make = function(path, mode) {
     return new Promise(function(resolve, reject) {
     	Node.FileSystem.mkdir(path, mode, function(error) {
     		if(error) {
-    			reject(error);
+    			// Return true if the directory exists
+    			if(error.code == 'EEXIST') {
+    				resolve(true);
+    			}
+    			else {
+    				reject(error);	
+    			}
     		}
     		else {
     			resolve(true);

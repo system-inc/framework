@@ -12,12 +12,12 @@ ConsoleModuleClass = Module.extend({
 		this.settings.default({
 			'commandHistory': {
 				'enabled': true,
-				'directory': Project.directory+'logs/',
+				'directory': Project.directory+'logs'+Node.Path.separator,
 				'nameWithoutExtension': Console.identifier+'-command-history',
 			},
 			'log': {
 				'enabled': false,
-				'directory': Project.directory+'logs/',
+				'directory': Project.directory+'logs'+Node.Path.separator,
 				'nameWithoutExtension': Console.identifier,
 			},
 		});

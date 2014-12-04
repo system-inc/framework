@@ -37,8 +37,11 @@ Log = Class.extend({
 			this.initializingWriteStream = true;
 
 			// Make sure the directory for the log exists
-			yield Directory.create(this.directory);
-
+			var directoryExists = yield Directory.exists(this.directory);
+			if(!directoryExists) {
+				yield Directory.create(this.directory);	
+			}
+			
 			// Create a write stream
 			this.writeStream = yield File.createWriteStream(this.file.file, {
 				'flags': 'a',

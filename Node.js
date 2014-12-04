@@ -7,6 +7,7 @@ Node.FileSystem = require('fs');
 Node.Http = require('http');
 Node.Https = require('https');
 Node.Path = require('path');
+Node.Path.separator = Node.Path.sep;
 Node.Process = process;
 Node.StandardIn = Node.Process.stdin;	
 Node.StandardOut = Node.Process.stdout;

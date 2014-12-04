@@ -63,6 +63,12 @@ ConsoleClass = Class.extend({
 	loadCommandHistory: function*(directory, fileNameWithoutExtension) {
 		//Console.out('Loading history...', directory, fileNameWithoutExtension);
 
+		// Make sure the directory exists
+		var directoryExists = yield Directory.exists(directory);
+		if(!directoryExists) {
+			yield Directory.create(directory);
+		}
+
 		var file = directory+fileNameWithoutExtension+'.log';
 
 		var commandHistory;
@@ -126,7 +132,7 @@ ConsoleClass = Class.extend({
 		var columnNumber = error.stack.callSites.first().getColumnNumber();
 		var fileName = error.stack.callSites.first().getFileName();
 		if(fileName) {
-			fileName = fileName.split('/').reverse()[0];
+			fileName = fileName.split(Node.Path.separator).reverse()[0];
 		}
 
 	    //console.log('Line Number'+': '+lineNumber);

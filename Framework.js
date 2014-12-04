@@ -37,7 +37,7 @@ Framework = Class.extend({
 	identifier: 'project',
 	version: null,
 	framework: {
-		directory: __dirname+'/',
+		directory: __dirname+Node.Path.separator,
 	},
 	directory: null,
 	settings: null,
@@ -66,7 +66,7 @@ Framework = Class.extend({
 		this.version = new Version('.2');
 
 		// Set the project directory
-		this.directory = directory;
+		this.directory = Node.Path.normalize(directory+Node.Path.separator);
 
 		// Announce loading
 		Console.out('Starting Framework '+this.version+'...');
@@ -77,7 +77,7 @@ Framework = Class.extend({
 
 		// Load the project settings
 		//Console.out('Loading project settings...');
-		this.settings = Settings.constructFromFile(this.directory+'settings/settings.json');
+		this.settings = Settings.constructFromFile(this.directory+'settings'+Node.Path.separator+'settings.json');
 
 		// Set the default settings
 		this.settings.default({
@@ -105,7 +105,7 @@ Framework = Class.extend({
 
 		// Merge the environment settings
 		//Console.out('Integrating environment settings...')
-		this.settings.integrateSettingsFromFile(this.directory+'settings/environment.json');
+		this.settings.integrateSettingsFromFile(this.directory+'settings'+Node.Path.separator+'environment.json');
 		//Console.out(this.settings);
 
 		// Initialize the environment

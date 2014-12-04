@@ -147,6 +147,12 @@ Terminal.beep = function() {
 	Console.write('\x07');
 };
 
+Terminal.demonstrateStyles = function() {
+    Terminal.ansiStyles.each(function(style) {
+        Console.out(Terminal.color('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', style)+' '+style);
+    });
+}
+
 Terminal.ansiStyles = {
 	// Text styles
     reset: {

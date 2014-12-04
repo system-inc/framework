@@ -29,7 +29,7 @@ ConciseTestReporter = TestReporter.extend({
 	startedRunningTest: function(data) {
 		this.currentTestName = data.name;
 
-		var testLocation = data.directory.replace(Project.framework.directory+'tests'+Node.Path.sep, '')+data.fileName;
+		var testLocation = data.directory.replace(Project.framework.directory+'tests'+Node.Path.separator, '')+data.fileName;
 
 		Console.out("\n"+'  '+data.name.replaceLast('Test', '')+' '+Terminal.style('('+testLocation+')', 'gray')+"\n");
 	},
