@@ -296,7 +296,7 @@ ConsoleClass = Class.extend({
 			this.currentCommandCursorIndex = 0;
 		}
 		// Backspace
-		else if(key.charCodeAt(0) === 127) {
+		else if(key.charCodeAt(0) === 127 || key.charCodeAt(0) == 8) {
 			// Remove the character prior to the cursor
 			this.currentCommandString = this.currentCommandString.substring(0, this.currentCommandCursorIndex - 1)+this.currentCommandString.substring(this.currentCommandCursorIndex);
 
@@ -555,6 +555,9 @@ ConsoleClass = Class.extend({
 		}
 		else if(command.lowercase() == 'hi') {
 			response = 'Hello.';
+		}
+		else if(command.lowercase() == 'hello') {
+			response = 'Hi.';
 		}
 		else if(command.lowercase() == 'clear' || command.lowercase() == 'cls') {
 			Terminal.clear();

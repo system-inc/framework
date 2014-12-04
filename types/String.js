@@ -86,7 +86,7 @@ String.prototype.replace = function(pattern, replacement, flags) {
 	}
 	// Make replace behave like replaceAll by default
 	else {
-		return this.replaceStandard(new RegularExpression(pattern, 'g'), replacement);	
+		return this.replaceStandard(new RegularExpression(RegularExpression.escape(pattern), 'g'), replacement);	
 	}
 }
 

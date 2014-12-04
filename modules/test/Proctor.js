@@ -52,17 +52,17 @@ Proctor = Class.extend({
 	resolvePath: function(path) {
 		// If the path does not exist, we are in the default Framework tests directory
 		if(!path) {
-			path = Project.framework.directory+'tests/';
+			path = Project.framework.directory+'tests'+Node.Path.separator;
 		}
 		// If the path does not start with a slash, we are in the default Framework tests directory
-		else if(!path.startsWith('/')) {
-			path = Project.framework.directory+'tests/'+path;
+		else if(!path.startsWith(Node.Path.separator)) {
+			path = Project.framework.directory+'tests'+Node.Path.separator+path;
 		}
 
 		// If the path does not end with .js, we are looking for a directory of tests which will always terminate with a slash
 		if(!path.endsWith('.js')) {
-			if(!path.endsWith('/')) {
-				path = path+'/';
+			if(!path.endsWith(Node.Path.separator)) {
+				path = path+Node.Path.separator;
 			}
 		}
 
@@ -99,7 +99,7 @@ Proctor = Class.extend({
 		path = this.resolvePath(path);
 		
 		// If we are working with a directory of tests
-		if(path.endsWith('/')) {
+		if(path.endsWith(Node.Path.separator)) {
 			// Recursively get all of the file system objects in the path
 			var fileSystemObjects = yield FileSystem.list(path, true);
 
