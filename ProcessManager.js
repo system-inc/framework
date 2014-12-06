@@ -1,345 +1,435 @@
-var util = require("util");
-var fs = require("fs");
-var spawn = require("child_process").spawn;
-var path = require("path");
-var fileExtensionPattern;
-var startChildProcess;
-var noRestartOn = null;
-var debug = true;
-var verbose = false;
-var ignoredPaths = {};
-var forceWatchFlag = false;
-var log = console.log;
+var NodeProcess = process;
+var NodeVersion = NodeProcess.version.split('.');
+var NodeFileSystem = require('fs');
+var NodePath = require('path');
+var NodeChildProcessSpawn = require('child_process').spawn;
 
-// Run
-// ----------------------------------
-var path = require("path")
-  , fs = require("fs")
-  , args = process.argv.slice(1)
+var ProcessManager = function() {
+}
 
-var arg, base;
-do arg = args.shift();
-while ( fs.realpathSync(arg) !== __filename
-  && (base = path.basename(arg)) !== "node-supervisor"
-  && base !== "supervisor"
-  && base !== "supervisor.js"
-)
-run(args);
-// ----------------------------------
+ProcessManager.settings = {};
+ProcessManager.program = null;
+ProcessManager.programExtension = null;
+ProcessManager.settings.watch = null;
+ProcessManager.settings.watching = {};
+ProcessManager.settings.ignore = null;
+ProcessManager.settings.ignoring = {};
+ProcessManager.settings.pollInterval = null;
+ProcessManager.settings.extensions = null;
+ProcessManager.settings.debug = false;
+ProcessManager.settings.debugBreakFlag = null;
+ProcessManager.settings.debugBreakFlagArgument = null;
+ProcessManager.settings.noRestartOn = null;
+ProcessManager.settings.forceWatch = false;
+ProcessManager.settings.verbose = false;
+ProcessManager.settings.harmony = false;
 
-function run (args) {
-  var arg, next, watch, ignore, program, extensions, executor, poll_interval, debugFlag, debugBrkFlag, debugBrkFlagArg, harmony;
-  while (arg = args.shift()) {
-    if (arg === "--help" || arg === "-h" || arg === "-?") {
-      return help();
-    } else if (arg === "--quiet" || arg === "-q") {
-      debug = false;
-      log = function(){};
-    } else if (arg === "--harmony") {
-      harmony = true;
-    } else if (arg === "--verbose" || arg === "-V") {
-      verbose = true;
-    } else if (arg === "--watch" || arg === "-w") {
-      watch = args.shift();
-    } else if (arg === "--ignore" || arg === "-i") {
-      ignore = args.shift();
-    } else if (arg === "--poll-interval" || arg === "-p") {
-      poll_interval = parseInt(args.shift());
-    } else if (arg === "--extensions" || arg === "-e") {
-      extensions = args.shift();
-    } else if (arg === "--exec" || arg === "-x") {
-      executor = args.shift();
-    } else if (arg === "--no-restart-on" || arg === "-n") {
-      noRestartOn = args.shift();
-    } else if (arg === "--debug") {
-      debugFlag = true;
-    } else if (arg.indexOf('--debug-brk')>=0) {
-      debugBrkFlag = true;
-      debugBrkFlagArg = arg;
-    } else if (arg === "--force-watch") {
-      forceWatchFlag = true;
-    } else if (arg === "--") {
-      program = args;
-      break;
-    } else if (arg[0] != "-" && !args.length) {
-      // Assume last arg is the program
-      program = [arg];
-    }
-  }
-  if (!program) {
-    return help();
-  }
-  if (!watch) {
-    watch = ".";
-  }
-  if (!poll_interval) {
-    poll_interval = 1000;
-  }
+ProcessManager.startChildProcess = null;
+ProcessManager.fileExtensionPattern = null;
+ProcessManager.crashQueued = false;
+ProcessManager.isWindowsWithoutWatchFile = NodeProcess.platform === 'win32' && parseInt(NodeVersion[1]) <= 6;
+ProcessManager.argumentsArray = NodeProcess.argv.slice(1);
+ProcessManager.log = console.log;
 
-  var programExt = program.join(" ").match(/.*\.(\S*)/);
-  programExt = programExt && programExt[1];
-
-  if (!extensions) {
-    // If no extensions passed try to guess from the program
-    extensions = "node,js";
-    if (programExt && extensions.indexOf(programExt) == -1) {
-      // Support coffee and litcoffee extensions
-      if(programExt === "coffee" || programExt === "litcoffee") {
-        extensions += ",coffee,litcoffee";
-      } else {
-        extensions += "," + programExt;
-      }
-    }
-  }
-  fileExtensionPattern = new RegExp("^.*\.(" + extensions.replace(/,/g, "|") + ")$");
-
-  if (!executor) {
-    executor = (programExt === "coffee" || programExt === "litcoffee") ? "coffee" : "node";
-  }
-
-  if (debugFlag) {
-    program.unshift("--debug");
-  }
-  if (debugBrkFlag) {
-    program.unshift(debugBrkFlagArg);
-  }
-  if (harmony) {
-    program.unshift("--harmony");
-  }
-  if (executor === "coffee" && (debugFlag || debugBrkFlag)) {
-    // coffee does not understand debug or debug-brk, make coffee pass options to node
-    program.unshift("--nodejs")
-  }
-
-  try {
-    // Pass kill signals through to child
-    [ "SIGTERM", "SIGINT", "SIGHUP", "SIGQUIT" ].forEach( function(signal) {
-      process.on(signal, function () {
-        var child = exports.child;
-        if (child) {
-          log("Sending "+signal+" to child...");
-          child.kill(signal);
-        }
-        process.exit();
-      });
-    });
-  } catch(e) {
-    // Windows doesn't support signals yet, so they simply don't get this handling.
-    // https://github.com/joyent/node/issues/1553
-  }
-
-  log("")
-  log("Running node-supervisor with");
-  log("  program '" + program.join(" ") + "'");
-  log("  --watch '" + watch + "'");
-  if (ignore) {
-    log("  --ignore '" + ignore + "'");
-  }
-  log("  --extensions '" + extensions + "'");
-  log("  --exec '" + executor + "'");
-  log("");
-
-  // store the call to startProgramm in startChildProcess
-  // in order to call it later
-  startChildProcess = function() { startProgram(program, executor); };
-
-  // if we have a program, then run it, and restart when it crashes.
-  // if we have a watch folder, then watch the folder for changes and restart the prog
-  startChildProcess();
-
-  if (ignore) {
-    var ignoreItems = ignore.split(',');
-    ignoreItems.forEach(function (ignoreItem) {
-      ignoreItem = path.resolve(ignoreItem);
-      ignoredPaths[ignoreItem] = true;
-      log("Ignoring directory '" + ignoreItem + "'.");
-    });
-  }
-
-  var watchItems = watch.split(',');
-  watchItems.forEach(function (watchItem) {
-    watchItem = path.resolve(watchItem);
-    log("Watching directory '" + watchItem + "' for changes.");
-    findAllWatchFiles(watchItem, function(f) {
-      watchGivenFile( f, poll_interval );
-    });
-  });
+ProcessManager.help = function() {
+    console.log('');
+    console.log('Usage:');
+    console.log('    ProcessManager.js [options] <program>');
+    console.log('    ProcessManager.js [options] -- <program> [args ...]');
+    console.log('');
+    console.log('Required:');
+    console.log('    <program>');
+    console.log('        The program to run.');
+    console.log('');
+    console.log('Options:');
+    console.log('    -w|--watch <watchItems>');
+    console.log('        A comma-delimited list of folders or js files to watch for changes.');
+    console.log('        When a change to a js file occurs, reload the program');
+    console.log('        Default is \'.\'');
+    console.log('');
+    console.log('    -i|--ignore <ignoreItems>');
+    console.log('        A comma-delimited list of folders to ignore for changes.');
+    console.log('        No default');
+    console.log('');
+    console.log('    -p|--poll-interval <milliseconds>');
+    console.log('        How often to poll watched files for changes.');
+    console.log('        Defaults to Node default.');
+    console.log('');
+    console.log('    -e|--extensions <extensions>');
+    console.log('        Specific file extensions to watch in addition to defaults.');
+    console.log('        Used when --watch option includes folders');
+    console.log('        Default is \'node,js\'');
+    console.log('');
+    console.log('    -x|--exec <executable>');
+    console.log('        The executable that runs the specified program.');
+    console.log('        Default is \'node\'');
+    console.log('');
+    console.log('    --debug');
+    console.log('        Start node with --debug flag.');
+    console.log('');
+    console.log('    --debug-brk[=port]');
+    console.log('        Start node with --debug-brk[=port] flag.');
+    console.log('');
+    console.log('    --harmony');
+    console.log('        Start node with --harmony flag.');
+    console.log('');
+    console.log('    -n|--no-restart-on error|exit');
+    console.log('        Don\'t automatically restart the supervised program if it ends.');
+    console.log('        Supervisor will wait for a change in the source files.');
+    console.log('        If \'error\', an exit code of 0 will still restart.');
+    console.log('        If \'exit\', no restart regardless of exit code.');
+    console.log('');
+    console.log('    --force-watch');
+    console.log('        Use fs.watch instead of fs.watchFile.');
+    console.log('        This may be useful if you see a high cpu load on a windows machine.');
+    console.log('');
+    console.log('    -h|--help|-?');
+    console.log('        Display these usage instructions.');
+    console.log('');
+    console.log('    -q|--quiet');
+    console.log('        Suppress debug messages');
+    console.log('');
+    console.log('    -V|--verbose');
+    console.log('        Show extra debug messages');
+    console.log('');
 };
 
-function print (m, n) { console.log(m+(!n?"\n":"")); return print; }
-
-function help () {
-  print
-    ("")
-    ("Node Supervisor is used to restart programs when they crash.")
-    ("It can also be used to restart programs when a *.js file changes.")
-    ("")
-    ("Usage:")
-    ("  supervisor [options] <program>")
-    ("  supervisor [options] -- <program> [args ...]")
-    ("")
-    ("Required:")
-    ("  <program>")
-    ("    The program to run.")
-    ("")
-    ("Options:")
-    ("  -w|--watch <watchItems>")
-    ("    A comma-delimited list of folders or js files to watch for changes.")
-    ("    When a change to a js file occurs, reload the program")
-    ("    Default is '.'")
-    ("")
-    ("  -i|--ignore <ignoreItems>")
-    ("    A comma-delimited list of folders to ignore for changes.")
-    ("    No default")
-    ("")
-    ("  -p|--poll-interval <milliseconds>")
-    ("    How often to poll watched files for changes.")
-    ("    Defaults to Node default.")
-    ("")
-    ("  -e|--extensions <extensions>")
-    ("    Specific file extensions to watch in addition to defaults.")
-    ("    Used when --watch option includes folders")
-    ("    Default is 'node,js'")
-    ("")
-    ("  -x|--exec <executable>")
-    ("    The executable that runs the specified program.")
-    ("    Default is 'node'")
-    ("")
-    ("  --debug")
-    ("    Start node with --debug flag.")
-    ("")
-    ("  --debug-brk[=port]")
-    ("    Start node with --debug-brk[=port] flag.")
-    ("")
-    ("  --harmony")
-    ("    Start node with --harmony flag.")
-    ("")
-    ("  -n|--no-restart-on error|exit")
-    ("    Don't automatically restart the supervised program if it ends.")
-    ("    Supervisor will wait for a change in the source files.")
-    ("    If \"error\", an exit code of 0 will still restart.")
-    ("    If \"exit\", no restart regardless of exit code.")
-    ("")
-    ("  --force-watch")
-    ("    Use fs.watch instead of fs.watchFile.")
-    ("    This may be useful if you see a high cpu load on a windows machine.")
-    ("")
-    ("  -h|--help|-?")
-    ("    Display these usage instructions.")
-    ("")
-    ("  -q|--quiet")
-    ("    Suppress DEBUG messages")
-    ("")
-    ("  -V|--verbose")
-    ("    Show extra DEBUG messages")
-    ("")
-    ("Examples:")
-    ("  supervisor myapp.js")
-    ("  supervisor myapp.coffee")
-    ("  supervisor -w scripts -e myext -x myrunner myapp")
-    ("  supervisor -- server.js -h host -p port")
-    ("");
-};
-
-function startProgram (prog, exec) {
-  log("Starting child process with '" + exec + " " + prog.join(" ") + "'");
-  crash_queued = false;
-  var child = exports.child = spawn(exec, prog, {stdio: 'inherit'});
-  if (child.stdout) {
-    // node < 0.8 doesn't understand the 'inherit' option, so pass through manually
-    child.stdout.addListener("data", function (chunk) { chunk && console.log(chunk); });
-    child.stderr.addListener("data", function (chunk) { chunk && console.error(chunk); });
-  }
-  child.addListener("exit", function (code) {
-    if (!crash_queued) {
-      log("Program " + exec + " " + prog.join(" ") + " exited with code " + code + "\n");
-      if(code === 1) {
-        process.exit();
-      }
-      exports.child = null;
-      if (noRestartOn == "exit" || noRestartOn == "error" && code !== 0) return;
+ProcessManager.crash = function() {
+    if(ProcessManager.crashQueued) {
+        return;
     }
-    startProgram(prog, exec);
-  });
-}
 
-var timer = null, mtime = null; crash_queued = false;
-function crash () {
+    ProcessManager.crashQueued = true;
+    var nodeChildProcess = exports.child;
 
-  if (crash_queued)
-    return;
-
-  crash_queued = true;
-  var child = exports.child;
-  setTimeout(function() {
-    if (child) {
-      log("crashing child");
-      process.kill(child.pid);
-    } else {
-      log("restarting child");
-      startChildProcess();
-    }
-  }, 50);
-}
-
-function crashWin (event, filename) {
-  var shouldCrash = true;
-  if( event === 'change' ) {
-    if (filename) {
-      filename = path.resolve(filename);
-      Object.keys(ignoredPaths).forEach(function (ignorePath) {
-        if ( filename.indexOf(ignorePath + '\\') === 0 || filename === ignorePath) {
-          shouldCrash = false;
+    setTimeout(function() {
+        if(nodeChildProcess) {
+            ProcessManager.log("\n"+'Process Manager: Crashing child process...'+"\n");
+            NodeProcess.kill(nodeChildProcess.pid);
         }
-      });
-    }
-    if (shouldCrash)
-      crash();
-  }
+        else {
+            ProcessManager.log("\n"+'Process Manager: Restarting child process...'+"\n");
+            ProcessManager.startChildProcess();
+        }
+    }, 50);
 }
 
-function crashOther (oldStat, newStat) {
-  // we only care about modification time, not access time.
-  if ( newStat.mtime.getTime() !== oldStat.mtime.getTime() )
-    crash();
-}
-
-var nodeVersion = process.version.split(".");
-var isWindowsWithoutWatchFile = process.platform === 'win32' && parseInt(nodeVersion[1]) <= 6;
-function watchGivenFile (watch, poll_interval) {
-  if (isWindowsWithoutWatchFile || forceWatchFlag)
-    fs.watch(watch, { persistent: true, interval: poll_interval }, crashWin);
-  else
-    fs.watchFile(watch, { persistent: true, interval: poll_interval }, crashOther);
-  if (verbose)
-    log("watching file '" + watch + "'");
-}
-
-function findAllWatchFiles(dir, callback) {
-  dir = path.resolve(dir);
-  if (ignoredPaths[dir])
-    return;
-  fs.stat(dir, function(err, stats){
-    if (err) {
-      console.error('Error retrieving stats for file: ' + dir);
-    } else {
-      if (stats.isDirectory()) {
-        if (isWindowsWithoutWatchFile || forceWatchFlag) callback(dir);
-        fs.readdir(dir, function(err, fileNames) {
-          if(err) {
-            console.error('Error reading path: ' + dir);
-          }
-          else {
-            fileNames.forEach(function (fileName) {
-              findAllWatchFiles(path.join(dir, fileName), callback);
+ProcessManager.crashOnWindows = function(event, fileName) {
+    var shouldCrash = true;
+    if(event === 'change') {
+        if(fileName) {
+            fileName = NodePath.resolve(fileName);
+            Object.keys(ProcessManager.settings.ignoring).forEach(function(ignoredPath) {
+                if(fileName.indexOf(ignoredPath+'\\') === 0 || fileName === ignoredPath) {
+                    shouldCrash = false;
+                }
             });
-          }
-        });
-      } else {
-        if ((!isWindowsWithoutWatchFile || !forceWatchFlag) && dir.match(fileExtensionPattern)) {
-          callback(dir);
         }
-      }
+
+        if(shouldCrash) {
+            ProcessManager.crash();
+        }
     }
-  });
-};
+}
+
+ProcessManager.crashOnNonWindowsOperatingSystem = function(oldStatus, newStatus) {
+    // We only care about modification time, not access time
+    if(newStatus.mtime.getTime() !== oldStatus.mtime.getTime()) {
+        ProcessManager.crash();
+    }
+}
+
+ProcessManager.watchFile = function(file, pollInterval) {
+    if(ProcessManager.isWindowsWithoutWatchFile || ProcessManager.settings.forceWatch) {
+        NodeFileSystem.watch(
+            file,
+            {
+                persistent: true,
+                interval: pollInterval
+            },
+            ProcessManager.crashOnWindows
+        );
+    }
+    else {
+        NodeFileSystem.watchFile(
+            file,
+            {
+                persistent: true,
+                interval: pollInterval
+            },
+            ProcessManager.crashOnNonWindowsOperatingSystem
+        );
+    }
+
+    if(ProcessManager.settings.verbose) {
+        ProcessManager.log('Watching file "'+file+'".');
+    }
+}
+
+ProcessManager.findFilesToWatch = function(directory, callback) {
+    directory = NodePath.resolve(directory);
+
+    if(ProcessManager.settings.ignoring[directory]) {
+        return;
+    }
+
+    NodeFileSystem.stat(directory, function(error, status) {
+        if(error) {
+            console.error('Process Manager: Error retrieving status for: '+directory);
+        }
+        else {
+            if(status.isDirectory()) {
+                if(ProcessManager.isWindowsWithoutWatchFile || ProcessManager.settings.forceWatch) {
+                    callback(directory);
+                }
+
+                NodeFileSystem.readdir(directory, function(error, fileNames) {
+                    if(error) {
+                        console.error('Process Manager: Error reading path: '+directory);
+                    }
+                    else {
+                        fileNames.forEach(function(fileName) {
+                            ProcessManager.findFilesToWatch(NodePath.join(directory, fileName), callback);
+                        });
+                    }
+                });
+            }
+            else {
+                if((!ProcessManager.isWindowsWithoutWatchFile || !ProcessManager.settings.forceWatch) && directory.match(ProcessManager.fileExtensionPattern)) {
+                    callback(directory);
+                }
+            }
+        }
+    });
+}
+
+ProcessManager.startProgram = function(program, executor) {
+    ProcessManager.log('Process Manager: Starting child process with "'+executor+' '+program.join(' ')+'".');
+
+    ProcessManager.crashQueued = false;
+
+    // Spawn the child process
+    var nodeChildProcess = exports.child = NodeChildProcessSpawn(executor, program, {
+        stdio: 'inherit',
+    });
+    
+    if(nodeChildProcess.stdout) {
+        // node < 0.8 doesn't understand the 'inherit' option, so pass through manually
+        nodeChildProcess.stdout.addListener('data', function(chunk) {
+            chunk && console.log(chunk);
+        });
+
+        nodeChildProcess.stderr.addListener('data', function(chunk) {
+            chunk && console.error(chunk);
+        });
+    }
+
+    nodeChildProcess.addListener('exit', function(code) {
+        if(!ProcessManager.crashQueued) {
+            ProcessManager.log("\n"+'Process Manager: Program '+executor+' '+program.join(' ')+' exited with code "'+code+'".');
+
+            // Exit on code 1 no matter what
+            if(code === 1) {
+                NodeProcess.exit();
+            }
+
+            exports.child = null;
+
+            if(ProcessManager.settings.noRestartOn == 'exit' || ProcessManager.settings.noRestartOn == 'error' && code !== 0) {
+                return;
+            }
+        }
+
+        // Restart the program if we get this far
+        ProcessManager.startProgram(program, executor);
+    });
+}
+
+ProcessManager.run = function(argumentsArray) {
+    // Setup the process manager using the passed arguments
+    var currentArgument;
+    while(currentArgument = argumentsArray.shift()) {
+        if(currentArgument === '--help' || currentArgument === '-h' || currentArgument === '-?') {
+            return ProcessManager.help();
+        }
+        else if(currentArgument === '--quiet' || currentArgument === '-q') {
+            ProcessManager.log = function() { };
+        }
+        else if(currentArgument === '--harmony') {
+            ProcessManager.settings.harmony = true;
+        }
+        else if(currentArgument === '--verbose' || currentArgument === '-V') {
+            ProcessManager.settings.verbose = true;
+        }
+        else if(currentArgument === '--watch' || currentArgument === '-w') {
+            ProcessManager.settings.watch = argumentsArray.shift();
+        }
+        else if(currentArgument === '--ignore' || currentArgument === '-i') {
+            ProcessManager.settings.ignore = argumentsArray.shift();
+        }
+        else if(currentArgument === '--poll-interval' || currentArgument === '-p') {
+            ProcessManager.settings.pollInterval = parseInt(argumentsArray.shift());
+        }
+        else if(currentArgument === '--extensions' || currentArgument === '-e') {
+            ProcessManager.settings.extensions = argumentsArray.shift();
+        }
+        else if(currentArgument === '--exec' || currentArgument === '-x') {
+            ProcessManager.settings.executor = argumentsArray.shift();
+        }
+        else if(currentArgument === '--no-restart-on' || currentArgument === '-n') {
+            ProcessManager.settings.noRestartOn = argumentsArray.shift();
+        }
+        else if(currentArgument === '--debug') {
+            ProcessManager.settings.debug = true;
+        }
+        else if(currentArgument.indexOf('--debug-brk')>=0) {
+            ProcessManager.settings.debugBreakFlag = true;
+            ProcessManager.settings.debugBreakFlagArgument = currentArgument;
+        }
+        else if(currentArgument === '--force-watch') {
+            ProcessManager.settings.forceWatch = true;
+        }
+        else if(currentArgument === '--') {
+            ProcessManager.program = argumentsArray;
+            break;
+        }
+        else if(currentArgument[0] != '-' && !argumentsArray.length) {
+            // Assume last currentArgument is the program
+            ProcessManager.program = [currentArgument];
+        }
+    }
+
+    // Show help if no program
+    if(!ProcessManager.program) {
+        return ProcessManager.help();
+    }
+
+    // Watch the current directory if nothing is specified
+    if(!ProcessManager.settings.watch) {
+        ProcessManager.settings.watch = '.';
+    }
+
+    // Set the default poll interval
+    if(!ProcessManager.settings.pollInterval) {
+        ProcessManager.settings.pollInterval = 1000;
+    }
+
+    // Set the program extension
+    ProcessManager.programExtension = ProcessManager.program.join(' ').match(/.*\.(\S*)/);
+    ProcessManager.programExtension = ProcessManager.programExtension && ProcessManager.programExtension[1];
+
+    // If no extensions passed try to guess from the program
+    if(!ProcessManager.settings.extensions) {
+        ProcessManager.settings.extensions = 'node,js';
+        if(ProcessManager.programExtension && ProcessManager.settings.extensions.indexOf(ProcessManager.programExtension) == -1) {
+            // Support coffee and litcoffee extensions
+            if(ProcessManager.programExtension === 'coffee' || ProcessManager.programExtension === 'litcoffee') {
+                ProcessManager.settings.extensions += ',coffee,litcoffee';
+            }
+            else {
+                ProcessManager.settings.extensions += ','+ProcessManager.programExtension;
+            }
+        }
+    }
+
+    ProcessManager.fileExtensionPattern = new RegExp('^.*\.('+ProcessManager.settings.extensions.replace(/,/g, '|')+')$');
+
+    if(!ProcessManager.settings.executor) {
+        ProcessManager.settings.executor = (ProcessManager.programExtension === 'coffee' || ProcessManager.programExtension === 'litcoffee') ? 'coffee' : 'node';
+    }
+
+    if(ProcessManager.settings.debug) {
+        ProcessManager.program.unshift('--debug');
+    }
+
+    if(ProcessManager.settings.debugBreakFlag) {
+        ProcessManager.program.unshift(ProcessManager.settings.debugBreakFlagArgument);
+    }
+
+    if(ProcessManager.settings.harmony) {
+        ProcessManager.program.unshift('--harmony');
+    }
+
+    if(ProcessManager.settings.executor === 'coffee' && (ProcessManager.settings.debug || ProcessManager.settings.debugBreakFlag)) {
+        // coffee does not understand debug or debug-brk, make coffee pass options to node
+        ProcessManager.program.unshift('--nodejs')
+    }
+
+    // Pass kill signals through to child
+    try {
+        ['SIGTERM', 'SIGINT', 'SIGHUP', 'SIGQUIT'].forEach(function(signal) {
+            NodeProcess.on(signal, function() {
+                var nodeChildProcess = exports.child;
+                if(nodeChildProcess) {
+                    ProcessManager.log('Sending "'+signal+'" signal to child...');
+                    nodeChildProcess.kill(signal);
+                }
+                NodeProcess.exit();
+            });
+        });
+    }
+    catch(error) {
+        // Windows doesn't support signals yet, so they simply don't get this handling.
+        // https://github.com/joyent/node/issues/1553
+    }
+
+    // Announce launch
+    ProcessManager.log('')
+    ProcessManager.log('Starting Process Manager with');
+    ProcessManager.log('  program "'+ProcessManager.program.join(' ')+'"');
+    ProcessManager.log('  --watch "'+ProcessManager.settings.watch+'"');
+    if(ProcessManager.settings.ignore) {
+        ProcessManager.log('  --ignore "'+ProcessManager.settings.ignore+'"');
+    }
+    ProcessManager.log('  --extensions "'+ProcessManager.settings.extensions+'"');
+    ProcessManager.log('  --exec "'+ProcessManager.settings.executor+'"');
+    ProcessManager.log('');
+
+    // Store the call to ProcessManager.startProgram in ProcessManager.startChildProcess in order to call it later
+    ProcessManager.startChildProcess = function() {
+        ProcessManager.startProgram(ProcessManager.program, ProcessManager.settings.executor);
+    }
+
+    // Start the child process
+    ProcessManager.startChildProcess();
+
+    // Handle ignored files
+    if(ProcessManager.settings.ignore) {
+        ProcessManager.settings.ignoring = ProcessManager.settings.ignore.split(',');
+        ProcessManager.settings.ignoring.forEach(function(itemToIgnore) {
+            itemToIgnore = NodePath.resolve(itemToIgnore);
+            ProcessManager.settings.ignoring[itemToIgnore] = true;
+            ProcessManager.log('Process Manager: Ignoring "'+itemToIgnore+'".');
+        });
+    }
+
+    // Handle watching files
+    ProcessManager.settings.watching = ProcessManager.settings.watch.split(',');
+    ProcessManager.settings.watching.forEach(function(itemToWatch) {
+        itemToWatch = NodePath.resolve(itemToWatch);
+        ProcessManager.log('Process Manager: Watching "'+itemToWatch+'" for changes.');
+        ProcessManager.findFilesToWatch(itemToWatch, function(file) {
+            ProcessManager.watchFile(file, ProcessManager.settings.pollInterval);
+        });
+    });
+}
+
+ProcessManager.start = function() {
+    var baseNameofCurrentArgument;
+    var currentArgument;
+
+    // Shift arguments off of the arguments array until the arguments array is just what is relevant
+    do {
+        currentArgument = ProcessManager.argumentsArray.shift();
+    }
+    while(
+        NodeFileSystem.realpathSync(currentArgument) !== __filename &&
+        (baseNameofCurrentArgument = NodePath.basename(currentArgument)) !== 'process-manager' &&
+        baseNameofCurrentArgument !== 'Process Manager' &&
+        baseNameofCurrentArgument !== 'Process Manager.js'
+    ) {
+        ProcessManager.run(ProcessManager.argumentsArray);
+    }
+}
+
+ProcessManager.start();
