@@ -14,6 +14,13 @@ Database = Class.extend({
 
 	databaseConnectionPool: null,
 
+	statistics: {
+		queries: 0,
+		successfulQueries: 0,
+		failedQueries: 0,
+		averageQueryTimeInMilliseconds: 0,
+	},
+
 	construct: function(settings) {
 		this.settings = Settings.default({
 			host: 'localhost',
@@ -67,7 +74,33 @@ Database = Class.extend({
 	},
 
 	query: function*(query, values, options) {
+		this.statistics.queries++;
+
+		// Time the query
+		var stopwatch = new Stopwatch();
+
 		var queryResults = yield Node.MySql.Adapter.query(this.databaseConnectionPool, query, values);
+
+		// Stop the stopwatch
+		stopwatch.stop();
+
+		// Debug
+		//Console.out(stopwatch.elapsedTime+'ms', queryResults.sql);
+
+		// Calculate the average query time
+		this.statistics.averageQueryTimeInMilliseconds = (this.statistics.averageQueryTimeInMilliseconds + stopwatch.elapsedTime) / 2;
+
+		// Handle errors
+		if(Error.is(queryResults)) {
+			this.statistics.failedQueries++;
+			throw queryResults;
+		}
+		else {
+			this.statistics.successfulQueries++;
+		}
+
+		// Add the stopwatch to the queryResults
+		queryResults.stopwatch = stopwatch;
 
 		// Reform the rows
 		// TODO: Make this an option
@@ -89,11 +122,95 @@ Database = Class.extend({
 	loadTables: function*() {
 		var tables = [];
 
-		var fullTables = yield this.query('SHOW TABLE STATUS');
-		yield fullTables.rows.each(function*(index, value) {
-			var table = new DatabaseTable(value.name, this);
-			yield table.loadProperties(value);
+		var allTables = yield this.query('SHOW TABLE STATUS');
+		//Console.out(allTables);
 
+		var allTableCharacterSets = yield this.query('SELECT `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`character_set_name`, `information_schema`.`TABLES`.`table_name` FROM `information_schema`.`TABLES`, `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY` WHERE `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`collation_name` = `information_schema`.`TABLES`.`table_collation` AND `table_schema` = ?', [this.name]);
+		//Console.out(allTableCharacterSets);
+
+		var allTableColumns = yield this.query('SELECT * FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? ORDER BY `ORDINAL_POSITION` ASC', [this.name]);
+		//Console.out(allTableColumns);
+
+		var allTableIndexes = yield this.query('SELECT DISTINCT `TABLE_NAME`, `STATISTICS`.* FROM `information_schema`.`STATISTICS` WHERE `TABLE_SCHEMA` = ?', [this.name]);
+		//Console.out(allTableColumns);
+
+		var allTableRelationships = yield this.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.name]);
+		//Console.out(allTableRelationships);
+
+		var allTableRelationshipConstraints = yield this.query('SELECT * FROM `information_schema`.`REFERENTIAL_CONSTRAINTS` WHERE `CONSTRAINT_SCHEMA` = ?', [this.name]);
+		//Console.out(allTableRelationshipConstraints);
+		
+		yield allTables.rows.each(function*(allTablesIndex, allTablesTable) {
+			// Create the table
+			var table = new DatabaseTable(allTablesTable.name, this);
+
+			// Select the correct character set for the table
+			var characterSet = allTableCharacterSets.rows.getObjectWithKeyValue('tableName', table.name).characterSetName;
+
+			// Build the table columns from the bulk query
+			var columns = [];
+			allTableColumns.rows.each(function(allTableColumnsIndex, allTableColumnsColumn) {
+				if(allTableColumnsColumn.tableName == table.name) {
+					var column = {
+						field: allTableColumnsColumn.columnName,
+						type: allTableColumnsColumn.columnType,
+						default: allTableColumnsColumn.columnDefault,
+						key: allTableColumnsColumn.columnKey,
+						'null': allTableColumnsColumn.isNullable,
+						extra: allTableColumnsColumn.extra,
+						collation: allTableColumnsColumn.collationName,
+						comment: allTableColumnsColumn.columnComment,
+						characterSet: allTableColumnsColumn.characterSetName,
+					};
+
+					columns.push(column);
+				}
+			});
+
+			// Build the table indexes from the bulk query
+			var indexes = [];
+			allTableIndexes.rows.each(function(allTableIndexesIndex, allTableIndexesIndex) {
+				if(allTableIndexesIndex.tableName == table.name) {
+					var index = {
+						keyName: allTableIndexesIndex.indexName,
+						nonUnique: allTableIndexesIndex.nonUnique,
+						indexType: allTableIndexesIndex.indexType,
+						packed: allTableIndexesIndex.packed,
+						'null': allTableIndexesIndex.nullable,
+						collation: allTableIndexesIndex.collation,
+						cardinality: allTableIndexesIndex.cardinality,
+						subPart: allTableIndexesIndex.subPart,
+						columnName: allTableIndexesIndex.columnName,
+						indexComment: allTableIndexesIndex.indexComment,
+					};
+
+					indexes.push(index);
+				}
+			});
+
+			// Build the table relationships from the bulk query
+			var relationships = [];
+			allTableRelationships.rows.each(function(allTableRelationshipsIndex, allTableRelationshipsRelationship) {
+				if(allTableRelationshipsRelationship.tableName == table.name) {
+					var relationship = {
+						constraintName: allTableRelationshipsRelationship.constraintName,
+						columnName: allTableRelationshipsRelationship.columnName,
+						referencedTableSchema: allTableRelationshipsRelationship.referencedTableSchema,
+						referencedTableName: allTableRelationshipsRelationship.referencedTableName,
+						referencedColumnName: allTableRelationshipsRelationship.referencedColumnName,
+					};
+
+					// Pull in constraint data from allTableRelationshipConstraints
+					relationship.constraint = allTableRelationshipConstraints.rows.getObjectsWithKeyValue('constraintName', allTableRelationshipsRelationship.constraintName).getObjectWithKeyValue('tableName', table.name);
+
+					relationships.push(relationship);
+				}
+			});
+
+			// Load the table properties
+			yield table.loadProperties(allTablesTable, characterSet, columns, indexes, relationships);
+
+			// Add the table
 			tables.push(table);
 		}, this);
 

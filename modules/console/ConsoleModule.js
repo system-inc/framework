@@ -31,8 +31,6 @@ ConsoleModuleClass = Module.extend({
 		if(this.settings.get('commandHistory.enabled')) {
 			Console.loadCommandHistory(this.settings.get('commandHistory.directory'), this.settings.get('commandHistory.nameWithoutExtension'));
 		}
-
-		Console.write(Terminal.style('', 'reset'));
 	},
 	
 });

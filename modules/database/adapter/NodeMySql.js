@@ -35,7 +35,7 @@ Node.MySql.Adapter.query = function(connection, query, values) {
 			//Console.out(queryResults.sql);
 
 			if(error) {
-				reject(error);
+				resolve(error);
 			}
 			else {
 				var result = {

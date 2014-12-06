@@ -52,7 +52,7 @@ DatabaseTable = Class.extend({
 		this.databaseName = database.name;
 	},
 
-	loadProperties: function*(properties) {
+	loadProperties: function*(properties, characterSet, columns, indexes, relationships) {
 		if(properties === undefined) {
 			var propertiesQuery = yield this.database.query('SHOW TABLE STATUS WHERE NAME = ?', this.name);
 			properties = propertiesQuery.rows.first();
@@ -76,14 +76,38 @@ DatabaseTable = Class.extend({
         this.timeUpdated = properties.updateTime;
         this.version = new Version(properties.version);
 
-        // Get the character set
-        var characterSetQuery = yield this.database.query('SELECT `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`character_set_name` FROM `information_schema`.`TABLES`, `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY` WHERE `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`collation_name` = `information_schema`.`TABLES`.`table_collation` AND `information_schema`.`TABLES`.`table_schema` = ? AND `information_schema`.`TABLES`.`table_name` = ?', [this.database.name, this.name]);
-        this.characterSet = characterSetQuery.rows.first().characterSetName;
+        // Get the character set if necessary
+        if(characterSet === undefined) {
+	        var characterSetQuery = yield this.database.query('SELECT `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`character_set_name` FROM `information_schema`.`TABLES`, `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY` WHERE `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`collation_name` = `information_schema`.`TABLES`.`table_collation` AND `information_schema`.`TABLES`.`table_schema` = ? AND `information_schema`.`TABLES`.`table_name` = ?', [this.database.name, this.name]);
+	        this.characterSet = characterSetQuery.rows.first().characterSetName;
+        }
+        else {
+        	this.characterSet = characterSet;
+        }
+
+        // Load the columns if passed
+    	if(columns !== undefined) {
+    		yield this.loadColumns(columns);
+    	}
+
+    	// Load the indexes if passed
+    	if(indexes !== undefined) {
+    		yield this.loadIndexes(indexes);
+    	}
+
+    	// Load the relationships if passed
+    	if(relationships !== undefined) {
+    		yield this.loadRelationships(relationships);
+    	}
 	},
 
-	loadColumns: function*() {
-		var fullColumns = yield this.database.query('SHOW FULL FIELDS FROM `'+this.name+'`');
-		yield fullColumns.rows.each(function*(index, row) {
+	loadColumns: function*(columns) {
+		if(columns === undefined) {
+			columns = yield this.database.query('SHOW FULL FIELDS FROM `'+this.name+'`');
+			columns = columns.rows;
+		}
+		
+		yield columns.each(function*(index, row) {
 			var column = new DatabaseTableColumn(row.field, this);
 			yield column.loadProperties(row);
 
@@ -93,10 +117,13 @@ DatabaseTable = Class.extend({
 		return this.columns;
 	},
 
-	loadIndexes: function*() {
-		var indexesQuery = yield this.database.query('SHOW INDEXES FROM `'+this.name+'`');
+	loadIndexes: function*(indexes) {
+		if(indexes === undefined) {
+			var indexes = yield this.database.query('SHOW INDEXES FROM `'+this.name+'`');
+			indexes = indexes.rows;
+		}
 
-		yield indexesQuery.rows.each(function*(index, row) {
+		yield indexes.each(function*(index, row) {
 			// If we already have the index add the column
 			var hasIndex = this.hasIndex(row.keyName);
 			if(hasIndex) {
@@ -126,12 +153,21 @@ DatabaseTable = Class.extend({
 		return hasIndex;
 	},
 
-	loadRelationships: function*() {
-		var relationshipsQuery = yield this.database.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.database.name, this.name]);
-		//Node.exit(relationshipsQuery);
-		yield relationshipsQuery.rows.each(function*(index, row) {
+	loadRelationships: function*(relationships) {
+		if(relationships === undefined) {
+			var relationships = yield this.database.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.database.name, this.name]);
+			relationships = relationships.rows;
+
+			var constraints = yield this.database.query('SELECT * FROM `information_schema`.`REFERENTIAL_CONSTRAINTS` WHERE `CONSTRAINT_SCHEMA` = ? AND `TABLE_NAME` = ?', [this.database.name, this.name]);
+			relationships.each(function(index, row) {
+				row.constraint = constraints.rows.getObjectWithKeyValue('constraintName', row.constraintName);
+			});
+		}
+		
+		yield relationships.each(function*(index, row) {
 			var relationship = new DatabaseTableRelationship(row.constraintName, this);
-			yield relationship.loadProperties(row);
+
+			yield relationship.loadProperties(row, row.constraint);
 
 			this.relationships.push(relationship);
 		}, this);
@@ -191,7 +227,7 @@ DatabaseTable = Class.extend({
 		schema.relationships = this.relationships;
 
 		// Load the columns
-		//yield this.loadColumns();
+		//yield this.loadColumns(); // Not necessary with bulk call
 
 		// Set the columns
 		schema.columns = [];
@@ -201,7 +237,7 @@ DatabaseTable = Class.extend({
 		}, this);
 
 		// Load the indexes
-		//yield this.loadIndexes();
+		//yield this.loadIndexes(); // Not necessary with bulk call
 
 		// Set the indexes
 		schema.indexes = [];
@@ -211,7 +247,7 @@ DatabaseTable = Class.extend({
 		}, this);
 
 		// Load the relationships
-		yield this.loadRelationships();
+		//yield this.loadRelationships(); // Not necessary with bulk call
 
 		// Set the relationships
 		schema.relationships = [];

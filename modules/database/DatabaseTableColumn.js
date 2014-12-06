@@ -58,9 +58,15 @@ DatabaseTableColumn = Class.extend({
 		this.collation = properties.collation;
 		this.comment = properties.comment;
 
-        // Get the character set
-        var characterSetQuery = yield this.database.query('SELECT `character_set_name` FROM `information_schema`.`COLUMNS` WHERE `table_schema` = ? AND `table_name` = ? AND `column_name` = ?', [this.database.name, this.table.name, this.name]);
-        this.characterSet = characterSetQuery.rows.first().characterSetName;
+		// Load the character set if we don't have it
+		if(properties.characterSet === undefined) {
+	        // Get the character set
+	        var characterSetQuery = yield this.database.query('SELECT `CHARACTER_SET_NAME` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `COLUMN_NAME` = ?', [this.database.name, this.table.name, this.name]);
+	        this.characterSet = characterSetQuery.rows.first().characterSetName;
+		}
+		else {
+			this.characterSet = properties.characterSet;
+		}
 	},
 
 	calculateOptimalDataType: function() {

@@ -6,6 +6,16 @@
 				"enabled": true
 			}
 		},
+		"database": {
+			"databases": {
+				"frameworkTest": {
+					"host": "localhost",
+					"username": "framework_test",
+					"password": "framework_test",
+					"databaseName": "framework_test"
+				}
+			}
+		},
 		"webServer": {
 			"webServers": [
 				{

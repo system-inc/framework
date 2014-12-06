@@ -281,7 +281,11 @@ ConsoleClass = Class.extend({
 		// Enter
 		else if(key == "\n" || key == "\r") {
 			if(this.currentCommandString) {
-				this.commandHistory.unshift(this.currentCommandString);
+				// Don't stack multiple of the same commands
+				if(this.currentCommandString != this.commandHistory.first()) {
+					this.commandHistory.unshift(this.currentCommandString);
+				}
+				
 				this.currentCommandHistoryIndex = -1;
 
 				// Write the history to disk
