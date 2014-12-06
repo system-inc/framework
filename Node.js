@@ -1,4 +1,5 @@
 Node = {};
+Node.Cluster = require('cluster');
 Node.Cryptography = require('crypto');
 Node.Domain = require('domain');
 Node.Events = require('events');
@@ -6,6 +7,7 @@ Node.EventEmitter = EventEmitter = Node.Events.EventEmitter;
 Node.FileSystem = require('fs');
 Node.Http = require('http');
 Node.Https = require('https');
+Node.OperatingSystem = require('os');
 Node.Path = require('path');
 Node.Path.separator = Node.Path.sep;
 Node.Process = process;
