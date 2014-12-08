@@ -66,11 +66,33 @@ JsonTest = Test.extend({
 	},
 
 	testDecycle: function() {
+		var actual = {
+			fruit: 'apple',
+		};
+		actual.cyclicalReference = actual;
+		actual = Json.decycle(actual);
+		//Console.out(actual);
 
+		var expected = {
+			fruit: 'apple',
+			cyclicalReference: {
+				'$reference': '$',
+			},
+		};		
+
+		Assert.deepEqual(actual, expected);
 	},
 
 	testRetrocycle: function() {
-
+		var actual = {
+			fruit: 'apple',
+			cyclicalReference: {
+				'$reference': '$',
+			},
+		};
+		actual = Json.retrocycle(actual);
+		
+		Assert.equal(actual.cyclicalReference.fruit, 'apple');
 	},
 
 });
