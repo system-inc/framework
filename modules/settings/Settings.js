@@ -5,22 +5,6 @@ Settings = Class.extend({
 	construct: function() {
 	},
 
-	constructFromFile: function(path) {
-		var settings = new Settings();
-		settings.settings = File.synchronous.read.json(path);
-
-		return settings;
-	},
-
-	constructFromObject: function(object) {
-		var settings = new Settings();
-		if(object) {
-			settings.settings = object;	
-		}
-		
-		return settings;
-	},
-
 	default: function(defaultSettings) {
 		this.settings = defaultSettings.merge(this.settings);
 	},
@@ -92,8 +76,22 @@ Settings = Class.extend({
 });
 
 // Static methods
-Settings.constructFromFile = Settings.prototype.constructFromFile;
-Settings.constructFromObject = Settings.prototype.constructFromObject;
+Settings.constructFromFile = function(path) {
+	var settings = new Settings();
+	settings.settings = File.synchronous.read.json(path);
+
+	return settings;
+}
+
+Settings.constructFromObject = function(object) {
+	var settings = new Settings();
+	if(object) {
+		settings.settings = object;	
+	}
+	
+	return settings;
+}
+
 Settings.default = function(defaultSettings, settings) {
 	// Create a settings object from the settings they provided
 	var settings = Settings.constructFromObject(settings);

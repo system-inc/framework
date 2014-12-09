@@ -10,14 +10,16 @@ require('./routes/RedirectRoute');
 require('./RouteMatch');
 require('./WebServer');
 require('./errors/HttpError');
+require('./errors/InternalServerError');
+require('./errors/NotFoundError');
+require('./errors/RequestEntityTooLargeError');
 
 WebServerModuleClass = Module.extend({
 
-	version: null,
+	version: new Version('1.0'),
 	webServers: {},
 
 	construct: function(settings) {
-		this.version = new Version('1.0');
 		this.super(settings);		
 
 		// Inspect the settings to see if they want a web server

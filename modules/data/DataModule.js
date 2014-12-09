@@ -10,10 +10,9 @@ require('./ModelClassManager');
 
 DataModuleClass = Module.extend({
 
-	version: null,
+	version: new Version('1.0'),
 
 	construct: function(settings) {
-		this.version = new Version('1.0');
 		this.super(settings);
 	},
 	

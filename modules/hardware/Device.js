@@ -9,39 +9,6 @@ Device = Class.extend({
 	construct: function() {
 	},
 
-	constructFromUserAgent: function(userAgent) {
-		var device = new Device();
-
-		// Return immediately if there is no user agent
-		if(!userAgent) {
-			return device;
-		}
-
-		// Set the type, name, and manufacturer
-		if(userAgent.contains('iPhone', false)) {
-			device.type = 'mobile';
-			device.name = 'iPhone';
-			device.manufacturer = 'Apple';
-		}
-		else if(userAgent.contains('iPod', false)) {
-			device.type = 'mobile';
-			device.name = 'iPod';
-			device.manufacturer = 'Apple';
-		}
-		else if(userAgent.contains('iPad', false)) {
-			device.type = 'tablet';
-			device.name = 'iPad';
-			device.manufacturer = 'Apple';
-		}
-
-		// Set the architecture
-		if(userAgent.contains('WOW64', false)) {
-			device.architecture = 'x64';
-		}
-
-		return device;
-	},
-
 	isMobile: function() {
 		return this.type == 'mobile';
 	},
@@ -57,4 +24,35 @@ Device = Class.extend({
 });
 
 // Static methods
-Device.constructFromUserAgent = Device.prototype.constructFromUserAgent;
+Device.constructFromUserAgent = function(userAgent) {
+	var device = new Device();
+
+	// Return immediately if there is no user agent
+	if(!userAgent) {
+		return device;
+	}
+
+	// Set the type, name, and manufacturer
+	if(userAgent.contains('iPhone', false)) {
+		device.type = 'mobile';
+		device.name = 'iPhone';
+		device.manufacturer = 'Apple';
+	}
+	else if(userAgent.contains('iPod', false)) {
+		device.type = 'mobile';
+		device.name = 'iPod';
+		device.manufacturer = 'Apple';
+	}
+	else if(userAgent.contains('iPad', false)) {
+		device.type = 'tablet';
+		device.name = 'iPad';
+		device.manufacturer = 'Apple';
+	}
+
+	// Set the architecture
+	if(userAgent.contains('WOW64', false)) {
+		device.architecture = 'x64';
+	}
+
+	return device;
+}

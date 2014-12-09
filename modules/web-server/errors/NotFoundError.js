@@ -1,8 +1,8 @@
-NotFoundError = Error.extend({
+NotFoundError = HttpError.extend({
 
 	construct: function(message) {
-		this.super.apply(this, arguments);
-		this.code = 404;
+		this.super.apply(this, [404, message]);
+
 		this.identifier = 'notFound';
 		if(!this.message) {
 			this.message = 'Could not find what was requested.';

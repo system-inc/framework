@@ -12,8 +12,8 @@ Response = Class.extend({
 
 	// Headers
 	statusCode: null,
-	headers: null,
-	cookies: null,
+	headers: new Headers(),
+	cookies: new Cookies(),
 
 	// Content
 	content: '',
@@ -34,10 +34,6 @@ Response = Class.extend({
 		// Reference the associated request and and web server
 		this.request = request;
 		this.webServer = webServer;
-
-		// Instantiate and connect Cookies to Headers
-		this.headers = new Headers();
-		this.cookies = new Cookies();
 	},
 
 	setAcceptedEncodings: function(acceptEncodeHeaderString) {

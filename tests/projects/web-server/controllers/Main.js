@@ -1,7 +1,9 @@
 Main = Controller.extend({
 
 	main: function*() {
-		//throw new InternalServerError('main!');
+		//throw new InternalServerError();
+		//throw new NotFoundError('file not found');
+		//throw new RequestEntityTooLargeError();
 
 		//yield Function.delay(500);
 

@@ -95,7 +95,6 @@ Request = Class.extend({
 			'major': nodeRequest.httpVersionMajor,
 			'minor': nodeRequest.httpVersionMinor,
 		});
-		
 	},
 
 	isSecure: function() {

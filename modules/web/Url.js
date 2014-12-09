@@ -15,17 +15,6 @@ Url = Class.extend({
 		this.parse(string);	
 	},
 
-	constructFromNodeRequest: function(nodeRequest) {
-		var protocol = 'http';
-		if(nodeRequest.connection.encrypted) {
-			protocol = 'https';
-		}
-
-		var urlString = protocol+'://'+nodeRequest.headers.host+nodeRequest.url;
-
-		return new Url(urlString);
-	},
-
 	parse: function(string) {
 		if(!string) {
 			return;
@@ -106,4 +95,13 @@ Url = Class.extend({
 });
 
 // Static methods
-Url.constructFromNodeRequest = Url.prototype.constructFromNodeRequest;
+Url.constructFromNodeRequest = function(nodeRequest) {
+	var protocol = 'http';
+	if(nodeRequest.connection.encrypted) {
+		protocol = 'https';
+	}
+
+	var urlString = protocol+'://'+nodeRequest.headers.host+nodeRequest.url;
+
+	return new Url(urlString);
+}
