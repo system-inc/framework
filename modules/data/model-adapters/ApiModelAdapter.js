@@ -1,0 +1,3 @@
+ApiModelAdapter = ModelAdapter.extend({
+
+});

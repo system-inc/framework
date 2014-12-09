@@ -1,0 +1,3 @@
+ModelTest = Test.extend({
+
+});

@@ -1,0 +1,3 @@
+DatabaseModelAdapter = ModelAdapter.extend({
+
+});

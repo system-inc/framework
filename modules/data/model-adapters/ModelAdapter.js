@@ -1,0 +1,3 @@
+ModelAdapter = Class.extend({
+
+});

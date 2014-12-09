@@ -1,0 +1,5 @@
+ModelList = Class.extend({
+
+	models: [],
+
+});

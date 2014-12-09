@@ -16,7 +16,7 @@ Data.decode = function(data, encoding) {
 			});
 		}
 		else {
-			reject(encoding+' is an unsupported encoding type.');
+			reject(new Error(encoding+' is an unsupported encoding type.'));
 		}
     });
 }
@@ -35,7 +35,7 @@ Data.encode = function(data, encoding) {
 			});
 		}
 		else {
-			reject(encoding+' is an unsupported encoding type.');
+			reject(new Error(encoding+' is an unsupported encoding type.'));
 		}
     });
 }

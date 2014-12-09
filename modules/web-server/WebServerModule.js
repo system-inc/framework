@@ -1,7 +1,13 @@
 require('./Controller');
 require('./Request');
 require('./Response');
-require('./router/Router');
+require('./Router');
+require('./routes/Route');
+require('./routes/ControllerRoute');
+require('./routes/FileRoute');
+require('./routes/ProxyRoute');
+require('./routes/RedirectRoute');
+require('./RouteMatch');
 require('./WebServer');
 require('./errors/HttpError');
 

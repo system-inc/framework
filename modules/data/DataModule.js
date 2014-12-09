@@ -1,4 +1,12 @@
 require('./Data');
+require('./Schema');
+require('./Model');
+require('./ModelProperty');
+require('./ModelList');
+require('./model-adapters/ModelAdapter');
+require('./model-adapters/DatabaseModelAdapter');
+require('./model-adapters/ApiModelAdapter');
+require('./ModelManager');
 
 DataModuleClass = Module.extend({
 
