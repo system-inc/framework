@@ -1,5 +1,5 @@
 Array.is = function(value) {
-	return Object.prototype.toStringStandard.call(value) == '[object Array]';
+	return Object.prototype.toString.call(value) == '[object Array]';
 }
 
 Array.isPrimitive = function(array) {

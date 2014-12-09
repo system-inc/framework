@@ -1,5 +1,5 @@
 Object.is = function(value) {
-	return Object.prototype.toStringStandard.call(value) == '[object Object]';
+	return Object.prototype.toString.call(value) == '[object Object]';
 }
 
 Object.isEmpty = function(object) {
@@ -89,7 +89,7 @@ Object.clone = function(object) {
 	var clone = object;
  
     if(object && typeof(object) === 'object') {
-        clone = Object.prototype.toStringStandard.call(object) === '[object Array]' ? [] : {};
+        clone = Object.prototype.toString.call(object) === '[object Array]' ? [] : {};
         for(var key in object) {
         	// This code 
         	if(object.hasOwnProperty(key)) {
@@ -209,22 +209,6 @@ Object.prototype.sort = function() {
 
 	return sorted;
 }
-
-Object.prototype.toStringStandard = Object.prototype.toString;
-
-// TODO: 2014-11-05 - This doesn't seem to be doing anything, remove if everything still works after all tests are written
-// If we do remove prototype.toString, then we can go rename all instances of prototype.toStringStandard to just prototype.toString
-// and the "Object.prototype.toStringStandard = Object.prototype.toString;" line above
-
-//Object.prototype.toString = function() {
-//	// Debugging
-//	if(this.toStringStandard) {
-//		return this.toStringStandard();	
-//	}
-//	else {
-//		return this.toString();
-//	}
-//}
 
 Object.prototype.toJson = function() {
 	return Json.encode(this);

@@ -218,7 +218,7 @@ Assert.isEquivalentObject = function(a, b) {
 }
 
 Assert.isArguments = function(object) {
-	return Object.prototype.toStringStandard.call(object) == '[object Arguments]';
+	return Object.prototype.toString.call(object) == '[object Arguments]';
 }
 
 Assert.deepEqual = function(actual, expected, message) {
@@ -472,7 +472,7 @@ Assert.expectedException =  function(actual, expected) {
 		return false;
 	}
 
-	if(Object.prototype.toStringStandard.call(expected) == '[object RegExp]') {
+	if(Object.prototype.toString.call(expected) == '[object RegExp]') {
 		return expected.test(actual);
 	}
 	else if(actual instanceof expected) {
