@@ -20,7 +20,7 @@ DatabaseTest = Test.extend({
 
 	testQueryOnDatabaseGeneratedBySettings: function*() {
 		var actual = yield FrameworkTestDatabase.query('SELECT * FROM user');
-		Console.out(actual);
+		//Console.out(actual);
 	},
 
 	testQueryOnDatabaseCreatedManually: function*() {

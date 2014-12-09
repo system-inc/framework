@@ -1,5 +1,6 @@
 require('./adapter/NodeMySql');
 require('./Database');
+require('./DatabaseField');
 require('./DatabaseTable');
 require('./DatabaseTableColumn');
 require('./DatabaseTableIndex');
