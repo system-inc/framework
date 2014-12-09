@@ -38,7 +38,7 @@ FileSystem.list = function(path, recursive) {
                 var fileSystemObject = yield FileSystemObject.constructFromPath(path+fileName);
 
                 // Handle recursion
-                if(recursive && Class.is(fileSystemObject, Directory)) {
+                if(recursive && Class.isInstance(fileSystemObject, Directory)) {
                     // Get the directory listing of any directories
                     var directoryList = yield fileSystemObject.list(true);
 

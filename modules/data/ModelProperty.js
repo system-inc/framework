@@ -21,7 +21,8 @@ ModelProperty = Class.extend({
 
 	validationRules: [],
 
-	construct: function() {
+	construct: function(name) {
+		this.name = name;
 	},
 
 	beforeValidate: function*() {
@@ -38,8 +39,8 @@ ModelProperty = Class.extend({
 	beforeChange: function*() {
 	},
 
-	setValue: function*(value) {
-		yield this.beforeChange();
+	setValue: function(value) {
+		//yield this.beforeChange();
 
 		this.previousValue = this.value;
 		this.value = value;
@@ -48,7 +49,7 @@ ModelProperty = Class.extend({
 			this.isChanged = true;
 		}		
 
-		yield this.afterChange();
+		//yield this.afterChange();
 	},
 
 	afterChange: function*() {

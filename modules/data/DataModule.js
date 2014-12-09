@@ -6,7 +6,7 @@ require('./ModelList');
 require('./model-adapters/ModelAdapter');
 require('./model-adapters/DatabaseModelAdapter');
 require('./model-adapters/ApiModelAdapter');
-require('./ModelManager');
+require('./ModelClassManager');
 
 DataModuleClass = Module.extend({
 

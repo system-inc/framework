@@ -108,6 +108,14 @@ ConsoleClass = Class.extend({
 			if(passedArguments[i] && Error.is(passedArguments[i])) {
 				message += Json.indent(passedArguments[i].toObject(true));
 			}
+			// If we have a function
+			else if(passedArguments[i] && Function.is(passedArguments[i])) {
+				message += Node.Utility.inspect(passedArguments[i], {
+					'showHidden': true,
+					'depth': 2,
+					'colors': true,
+				});
+			}
 			// If we have an non-primitive encode it into Json and indent it
 			else if(passedArguments[i] && !Primitive.is(passedArguments[i])) {
 				message += Json.indent(passedArguments[i]);

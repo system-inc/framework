@@ -1,5 +1,7 @@
 Model = Class.extend({
 
+	name: 'Model',
+
 	defaults: {},
 	properties: {},
 	adapter: null,
@@ -17,19 +19,19 @@ Model = Class.extend({
 		}
 	},
 
-	setProperty: function(propertyName, propertyValue) {
-		this.properties[propertyName].setValue(propertyValue);	
+	setPropertyValue: function(propertyName, propertyValue) {
+		this.properties[propertyName].setValue(propertyValue);
 	},
 
 	set: function(valuesOrPropertyName, propertyValue) {
 		// If valuesOrPropertyName is a string, then it is a propertyName
 		if(String.is(valuesOrPropertyName)) {
-			this.setProperty(valuesOrPropertyName, propertyValue);
+			this.setPropertyValue(valuesOrPropertyName, propertyValue);
 		}
 		// Otherwise it is a hash of propertyName: propertyValue
 		else {
 			valuesOrPropertyName.each(function(propertyName, propertyValue) {
-				this.setProperty(propertyName, propertyValue)
+				this.setPropertyValue(propertyName, propertyValue)
 			}.bind(this));
 		}
 
@@ -93,10 +95,6 @@ Model = Class.extend({
 	},
 
 	afterValidate: function*() {
-	},
-
-	addProperty: function(modelProperty) {
-
 	},
 
 });

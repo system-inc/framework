@@ -1,11 +1,14 @@
 ClassTest = Test.extend({
 
-	testIs: function() {
-		Assert.false(Class.is(Version), 'not a class definition');
-		Assert.true(Class.is(new Version('1.0')), 'is an instance');
-		Assert.true(Class.is(new Version('1.0'), Version), 'observes classType parameter');
-		Assert.true(Class.is(new Version('1.0'), Class), 'classType parameter may be Class');
-		Assert.false(Class.is(new Version('1.0'), Settings), 'observes classType parameter');
+	testIsInstance: function() {
+		Assert.false(Class.isInstance(Version), 'not a class definition');
+		Assert.false(Class.isInstance({}), '{} is not an instance of a class');
+		Assert.false(Class.isInstance([]), '[] is not an instance of a class');
+		Assert.false(Class.isInstance(null), 'null is not an instance of a class');
+		Assert.true(Class.isInstance(new Version('1.0')), 'is an instance');
+		Assert.true(Class.isInstance(new Version('1.0'), Version), 'observes classType parameter');
+		Assert.true(Class.isInstance(new Version('1.0'), Class), 'classType parameter may be Class');
+		Assert.false(Class.isInstance(new Version('1.0'), Settings), 'observes classType parameter');
 	},
 
 	testInheritance: function() {
@@ -16,6 +19,7 @@ ClassTest = Test.extend({
 			parentNullClassVariable: null,
 			parentArrayClassVariable: [],
 			parentObjectClassVariable: {},
+			parentClassInstanceClassVariable: new Version('1.0'),
 			parentContainedReferenceClassVariable: {},
 
 			construct: function() {
@@ -82,12 +86,14 @@ ClassTest = Test.extend({
 		Assert.true(Object.hasKey(specialTestParentClassInstance, 'parentNullClassVariable'), 'parentNullClassVariable key');
 		Assert.true(Object.hasKey(specialTestParentClassInstance, 'parentArrayClassVariable'), 'parentArrayClassVariable key');
 		Assert.true(Object.hasKey(specialTestParentClassInstance, 'parentObjectClassVariable'), 'parentObjectClassVariable key');
+		Assert.true(Object.hasKey(specialTestParentClassInstance, 'parentClassInstanceClassVariable'), 'parentClassInstanceClassVariable key');
 
 		Assert.equal(specialTestParentClassInstance.parentClassConstruct, 'constructed', 'parentClassConstruct key set correctly');
 		Assert.equal(specialTestParentClassInstance.parentStringClassVariable, 'string', 'parentStringClassVariable key set correctly');
 		Assert.equal(specialTestParentClassInstance.parentNullClassVariable, null, 'parentNullClassVariable key set correctly');
 		Assert.deepEqual(specialTestParentClassInstance.parentArrayClassVariable, [], 'parentArrayClassVariable key set correctly');
 		Assert.deepEqual(specialTestParentClassInstance.parentObjectClassVariable, {}, 'parentObjectClassVariable key set correctly');
+		Assert.equal(specialTestParentClassInstance.parentClassInstanceClassVariable, '1.0', 'parentClassInstanceClassVariable key set correctly');
 
 		Assert.equal(specialTestParentClassInstance.parentMethodToOverride(), 'override me', 'class method');
 		Assert.equal(specialTestParentClassInstance.parentStaticMethodDefinedInClass(), 'static method', 'class static method called from instance');
@@ -103,6 +109,7 @@ ClassTest = Test.extend({
 		Assert.true(Object.hasKey(specialTestChildClassInstance, 'parentNullClassVariable'), 'inherited parentNullClassVariable key');
 		Assert.true(Object.hasKey(specialTestChildClassInstance, 'parentArrayClassVariable'), 'inherited parentArrayClassVariable key');
 		Assert.true(Object.hasKey(specialTestChildClassInstance, 'parentObjectClassVariable'), 'inherited parentObjectClassVariable key');
+		Assert.true(Object.hasKey(specialTestChildClassInstance, 'parentClassInstanceClassVariable'), 'inherited parentClassInstanceClassVariable key');
 
 		Assert.true(Object.hasKey(specialTestChildClassInstance, 'childClassConstruct'), 'childClassConstruct key');
 		Assert.true(Object.hasKey(specialTestChildClassInstance, 'childStringClassVariable'), 'childStringClassVariable key');
@@ -125,6 +132,9 @@ ClassTest = Test.extend({
 		//Console.out(specialTestParentClassInstance.parentContainedReferenceClassVariable);
 		//Console.out(specialTestChildClassInstance.parentContainedReferenceClassVariable);
 		Assert.true(specialTestChildClassInstance.parentContainedReferenceClassVariable.isEmpty(), 'child object references are contained to their instantiation and are not tied to parent object references');
+
+		specialTestParentClassInstance.parentClassInstanceClassVariable.major = 2;
+		Assert.equal(specialTestChildClassInstance.parentClassInstanceClassVariable, 1, 'inherited class instance variables are localized to their own memory');
 		
 		Assert.equal(specialTestChildClassInstance.parentMethodToOverride(), 'overridden!', 'overridden class method');
 		Assert.equal(specialTestChildClassInstance.parentMethodToUse(), 'child use me', 'parent class method');
@@ -148,6 +158,14 @@ ClassTest = Test.extend({
 		Assert.strictEqual(SpecialTestParentClass.childStaticMethodDefinedOutOfClass, undefined, 'child class static method defined out of Class.extend called from class is not available on parent');
 		Assert.strictEqual(specialTestParentClassInstance.childStaticMethodDefinedInClass, undefined, 'child class static method defined in Class.extend called from instance is not available on parent');
 		Assert.strictEqual(specialTestParentClassInstance.childStaticMethodDefinedOutOfClass, undefined, 'child class static method defined out of Class.extend called from instance is not available on parent');
+
+		// Test two parents
+		var specialTestParentClassInstance1 = new SpecialTestParentClass();
+		var specialTestParentClassInstance2 = new SpecialTestParentClass();
+
+		specialTestParentClassInstance2.parentClassInstanceClassVariable.major = 2;
+		Assert.equal(specialTestParentClassInstance1.parentClassInstanceClassVariable.toString(), '1.0', 'class instance class variables are in their own memory space');
+		Assert.equal(specialTestParentClassInstance2.parentClassInstanceClassVariable.toString(), '2.0', 'class instance class variables are in their own memory space');
 	},
 
 	testGenerators: function*() {
@@ -168,7 +186,7 @@ ClassTest = Test.extend({
 		Assert.equal(actual, expected, 'generator class methods return value when yielded')
 
 		actual = specialTestClassInstance.generator();
-		Assert.true(Class.is(actual, Promise), 'generator class methods return promise when not yielded');
+		Assert.true(Class.isInstance(actual, Promise), 'generator class methods return promise when not yielded');
 	},
 
 });

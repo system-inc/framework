@@ -62,12 +62,12 @@ FunctionTest = Test.extend({
 
 	testDelay: function*() {
 		var stopwatch = new Stopwatch();
-		yield Function.delay(10);
+		yield Function.delay(50);
 		stopwatch.stop();
 		//Console.out(stopwatch.elapsedTime);
 
 		// http://stackoverflow.com/questions/21097421/what-is-the-reason-javascript-settimeout-is-so-inaccurate
-		Assert.greaterThanOrEqualTo(stopwatch.elapsedTime, 5, 'delaying 10 milliseconds should make the stopwatch elapsed time at least 5 milliseconds');
+		Assert.greaterThanOrEqualTo(stopwatch.elapsedTime, 25, 'delaying 50 milliseconds should make the stopwatch elapsed time at least 25 milliseconds');
 	},
 
 });

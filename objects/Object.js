@@ -22,6 +22,22 @@ Object.prototype.hasKey = function(key) {
 	return Object.hasKey(this, key);
 }
 
+Object.containsClassInstance = function(object) {
+    var containsClassInstance = object.constructor.toString().startsWith('function Class()');
+
+    if(!containsClassInstance && (Object.is(object) || Array.is(object))) {
+        object.each(function(key, value) {
+            containsClassInstance = Object.containsClassInstance(value);
+
+            if(containsClassInstance) {
+                return false; // break
+            }
+        });
+    }
+
+    return containsClassInstance;
+}
+
 Object.prototype.getValueForKey = function(key, caseSensitive) {
 	caseSensitive = caseSensitive === false ? false : true;
 	var result = null;
@@ -85,19 +101,36 @@ Object.prototype.each = function(callback, context) {
 	}	
 }
 
-Object.clone = function(object) {
-	var clone = object;
- 
-    if(object && typeof(object) === 'object') {
-        clone = Object.prototype.toString.call(object) === '[object Array]' ? [] : {};
-        for(var key in object) {
-        	// This code 
-        	if(object.hasOwnProperty(key)) {
-        		clone[key] = Object.clone(object[key]);	
+Object.clone = function(value) {
+    var clone;
+
+    // Primitives are just cloned by assignment
+    if(Primitive.is(value)) {
+        clone = value;
+    }
+    // If the value is a class instance, use Object.create to clone the instance
+    else if(Class.isInstance(value)) {
+        clone = Object.create(value);
+        for(var key in value) {
+            clone[key] = value[key];
+        }
+    }
+    // If we have an array or object
+    else if(value && typeof(value) === 'object') {
+        // Start out with a simple array or object
+        clone = Object.prototype.toString.call(value) === '[object Array]' ? [] : {};
+
+        // Call Object.clone for each item in the array or object
+        for(var key in value) {
+        	if(value.hasOwnProperty(key)) {
+        		clone[key] = Object.clone(value[key]);	
         	}
         }
     }
- 
+    else {
+        throw new Error('Object is not clonable.');
+    }
+
     return clone;
 }
 

@@ -125,6 +125,21 @@ ObjectTest = Test.extend({
 
 		Assert.deepEqual(object, clone, 'simple object');
 		Assert.notStrictEqual(object, clone, 'simple object should not point to same reference');
+
+		// Test cloning class instances
+		var version = new Version('1.0');
+		var versionClone = Object.clone(version);
+
+		// Change a property on the source
+		version.major = 2;
+
+		Assert.notStrictEqual(version, versionClone, 'instance clones are not in the same memory');
+		Assert.notEqual(version.major, versionClone.major, 'properties of instance clones are not in the same memory');
+		Assert.true(versionClone instanceof Class, 'instance clones are instanceof Class');
+		Assert.true(versionClone instanceof Version, 'instance clones are instanceof their subclass');
+		Assert.true(Class.isInstance(versionClone), 'instance clones pass Class.isInstance');
+		Assert.equal(version.toString(), '2.0', 'instance clones receive prototypes correctly');
+		Assert.equal(versionClone.toString(), '1.0', 'instance clones receive prototypes correctly');
 	},
 
 	testPrototypeClone: function() {
