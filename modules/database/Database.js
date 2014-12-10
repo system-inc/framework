@@ -240,7 +240,7 @@ Database = Class.extend({
 
 	},
 
-	getSchema: function*() {
+	getMySqlSchema: function*() {
 		var schema = {};
 
 		// Set the name
@@ -257,9 +257,97 @@ Database = Class.extend({
 		// Set the tables
 		schema.tables = [];
 		yield this.tables.each(function*(index, table) {
-			var tableSchema = yield table.getSchema();
+			var tableSchema = yield table.getMySqlSchema();
 			schema.tables.push(tableSchema);
 		}, this);
+
+		return schema;
+	},
+
+	getSchema: function*() {
+		// Get the MySQL schema
+		var mySqlSchema = yield this.getMySqlSchema();
+
+		// Convert the MySQL schema into a Schema
+		var schema = new Schema();
+		schema.name = mySqlSchema.name.toCamelCase();
+
+		// Loop through tables
+		mySqlSchema.tables.each(function(tableIndex, table) {
+			var schemaModel = new SchemaModel();
+			schemaModel.name = table.name.toCamelCase();
+			schemaModel.description = table.comment;
+			
+			// Loop through the columns
+			table.columns.each(function(columnIndex, column) {
+				var schemaModelProperty = new SchemaModelProperty();
+				schemaModelProperty.name = column.name.toCamelCase();
+				schemaModelProperty.description = column.comment;
+
+				//dataType: "int",
+				//dataLength: "11",
+				schemaModelProperty.type = SchemaModelProperty.convertType(column.dataType);
+
+				schemaModelProperty.default = column.default;
+				schemaModelProperty.required = (column.nullable == false);
+
+				// Set key based on naming convention
+				if(schemaModelProperty.name == 'id' || schemaModelProperty.name.endsWith('Id')) {
+					schemaModelProperty.key = true;
+				}
+				else {
+					schemaModelProperty.key = false;
+				}
+
+				//schemaModel.properties[schemaModelProperty.name] = schemaModelProperty;
+			});
+
+			// Loop through the indexes
+			table.indexes.each(function(indexIndex, index) {
+				var schemaModelIndex = {};
+				schemaModelIndex.properties = [];
+				index.columns.each(function(indexColumnIndex, indexColumn) {
+					schemaModelIndex.properties.push(indexColumn.toCamelCase());
+				});
+				schemaModelIndex.unique = index.unique;
+				schemaModelIndex.description = index.comment;
+
+				//schemaModel.indexes.push(schemaModelIndex);
+			});
+
+			// Loop through this table's relationships
+			table.relationships.each(function(relationshipIndex, relationship) {
+				var relationshipToAdd = {};
+				relationshipToAdd.model = relationship.referencedTableName.toCamelCase();
+				relationshipToAdd.key = relationship.column.toCamelCase();
+
+				schemaModel.relationships.hasOne.push(relationshipToAdd);
+			});
+
+			// Loop through all relationships
+			mySqlSchema.tables.each(function(relationshipsLoopTableIndex, relationshipsLoopTable) {
+				relationshipsLoopTable.relationships.each(function(relationshipsLoopRelationshipsIndex, relationshipsLoopRelationship) {
+					// If the relationship points to this model
+					if(relationshipsLoopRelationship.referencedTableName.toCamelCase() == schemaModel.name) {
+						var relationshipToAdd = {};
+						relationshipToAdd.model = relationshipsLoopTable.name.toCamelCase();
+						relationshipToAdd.key = relationshipsLoopRelationship.column.toCamelCase();
+
+						schemaModel.relationships.belongsToMany.push(relationshipToAdd);
+					}
+				});
+			});
+			
+			
+			//// Relationships
+			//hasOne: [],
+			//hasMany: [],
+			//belongsTo: [],
+			//belongsToMany: [],
+
+
+			schema.models[schemaModel.name] = schemaModel;
+		});
 
 		return schema;
 	},

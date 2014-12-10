@@ -211,7 +211,7 @@ DatabaseTable = Class.extend({
 
 	},
 
-	getSchema: function*() {
+	getMySqlSchema: function*() {
 		var schema = {};
 
 		schema.name = this.name;
@@ -232,7 +232,7 @@ DatabaseTable = Class.extend({
 		// Set the columns
 		schema.columns = [];
 		yield this.columns.each(function*(index, column) {
-			var columnSchema = yield column.getSchema();
+			var columnSchema = yield column.getMySqlSchema();
 			schema.columns.push(columnSchema);
 		}, this);
 
@@ -242,7 +242,7 @@ DatabaseTable = Class.extend({
 		// Set the indexes
 		schema.indexes = [];
 		yield this.indexes.each(function*(indexIndex, index) {
-			var indexSchema = yield index.getSchema();
+			var indexSchema = yield index.getMySqlSchema();
 			schema.indexes.push(indexSchema);
 		}, this);
 
@@ -252,7 +252,7 @@ DatabaseTable = Class.extend({
 		// Set the relationships
 		schema.relationships = [];
 		yield this.relationships.each(function*(index, relationship) {
-			var relationshipSchema = yield relationship.getSchema();
+			var relationshipSchema = yield relationship.getMySqlSchema();
 			schema.relationships.push(relationshipSchema);
 		}, this);
 

@@ -26,3 +26,7 @@ ModelClassManager.addPropertiesToModelClass = function(properties, modelClass) {
 
 	return modelClass;
 }
+
+ModelClassManager.generateModelFromSchema = function(schema) {
+	
+}

@@ -19,9 +19,9 @@ Main = Controller.extend({
 		//});
 		//var response = yield frameworkTestDatabase.query('SELECT * FROM `user1`');
 		//var response = yield FrameworkTestDatabase.query('SELECT * FROM `user`');
-		//var response = yield FrameworkTestDatabase.getSchema();
+		return yield FrameworkTestDatabase.getSchema();
 		//Console.out(FrameworkTestDatabase.statistics);
-		return 'Hi';
+		//return 'Hi';
 		//return response;
 
 		//return String.random(1024 * 1, '01');

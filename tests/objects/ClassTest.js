@@ -20,6 +20,7 @@ ClassTest = Test.extend({
 			parentArrayClassVariable: [],
 			parentObjectClassVariable: {},
 			parentClassInstanceClassVariable: new Version('1.0'),
+			parentTimeClassVariable: new Time(),
 			parentContainedReferenceClassVariable: {},
 
 			construct: function() {
@@ -87,6 +88,7 @@ ClassTest = Test.extend({
 		Assert.true(Object.hasKey(specialTestParentClassInstance, 'parentArrayClassVariable'), 'parentArrayClassVariable key');
 		Assert.true(Object.hasKey(specialTestParentClassInstance, 'parentObjectClassVariable'), 'parentObjectClassVariable key');
 		Assert.true(Object.hasKey(specialTestParentClassInstance, 'parentClassInstanceClassVariable'), 'parentClassInstanceClassVariable key');
+		Assert.true(Object.hasKey(specialTestParentClassInstance, 'parentTimeClassVariable'), 'parentTimeClassVariable key');
 
 		Assert.equal(specialTestParentClassInstance.parentClassConstruct, 'constructed', 'parentClassConstruct key set correctly');
 		Assert.equal(specialTestParentClassInstance.parentStringClassVariable, 'string', 'parentStringClassVariable key set correctly');
@@ -135,6 +137,8 @@ ClassTest = Test.extend({
 
 		specialTestParentClassInstance.parentClassInstanceClassVariable.major = 2;
 		Assert.equal(specialTestChildClassInstance.parentClassInstanceClassVariable, 1, 'inherited class instance variables are localized to their own memory');
+
+		Assert.equal(specialTestChildClassInstance.parentTimeClassVariable.toString(), specialTestChildClassInstance.parentTimeClassVariable.toString(), 'inherited time class instance variables are the same time');
 		
 		Assert.equal(specialTestChildClassInstance.parentMethodToOverride(), 'overridden!', 'overridden class method');
 		Assert.equal(specialTestChildClassInstance.parentMethodToUse(), 'child use me', 'parent class method');
@@ -166,6 +170,10 @@ ClassTest = Test.extend({
 		specialTestParentClassInstance2.parentClassInstanceClassVariable.major = 2;
 		Assert.equal(specialTestParentClassInstance1.parentClassInstanceClassVariable.toString(), '1.0', 'class instance class variables are in their own memory space');
 		Assert.equal(specialTestParentClassInstance2.parentClassInstanceClassVariable.toString(), '2.0', 'class instance class variables are in their own memory space');
+
+		//Console.out(specialTestParentClassInstance1.parentTimeClassVariable);
+		//Console.out(specialTestParentClassInstance2.parentTimeClassVariable);
+		Assert.equal(specialTestParentClassInstance1.parentTimeClassVariable.toString(), specialTestParentClassInstance2.parentTimeClassVariable.toString(), 'time class instance variables are the same time');
 	},
 
 	testGenerators: function*() {

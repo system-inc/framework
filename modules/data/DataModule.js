@@ -1,5 +1,7 @@
 require('./Data');
 require('./Schema');
+require('./SchemaModel');
+require('./SchemaModelProperty');
 require('./Model');
 require('./ModelProperty');
 require('./ModelList');

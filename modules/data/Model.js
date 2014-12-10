@@ -48,6 +48,7 @@ Model = Class.extend({
 		this.properties.each(function(propertyName, property) {
 			if(property.isChanged) {
 				isChanged = true;
+
 				return false; // break
 			}
 		}.bind(this));
@@ -89,9 +90,18 @@ Model = Class.extend({
 	validate: function*() {
 		yield this.beforeValidate();
 
+		var validationErrors = [];
+		yield this.properties.each(function*(propertyName, property) {
+			var validationError = yield property.validate();
 
+			if(validationError) {
+				validationErrors.push(validationError);
+			}
+		});
 
 		yield this.afterValidate();
+
+		return validationErrors;
 	},
 
 	afterValidate: function*() {

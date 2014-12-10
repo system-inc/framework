@@ -57,7 +57,7 @@ DatabaseTableIndex = Class.extend({
 
 	},
 
-	getSchema: function*() {
+	getMySqlSchema: function*() {
 		var schema = {};
 
 		schema.name = this.name;
