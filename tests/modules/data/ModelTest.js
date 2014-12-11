@@ -18,10 +18,7 @@ ModelTest = Test.extend({
 
 	testSave: function() {
 
-		// Create a new model
-		var TestModel = Model.extend({
-			name: 'TestModel',
-		});
+		var testModel = new this.testModel();
 
 	},
 

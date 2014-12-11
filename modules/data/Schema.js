@@ -1,9 +1,9 @@
 Schema = Class.extend({
 
 	name: null,
-	description: null,
+	description: '',
 
 	// Schema models
-	models: {},
+	models: [],
 
 });

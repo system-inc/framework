@@ -270,12 +270,12 @@ Database = Class.extend({
 
 		// Convert the MySQL schema into a Schema
 		var schema = new Schema();
-		schema.name = mySqlSchema.name.toCamelCase();
+		schema.name = mySqlSchema.name.toCamelCase(true);
 
 		// Loop through tables
 		mySqlSchema.tables.each(function(tableIndex, table) {
 			var schemaModel = new SchemaModel();
-			schemaModel.name = table.name.toCamelCase();
+			schemaModel.name = table.name.toCamelCase(true);
 			schemaModel.description = table.comment;
 			
 			// Loop through the columns
@@ -284,9 +284,8 @@ Database = Class.extend({
 				schemaModelProperty.name = column.name.toCamelCase();
 				schemaModelProperty.description = column.comment;
 
-				//dataType: "int",
-				//dataLength: "11",
-				schemaModelProperty.type = SchemaModelProperty.convertType(column.dataType);
+				schemaModelProperty.type = SchemaModelProperty.getTypeFromMySqlSchema(column.dataType);
+				schemaModelProperty.typeOptions = SchemaModelProperty.getTypeOptionsFromMySqlSchema(column.dataType, column.dataLength, column.autoIncrement, column.unsigned, column.zeroFill);
 
 				schemaModelProperty.default = column.default;
 				schemaModelProperty.required = (column.nullable == false);
@@ -299,7 +298,7 @@ Database = Class.extend({
 					schemaModelProperty.key = false;
 				}
 
-				//schemaModel.properties[schemaModelProperty.name] = schemaModelProperty;
+				schemaModel.properties.push(schemaModelProperty);
 			});
 
 			// Loop through the indexes
@@ -309,44 +308,42 @@ Database = Class.extend({
 				index.columns.each(function(indexColumnIndex, indexColumn) {
 					schemaModelIndex.properties.push(indexColumn.toCamelCase());
 				});
-				schemaModelIndex.unique = index.unique;
+				schemaModelIndex.options = {};
+				if(index.unique) {
+					schemaModelIndex.options.unique = true;
+				}
 				schemaModelIndex.description = index.comment;
 
-				//schemaModel.indexes.push(schemaModelIndex);
+				schemaModel.indexes.push(schemaModelIndex);
 			});
 
 			// Loop through this table's relationships
 			table.relationships.each(function(relationshipIndex, relationship) {
 				var relationshipToAdd = {};
-				relationshipToAdd.model = relationship.referencedTableName.toCamelCase();
-				relationshipToAdd.key = relationship.column.toCamelCase();
+				relationshipToAdd.type = 'hasOne';
+				relationshipToAdd.model = relationship.referencedTableName.toCamelCase(true);
+				relationshipToAdd.property = relationship.column.toCamelCase();
 
-				schemaModel.relationships.hasOne.push(relationshipToAdd);
+				schemaModel.relationships.push(relationshipToAdd);
 			});
 
 			// Loop through all relationships
 			mySqlSchema.tables.each(function(relationshipsLoopTableIndex, relationshipsLoopTable) {
 				relationshipsLoopTable.relationships.each(function(relationshipsLoopRelationshipsIndex, relationshipsLoopRelationship) {
 					// If the relationship points to this model
-					if(relationshipsLoopRelationship.referencedTableName.toCamelCase() == schemaModel.name) {
+					if(relationshipsLoopRelationship.referencedTableName.toCamelCase(true) == schemaModel.name) {
 						var relationshipToAdd = {};
-						relationshipToAdd.model = relationshipsLoopTable.name.toCamelCase();
-						relationshipToAdd.key = relationshipsLoopRelationship.column.toCamelCase();
+						relationshipToAdd.type = 'belongsTo';
+						relationshipToAdd.model = relationshipsLoopTable.name.toCamelCase(true);
+						relationshipToAdd.property = relationshipsLoopRelationship.column.toCamelCase();
 
-						schemaModel.relationships.belongsToMany.push(relationshipToAdd);
+						schemaModel.relationships.push(relationshipToAdd);
 					}
 				});
 			});
-			
-			
-			//// Relationships
-			//hasOne: [],
-			//hasMany: [],
-			//belongsTo: [],
-			//belongsToMany: [],
 
 
-			schema.models[schemaModel.name] = schemaModel;
+			schema.models.push(schemaModel);
 		});
 
 		return schema;

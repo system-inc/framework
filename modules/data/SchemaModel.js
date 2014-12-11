@@ -1,21 +1,16 @@
 SchemaModel = Class.extend({
 
 	name: null,
-	description: null,
+	description: '',
 
 	// Schema properties
-	properties: {},
+	properties: [],
 
 	// Indexes
 	indexes: [],
 
 	// Relationships
-	relationships: {
-		hasOne: [],
-		hasMany: [],
-		belongsTo: [],
-		belongsToMany: [],
-	},	
+	relationships: [],
 
 	// Methods
 	toModel: function() {
