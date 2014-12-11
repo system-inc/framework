@@ -2,8 +2,8 @@ ModelClassManager = Class.extend({
 });
 
 // Static methods
-ModelClassManager.addPropertyToModelClass = function(modelProperty, modelClass) {
-	// Add the new property to properties
+ModelClassManager.addModelPropertyToModelClass = function(modelProperty, modelClass) {
+	// Add the model property to properties
 	modelClass.prototype.properties[modelProperty.name] = modelProperty;
 	
 	// Add the getter
@@ -19,14 +19,27 @@ ModelClassManager.addPropertyToModelClass = function(modelProperty, modelClass) 
 	return modelClass;
 }
 
-ModelClassManager.addPropertiesToModelClass = function(properties, modelClass) {
-	properties.each(function(modelPropertyName, modelProperty) {
-		modelClass = ModelClassManager.addPropertyToModelClass(modelProperty, modelClass);
+ModelClassManager.addModelPropertiesToModelClass = function(modelProperties, modelClass) {
+	modelProperties.each(function(modelPropertyIndex, modelProperty) {
+		modelClass = ModelClassManager.addModelPropertyToModelClass(modelProperty, modelClass);
 	});
 
 	return modelClass;
 }
 
-ModelClassManager.generateModelFromSchema = function(schema) {
-	
+ModelClassManager.generateModelClassFromSchemaModel = function(schemaModel) {
+	var modelClass = Model.extend({
+		'name': schemaModel.name,
+	});
+
+	// Generate all of the the ModelProperty objects
+	var modelProperties = [];
+	schemaModel.properties.each(function(schemaModelPropertyIndex, schemaModelProperty) {
+		modelProperties.push(ModelProperty.constructFromSchemaModelProperty(schemaModelProperty));
+	});
+
+	// Add the ModelProperty objects to the modelClass
+	modelClass = ModelClassManager.addModelPropertiesToModelClass(modelProperties, modelClass);
+
+	return modelClass;
 }

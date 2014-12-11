@@ -1,23 +1,15 @@
 ModelProperty = Class.extend({
 
 	name: null,
+	description: '',
+	type: null,
+	typeOptions: {},
+	default: null,
+	required: null,
+	key: null,
+
 	value: null,
 	previousValue: null,
-	description: '',
-	
-	isChanged: null,
-	isNew: null,
-
-	// WHAT TYPES DO I WANT TO SUPPORT?
-	type: undefined, // Supported types 'integer', 'time', 'date', 'string', 'boolean'
-
-	// USE THIS?
-	length: null,
-
-	// USE THIS?
-	required: null,
-
-	// ADD all the data type stuff from SCHEMA
 
 	validationRules: [],
 
@@ -36,23 +28,55 @@ ModelProperty = Class.extend({
 	afterValidate: function*() {
 	},
 
-	beforeChange: function*() {
-	},
-
 	setValue: function(value) {
-		//yield this.beforeChange();
+		// Don't do anything if the new value is the same as the current value
+		if(value == this.value) {
+			return;
+		}
 
 		this.previousValue = this.value;
 		this.value = value;
-
-		if(this.previousValue != this.value) {
-			this.isChanged = true;
-		}		
-
-		//yield this.afterChange();
 	},
 
-	afterChange: function*() {
+	isChanged: function() {
+		var isChanged = false;
+
+		if(this.value != this.previousValue) {
+			isChanged = true;
+		}
+
+		return isChanged;
 	},
 
 });
+
+// Static methods
+ModelProperty.constructFromSchemaModelProperty = function(schemaModelProperty) {
+	var modelProperty = new ModelProperty(schemaModelProperty.name);
+
+	if(schemaModelProperty.description) {
+		modelProperty.description = schemaModelProperty.description;
+	}
+
+	if(schemaModelProperty.type) {
+		modelProperty.type = schemaModelProperty.type;
+	}
+
+	if(schemaModelProperty.typeOptions) {
+		modelProperty.typeOptions = schemaModelProperty.typeOptions;
+	}
+
+	if(schemaModelProperty.default) {
+		modelProperty.default = schemaModelProperty.default;
+	}
+
+	if(schemaModelProperty.required) {
+		modelProperty.required = schemaModelProperty.required;
+	}
+
+	if(schemaModelProperty.key) {
+		modelProperty.key = schemaModelProperty.key;
+	}
+
+	return modelProperty;
+}

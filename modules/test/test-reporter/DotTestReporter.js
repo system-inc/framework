@@ -21,7 +21,7 @@ DotTestReporter = TestReporter.extend({
 
 	startedRunningTests: function(data) {
 		// Clear the terminal
-		Terminal.clear();
+		//Terminal.clear();
 	},
 
 	startedRunningTest: function(data) {

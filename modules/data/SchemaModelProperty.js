@@ -8,7 +8,6 @@ SchemaModelProperty = Class.extend({
 	required: null,
 	key: null,
 
-	// Methods
 	toModelProperty: function() {
 
 	},
@@ -58,17 +57,8 @@ SchemaModelProperty.getTypeFromMySqlSchema = function(dataType) {
 SchemaModelProperty.getTypeOptionsFromMySqlSchema = function(dataType, dataLength, autoIncrement, unsigned, zeroFill) {
 	var typeOptions = {};
 
-	// Boolean, stored as TINYINT(1)
-	if(dataType == 'bool' || dataType == 'boolean') {
-	}
-	// Data, stored as LONGBLOB
-	else if(dataType == 'tinyblob' || dataType == 'blob' || dataType == 'mediumblob' || dataType == 'longblob' || dataType == 'binary' || dataType == 'varbinary') {
-	}
-	// Date, stored as DATE
-	else if(dataType == 'date') {
-	}
 	// Enumeration, stored as ENUM
-	else if(dataType == 'enum') {
+	if(dataType == 'enum') {
 		// Handle enumeration values
 		var enumerationValues = dataLength.split(',');
 		enumerationValues.each(function(index, element) {
@@ -81,7 +71,6 @@ SchemaModelProperty.getTypeOptionsFromMySqlSchema = function(dataType, dataLengt
 		if(autoIncrement) {
 			typeOptions.increment = true;
 		}
-
 		if(unsigned) {
 			typeOptions.unsigned = true;
 		}
@@ -89,17 +78,11 @@ SchemaModelProperty.getTypeOptionsFromMySqlSchema = function(dataType, dataLengt
 			typeOptions.zeroFill = true;
 		}
 	}
-	// Number, stored as DECIMAL(65,30) (65 total digits, 30 used for precision after the decimal)
-	else if(dataType == 'decimal' || dataType == 'double' || dataType == 'float' || dataType == 'long') {
-	}
 	// String, stored as VARCHAR(length (128 by default)), MySQL automatically converts to *TEXT type based on the length passed in
 	else if(dataType == 'varchar' || dataType == 'char' || dataType == 'text' || dataType == 'tinytext' || dataType == 'mediumtext' || dataType == 'longtext') {
 		if(dataLength) {
 			typeOptions.length = dataLength;
 		}
-	}
-	// Time, stored as DATETIME
-	else if(dataType == 'datetime' || dataType == 'time' || dataType == 'timestamp' || dataType == 'year') {
 	}
 
 	return typeOptions;

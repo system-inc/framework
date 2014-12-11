@@ -19,7 +19,10 @@ Main = Controller.extend({
 		//});
 		//var response = yield frameworkTestDatabase.query('SELECT * FROM `user1`');
 		//var response = yield FrameworkTestDatabase.query('SELECT * FROM `user`');
-		return yield FrameworkTestDatabase.getSchema();
+		var databaseSchema = yield FrameworkTestDatabase.getSchema();
+		var schema = Schema.constructFromDatabaseSchema(databaseSchema);
+
+		return schema;
 		//Console.out(FrameworkTestDatabase.statistics);
 		//return 'Hi';
 		//return response;

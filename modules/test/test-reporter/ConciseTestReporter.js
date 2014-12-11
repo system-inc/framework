@@ -20,7 +20,7 @@ ConciseTestReporter = TestReporter.extend({
 
 	startedRunningTests: function(data) {
 		// Clear the terminal
-		Terminal.clear();
+		//Terminal.clear();
 
 		// Tell the user what we are doing
 		Console.out('Running '+data.testMethodCount+' '+(data.testMethodCount == 1 ? 'test' : 'tests')+' in '+data.testCount+' test '+(data.testCount == 1 ? 'class' : 'classes')+'...');

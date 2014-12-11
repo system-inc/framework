@@ -1,3 +1,4 @@
 tests/projects/web-server/logs/*
+tests/logs/*
 .DS_Store
 npm-debug.log

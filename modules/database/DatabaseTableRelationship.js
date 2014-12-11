@@ -51,7 +51,7 @@ DatabaseTableRelationship = Class.extend({
 
 	},
 
-	getMySqlSchema: function*() {
+	getSchema: function*() {
 		var schema = {};
 
 		schema.name = this.name;

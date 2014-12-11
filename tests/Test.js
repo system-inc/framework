@@ -1,6 +1,7 @@
 // Require Framework and instantiate an empty project
 require('./../Framework.js');
-Project = new Framework();
+Project = new Framework(__dirname);
+Project.initialize();
 
 // Parse the command-line arguments
 var parsedArguments = Arguments.parse(Node.Process.argv, {

@@ -1,24 +1,6 @@
 ModelClassManagerTest = Test.extend({
 
-	databaseSettings: {
-		host: 'localhost',
-		username: 'framework_test',
-		password: 'framework_test',
-		databaseName: 'framework_test',
-	},
-
-	before: function() {
-		Project.settings.set('modules.database', {
-			databases: {
-				'frameworkTest': this.databaseSettings.clone(),
-			},
-		});
-
-		Module.load('Database');
-		Module.initialize('Database');
-	},
-
-	testAddPropertyToModel: function() {
+	testAddPropertyToModel: function*() {
 		// Create a new model
 		var TestModel = Model.extend({
 			name: 'TestModel',
@@ -28,7 +10,7 @@ ModelClassManagerTest = Test.extend({
 		var testModelProperty = new ModelProperty('test');
 
 		// Add the model property to the class
-		TestModel = ModelClassManager.addPropertyToModelClass(testModelProperty, TestModel);
+		TestModel = ModelClassManager.addModelPropertyToModelClass(testModelProperty, TestModel);
 
 		// Instantiate a new model
 		var testModel = new TestModel();
@@ -39,12 +21,7 @@ ModelClassManagerTest = Test.extend({
 		// Call the getter
 		var actual = testModel.getTest();
 
-		Assert.equal(actual, 'test value', 'getters and setters work');
-	},
-
-	testGenerateModelsFromDatabase: function*() {
-		var schema = yield FrameworkTestDatabase.getSchema();
-		Console.out(schema);
+		Assert.equal(actual, 'test value', 'getting and setting a property');
 	},
 
 });

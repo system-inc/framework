@@ -46,7 +46,7 @@ Model = Class.extend({
 		var isChanged = false;
 
 		this.properties.each(function(propertyName, property) {
-			if(property.isChanged) {
+			if(property.isChanged()) {
 				isChanged = true;
 
 				return false; // break
