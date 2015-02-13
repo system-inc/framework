@@ -3,7 +3,16 @@ Object.is = function(value) {
 }
 
 Object.isEmpty = function(object) {
-	if(Array.is(object) || String.is(object)) {
+    if(object === null) {
+        return true;
+    }
+    else if(object === undefined) {
+        return true;
+    }
+    else if(object == '') {
+        return true;
+    }
+	else if(Array.is(object) || String.is(object)) {
     	return object.length === 0;
     }
 
