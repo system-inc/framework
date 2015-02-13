@@ -61,6 +61,9 @@ WebServer = Server.extend({
 		if(this.settings.get('logs.responses.enabled')) {
 			this.logs.responses = new Log(this.settings.get('logs.responses.directory'), this.settings.get('logs.responses.nameWithoutExtension'));
 		}
+
+		// Allow HTTPS files to be configured in settings just using a file name
+		this.resolveHttpsProtocolFiles();
 		
 		// Load the routes into the router
 		this.router = new Router(this);
@@ -68,6 +71,22 @@ WebServer = Server.extend({
 
 		// Start listening
 		this.listen(this.settings.get('protocols'));
+	},
+	
+	resolveHttpsProtocolFiles: function() {
+		var httpsSettings = this.settings.get('protocols.https');
+		
+		// Key file
+		if(!Object.isEmpty(httpsSettings.keyFile) && !httpsSettings.keyFile.startsWith(Node.Path.separator)) {
+			httpsSettings.keyFile = Project.directory+'settings'+Node.Path.separator+'environment'+Node.Path.separator+'modules'+Node.Path.separator+'web-server'+Node.Path.separator+'https'+Node.Path.separator+httpsSettings.keyFile;
+		}
+
+		// Certificate file
+		if(!Object.isEmpty(httpsSettings.certificateFile) && !httpsSettings.certificateFile.startsWith(Node.Path.separator)) {
+			httpsSettings.certificateFile = Project.directory+'settings'+Node.Path.separator+'environment'+Node.Path.separator+'modules'+Node.Path.separator+'web-server'+Node.Path.separator+'https'+Node.Path.separator+httpsSettings.certificateFile;
+		}
+
+		this.settings.set('protocols.https', httpsSettings);
 	},
 
 	listen: function(protocols) {
