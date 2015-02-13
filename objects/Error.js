@@ -145,8 +145,10 @@ StackTrace = Class.extend({
 	},
 
 	shift: function(count) {
-		for(var i = 0; i < count; i++) {
-			this.callSites.shift();
+		if(this.callSites) {
+			for(var i = 0; i < count; i++) {
+				this.callSites.shift();
+			}
 		}
 	},
 
@@ -162,7 +164,10 @@ StackTrace = Class.extend({
 			columnNumber: null,
 		};
 
-		var callSite = this.callSites[index];
+		if(this.callSites) {
+			var callSite = this.callSites[index];
+		}
+				
 		if(callSite) {
 			// Calling callSite.getTypeName() can sometimes throw an error for reasons I don't know, so I use this try catch block to fix it
 			try {
@@ -217,39 +222,41 @@ StackTrace = Class.extend({
 		}		
 		
 		// Generate the stack track string
-		for(var i = 0; i< this.callSites.length; i++) {
-			var callSite = this.callSites[i];
+		if(this.callSites) {
+			for(var i = 0; i< this.callSites.length; i++) {
+				var callSite = this.callSites[i];
 
-			string += "    at ";
+				string += "    at ";
 
-			// Calling callSite.getTypeName() can sometimes throw an error for reasons I don't know, so I use this try catch block to fix it
-			try {
-				string += callSite.getTypeName()+'.';	
-			}
-			catch(error) {
-				string += '<unknown>.';
-			}			
+				// Calling callSite.getTypeName() can sometimes throw an error for reasons I don't know, so I use this try catch block to fix it
+				try {
+					string += callSite.getTypeName()+'.';	
+				}
+				catch(error) {
+					string += '<unknown>.';
+				}			
 
-			if(callSite.getFunctionName()) {
-				string += callSite.getFunctionName()+' ';
-			}
-			else {
-				string += '<anonymous>'+' ';
-			}
-		
-			if(callSite.getMethodName() && callSite.getFunctionName() && callSite.getMethodName() != callSite.getFunctionName() && !(callSite.getFunctionName().indexOf('.'+callSite.getMethodName(), callSite.getFunctionName().length - ('.'+callSite.getMethodName()).length) !== -1)) {
-				string += '[as '+callSite.getMethodName()+'] ';
+				if(callSite.getFunctionName()) {
+					string += callSite.getFunctionName()+' ';
+				}
+				else {
+					string += '<anonymous>'+' ';
+				}
+			
+				if(callSite.getMethodName() && callSite.getFunctionName() && callSite.getMethodName() != callSite.getFunctionName() && !(callSite.getFunctionName().indexOf('.'+callSite.getMethodName(), callSite.getFunctionName().length - ('.'+callSite.getMethodName()).length) !== -1)) {
+					string += '[as '+callSite.getMethodName()+'] ';
+				}
+
+				string += '(';
+				string += callSite.getFileName()+':';
+				string += callSite.getLineNumber()+':';
+				string += callSite.getColumnNumber();
+				string += ')';
+				string += "\n";
 			}
 
-			string += '(';
-			string += callSite.getFileName()+':';
-			string += callSite.getLineNumber()+':';
-			string += callSite.getColumnNumber();
-			string += ')';
-			string += "\n";
+			return string;
 		}
-
-		return string;
 	},
 
 });
