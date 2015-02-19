@@ -121,7 +121,7 @@ Object.clone = function(value) {
     else if(Class.isInstance(value)) {
         clone = Object.create(value);
         for(var key in value) {
-            clone[key] = value[key];
+            clone[key] = Object.clone(value[key]);
         }
     }
     // If we have an array or object
@@ -136,8 +136,13 @@ Object.clone = function(value) {
         	}
         }
     }
+    // Functions are just cloned by assignment (do this down here?)
+    else if(Function.is(value)) {
+        clone = value;
+    }
     else {
-        throw new Error('Object is not clonable.');
+        Console.out(value);
+        throw new Error('Value is not clonable.');
     }
 
     return clone;
