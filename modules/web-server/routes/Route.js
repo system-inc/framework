@@ -33,6 +33,7 @@ Route = Class.extend({
 		// FileRoute
 		else if(routeSettings.type == 'file') {
 			route = new FileRoute();
+			route.inheritProperty('filePath', routeSettings, parent);
 		}
 		// ProxyRoute
 		else if(routeSettings.type == 'proxy') {

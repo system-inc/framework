@@ -146,23 +146,32 @@ RouteMatch = Class.extend({
 		// FileRoute
 		else if(this.route.type == 'file') {
 			// Build the file path
-			var path = Project.directory+'views'+this.request.url.path;
+			var filePath;
+
+			// If the file path is * or not set, use the URL path
+			if(this.route.filePath == '*' || !this.route.filePath) {
+				filePath = Project.directory+'views'+this.request.url.path;
+			}
+			// If a file path is specified, use it
+			else if(this.route.filePath) {
+				filePath = Project.directory+'views'+Node.Path.separator+this.route.filePath;
+			}
 
 			// Check if the file exists
-			if(yield File.exists(path)) {
+			if(yield File.exists(filePath)) {
 				// Set the Content-Type header
-				var contentType = File.getContentType(path);
+				var contentType = File.getContentType(filePath);
 				this.response.headers.set('Content-Type', contentType);
 				
 				// Read the file
-				var file = yield File.read(path);
+				var file = yield File.read(filePath);
 
 				// Set the response content
 				content = file;
 			}
 			// If the file doesn't exist, send a 404
 			else {
-				throw new NotFoundError(this.request.url.path+' not found.');
+				throw new NotFoundError(filePath+' not found.');
 			}
 		}
 
