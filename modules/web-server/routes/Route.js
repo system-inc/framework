@@ -34,6 +34,11 @@ Route = Class.extend({
 		else if(routeSettings.type == 'file') {
 			route = new FileRoute();
 			route.inheritProperty('filePath', routeSettings, parent);
+
+			// Make sure filePath is a normalized path
+			if(!Object.isEmpty(route.filePath)) {
+				route.filePath = Node.Path.normalize(route.filePath);
+			}
 		}
 		// ProxyRoute
 		else if(routeSettings.type == 'proxy') {

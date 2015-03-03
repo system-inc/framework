@@ -149,12 +149,12 @@ RouteMatch = Class.extend({
 			var filePath;
 
 			// If the file path is * or not set, use the URL path
-			if(this.route.filePath == '*' || !this.route.filePath) {
-				filePath = Project.directory+'views'+this.request.url.path;
+			if(this.route.filePath == '*' || Object.isEmpty(this.route.filePath)) {
+				filePath = Node.Path.normalize(Project.directory+'views'+this.request.url.path);
 			}
 			// If a file path is specified, use it
 			else if(this.route.filePath) {
-				filePath = Project.directory+'views'+Node.Path.separator+this.route.filePath;
+				filePath = Node.Path.normalize(Project.directory+'views'+Node.Path.separator+this.route.filePath);
 			}
 
 			// Check if the file exists
