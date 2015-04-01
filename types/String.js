@@ -231,16 +231,16 @@ String.cryptographicRandom = function*(length, characters) {
 String.prototype.sizeInBytes = function() {
 	var bytes = 0;
 	for(var i = 0; i < this.length; i++) {
-		var c = this.characterCodeAt(i);
+		var characterCode = this.characterCodeAt(i);
 		
 		// In accordance with http://en.wikipedia.org/wiki/UTF-8#Description
 		bytes +=
-			c === false ? 0 :
-			c <= 0x007f ? 1 :
-			c <= 0x07FF ? 2 :
-			c <= 0xFFFF ? 3 :
-			c <= 0x1FFFFF ? 4 :
-			c <= 0x3FFFFFF ? 5 : 6;
+			characterCode === false ? 0 :
+			characterCode <= 0x007f ? 1 :
+			characterCode <= 0x07FF ? 2 :
+			characterCode <= 0xFFFF ? 3 :
+			characterCode <= 0x1FFFFF ? 4 :
+			characterCode <= 0x3FFFFFF ? 5 : 6;
 	}
 
 	return bytes;
