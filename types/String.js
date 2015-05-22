@@ -189,36 +189,38 @@ String.prototype.toTitle = function() {
 }
 
 String.prototype.toDashes = function() {
-	var result;
+	var string;
 
 	// If we are all caps then turn the whole string to lowercase
 	if(this.isUppercase()) {
-		result = this.lowercase();
+		string = this.lowercase();
 	}
 	// If we aren't all caps, just lowercase the first character
 	else {
-		result = this.lowercaseFirstCharacter();
+		string = this.lowercaseFirstCharacter();
 	}
 
 	// If we have a string with spaces 'This Is My String';
-	if(result.contains(' ')) {
-		result = result.replace(/\s+/g, '-');
+	if(string.contains(' ')) {
+		string = string.replace(/\s+/g, '-');
 	}
 	// If we have a string with underscore 'This Is My String';
-	else if(result.contains('_')) {
-		result = result.replace(/_+/g, '-');
+	else if(string.contains('_')) {
+		string = string.replace(/_+/g, '-');
 	}
 	// Assume we have a string like 'ThisIsMyString' (no spaces)
 	else {
-		result = result.replace(/([A-Z])/g, function(match) {
+		string = string.replace(/([A-Z])/g, function(match) {
 			return '-'+match.toLowerCase();
 		});
 	}
 
-	// Lowercase the entire result
-	result = result.lowercase();
+	// Lowercase the entire string
+	string = string.lowercase();
 
-	return result;
+	string = string.replace("'", '');
+
+	return string;
 }
 
 String.prototype.toCamelCase = function(uppercaseFirstCharacter) {
@@ -238,16 +240,37 @@ String.prototype.toCamelCase = function(uppercaseFirstCharacter) {
 }
 
 String.prototype.toSpaces = function() {
-	var result = this.lowercaseFirstCharacter();
+	var string = this.lowercaseFirstCharacter();
 
 	// This is assuming we have a string like 'ThisIsMyString'
 	// We should make this function intelligent and autodetect other types like 'this_is_my_string' and 'this is my string'
-	result = result.replace(/([A-Z])/g, function(match) {
+	string = string.replace(/([A-Z])/g, function(match) {
 		//Console.out(arguments);
 		return ' '+match.toLowerCase();
 	});
 
-	return result;
+	return string;
+}
+
+String.prototype.toHtmlEntities = function() {
+	return this.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+String.prototype.indefiniteArticle = function(capitalizeFirstCharacter) {
+    var indefiniteArticle = null;
+    var vowels = ['a', 'e', 'i', 'o', 'u'];
+    
+    if(vowels.contains(this[0].lowercase())) {
+        indefiniteArticle = 'an';
+    }
+    else {
+        indefiniteArticle = 'a';
+    }
+    if(capitalizeFirstCharacter) {
+        indefiniteArticle = indefiniteArticle.uppercaseFirstCharacter();
+    }
+
+    return indefiniteArticle;
 }
 
 String.random = function(length, characters) {
