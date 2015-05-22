@@ -39,6 +39,27 @@ Array.prototype.unique = function() {
 	return Array.unique(this);
 }
 
+Array.prototype.sortObjectsByKeyValue = function(keyName, direction) {
+	if(direction === undefined) {
+		direction = 'ascending';
+	}
+
+	// Ascending, smallest to largest (default)
+	if(direction == 'ascending') {
+		this.sort(function(a, b) {
+			return a[keyName] > b[keyName];
+		});
+	}
+	// Descending, largest to smallest
+	else if(direction == 'descending') {
+		this.sort(function(a, b) {
+			return b[keyName] < a[keyName];
+		});
+	}
+
+	return this;
+}
+
 Array.prototype.sortByLength = function(descending) {
 	descending = (descending === undefined ? false : descending);
 
@@ -246,6 +267,10 @@ Array.prototype.delete = function(index) {
 
 	return this;
 };
+
+Array.prototype.random = function() {
+	return this[Number.random(0, this.length - 1)];
+}
 
 // Takes either a normal callback function or a generator callback function
 Array.prototype.each = function(callback, context) {

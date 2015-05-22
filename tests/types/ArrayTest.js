@@ -24,6 +24,74 @@ ArrayTest = Test.extend({
 		Assert.deepEqual(actual, expected, 'Removes duplicate elements');
 	},
 
+	testSortObjectsByKeyValue: function() {
+		var actual = [
+			{
+				'a': 10,
+				'b': 'originally first, should be third',
+			},
+			{
+				'a': 1,
+				'b': 'originally second, should be first',
+			},
+			{
+				'a': 5,
+				'b': 'originally third, should be second',
+			},
+		].sortObjectsByKeyValue('a');
+		//Console.out(actual);
+
+		var expected = [
+			{
+				'a': 1,
+				'b': 'originally second, should be first',
+			},
+			{
+				'a': 5,
+				'b': 'originally third, should be second',
+			},
+			{
+				'a': 10,
+				'b': 'originally first, should be third',
+			},
+		];
+
+		Assert.deepEqual(actual, expected, 'Sorts objects by key value where the value is a number');
+
+		actual = [
+			{
+				'a': 'c',
+				'b': 'originally first, should be third',
+			},
+			{
+				'a': 'a',
+				'b': 'originally second, should be first',
+			},
+			{
+				'a': 'b',
+				'b': 'originally third, should be second',
+			},
+		].sortObjectsByKeyValue('a');
+		//Console.out(actual);
+
+		expected = [
+			{
+				'a': 'a',
+				'b': 'originally second, should be first',
+			},
+			{
+				'a': 'b',
+				'b': 'originally third, should be second',
+			},
+			{
+				'a': 'c',
+				'b': 'originally first, should be third',
+			},
+		];
+
+		Assert.deepEqual(actual, expected, 'Sorts objects by key value where the value is a string');
+	},
+
 	testMerge: function() {
 		Assert.deepEqual([1,2,3], [1].merge([2,3]), 'array of primitives');
 		Assert.deepEqual([], [].merge([]), 'two empty arrays');

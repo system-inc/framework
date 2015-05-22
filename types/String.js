@@ -141,6 +141,14 @@ String.prototype.toInteger = function() {
 	return new Number(this).toInteger();
 }
 
+String.prototype.toTitleFromCamelCase = function() {
+	var string = this.toDashes();
+	string = string.replace('-', ' ');
+	string = string.toTitle();
+
+	return string;
+}
+
 String.prototype.toTitle = function() {
 	var string = this.toLowerCase();
 	var lowercaseWords = ['of','a','the','and','an','or','nor','but','is','if','then','else','when', 'at','from','by','on','off','for','in','out','over','to','into','with'];
