@@ -120,6 +120,10 @@ String.prototype.replaceRange = function(start, end, replacement) {
     return this.substring(0, start) + replacement + this.substring(end);
 }
 
+String.prototype.replaceCharacterAtIndex = function(index, character) {
+	return this.substr(0, index) + character + this.substr(index+character.length);
+}
+
 String.prototype.insert = function(index, string) {
     if(index > 0) {
         return this.substring(0, index) + string + this.substring(index, this.length);
@@ -135,6 +139,45 @@ String.prototype.toNumber = function() {
 
 String.prototype.toInteger = function() {
 	return new Number(this).toInteger();
+}
+
+String.prototype.toTitle = function() {
+	var string = this.toLowerCase();
+	var lowercaseWords = ['of','a','the','and','an','or','nor','but','is','if','then','else','when', 'at','from','by','on','off','for','in','out','over','to','into','with'];
+	var uppercaseWords = ['qr', 'api', 'os'];
+	var specialCaseWords = ['ios', 'ipad', 'iphone', 'ipod', 'imac'];
+	var words = string.split(' ');
+
+	var processedWords = [];
+	words.each(function(index, word) {
+		// Capitalize the first word or any word not explicitly in the lowercaseWords array
+	    if(index == 0 || !lowercaseWords.contains(word)) {
+	        word = word.capitalize(true);
+	    }
+
+	    // Uppercase any words explicitly in the uppercaseWords array
+	    if(uppercaseWords.contains(word)) {
+	        word = word.uppercase();
+	    }
+
+	    // Special case words have their second letter capitalized
+	    if(specialCaseWords.contains(word)) {
+	    	// iOS is a very special case where the third letter is capitalized as well
+			if(word.lowercase() == 'ios') {
+				word = 'iOS';
+			}
+			else {
+		        word = word.lowercase();
+		        word = word.replaceCharacterAtIndex(1, word[1].uppercase());
+			}
+	    }
+
+	    processedWords.push(word);
+	});
+
+	string = processedWords.join(' ');
+
+	return string;
 }
 
 String.prototype.toDashes = function() {

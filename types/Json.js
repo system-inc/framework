@@ -38,6 +38,8 @@ Json.decode = function(string) {
 	return JSON.parse(string);
 }
 
+Json.parse = JSON.parse;
+
 Json.indent = function(object, replacer, indentation) {
 	indentation = (indentation === undefined ? 4 : indentation);
 
