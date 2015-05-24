@@ -72,6 +72,10 @@ Url = Class.extend({
 		return this.protocol+'://'+this.host+(this.port != 80 && this.port != 443 ? ':'+this.port : '')+this.path+this.queryString+(this.hash ? '#'+this.hash : '');
 	},
 
+	toString: function() {
+		return this.getUrl();
+	},
+
 	setQueryParameter: function(key, value) {
 		// Copy and pasted this code, can probably clean this up
 		var newAdditionalUrl = '';

@@ -18,7 +18,7 @@ Cookies = Class.extend({
 	},
 
 	get: function(key, caseSensitive) {
-		caseSensitive = caseSensitive === false ? false : true;
+		caseSensitive = caseSensitive === true ? true : false;
 		var cookie = null;
 
 		if(caseSensitive) {
@@ -42,7 +42,7 @@ Cookies = Class.extend({
 	},
 
 	getCookie: function(key, caseSensitive) {
-		caseSensitive = caseSensitive === false ? false : true;
+		caseSensitive = caseSensitive === true ? true : false;
 		var cookie = null;
 
 		if(caseSensitive) {
@@ -65,6 +65,10 @@ Cookies = Class.extend({
 		return cookie;
 	},
 
+	add: function(cookie) {
+		this.cookies.push(cookie);
+	},
+
 	create: function(key, value) {
 		var cookie = new Cookie(key, value);
 
@@ -78,7 +82,7 @@ Cookies = Class.extend({
 	},
 
 	update: function(key, value, caseSensitive) {
-		caseSensitive = caseSensitive === false ? false : true;
+		caseSensitive = caseSensitive === true ? true : false;
 		var cookie = this.getCookie(key, false);
 
 		if(cookie != null) {
@@ -93,6 +97,20 @@ Cookies = Class.extend({
 
 	delete: function() {
 
+	},
+
+	length: function() {
+		return this.cookies.length;
+	},
+
+	toHeadersArray: function() {
+		var headersArray = [];
+
+		this.cookies.each(function(index, cookie) {
+			headersArray.push(cookie.toHeader());
+		});
+
+		return headersArray;
 	},
 	
 });

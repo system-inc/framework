@@ -20,7 +20,7 @@ Headers = Class.extend({
 	},
 
 	get: function(key, caseSensitive) {
-		caseSensitive = caseSensitive === false ? false : true;
+		caseSensitive = caseSensitive === true ? true : false;
 		var header = null;
 
 		if(caseSensitive) {
@@ -44,7 +44,7 @@ Headers = Class.extend({
 	},
 
 	getHeader: function(key, caseSensitive) {
-		caseSensitive = caseSensitive === false ? false : true;
+		caseSensitive = caseSensitive === true ? true : false;
 		var header = null;
 
 		if(caseSensitive) {
@@ -76,7 +76,7 @@ Headers = Class.extend({
 	},
 
 	update: function(key, value, caseSensitive) {
-		caseSensitive = caseSensitive === false ? false : true;
+		caseSensitive = caseSensitive === true ? true : false;
 		var header = this.getHeader(key, false);
 
 		if(header != null) {
@@ -97,10 +97,26 @@ Headers = Class.extend({
 
 	},
 
+	getCookies: function() {
+		var cookies = new Cookies();
+
+		this.headers.each(function(index, header) {
+			if(header.key.lowercase() == 'set-cookie' || header.key.lowercase() == 'cookie') {
+				cookies.add(Cookie.constructFromHeaderString(header.value));
+			}
+		});
+
+		return cookies;
+	},
+
 	addCookies: function(cookies) {
 		cookies.cookies.each(function(index, cookie) {
 			this.create('Set-Cookie', cookie.toHeaderString());
 		}, this);
+	},
+
+	length: function() {
+		return this.headers.length;
 	},
 
 	toArray: function() {
@@ -112,8 +128,40 @@ Headers = Class.extend({
 
 		return array;
 	},
+
+	toObject: function() {
+		var object = {};
+
+		this.headers.each(function(index, header) {
+			object[header.key] = header.value;
+		}, this);
+
+		return object;
+	},
 	
 });
 
 // Static methods
 Headers.constructFromNodeHeaders = Headers.prototype.constructFromNodeHeaders;
+
+Headers.nodeRawHeadersToString = function(rawHeaders) {
+	var rawHeadersString = '';
+
+	for(var index = 0; index < rawHeaders.length; index++) {
+		// Node is silly and uses even and odd numbers to specify key value pairs
+		// Zeroth
+	    if(index == 0) {
+	    	rawHeadersString += rawHeaders[index]+': ';
+	    }
+	    // Odd
+	    else if(index % 2) {
+	    	rawHeadersString += rawHeaders[index];
+	    }
+	    // Even
+	    else {
+	    	rawHeadersString += "\n"+rawHeaders[index]+': ';
+	    }
+	}
+
+	return rawHeadersString;
+}

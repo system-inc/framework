@@ -8,6 +8,12 @@ Cookie = Class.extend({
 		this.value = value;
 	},
 
+	toHeader: function() {
+		var header = new Header('Set-Cookie', this.toHeaderString());
+
+		return header;
+	},
+
 	toHeaderString: function() {
 		var headerString = this.key+'='+this.value+';';
 
@@ -15,3 +21,13 @@ Cookie = Class.extend({
 	},
 	
 });
+
+// Static methods
+Cookie.constructFromHeaderString = function(headerString) {
+	var key = headerString.split('=').first();
+
+	// TODO: This needs to be fixed
+	var cookie = new Cookie(key, headerString);
+
+	return cookie;
+}

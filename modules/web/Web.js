@@ -24,52 +24,65 @@ Web.request = function(options) {
 
 			var chunks = [];
 
-			// Bundle the result
-			var result = {
-				'statusCode': response.statusCode,
-				'headers': Headers.constructFromNodeHeaders(response.headers),
-				'body': '',
-				'data': null,
-				'trailers': response.trailers,
-				'httpVersion': new Version({
-					'major': response.httpVersionMajor,
-					'minor': response.httpVersionMinor,
+			console.log('response!!!', response);
+
+			// Bundle the webResponse
+			var webResponse = {
+				url: new Url(options.protocol+'//'+options.host+':'+options.port+options.path),
+				statusCode: response.statusCode,
+				statusMessage: response.statusMessage,
+				headers: Headers.constructFromNodeHeaders(response.headers),
+				rawHeaders: response.rawHeaders,
+				cookies: null,
+				body: '',
+				data: null,
+				trailers: response.trailers,
+				rawTrailers: response.rawTrailers,
+				httpVersion: new Version({
+					major: response.httpVersionMajor,
+					minor: response.httpVersionMinor,
 				}),
-				'stopwatch': stopwatch,
+				stopwatch: stopwatch,
+				request: {
+					rawHeaders: request._header,
+				},
 			};
-			//console.log('result (before finish)', result);
+			//console.log('webResponse (before finish)', webResponse);
+
+			// Set the cookies from the headers
+			webResponse.cookies = webResponse.headers.getCookies();
 
 			var finish = function*() {
 				// Get the content encoding
-				var contentEncoding = result.headers.get('content-encoding');
+				var contentEncoding = webResponse.headers.get('content-encoding');
 
 				// Concatenate all of the data chunks into one buffer
 				var buffer = Buffer.concat(chunks);
 
 				// Gzip
 				if(contentEncoding == 'gzip') {
-					result.body = yield Data.decode(buffer, contentEncoding);
+					webResponse.body = yield Data.decode(buffer, contentEncoding);
 				}
 				// No content encoding
 				else {
-					result.body = buffer.toString();
+					webResponse.body = buffer.toString();
 				}
 
 				// Automatically decode the response body if it is JSON
-				if(Json.is(result.body)) {
-					result.data = Json.decode(result.body);
+				if(Json.is(webResponse.body)) {
+					webResponse.data = Json.decode(webResponse.body);
 				}
 
 				// Set the trailers
-				result.trailers = response.trailers;
+				webResponse.trailers = response.trailers;
 
 				// Stop and attach the stopwatch
-				result.stopwatch = stopwatch.stop();
+				webResponse.stopwatch = stopwatch.stop();
 
-				//console.log('Web request finished:', result);
+				//console.log('Web request finished:', webResponse);
 
 				// Resolve the promise
-				resolve(result);
+				resolve(webResponse);
 			}
 
 			// Build the body
