@@ -46,6 +46,9 @@ Web.request = function(options) {
 				request: {
 					rawHeaders: request._header,
 				},
+				bytesReceived: response.connection.bytesRead,
+				bytesSent: response.connection.bytesWritten,
+				ipAddress: new IpAddress(response.connection.remoteAddress),
 			};
 			//console.log('webResponse (before finish)', webResponse);
 
