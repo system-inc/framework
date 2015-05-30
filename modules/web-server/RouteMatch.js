@@ -135,12 +135,15 @@ RouteMatch = Class.extend({
 		else if(this.route.type == 'proxy') {
 			// Build a web request for the proxy
 			//Console.out(this.route);
-			var webRequest = new WebRequest(this.route.getFullProxyUrl(this.request.url).url);
+			Console.highlight(this.route.proxyUrl);
+			var webRequest = new WebRequest(this.route.proxyUrl.url);
 			var webResponse = yield webRequest.execute();
 			//Console.out(webResponse);
 
 			this.response.statusCode = webResponse.statusCode;
 			this.response.headers = webResponse.headers;
+			this.response.headers.delete('location');
+			
 			content = webResponse.body;
 		}
 		// FileRoute

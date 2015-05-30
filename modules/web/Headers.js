@@ -93,8 +93,30 @@ Headers = Class.extend({
 		return this.update(key, value, caseSensitive);
 	},
 
-	delete: function() {
+	delete: function(key, caseSensitive) {
+		caseSensitive = caseSensitive === true ? true : false;
 
+		var indexToDelete = null;
+		this.headers.each(function (index, header) {
+			if(caseSensitive) {
+				if(key == header.key) {
+					indexToDelete = index;
+					return false; // break
+				}	
+			}
+			else {
+				if(key.lowercase() == header.key.lowercase()) {
+					indexToDelete = index;
+					return false; // break
+				}	
+			}
+		});
+
+		if(indexToDelete !== null) {
+			this.headers.delete(indexToDelete);
+		}
+
+		return this.headers;
 	},
 
 	getCookies: function() {
