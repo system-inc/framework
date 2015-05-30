@@ -107,19 +107,19 @@ WebServer = Server.extend({
 						if(protocol == 'https') {
 							// Make sure they have a keyFile and a certificateFile
 							if(Object.isEmpty(protocolSettings.keyFile)) {
-								Console.out('Could not create a secure web server (HTTPS) listener on port '+port+', the key file is not set.');
+								Console.out(Terminal.style('Could not create a secure web server (HTTPS) listener on port '+port+', the key file is not set.', 'red'));
 								return;
 							}
 							if(Object.isEmpty(protocolSettings.certificateFile)) {
-								Console.out('Could not create a secure web server (HTTPS) listener on port '+port+', the certicate file is not set.');
+								Console.out(Terminal.style('Could not create a secure web server (HTTPS) listener on port '+port+', the certicate file is not set.', 'red'));
 								return;
 							}
 							if(!File.synchronous.exists(protocolSettings.keyFile)) {
-								Console.out('Could not create a secure web server (HTTPS) listener on port '+port+', the key file "'+protocolSettings.keyFile+'" does not exist.');
+								Console.out(Terminal.style('Could not create a secure web server (HTTPS) listener on port '+port+', the key file "'+protocolSettings.keyFile+'" does not exist.', 'red'));
 								return;
 							}
 							if(!File.synchronous.exists(protocolSettings.certificateFile)) {
-								Console.out('Could not create a secure web server (HTTPS) listener on port '+port+', the certificate file "'+protocolSettings.certificateFile+'" does not exist.');
+								Console.out(Terminal.style('Could not create a secure web server (HTTPS) listener on port '+port+', the certificate file "'+protocolSettings.certificateFile+'" does not exist.', 'red'));
 								return;
 							}
 
@@ -143,6 +143,9 @@ WebServer = Server.extend({
 						nodeServer.on('error', function(error) {
 							if(error.code == 'EADDRINUSE') {
 								Console.out(Terminal.style('Could not listen to '+protocol.uppercase()+' requests on port '+port+', the port is already in use.', 'red'));
+							}
+							else if(error.code == 'EACCES') {
+								Console.out(Terminal.style('Could not listen to '+protocol.uppercase()+' requests on port '+port+', your system user account does not have permission to use port '+port+'.', 'red'));
 							}
 							else {
 								throw error;
