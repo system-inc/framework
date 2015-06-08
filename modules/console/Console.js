@@ -160,8 +160,10 @@ ConsoleClass = Class.extend({
 
 	listen: function() {
 		// Make sure we have Node.StandardIn
-		if(global['Node'] && global['Node']['StandardIn']) {
-			Node.StandardIn.setRawMode(true); // Takes input character by character
+		if(global['Node'] && global['Node'].StandardIn) {
+			if(Node.StandardIn.setRawMode) {
+				Node.StandardIn.setRawMode(true); // Takes input character by character	
+			}
 			Node.StandardIn.resume();
 			Node.StandardIn.setEncoding('utf8');
 			Node.StandardIn.on('data', function(key) {
