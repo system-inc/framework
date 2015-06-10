@@ -1,25 +1,34 @@
 HtmlDocument = XmlDocument.extend({
 
 	type: 'HTML',
-	element: Html.html(),
-	head: Html.head(),
-	body: Html.body(),
+
+	element: null,
+	head: null,
+	body: null,
 
 	scripts: [],
 	styles: [],
 
 	construct: function() {
-	},
+		// An <html> tag to store the head and body
+		this.element = Html.html();
 
-	toString: function() {
-		var string = '<!DOCTYPE '+this.type+'>';
-		
+		// Create the head and body tags
+		this.head = Html.head();
+		this.body = Html.body();
+
+		// Append the head and body to the <html> tag
 		this.element.append(this.head);
 		this.element.append(this.body);
 
-		string += this.element;
+		// Append the <html> tag to the content array
+		this.content.append(this.element);
+	},
 
-		return string;
+	toString: function(indent) {
+		this.declaration = '<!DOCTYPE '+this.type+'>';
+
+		return this.super(indent);
 	},
 
 });

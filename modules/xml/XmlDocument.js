@@ -7,10 +7,9 @@ XmlDocument = Class.extend({
 	content: [], // An array containing strings or XmlElements
 
 	construct: function() {
-
 	},
 
-	toString: function() {
+	toString: function(indent) {
 		var string = '';
 
 		var declaration = '';
@@ -44,7 +43,7 @@ XmlDocument = Class.extend({
 		string += declaration;
 
 		this.content.each(function(index, stringOrElement) {
-			string += stringOrElement;
+			string += stringOrElement.toString(indent);
 		});
 
 		return string;

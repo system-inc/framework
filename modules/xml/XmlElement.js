@@ -8,7 +8,12 @@ XmlElement = Class.extend({
 	construct: function(tag, options) {
 		this.tag = tag;
 
-		if(options) {
+		// Allow options to be strings (or any primitive) which will be used as the default content
+		if(options && Primitive.is(options)) {
+			this.content.append(options);
+		}
+		// Allow options to be an object
+		else if(options) {
 			options.each(function(optionName, optionValue) {
 				// Handle content
 				if(optionName == 'content') {
@@ -21,20 +26,62 @@ XmlElement = Class.extend({
 		}
 	},
 
+	getAttribute: function(attributeName) {
+		var attribute = null;
+
+		if(this.attributes.attributeName) {
+			attribute = this.attributes.attributeName;
+		}
+
+		return attribute;
+	},
+
 	setAttribute: function(attributeName, attributeValue) {
 		this.attributes[attributeName] = attributeValue;
 
 		return this;
 	},
 
-	append: function(stringOrElement) {
-		this.content.push(stringOrElement);
+	removeAttribute: function(attributeName) {
+		if(this.attributes.attributeName) {
+			delete this.attributes.attributeName;
+		}
 
 		return this;
 	},
 
-	toString: function() {
-		var string = '<'+this.tag;
+	empty: function() {
+		this.content = [];
+
+		return this;
+	},
+
+	prepend: function(stringOrElement) {
+		this.content.prepend(stringOrElement);
+
+		return this;
+	},	
+
+	append: function(stringOrElement) {
+		this.content.append(stringOrElement);
+
+		return this;
+	},
+
+	toString: function(indent, indentationLevel) {
+		var string = '';
+		var indentationRepetitions = 4;
+		var indentationCharacter = ' ';
+
+		if(indent) {
+			if(!indentationLevel) {
+				indentationLevel = 0;
+			}
+
+			string += "\r\n"+indentationCharacter.repeat(indentationRepetitions * indentationLevel);
+		}
+
+		string += '<'+this.tag;
 
 		// Attributes
 		this.attributes.each(function(attributeName, attributeValue) {
@@ -49,10 +96,23 @@ XmlElement = Class.extend({
 
 			// Content
 			this.content.each(function(index, stringOrElement) {
-				string += stringOrElement;
+				if(indent) {
+					if(Primitive.is(stringOrElement)) {
+						string += "\r\n"+indentationCharacter.repeat(indentationRepetitions * (indentationLevel + 1))+stringOrElement;
+					}
+					else {
+						string += stringOrElement.toString(indent, indentationLevel + 1);	
+					}
+				}
+				else {
+					string += stringOrElement.toString();		
+				}
 			});
 
-			string += '</'+this.tag+'>';
+			if(this.content.length && indent) {
+				string += "\r\n"+indentationCharacter.repeat(indentationRepetitions * indentationLevel);
+			}
+			string += '</'+this.tag+'>';	
 		}
 
 		return string;

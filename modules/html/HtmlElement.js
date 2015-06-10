@@ -1,7 +1,7 @@
 HtmlElement = XmlElement.extend({
 
-	construct: function() {
-
+	construct: function(tag, options) {
+		this.super(tag, options);
 	},
 
 });
