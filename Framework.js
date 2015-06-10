@@ -24,7 +24,7 @@ require('./types/Primitive');
 require('./types/RegularExpression');
 require('./types/String');
 
-// TODO: Need to rethink this
+// TODO: Need to rethink this - all of these are required before coreModules are initialized
 require('./modules/settings/SettingsModule');
 require('./modules/file-system/FileSystemModule');
 require('./modules/log/LogModule');
@@ -42,6 +42,8 @@ Framework = Class.extend({
 	directory: null,
 	settings: null,
 	environment: null,
+
+	// Need to prune this list
 	coreModules: [
 		'Console',
 		'Cryptography',
@@ -59,6 +61,8 @@ Framework = Class.extend({
 		'Data',
 		'Web',
 		'WebServer',
+		'Xml',
+		'Html',
 	],
 
 	construct: function(directory) {
