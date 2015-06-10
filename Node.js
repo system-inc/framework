@@ -1,4 +1,5 @@
 Node = {};
+Node.ChildProcess = require('child_process');
 Node.Cluster = require('cluster');
 Node.Cryptography = require('crypto');
 Node.Domain = require('domain');

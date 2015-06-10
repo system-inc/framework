@@ -10,6 +10,10 @@ XmlDocument = Class.extend({
 	},
 
 	toString: function(indent) {
+		if(indent === undefined) {
+			indent = true;
+		}
+
 		var string = '';
 
 		var declaration = '';

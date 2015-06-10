@@ -28,6 +28,17 @@ var parsedArguments = Arguments.parse(Node.Process.argv, {
 			optionalArguments: [
 			],
 		},
+		{
+			option: 'supervise',
+			description: 'Watch for changes and run tests when changes happen.',
+			aliases: [
+				's',
+			],
+			requiredArguments: [
+			],
+			optionalArguments: [
+			],
+		},
 	],
 });
 //Console.out(parsedArguments);
@@ -39,5 +50,11 @@ Module.initialize('Test');
 // Create a Proctor to oversee all of the tests as they run
 proctor = new Proctor(parsedArguments.options.reporter);
 
-// Get and run the tests
-proctor.getAndRunTests(parsedArguments.arguments.path, parsedArguments.arguments.testMethodName);
+// If test supervising is enabled
+if(parsedArguments.options.hasKey('supervise')) {
+	proctor.supervise();
+}
+else {
+	// Get and run the tests
+	proctor.getAndRunTests(parsedArguments.arguments.path, parsedArguments.arguments.testMethodName);	
+}

@@ -262,6 +262,16 @@ Array.prototype.getObjectsWithKeyValue = function(key, value) {
 	return objects;
 }
 
+Array.prototype.deleteValue = function(value) {
+	var valueIndex = this.indexOf(value);
+
+	if(valueIndex > -1) {
+		this.delete(valueIndex);
+	}
+
+	return this;
+}
+
 Array.prototype.delete = function(index) {
 	this.splice(index, 1);
 

@@ -1,6 +1,6 @@
 HtmlDocument = XmlDocument.extend({
 
-	type: 'HTML',
+	type: 'html',
 
 	element: null,
 	head: null,

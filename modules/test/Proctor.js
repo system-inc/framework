@@ -45,6 +45,47 @@ Proctor = Class.extend({
 		}
 	},
 
+	supervise: function() {
+		var rightSword = "\r\n._._._._._._._._._._|______________________________________________________\r\n|_#_#_#_#_#_#_#_#_#_|_____________________________________________________/\r\b                    |";
+		var leftSword = "\r\n\r\n______________________________________________________|_._._._._._._._._._.\r\n\\_____________________________________________________|_#_#_#_#_#_#_#_#_#_|\r\n                                                      |\r\n";
+
+		Console.out('Will run tests on next file change...'+String.newline);
+
+		var runTests = function() {
+			Console.out(Terminal.style(rightSword, 'blue'));
+
+			// Spawn the child process
+		    var nodeChildProcess = exports.child = Node.ChildProcess.spawn('node', ['--harmony', 'tests'+Node.Path.separator+'Test.js', 'modules/Xml'], {
+		    	stdio: 'inherit',
+		    });
+
+			nodeChildProcess.on('close', function(code) {
+				Console.out('Child process exited with code '+code+'.');
+				Console.out(Terminal.style(leftSword, 'blue'));
+				Console.out('Will run tests on next file change...'+String.newline);
+			});
+		}
+
+
+		var watchPath = function(path) {
+			Console.out('watching', path);
+
+			Node.FileSystem.watch(
+	            path,
+	            {
+	                persistent: true,
+	                recursive: true,
+	                interval: 1000,
+	            },
+	            function() {
+	            	Console.out('file changed!', this.args);
+	            }
+	        );
+		}
+		
+		watchPath(Node.Path.resolve(Project.framework.directory));
+	},
+
 	emit: function(eventName, data) {
 		Framework.emit(eventName, data);
 	},

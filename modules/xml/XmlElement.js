@@ -5,8 +5,13 @@ XmlElement = Class.extend({
 	attributes: {},
 	content: [], // Array containing strings or elements
 
-	construct: function(tag, options) {
+	construct: function(tag, options, unary) {
 		this.tag = tag;
+
+		// If unary is passed
+		if(unary !== undefined) {
+			this.unary = unary;
+		}
 
 		// Allow options to be strings (or any primitive) which will be used as the default content
 		if(options && Primitive.is(options)) {
@@ -19,6 +24,10 @@ XmlElement = Class.extend({
 				if(optionName == 'content') {
 					this.append(optionValue);
 				}
+				// Handle unary being passed as an option
+				else if(optionName == 'unary') {
+					this.unary = optionValue;
+				}
 				else {
 					this.setAttribute(optionName, optionValue);
 				}
@@ -29,8 +38,8 @@ XmlElement = Class.extend({
 	getAttribute: function(attributeName) {
 		var attribute = null;
 
-		if(this.attributes.attributeName) {
-			attribute = this.attributes.attributeName;
+		if(this.attributes[attributeName]) {
+			attribute = this.attributes[attributeName];
 		}
 
 		return attribute;
@@ -43,8 +52,8 @@ XmlElement = Class.extend({
 	},
 
 	removeAttribute: function(attributeName) {
-		if(this.attributes.attributeName) {
-			delete this.attributes.attributeName;
+		if(this.attributes[attributeName]) {
+			delete this.attributes[attributeName];
 		}
 
 		return this;
@@ -78,7 +87,7 @@ XmlElement = Class.extend({
 				indentationLevel = 0;
 			}
 
-			string += "\r\n"+indentationCharacter.repeat(indentationRepetitions * indentationLevel);
+			string += String.newline+indentationCharacter.repeat(indentationRepetitions * indentationLevel);
 		}
 
 		string += '<'+this.tag;
@@ -98,7 +107,7 @@ XmlElement = Class.extend({
 			this.content.each(function(index, stringOrElement) {
 				if(indent) {
 					if(Primitive.is(stringOrElement)) {
-						string += "\r\n"+indentationCharacter.repeat(indentationRepetitions * (indentationLevel + 1))+stringOrElement;
+						string += String.newline+indentationCharacter.repeat(indentationRepetitions * (indentationLevel + 1))+stringOrElement;
 					}
 					else {
 						string += stringOrElement.toString(indent, indentationLevel + 1);	
@@ -110,7 +119,7 @@ XmlElement = Class.extend({
 			});
 
 			if(this.content.length && indent) {
-				string += "\r\n"+indentationCharacter.repeat(indentationRepetitions * indentationLevel);
+				string += String.newline+indentationCharacter.repeat(indentationRepetitions * indentationLevel);
 			}
 			string += '</'+this.tag+'>';	
 		}
