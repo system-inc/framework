@@ -160,6 +160,10 @@ FileSystemObject = Class.extend({
 	    	});
 	    });
 	},
+
+	watch: function*(callback) {
+		return FileSystem.watch(this.path, callback);
+	},
 	
 });
 

@@ -45,45 +45,48 @@ Proctor = Class.extend({
 		}
 	},
 
-	supervise: function() {
-		var rightSword = "\r\n._._._._._._._._._._|______________________________________________________\r\n|_#_#_#_#_#_#_#_#_#_|_____________________________________________________/\r\b                    |";
-		var leftSword = "\r\n\r\n______________________________________________________|_._._._._._._._._._.\r\n\\_____________________________________________________|_#_#_#_#_#_#_#_#_#_|\r\n                                                      |\r\n";
+	supervise: function*() {
+		// Use ASCII art
+		Framework.require(Project.framework.directory+'modules'+Node.Path.separator+'ascii-art'+Node.Path.separator+'AsciiArt.js');
 
-		Console.out('Will run tests on next file change...'+String.newline);
-
-		var runTests = function() {
-			Console.out(Terminal.style(rightSword, 'blue'));
-
-			// Spawn the child process
-		    var nodeChildProcess = exports.child = Node.ChildProcess.spawn('node', ['--harmony', 'tests'+Node.Path.separator+'Test.js', 'modules/Xml'], {
-		    	stdio: 'inherit',
-		    });
-
-			nodeChildProcess.on('close', function(code) {
-				Console.out('Child process exited with code '+code+'.');
-				Console.out(Terminal.style(leftSword, 'blue'));
-				Console.out('Will run tests on next file change...'+String.newline);
-			});
-		}
-
-
-		var watchPath = function(path) {
-			Console.out('watching', path);
-
-			Node.FileSystem.watch(
-	            path,
-	            {
-	                persistent: true,
-	                recursive: true,
-	                interval: 1000,
-	            },
-	            function() {
-	            	Console.out('file changed!', this.args);
-	            }
-	        );
-		}
+		// Keep track of the last test class and methods changed
+		var activeTest = {
+			class: null,
+			method: null, // Will implement this at some point, right now I can't figure out a good way to do
+		};
 		
-		watchPath(Node.Path.resolve(Project.framework.directory));
+		// Watch the project and framework directories
+		var watchedFileSystemObjects = yield FileSystem.watch([Project.directory, Project.framework.directory], function(fileSystemObject, currentStatus, previousStatus) {
+			if(fileSystemObject.path.endsWith('Test.js')) {
+				// Set the active test class
+				activeTest.class = fileSystemObject.path.replace(Project.framework.directory+'tests'+Node.Path.separator, '');
+			}
+
+			Console.out("\r\n".repeat(64));
+
+			Console.out(fileSystemObject.path, 'updated.');
+			Console.out(Terminal.style(AsciiArt.weapons.swords.samurai.pointingRight, 'blue'));
+
+			// If there is no active test file
+			if(!activeTest.class) {
+				Console.out(Terminal.style("\r\n"+'Did not run tests, please update (touch) the test class file you would like to run.', 'red'));
+				Console.out(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
+			}
+			else {
+				// Spawn the child process
+			    var nodeChildProcess = exports.child = Node.ChildProcess.spawn('node', ['--harmony', 'tests'+Node.Path.separator+'Test.js', activeTest.class], {
+			    	stdio: 'inherit',
+			    });
+
+				nodeChildProcess.on('close', function(code) {
+					Console.out(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
+					Console.out('Tests finished. Child process exited with code '+code+'. Will run tests on next file update...'+String.newline);
+				});
+			}
+		});
+
+		// Tell the user how many objects we are watching
+		Console.out("\r\n"+'Watching', watchedFileSystemObjects.length, 'file system objects for updates...'+"\r\n");
 	},
 
 	emit: function(eventName, data) {

@@ -23,7 +23,7 @@ StandardTestReporter = TestReporter.extend({
 		//Terminal.clear();
 
 		// Tell the user what we are doing
-		Console.out('Running '+data.testMethodCount+' '+(data.testMethodCount == 1 ? 'test' : 'tests')+' in '+data.testCount+' test '+(data.testCount == 1 ? 'class' : 'classes')+'...');
+		Console.out("\r\n"+'Running '+data.testMethodCount+' '+(data.testMethodCount == 1 ? 'test' : 'tests')+' in '+data.testCount+' test '+(data.testCount == 1 ? 'class' : 'classes')+'...');
 	},
 
 	startedRunningTest: function(data) {

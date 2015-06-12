@@ -141,3 +141,7 @@ Framework.emit = function(eventName, data) {
 Framework.on = function(eventName, callback) {
 	Framework.eventEmitter.on(eventName, callback);
 };
+
+Framework.require = function(identifier) {
+	return require(identifier);
+}
