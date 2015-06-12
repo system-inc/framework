@@ -65,12 +65,12 @@ Framework = Class.extend({
 		'Html',
 	],
 
-	construct: function(directory) {
+	construct: function(projectDirectory) {
 		// Initialize the version
 		this.version = new Version('.2');
 
 		// Set the project directory
-		this.directory = Node.Path.normalize(directory+Node.Path.separator);
+		this.directory = Node.Path.normalize(projectDirectory+Node.Path.separator);
 
 		// Announce loading
 		Console.out('Starting Framework '+this.version+'...');
@@ -86,7 +86,7 @@ Framework = Class.extend({
 		// Set the default settings
 		this.settings.default({
 			environment: 'development',
-		})
+		});
 		//Console.out(this.settings);
 
 		// Set the title
@@ -119,6 +119,22 @@ Framework = Class.extend({
 	initialize: function() {
 		// Initialize the Framework core modules
 		Module.initialize(this.coreModules);
+
+		// Load all of the modules for the Project indicated in the Project settings
+		var modulesForProject = [];
+		this.settings.get('modules').each(function(moduleName, moduleSettings) {
+			var moduleClassName = moduleName.uppercaseFirstCharacter();
+			
+			// If we haven't already loaded the module
+			if(!this.coreModules.contains(moduleClassName)) {
+				//Console.out('Project module', moduleClassName);
+				Module.load(moduleClassName);
+				modulesForProject.append(moduleClassName);
+			}
+		}.bind(this));
+
+		// Initialize the modules for the Project
+		Module.initialize(modulesForProject);
 	},
 
 	initializeEnvironment: function() {

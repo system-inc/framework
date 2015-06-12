@@ -20,11 +20,12 @@ ConsoleClass = Class.extend({
 	},
 
 	write: function(message) {
-		// If we are not in the browser
+		// If we have StandardIn
 		if(Node.StandardIn) {
 			// Write the message to standard out
 			Node.StandardOut.write(message);
 		}
+		// If we do not have StandardIn (we are in a browser or other context)
 		else {
 			// Use the console
 			console.log(message);
@@ -36,7 +37,27 @@ ConsoleClass = Class.extend({
 		}
 	},
 
+	logInBrowser: function() {
+		var index = -1;
+		var argumentsLength = arguments.length;
+		var argumentsClone = [];
+		var consoleLogFunction = 'console.log(argumentsClone)';
+
+		while(++index < argumentsLength) {
+			argumentsClone.push('argumentsClone['+index+']');
+		};
+
+		consoleLogFunction = new Function('argumentsClone', consoleLogFunction.replace(/argumentsClone/,argumentsClone.join(',')));
+		consoleLogFunction(arguments);
+	},
+
 	out: function() {
+		// If we are using the Electron module
+		// TODO: find a better way to do this
+		if(global.Electron) {
+			this.logInBrowser.apply(this, arguments);	
+		}
+
 		// Prepare the message
 		var message = Console.prepareMessage(arguments);
 		//console.log.apply(this, arguments); // This invokes the stock console.log method
