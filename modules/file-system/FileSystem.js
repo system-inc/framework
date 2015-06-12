@@ -68,6 +68,8 @@ FileSystem.watch = function(paths, callback) {
 
             // Loop through the paths and collect all of the file system objects to watch
             yield paths.each(function*(pathIndex, path) {
+                //Console.out('path', path);
+
                 // Instantiate a file or directory from the path
                 var fileSystemObject = yield FileSystemObject.constructFromPath(path);
 
