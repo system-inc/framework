@@ -47,7 +47,7 @@ Proctor = Class.extend({
 
 	supervise: function*() {
 		// Use ASCII art
-		Framework.require(Project.framework.directory+'modules'+Node.Path.separator+'ascii-art'+Node.Path.separator+'AsciiArt.js');
+		require(Project.framework.directory+'modules'+Node.Path.separator+'ascii-art'+Node.Path.separator+'AsciiArt.js');
 
 		// Keep track of the last test class and methods changed
 		var activeTest = {

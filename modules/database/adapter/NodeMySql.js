@@ -2,7 +2,6 @@
 // Expects node-mysql to be globally installed via npm install -g mysql
 
 Node.MySql = require('mysql');
-
 Node.MySql.Adapter = {};
 
 Node.MySql.Adapter.reformFields = function(fields) {

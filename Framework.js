@@ -47,7 +47,6 @@ Framework = Class.extend({
 	coreModules: [
 		'Console',
 		'Cryptography',
-		'Database',
 		'Email',
 		'FileSystem',
 		'Geolocation',
@@ -158,6 +157,12 @@ Framework.on = function(eventName, callback) {
 	Framework.eventEmitter.on(eventName, callback);
 };
 
-Framework.require = function(identifier) {
-	return require(identifier);
+require = function(identifier) {
+	try {
+		return require(identifier);
+	}
+	catch(exception) {
+		Console.out(exception);
+		return false;
+	}
 }
