@@ -157,7 +157,7 @@ Framework.on = function(eventName, callback) {
 	Framework.eventEmitter.on(eventName, callback);
 };
 
-require = function(identifier) {
+Framework.require = function(identifier) {
 	try {
 		return require(identifier);
 	}
