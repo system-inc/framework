@@ -185,9 +185,17 @@ RouteMatch = Class.extend({
 			}
 		}
 
-		// If content exists, make sure it is a string or a buffer
-		if(content && !String.is(content) && !Buffer.is(content)) {
-			content = Json.encode(content);
+		// If the content exists
+
+		if(content) {
+			// And is an HtmlDocument
+			if(Class.isInstance(content, HtmlDocument)) {
+				content = content.toString();
+			}
+			// Make sure content is a string or a buffer
+			else if(content && !String.is(content) && !Buffer.is(content)) {
+				content = Json.encode(content);
+			}
 		}
 
 		// If content exists, put it on the response

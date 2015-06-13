@@ -55,6 +55,7 @@ ConsoleClass = Class.extend({
 		// If we are using the Electron module
 		// TODO: find a better way to do this
 		if(global.Electron) {
+			Console.out('hi');
 			this.logInBrowser.apply(this, arguments);	
 		}
 
