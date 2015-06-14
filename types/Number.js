@@ -25,7 +25,14 @@ Number.prototype.toInteger = function() {
 Number.round = function(number, precision) {
 	precision = (precision === undefined ? 0 : precision);
 
-	return number.toFixed(precision);
+	var number = number.toFixed(precision);
+
+	// Make 0 precision numbers integers
+	if(precision == 0) {
+		number = Number.toInteger(number);
+	}
+
+	return number;
 }
 
 Number.addCommas = function(number) {

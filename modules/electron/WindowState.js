@@ -1,29 +1,38 @@
 WindowState = Class.extend({
 
+	identifier: null,
 	browserWindow: null,
+	settings: null,
 
-	mode: null,
+	mode: null, // maximized, minimized, normal
+
+	display: null, // The display to show on
+
 	x: null,
 	y: null,
+
 	height: null,
 	width: null,
 
-	construct: function(browserWindow) {
+	construct: function(identifier, browserWindow, settings) {
+		this.identifier = identifier;
 		this.browserWindow = browserWindow;
+		this.settings = settings;
 
-		// Initialize the current window state
-		this.loadWindowState();
-
-		// Save window state to local storage
-		window.onbeforeunload = function(event) {
-			this.loadWindowState();
-			this.saveWindowStateToLocalStorage();
-		}.bind(this);
+		// If we are to remember the window state
+		if(this.settings.remember) {
+			this.saveToLocalStorageOnClose();
+			this.applyFromLocalStorage();
+		}
+		// If we are not supposed to remember window state, we use the defaults from settings
+		else {
+			this.applyDefault();
+		}
 	},
 
-	loadWindowState: function(windowState) {
+	load: function(windowState) {
 		if(!windowState) {
-			windowState = this.getWindowStateFromBrowserWindow(this.browserWindow);
+			windowState = this.get();
 		}
 
 		this.mode = windowState.mode;
@@ -33,7 +42,7 @@ WindowState = Class.extend({
 		this.width = windowState.width;
 	},
 
-	getWindowStateFromBrowserWindow: function(browserWindow) {
+	get: function() {
 		var windowState = {};
 
 		// Mode
@@ -62,7 +71,7 @@ WindowState = Class.extend({
 		return windowState;
 	},
 
-	updateWindowWithWindowState: function() {
+	apply: function() {
 		if(this.mode == 'maximized' && !this.browserWindow.isMaximized()) {
 			this.browserWindow.maximize();
 		}
@@ -81,26 +90,132 @@ WindowState = Class.extend({
 		});
 	},
 
-	saveWindowStateToLocalStorage: function() {
-		//console.log('saveWindowStateToLocalStorage', this.toObject());
-		LocalStorage.set('windowState', this.toObject());
+	applyDefault: function() {
+		var displays = Electron.screen.getAllDisplays();
+		var defaultSettingsForDisplayCount = null;
+
+		// Get the default settings for the display count
+		if(displays.length == 1) {
+			defaultSettingsForDisplayCount = this.settings.defaultWindowState.oneDisplay;
+		}
+		else if(displays.length > 1) {
+			defaultSettingsForDisplayCount = this.settings.defaultWindowState.twoDisplays;
+		}
+
+		// Set the mode
+		this.mode = defaultSettingsForDisplayCount.mode;
+
+		// Set the display
+		this.display = defaultSettingsForDisplayCount.display;
+		var currentDisplay = displays[this.display - 1];
+		console.log(currentDisplay);
+
+		// Set the width
+		var width = defaultSettingsForDisplayCount.width;
+		// If the width is a percentage
+		if(width <= 1) {
+			width = Number.round(width * currentDisplay.size.width);
+		}
+		this.width = width;
+		//this.width = 1024;
+
+		// Set the height
+		var height = defaultSettingsForDisplayCount.height;
+		// If the height is a percentage
+		if(height <= 1) {
+			height = Number.round(height * currentDisplay.size.height);
+		}
+		this.height = height;
+		//this.height = 768;
+
+		//console.log(width, height);
+
+		// Set the x
+		var x = defaultSettingsForDisplayCount.x;
+		if(Number.is(x)) {
+			// If x is a percentage
+			if(x <= 1) {
+				x = Number.round(x * currentDisplay.size.width);
+			}
+		}
+		else if(String.is(x)) {
+			if(x == 'left') {
+				x = currentDisplay.bounds.x;
+			}
+			else if(x == 'center') {
+				x = Number.round((currentDisplay.size.width - this.width) / 2);
+			}
+			else if(x == 'right') {
+				x = Number.round((currentDisplay.size.width - this.width));
+			}
+		}
+		this.x = x;
+		//this.x = 100;
+
+		// Set the y
+		var y = defaultSettingsForDisplayCount.y;
+		if(Number.is(y)) {
+			// If y is a percentage
+			if(y <= 1) {
+				y = Number.round(y * currentDisplay.size.height);
+			}
+		}
+		else if(String.is(y)) {
+			if(y == 'top') {
+				y = currentDisplay.bounds.y;
+			}
+			else if(y == 'center') {
+				y = Number.round((currentDisplay.size.height - this.height) / 2);
+			}
+			else if(y == 'bottom') {
+				y = Number.round((currentDisplay.size.height - this.height));
+			}
+		}
+		this.y = y;
+		//this.y = 100;
+
+		this.apply();
 	},
 
-	restoreWindowStateFromLocalStorage: function() {
-		// Try local storage to see if windowState is set
-		var windowStateFromLocalStorage = LocalStorage.get('windowState');
-		//console.log('windowStateFromLocalStorage', windowStateFromLocalStorage);
+	applyFromLocalStorage: function() {
+		var windowStateFromLocalStorage = this.getFromLocalStorage();
 
 		// If windowState is available
 		if(windowStateFromLocalStorage) {
-			this.loadWindowState(windowStateFromLocalStorage);
-			this.updateWindowWithWindowState();
+			this.load(windowStateFromLocalStorage);
+			this.apply();
 		}
+		else {
+			this.applyDefault();
+		}
+	},
+
+	getFromLocalStorage: function() {
+		// Try local storage to see if windowState is set
+		var windowStateFromLocalStorage = LocalStorage.get(this.identifier+'WindowState');
+		//console.log('windowStateFromLocalStorage', windowStateFromLocalStorage);
+
+		return windowStateFromLocalStorage;
+	},
+
+	saveToLocalStorage: function() {
+		//console.log('saveToLocalStorage', this.toObject());
+		LocalStorage.set(this.identifier+'WindowState', this.toObject());
+	},
+
+	saveToLocalStorageOnClose: function() {
+		// TODO: Change the way this event listener is set
+		// Save window state to local storage
+		window.onbeforeunload = function(event) {
+			this.load();
+			this.saveToLocalStorage();
+		}.bind(this);
 	},
 
 	toObject: function() {
 		return {
 			mode: this.mode,
+			display: this.display,
 			x: this.x,
 			y: this.y,
 			height: this.height,
