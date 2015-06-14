@@ -48,7 +48,7 @@ WebServerModuleClass = Module.extend({
 				this.webServers[webServer.identifier] = webServer;
 
 				webServerCount++;
-			}, this);
+			}.bind(this));
 		}
 	},
 	

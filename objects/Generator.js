@@ -47,6 +47,9 @@ Generator.run = function(generator, resolve, reject) {
 				// Tell the generator to move forward
 				pump(generator, next);
 			});
+
+			// Return the value if it is a promise
+			return next.value;
 		}
 		//else if(next.value instanceof Error) {
 		//	Console.out('we got an error!', next.value);
@@ -66,22 +69,20 @@ Generator.toPromise = function(generatorFunction) {
 
 	// Use a closure to generate a new, unique anonymous function which returns a promise which will resolve when the method completes execution
 	return (function(generatorFunction) {
-		var fn = function() {
+		var promiseFunction = function() {
 			// Invoke the generator with the right context and arguments
 			var invokedGeneratorFunction = generatorFunction.apply(this, arguments);
 
-			var promise = new Promise(function(resolve, reject) {
+			// Return a promise
+			return new Promise(function(resolve, reject) {
 				// Run the invoked generator
 				Generator.run(invokedGeneratorFunction, resolve, reject);
 			});
-
-			// Return a promise
-			return promise;
 		};
 
 		// You'll judge me for this in the future, but this is the only way I can store parameters for generator functions
-		fn.parameters = originalGeneratorParameters;
+		promiseFunction.parameters = originalGeneratorParameters;
 
-		return fn;
+		return promiseFunction;
 	})(generatorFunction);
 }

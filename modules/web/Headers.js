@@ -134,7 +134,7 @@ Headers = Class.extend({
 	addCookies: function(cookies) {
 		cookies.cookies.each(function(index, cookie) {
 			this.create('Set-Cookie', cookie.toHeaderString());
-		}, this);
+		}.bind(this));
 	},
 
 	length: function() {
@@ -146,7 +146,7 @@ Headers = Class.extend({
 
 		this.headers.each(function(index, header) {
 			array.push([header.key, header.value]);
-		}, this);
+		}.bind(this));
 
 		return array;
 	},
@@ -156,7 +156,7 @@ Headers = Class.extend({
 
 		this.headers.each(function(index, header) {
 			object[header.key] = header.value;
-		}, this);
+		}.bind(this));
 
 		return object;
 	},

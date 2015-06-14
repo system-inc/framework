@@ -13,16 +13,42 @@ GeneratorTest = Test.extend({
 		Assert.false(Generator.is({}), 'object');
 	},
 
-	testRun: function() {
+	testRun: function*() {
+		// Generator just returns a string
 		var generator = function*() {
+			return 'hello';
+		}
+
+		var actual = yield Generator.run(generator);
+		Assert.equal(actual, 'hello', 'returning string, returns the result of the generator');
+
+		// Generator yields on a string and returns it
+		generator = function*() {
 			var result = yield 'hello';
 			return result;
 		}
 
-		var actual = Generator.run(generator);
-		var expected = 'hello';
-		// Not sure if this is actually important that it does this or if it will do this all of the time
-		Assert.equal(actual, expected, 'returns the result of the generator');
+		actual = yield Generator.run(generator);
+		Assert.equal(actual, 'hello', 'returning yielded string, returns the result of the generator');
+	},
+
+	testRunWithBind: function*() {
+		// Generator just returns a string
+		var generator = function*() {
+			return 'hello';
+		}.bind(this);
+
+		var actual = yield Generator.run(generator);
+		Assert.equal(actual, 'hello', 'returning string, returns the result of the generator');
+
+		// Generator yields on a string and returns it
+		generator = function*() {
+			var result = yield 'hello';
+			return result;
+		}.bind(this);
+
+		actual = yield Generator.run(generator);
+		Assert.equal(actual, 'hello', 'returning yielded string, also returns the result of the generator');
 	},
 
 });

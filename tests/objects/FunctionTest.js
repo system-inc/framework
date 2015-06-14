@@ -11,7 +11,7 @@ FunctionTest = Test.extend({
 		Assert.false(Function.is({}), 'object');
 	},
 
-	testisGenerator: function() {
+	testIsGenerator: function() {
 		Assert.true(Function.isGenerator(function*() {}), 'generator function');
 		Assert.true(Function.isGenerator(function*() {}.bind(this)), 'generator function with .bind(this) called on it');
 		Assert.false(Function.isGenerator(function() {}), 'function');
@@ -68,6 +68,24 @@ FunctionTest = Test.extend({
 
 		// http://stackoverflow.com/questions/21097421/what-is-the-reason-javascript-settimeout-is-so-inaccurate
 		Assert.greaterThanOrEqualTo(stopwatch.elapsedTime, 25, 'delaying 50 milliseconds should make the stopwatch elapsed time at least 25 milliseconds');
+	},
+
+	bindWithGeneratorTestObject: {
+		'apple': 'macintosh',
+		'banana': 'chiquita',
+		'cherry': 'kirkland',
+	},
+
+	testBindWithGenerator: function*() {
+		var generatorFunction = function*(parameter1, parameter2) {
+			Assert.equal(parameter1, 'parameter1', 'passing parameters works');
+			Assert.equal(parameter2, 'parameter2', 'verifying passing parameters works');
+			
+			return this.bindWithGeneratorTestObject;
+		}.bind(this);
+
+		var actual = yield Generator.run(generatorFunction('parameter1', 'parameter2'));
+		Assert.strictEqual(actual, this.bindWithGeneratorTestObject, 'context was passed and used to return a value');
 	},
 
 });

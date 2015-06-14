@@ -178,7 +178,7 @@ Proctor = Class.extend({
 						}
 					}
 				}
-			}, this);
+			}.bind(this));
 		}
 		// If we are working with a single test file
 		else {

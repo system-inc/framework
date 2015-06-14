@@ -14,7 +14,7 @@ Cookies = Class.extend({
 				var parts = cookie.split('=');
 	        	this.cookies.push(new Cookie(parts.shift().trim(), unescape(parts.join('='))));
 			}
-		}, this);
+		}.bind(this));
 	},
 
 	get: function(key, caseSensitive) {

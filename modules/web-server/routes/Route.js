@@ -115,7 +115,7 @@ Route = Class.extend({
 		if(routeSettings.children) {
 			routeSettings.children.each(function(index, childRoute) {
 				route.children.push(new Route(childRoute, route));
-			}, this);
+			}.bind(this));
 		}
 
 		return route;

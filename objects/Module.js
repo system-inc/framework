@@ -14,7 +14,7 @@ Module = Class.extend({
 			var modulePath = __dirname.replaceLast('objects', 'modules')+'/'+moduleName.toDashes()+'/'+moduleName+'Module';
 			//Console.out('Loading', modulePath, 'module...');
 			require(modulePath);
-		}, this);
+		}.bind(this));
 	},
 
 	initialize: function(moduleNames) {
@@ -29,7 +29,7 @@ Module = Class.extend({
 			}
 			
 			global[moduleName+'Module'] = new global[moduleName+'ModuleClass'](settings);
-		}, this);
+		}.bind(this));
 	}
 
 });

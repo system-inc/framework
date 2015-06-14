@@ -28,7 +28,7 @@ RouteMatch = Class.extend({
 		this.getCaptureGroupNames().each(function(index, captureGroupName) {
 			finalizedRouteData[captureGroupName] = this.complete[count];
 			count++;
-		}, this);
+		}.bind(this));
 
 		// Merge what we have so far with the route data
 		finalizedRouteData = this.route.data.clone().merge(finalizedRouteData);
@@ -94,7 +94,7 @@ RouteMatch = Class.extend({
 					else {
 						controllerMethodArguments.push(undefined);
 					}
-				}, this);
+				}.bind(this));
 
 				// Invoke the controller method and pass in the arguments array
 				content = yield controller[this.route.controllerMethodName].apply(controller, controllerMethodArguments);

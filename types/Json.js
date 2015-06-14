@@ -5,11 +5,11 @@ Json.is = function(value) {
 
 	if(String.is(value)) {
 		try {
-	        var object = JSON.parse(value);
+	        var object = Json.parse(value);
 
 	        // Handle non-exception-throwing cases:
-	        // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
-	        // but JSON.parse(null) returns 'null', and typeof(null) === "object", so we must check for that, too.
+	        // Neither Json.parse(false) or Json.parse(1234) throw errors, hence the type-checking,
+	        // but Json.parse(null) returns 'null', and typeof(null) === "object", so we must check for that, too.
 	        if(object && typeof(object) === "object" && object !== null) {
 	            is = true;
 	        }

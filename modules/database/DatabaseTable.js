@@ -112,7 +112,7 @@ DatabaseTable = Class.extend({
 			yield column.loadProperties(row);
 
 			this.columns.push(column);
-		}, this);
+		}.bind(this));
 
 		return this.columns;
 	},
@@ -135,7 +135,7 @@ DatabaseTable = Class.extend({
 				yield index.loadProperties(row);
 				this.indexes.push(index);
 			}
-		}, this);
+		}.bind(this));
 
 		return this.indexes;
 	},
@@ -170,7 +170,7 @@ DatabaseTable = Class.extend({
 			yield relationship.loadProperties(row, row.constraint);
 
 			this.relationships.push(relationship);
-		}, this);
+		}.bind(this));
 
 		return this.relationships;
 	},
@@ -234,7 +234,7 @@ DatabaseTable = Class.extend({
 		yield this.columns.each(function*(index, column) {
 			var columnSchema = yield column.getSchema();
 			schema.columns.push(columnSchema);
-		}, this);
+		}.bind(this));
 
 		// Load the indexes
 		//yield this.loadIndexes(); // Not necessary with bulk call
@@ -244,7 +244,7 @@ DatabaseTable = Class.extend({
 		yield this.indexes.each(function*(indexIndex, index) {
 			var indexSchema = yield index.getSchema();
 			schema.indexes.push(indexSchema);
-		}, this);
+		}.bind(this));
 
 		// Load the relationships
 		//yield this.loadRelationships(); // Not necessary with bulk call
@@ -254,7 +254,7 @@ DatabaseTable = Class.extend({
 		yield this.relationships.each(function*(index, relationship) {
 			var relationshipSchema = yield relationship.getSchema();
 			schema.relationships.push(relationshipSchema);
-		}, this);
+		}.bind(this));
 
 		return schema;
 	},

@@ -16,6 +16,7 @@ FileSystemObject = Class.extend({
 	timeAccessed: null,
 	timeModified: null,
 	timeStatusChanged: null,
+	timeCreated: null,
 	nodeStatus: null,
 	
 	construct: function(path) {
@@ -81,6 +82,7 @@ FileSystemObject = Class.extend({
 			this.timeAccessed = new Time(this.nodeStatus.atime);
 			this.timeModified = new Time(this.nodeStatus.mtime);
 			this.timeStatusChanged = new Time(this.nodeStatus.ctime);
+			this.timeCreated = new Time(this.nodeStatus.birthtime);
 		}
 	},
 

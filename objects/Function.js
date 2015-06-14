@@ -66,27 +66,19 @@ Function.delay = function(milliseconds, callback) {
 }
 
 // Calling .bind() on a generator function does not return a generator
-// This fixes it, inspiraed by https://www.npmjs.org/package/generator-bind
+// This fixes it, inspired by https://www.npmjs.org/package/generator-bind
 Function.prototype.standardBind = Function.prototype.bind;
 Function.prototype.bind = function(context) {
-	var args = [context, this].concat(Array.prototype.slice.call(arguments, 1));
-
-	function bind(context, fn) {
-		var args = [context].concat(Array.prototype.slice.call(arguments, 2));
-
-		if(fn.constructor.name === 'GeneratorFunction') {
-			var boundGenerator = function*() {
-				var iterator = fn.apply(context, args.Array.prototype.slice(1));
-				for(var i of iterator) {
-					yield i;
-				}
-			};
-
-			return boundGenerator;
-		}
-
-		return Function.prototype.standardBind.apply(fn, args);
+	// Normal functions use the standard bind
+	if(this.constructor.name !== 'GeneratorFunction') {
+		return Function.prototype.standardBind.apply(this, arguments);
 	}
-
-	return bind.apply(null, args);
+	// Generator functions return a generator
+	else {
+		var functionToBind = this;
+		return function*() {
+			// Have the generator return a Promise that resolves when the generator finishes
+			return Generator.toPromise(functionToBind).apply(context, arguments);
+		}
+	}
 }

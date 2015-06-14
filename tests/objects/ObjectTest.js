@@ -100,18 +100,43 @@ ObjectTest = Test.extend({
 	},
 
 	testEachWithGenerator: function*() {
+		// No yield in generator
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
 			'cherry': 'kirkland',
 		};
-
 		var string = '';
 		yield object.each(function*(key, value) {
 			string += key+value;
 		});
+		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', 'no yield, key and value are passed in the correct order');
 
-		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', 'key and value are passed in the correct order');
+		// yield in generator
+		object = {
+			'apple': 'macintosh',
+			'banana': 'chiquita',
+			'cherry': 'kirkland',
+		};
+		string = '';
+		yield object.each(function*(key, value) {
+			yield Function.delay(25);
+			string += yield key+value;
+		});
+		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', 'yield, key and value are passed in the correct order');
+
+		// with .bind(this)
+		object = {
+			'apple': 'macintosh',
+			'banana': 'chiquita',
+			'cherry': 'kirkland',
+		};
+		string = '';
+		yield object.each(function*(key, value) {
+			yield Function.delay(25);
+			string += yield key+value;
+		}.bind(this));
+		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', '.bind(this) with yield, key and value are passed in the correct order');
 	},
 
 	testClone: function() {

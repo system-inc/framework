@@ -12,7 +12,7 @@ Router = Class.extend({
 
 		routes.each(function(index, routeJson) {
 			this.routes.push(new Route(routeJson));
-		}, this);
+		}.bind(this));
 
 		//Console.out(this.routes);
 	},

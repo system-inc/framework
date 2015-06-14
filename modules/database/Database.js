@@ -212,7 +212,7 @@ Database = Class.extend({
 
 			// Add the table
 			tables.push(table);
-		}, this);
+		}.bind(this));
 
 		this.tables = tables;
 
@@ -259,7 +259,7 @@ Database = Class.extend({
 		yield this.tables.each(function*(index, table) {
 			var tableSchema = yield table.getSchema();
 			schema.tables.push(tableSchema);
-		}, this);
+		}.bind(this));
 
 		return schema;
 	},

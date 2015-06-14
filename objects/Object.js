@@ -68,7 +68,9 @@ Object.prototype.getValueForKey = function(key, caseSensitive) {
 	return result;
 }
 
-Object.prototype.each = function(callback, context) {
+Object.prototype.each = function(callback) {
+    var context = this;
+
 	// If the callback is not a generator, use a standard for loop
 	if(!Function.isGenerator(callback)) {
 		var objectKeys = Object.keys(this);
@@ -180,8 +182,8 @@ Object.prototype.merge = function() {
     		else if(this[objectToMergeKey] === undefined) {
     			this[objectToMergeKey] = objectToMergeValue;
     		}
-    	}, this);
-    }, this);
+    	}.bind(this));
+    }.bind(this));
 
     return this;
 }
@@ -241,8 +243,8 @@ Object.prototype.integrate = function() {
     		else if(this[objectToIntegrateKey] === undefined) {
     			this[objectToIntegrateKey] = objectToIntegrateValue;
     		}
-    	}, this);
-    }, this);
+    	}.bind(this));
+    }.bind(this));
 
     return this;
 }
@@ -252,7 +254,7 @@ Object.prototype.sort = function() {
 
 	Object.keys(this).sort().each(function(index, key) {
 		sorted[key] = this[key];
-	}, this);
+	}.bind(this));
 
 	return sorted;
 }

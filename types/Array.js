@@ -93,8 +93,8 @@ Array.prototype.merge = function() {
     		if(!this.contains(arrayValue)) {
     			this.push(arrayValue);
     		}
-    	}, this);
-    }, this);
+    	}.bind(this));
+    }.bind(this));
 
     return this;
 }
@@ -283,7 +283,9 @@ Array.prototype.random = function() {
 }
 
 // Takes either a normal callback function or a generator callback function
-Array.prototype.each = function(callback, context) {
+Array.prototype.each = function(callback) {
+	var context = this;
+
 	// If the callback is not a generator, use a standard for loop
 	if(!Function.isGenerator(callback)) {
 		//Array.prototype.forEach.apply(this, arguments)

@@ -109,3 +109,6 @@ Url.constructFromNodeRequest = function(nodeRequest) {
 
 	return new Url(urlString);
 }
+
+Url.encode = encodeURIComponent;
+Url.decode = decodeURIComponent;
