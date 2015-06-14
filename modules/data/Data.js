@@ -15,16 +15,6 @@ Data.decode = function(data, encoding) {
 				}
 			});
 		}
-		else if(encoding == 'zip') {
-			Node.Zlip.unzip(data, function(error, result) {
-				if(error) {
-					reject(error);
-				}
-				else {
-					resolve(result);
-				}
-			});
-		}
 		else {
 			reject(new Error(encoding+' is an unsupported encoding type.'));
 		}
