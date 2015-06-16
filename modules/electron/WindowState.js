@@ -108,13 +108,13 @@ WindowState = Class.extend({
 		// Set the display
 		this.display = defaultSettingsForDisplayCount.display;
 		var currentDisplay = displays[this.display - 1];
-		console.log(currentDisplay);
+		//console.log(currentDisplay);
 
 		// Set the width
 		var width = defaultSettingsForDisplayCount.width;
 		// If the width is a percentage
 		if(width <= 1) {
-			width = Number.round(width * currentDisplay.size.width);
+			width = Number.round(width * currentDisplay.workArea.width);
 		}
 		this.width = width;
 		//this.width = 1024;
@@ -123,7 +123,7 @@ WindowState = Class.extend({
 		var height = defaultSettingsForDisplayCount.height;
 		// If the height is a percentage
 		if(height <= 1) {
-			height = Number.round(height * currentDisplay.size.height);
+			height = Number.round(height * currentDisplay.workArea.height);
 		}
 		this.height = height;
 		//this.height = 768;
@@ -135,7 +135,7 @@ WindowState = Class.extend({
 		if(Number.is(x)) {
 			// If x is a percentage
 			if(x <= 1) {
-				x = Number.round(x * currentDisplay.size.width);
+				x = Number.round(x * currentDisplay.workArea.width);
 			}
 		}
 		else if(String.is(x)) {
@@ -143,10 +143,10 @@ WindowState = Class.extend({
 				x = currentDisplay.bounds.x;
 			}
 			else if(x == 'center') {
-				x = Number.round((currentDisplay.size.width - this.width) / 2);
+				x = currentDisplay.bounds.x + Number.round((currentDisplay.workArea.width - this.width) / 2);
 			}
 			else if(x == 'right') {
-				x = Number.round((currentDisplay.size.width - this.width));
+				x = currentDisplay.bounds.x + Number.round((currentDisplay.workArea.width - this.width));
 			}
 		}
 		this.x = x;
@@ -157,7 +157,7 @@ WindowState = Class.extend({
 		if(Number.is(y)) {
 			// If y is a percentage
 			if(y <= 1) {
-				y = Number.round(y * currentDisplay.size.height);
+				y = Number.round(y * currentDisplay.workArea.height);
 			}
 		}
 		else if(String.is(y)) {
@@ -165,10 +165,10 @@ WindowState = Class.extend({
 				y = currentDisplay.bounds.y;
 			}
 			else if(y == 'center') {
-				y = Number.round((currentDisplay.size.height - this.height) / 2);
+				y = currentDisplay.bounds.y + Number.round((currentDisplay.workArea.height - this.height) / 2);
 			}
 			else if(y == 'bottom') {
-				y = Number.round((currentDisplay.size.height - this.height));
+				y = currentDisplay.bounds.y + Number.round((currentDisplay.workArea.height - this.height));
 			}
 		}
 		this.y = y;
