@@ -13,6 +13,11 @@ ElectronModuleClass = Module.extend({
 				windowState: {
 					remember: true, // Open the main browser window in same position when it was closed, can be either true or false
 					defaultWindowState: {
+						applyOn: {
+							displayAdded: false,
+							displayRemoved: false,
+							displayMetricsChanged: false,
+						},
 						oneDisplay: {
 							display: 1,
 							mode: 'normal',

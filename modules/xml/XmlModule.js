@@ -1,5 +1,6 @@
 require('./XmlDocument');
 require('./XmlElement');
+require('./XmlElements');
 
 XmlModuleClass = Module.extend({
 

@@ -28,6 +28,9 @@ WindowState = Class.extend({
 		else {
 			this.applyDefault();
 		}
+
+		// Conditionally apply defaults on screen events
+		this.listenToScreenEvents();
 	},
 
 	load: function(windowState) {
@@ -204,12 +207,37 @@ WindowState = Class.extend({
 	},
 
 	saveToLocalStorageOnClose: function() {
-		// TODO: Change the way this event listener is set
 		// Save window state to local storage
-		window.onbeforeunload = function(event) {
+		window.addEventListener('beforeunload', function(event) {
 			this.load();
 			this.saveToLocalStorage();
-		}.bind(this);
+		}.bind(this));
+	},
+
+	listenToScreenEvents: function() {
+		// Display added
+		if(this.settings.defaultWindowState.applyOn.displayAdded) {
+			Electron.screen.on('display-added', function(event, newDisplay) {
+				console.log('display-added', event)
+				this.applyDefault();
+			}.bind(this));	
+		}
+
+		// Display removed
+		if(this.settings.defaultWindowState.applyOn.displayRemoved) {
+			Electron.screen.on('display-removed', function(event, oldDisplay) {
+				console.log('display-removed', event)
+				this.applyDefault();
+			}.bind(this));
+		}
+
+		// Display metrics changed
+		if(this.settings.defaultWindowState.applyOn.displayMetricsChanged) {
+			Electron.screen.on('display-metrics-changed', function(event, display, changedMetrics) {
+				console.log('display-metrics-changed', event)
+				this.applyDefault();
+			}.bind(this));
+		}
 	},
 
 	toObject: function() {

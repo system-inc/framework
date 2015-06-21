@@ -1,7 +1,7 @@
 require('./HtmlElement');
+require('./HtmlElements');
 require('./Html');
 require('./HtmlDocument');
-require('./LocalStorage');
 
 HtmlModuleClass = Module.extend({
 

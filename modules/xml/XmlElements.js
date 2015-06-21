@@ -1,0 +1,3 @@
+XmlElements = Class.extend({
+
+});

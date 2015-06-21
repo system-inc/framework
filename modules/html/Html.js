@@ -1,6 +1,14 @@
-Html = function(tag, options) {
+Html = {};
+
+Html.find = HtmlElements.find;
+
+// Any tag
+
+Html.create = function(tag, options) {
 	return new HtmlElement(tag, options);
 }
+
+Html.tag = Html.create;
 
 // HTML structure
 

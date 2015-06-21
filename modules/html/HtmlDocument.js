@@ -25,6 +25,26 @@ HtmlDocument = XmlDocument.extend({
 		this.content.append(this.element);
 	},
 
+	on: function(eventName, callback) {
+		// Alias ready to DOMContentLoaded
+		if(eventName == 'ready') {
+			eventName = 'DOMContentLoaded';
+		}
+
+		if(document && document.addEventListener) {
+			document.addEventListener(eventName, callback);
+		}
+	},
+
+	apply: function() {
+		// Will probably have to rewrite this in the future, works for now
+		if(document && document.open) {
+			var openDocument = document.open('text/html');
+			openDocument.write(this.toString());
+			openDocument.close();
+		}
+	},
+
 	toString: function(indent) {
 		this.declaration = '<!DOCTYPE '+this.type+'>';
 
@@ -32,3 +52,6 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 });
+
+// Static methods
+HtmlDocument.on = HtmlDocument.prototype.on;
