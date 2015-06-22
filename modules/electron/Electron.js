@@ -66,7 +66,12 @@ ElectronClass = Module.extend({
 	},
 
 	getDefaultMenu: function() {
-		var menu = this.menu.buildFromTemplate(this.getDefaultMenuTemplate());
+		var menu = null;
+		var defaultMenu = this.getDefaultMenuTemplate();
+
+		if(defaultMenu) {
+			menu = this.menu.buildFromTemplate(this.getDefaultMenuTemplate());	
+		}
 
 		return menu;
 	},
@@ -218,17 +223,6 @@ ElectronClass = Module.extend({
 						},
 					]
 				},
-				//{
-				//	label: 'Help',
-				//	submenu: [
-				//		{
-				//			label: Project.title+' Help',
-				//			click: function() {
-				//				this.shell.openExternal('http://www.google.com/');
-				//			}.bind(this),
-				//		},
-				//	]
-				//},
 			];
 		}
 		// Not on OS X
@@ -238,16 +232,23 @@ ElectronClass = Module.extend({
 					label: '&File',
 					submenu: [
 						{
-							label: '&Open',
-							accelerator: 'Ctrl+O',
-						},
-						{
 							label: '&Close',
 							accelerator: 'Ctrl+W',
 							click: function() {
-								var focusedWindow = this.mainBrowserWindow.getFocusedWindow();
-								if(focusedWindow)
+								var browserWindow = this.remote.require('browser-window');
+								var focusedWindow = browserWindow.getFocusedWindow();
+								if(focusedWindow) {
 									focusedWindow.close();
+								}
+							}.bind(this),
+						},
+						{
+							type: 'separator'
+						},
+						{
+							label: '&Exit',
+							click: function() {
+								this.application.quit();
 							}.bind(this),
 						},
 					]
@@ -259,42 +260,37 @@ ElectronClass = Module.extend({
 							label: '&Reload',
 							accelerator: 'Ctrl+R',
 							click: function() {
-								var focusedWindow = this.mainBrowserWindow.getFocusedWindow();
-								if(focusedWindow)
+								var browserWindow = this.remote.require('browser-window');
+								var focusedWindow = browserWindow.getFocusedWindow();
+								if(focusedWindow) {
 									focusedWindow.reload();
+								}
 							}.bind(this),
 						},
 						{
 							label: 'Toggle &Full Screen',
 							accelerator: 'F11',
 							click: function() {
-								var focusedWindow = this.mainBrowserWindow.getFocusedWindow();
-								if(focusedWindow)
+								var browserWindow = this.remote.require('browser-window');
+								var focusedWindow = browserWindow.getFocusedWindow();
+								if(focusedWindow) {
 									focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+								}									
 							}.bind(this),
 						},
 						{
 							label: 'Toggle &Developer Tools',
 							accelerator: 'Alt+Ctrl+I',
 							click: function() {
-								var focusedWindow = this.mainBrowserWindow.getFocusedWindow();
-								if(focusedWindow)
+								var browserWindow = this.remote.require('browser-window');
+								var focusedWindow = browserWindow.getFocusedWindow();
+								if(focusedWindow) {
 									focusedWindow.toggleDevTools();
+								}
 							}.bind(this),
 						},
 					]
 				},
-				//{
-				//	label: 'Help',
-				//	submenu: [
-				//		{
-				//			label: Project.title+' Help',
-				//			click: function() {
-				//				this.shell.openExternal('http://www.google.com/');
-				//			}.bind(this),
-				//		},
-				//	]
-				//},
 			];
 		}
 
