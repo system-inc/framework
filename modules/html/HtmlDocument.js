@@ -6,6 +6,7 @@ HtmlDocument = XmlDocument.extend({
 	head: null,
 	body: null,
 
+	title: null,
 	scripts: [],
 	styles: [],
 
@@ -46,6 +47,26 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	toString: function(indent) {
+		// Handle title
+		if(this.title) {
+			this.head.append(Html.title(this.title));
+		}
+
+		// Handle scripts
+		this.scripts.each(function(index, script) {
+			this.head.append(Html.script({
+				src: script,
+			}));
+		}.bind(this));
+
+		// Handle styles
+		this.styles.each(function(index, style) {
+			this.head.append(Html.link({
+				rel: 'stylesheet',
+				href: style,
+			}));
+		}.bind(this));		
+
 		this.declaration = '<!DOCTYPE '+this.type+'>';
 
 		return this.super(indent);
