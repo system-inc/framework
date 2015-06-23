@@ -109,7 +109,7 @@ Assert.notEqual = function(actual, expected, message) {
 }
 
 Assert.isDeepEqual = function(actual, expected) {
-	// 7.1. All identical values are equivalent, as determined by ===.
+	// All identical values are equivalent, as determined by ===.
 	if(actual === expected) {
 		return true;
 	}
@@ -125,12 +125,12 @@ Assert.isDeepEqual = function(actual, expected) {
 		}
 
 		return true;
-	// 7.2. If the expected value is a Date object, the actual value is
+	// If the expected value is a Date object, the actual value is
 	// equivalent if it is also a Date object that refers to the same time.
 	}
 	else if(Node.Utility.isDate(actual) && Node.Utility.isDate(expected)) {
 		return actual.getTime() === expected.getTime();
-	// 7.3 If the expected value is a RegExp object, the actual value is
+	// If the expected value is a RegExp object, the actual value is
 	// equivalent if it is also a RegExp object with the same source and
 	// properties (`global`, `multiline`, `lastIndex`, `ignoreCase`).
 	}
@@ -141,12 +141,12 @@ Assert.isDeepEqual = function(actual, expected) {
 			actual.multiline === expected.multiline &&
 			actual.lastIndex === expected.lastIndex &&
 			actual.ignoreCase === expected.ignoreCase;
-	// 7.4. Other pairs that do not both pass typeof value == 'object',
+	// Other pairs that do not both pass typeof value == 'object',
 	// equivalence is determined by ==.
 	}
 	else if (!Node.Utility.isObject(actual) && !Node.Utility.isObject(expected)) {
 		return actual == expected;
-	// 7.5 For all other Object pairs, including Array objects, equivalence is
+	// For all other Object pairs, including Array objects, equivalence is
 	// determined by having the same number of owned properties (as verified
 	// with Object.prototype.hasOwnProperty.call), the same set of keys
 	// (although not necessarily the same order), equivalent values for every

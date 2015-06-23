@@ -75,13 +75,18 @@ WindowState = Class.extend({
 	},
 
 	apply: function() {
-		if(this.mode == 'maximized' && !this.browserWindow.isMaximized()) {
+		//console.log(this.mode);
+
+		if(this.mode == 'maximized') {
+			//console.log('maximizing');
 			this.browserWindow.maximize();
 		}
-		else if(this.mode == 'minimized' && !this.browserWindow.isMinimized()) {
+		else if(this.mode == 'minimized') {
+			//console.log('minimizing');
 			this.browserWindow.minimize();
 		}
-		else if(this.mode == 'fullScreen' && !this.browserWindow.isFullScreen()) {
+		else if(this.mode == 'fullScreen') {
+			//console.log('setting full screen');
 			this.browserWindow.setFullScreen(true);
 		}
 
@@ -202,7 +207,7 @@ WindowState = Class.extend({
 	},
 
 	saveToLocalStorage: function() {
-		//console.log('saveToLocalStorage', this.toObject());
+		//console.log('saveToLocalStorage', Json.encode(this.toObject()));
 		LocalStorage.set(this.identifier+'WindowState', this.toObject());
 	},
 

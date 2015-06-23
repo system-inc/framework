@@ -20,10 +20,15 @@ ConsoleClass = Class.extend({
 	},
 
 	write: function(message) {
-		// If we have StandardIn
-		if(Node.StandardIn) {
-			// Write the message to standard out
-			Node.StandardOut.write(message);
+		// If we have StandardIn and StandardOut
+		if(Node.StandardIn && Node.StandardOut) {
+			try {
+				// Write the message to standard out
+				Node.StandardOut.write(message);
+			}
+			catch(exception) {
+				console.log('Exception on Node.StandardOut.write', exception);
+			}
 		}
 		// If we do not have StandardIn (we are in a browser or other context)
 		else {

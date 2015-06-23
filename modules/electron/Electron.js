@@ -6,6 +6,7 @@ ElectronClass = Module.extend({
 	screen: null,
 	menu: null,
 	menuItem: null,
+	browserWindow: null,
 	mainBrowserWindow: null,
 	mainBrowserWindowState: null,
 
@@ -27,6 +28,9 @@ ElectronClass = Module.extend({
 		// Set the screen
 		this.screen = require('screen');
 
+		// Set the BrowserWindow
+		this.browserWindow = this.remote.require('browser-window');
+
 		// Set the main browser window
 		this.mainBrowserWindow = this.remote.getCurrentWindow();
 
@@ -39,14 +43,14 @@ ElectronClass = Module.extend({
 		// Initialize the developer tools
 		this.initializeDeveloperTools();
 
-		// Show the main browser window
-		this.mainBrowserWindow.show();
-
 		// Add default keyboard shortcuts
 		this.addDefaultKeyboardShortcuts();
 
 		// Load the initial HtmlDocument
 		Controller.getController('Main').main().apply();
+
+		// Show the main browser window
+		this.mainBrowserWindow.show();
 	},
 
 	initializeDeveloperTools: function() {
@@ -69,36 +73,60 @@ ElectronClass = Module.extend({
 	},
 
 	addDefaultKeyboardShortcuts: function() {
-		// TO DO
-		// Change these functions to Electron class methods (Electron.closeFocusedWindow)
-		// Update the template below to use the Electron class methods
+		var keyboardShortcutSettings = ElectronModule.settings.get('keyboardShortcuts');
 
-		// Close 
-		//KeyboardShortcuts.add('Ctrl+W', this.closeFocusedWindow.bind(this));
+		if(keyboardShortcutSettings.closeFocusedWindow) {
+			KeyboardShortcuts.add(['Ctrl+W'], this.closeFocusedWindow.bind(this));
+		}
+		if(keyboardShortcutSettings.reloadFocusedWindow) {
+			KeyboardShortcuts.add(['Ctrl+R', 'Command+R'], this.reloadFocusedWindow.bind(this));
+		}
+		if(keyboardShortcutSettings.toggleFullScreenOnFocusedWindow) {
+			KeyboardShortcuts.add(['F11', 'Ctrl+Command+F'], this.toggleFullScreenOnFocusedWindow.bind(this));
+		}
+		if(keyboardShortcutSettings.toggleDeveloperToolsOnFocusedWindow) {
+			KeyboardShortcuts.add(['Alt+Ctrl+I', 'Alt+Command+I'], this.toggleDeveloperToolsOnFocusedWindow.bind(this));
+		}
+		if(keyboardShortcutSettings.applyDefaultWindowStateOnFocusedWindow) {
+			KeyboardShortcuts.add(['Alt+Ctrl+W'], this.applyDefaultWindowStateOnFocusedWindow.bind(this));
+		}
+	},
 
-		// Close
-		KeyboardShortcuts.add('Ctrl+W', function() {
-			console.log('close');
-			return;
+	applyDefaultWindowStateOnFocusedWindow: function() {
+		// TODO: For apps with multiple windows, need to make this work on the focused window
+		this.mainBrowserWindowState.applyDefault();
+	},
 
-			var browserWindow = this.remote.require('browser-window');
-			var focusedWindow = browserWindow.getFocusedWindow();
-			if(focusedWindow) {
-				focusedWindow.close();
-			}
-		}.bind(this));
+	closeFocusedWindow: function() {
+		var focusedWindow = this.browserWindow.getFocusedWindow();
+		if(focusedWindow) {
+			focusedWindow.close();
+		}
+	},
 
-		// Reload
-		KeyboardShortcuts.add('Ctrl+R', function() {
-			console.log('reload');
-			return;
+	exit: function() {
+		this.application.quit();
+	},
 
-			var browserWindow = this.remote.require('browser-window');
-			var focusedWindow = browserWindow.getFocusedWindow();
-			if(focusedWindow) {
-				focusedWindow.reload();
-			}
-		}.bind(this));
+	reloadFocusedWindow: function() {
+		var focusedWindow = this.browserWindow.getFocusedWindow();
+		if(focusedWindow) {
+			focusedWindow.reload();
+		}
+	},
+
+	toggleFullScreenOnFocusedWindow: function() {
+		var focusedWindow = this.browserWindow.getFocusedWindow();
+		if(focusedWindow) {
+			focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+		}
+	},
+
+	toggleDeveloperToolsOnFocusedWindow: function() {
+		var focusedWindow = this.browserWindow.getFocusedWindow();
+		if(focusedWindow) {
+			focusedWindow.toggleDevTools();
+		}
 	},
 
 	getDefaultMenu: function() {
@@ -155,9 +183,7 @@ ElectronClass = Module.extend({
 						{
 							label: 'Quit',
 							accelerator: 'Command+Q',
-							click: function() {
-								this.application.quit();
-							}.bind(this)
+							click: this.exit.bind(this),
 						},
 					]
 				},
@@ -200,44 +226,6 @@ ElectronClass = Module.extend({
 					]
 				},
 				{
-					label: 'View',
-					submenu: [
-						{
-							label: 'Reload',
-							accelerator: 'Command+R',
-							click: function() {
-								var browserWindow = this.remote.require('browser-window');
-								var focusedWindow = browserWindow.getFocusedWindow();
-								if(focusedWindow) {
-									focusedWindow.reload();
-								}
-							}.bind(this),
-						},
-						{
-							label: 'Toggle Full Screen',
-							accelerator: 'Ctrl+Command+F',
-							click: function() {
-								var browserWindow = this.remote.require('browser-window');
-								var focusedWindow = browserWindow.getFocusedWindow();
-								if(focusedWindow) {
-									focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-								}
-							}.bind(this),
-						},
-						{
-							label: 'Toggle Developer Tools',
-							accelerator: 'Alt+Command+I',
-							click: function() {
-								var browserWindow = this.remote.require('browser-window');
-								var focusedWindow = browserWindow.getFocusedWindow();
-								if(focusedWindow) {
-									focusedWindow.toggleDevTools();
-								}
-							}.bind(this),
-						},
-					]
-				},
-				{
 					label: 'Window',
 					submenu: [
 						{
@@ -256,74 +244,6 @@ ElectronClass = Module.extend({
 						{
 							label: 'Bring All to Front',
 							selector: 'arrangeInFront:'
-						},
-					]
-				},
-			];
-		}
-		// Not on OS X
-		else {
-			template = [
-				{
-					label: '&File',
-					submenu: [
-						{
-							label: '&Close',
-							accelerator: 'Ctrl+W',
-							click: function() {
-								var browserWindow = this.remote.require('browser-window');
-								var focusedWindow = browserWindow.getFocusedWindow();
-								if(focusedWindow) {
-									focusedWindow.close();
-								}
-							}.bind(this),
-						},
-						{
-							type: 'separator'
-						},
-						{
-							label: '&Exit',
-							click: function() {
-								this.application.quit();
-							}.bind(this),
-						},
-					]
-				},
-				{
-					label: '&View',
-					submenu: [
-						{
-							label: '&Reload',
-							accelerator: 'Ctrl+R',
-							click: function() {
-								var browserWindow = this.remote.require('browser-window');
-								var focusedWindow = browserWindow.getFocusedWindow();
-								if(focusedWindow) {
-									focusedWindow.reload();
-								}
-							}.bind(this),
-						},
-						{
-							label: 'Toggle &Full Screen',
-							accelerator: 'F11',
-							click: function() {
-								var browserWindow = this.remote.require('browser-window');
-								var focusedWindow = browserWindow.getFocusedWindow();
-								if(focusedWindow) {
-									focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-								}									
-							}.bind(this),
-						},
-						{
-							label: 'Toggle &Developer Tools',
-							accelerator: 'Alt+Ctrl+I',
-							click: function() {
-								var browserWindow = this.remote.require('browser-window');
-								var focusedWindow = browserWindow.getFocusedWindow();
-								if(focusedWindow) {
-									focusedWindow.toggleDevTools();
-								}
-							}.bind(this),
 						},
 					]
 				},

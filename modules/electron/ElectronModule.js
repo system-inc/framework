@@ -39,8 +39,14 @@ ElectronModuleClass = Module.extend({
 				},
 				developerTools: {
 					show: true, // Show the developer tools on start
-					//TODO: enableKeyboardShortcut: true, // Enable the default Chrome keyboard shortcut to open the developer tools
 				},
+			},
+			keyboardShortcuts: {
+				closeFocusedWindow: true,
+				reloadFocusedWindow: true,
+				toggleFullScreenOnFocusedWindow: true,
+				toggleDeveloperToolsOnFocusedWindow: true,
+				applyDefaultWindowStateOnFocusedWindow: true,
 			},
 		});
 	},
