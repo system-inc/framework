@@ -33,14 +33,17 @@ ElectronClass = Module.extend({
 		// Set the Project title
 		this.mainBrowserWindow.setTitle(Project.title);
 
-		// Initialize the developer tools
-		this.initializeDeveloperTools();
-
 		// Initialize the window state
 		this.initializeWindowState();
 
+		// Initialize the developer tools
+		this.initializeDeveloperTools();
+
 		// Show the main browser window
 		this.mainBrowserWindow.show();
+
+		// Add default keyboard shortcuts
+		this.addDefaultKeyboardShortcuts();
 
 		// Load the initial HtmlDocument
 		Controller.getController('Main').main().apply();
@@ -63,6 +66,39 @@ ElectronClass = Module.extend({
 
 		// Create a window state for the main browser window
 		this.mainBrowserWindowState = new WindowState('main', this.mainBrowserWindow, windowStateSettings);
+	},
+
+	addDefaultKeyboardShortcuts: function() {
+		// TO DO
+		// Change these functions to Electron class methods (Electron.closeFocusedWindow)
+		// Update the template below to use the Electron class methods
+
+		// Close 
+		//KeyboardShortcuts.add('Ctrl+W', this.closeFocusedWindow.bind(this));
+
+		// Close
+		KeyboardShortcuts.add('Ctrl+W', function() {
+			console.log('close');
+			return;
+
+			var browserWindow = this.remote.require('browser-window');
+			var focusedWindow = browserWindow.getFocusedWindow();
+			if(focusedWindow) {
+				focusedWindow.close();
+			}
+		}.bind(this));
+
+		// Reload
+		KeyboardShortcuts.add('Ctrl+R', function() {
+			console.log('reload');
+			return;
+
+			var browserWindow = this.remote.require('browser-window');
+			var focusedWindow = browserWindow.getFocusedWindow();
+			if(focusedWindow) {
+				focusedWindow.reload();
+			}
+		}.bind(this));
 	},
 
 	getDefaultMenu: function() {

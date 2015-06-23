@@ -190,7 +190,7 @@ RouteMatch = Class.extend({
 		if(content) {
 			// And is an HtmlDocument
 			if(Class.isInstance(content, HtmlDocument)) {
-				content = content.toString();
+				content = content.toString(false);
 			}
 			// Make sure content is a string or a buffer
 			else if(content && !String.is(content) && !Buffer.is(content)) {

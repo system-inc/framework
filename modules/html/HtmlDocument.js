@@ -41,7 +41,7 @@ HtmlDocument = XmlDocument.extend({
 		// Will probably have to rewrite this in the future, works for now
 		if(document && document.open) {
 			var openDocument = document.open('text/html');
-			openDocument.write(this.toString());
+			openDocument.write(this.toString(false));
 			openDocument.close();
 		}
 	},

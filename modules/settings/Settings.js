@@ -2,7 +2,10 @@ Settings = Class.extend({
 
 	settings: {},
 
-	construct: function() {
+	construct: function(settings) {
+		if(settings !== undefined) {
+			this.settings = settings;
+		}
 	},
 
 	default: function(defaultSettings) {
