@@ -177,6 +177,11 @@ WindowState = Class.extend({
 			}
 			else if(y == 'bottom') {
 				y = currentDisplay.bounds.y + Number.round((currentDisplay.workArea.height - this.height));
+
+				// Adjust for OS X menu bar
+				if(Node.Process.platform == 'darwin') {
+					y += 24; // Menu bar is 22px tall but 24px seems to work better
+				}
 			}
 		}
 		this.y = y;
