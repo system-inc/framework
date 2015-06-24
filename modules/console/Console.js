@@ -22,12 +22,15 @@ ConsoleClass = Class.extend({
 	write: function(message) {
 		// If we have StandardIn and StandardOut
 		if(Node.StandardIn && Node.StandardOut) {
+			// Try to write to standard out
 			try {
 				// Write the message to standard out
 				Node.StandardOut.write(message);
 			}
+			// If we can't write to standard out, use console.log
 			catch(exception) {
-				console.log('Exception on Node.StandardOut.write', exception);
+				//console.log('Exception on Node.StandardOut.write', exception);
+				console.log(message);
 			}
 		}
 		// If we do not have StandardIn (we are in a browser or other context)
@@ -42,7 +45,7 @@ ConsoleClass = Class.extend({
 		}
 	},
 
-	logInBrowser: function() {
+	logToDeveloperTools: function() {
 		var index = -1;
 		var argumentsLength = arguments.length;
 		var argumentsClone = [];
@@ -53,13 +56,14 @@ ConsoleClass = Class.extend({
 		};
 
 		consoleLogFunction = new Function('argumentsClone', consoleLogFunction.replace(/argumentsClone/,argumentsClone.join(',')));
+		
 		return consoleLogFunction(arguments);
 	},
 
 	out: function() {
 		// If we are using the Electron module
 		if(Node.Process.versions.electron) {
-			return this.logInBrowser.apply(this, arguments);
+			return this.logToDeveloperTools.apply(this, arguments);
 		}
 
 		// Prepare the message

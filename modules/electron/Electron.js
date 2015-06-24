@@ -85,10 +85,10 @@ ElectronClass = Module.extend({
 			KeyboardShortcuts.add(['F11', 'Ctrl+Command+F'], this.toggleFullScreenOnFocusedWindow.bind(this));
 		}
 		if(keyboardShortcutSettings.toggleDeveloperToolsOnFocusedWindow) {
-			KeyboardShortcuts.add(['Alt+Ctrl+I', 'Alt+Command+I'], this.toggleDeveloperToolsOnFocusedWindow.bind(this));
+			KeyboardShortcuts.add(['Ctrl+Alt+I', 'Ctrl+Command+I', 'Alt+Command+I'], this.toggleDeveloperToolsOnFocusedWindow.bind(this));
 		}
 		if(keyboardShortcutSettings.applyDefaultWindowStateOnFocusedWindow) {
-			KeyboardShortcuts.add(['Alt+Ctrl+W'], this.applyDefaultWindowStateOnFocusedWindow.bind(this));
+			KeyboardShortcuts.add(['Ctrl+Alt+W', 'Ctrl+Command+W', 'Alt+Command+W'], this.applyDefaultWindowStateOnFocusedWindow.bind(this));
 		}
 	},
 
