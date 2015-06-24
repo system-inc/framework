@@ -24,7 +24,7 @@ Web.request = function(options) {
 
 			var chunks = [];
 
-			console.log('response!!!', response);
+			//console.log('response!!!', response);
 
 			// Bundle the webResponse
 			var webResponse = {

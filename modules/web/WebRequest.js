@@ -7,6 +7,8 @@ WebRequest = Class.extend({
 	headers: new Headers(),
 	cookies: new Cookies(),
 	encoding: null, // Must use null encoding in order for gzipped responses to work
+	authorizeConnection: false,
+	requestCertificate: false,
 
 	construct: function(url, options) {
 		// Make sure we are working with a URL object
@@ -39,6 +41,12 @@ WebRequest = Class.extend({
 				options.cookies.each(function(key, value) {
 					this.cookies.create(key, value);
 				}.bind(this));
+			}
+			if(options.authorizeConnection) {
+				this.authorizeConnection = options.authorizeConnection;
+			}
+			if(options.requestCertificate) {
+				this.requestCertificate = options.requestCertificate;
 			}
 		}
 
@@ -99,6 +107,8 @@ WebRequest = Class.extend({
 			encoding: webRequest.encoding,
 			body: webRequest.body,
 			headers: webRequest.headers.toObject(),
+			rejectUnauthorized: webRequest.authorizeConnection,
+			requestCert: webRequest.requestCertificate,
 		};
 
 		var response = yield Web.request(options);

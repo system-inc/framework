@@ -53,15 +53,13 @@ ConsoleClass = Class.extend({
 		};
 
 		consoleLogFunction = new Function('argumentsClone', consoleLogFunction.replace(/argumentsClone/,argumentsClone.join(',')));
-		consoleLogFunction(arguments);
+		return consoleLogFunction(arguments);
 	},
 
 	out: function() {
 		// If we are using the Electron module
-		// TODO: find a better way to do this
-		if(global.Electron) {
-			Console.out('hi');
-			this.logInBrowser.apply(this, arguments);	
+		if(Node.Process.versions.electron) {
+			return this.logInBrowser.apply(this, arguments);
 		}
 
 		// Prepare the message
