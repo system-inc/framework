@@ -2,7 +2,11 @@ HtmlModule = Module.extend({
 
 	version: new Version('0.1.0'),
 
-	dependencies: [
+	needs: [
+		'Xml',
+	],
+
+	uses: [
 		'HtmlElement',
 		'HtmlElements',
 		'Html',

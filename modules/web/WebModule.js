@@ -2,7 +2,15 @@ WebModule = Module.extend({
 
 	version: new Version('1.0'),
 
-	dependencies: [
+	needs: [
+		'Data',
+		'Geolocation',
+		'Html',
+		'Network',
+		'OperatingSystem',
+	],
+
+	uses: [
 		'Browser',
 		'Cookie',
 		'Cookies',
