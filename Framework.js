@@ -5,6 +5,7 @@ require('./Node');
 require('./objects/Function');
 require('./objects/Generator');
 require('./objects/Object');
+require('./objects/Json');
 require('./objects/Promise');
 require('./objects/Class');
 require('./objects/Error');
@@ -15,7 +16,6 @@ require('./objects/Module');
 require('./types/Array');
 require('./types/Boolean');
 require('./types/Buffer');
-require('./types/Json');
 require('./types/Number');
 require('./types/Primitive');
 require('./types/RegularExpression');
@@ -23,8 +23,8 @@ require('./types/String');
 
 Framework = Class.extend({
 
-	title: 'Project',
-	identifier: 'project',
+	title: null,
+	identifier: null,
 	version: new Version('0.1.0'),
 	framework: {
 		directory: __dirname+Node.Path.separator,
@@ -33,25 +33,13 @@ Framework = Class.extend({
 	settings: null,
 	environment: null,
 
-	// Need to prune this list
+	// The bare minimum needed for a project to run
 	coreModules: [
 		'Console',
-		'Cryptography',
-		'Email',
-		'FileSystem',
-		'Geolocation',
-		'Hardware',
+		'FileSystem', 
 		'Log',
-		'Network',
-		'OperatingSystem',
-		'Server',
 		'Settings',
 		'Time',
-		'Data',
-		'Web',
-		'WebServer',
-		'Xml',
-		'Html',
 	],
 
 	construct: function(projectDirectory) {
@@ -64,12 +52,32 @@ Framework = Class.extend({
 
 	initialize: function() {
 		// Load the Framework core modules
-		Module.load(this.coreModules);
+		this.loadCoreModules();
 
+		// Load the project settings
+		this.loadProjectSettings();
+
+		// Use settings to set the title and the identifier
+		this.setTitleAndIdentifier();
+
+		// Initialize the environment
+		this.initializeEnvironment();
+
+		// After the environment is initialized, initialize the Framework core modules
+		this.initializeCoreModules();
+
+		// Load all of the modules for the Project indicated in the Project settings
+		this.loadAndInitializeProjectModules();
+	},
+
+	loadCoreModules: function() {
+		Module.load(this.coreModules);
+	},
+
+	loadProjectSettings: function() {
 		// Announce starting
 		Console.out('Starting Framework '+this.version+'...');
 
-		// Load the project settings
 		Console.out('Loading project settings...');
 		this.settings = Settings.constructFromFile(this.directory+'settings'+Node.Path.separator+'settings.json');
 
@@ -79,11 +87,21 @@ Framework = Class.extend({
 		});
 		//Console.out(this.settings);
 
+		// Merge the environment settings
+		//Console.out('Integrating environment settings...')
+		this.settings.integrateSettingsFromFile(this.directory+'settings'+Node.Path.separator+'environment.json');
+		//Console.out(this.settings);
+	},
+
+	setTitleAndIdentifier: function() {
 		// Set the title
 		var title = this.settings.get('title');
 		if(title) {
 			this.title = title;
 		}
+
+		// Anounce project title
+		Console.out('Loaded settings for project "'+this.title+'".');
 
 		// Set the identifier
 		var identifier = this.settings.get('identifier');
@@ -93,36 +111,6 @@ Framework = Class.extend({
 		else {
 			this.identifier = this.title.toCamelCase();
 		}
-
-		// Anounce project title
-		Console.out('Loaded settings for project "'+this.title+'".');
-
-		// Merge the environment settings
-		//Console.out('Integrating environment settings...')
-		this.settings.integrateSettingsFromFile(this.directory+'settings'+Node.Path.separator+'environment.json');
-		//Console.out(this.settings);
-
-		// Initialize the environment
-		this.initializeEnvironment();
-
-		// Initialize the Framework core modules
-		Module.initialize(this.coreModules);
-
-		// Load all of the modules for the Project indicated in the Project settings
-		var modulesForProject = [];
-		this.settings.get('modules').each(function(moduleName, moduleSettings) {
-			var moduleClassName = moduleName.uppercaseFirstCharacter();
-			
-			// If we haven't already loaded the module
-			if(!this.coreModules.contains(moduleClassName)) {
-				//Console.out('Project module', moduleClassName);
-				Module.load(moduleClassName);
-				modulesForProject.append(moduleClassName);
-			}
-		}.bind(this));
-
-		// Initialize the modules for the Project
-		Module.initialize(modulesForProject);
 	},
 
 	initializeEnvironment: function() {
@@ -135,17 +123,30 @@ Framework = Class.extend({
 		Console.out('Initialized environment ('+this.environment+')...');
 	},
 
+	initializeCoreModules: function() {
+		Module.initialize(this.coreModules);
+	},	
+
+	loadAndInitializeProjectModules: function() {
+		var modulesForProject = [];
+		this.settings.get('modules').each(function(moduleName, moduleSettings) {
+			var moduleClassName = moduleName.uppercaseFirstCharacter();
+			
+			// If we haven't already loaded the module
+			if(!this.coreModules.contains(moduleClassName)) {
+				//Console.out('Project module', moduleClassName);
+				Module.load(moduleClassName);
+				modulesForProject.append(moduleClassName);
+			}
+		}.bind(this));
+		
+		// Initialize the modules for the Project
+		Module.initialize(modulesForProject);
+	},	
+
 });
 
-// Static methods
-Framework.eventEmitter = new EventEmitter();
-Framework.emit = function(eventName, data) {
-	Framework.eventEmitter.emit(eventName, data);
-}
-Framework.on = function(eventName, callback) {
-	Framework.eventEmitter.on(eventName, callback);
-};
-
+// Static methods and properties
 Framework.require = function(identifier) {
 	try {
 		return require(identifier);
@@ -155,3 +156,12 @@ Framework.require = function(identifier) {
 		return false;
 	}
 }
+
+// Attach an event emitter
+Framework.eventEmitter = new EventEmitter();
+Framework.emit = function(eventName, data) {
+	Framework.eventEmitter.emit(eventName, data);
+}
+Framework.on = function(eventName, callback) {
+	Framework.eventEmitter.on(eventName, callback);
+};
