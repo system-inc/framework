@@ -1,4 +1,4 @@
-ElectronClass = Module.extend({
+Electron = new (Class.extend({
 
 	remote: null,
 	application: null,
@@ -28,6 +28,9 @@ ElectronClass = Module.extend({
 		// Set the screen
 		this.screen = require('screen');
 
+		// Remove all screen event listeners to prevent duplicate listeners from being attached on browser window refresh
+		this.screen.removeAllListeners();
+
 		// Set the BrowserWindow
 		this.browserWindow = this.remote.require('browser-window');
 
@@ -46,8 +49,11 @@ ElectronClass = Module.extend({
 		// Add default keyboard shortcuts
 		this.addDefaultKeyboardShortcuts();
 
-		// Load the initial HtmlDocument
-		Controller.getController('Main').main().apply();
+		// Load the Main controller
+		Main = Controller.getController('Main');
+
+		// Load the HtmlDocument from Main.main()
+		Main.main().apply();
 
 		// Show the main browser window
 		this.mainBrowserWindow.show();
@@ -253,7 +259,4 @@ ElectronClass = Module.extend({
 		return template;
 	},
 
-});
-
-// Initialize the module
-Electron = new ElectronClass();
+}))();

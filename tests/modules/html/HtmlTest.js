@@ -1,10 +1,5 @@
 HtmlTest = Test.extend({
 
-	testHtml: function*() {
-		var actual = Html('div');
-		Assert.equal(actual.toString(false), '<div></div>', 'Using Html() to create an HtmlElement');
-	},
-
 	testHtmlDocument: function*() {
 		// Blank HTML document
 		var actual = new HtmlDocument();

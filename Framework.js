@@ -1,6 +1,3 @@
-// Make it obvious we are starting
-console.log("\x1B[90m\r\n        ____________\r\n       \/\\  ________ \\\r\n      \/  \\ \\______\/\\ \\\r\n     \/ \/\\ \\ \\  \/ \/\\ \\ \\\r\n    \/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\r\n   \/ \/ \/__\\ \\ \\\/_\/__\\_\\ \\__________\r\n  \/ \/_\/____\\ \\__________  ________ \\\r\n  \\ \\ \\____\/ \/ ________\/\\ \\______\/\\ \\\r\n   \\ \\ \\  \/ \/ \/\\ \\  \/ \/\\ \\ \\  \/ \/\\ \\ \\\r\n    \\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\r\n     \\ \\\/ \/ \/__\\_\\\/ \/ \/__\\ \\ \\\/_\/__\\_\\ \\\r\n      \\  \/_\/______\\\/_\/____\\ \\___________\\\r\n      \/  \\ \\______\/\\ \\____\/ \/ ________  \/\r\n     \/ \/\\ \\ \\  \/ \/\\ \\ \\  \/ \/ \/\\ \\  \/ \/ \/\r\n    \/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\r\n   \/ \/ \/__\\ \\ \\\/_\/__\\_\\\/ \/ \/__\\_\\\/ \/ \/\r\n  \/ \/_\/____\\ \\_________\\\/ \/______\\\/ \/\r\n  \\ \\ \\____\/ \/ ________  __________\/\r\n   \\ \\ \\  \/ \/ \/\\ \\  \/ \/ \/\r\n    \\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\r\n     \\ \\\/ \/ \/__\\_\\\/ \/ \/\r\n      \\  \/ \/______\\\/ \/\r\n       \\\/___________\/  \u00A9 "+new Date().getFullYear()+" System, Inc.\n\x1B[39m");
-
 // Node
 require('./Node');
 
@@ -24,18 +21,11 @@ require('./types/Primitive');
 require('./types/RegularExpression');
 require('./types/String');
 
-// TODO: Need to rethink this - all of these are required before coreModules are initialized
-require('./modules/settings/SettingsModule');
-require('./modules/file-system/FileSystemModule');
-require('./modules/log/LogModule');
-require('./modules/console/ConsoleModule');
-require('./modules/time/TimeModule');
-
 Framework = Class.extend({
 
 	title: 'Project',
 	identifier: 'project',
-	version: null,
+	version: new Version('0.1.0'),
 	framework: {
 		directory: __dirname+Node.Path.separator,
 	},
@@ -65,21 +55,22 @@ Framework = Class.extend({
 	],
 
 	construct: function(projectDirectory) {
-		// Initialize the version
-		this.version = new Version('.2');
+		// Make it obvious we are starting
+		console.log("\x1B[90m\r\n        ____________\r\n       \/\\  ________ \\\r\n      \/  \\ \\______\/\\ \\\r\n     \/ \/\\ \\ \\  \/ \/\\ \\ \\\r\n    \/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\r\n   \/ \/ \/__\\ \\ \\\/_\/__\\_\\ \\__________\r\n  \/ \/_\/____\\ \\__________  ________ \\\r\n  \\ \\ \\____\/ \/ ________\/\\ \\______\/\\ \\\r\n   \\ \\ \\  \/ \/ \/\\ \\  \/ \/\\ \\ \\  \/ \/\\ \\ \\\r\n    \\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\r\n     \\ \\\/ \/ \/__\\_\\\/ \/ \/__\\ \\ \\\/_\/__\\_\\ \\\r\n      \\  \/_\/______\\\/_\/____\\ \\___________\\\r\n      \/  \\ \\______\/\\ \\____\/ \/ ________  \/\r\n     \/ \/\\ \\ \\  \/ \/\\ \\ \\  \/ \/ \/\\ \\  \/ \/ \/\r\n    \/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\r\n   \/ \/ \/__\\ \\ \\\/_\/__\\_\\\/ \/ \/__\\_\\\/ \/ \/\r\n  \/ \/_\/____\\ \\_________\\\/ \/______\\\/ \/\r\n  \\ \\ \\____\/ \/ ________  __________\/\r\n   \\ \\ \\  \/ \/ \/\\ \\  \/ \/ \/\r\n    \\ \\ \\\/ \/ \/\\ \\ \\\/ \/ \/\r\n     \\ \\\/ \/ \/__\\_\\\/ \/ \/\r\n      \\  \/ \/______\\\/ \/\r\n       \\\/___________\/  \u00A9 "+new Date().getFullYear()+" System, Inc.\n\x1B[39m");		
 
 		// Set the project directory
 		this.directory = Node.Path.normalize(projectDirectory+Node.Path.separator);
+	},
 
-		// Announce loading
-		Console.out('Starting Framework '+this.version+'...');
-
+	initialize: function() {
 		// Load the Framework core modules
-		//Console.out('Loading modules...');
 		Module.load(this.coreModules);
 
+		// Announce starting
+		Console.out('Starting Framework '+this.version+'...');
+
 		// Load the project settings
-		//Console.out('Loading project settings...');
+		Console.out('Loading project settings...');
 		this.settings = Settings.constructFromFile(this.directory+'settings'+Node.Path.separator+'settings.json');
 
 		// Set the default settings
@@ -113,9 +104,7 @@ Framework = Class.extend({
 
 		// Initialize the environment
 		this.initializeEnvironment();
-	},
 
-	initialize: function() {
 		// Initialize the Framework core modules
 		Module.initialize(this.coreModules);
 
@@ -162,7 +151,7 @@ Framework.require = function(identifier) {
 		return require(identifier);
 	}
 	catch(exception) {
-		Console.out(exception);
+		console.log('Framework.require', identifier, exception);
 		return false;
 	}
 }

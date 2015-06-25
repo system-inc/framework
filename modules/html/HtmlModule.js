@@ -1,17 +1,12 @@
-require('./HtmlElement');
-require('./HtmlElements');
-require('./Html');
-require('./HtmlDocument');
+HtmlModule = Module.extend({
 
-HtmlModuleClass = Module.extend({
+	version: new Version('0.1.0'),
 
-	version: new Version('1.0'),
-
-	construct: function(settings) {
-		this.super(settings);
-	},
+	dependencies: [
+		'HtmlElement',
+		'HtmlElements',
+		'Html',
+		'HtmlDocument',
+	],
 	
 });
-
-// Initialize the module
-HtmlModule = new HtmlModuleClass();

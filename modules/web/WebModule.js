@@ -1,22 +1,20 @@
-require('./Browser');
-require('./Cookie');
-require('./Cookies');
-require('./Header');
-require('./Headers');
-require('./LocalStorage');
-require('./Url');
-require('./WebRequest');
-require('./Web');
-
-require('./interface/KeyboardShortcut.js');
-require('./interface/KeyboardShortcuts.js');
-
-WebModuleClass = Module.extend({
+WebModule = Module.extend({
 
 	version: new Version('1.0'),
 
-	construct: function(settings) {
-		this.super(settings);
-	},
+	dependencies: [
+		'Browser',
+		'Cookie',
+		'Cookies',
+		'Header',
+		'Headers',
+		'LocalStorage',
+		'Url',
+		'WebRequest',
+		'Web',
+		'WebApi',
+		'interface/KeyboardShortcut.js',
+		'interface/KeyboardShortcuts.js',
+	],
 	
 });

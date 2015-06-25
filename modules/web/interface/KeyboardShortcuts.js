@@ -1,4 +1,4 @@
-KeyboardShortcutsClass = Class.extend({
+KeyboardShortcuts = new (Class.extend({
 
 	listeningToKeyboardEvents: false,
 	keyboardShortcuts: [],
@@ -219,6 +219,4 @@ KeyboardShortcutsClass = Class.extend({
 		this.keyboardActivity = [];
 	},
 
-});
-
-KeyboardShortcuts = new KeyboardShortcutsClass();
+}))();

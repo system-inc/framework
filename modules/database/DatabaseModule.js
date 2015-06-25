@@ -1,19 +1,21 @@
-require('./adapter/NodeMySql');
-require('./Database');
-require('./DatabaseField');
-require('./DatabaseTable');
-require('./DatabaseTableColumn');
-require('./DatabaseTableIndex');
-require('./DatabaseTableRelationship');
-require('./DatabaseConnection');
-require('./DatabaseManager');
+DatabaseModule = Module.extend({
 
-DatabaseModuleClass = Module.extend({
+	version: new Version('0.1.0'),
 
-	version: new Version('1.0'),
+	dependencies: [
+		'adapter/NodeMySql',
+		'Database',
+		'DatabaseField',
+		'DatabaseTable',
+		'DatabaseTableColumn',
+		'DatabaseTableIndex',
+		'DatabaseTableRelationship',
+		'DatabaseConnection',
+		'DatabaseManager',
+	],
 
-	construct: function(settings) {
-		this.super(settings);
+	initialize: function(settings) {
+		this.super.apply(this, arguments);
 
 		// Add any databases to the database manager
 		var databases = this.settings.get('databases');
@@ -26,6 +28,3 @@ DatabaseModuleClass = Module.extend({
 	},
 	
 });
-
-// Initialize the module
-DatabaseModule = new DatabaseModuleClass();

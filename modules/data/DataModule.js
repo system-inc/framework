@@ -1,21 +1,19 @@
-require('./Data');
-require('./Schema');
-require('./SchemaModel');
-require('./SchemaModelProperty');
-require('./Model');
-require('./ModelProperty');
-require('./ModelList');
-require('./model-adapters/ModelAdapter');
-require('./model-adapters/DatabaseModelAdapter');
-require('./model-adapters/ApiModelAdapter');
-require('./ModelClassManager');
+DataModule = Module.extend({
 
-DataModuleClass = Module.extend({
+	version: new Version('0.1.0'),
 
-	version: new Version('1.0'),
-
-	construct: function(settings) {
-		this.super(settings);
-	},
+	dependencies: [
+		'Data',
+		'Schema',
+		'SchemaModel',
+		'SchemaModelProperty',
+		'Model',
+		'ModelProperty',
+		'ModelList',
+		'model-adapters/ModelAdapter',
+		'model-adapters/DatabaseModelAdapter',
+		'model-adapters/ApiModelAdapter',
+		'ModelClassManager',
+	],
 	
 });

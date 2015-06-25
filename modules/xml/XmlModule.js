@@ -1,16 +1,11 @@
-require('./XmlDocument');
-require('./XmlElement');
-require('./XmlElements');
+XmlModule = Module.extend({
 
-XmlModuleClass = Module.extend({
+	version: new Version('0.1.0'),
 
-	version: new Version('1.0'),
-
-	construct: function(settings) {
-		this.super(settings);
-	},
+	dependencies: [
+		'XmlDocument',
+		'XmlElement',
+		'XmlElements',
+	],
 	
 });
-
-// Initialize the module
-XmlModule = new XmlModuleClass();

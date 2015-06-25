@@ -1,13 +1,16 @@
-require('./Arguments');
-require('./Console');
-require('./Terminal');
+ConsoleModule = Module.extend({
 
-ConsoleModuleClass = Module.extend({
+	version: new Version('0.1.0'),
 
-	version: new Version('1.0'),
+	dependencies: [
+		'Arguments',
+		'Console',
+		'Terminal',
+	],
 
-	construct: function(settings) {
-		this.super(settings);
+	initialize: function(settings) {
+		this.super.apply(this, arguments);
+		
 		this.settings.default({
 			'commandHistory': {
 				'enabled': true,

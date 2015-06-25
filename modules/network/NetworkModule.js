@@ -1,14 +1,12 @@
-require('./IpAddress');
-require('./IpV4Address');
-require('./IpV6Address');
-require('./Network');
+NetworkModule = Module.extend({
 
-NetworkModuleClass = Module.extend({
+	version: new Version('0.1.0'),
 
-	version: new Version('1.0'),
-
-	construct: function(settings) {
-		this.super(settings);
-	},
+	dependencies: [
+		'IpAddress',
+		'IpV4Address',
+		'IpV6Address',
+		'Network',
+	],
 	
 });

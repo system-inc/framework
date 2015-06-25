@@ -1,18 +1,16 @@
-require('./Assert');
-require('./Test');
-require('./Proctor');
-require('./Fixture');
-require('./test-reporter/TestReporter');
-require('./test-reporter/StandardTestReporter');
-require('./test-reporter/ConciseTestReporter');
-require('./test-reporter/DotTestReporter');
+TestModule = Module.extend({
 
-TestModuleClass = Module.extend({
+	version: new Version('0.1.0'),
 
-	version: new Version('1.0'),
-
-	construct: function(settings) {
-		this.super(settings);
-	},
+	dependencies: [
+		'Assert',
+		'Test',
+		'Proctor',
+		'Fixture',
+		'test-reporter/TestReporter',
+		'test-reporter/StandardTestReporter',
+		'test-reporter/ConciseTestReporter',
+		'test-reporter/DotTestReporter',
+	],
 	
 });

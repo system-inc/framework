@@ -1,11 +1,9 @@
-require('./OperatingSystem');
+OperatingSystemModule = Module.extend({
 
-OperatingSystemModuleClass = Module.extend({
+	version: new Version('0.1.0'),
 
-	version: new Version('1.0'),
-
-	construct: function(settings) {
-		this.super(settings);
-	},
+	dependencies: [
+		'OperatingSystem',
+	],
 	
 });

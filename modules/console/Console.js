@@ -1,6 +1,5 @@
-ConsoleClass = Class.extend({
+Console = new (Class.extend({
 
-	identifier: null,
 	log: null,
 	showTime: true,
 	showFile: true,
@@ -12,9 +11,7 @@ ConsoleClass = Class.extend({
 	currentCommandCursorIndex: 0,
 	commandColor: 'cyan',
 
-	construct: function(identifier) {
-		this.identifier = (identifier === undefined ? this.identifier : identifier);
-
+	construct: function() {
 		// Listen for incoming commands from standard in
 		this.listen();
 	},
@@ -86,7 +83,7 @@ ConsoleClass = Class.extend({
 	},
 
 	attachLog: function(directory) {
-		this.log = new Log(directory, this.identifier);
+		this.log = new Log(directory, 'console');
 	},
 
 	loadCommandHistory: function*(directory, fileNameWithoutExtension) {
@@ -649,7 +646,4 @@ ConsoleClass = Class.extend({
 		return;
 	},
 
-});
-
-// Instantiate a global console
-Console = new ConsoleClass('console');
+}))();

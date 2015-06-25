@@ -1,26 +1,29 @@
-require('./Controller');
-require('./Request');
-require('./Response');
-require('./Router');
-require('./routes/Route');
-require('./routes/ControllerRoute');
-require('./routes/FileRoute');
-require('./routes/ProxyRoute');
-require('./routes/RedirectRoute');
-require('./RouteMatch');
-require('./WebServer');
-require('./errors/HttpError');
-require('./errors/InternalServerError');
-require('./errors/NotFoundError');
-require('./errors/RequestEntityTooLargeError');
+WebServerModule = Module.extend({
 
-WebServerModuleClass = Module.extend({
+	version: new Version('0.1.0'),
 
-	version: new Version('1.0'),
+	dependencies: [
+		'Controller',
+		'Request',
+		'Response',
+		'Router',
+		'routes/Route',
+		'routes/ControllerRoute',
+		'routes/FileRoute',
+		'routes/ProxyRoute',
+		'routes/RedirectRoute',
+		'RouteMatch',
+		'WebServer',
+		'errors/HttpError',
+		'errors/InternalServerError',
+		'errors/NotFoundError',
+		'errors/RequestEntityTooLargeError',
+	],
+
 	webServers: {},
 
-	construct: function(settings) {
-		this.super(settings);		
+	initialize: function(settings) {
+		this.super.apply(this, settings);
 
 		// Inspect the settings to see if they want a web server
 		var webServersSettings = this.settings.get('webServers');

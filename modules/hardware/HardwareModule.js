@@ -1,15 +1,10 @@
-require('./Device');
-require('./Hardware');
+HardwareModule = Module.extend({
 
-HardwareModuleClass = Module.extend({
+	version: new Version('0.1.0'),
 
-	version: new Version('1.0'),
-
-	construct: function(settings) {
-		this.super(settings);
-	},
+	dependencies: [
+		'Device',
+		'Hardware',
+	],
 	
 });
-
-// Initialize the module
-HardwareModule = new HardwareModuleClass();

@@ -1,4 +1,4 @@
-DatabaseManagerClass = Class.extend({
+DatabaseManager = new (Class.extend({
 
 	databases: {},
 
@@ -15,6 +15,4 @@ DatabaseManagerClass = Class.extend({
 		return this.databases.getKeyForValue(databaseIdentifier);
 	},
 
-});
-
-DatabaseManager = new DatabaseManagerClass();
+}))();

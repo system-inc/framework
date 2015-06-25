@@ -126,5 +126,5 @@ KeyboardShortcut.modifierAliases = {
     'return': 'enter',
     'escape': 'esc',
     'plus': '+',
-    'mod': /Mac|iPod|iPhone|iPad/.test(navigator.platform) ? 'meta' : 'ctrl',
+    'mod': (global['navigator'] && /Mac|iPod|iPhone|iPad/.test(navigator.platform)) ? 'meta' : 'ctrl',
 };
