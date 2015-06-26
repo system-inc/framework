@@ -110,6 +110,7 @@ Module.initialize = function(moduleNames) {
 			// Conditionally get the module settings from the project
 			if(global['Project']) {
 				settings = Project.settings.get('modules.'+moduleName.lowercaseFirstCharacter());
+				//console.log(settings);
 			}
 			
 			//console.log('moduleName', moduleName+'Module');

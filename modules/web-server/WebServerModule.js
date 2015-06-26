@@ -19,6 +19,7 @@ WebServerModule = Module.extend({
 		'routes/ProxyRoute',
 		'routes/RedirectRoute',
 		'RouteMatch',
+		'View',
 		'WebServer',
 		'errors/HttpError',
 		'errors/InternalServerError',

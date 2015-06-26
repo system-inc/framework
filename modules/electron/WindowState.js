@@ -228,7 +228,7 @@ WindowState = Class.extend({
 		// Display added
 		if(this.settings.defaultWindowState.applyOn.displayAdded) {
 			Electron.screen.on('display-added', function(event, newDisplay) {
-				console.log('display-added', event)
+				//console.log('display-added', event)
 				this.applyDefault();
 			}.bind(this));	
 		}
@@ -236,7 +236,7 @@ WindowState = Class.extend({
 		// Display removed
 		if(this.settings.defaultWindowState.applyOn.displayRemoved) {
 			Electron.screen.on('display-removed', function(event, oldDisplay) {
-				console.log('display-removed', event)
+				//console.log('display-removed', event)
 				this.applyDefault();
 			}.bind(this));
 		}
@@ -244,7 +244,7 @@ WindowState = Class.extend({
 		// Display metrics changed
 		if(this.settings.defaultWindowState.applyOn.displayMetricsChanged) {
 			Electron.screen.on('display-metrics-changed', function(event, display, changedMetrics) {
-				console.log('display-metrics-changed', event)
+				//console.log('display-metrics-changed', event)
 				this.applyDefault();
 			}.bind(this));
 		}

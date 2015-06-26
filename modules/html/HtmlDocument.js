@@ -18,10 +18,6 @@ HtmlDocument = XmlDocument.extend({
 		this.head = Html.head();
 		this.body = Html.body();
 
-		// Append the head and body to the <html> tag
-		this.element.append(this.head);
-		this.element.append(this.body);
-
 		// Append the <html> tag to the content array
 		this.content.append(this.element);
 	},
@@ -44,6 +40,11 @@ HtmlDocument = XmlDocument.extend({
 			openDocument.write(this.toString(false));
 			openDocument.close();
 		}
+
+		//document.head.innerHTML = this.head.toString(false);
+		//document.head.outerHTML = this.head.toString(false);
+		//document.body.outerHTML = this.body.toString(false);
+		//document.replaceChild(this.body.toString(false), document.body);
 	},
 
 	toString: function(indent) {
@@ -68,6 +69,10 @@ HtmlDocument = XmlDocument.extend({
 		}.bind(this));		
 
 		this.declaration = '<!DOCTYPE '+this.type+'>';
+
+		// Append the head and body to the <html> tag
+		this.element.append(this.head);
+		this.element.append(this.body);
 
 		return this.super(indent);
 	},

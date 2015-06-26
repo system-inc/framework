@@ -34,8 +34,57 @@ Controller = Class.extend({
 
 		return controller;
 	},
+
+	getView: function*(viewPath, data) {
+		// See if the viewPath ends in a valid extension
+		var validExtensions = [
+			'.html',
+			'.json',
+			'.js',
+		];
+		var endsWithValidExtension = false;
+		validExtensions.each(function(index, extension) {
+			if(viewPath.endsWith(extension)) {
+				endsWithValidExtension = true;
+				return false; // break
+			}
+		});
+
+		// If the view path does not end with a valid extension, assume .js
+		if(!endsWithValidExtension) {
+			viewPath = viewPath+'.js';
+		}
+
+		// Create a file to reference the view
+		var viewFile = new File(Project.directory+'views'+Node.Path.separator+viewPath);
+		//console.log('viewFile', viewFile);
+
+		var viewFileExists = yield viewFile.exists();
+		//console.log('viewFileExists', viewFileExists);
+
+		// Throw if the view file does not exist
+		if(!viewFileExists) {
+			throw new Error('View '+viewPath+' does not exist.');
+		}
+
+		var response = null;
+
+		// If the view is not .js, read the file
+		if(viewFile.extension != 'js') {
+			response = yield viewFile.read();
+			response = response.toString();
+			//console.log('response', response);
+		}
+		else {
+			response = Framework.require(viewFile.path);
+			//console.log('response', response)
+		}
+
+		return response;
+	},
 	
 });
 
 // Static methods
 Controller.getController = Controller.prototype.getController;
+Controller.getView = Controller.prototype.getView;

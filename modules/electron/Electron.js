@@ -49,11 +49,13 @@ Electron = new (Class.extend({
 		// Add default keyboard shortcuts
 		this.addDefaultKeyboardShortcuts();
 
-		// Load the Main controller
-		Main = Controller.getController('Main');
+		// Get the Main controller
+		var mainController = Controller.getController('Main');
 
-		// Load the HtmlDocument from Main.main()
-		var htmlDocument = yield Main.main();
+		// Load the HtmlDocument from Main.main() (Main.main() should always return an HtmlDocument)
+		var htmlDocument = yield mainController.main();
+		
+		// Apply the HtmlDocument to the DOM
 		htmlDocument.apply();
 
 		// Show the main browser window

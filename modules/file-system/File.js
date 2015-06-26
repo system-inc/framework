@@ -41,9 +41,17 @@ File = FileSystemObject.extend({
 		return this.handle;
 	},
 
+    read: function*(options) {
+        var content = yield File.read(this.path, options);
+
+        return content;
+    },
+
 	write: function*(data) {
 		//console.log('Running file.write', 'with handle', this.handle, data);
-		File.write(this.handle, data);
+		var response = yield File.write(this.handle, data);
+
+        return response;
 	},
 
 });
@@ -51,9 +59,9 @@ File = FileSystemObject.extend({
 // Static methods
 File.getContentType = File.prototype.getContentType;
 
-File.read = function(fileName, options) {
+File.read = function(path, options) {
     return new Promise(function(resolve, reject) {
-    	Node.FileSystem.readFile(fileName, options, function(error, data) {
+    	Node.FileSystem.readFile(path, options, function(error, data) {
     		if(error) {
     			reject(error);
     		}
