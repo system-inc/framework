@@ -10,7 +10,7 @@ Electron = new (Class.extend({
 	mainBrowserWindow: null,
 	mainBrowserWindowState: null,
 
-	initialize: function() {
+	initialize: function*() {
 		// Remotely access Application variables in this renderer process
 		this.remote = require('remote');
 
@@ -53,7 +53,8 @@ Electron = new (Class.extend({
 		Main = Controller.getController('Main');
 
 		// Load the HtmlDocument from Main.main()
-		Main.main().apply();
+		var htmlDocument = yield Main.main();
+		htmlDocument.apply();
 
 		// Show the main browser window
 		this.mainBrowserWindow.show();
