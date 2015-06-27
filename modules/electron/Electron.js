@@ -55,8 +55,11 @@ Electron = new (Class.extend({
 		// Load the HtmlDocument from Main.main() (Main.main() should always return an HtmlDocument)
 		var htmlDocument = yield mainController.main();
 		
-		// Apply the HtmlDocument to the DOM
-		htmlDocument.apply();
+		// Apply the HtmlDocument to the DOM without stripping out the current reference to Project.js in the head tag
+		document.querySelector('head').appendChild(document.createRange().createContextualFragment(htmlDocument.buildHead().contentToString()));
+		console.log('replacing body outerHTML causes a second head element to be created, need to find a better way to do this');
+		console.log('electron apps need to be entirely rendered in the browser without every loading a new page - this way we keep Framework and dont have to reinitialize')
+		document.querySelector('body').outerHTML = '<head></head>'+htmlDocument.bodyToString(false);
 
 		// Show the main browser window
 		this.mainBrowserWindow.show();

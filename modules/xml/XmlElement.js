@@ -77,6 +77,26 @@ XmlElement = Class.extend({
 		return this;
 	},
 
+	contentToString: function(indent, indentationLevel) {
+		var string = '';
+
+		this.content.each(function(index, stringOrElement) {
+			if(indent) {
+				if(Primitive.is(stringOrElement)) {
+					string += String.newline+indentationCharacter.repeat(indentationRepetitions * (indentationLevel + 1))+stringOrElement;
+				}
+				else {
+					string += stringOrElement.toString(indent, indentationLevel + 1);	
+				}
+			}
+			else {
+				string += stringOrElement.toString();		
+			}
+		});
+
+		return string;
+	},
+
 	toString: function(indent, indentationLevel) {
 		var string = '';
 		var indentationRepetitions = 4;
@@ -103,20 +123,7 @@ XmlElement = Class.extend({
 		else {
 			string += '>';
 
-			// Content
-			this.content.each(function(index, stringOrElement) {
-				if(indent) {
-					if(Primitive.is(stringOrElement)) {
-						string += String.newline+indentationCharacter.repeat(indentationRepetitions * (indentationLevel + 1))+stringOrElement;
-					}
-					else {
-						string += stringOrElement.toString(indent, indentationLevel + 1);	
-					}
-				}
-				else {
-					string += stringOrElement.toString();		
-				}
-			});
+			string += this.contentToString(indent, indentationLevel);
 
 			if(this.content.length && indent) {
 				string += String.newline+indentationCharacter.repeat(indentationRepetitions * indentationLevel);

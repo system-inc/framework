@@ -34,20 +34,9 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	apply: function() {
-		// Will probably have to rewrite this in the future, works for now
-		if(document && document.open) {
-			var openDocument = document.open('text/html');
-			openDocument.write(this.toString(false));
-			openDocument.close();
-		}
-
-		//document.head.innerHTML = this.head.toString(false);
-		//document.head.outerHTML = this.head.toString(false);
-		//document.body.outerHTML = this.body.toString(false);
-		//document.replaceChild(this.body.toString(false), document.body);
 	},
 
-	toString: function(indent) {
+	buildHead: function() {
 		// Handle title
 		if(this.title) {
 			this.head.append(Html.title(this.title));
@@ -66,15 +55,34 @@ HtmlDocument = XmlDocument.extend({
 				rel: 'stylesheet',
 				href: style,
 			}));
-		}.bind(this));		
+		}.bind(this));
 
-		this.declaration = '<!DOCTYPE '+this.type+'>';
+		return this.head;
+	},
 
-		// Append the head and body to the <html> tag
-		this.element.append(this.head);
-		this.element.append(this.body);
+	headToString: function(indent) {
+		// Use cloning to prevent duplicate appending
+		var htmlDocument = Object.clone(this);
 
-		return this.super(indent);
+		htmlDocument.buildHead();
+
+		return htmlDocument.head.toString(indent);
+	},
+
+	bodyToString: function(indent) {
+		return this.body.toString(indent);
+	},
+
+	toString: function(indent) {
+		// Use cloning to prevent duplicate appending
+		var htmlDocument = Object.clone(this);
+
+		htmlDocument.declaration = '<!DOCTYPE '+this.type+'>';
+
+		// Build the head tag
+		htmlDocument.buildHead();
+
+		return htmlDocument.super(indent);
 	},
 
 });
