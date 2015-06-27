@@ -58,22 +58,32 @@ Web.request = function(options) {
 			var finish = function*() {
 				// Get the content encoding
 				var contentEncoding = webResponse.headers.get('content-encoding');
+				//Console.highlight(webResponse.headers);
+				//Console.highlight('contentEncoding', contentEncoding);
 
 				// Concatenate all of the data chunks into one buffer
 				var buffer = Buffer.concat(chunks);
+				//Console.highlight('decode', options.decode, 'buffer', buffer.toString());
 
-				// Gzip
-				if(contentEncoding == 'gzip') {
-					webResponse.body = yield Data.decode(buffer, contentEncoding);
+				// If we are to decode the response
+				if(options.decode) {
+					// Gzip
+					if(contentEncoding == 'gzip') {
+						webResponse.body = yield Data.decode(buffer, contentEncoding);
+					}
+					// No content encoding
+					else {
+						webResponse.body = buffer.toString();
+					}
+
+					// Automatically decode the response body if it is JSON
+					if(Json.is(webResponse.body)) {
+						webResponse.data = Json.decode(webResponse.body);
+					}	
 				}
-				// No content encoding
+				// If we are not supposed to decode the response
 				else {
-					webResponse.body = buffer.toString();
-				}
-
-				// Automatically decode the response body if it is JSON
-				if(Json.is(webResponse.body)) {
-					webResponse.data = Json.decode(webResponse.body);
+					webResponse.body = buffer;
 				}
 
 				// Set the trailers

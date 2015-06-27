@@ -6,7 +6,8 @@ WebRequest = Class.extend({
 	body: null,
 	headers: new Headers(),
 	cookies: new Cookies(),
-	encoding: null, // Must use null encoding in order for gzipped responses to work
+	encoding: null, // Must use null encoding in order for gzipped responses to work, can be null, binary, utf8, ascii, hex, base64
+	decode: true,
 	authorizeConnection: false,
 	requestCertificate: false,
 
@@ -20,32 +21,40 @@ WebRequest = Class.extend({
 		}
 
 		if(options) {
-			if(options.method) {
+			if(options.method !== undefined) {
 				this.method = options.method.uppercase();
 			}
-			if(options.encoding) {
+			if(options.encoding !== undefined) {
 				this.encoding = options.encoding;
 			}
-			if(options.data) {
+			if(options.decode !== undefined) {
+				this.decode = options.decode;
+			}
+			if(options.data !== undefined) {
 				this.data = options.data;
 			}
-			if(options.body) {
+			if(options.body !== undefined) {
 				this.body = options.body;
 			}
-			if(options.headers) {
+			if(options.headers !== undefined) {
+				// If we have a Headers object, turn it into an object
+				if(Class.isInstance(options.headers, Headers)) {
+					options.headers = options.headers.toObject();
+				}
+
 				options.headers.each(function(key, value) {
 					this.headers.create(key, value);
 				}.bind(this));
 			}
-			if(options.cookies) {
+			if(options.cookies !== undefined) {
 				options.cookies.each(function(key, value) {
 					this.cookies.create(key, value);
 				}.bind(this));
 			}
-			if(options.authorizeConnection) {
+			if(options.authorizeConnection !== undefined) {
 				this.authorizeConnection = options.authorizeConnection;
 			}
-			if(options.requestCertificate) {
+			if(options.requestCertificate !== undefined) {
 				this.requestCertificate = options.requestCertificate;
 			}
 		}
@@ -105,6 +114,7 @@ WebRequest = Class.extend({
 			port: webRequest.url.port,
 			path: webRequest.url.path+webRequest.url.queryString,
 			encoding: webRequest.encoding,
+			decode: webRequest.decode,
 			body: webRequest.body,
 			headers: webRequest.headers.toObject(),
 			rejectUnauthorized: webRequest.authorizeConnection,

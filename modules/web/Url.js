@@ -72,6 +72,10 @@ Url = Class.extend({
 		return this.protocol+'://'+this.host+(this.port != 80 && this.port != 443 ? ':'+this.port : '')+this.path+this.queryString+(this.hash ? '#'+this.hash : '');
 	},
 
+	rebuild: function() {
+		this.url = this.getUrl();
+	},
+
 	toString: function() {
 		return this.getUrl();
 	},

@@ -1,5 +1,6 @@
 Console = new (Class.extend({
 
+	identifier: 'console',
 	log: null,
 	showTime: true,
 	showFile: true,
@@ -11,7 +12,11 @@ Console = new (Class.extend({
 	currentCommandCursorIndex: 0,
 	commandColor: 'cyan',
 
-	construct: function() {
+	construct: function(identifier) {
+		if(identifier !== undefined) {
+			this.identifier = identifier;
+		}
+
 		// Listen for incoming commands from standard in
 		this.listen();
 	},
