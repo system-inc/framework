@@ -9,6 +9,7 @@ Response = Class.extend({
 	// Encodings
 	encoding: 'identity',
 	acceptedEncodings: [],
+	contentEncoded: false,
 
 	// Headers
 	statusCode: null,
@@ -64,8 +65,19 @@ Response = Class.extend({
 		// Mark the response as handled
 		this.handled = true;
 
-		// Let the response know what accepted encodings the request allows
-		this.setAcceptedEncodings(this.request.headers.get('accept-encoding'));
+		// If the Content-Encoding header is already set, use it (this is used for proxying requests)
+		var contentEncodingHeaderValue = this.headers.get('Content-Encoding');
+		if(contentEncodingHeaderValue) {
+			this.encoding = contentEncodingHeaderValue;
+
+			// Mark the content as already encoded (if we already have set a content encoding than the content must be encoded already)
+			this.contentEncoded = true;
+		}
+		// If the Content-Encoding header is not set, set the best encoding method based on what the user said they will accept
+		else {
+			// Let the response know what accepted encodings the request allows
+			this.setAcceptedEncodings(this.request.headers.get('accept-encoding'));
+		}
 
 		// Send the headers
 		this.sendHeaders();
@@ -93,18 +105,24 @@ Response = Class.extend({
 
 		// Write the headers out
 		this.nodeResponse.writeHead(this.statusCode, this.headers.toArray());
+
+		//Console.highlight(this.headers.toArray());
 	},
 
 	sendContent: function*() {
-		//console.log(this.content);
-		//console.log(this.acceptedEncodings);
+		//Console.out(this.content);
+		//Console.out(this.acceptedEncodings);
+		//Console.out('contentEncoded', this.contentEncoded);
 
-		// If the client Accept-Encoding is gzip or deflate
-		if(this.encoding == 'gzip' || this.encoding == 'deflate') {
-			this.content = yield Data.encode(this.content, this.encoding);
+		// If we need to encode the content
+		if(!this.contentEncoded) {
+			// If the client Accept-Encoding is gzip or deflate
+			if(this.encoding == 'gzip' || this.encoding == 'deflate') {
+				this.content = yield Data.encode(this.content, this.encoding);
+			}
+			//console.log(this.content);
 		}
-		//console.log(this.content);
-
+		
 		// End the response
 		this.nodeResponse.end(this.content);
 	},

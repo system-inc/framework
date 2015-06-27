@@ -3,6 +3,7 @@ WebServerModule = Module.extend({
 	version: new Version('0.1.0'),
 
 	needs: [
+		'Hardware',
 		'Email',
 		'Server',
 		'Web',
@@ -30,7 +31,8 @@ WebServerModule = Module.extend({
 	webServers: {},
 
 	initialize: function(settings) {
-		this.super.apply(this, settings);
+		this.super.apply(this, arguments);
+		//Console.out('WebServerModule initialize', this.settings);
 
 		// Inspect the settings to see if they want a web server
 		var webServersSettings = this.settings.get('webServers');

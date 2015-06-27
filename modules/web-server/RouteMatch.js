@@ -134,17 +134,38 @@ RouteMatch = Class.extend({
 		// ProxyRoute
 		else if(this.route.type == 'proxy') {
 			// Build a web request for the proxy
-			//Console.out(this.route);
-			Console.highlight(this.route.proxyUrl);
-			var webRequest = new WebRequest(this.route.proxyUrl.url);
-			var webResponse = yield webRequest.execute();
-			//Console.out(webResponse);
+			var fullProxyUrl = this.route.getFullProxyUrl(this.request.url);
+			//Console.highlight(fullProxyUrl);
 
-			this.response.statusCode = webResponse.statusCode;
-			this.response.headers = webResponse.headers;
-			this.response.headers.delete('location');
+			// Use the headers from the request
+			var requestHeaders = Object.clone(this.request.headers);
+			requestHeaders.update('host', fullProxyUrl.host);
+			//Console.highlight('requestHeaders', requestHeaders);
+
+			// Create a web request
+			var webRequest = new WebRequest(fullProxyUrl, {
+				decode: false,
+				headers: requestHeaders,
+			});
+			//Console.highlight(webRequest);
+
+			// Execute the web request
+			var webRequestResponse = yield webRequest.execute();
+			//Console.highlight('webRequestResponse', webRequestResponse);
+
+			// Match the status code
+			this.response.statusCode = webRequestResponse.statusCode;
+
+			// Match the headers
+			var responseHeaders = Object.clone(webRequestResponse.headers);
+
+			// Set the headers
+			this.response.headers = responseHeaders;
+			//Console.out(this.response.headers);
 			
-			content = webResponse.body;
+			// Set the content
+			content = webRequestResponse.body;
+			//Console.out(content);
 		}
 		// FileRoute
 		else if(this.route.type == 'file') {

@@ -7,12 +7,17 @@ ProxyRoute = Route.extend({
 	construct: function() {
 	},
 
-	getFullProxyUrl: function(url) {
-		var indexInUrlWhereFullExpressionMatchStarts = url.url.search(this.fullExpression);
-		var indexInFullExpressionWhereRegularExpressionCaptureGroupStarts = this.fullExpression.indexOf('(');
-		var indexWhereAdditionalUrlPathStarts = indexInUrlWhereFullExpressionMatchStarts + indexInFullExpressionWhereRegularExpressionCaptureGroupStarts;
-		var additionalUrlPath = url.url.substring(indexWhereAdditionalUrlPathStarts);
-		var fullProxyUrl = new Url(this.proxyUrl.url.replaceLast('/', '')+additionalUrlPath);
+	getFullProxyUrl: function(requestUrl) {
+		//Console.highlight(requestUrl, this.proxyUrl);
+
+		// Clone the proxyUrl from the route
+		var fullProxyUrl = Object.clone(this.proxyUrl);
+
+		// Set the path of the fullProxyUrl to be the request path
+		fullProxyUrl.path = requestUrl.path;
+
+		// Rebuild the fullProxyUrl
+		fullProxyUrl.rebuild();
 
 		return fullProxyUrl;
 	},

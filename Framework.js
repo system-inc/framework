@@ -111,12 +111,17 @@ Framework = Class.extend({
 	},
 
 	loadAndInitializeProjectModules: function() {
+		// Load and initialize project modules separately in case multiple project modules rely on each other
 		var modulesForProject = [];
+
+		// Load the modules
 		this.settings.get('modules').each(function(moduleName, moduleSettings) {
 			moduleName = moduleName.uppercaseFirstCharacter();
 			
 			//Console.out('Project module', moduleName);
 			Module.load(moduleName);
+
+			// Store the module name for initialization later
 			modulesForProject.append(moduleName);
 		}.bind(this));
 		
