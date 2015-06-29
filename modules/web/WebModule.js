@@ -21,8 +21,9 @@ WebModule = Module.extend({
 		'WebRequest',
 		'Web',
 		'WebApi',
-		'interface/KeyboardShortcut.js',
-		'interface/KeyboardShortcuts.js',
+		'components/WebComponent',
+		'interface/KeyboardShortcut',
+		'interface/KeyboardShortcuts',
 	],
 	
 });

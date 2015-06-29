@@ -47,10 +47,10 @@ Module.modules = {
 	core: [
 		'Console',
 		'Cryptography',
-		'FileSystem', 
+		'FileSystem',
 		'Log',
 		'Settings',
-		'Time',	
+		'Time',
 	],
 	// Keep track of loaded modules
 	loaded: [],

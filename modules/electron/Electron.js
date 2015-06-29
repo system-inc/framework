@@ -54,12 +54,14 @@ Electron = new (Class.extend({
 
 		// Load the HtmlDocument from Main.main() (Main.main() should always return an HtmlDocument)
 		var htmlDocument = yield mainController.main();
+		//console.log(htmlDocument);
 		
-		// Apply the HtmlDocument to the DOM without stripping out the current reference to Project.js in the head tag
-		document.querySelector('head').appendChild(document.createRange().createContextualFragment(htmlDocument.buildHead().contentToString()));
-		console.log('replacing body outerHTML causes a second head element to be created, need to find a better way to do this');
-		console.log('electron apps need to be entirely rendered in the browser without every loading a new page - this way we keep Framework and dont have to reinitialize')
-		document.querySelector('body').outerHTML = '<head></head>'+htmlDocument.bodyToString(false);
+		// Apply the HtmlDocument to the DOM (make sure not to strip out the current reference to Project.js in the head tag)
+		HtmlDocument.on('ready', function() {
+			htmlDocument.buildHead();
+			htmlDocument.head.apply();
+			htmlDocument.body.apply();	
+		});
 
 		// Show the main browser window
 		this.mainBrowserWindow.show();
@@ -86,6 +88,7 @@ Electron = new (Class.extend({
 
 	addDefaultKeyboardShortcuts: function() {
 		var keyboardShortcutSettings = ElectronModule.settings.get('keyboardShortcuts');
+		//console.log(keyboardShortcutSettings); 
 
 		if(keyboardShortcutSettings.closeFocusedWindow) {
 			KeyboardShortcuts.add(['Ctrl+W'], this.closeFocusedWindow.bind(this));
@@ -105,6 +108,8 @@ Electron = new (Class.extend({
 	},
 
 	applyDefaultWindowStateOnFocusedWindow: function() {
+		//console.log(applyDefaultWindowStateOnFocusedWindow);
+
 		// TODO: For apps with multiple windows, need to make this work on the focused window
 		this.mainBrowserWindowState.applyDefault();
 	},

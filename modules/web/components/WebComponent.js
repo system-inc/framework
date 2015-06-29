@@ -1,29 +1,23 @@
 WebComponent = Class.extend({
 
-	document: null,
-
-	content: [],
+	element: null,
 
 	settings: null,
-	
-	data: null,
 
 	construct: function(settings) {
 		this.settings = new Settings(settings);
-	},
 
-	initialize: function() {
+		// The default tag for a web component is a div
+		this.settings.default({
+			tag: 'div',
+		});
 
+		// Every web component must have an HtmlElement
+		this.element = new HtmlElement(this.settings.get('tag'));
 	},
 
 	toString: function() {
-		var string = '';
-
-		this.content.each(function(index, stringOrElement) {
-			string += stringOrElement.toString(indent);
-		});
-
-		return string;
+		return this.element.toString();
 	},
 
 });
