@@ -77,7 +77,7 @@ XmlElement = Class.extend({
 		return this;
 	},
 
-	contentToString: function(indent, indentationLevel) {
+	contentToString: function(indent, indentationLevel, indentationCharacter, indentationRepetitions) {
 		var string = '';
 
 		this.content.each(function(index, stringOrElement) {
@@ -123,7 +123,7 @@ XmlElement = Class.extend({
 		else {
 			string += '>';
 
-			string += this.contentToString(indent, indentationLevel);
+			string += this.contentToString(indent, indentationLevel, indentationCharacter, indentationRepetitions);
 
 			if(this.content.length && indent) {
 				string += String.newline+indentationCharacter.repeat(indentationRepetitions * indentationLevel);

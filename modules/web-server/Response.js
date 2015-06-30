@@ -3,13 +3,38 @@ Response = Class.extend({
 	id: null, // Unique identifier for the response
 	request: null,
 	webServer: null,
-	stopwatch: null,
+	stopwatches: {
+		process: null,
+		send: null,
+	},
+	buildStopwatch: null,
 	nodeResponse: null,
 
 	// Encodings
 	encoding: 'identity',
 	acceptedEncodings: [],
 	contentEncoded: false,
+
+	contentTypesToEncode: [
+	    'text/html',
+	    'application/x-javascript',
+	    'text/css',
+	    'application/javascript',
+	    'text/javascript',
+	    'text/plain',
+	    'text/xml',
+	    'application/json',
+	    'application/vnd.ms-fontobject',
+	    'application/x-font-opentype',
+	    'application/x-font-truetype',
+	    'application/x-font-ttf',
+	    'application/xml',
+	    'font/eot',
+	    'font/opentype',
+	    'font/otf',
+	    'image/svg+xml',
+	    'image/vnd.microsoft.icon',
+	],
 
 	// Headers
 	statusCode: null,
@@ -29,8 +54,9 @@ Response = Class.extend({
 		// Hold onto Node's response object
 		this.nodeResponse = nodeResponse;
 
-		// Add a stopwatch to the response
-		this.stopwatch = new Stopwatch();
+		// Track processing time and sending time
+		this.stopwatches.process = new Stopwatch();
+		this.stopwatches.send = new Stopwatch();
 		
 		// Reference the associated request and and web server
 		this.request = request;
@@ -44,19 +70,27 @@ Response = Class.extend({
 				this.acceptedEncodings.push(acceptedEncodings[i].trim());
 			}
 
-			// Deflate is faster than gzip
-			if(this.acceptedEncodings.contains('deflate', false)) {
-				this.encoding = 'deflate';
+			// Encode if we do not have a contentType (means we are probably text/html) or if we match a content type on the white list
+			var contentType = this.headers.get('Content-Type');
+			if(!contentType || this.contentTypesToEncode.contains(contentType)) {
+				// Deflate is faster than gzip
+				if(this.acceptedEncodings.contains('deflate', false)) {
+					this.encoding = 'deflate';
+				}
+				else if(this.acceptedEncodings.contains('gzip', false)) {
+					this.encoding = 'gzip';
+				}
 			}
-			else if(this.acceptedEncodings.contains('gzip', false)) {
-				this.encoding = 'gzip';
+			// Do not encode unless the conditions above are met
+			else {
+				this.encoding =  null;
 			}
 		}
 
 		return this.acceptedEncodings;
 	},
 
-	send: function(evenIfHandled) {
+	send: function*(evenIfHandled) {
 		// Don't send the request if it is already handled unless forced
 		if(this.handled && !evenIfHandled) {
 			return;
@@ -73,15 +107,52 @@ Response = Class.extend({
 			// Mark the content as already encoded (if we already have set a content encoding than the content must be encoded already)
 			this.contentEncoded = true;
 		}
-		// If the Content-Encoding header is not set, set the best encoding method based on what the user said they will accept
-		else {
+
+		// If the content is something
+		if(this.content) {
+			// If the content is a file
+			if(Class.isInstance(this.content, File)) {
+				// Check if the file exists
+				var fileExists = yield this.content.exists();
+
+				// If the file exists
+				if(fileExists) {
+					// Set the Content-Type header
+					var contentType = File.getContentType(this.content.path);
+					this.headers.set('Content-Type', contentType);
+
+					// Turn the file into a read stream
+					//this.content = yield File.read(this.content.path);
+					this.content = yield this.content.toReadStream();
+				}
+				// If the file does not exist, send a 404
+				else {
+					throw new NotFoundError(this.content.name+' not found.');
+				}
+			}
+			// If the content is an HtmlDocument
+			else if(Class.isInstance(this.content, HtmlDocument)) {
+				this.headers.set('Content-Type', 'text/html');
+				this.content = this.content.toString(false); // No indentation
+			}
+			// If the content isn't a string or buffer, JSON encode it
+			else if(!String.is(this.content) && !Buffer.is(this.content)) {
+				this.headers.set('Content-Type', 'application/json');
+				this.content = Json.encode(this.content);
+			}
+		}
+
+		// If the content is not already encoded set the best encoding method based on what the user said they will accept
+		if(!this.contentEncoded) {
 			// Let the response know what accepted encodings the request allows
-			this.setAcceptedEncodings(this.request.headers.get('accept-encoding'));
+			this.setAcceptedEncodings(this.request.headers.get('Accept-Encoding'));
 		}
 
 		// Send the headers
 		this.sendHeaders();
-		this.sendContent();
+
+		// Send the content (yield until we finish)
+		var contentSent = yield this.sendContent();
 
 		// Wrap things up
 		this.sent();
@@ -93,12 +164,18 @@ Response = Class.extend({
 			this.statusCode = 200;
 		}
 
-		// Set the content encoding header
-		this.headers.update('Content-Encoding', this.encoding);
-
+		// If there is no encoding type specified, remove the Content-Encoding header
+		if(!this.encoding) {
+			this.headers.delete('Content-Encoding');
+		}
+		// If there is an encoding type specified, update the header
+		else {
+			this.headers.update('Content-Encoding', this.encoding);	
+		}
+		
 		// Track the elapsed time
-		this.stopwatch.stop();
-		this.headers.create('X-Processing-Time-in-'+this.stopwatch.precision.capitalize(), this.stopwatch.elapsedTime);
+		this.stopwatches.process.stop();
+		this.headers.create('X-Processing-Time-in-'+this.stopwatches.process.precision.capitalize(), this.stopwatches.process.elapsedTime);
 
 		// Add the response cookies to the headers
 		this.headers.addCookies(this.cookies);
@@ -114,21 +191,57 @@ Response = Class.extend({
 		//Console.out(this.acceptedEncodings);
 		//Console.out('contentEncoded', this.contentEncoded);
 
-		// If we need to encode the content
-		if(!this.contentEncoded) {
-			// If the client Accept-Encoding is gzip or deflate
-			if(this.encoding == 'gzip' || this.encoding == 'deflate') {
+		// If the content is a string and is not a stream, turn it into a stream
+		if(String.is(this.content)) {
+			this.content = this.content.toStream();
+		}
+
+		// Handle streams
+		if(this.content instanceof Node.Stream.Stream) {
+			// Return a promise that resolves when the response is completely sent
+			return new Promise(function(resolve, reject) {
+				// If the content is not encoded and the encoding is deflate
+				if(!this.contentEncoded && this.encoding == 'deflate') {
+					var deflate = Node.Zlib.createDeflate();
+					this.content.pipe(deflate).pipe(this.nodeResponse).on('finish', function() {
+						//console.log('done sending!')
+						resolve(true);
+					});
+				}
+				// If the content is not encoded and the encoding is gzip
+				else if(!this.contentEncoded && this.encoding == 'gzip') {
+					var gzip = Node.Zlib.createGzip();
+					this.content.pipe(gzip).pipe(this.nodeResponse).on('finish', function() {
+						//console.log('done sending!')
+						resolve(true);
+					});
+				}
+				// If there is no encoding
+				else {
+					this.content.pipe(this.nodeResponse).on('finish', function() {
+						//console.log('done sending!')
+						resolve(true);
+					});
+				}
+			}.bind(this));
+		}
+		else {
+			// If the content is not encoded and we need to encode
+			if(!this.contentEncoded && (this.encoding == 'gzip' || this.encoding == 'deflate')) {
 				this.content = yield Data.encode(this.content, this.encoding);
 			}
-			//console.log(this.content);
+
+			// End the response
+			this.nodeResponse.end(this.content);
 		}
-		
-		// End the response
-		this.nodeResponse.end(this.content);
 	},
 
 	sent: function() {
+		// Record the time
 		this.time = new Time();
+
+		// Stop the send stopwatch
+		this.stopwatches.send.stop();
 
 		// Show the request in the console
 		var responsesLogEntry = this.prepareLogEntry();
@@ -146,8 +259,9 @@ Response = Class.extend({
 		responsesLogEntry += '"'+this.id+'"';
 		responsesLogEntry += ',"'+this.time.getDateTime()+'"';
 		responsesLogEntry += ',"'+this.statusCode+'"';
-		responsesLogEntry += ',"'+this.stopwatch.precision+'"';
-		responsesLogEntry += ',"'+this.stopwatch.elapsedTime+'"';
+		responsesLogEntry += ',"'+this.stopwatches.process.precision+'"';
+		responsesLogEntry += ',"'+this.stopwatches.process.elapsedTime+'"';
+		responsesLogEntry += ',"'+this.stopwatches.send.elapsedTime+'"';
 
 		return responsesLogEntry;
 	},

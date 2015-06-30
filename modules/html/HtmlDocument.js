@@ -12,13 +12,25 @@ HtmlDocument = XmlDocument.extend({
 	scripts: [],
 	styles: [],
 
-	construct: function() {
+	construct: function(head, body) {
 		// An <html> tag to store the head and body
 		this.element = Html.html();
 
-		// Create the head and body tags
-		this.head = Html.head();
-		this.body = Html.body();
+		// Conditionally create the head tag
+		if(head === undefined) {
+			this.head = Html.head();	
+		}
+		else {
+			this.head = head;
+		}
+
+		// Conditionally create the body tag
+		if(body === undefined) {
+			this.body = Html.body();	
+		}
+		else {
+			this.body = body;
+		}
 
 		// Append the head and body to the element
 		this.element.append(this.head);
@@ -115,6 +127,7 @@ HtmlDocument = XmlDocument.extend({
 	toString: function(indent) {
 		// Use cloning to prevent duplicate appending
 		var htmlDocument = this.clone();
+		//Console.highlight(this.body.toString());
 
 		// Set the declaration
 		htmlDocument.declaration = '<!DOCTYPE '+htmlDocument.type+'>';
@@ -129,18 +142,23 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	clone: function() {
-		var htmlDocument = new HtmlDocument();
+		// Clone the head and body elements to pass into the HtmlDocument constructor
+		var head = this.head.clone();
+		var body = this.body.clone();
+
+		var htmlDocument = new HtmlDocument(head, body);
 
 		// XML properties
-		htmlDocument.declaration = this.declaration;
-		htmlDocument.version = this.version;
-		htmlDocument.encoding = this.encoding;
+		htmlDocument.type = Object.clone(this.type);
+		htmlDocument.declaration = Object.clone(this.declaration);
+		htmlDocument.version = Object.clone(this.version);
+		htmlDocument.encoding = Object.clone(this.encoding);
 
 		// HTML properties
-		htmlDocument.title = this.title;
-		htmlDocument.scripts = Object.clone(this.scripts);
-		htmlDocument.styles = Object.clone(this.styles);
-		htmlDocument.element = this.element.clone();
+		htmlDocument.domDocument = this.domDocument;
+		htmlDocument.title = Object.clone(this.title);
+		htmlDocument.scripts = this.scripts.clone();
+		htmlDocument.styles = this.styles.clone();
 
 		return htmlDocument;
 	},

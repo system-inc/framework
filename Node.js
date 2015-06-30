@@ -14,9 +14,10 @@ Node.Path.separator = Node.Path.sep;
 Node.Process = process;
 Node.StandardIn = Node.Process.stdin;	
 Node.StandardOut = Node.Process.stdout;
+Node.Stream = require('stream');
 Node.Url = require('url');
 Node.Utility = require('util');
-Node.Zlip = require('zlib');
+Node.Zlib = require('zlib');
 
 Node.exit = function() {
 	if(arguments.length) {

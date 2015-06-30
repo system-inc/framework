@@ -73,9 +73,6 @@ RouteMatch = Class.extend({
 		// Finalize route data
 		var finalizedRouteData = this.finalizeRouteData();
 
-		// Setup a variable to store the content
-		var content = null;
-
 		// ControllerRoute
 		if(this.route.type == 'controller') {
 			// Try to get the controller
@@ -97,7 +94,7 @@ RouteMatch = Class.extend({
 				}.bind(this));
 
 				// Invoke the controller method and pass in the arguments array
-				content = yield controller[this.route.controllerMethodName].apply(controller, controllerMethodArguments);
+				this.response.content = yield controller[this.route.controllerMethodName].apply(controller, controllerMethodArguments);
 			}
 			// Send a 404
 			else {
@@ -164,7 +161,7 @@ RouteMatch = Class.extend({
 			//Console.out(this.response.headers);
 			
 			// Set the content
-			content = webRequestResponse.body;
+			this.response.content = webRequestResponse.body;
 			//Console.out(content);
 		}
 		// FileRoute
@@ -181,98 +178,12 @@ RouteMatch = Class.extend({
 				filePath = Node.Path.normalize(Project.directory+'views'+Node.Path.separator+this.route.filePath);
 			}
 
-			// Check if the file exists
-			if(yield File.exists(filePath)) {
-				// Set the Content-Type header
-				var contentType = File.getContentType(filePath);
-				this.response.headers.set('Content-Type', contentType);
-				
-				// Read the file
-				var file = yield File.read(filePath);
-
-				// Hacking this together for testing
-				if(filePath.endsWith('.html')) {
-					var fileDirectory = new FileSystemObject(filePath).directory;
-					content = yield this.processIncludes(file.toString(), fileDirectory);
-				}
-				else {
-					// Set the response content
-					content = file;
-				}
-			}
-			// If the file doesn't exist, send a 404
-			else {
-				throw new NotFoundError(filePath+' not found.');
-			}
-		}
-
-		// If the content exists
-
-		if(content) {
-			// And is an HtmlDocument
-			if(Class.isInstance(content, HtmlDocument)) {
-				content = content.toString(false);
-			}
-			// Make sure content is a string or a buffer
-			else if(content && !String.is(content) && !Buffer.is(content)) {
-				content = Json.encode(content);
-			}
-		}
-
-		// If content exists, put it on the response
-		if(content) {
-			this.response.content = content;
+			this.response.content = new File(filePath);
 		}
 
 		// Send the response
 		//Console.out('Sending response:', this.response.id, this.response.content);
 		this.response.send();
-	},
-
-	processIncludes: function*(content, fileDirectory) {
-		var includeStatementStartIndex;
-		do {
-			// Check if we have a Project.include statement
-			includeStatementStartIndex = content.indexOf('Project.include');
-
-			// If we do have Project.include
-			if(includeStatementStartIndex != -1) {
-				// Get the end index of the Project.include statement
-				var includeStatementEndIndex = content.substring(includeStatementStartIndex, content.length).indexOf(';') + includeStatementStartIndex + 1;
-
-				// Get the entire include statement
-				var includeStatement = content.substring(includeStatementStartIndex, includeStatementEndIndex);
-				//Console.highlight(includeStatement);
-
-				// Get just the include path from the include statement
-				var includePath = includeStatement.substring(includeStatement.indexOf('(') + 2, includeStatement.indexOf(')') - 1);
-
-				// Turn the include path into an normalized absolute path
-				var includeFileAbsolutePath = Node.Path.normalize(fileDirectory+includePath);
-				//Console.highlight("\n", includeStatement, "\n", includeFileAbsolutePath);
-
-				// Check if the file exists
-				if(yield File.exists(includeFileAbsolutePath)) {
-					// Read the file
-					var includeFile = yield File.read(includeFileAbsolutePath);
-					includeFile = includeFile.toString();
-
-					// Run the included file through process includes
-					var includeFileDirectory = new FileSystemObject(includeFileAbsolutePath).directory;
-					var includeContent = yield this.processIncludes(includeFile, includeFileDirectory);
-
-					// Merge the included content
-					content = content.replaceRange(includeStatementStartIndex, includeStatementEndIndex, includeContent);
-				}
-				// If the file doesn't exist, send a 404
-				else {
-					throw new NotFoundError(includeFileAbsolutePath+' not found.');
-				}
-			}
-		}
-		while(includeStatementStartIndex != -1);
-
-		return content;
 	},
 
 });

@@ -7,9 +7,9 @@ File = FileSystemObject.extend({
 	handle: null,
 
 	construct: function(path) {
-		this.super(path);
-		this.file = (path === undefined ? this.path : path);
-
+		this.super.apply(this, arguments);
+		
+        this.file = this.path;
 		this.fileWithoutExtension = this.file.substr(0, this.file.lastIndexOf('.'));
 		this.nameWithoutExtension = this.name.substr(0, this.name.lastIndexOf('.'));
 		this.extension = this.file.split('.').reverse()[0];
@@ -53,6 +53,18 @@ File = FileSystemObject.extend({
 
         return response;
 	},
+
+    toReadStream: function*(options) {
+        var readStream = yield File.createReadStream(this.path, options);
+
+        return readStream;
+    },
+
+    toWriteStream: function*(options) {
+        var writeStream = yield File.createWriteStream(this.path, options);
+
+        return writeStream;
+    },
 
 });
 
@@ -110,6 +122,22 @@ File.create = function(file, data, options) {
             else {
                 resolve(true);
             }
+        });
+    });
+}
+
+File.createReadStream = function() {
+    var storedContext = this;
+    var storedArguments = arguments;
+
+    return new Promise(function(resolve, reject) {
+        var readStream = Node.FileSystem.createReadStream.apply(storedContext, storedArguments);
+        readStream.on('open', function(fileDescriptor) {
+            resolve(readStream);
+        });
+        readStream.on('error', function(error) {
+            console.log(error);
+            reject(error);
         });
     });
 }

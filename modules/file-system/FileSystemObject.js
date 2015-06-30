@@ -20,7 +20,7 @@ FileSystemObject = Class.extend({
 	nodeStatus: null,
 	
 	construct: function(path) {
-		this.path = (path === undefined) ? this.path : path;
+		this.path = Node.Path.normalize(path);
 
 		// Make sure we have a path
 		if(this.path) {
@@ -155,9 +155,7 @@ FileSystemObject = Class.extend({
 	},
 
 	exists: function(path) {
-		if(!path) {
-			path = this.path;
-		}
+		path = (path === undefined) ? this.path : Node.Path.normalize(path);
 		//console.log('path', path);
 
 	    return new Promise(function(resolve, reject) {

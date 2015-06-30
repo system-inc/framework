@@ -6,7 +6,7 @@ Data.decode = function(data, encoding) {
     return new Promise(function(resolve, reject) {
     	// Gzip
 		if(encoding == 'gzip') {
-			Node.Zlip.gunzip(data, function(error, result) {
+			Node.Zlib.gunzip(data, function(error, result) {
 				if(error) {
 					reject(error);
 				}
@@ -25,7 +25,7 @@ Data.encode = function(data, encoding) {
     return new Promise(function(resolve, reject) {
     	// Gzip
 		if(encoding == 'gzip' || encoding == 'deflate') {
-			Node.Zlip[encoding](data, function(error, result) {
+			Node.Zlib[encoding](data, function(error, result) {
 				if(error) {
 					reject(error);
 				}

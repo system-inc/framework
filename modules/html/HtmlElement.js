@@ -62,28 +62,37 @@ HtmlElement = XmlElement.extend({
 		return this;
 	},
 
-	clone: function() {
+	clone: function(options) {
+		options = {
+			content: true,
+		}.merge(options);
+
 		// Create a new HtmlElement
 		var htmlElement = new HtmlElement(this.tag, null, this.unary);
+
+		// Link the DOM element
+		htmlElement.domElement = this.domElement;
 
 		// Clone the attributes
 		htmlElement.attributes = Object.clone(this.attributes);
 
-		// Clone the content
-		this.content.each(function(index, stringOrElement) {
-			var content;
+		// Conditionally clone the content
+		if(options.content) {
+			this.content.each(function(index, stringOrElement) {
+				var content;
 
-			// Bring primitives over, no need to clone
-			if(Primitive.is(stringOrElement)) {
-				content = stringOrElement;
-			}
-			// Clone anything else
-			else {
-				content = stringOrElement.clone();
-			}
+				// Bring primitives over, no need to clone
+				if(Primitive.is(stringOrElement)) {
+					content = stringOrElement;
+				}
+				// Clone anything else
+				else {
+					content = stringOrElement.clone();
+				}
 
-			htmlElement.content.append(content);
-		});
+				htmlElement.content.append(content);
+			});
+		}
 
 		return htmlElement;
 	},

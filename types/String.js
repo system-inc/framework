@@ -384,3 +384,16 @@ String.prototype.reflect = function() {
 
 	return reflectedString;
 }
+
+String.prototype.toStream = function() {
+	// Create a new stream
+	var stream = new Node.Stream.Readable();
+
+	// Add this string to the stream
+	stream.push(this.toString());
+
+	// Indicate end of stream
+	stream.push(null);
+
+	return stream;
+}
