@@ -17,6 +17,7 @@ TestModule = Module.extend({
 		'Web',
 		'WebServer',
 		'Xml',
+		'Zip',
 	],
 
 	uses: [
