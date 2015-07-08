@@ -1,15 +1,56 @@
 {
-	"title": "Tests",
-	"modules": {
-		"database": {
-			"databases": {
-				"frameworkTest": {
-					"host": "localhost",
-					"username": "framework_test",
-					"password": "framework_test",
-					"databaseName": "framework_test"
+	title: "Test",
+	arguments: {
+		usage: '[options path testMethodName]',
+		requiredArguments: [
+			{
+				identifier: 'path'
+			}
+		],
+		optionalArguments: [
+			{
+				identifier: 'testMethodName',
+			}
+		],
+		options: [
+			{
+				option: 'reporter',
+				default: 'standard',
+				description: 'Specifiy a test reporter to use. Currently, "standard" and "dot" are available, with "standard" being the default.',
+				aliases: [
+					'r',
+				],
+				requiredArguments: [
+				],
+				optionalArguments: [
+				],
+			},
+			{
+				option: 'supervise',
+				default: false,
+				description: 'Watch for changes and run tests when changes happen.',
+				aliases: [
+					's',
+				],
+				requiredArguments: [
+				],
+				optionalArguments: [
+				],
+			},
+		],
+	},
+	modules: {
+		database: {
+			databases: {
+				frameworkTest: {
+					host: "localhost",
+					username: "framework_test",
+					password: "framework_test",
+					databaseName: "framework_test",
 				}
 			}
-		}
+		},
+		test: {
+		},
 	}
 }

@@ -12,4 +12,4 @@ scriptDirectory=`dirname "$scriptDirectory"`
 #echo $scriptDirectory
 
 # Run the script
-node --harmony "$scriptDirectory/../tests/Test.js" "$@"
+node --harmony "$scriptDirectory/../tests/Project.js" "$@"

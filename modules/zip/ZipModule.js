@@ -6,9 +6,5 @@ ZipModule = Module.extend({
 		'ZipFile',
 		'ZipFileSystemObjectReference',
 	],
-
-	construct: function(moduleName) {
-		this.super.apply(this, arguments);
-	},
 	
 });

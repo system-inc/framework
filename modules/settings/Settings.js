@@ -2,26 +2,36 @@ Settings = Class.extend({
 
 	settings: {},
 
-	construct: function(settings) {
-		if(settings !== undefined) {
+	construct: function(settings, defaultSettings) {
+		if(settings && Object.is(settings)) {
 			this.settings = settings;
+		}
+
+		if(defaultSettings !== undefined) {
+			this.default(defaultSettings);
 		}
 	},
 
 	default: function(defaultSettings) {
 		this.settings = defaultSettings.merge(this.settings);
+
+		return this;
 	},
 
 	mergeSettingsFromFile: function(path) {
 		var settings = File.synchronous.read.json(path);
 		//Console.out('Settings from', path, 'to merge:', settings);
 		this.settings.merge(settings);
+
+		return this;
 	},
 
 	integrateSettingsFromFile: function(path) {
 		var settings = File.synchronous.read.json(path);
 		//Console.out('Settings from', path, 'to integrate:', settings);
 		this.settings.integrate(settings);
+
+		return this;
 	},
 
 	isEmpty: function() {
