@@ -1,7 +1,5 @@
 ZipFile = File.extend({
 
-	admZip: null,
-
 	fileSystemObjectReferences: [],
 
 	construct: function() {
