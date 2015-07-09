@@ -32,7 +32,7 @@ Proctor = Class.extend({
 			this.testReporter = new StandardTestReporter();
 		}
 		else if(testReporterIdentifier.lowercase() == 'standard') {
-			this.testReporter = new DotTestReporter();
+			this.testReporter = new StandardTestReporter();
 		}
 		else if(testReporterIdentifier.lowercase() == 'dot') {
 			this.testReporter = new DotTestReporter();
@@ -96,7 +96,7 @@ Proctor = Class.extend({
 	resolvePath: function(path) {
 		// If the path does not exist, we are in the default Framework tests directory
 		if(!path) {
-			path = Project.framework.directory+'tests'+Node.Path.separator;
+			path = Project.framework.directory;
 		}
 		// If the path does not start with a slash, we are in the default Framework tests directory
 		else if(!path.startsWith(Node.Path.separator)) {
@@ -113,8 +113,8 @@ Proctor = Class.extend({
 		return path;
 	},
 
-	getAndRunTests: function*(path, testMethodName) {
-		yield this.getTests(path, testMethodName);
+	getAndRunTests: function*(path, filePattern, methodPattern) {
+		yield this.getTests(path, filePattern, methodPattern);
 		yield this.runTests();
 	},
 
@@ -138,104 +138,88 @@ Proctor = Class.extend({
 		return count;
 	},
 
-	getTests: function*(path, testMethodName) {
+	getTests: function*(path, filePattern, methodPattern) {
 		// Resolve the path
 		path = this.resolvePath(path);
+		//Node.exit(path);
+
+		// Create a file or directory from the path
+		var fileSystemObjectFromPath = yield FileSystemObject.constructFromPath(path);
+		//Node.exit(fileSystemObject);
+
+		// Store all of the file system objects
+		var fileSystemObjects = [];
 		
 		// If we are working with a directory of tests
-		if(path.endsWith(Node.Path.separator)) {
+		if(fileSystemObjectFromPath.isDirectory()) {
 			// Recursively get all of the file system objects in the path
-			var fileSystemObjects = yield FileSystem.list(path, true);
-
-			// Loop through each of the file system objects
-			fileSystemObjects.each(function(index, fileSystemObject) {
-				// If we have a file
-				if(Class.isInstance(fileSystemObject, File)) {
-					// We need to see if this is a test class file, if the file is not "Test.js" but ends with "Test.js" it should be
-					if(fileSystemObject.name != 'Test.js' && fileSystemObject.name.endsWith('Test.js')) {
-						// Require the test class file
-						require(fileSystemObject.file);
-
-						var testClassName = fileSystemObject.nameWithoutExtension;
-
-						// Add the test class to tests
-						this.addTest(testClassName, fileSystemObject.name, fileSystemObject.directory);
-
-						// Instantiate the test class
-						var testClass = this.testClasses[testClassName];
-						// Cache the test class if we don't have it already instantiated
-						if(!testClass) {
-							testClass = new global[testClassName]();
-							this.testClasses[testClassName] = testClass;
-						}
-
-						// Loop through all of the class properties
-						for(var key in testClass) {
-							// All tests must start with "test" and be a function
-							if(key.startsWith('test') && Function.is(testClass[key])) {
-								this.tests[testClassName].methods.push(key);
-							}
-						}
-					}
-				}
-			}.bind(this));
+			fileSystemObjects = yield fileSystemObjectFromPath.list(true);
 		}
 		// If we are working with a single test file
 		else {
-			// Instantiate a file object for the test class file
-			var testClassFile = new File(path);
-			
-			// If the test class file exists
-			var fileExists = yield File.exists(testClassFile.file);
-			if(fileExists) {
-				// Require the test class file
-				require(testClassFile.file);
+			fileSystemObjects.append(fileSystemObjectFromPath);
+		}
 
-				var testClassName = testClassFile.nameWithoutExtension;
+		// Loop through each of the file system objects
+		fileSystemObjects.each(function(index, fileSystemObject) {
+			//Console.out(fileSystemObject.path);
 
-				// Add the test class to tests
-				this.addTest(testClassName, testClassFile.name, testClassFile.directory);
+			// If we have a file
+			if(fileSystemObject.isFile()) {
+				// We need to see if this is a test class file, if the file is not "Test.js" but ends with "Test.js" it should be
+				if(fileSystemObject.name != 'Test.js' && fileSystemObject.name.endsWith('Test.js')) {
+					// Filter the tests if there is a filePattern
+					if(filePattern == null || fileSystemObject.path.lowercase().match(filePattern)) {
+						//Console.out(fileSystemObject.path.lowercase(), 'matched against', filePattern);
 
-				// Instantiate the test class
-				var testClass = this.testClasses[testClassName];
-				// Cache the test class if we don't have it already instantiated
-				if(!testClass) {
-					testClass = new global[testClassName]();
-					this.testClasses[testClassName] = testClass;
-				}
-				
-				// If they want to run all tests in the class
-				if(!testMethodName) {
-					// Loop through all of the class properties
-					for(var key in testClass) {
-						// All tests must start with "test" and be a function
-						if(key.startsWith('test') && Function.is(testClass[key])) {
-							this.tests[testClassName].methods.push(key);
+						// Require the test class file
+						Framework.require(fileSystemObject.file);
+
+						var testClassName = fileSystemObject.nameWithoutExtension;
+
+						// Test classes that have been required should have their definitions defined in the global namespace
+						if(global[testClassName]) {
+							// Instantiate the test class
+							var instantiatedTestClass = new global[testClassName]();
+
+							// Make sure the instantiated class is an instance of Test
+							if(Class.isInstance(instantiatedTestClass, Test)) {
+								//Console.out('Adding test:', testClassName);
+
+								// Add the test class to tests
+								this.addTest(testClassName, fileSystemObject.name, fileSystemObject.directory);
+
+								// Instantiate the test class
+								var testClass = this.testClasses[testClassName];
+								// Cache the test class if we don't have it already instantiated
+								if(!testClass) {
+									testClass = instantiatedTestClass;
+									this.testClasses[testClassName] = testClass;
+								}
+
+								// Loop through all of the class properties
+								for(var key in testClass) {
+									// All tests must start with "test" and be a function
+									if(key.startsWith('test') && Function.is(testClass[key])) {
+										// Filter test methods
+										if(methodPattern == null || key.lowercase().match(methodPattern)) {
+											//Console.out(key.lowercase(), 'matched against', methodPattern);
+											this.tests[testClassName].methods.append(key);
+										}
+										else {
+											//Console.out(key.lowercase(), 'did not match against', methodPattern);
+										}
+									}
+								}
+							}	
 						}
 					}
-				}
-				else {
-					var expandedTestMethodName = 'test'+testMethodName.uppercaseFirstCharacter();
-
-					// If they want to run a specific method in the class
-					if(testMethodName && testClass[testMethodName]) {
-						this.tests[testClassName].methods.push(testMethodName);
-					}
-					// If they want to run a specific method in the class using a shorthand testMethodName
-					else if(testMethodName && testClass[expandedTestMethodName]) {
-						this.tests[testClassName].methods.push(expandedTestMethodName);
-					}
-					// If the passed testMethod name does not exist on the test class
 					else {
-						this.exit('The test class "'+testClassName+'" does not have the method "'+testMethodName+'", aborting.');
+						//Console.out(fileSystemObject.path.lowercase(), 'did not match against', filePattern);
 					}
 				}
 			}
-			// If the test class file does not exists
-			else {
-				this.exit('The file '+testClassFile.file+' does not exist, aborting.');
-			}
-		}
+		}.bind(this));
 
 		return this;
 	},
@@ -270,10 +254,10 @@ Proctor = Class.extend({
 
 	buildTestQueue: function() {
 		this.tests.each(function(testClassName, test) {
-			test.methods.each(function(testMethodNameIndex, testMethodName) {
+			test.methods.each(function(filePatternIndex, filePattern) {
 				// Build a new structure for tests in the test queue
 				var testToAddToQueue = {
-					method: testMethodName,
+					method: filePattern,
 				};
 
 				// Bring in all of the properties of the test

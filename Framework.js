@@ -11,7 +11,7 @@ require('./objects/Class');
 require('./objects/Error');
 require('./objects/Version');
 require('./objects/Module');
-require('./objects/Arguments');
+require('./objects/Command');
 
 // Framework core types
 require('./types/Array');
@@ -33,7 +33,7 @@ Framework = Class.extend({
 	directory: null,
 	settings: null,
 	environment: null,
-	arguments: null,
+	command: null,
 
 	construct: function(projectDirectory) {
 		// Make it obvious we are starting
@@ -53,8 +53,8 @@ Framework = Class.extend({
 		// Use core modules to load the project settings
 		this.loadProjectSettings();
 
-		// Load the arguments
-		this.arguments = new Arguments(Node.Process.argv, this.settings.get('arguments'));
+		// Load the command
+		this.command = new Command(Node.Process.argv, this.settings.get('command'));
 
 		// Use project settings to set the title and the identifier
 		this.setTitleAndIdentifier();

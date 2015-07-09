@@ -7,18 +7,18 @@ Project = new (Framework.extend({
 	initialize: function() {
 		this.super.apply(this, arguments);
 
-		Console.out(this.arguments); Node.Process.exit();
+		//Node.exit(this.command);
 
 		// Create a Proctor to oversee all of the tests as they run
-		this.proctor = new Proctor(this.arguments.options.reporter);
+		this.proctor = new Proctor(this.command.options.reporter);
 
 		// If test supervising is enabled
-		if(this.arguments.options['supervise']) {
+		if(this.command.options.supervise) {
 			this.proctor.supervise();
 		}
 		// Get and run the tests
 		else {
-			this.proctor.getAndRunTests(this.arguments.arguments.path, this.arguments.arguments.testMethodName);
+			this.proctor.getAndRunTests(this.command.options.path, this.command.options.filePattern, this.command.options.methodPattern);
 		}
 	},
 

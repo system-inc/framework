@@ -1,41 +1,45 @@
 {
 	title: "Test Proctor",
-	arguments: {
-		usage: '[path testMethodPattern options]',
-		optionalArguments: [
-			{
-				identifier: 'path',
-			},
-			{
-				identifier: 'testMethodPattern',
-			},
-		],
+	command: {
 		options: [
 			{
-				option: 'reporter',
-				default: 'standard',
-				description: 'Specifiy a test reporter to use. Currently, "standard" and "dot" are available, with "standard" being the default.',
+				identifier: 'path',
+				defaultValue: null,
+				description: 'The path containing tests to run.',
+				aliases: [
+					'p',
+				],
+			},
+			{
+				identifier: 'filePattern',
+				defaultValue: null,
+				description: 'A pattern used to filter which test files will be run.',
+				aliases: [
+					'f',
+				],
+			},
+			{
+				identifier: 'methodPattern',
+				defaultValue: null,
+				description: 'A pattern used to filter which test class methods will be run.',
+				aliases: [
+					'm',
+				],
+			},
+			{
+				identifier: 'reporter',
+				defaultValue: 'standard',
+				description: 'The test reporter to use. Currently, "standard", "dot", and "concise" are available, with "standard" being the default.',
 				aliases: [
 					'r',
 				],
-				requiredArguments: [
-					{
-						'identifier': 'reporter',
-					},
-				],
-				optionalArguments: [
-				],
 			},
 			{
-				option: 'supervise',
-				default: false,
-				description: 'Watch for changes and run tests when changes happen.',
+				identifier: 'supervise',
+				defaultValue: false,
+				description: 'Watch for changes and run tests when changes happen. Either "true" or "false", with "false" being the default.',
 				aliases: [
 					's',
-				],
-				requiredArguments: [
-				],
-				optionalArguments: [
 				],
 			},
 		],

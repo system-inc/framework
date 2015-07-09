@@ -4,7 +4,7 @@
 scriptInvocationPath=`echo $0 | sed 's/.\///'`
 #echo "scriptInvocationPath $scriptInvocationPath"
 
-# Change path separators from \ to / for Windows
+# Change path separators from \ to / on Windows
 scriptInvocationPath=$(echo $scriptInvocationPath | sed -e 's/\\/\//g')
 #echo "scriptInvocationPath $scriptInvocationPath"
 

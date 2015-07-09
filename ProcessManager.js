@@ -306,8 +306,7 @@ ProcessManager.run = function(argumentsArray) {
 
     // Watch the current directory if nothing is specified
     if(!ProcessManager.settings.watch) {
-        // This causes problems if the script is called from a directory
-        //ProcessManager.settings.watch = '.';
+        ProcessManager.settings.watch = NodePath.resolve('.');
     }
 
     // Set the default poll interval
