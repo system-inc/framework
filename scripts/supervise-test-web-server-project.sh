@@ -1,19 +1,46 @@
 #!/bin/bash
 
-# Get the directory of the script
+# Get the script file name with extension
 scriptInvocationBasename=`basename $0`
+#echo "scriptInvocationBasename $scriptInvocationBasename"
+
+# Get the directory of the script
 if [ "`echo $0 | cut -c1`" = "/" ]; then
-	scriptPath=`dirname $0`
+	#echo "if"
+
+	scriptDirectory=`dirname $0`
+	#echo "scriptDirectory $scriptDirectory"
 else
-	scriptPath=`pwd`/`echo $0 | sed -e s/$scriptInvocationBasename//`
+	#echo "else $0"
+
+	# Remove any instances of ./ from the script invocation path
+	scriptInvocationPath=`echo $0 | sed 's/.\///'`
+	#echo "scriptInvocationPath $scriptInvocationPath"
+	
+	# Build the script directory
+	scriptDirectory=`pwd`/`echo $scriptInvocationPath | sed -e s/$scriptInvocationBasename//`
+	#echo "scriptDirectory $scriptDirectory"
 fi
-scriptDirectory=$(echo $scriptPath | sed -e 's/\\/\//g')
-scriptDirectory=`dirname "$scriptDirectory"`
-scriptDirectoryWithEscapedSpaces=$(echo $scriptDirectory | sed 's/ /\\ /g' )
-#echo $scriptDirectory
+
+#echo "scriptDirectory $scriptDirectory"
+
+# Change path separators from \ to / for Windows
+scriptDirectory=$(echo $scriptDirectory | sed -e 's/\\/\//g')
+#echo "scriptDirectory $scriptDirectory"
+
+# The path to the test web server project from the scripts directory
+testWebServerProjectFile="$scriptDirectory../tests/projects/web-server/Project.js"
+#echo "testWebServerProjectFile $testWebServerProjectFile"
+
+# The path to the test project from the scripts directory
+processManagerFile="$scriptDirectory../ProcessManager.js"
+#echo "processManagerFile $processManagerFile"
 
 # Run the script
-processManagerArgument="--harmony '$scriptDirectory/../tests/projects/web-server/Project.js'"
-#echo $processManagerArgument
-#echo "$scriptDirectory/../ProcessManager.js" $processManagerArgument
-node "$scriptDirectory/../ProcessManager.js" $processManagerArgument
+processManagerArguments="--harmony $testWebServerProjectFile"
+#echo "processManagerArguments $processManagerArguments"
+
+# Run the script
+command="node $processManagerFile $processManagerArguments"
+#echo "command $command"
+$command

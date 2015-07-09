@@ -1,16 +1,14 @@
 {
-	title: "Test",
+	title: "Test Proctor",
 	arguments: {
-		usage: '[options path testMethodName]',
-		requiredArguments: [
-			{
-				identifier: 'path'
-			}
-		],
+		usage: '[path testMethodPattern options]',
 		optionalArguments: [
 			{
-				identifier: 'testMethodName',
-			}
+				identifier: 'path',
+			},
+			{
+				identifier: 'testMethodPattern',
+			},
 		],
 		options: [
 			{
@@ -21,6 +19,9 @@
 					'r',
 				],
 				requiredArguments: [
+					{
+						'identifier': 'reporter',
+					},
 				],
 				optionalArguments: [
 				],

@@ -306,7 +306,8 @@ ProcessManager.run = function(argumentsArray) {
 
     // Watch the current directory if nothing is specified
     if(!ProcessManager.settings.watch) {
-        ProcessManager.settings.watch = '.';
+        // This causes problems if the script is called from a directory
+        //ProcessManager.settings.watch = '.';
     }
 
     // Set the default poll interval
@@ -404,14 +405,16 @@ ProcessManager.run = function(argumentsArray) {
     }
 
     // Handle watching files
-    ProcessManager.settings.watching = ProcessManager.settings.watch.split(',');
-    ProcessManager.settings.watching.forEach(function(itemToWatch) {
-        itemToWatch = NodePath.resolve(itemToWatch);
-        ProcessManager.log('Process Manager: Watching "'+itemToWatch+'" for changes.');
-        ProcessManager.findFilesToWatch(itemToWatch, function(file) {
-            ProcessManager.watchFile(file, ProcessManager.settings.pollInterval);
+    if(ProcessManager.settings.watch) {
+        ProcessManager.settings.watching = ProcessManager.settings.watch.split(',');
+        ProcessManager.settings.watching.forEach(function(itemToWatch) {
+            itemToWatch = NodePath.resolve(itemToWatch);
+            ProcessManager.log('Process Manager: Watching "'+itemToWatch+'" for changes.');
+            ProcessManager.findFilesToWatch(itemToWatch, function(file) {
+                ProcessManager.watchFile(file, ProcessManager.settings.pollInterval);
+            });
         });
-    });
+    }
 }
 
 ProcessManager.start = function() {
