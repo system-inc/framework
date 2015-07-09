@@ -1,31 +1,23 @@
 #!/bin/bash
 
-# Get the script file name with extension
-scriptInvocationBasename=`basename $0`
-#echo "scriptInvocationBasename $scriptInvocationBasename"
-
-# Get the directory of the script
-if [ "`echo $0 | cut -c1`" = "/" ]; then
-	#echo "if"
-
-	scriptDirectory=`dirname $0`
-	#echo "scriptDirectory $scriptDirectory"
-else
-	#echo "else $0"
-
-	# Remove any instances of ./ from the script invocation path
-	scriptInvocationPath=`echo $0 | sed 's/.\///'`
-	#echo "scriptInvocationPath $scriptInvocationPath"
-	
-	# Build the script directory
-	scriptDirectory=`pwd`/`echo $scriptInvocationPath | sed -e s/$scriptInvocationBasename//`
-	#echo "scriptDirectory $scriptDirectory"
-fi
-
-#echo "scriptDirectory $scriptDirectory"
+# Remove any instances of ./ from the script invocation path
+scriptInvocationPath=`echo $0 | sed 's/.\///'`
+#echo "scriptInvocationPath $scriptInvocationPath"
 
 # Change path separators from \ to / for Windows
-scriptDirectory=$(echo $scriptDirectory | sed -e 's/\\/\//g')
+scriptInvocationPath=$(echo $scriptInvocationPath | sed -e 's/\\/\//g')
+#echo "scriptInvocationPath $scriptInvocationPath"
+
+# Get the script file name with extension
+scriptInvocationBasename=`basename $scriptInvocationPath`
+#echo "scriptInvocationBasename $scriptInvocationBasename"
+
+# Get the working directory
+workingDirectory=`pwd`
+#echo "workingDirectory $workingDirectory"
+
+# Build the script directory
+scriptDirectory=$workingDirectory/`echo $scriptInvocationPath | sed -e s/$scriptInvocationBasename//`
 #echo "scriptDirectory $scriptDirectory"
 
 # The path to the test web server project from the scripts directory
@@ -37,10 +29,4 @@ processManagerFile="$scriptDirectory../ProcessManager.js"
 #echo "processManagerFile $processManagerFile"
 
 # Run the script
-processManagerArguments="--harmony $testWebServerProjectFile"
-#echo "processManagerArguments $processManagerArguments"
-
-# Run the script
-command="node $processManagerFile $processManagerArguments"
-#echo "command $command"
-$command
+node --harmony "$processManagerFile" --harmony "$testWebServerProjectFile" $@

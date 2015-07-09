@@ -421,7 +421,8 @@ ProcessManager.start = function() {
     var baseNameofCurrentArgument;
     var currentArgument;
 
-    //console.log(ProcessManager.argumentsArray); return;
+    //console.log(ProcessManager.argumentsArray);
+    //return;
 
     // Shift arguments off of the arguments array until the arguments array is just what is relevant
     do {
