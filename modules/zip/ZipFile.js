@@ -1,23 +1,36 @@
 ZipFile = File.extend({
 
+	endOfCentralDirectoryRecord: null,
+
 	fileSystemObjectReferences: [],
 
-	construct: function() {
-		this.super.apply(this, arguments);
+	readEndOfCentralDirectoryRecord: function*() {
+		Console.out('reading end of central directory record');
 
-		this.admZip = new ZipModule.AdmZip(this.path);
+		// Create and read the end of central directory record from the zip file
+		this.endOfCentralDirectoryRecord = new ZipEndOfCentralDirectoryRecord(this);
+		yield this.endOfCentralDirectoryRecord.read();
 	},
 	
-	getFileSystemObjectReferences: function() {
-		var fileSystemObjectReferences = []
+	getFileSystemObjectReferences: function*() {
+		// If the central directory has not been read, read it
+		if(this.centralDirectoryHeader == null) {
+			yield this.readEndOfCentralDirectoryRecord();
+		}
 
-		var admZipEntries = this.admZip.getEntries();
+		this.fileSystemObjectReferences = [];
 
-		admZipEntries.each(function(key, value) {
-			Console.out(value.entryName);
-		});
+		// Open the file
 
-		// Console.highlight(admZipEntries);
+
+		// Go to the central directory
+
+		// Read the entries out
+
+		return this.fileSystemObjectReferences;
 	},
 
 });
+
+// Alias list to getFileSystemObjectReferences
+ZipFile.prototype.list = ZipFile.prototype.getFileSystemObjectReferences;

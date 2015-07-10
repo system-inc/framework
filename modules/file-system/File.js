@@ -4,7 +4,7 @@ File = FileSystemObject.extend({
 	fileWithoutExtension: null, // The full path the file without the extension
 	nameWithoutExtension: null,
 	extension: null,
-	handle: null,
+	descriptor: null,
 
 	construct: function(path) {
 		this.super.apply(this, arguments);
@@ -36,9 +36,9 @@ File = FileSystemObject.extend({
 
 	open: function*(flags) {
 		//console.log('Running file.open on', this.file, 'with flags', flags);
-		this.handle = yield File.open(this.file, flags);
+		this.descriptor = yield File.open(this.file, flags);
 
-		return this.handle;
+		return this.descriptor;
 	},
 
     read: function*(options) {
@@ -47,9 +47,33 @@ File = FileSystemObject.extend({
         return content;
     },
 
+    readToBuffer: function*(length, position) {
+        return new Promise(function(resolve, reject) {
+            var bufferToUse = new Buffer(0);
+
+            Node.FileSystem.read(
+                this.descriptor,
+                null,
+                {
+                    buffer: bufferToUse,
+                    length: length,
+                    position: position,
+                },
+                function(error, bytesRead, buffer) {
+                    if(error) {
+                        reject(error);
+                    }
+                    else {
+                        resolve(buffer);
+                    }
+                }
+            );
+        }.bind(this));
+    },
+
 	write: function*(data) {
-		//console.log('Running file.write', 'with handle', this.handle, data);
-		var response = yield File.write(this.handle, data);
+		//console.log('Running file.write', 'with descriptor', this.descriptor, data);
+		var response = yield File.write(this.descriptor, data);
 
         return response;
 	},
