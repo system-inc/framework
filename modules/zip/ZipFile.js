@@ -2,35 +2,34 @@ ZipFile = File.extend({
 
 	endOfCentralDirectoryRecord: null,
 
-	fileSystemObjectReferences: [],
+	zipFileSystemObjects: [],
 
 	readEndOfCentralDirectoryRecord: function*() {
-		Console.out('reading end of central directory record');
-
 		// Create and read the end of central directory record from the zip file
 		this.endOfCentralDirectoryRecord = new ZipEndOfCentralDirectoryRecord(this);
 		yield this.endOfCentralDirectoryRecord.read();
 	},
 	
-	getFileSystemObjectReferences: function*() {
+	getZipFileSystemObjects: function*() {
 		// If the central directory has not been read, read it
 		if(this.centralDirectoryHeader == null) {
 			yield this.readEndOfCentralDirectoryRecord();
 		}
 
-		this.fileSystemObjectReferences = [];
-
-		// Open the file
+		this.zipFileSystemObjects = [];
 
 
 		// Go to the central directory
 
 		// Read the entries out
 
-		return this.fileSystemObjectReferences;
+		return this.zipFileSystemObjects;
 	},
 
 });
 
-// Alias list to getFileSystemObjectReferences
-ZipFile.prototype.list = ZipFile.prototype.getFileSystemObjectReferences;
+// Alias list to getZipFileSystemObjects
+ZipFile.prototype.list = ZipFile.prototype.getZipFileSystemObjects;
+
+// Static properties
+ZipFile.minimumSizeInBytes = 22;

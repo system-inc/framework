@@ -18,6 +18,8 @@ FileSystemObject = Class.extend({
 	timeStatusChanged: null,
 	timeCreated: null,
 	nodeStatus: null,
+
+	statusInitialized: false,
 	
 	construct: function(path) {
 		this.path = Node.Path.normalize(path);
@@ -83,6 +85,8 @@ FileSystemObject = Class.extend({
 			this.timeModified = new Time(this.nodeStatus.mtime);
 			this.timeStatusChanged = new Time(this.nodeStatus.ctime);
 			this.timeCreated = new Time(this.nodeStatus.birthtime);
+
+			this.statusInitialized = true;
 		}
 	},
 

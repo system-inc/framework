@@ -5,7 +5,7 @@ ZipModule = Module.extend({
 	uses: [
 		'ZipFile',
 		'ZipEndOfCentralDirectoryRecord',
-		'ZipFileSystemObjectReference',
+		'ZipFileSystemObject',
 	],
 	
 });

@@ -57,7 +57,7 @@ Command = Class.extend({
 					//Console.out(argumentsArray[i], 'is an identifier for the option we are using');
 
 					// If the next item in the arguments array is not an option, set is as the option value
-					if(!argumentsArray[i+1].startsWith('-')) {
+					if((i+1 < argumentsArray.length) && !argumentsArray[i+1].startsWith('-')) {
 						// This is a very naive approach and is not robust at all
 						optionValue = argumentsArray[i+1];
 						break; // Exit the for loop

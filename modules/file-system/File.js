@@ -48,26 +48,26 @@ File = FileSystemObject.extend({
     },
 
     readToBuffer: function*(length, position) {
-        return new Promise(function(resolve, reject) {
-            var bufferToUse = new Buffer(0);
+        //Console.out('length', length, 'position', position);
+        
+        // If there is no file descriptor, open the file in read only mode
+        if(!this.descriptor) {
+            yield this.open('r');
+            //Console.out('Opened file in read mode', this.descriptor);
+        }
 
-            Node.FileSystem.read(
-                this.descriptor,
-                null,
-                {
-                    buffer: bufferToUse,
-                    length: length,
-                    position: position,
-                },
-                function(error, bytesRead, buffer) {
-                    if(error) {
-                        reject(error);
-                    }
-                    else {
-                        resolve(buffer);
-                    }
+        return new Promise(function(resolve, reject) {
+            var bufferToUse = new Buffer(length);
+
+            Node.FileSystem.read(this.descriptor, bufferToUse, 0, length, position, function(error, bytesRead, buffer) {
+                if(error) {
+                    reject(error);
                 }
-            );
+                else {
+                    Console.out('bytesRead', bytesRead);
+                    resolve(buffer);
+                }
+            });
         }.bind(this));
     },
 

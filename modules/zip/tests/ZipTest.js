@@ -4,7 +4,8 @@ ZipTest = Test.extend({
 		//var actual = yield FrameworkTestDatabase.query('SELECT * FROM user');
 		//Console.out(actual);
 	
-		var zipFilePath = __dirname+Node.Path.separator+'zip-files'+Node.Path.separator+'zip-file-1.zip';
+		var zipFilePath = __dirname+Node.Path.separator+'zip-files'+Node.Path.separator+'zip-file-with-comment.zip';
+		//var zipFilePath = '/Users/kirkouimet/Desktop/comic.cbr';
 		//Console.out(zipFilePath);
 
 		// Read the zip file from disk
@@ -15,7 +16,7 @@ ZipTest = Test.extend({
 		var zipFileList = yield zipFile.list();
 		//zipFileList.each(function(index, zipFileSystemObject) {
 		//});
-		Console.out(zipFileList);
+		Console.out(zipFile, zipFileList);
 
 		// Extract a file or directory from the zip file to a specific path
 		//zipFile.extract(zipFileSystemObjectPath, path);
