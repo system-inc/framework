@@ -1,0 +1,3 @@
+ZipExtraDataRecord = Class.extend({
+
+});

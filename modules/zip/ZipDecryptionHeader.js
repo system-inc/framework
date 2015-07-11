@@ -1,0 +1,3 @@
+ZipDecryptionHeader = Class.extend({
+
+});

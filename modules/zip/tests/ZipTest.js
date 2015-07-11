@@ -6,6 +6,8 @@ ZipTest = Test.extend({
 	
 		var zipFilePath = __dirname+Node.Path.separator+'zip-files'+Node.Path.separator+'zip-file-with-comment.zip';
 		//var zipFilePath = '/Users/kirkouimet/Desktop/comic.cbr';
+		//var zipFilePath = 'C:/comic.cbz';
+		//var zipFilePath = 'C:/comic.cbr'; // doesnt work?
 		//Console.out(zipFilePath);
 
 		// Read the zip file from disk
@@ -14,9 +16,11 @@ ZipTest = Test.extend({
 
 		// List the zip file's contents
 		var zipFileList = yield zipFile.list();
+		Console.highlight(zipFile.centralDirectory.fileSystemObjectHeaders);
+
 		//zipFileList.each(function(index, zipFileSystemObject) {
 		//});
-		Console.out(zipFile, zipFileList);
+		
 
 		// Extract a file or directory from the zip file to a specific path
 		//zipFile.extract(zipFileSystemObjectPath, path);

@@ -64,7 +64,7 @@ File = FileSystemObject.extend({
                     reject(error);
                 }
                 else {
-                    Console.out('bytesRead', bytesRead);
+                    //Console.out('bytesRead', bytesRead);
                     resolve(buffer);
                 }
             });

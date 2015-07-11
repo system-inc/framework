@@ -4,8 +4,11 @@ ZipModule = Module.extend({
 
 	uses: [
 		'ZipFile',
+		'ZipDecryptionHeader',
+		'ZipExtraDataRecord',
+		'ZipCentralDirectory',
+		'ZipCentralDirectoryFileSystemObjectHeader',
 		'ZipEndOfCentralDirectoryRecord',
-		'ZipFileSystemObject',
 	],
 	
 });
