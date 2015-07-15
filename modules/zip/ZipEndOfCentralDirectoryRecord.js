@@ -90,7 +90,7 @@ ZipEndOfCentralDirectoryRecord = Class.extend({
 	},
 
 	sizeInBytes: function() {
-		Console.out('sizeInBytes', ZipEndOfCentralDirectoryRecord.sizeInBytesWithoutComment, '+', this.commentSizeInBytes, '=', ZipEndOfCentralDirectoryRecord.sizeInBytesWithoutComment + this.commentSizeInBytes);
+		//Console.out('sizeInBytes', ZipEndOfCentralDirectoryRecord.sizeInBytesWithoutComment, '+', this.commentSizeInBytes, '=', ZipEndOfCentralDirectoryRecord.sizeInBytesWithoutComment + this.commentSizeInBytes);
 		return ZipEndOfCentralDirectoryRecord.sizeInBytesWithoutComment + this.commentSizeInBytes;
 	},
 

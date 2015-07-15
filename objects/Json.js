@@ -110,8 +110,12 @@ Json.decycle = function(objectToDecycle) {
 					decycledValue[i] = decycle(value[i], path + '[' + i + ']');
 				}
 			}
+            // Call .toString all Buffer objects to prevent a giant string of buffer content in output
+            else if(value instanceof Buffer) {
+                decycledValue = value.toString();
+            }
+            // If it is an object, replicate the object
 			else {
-				// If it is an object, replicate the object
 				decycledValue = {};
 				for(key in value) {
 					if(Object.prototype.hasOwnProperty.call(value, key)) {

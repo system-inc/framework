@@ -11,7 +11,7 @@ ZipFile = File.extend({
 		}
 
 		// Read the entries out of the central directory
-		return [];
+		return this.centralDirectory.fileSystemObjectHeaders;
 	},
 
 	readCentralDirectory: function*() {

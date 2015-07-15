@@ -98,8 +98,10 @@ ZipCentralDirectoryFileSystemObjectHeader = Class.extend({
 	offsetToLocalFileSystemObjectHeader: null, // This is the offset to the corresponding local file header from the start of the first volume
 	
 	path: null, // The path of the file system object including an optional relative path, all slashes in the path should be forward slashes '/'
-	extraField: null, // Used to store additional information, the field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field
+	extraFields: [], // Used to store additional information, the field consistes of a sequence of header and data pairs, where the header has a 2 byte identifier and a 2 byte data size field
 	comment: null, // An optional comment for the file system object
+
+	sizeInBytes: null,
 
 	construct: function() {
 	},
@@ -135,66 +137,47 @@ ZipCentralDirectoryFileSystemObjectHeader = Class.extend({
 		// TODO: Use utf8 if path is utf8
 		this.path = buffer.toString('utf8', startOffset + 46, startOffset + 46 + this.pathSizeInBytes);
 
-		this.extraField = null;
-		this.comment = null;
+		// Validate the path
+		if(this.path.indexOf('\\') !== -1) {
+			throw new Error('Zip file contains a path with a backslash which is disallowed, "'+this.path+'".');
+		}
+		if(/^[a-zA-Z]:/.test(this.path) || /^\//.test(this.path)) {
+			throw new Error('Zip file contains a disallowed absolute path, "'+this.path+'".');
+		}
+		if(this.path.split('/').indexOf('..') !== -1) {
+			throw new Error('Zip file contains an invalid relative path, "'+this.path+'".');
+		}
+
+		// Validate size
+		if(this.compressionMethod === 0) { // Stored with no compression
+			if(this.compressedSizeInBytes !== this.uncompressedSizeInBytes) {
+				throw new Error('Compressed size ('+this.compressedSizeInBytes+') does not match uncompressed size ('+this.uncompressedSizeInBytes+') for '+this.path+'.');
+			}
+		}
+
+		// Get the extra field data
+		var extraFieldBuffer = buffer.slice(startOffset + 46 + this.pathSizeInBytes, startOffset + 46 + this.pathSizeInBytes + this.extraFieldSizeInBytes);
+		var i = 0;
+		while(i < extraFieldBuffer.length) {
+			var headerIdentifier = extraFieldBuffer.readUInt16LE(i + 0);
+			var dataSize = extraFieldBuffer.readUInt16LE(i + 2);
+			var dataStart = i + 4;
+			var dataEnd = dataStart + dataSize;
+			var dataBuffer = new Buffer(dataSize);
+			extraFieldBuffer.copy(dataBuffer, 0, dataStart, dataEnd);
+			this.extraFields.push({
+				identifier: headerIdentifier,
+				data: dataBuffer,
+			});
+			i = dataEnd;
+		}
+
+		// Get the comment
+		this.comment = buffer.toString('utf8', startOffset + 46 + this.pathSizeInBytes + this.extraFieldSizeInBytes, startOffset + 46 + this.pathSizeInBytes + this.extraFieldSizeInBytes + this.commentSizeInBytes);
+
+		// Save the size of the entire header in bytes
+		this.sizeInBytes = 46 + this.pathSizeInBytes + this.extraFieldSizeInBytes + this.commentSizeInBytes;
 	},
-
-
-//    // validate file size
-//    if (entry.compressionMethod === 0) {
-//      var msg = "compressed/uncompressed size mismatch for stored file: " + entry.compressedSize + " != " + entry.uncompressedSize;
-//      if (entry.compressedSize !== entry.uncompressedSize) return emitErrorAndAutoClose(self, new Error(msg));
-//    }
-
-//    buffer = new Buffer(entry.fileNameLength + entry.extraFieldLength + entry.fileCommentLength);
-//    readAndAssertNoEof(self.reader, buffer, 0, buffer.length, self.readEntryCursor, function(err) {
-//      if (err) return emitErrorAndAutoClose(self, err);
-//      if (self.emittedError) return;
-//      // 46 - File name
-//      var isUtf8 = entry.generalPurposeBitFlag & 0x800
-//      try {
-//        entry.fileName = bufferToString(buffer, 0, entry.fileNameLength, isUtf8);
-//      } catch (e) {
-//        return emitErrorAndAutoClose(self, e);
-//      }
-
-//      // 46+n - Extra field
-//      var fileCommentStart = entry.fileNameLength + entry.extraFieldLength;
-//      var extraFieldBuffer = buffer.slice(entry.fileNameLength, fileCommentStart);
-//      entry.extraFields = [];
-//      var i = 0;
-//      while (i < extraFieldBuffer.length) {
-//        var headerId = extraFieldBuffer.readUInt16LE(i + 0);
-//        var dataSize = extraFieldBuffer.readUInt16LE(i + 2);
-//        var dataStart = i + 4;
-//        var dataEnd = dataStart + dataSize;
-//        var dataBuffer = new Buffer(dataSize);
-//        extraFieldBuffer.copy(dataBuffer, 0, dataStart, dataEnd);
-//        entry.extraFields.push({
-//          id: headerId,
-//          data: dataBuffer,
-//        });
-//        i = dataEnd;
-//      }
-
-//      // 46+n+m - File comment
-//      try {
-//        entry.fileComment = bufferToString(buffer, fileCommentStart, fileCommentStart + entry.fileCommentLength, isUtf8);
-//      } catch (e) {
-//        return emitErrorAndAutoClose(self, e);
-//      }
-
-//      self.readEntryCursor += buffer.length;
-//      self.entriesRead += 1;
-
-//      // validate file name
-//      if (entry.fileName.indexOf("\\") !== -1) return emitErrorAndAutoClose(self, new Error("invalid characters in fileName: " + entry.fileName));
-//      if (/^[a-zA-Z]:/.test(entry.fileName) || /^\//.test(entry.fileName)) return emitErrorAndAutoClose(self, new Error("absolute path: " + entry.fileName));
-//      if (entry.fileName.split("/").indexOf("..") !== -1) return emitErrorAndAutoClose(self, new Error("invalid relative path: " + entry.fileName));
-//      self.emit("entry", entry);
-//      readEntries(self);
-//    });
-//  });
 
 });
 
