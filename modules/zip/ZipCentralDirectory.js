@@ -2,9 +2,10 @@ ZipCentralDirectory = Class.extend({
 
 	zipFile: null,
 
-	fileSystemObjectHeaders: [],
+	zippedFileSystemObjectHeaders: [],
 
 	digitalSignature: null,
+	
 	zip64EndRecord: null,
 	zip64EndLocator: null,
 
@@ -25,28 +26,30 @@ ZipCentralDirectory = Class.extend({
 	readEndRecord: function*() {
 		this.endRecord = new ZipEndOfCentralDirectoryRecord(this.zipFile);
 		yield this.endRecord.read();
-
 		//Console.out(this.endRecord);
+
+		// Set the comment on the zip file to the comment in the end record
+		this.zipFile.comment = this.endRecord.comment;
 
 		return this.endRecord;
 	},
 
 	readFileSystemObjectHeaders: function*() {
-		this.fileSystemObjectHeaders = [];
+		this.zippedFileSystemObjectHeaders = [];
 
 		// Read the central directory file system object headers into a buffer
-		//Console.out('fileSystemObjectHeadersSizeInBytes', this.zipFile.sizeInBytes(), '-', this.endRecord.offsetToCentralDirectory, '-', this.endRecord.sizeInBytes(), '=', this.zipFile.sizeInBytes() - this.endRecord.offsetToCentralDirectory - this.endRecord.sizeInBytes());
-		var fileSystemObjectHeadersSizeInBytes = this.zipFile.sizeInBytes() - this.endRecord.offsetToCentralDirectory - this.endRecord.sizeInBytes();
+		//Console.out('zippedFileSystemObjectHeadersSizeInBytes', this.zipFile.sizeInBytes(), '-', this.endRecord.offsetToCentralDirectoryOnVolumeWhereCentralDirectoryStarts, '-', this.endRecord.sizeInBytes(), '=', this.zipFile.sizeInBytes() - this.endRecord.offsetToCentralDirectoryOnVolumeWhereCentralDirectoryStarts - this.endRecord.sizeInBytes());
+		var zippedFileSystemObjectHeadersSizeInBytes = this.zipFile.sizeInBytes() - this.endRecord.offsetToCentralDirectoryOnVolumeWhereCentralDirectoryStarts - this.endRecord.sizeInBytes();
 		//Console.highlight(this.endRecord.sizeInBytes());
-		//Console.out('this.zipFile.sizeInBytes()', this.zipFile.sizeInBytes(), 'this.endRecord.offsetToCentralDirectory', this.endRecord.offsetToCentralDirectory, 'fileSystemObjectHeadersSizeInBytes', fileSystemObjectHeadersSizeInBytes);
-		var buffer = yield this.zipFile.readToBuffer(fileSystemObjectHeadersSizeInBytes, this.endRecord.offsetToCentralDirectory);
+		//Console.out('this.zipFile.sizeInBytes()', this.zipFile.sizeInBytes(), 'this.endRecord.offsetToCentralDirectoryOnVolumeWhereCentralDirectoryStarts', this.endRecord.offsetToCentralDirectoryOnVolumeWhereCentralDirectoryStarts, 'zippedFileSystemObjectHeadersSizeInBytes', zippedFileSystemObjectHeadersSizeInBytes);
+		var buffer = yield this.zipFile.readToBuffer(zippedFileSystemObjectHeadersSizeInBytes, this.endRecord.offsetToCentralDirectoryOnVolumeWhereCentralDirectoryStarts);
 		//Console.out('buffer.length', buffer.length);
 
 		// Parse all of the entries
 		var currentBufferPosition = 0;
 		while(currentBufferPosition < buffer.length) {
 			// Create the header using the buffer
-			var fileSystemObjectHeader = new ZipCentralDirectoryFileSystemObjectHeader();
+			var fileSystemObjectHeader = new ZipCentralDirectoryZippedFileSystemObjectHeader();
 			fileSystemObjectHeader.initializeFromBuffer(buffer, currentBufferPosition);
 
 			// Increment the current buffer position based on the size of the file system object header
@@ -54,16 +57,16 @@ ZipCentralDirectory = Class.extend({
 			//Console.out('currentBufferPosition', currentBufferPosition);
 
 			// Add the header to the array
-			this.fileSystemObjectHeaders.append(fileSystemObjectHeader);
+			this.zippedFileSystemObjectHeaders.append(fileSystemObjectHeader);
 		}
-		//Console.out('this.fileSystemObjectHeaders.length', this.fileSystemObjectHeaders.length);
+		//Console.out('this.zippedFileSystemObjectHeaders.length', this.zippedFileSystemObjectHeaders.length);
 
 		// Confirm the entries read count is correct
-		if(this.endRecord.totalEntriesCount != this.fileSystemObjectHeaders.length) {
-			throw new Error('Invalid zip file, expected '+this.endRecord.totalEntriesCount+' entries, found '+this.fileSystemObjectHeaders.length+'.');
+		if(this.endRecord.zippedFileSystemObjectsCount != this.zippedFileSystemObjectHeaders.length) {
+			throw new Error('Invalid zip file, expected '+this.endRecord.zippedFileSystemObjectsCount+' entries, found '+this.zippedFileSystemObjectHeaders.length+'.');
 		}
 
-		return this.fileSystemObjectHeaders;
+		return this.zippedFileSystemObjectHeaders;
 	},
 
 });

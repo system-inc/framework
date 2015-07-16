@@ -3,9 +3,15 @@ Time = Class.extend({
 	time: null,
 	precision: 'milliseconds',
 
-	construct: function(string) {
-		if(string != undefined) {
-			this.time = new Date(string);
+	construct: function(stringOrDate) {
+		if(stringOrDate !== undefined) {
+			if(String.is(stringOrDate)) {
+				this.time = new Date(stringOrDate);
+			}
+			//else if(Class.isInstance(stringOrDate, Date)) {
+			else {
+				this.time = stringOrDate;
+			}
 		}
 		else {
 			this.time = new Date();
@@ -247,9 +253,23 @@ Time = Class.extend({
 
 });
 
-// Static methods
+// Static properties
 Time.precision = 'milliseconds';
+
+// Static methods
 Time.now = Time.prototype.now;
 Time.nowInMilliseconds = Time.prototype.nowInSeconds;
 Time.nowInMilliseconds = Time.prototype.nowInMilliseconds;
 Time.nowInMicroseconds = Time.prototype.nowInMicroseconds;
+Time.constructFromDosDateTime = function(date, time) {
+	var day = date & 0x1f; // 1-31
+	var month = (date >> 5 & 0xf) - 1; // 1-12, 0-11
+	var year = (date >> 9 & 0x7f) + 1980; // 0-128, 1980-2108
+
+	var millisecond = 0;
+	var second = (time & 0x1f) * 2; // 0-29, 0-58 (even numbers)
+	var minute = time >> 5 & 0x3f; // 0-59
+	var hour = time >> 11 & 0x1f; // 0-23
+
+	return new Time(new Date(year, month, day, hour, minute, second, millisecond));
+}

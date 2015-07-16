@@ -24,16 +24,16 @@ Version = Class.extend({
 		}
 		// Construct from an object
 		else if(options && Object.is(options)) {
-			if(options.major) {
+			if(options.major !== undefined) {
 				this.major = options.major;
 			}
-			if(options.minor) {
+			if(options.minor !== undefined) {
 				this.minor = options.minor;
 			}
-			if(options.patch) {
+			if(options.patch !== undefined) {
 				this.patch = options.patch;
 			}
-			if(options.patchMinor) {
+			if(options.patchMinor !== undefined) {
 				this.patchMinor = options.patchMinor;
 			}	
 		}

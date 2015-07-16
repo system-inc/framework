@@ -4,10 +4,10 @@ ZipEndOfCentralDirectoryRecord = Class.extend({
 
 	volumeNumberWhereCentralDirectoryEnds: null, // The number of the volume where the central directory ends
 	volumeNumberWhereCentralDirectoryStarts: null, // The number of the volume where the central directory starts
-	volumeEntriesCountWhereCentralDirectoryEnds: null, // The number of central directory entries on the volume where the central directory ends
-	totalEntriesCount: null, // The total number of entries in the central directory
+	zippedFileSystemObjectsCountOnVolumeWhereCentralDirectoryEnds: null, // The number of central directory entries on the volume where the central directory ends
+	zippedFileSystemObjectsCount: null, // The total number of entries in the central directory
 	centralDirectorySizeInBytes: null, // The size of the central directory in bytes
-	offsetToCentralDirectory: null, // Offset of the start of the central directory on the volume on which the central directory starts
+	offsetToCentralDirectoryOnVolumeWhereCentralDirectoryStarts: null, // Offset of the start of the central directory on the volume on which the central directory starts
 	commentSizeInBytes: null, // The size of the commend field in bytes
 	comment: null, // An optional comment for the zip file
 
@@ -68,10 +68,10 @@ ZipEndOfCentralDirectoryRecord = Class.extend({
 			}
 
 			this.volumeNumberWhereCentralDirectoryStarts = endOfCentralDirectoryRecordBuffer.readUInt16LE(6);
-			this.volumeEntriesCountWhereCentralDirectoryEnds = endOfCentralDirectoryRecordBuffer.readUInt16LE(8);
-			this.totalEntriesCount = endOfCentralDirectoryRecordBuffer.readUInt16LE(10);
+			this.zippedFileSystemObjectsCountOnVolumeWhereCentralDirectoryEnds = endOfCentralDirectoryRecordBuffer.readUInt16LE(8);
+			this.zippedFileSystemObjectsCount = endOfCentralDirectoryRecordBuffer.readUInt16LE(10);
 			this.centralDirectorySizeInBytes = endOfCentralDirectoryRecordBuffer.readUInt32LE(12);
-			this.offsetToCentralDirectory = endOfCentralDirectoryRecordBuffer.readUInt32LE(16);
+			this.offsetToCentralDirectoryOnVolumeWhereCentralDirectoryStarts = endOfCentralDirectoryRecordBuffer.readUInt32LE(16);
 			this.commentSizeInBytes = endOfCentralDirectoryRecordBuffer.readUInt16LE(20);
 
 			// Read the comment as utf8 (maybe is cp437 encoded? will need to revisit)
@@ -85,8 +85,7 @@ ZipEndOfCentralDirectoryRecord = Class.extend({
 			throw new Error('Invalid zip file. Could not find end of central directory record.');
 		}
 
-		// Confirm the start of the central directory (pointed to by the byte 12 offset) has an appropriate signature
-
+		return this;
 	},
 
 	sizeInBytes: function() {
@@ -97,7 +96,7 @@ ZipEndOfCentralDirectoryRecord = Class.extend({
 });
 
 // Static properties
-ZipEndOfCentralDirectoryRecord.signature = 0x06054b50; // The signature of end of central directory record, should always be \x50\x4b\x05\x06
+ZipEndOfCentralDirectoryRecord.signature = 0x06054B50; // The signature of end of central directory record, should always be \x50\x4b\x05\x06
 ZipEndOfCentralDirectoryRecord.sizeInBytesWithoutComment = 22;
 ZipEndOfCentralDirectoryRecord.maximumCommentSizeInBytes = 0xFFFF; // 65535
 ZipEndOfCentralDirectoryRecord.maximumSizeInBytes = ZipEndOfCentralDirectoryRecord.sizeInBytesWithoutComment + ZipEndOfCentralDirectoryRecord.maximumCommentSizeInBytes;
