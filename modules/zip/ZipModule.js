@@ -9,6 +9,9 @@ ZipModule = Module.extend({
 		'ZipCentralDirectory',
 		'ZipCentralDirectoryFileSystemObjectHeader',
 		'ZipEndOfCentralDirectoryRecord',
+		'ZippedFileSystemObject',
+		'ZippedFile',
+		'ZippedDirectory',
 	],
 	
 });

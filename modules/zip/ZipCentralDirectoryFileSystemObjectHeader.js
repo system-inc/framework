@@ -179,6 +179,22 @@ ZipCentralDirectoryFileSystemObjectHeader = Class.extend({
 		this.sizeInBytes = 46 + this.pathSizeInBytes + this.extraFieldSizeInBytes + this.commentSizeInBytes;
 	},
 
+	toZippedFileSystemObject: function() {
+		var zippedFileSystemObject;
+
+		// If the path ends with / then the file system object is a directory
+		if(this.path.endsWith('/')) {
+			zippedFileSystemObject = new ZippedDirectory();
+		}
+		else {
+			zippedFileSystemObject = new ZippedFile();
+		}
+
+		zippedFileSystemObject.centralDirectoryHeader = this;
+
+		return zippedFileSystemObject;
+	},
+
 });
 
 ZipCentralDirectoryFileSystemObjectHeader.signature = 0x02014b50;

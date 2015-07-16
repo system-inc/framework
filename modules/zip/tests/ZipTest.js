@@ -1,14 +1,14 @@
-ZipTest = Test.extend({	
+ZipTest = Test.extend({
 
-	testZip: function*() {
+	testReadFromPath: function*() {
 		//var actual = yield FrameworkTestDatabase.query('SELECT * FROM user');
 		//Console.out(actual);
 	
 		//var zipFilePath = __dirname+Node.Path.separator+'zip-files'+Node.Path.separator+'zip-file-with-comment.zip';
-		var zipFilePath = '/Users/kirkouimet/Desktop/Share/comic.cbz';
+		//var zipFilePath = '/Users/kirkouimet/Desktop/Share/comic.cbz';
 		//var zipFilePath = '/Users/kirkouimet/Desktop/comic.cbr';		
-		//var zipFilePath = 'C:/comic.cbz';
-		//var zipFilePath = 'C:/comic.cbr'; // doesnt work?
+		var zipFilePath = 'C:\\Users\\Kirk Ouimet\\Desktop\\Share\\Test Folder 1\\comic.cbz';
+		//var zipFilePath = 'C:\\Users\\Kirk Ouimet\\Desktop\\Share\\Test Folder 1\\comic.cbr';
 		//Console.out(zipFilePath);
 
 		// Read the zip file from disk
@@ -23,7 +23,6 @@ ZipTest = Test.extend({
 			Console.out(zipFileSystemObject);
 			//Console.out(zipFileSystemObject.path);
 		});
-		
 
 		// Extract a file or directory from the zip file to a specific path
 		//zipFile.extract(zipFileSystemObjectPath, path);
@@ -47,16 +46,33 @@ ZipTest = Test.extend({
 		//Console.out(actual);
 	},
 
-	//new ZipFile() // create an in memory zip file
-	//new ZipFile(doesnotexistyet.zip) // create an in memory zip which will save to doesnotexistyet.zip
-	//new ZipFile(exists.zip) // read a zip from disk
-	//zipFile.getFileSystemObjects()
+	testReadFromMemory: function*() {
+	},
 
-	// Create a zip file
-		// Add files to the zip file
-		// Add folders to the zip file
-		// Add a comment on a file
+	testCreateInMemory: function*() {
+		// Create the zip file
+		//var zipFile = new ZipFile();
 
-	// Read a zip file
+		// Add empty file
+
+		// Add file with content
+
+		// Add file with content with comment
+
+		// Add empty directory
+
+		// Add directory with content
+
+		// Add comment to directory
+
+		// Add a comment to the zip
+
+		// Save to disk
+
+		// Read and verify zip file has everything that was created
+	},
+
+	testCreateInMemoryWithPath: function*() {
+	},
 
 });

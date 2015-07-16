@@ -5,13 +5,19 @@ ZipFile = File.extend({
 	extraDataRecord: null,
 
 	list: function*() {
+		var list = [];
+
 		// If the central directory has not been read, read it
 		if(!this.centralDirectory) {
 			yield this.readCentralDirectory();
 		}
 
-		// Read the entries out of the central directory
-		return this.centralDirectory.fileSystemObjectHeaders;
+		// Create ZippedFileSystemObjects out of the headers
+		this.centralDirectory.fileSystemObjectHeaders.each(function(index, centralDirectoryFileSystemObjectHeader) {
+			list.append(centralDirectoryFileSystemObjectHeader.toZippedFileSystemObject());
+		});
+
+		return list;
 	},
 
 	readCentralDirectory: function*() {

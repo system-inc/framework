@@ -1,0 +1,3 @@
+ZippedDirectory = ZippedFileSystemObject.extend({
+
+});
