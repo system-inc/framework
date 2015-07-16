@@ -96,7 +96,7 @@ ZipEndOfCentralDirectoryRecord = Class.extend({
 });
 
 // Static properties
-ZipEndOfCentralDirectoryRecord.signature = 0x06054B50; // The signature of end of central directory record, should always be \x50\x4b\x05\x06
+ZipEndOfCentralDirectoryRecord.signature = 0x06054b50; // The signature of end of central directory record, should always be \x50\x4b\x05\x06
 ZipEndOfCentralDirectoryRecord.sizeInBytesWithoutComment = 22;
 ZipEndOfCentralDirectoryRecord.maximumCommentSizeInBytes = 0xFFFF; // 65535
 ZipEndOfCentralDirectoryRecord.maximumSizeInBytes = ZipEndOfCentralDirectoryRecord.sizeInBytesWithoutComment + ZipEndOfCentralDirectoryRecord.maximumCommentSizeInBytes;

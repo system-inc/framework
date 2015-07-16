@@ -22,10 +22,24 @@ ZipFile = File.extend({
 
 		var list = [];
 
-		// Create ZippedFileSystemObjects out of the headers
+		// Create ZippedFileSystemObjects out of the central directory headers
 		this.centralDirectory.zippedFileSystemObjectHeaders.each(function(index, centralDirectoryZippedFileSystemObjectHeader) {
-			list.append(centralDirectoryZippedFileSystemObjectHeader.toZippedFileSystemObject());
-		});
+			var zippedFileSystemObject = null;
+
+			// If the path ends with / then the file system object is a directory
+			if(centralDirectoryZippedFileSystemObjectHeader.path.endsWith('/')) {
+				zippedFileSystemObject = new ZippedDirectory(this);
+			}
+			// If not, it is a file
+			else {
+				zippedFileSystemObject = new ZippedFile(this);
+			}
+
+			// Save a reference to the central directory header
+			zippedFileSystemObject.centralDirectoryHeader = centralDirectoryZippedFileSystemObjectHeader;
+
+			list.append(zippedFileSystemObject);
+		}.bind(this));
 
 		return list;
 	},
@@ -45,51 +59,6 @@ ZipFile = File.extend({
 		});
 
 		return containsFile;
-	},
-
-	getZippedFileSystemObjectHeaderByPath: function*(path) {
-
-	},
-
-	extractFile: function*(zippedFilePath, destinationPath) {
-		
-	},
-
-	fileToStream: function*(zippedFilePath) {
-		// If the central directory has not been read, read it
-		if(!this.centralDirectory) {
-			yield this.readCentralDirectory();
-		}
-
-		// Get the file system object header
-		var zippedFileSystemObjectHeader = this.getZippedFileSystemObjectHeaderByPath(zippedFilePath);
-
-		// Read the 
-	},
-
-	extractFileToStream: function*(zippedFilePath, decompress) {
-		decompress = decompress === undefined ? true : false; // true by default
-
-		// If the central directory has not been read, read it
-		if(!this.centralDirectory) {
-			yield this.readCentralDirectory();
-		}
-
-		// Get the file system object header
-		var zippedFileSystemObjectHeader = this.getZippedFileSystemObjectHeaderByPath(zippedFilePath);
-
-		var stream = null;
-
-		// If they want the file decompressed
-		if(decompress) {
-
-		}
-		// If they do not want the file decompressed
-		else {
-
-		}
-
-		return stream;
 	},
 
 });

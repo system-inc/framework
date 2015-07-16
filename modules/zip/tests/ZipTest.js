@@ -4,9 +4,9 @@ ZipTest = Test.extend({
 		//var actual = yield FrameworkTestDatabase.query('SELECT * FROM user');
 		//Console.out(actual);
 	
-		var zipFilePath = __dirname+Node.Path.separator+'files'+Node.Path.separator+'zip-file-with-comment.zip';
+		//var zipFilePath = __dirname+Node.Path.separator+'files'+Node.Path.separator+'zip-file-with-comment.zip';
 		//var zipFilePath = '/Users/kirkouimet/Desktop/Share/comic.cbz';
-		//var zipFilePath = 'C:\\Users\\Kirk Ouimet\\Desktop\\Share\\Test Folder 1\\comic.cbz';
+		var zipFilePath = 'C:\\Users\\Kirk Ouimet\\Desktop\\Share\\Test Folder 1\\comic.cbz';
 		//Console.out(zipFilePath);
 
 		// Read the zip file from disk
@@ -17,10 +17,26 @@ ZipTest = Test.extend({
 		var zipFileList = yield zipFile.list();
 		//Console.highlight(zipFile);
 
-		zipFileList.each(function(index, zipFileSystemObject) {
-			Console.out(zipFileSystemObject);
+		//zipFileList.each(function(index, zipFileSystemObject) {
+			//Console.out(zipFileSystemObject);
 			//Console.out(zipFileSystemObject.path);
-		});
+		//});
+
+		var zippedFile = zipFileList.last();
+		//Console.out(zippedFile);
+
+		// Read the local header for the zipped file
+		yield zippedFile.readLocalHeader();
+		//Console.out('zippedFile.localHeader', zippedFile.localHeader);
+		//Console.out('zippedFile.centralDirectoryHeader', zippedFile.centralDirectoryHeader);
+
+		//var zippedFileReadStream = yield zippedFile.toReadStream();
+		//zippedFileReadStream.on('data', function(chunk) {
+		//	Console.out('chunk', chunk);
+		//});
+		//zippedFileReadStream.on('end', function(chunk) {
+		//	Console.out('no more data');
+		//});
 
 		// Extract a file or directory from the zip file to a specific path
 		//zipFile.extract(zipFileSystemObjectPath, path);

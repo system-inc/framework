@@ -20,7 +20,7 @@ ZipCentralDirectory = Class.extend({
 		yield this.readEndRecord();
 
 		// Read in the file system object headers
-		yield this.readFileSystemObjectHeaders();
+		yield this.readZippedFileSystemObjectHeaders();
 	},
 
 	readEndRecord: function*() {
@@ -34,7 +34,7 @@ ZipCentralDirectory = Class.extend({
 		return this.endRecord;
 	},
 
-	readFileSystemObjectHeaders: function*() {
+	readZippedFileSystemObjectHeaders: function*() {
 		this.zippedFileSystemObjectHeaders = [];
 
 		// Read the central directory file system object headers into a buffer
