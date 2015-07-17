@@ -108,8 +108,12 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 	caseSensitive = (caseSensitive === undefined ? false : caseSensitive); // case sensitive is off by default
 	var contains = 0;
 
+	// If search is nothing
+	if(!search) {
+		// Do nothing
+	}
 	// If not using a regular expression and not case sensitive
-	if(!regularExpressionLocation && !caseSensitive) {
+	else if(!regularExpressionLocation && !caseSensitive) {
 		for(var i = 0; i < this.length; i++) {
 			if(String.is(this[i]) && search.toLowerCase() == this[i].toLowerCase()) {
 				contains++;
