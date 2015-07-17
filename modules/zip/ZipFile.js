@@ -28,15 +28,12 @@ ZipFile = File.extend({
 
 			// If the path ends with / then the file system object is a directory
 			if(centralDirectoryZippedFileSystemObjectHeader.path.endsWith('/')) {
-				zippedFileSystemObject = new ZippedDirectory(this);
+				zippedFileSystemObject = new ZippedDirectory(this, centralDirectoryZippedFileSystemObjectHeader);
 			}
 			// If not, it is a file
 			else {
-				zippedFileSystemObject = new ZippedFile(this);
+				zippedFileSystemObject = new ZippedFile(this, centralDirectoryZippedFileSystemObjectHeader);
 			}
-
-			// Save a reference to the central directory header
-			zippedFileSystemObject.centralDirectoryHeader = centralDirectoryZippedFileSystemObjectHeader;
 
 			list.append(zippedFileSystemObject);
 		}.bind(this));

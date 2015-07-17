@@ -105,7 +105,7 @@ Array.prototype.merge = function() {
 // 'array' (the array itself contains regular expression(s) to be used to match against the search term)
 // 'either' (both 'search' and 'array' methods above will be used to find a match)
 Array.prototype.contains = function(search, caseSensitive, regularExpressionLocation) {
-	caseSensitive = (caseSensitive === undefined ? false : caseSensitive);
+	caseSensitive = (caseSensitive === undefined ? false : caseSensitive); // case sensitive is off by default
 	var contains = 0;
 
 	// If not using a regular expression and not case sensitive

@@ -5,11 +5,33 @@ ZippedFileSystemObject = Class.extend({
 	localHeader: null,
 	centralDirectoryHeader: null,
 
-	construct: function(zipFile) {
+	// References from central directory header
+	path: null,
+	compressionMethod: null,
+	compressionMethodOptions: null,
+	compressedSizeInBytes: null,
+	uncompressedSizeInBytes: null,
+	comment: null,
+
+	construct: function(zipFile, centralDirectoryHeader) {
 		this.zipFile = zipFile;
+		this.centralDirectoryHeader = centralDirectoryHeader;
+
+		// Initialize class variables from central directory header
+		this.path = this.centralDirectoryHeader.path;
+		this.compressionMethod = this.centralDirectoryHeader.compressionMethod;
+		this.compressionMethodOptions = this.centralDirectoryHeader.compressionMethodOptions;
+		this.compressedSizeInBytes = this.centralDirectoryHeader.compressedSizeInBytes;
+		this.uncompressedSizeInBytes = this.centralDirectoryHeader.uncompressedSizeInBytes;
+		this.comment = this.centralDirectoryHeader.comment;
 	},
 
 	readLocalHeader: function*() {
+		// Return the local header if it has already been read
+		if(this.localHeader) {
+			return this.localHeader;
+		}
+
 		// Create a new local header
 		this.localHeader = new ZipLocalZippedFileSystemObjectHeader();
 

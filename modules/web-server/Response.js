@@ -99,26 +99,33 @@ Response = Class.extend({
 		// Mark the response as handled
 		this.handled = true;
 
-		// If the Content-Encoding header is already set, use it (this is used for proxying requests)
-		var contentEncodingHeaderValue = this.headers.get('Content-Encoding');
-		if(contentEncodingHeaderValue) {
-			this.encoding = contentEncodingHeaderValue;
-
-			// Mark the content as already encoded (if we already have set a content encoding than the content must be encoded already)
-			this.contentEncoded = true;
-		}
-
 		// If the content is something
+		var contentType;
 		if(this.content) {
+			// If the zip module is enabled and the content is a zipped file inside of a zip file
+			if(global['ZippedFile'] && Class.isInstance(this.content, ZippedFile)) {
+				// Set the Content-Type header
+				contentType = File.getContentType(this.content.path);
+
+				// If the zipped file is compressed with deflate and the requester has said they accept deflate, leave the zipped file compressed and make them deflate it
+				if(this.content.compressionMethod == 'deflate' && this.request.headers.get('Accept-Encoding').contains('deflate')) {
+					this.headers.set('Content-Encoding', 'deflate');
+					this.content = yield this.content.toReadStream(false); // do not decompress
+				}
+				// Decompress the file
+				else {
+					this.content = yield this.content.toReadStream(); // decompress
+				}				
+			}
 			// If the content is a file
-			if(Class.isInstance(this.content, File)) {
+			else if(Class.isInstance(this.content, File)) {
 				// Check if the file exists
 				var fileExists = yield this.content.exists();
 
 				// If the file exists
 				if(fileExists) {
 					// Set the Content-Type header
-					var contentType = File.getContentType(this.content.path);
+					contentType = File.getContentType(this.content.path);
 					this.headers.set('Content-Type', contentType);
 
 					// Turn the file into a read stream
@@ -135,11 +142,20 @@ Response = Class.extend({
 				this.headers.set('Content-Type', 'text/html');
 				this.content = this.content.toString(false); // No indentation
 			}
-			// If the content isn't a string or buffer, JSON encode it
-			else if(!String.is(this.content) && !Buffer.is(this.content)) {
+			// If the content isn't a string, buffer, or stream, JSON encode it
+			else if(!String.is(this.content) && !Buffer.is(this.content) && !(this.content instanceof Node.Stream.Stream)) {
 				this.headers.set('Content-Type', 'application/json');
 				this.content = Json.encode(this.content);
 			}
+		}
+
+		// If the Content-Encoding header is already set, use it (this is used for proxying requests)
+		var contentEncodingHeaderValue = this.headers.get('Content-Encoding');
+		if(contentEncodingHeaderValue) {
+			this.encoding = contentEncodingHeaderValue;
+
+			// Mark the content as already encoded (if we already have set a content encoding than the content must be encoded already)
+			this.contentEncoded = true;
 		}
 
 		// If the content is not already encoded set the best encoding method based on what the user said they will accept
