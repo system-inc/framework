@@ -24,6 +24,98 @@ ArrayTest = Test.extend({
 		Assert.deepEqual(actual, expected, 'Removes duplicate elements');
 	},
 
+	testSortObjects: function() {
+		var actual = [
+			{
+				'type': 'file',
+				'name': 'b-file',
+			},
+			{
+				'type': 'directory',
+				'name': 'b-directory',
+			},
+			{
+				'type': 'directory',
+				'name': 'a-directory',
+			},
+			{
+				'type': 'file',
+				'name': 'a-file',
+			},
+		].sortObjects({
+			'key': 'type',
+			'direction': 'ascending',
+		});
+		//Console.out(actual);
+		var expected = [
+			{
+				'type': 'directory',
+				'name': 'b-directory',
+			},
+			{
+				'type': 'directory',
+				'name': 'a-directory',
+			},
+			{
+				'type': 'file',
+				'name': 'b-file',
+			},
+			{
+				'type': 'file',
+				'name': 'a-file',
+			},
+		];
+		Assert.deepEqual(actual, expected, 'Sorts objects using one property');
+
+		actual = [
+			{
+				'type': 'file',
+				'name': 'b-file',
+			},
+			{
+				'type': 'directory',
+				'name': 'b-directory',
+			},
+			{
+				'type': 'directory',
+				'name': 'a-directory',
+			},
+			{
+				'type': 'file',
+				'name': 'a-file',
+			},
+		].sortObjects([
+			{
+				'key': 'type',
+				'direction': 'ascending',
+			},
+			{
+				'key': 'name',
+				'direction': 'ascending',
+			},
+		]);
+		//Console.out(actual);
+		expected = [
+			{
+				'type': 'directory',
+				'name': 'a-directory',
+			},
+			{
+				'type': 'directory',
+				'name': 'b-directory',
+			},
+			{
+				'type': 'file',
+				'name': 'a-file',
+			},
+			{
+				'type': 'file',
+				'name': 'b-file',
+			},			
+		];
+		Assert.deepEqual(actual, expected, 'Sorts objects using two properties');
+	},
+
 	testSortObjectsByKeyValue: function() {
 		var actual = [
 			{

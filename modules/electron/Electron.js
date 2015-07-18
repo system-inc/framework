@@ -11,6 +11,12 @@ Electron = new (Class.extend({
 	mainBrowserWindowState: null,
 
 	initialize: function*() {
+		// Do nothing if Electron is not active (e.g., we are running a Framework app that uses Electron but from the console so there is no Electron window)
+		if(!Node.Process.versions.electron) {
+			Console.warn('Electron is disabled. No Electron application code will be executed.');
+			return;
+		}
+
 		// Remotely access Application variables in this renderer process
 		this.remote = require('remote');
 

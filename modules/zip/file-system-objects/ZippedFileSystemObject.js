@@ -2,16 +2,27 @@ ZippedFileSystemObject = Class.extend({
 
 	zipFile: null,
 
+	type: null, // Either "file" or "directory"
+
 	localHeader: null,
 	centralDirectoryHeader: null,
 
 	// References from central directory header
-	path: null,
 	compressionMethod: null,
 	compressionMethodOptions: null,
 	compressedSizeInBytes: null,
 	uncompressedSizeInBytes: null,
 	comment: null,
+	path: null,
+
+	// Mimic FileSystemObject
+	name: null,
+	directory: null,
+
+	timeAccessed: null,
+	timeModified: null,
+	timeStatusChanged: null,
+	timeCreated: null,
 
 	construct: function(zipFile, centralDirectoryHeader) {
 		this.zipFile = zipFile;
@@ -24,6 +35,15 @@ ZippedFileSystemObject = Class.extend({
 		this.compressedSizeInBytes = this.centralDirectoryHeader.compressedSizeInBytes;
 		this.uncompressedSizeInBytes = this.centralDirectoryHeader.uncompressedSizeInBytes;
 		this.comment = this.centralDirectoryHeader.comment;
+
+		// Just use time modified for all of these
+		this.timeAccessed = this.centralDirectoryHeader.timeModified;
+		this.timeModified = this.centralDirectoryHeader.timeModified;
+		this.timeStatusChanged = this.centralDirectoryHeader.timeModified;
+		this.timeCreated = this.centralDirectoryHeader.timeModified;
+
+		// Use FileSystemObject's constructor to setup class variables based on path
+		FileSystemObject.prototype.construct.call(this, this.path);
 	},
 
 	readLocalHeader: function*() {
@@ -63,5 +83,13 @@ ZippedFileSystemObject = Class.extend({
 
 		return readStream;
     },
+
+    isFile: function() {
+		return Class.isInstance(this, ZippedFile);
+	},
+
+	isDirectory: function() {
+		return Class.isInstance(this, ZippedDirectory);
+	},
 
 });

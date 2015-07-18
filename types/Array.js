@@ -60,6 +60,69 @@ Array.prototype.sortObjectsByKeyValue = function(keyName, direction) {
 	return this;
 }
 
+// Options
+/*
+	[
+		{
+			'key': 'keyName', // sort by this first
+			'direction': 'descending',
+		},
+		{
+			'key': 'keyName', // then by this
+			'direction': 'ascending',
+		},
+		...
+	]
+*/
+Array.prototype.sortObjects = function(options) {
+	// Make sure we are working with an array
+	if(!Array.is(options)) {
+		options = [options];
+	}
+
+	this.sort(function(a, b) {
+        var sortedObjects = options.map(function(option) {
+        	// Set the direction (ascending by default, may be specified to descending)
+        	var direction = 1; // 1 = ascending, 2 = descending
+        	if(option.direction) {
+        		if(option.direction == 'descending') {
+        			direction = -1;
+        		}
+        	}
+
+        	var result = 0;
+
+        	var aValue = a[option.key];
+        	var bValue = b[option.key];
+
+        	// Lowercase strings for comparisons
+        	if(String.is(aValue)) {
+        		aValue = aValue.lowercase();
+        	}
+        	if(String.is(bValue)) {
+        		bValue = bValue.lowercase();
+        	}
+
+        	// Perform the comparison
+            if(aValue > bValue) {
+            	result = direction;
+            }
+            if(aValue < bValue) {
+            	result = -(direction);
+            }
+
+            return result;
+        })
+        .reduce(function firstNonZeroValue(p, n) {
+            return p ? p : n;
+        }, 0);
+
+        return sortedObjects;
+    });
+
+    return this;
+}
+
 Array.prototype.sortByLength = function(descending) {
 	descending = (descending === undefined ? false : descending);
 

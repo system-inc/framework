@@ -77,6 +77,21 @@ Console = new (Class.extend({
 		return consoleLogFunction(arguments);
 	},
 
+	warnToDeveloperTools: function() {
+		var index = -1;
+		var argumentsLength = arguments.length;
+		var argumentsClone = [];
+		var consoleLogFunction = 'console.warn(argumentsClone)';
+
+		while(++index < argumentsLength) {
+			argumentsClone.push('argumentsClone['+index+']');
+		};
+
+		consoleLogFunction = new Function('argumentsClone', consoleLogFunction.replace(/argumentsClone/,argumentsClone.join(',')));
+		
+		return consoleLogFunction(arguments);
+	},
+
 	out: function() {
 		// If we are using the Electron module
 		if(Node.Process.versions.electron) {
@@ -100,6 +115,22 @@ Console = new (Class.extend({
 		else {
 			// Prepare the message
 			var message = Console.prepareMessage(arguments, 'error');
+			//console.log.apply(this, arguments); // This invokes the stock console.log method
+
+			this.write(message+"\n");
+
+			return message;
+		}
+	},
+
+	warn: function() {
+		// If we are using the Electron module
+		if(Node.Process.versions.electron) {
+			return this.warnToDeveloperTools.apply(this, arguments);
+		}
+		else {
+			// Prepare the message
+			var message = Console.prepareMessage(arguments, 'warn');
 			//console.log.apply(this, arguments); // This invokes the stock console.log method
 
 			this.write(message+"\n");
@@ -225,7 +256,7 @@ Console = new (Class.extend({
 	    if(messageType == 'error') {
 	    	message = Terminal.style(message, 'red');
 	    }
-	    else if(messageType == 'warning') {
+	    else if(messageType == 'warn' || messageType == 'warning') {
 	    	message = Terminal.style(message, 'yellow');
 	    }
 
