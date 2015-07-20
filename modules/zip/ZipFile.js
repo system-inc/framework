@@ -41,21 +41,19 @@ ZipFile = File.extend({
 		return list;
 	},
 
-	contains: function*(zippedFilePath) {
-		// If the central directory has not been read, read it
-		if(!this.centralDirectory) {
-			yield this.readCentralDirectory();
-		}
+	getArchivedFileSystemObjectByPath: function*(archivedFileSystemObjectPath) {
+		var list = yield this.list();
 
-		var containsFile = false;
-		this.centralDirectory.zippedFileSystemObjectHeaders.each(function(index, zippedFileSystemObjectHeaders) {
-			if(zippedFilePath = zippedFileSystemObjectHeaders.path) {
-				containsFile = true;
+		var archivedFileSystemObject = null;
+		list.each(function(index, zippedFileSystemObject) {
+			//Console.out('Comparing', Terminal.style(archivedFileSystemObjectPath, 'red'), 'to', Terminal.style(zippedFileSystemObject.path, 'blue'));
+			if(archivedFileSystemObjectPath == zippedFileSystemObject.path) {
+				archivedFileSystemObject = zippedFileSystemObject;
 				return false; // break
 			}
 		});
 
-		return containsFile;
+		return archivedFileSystemObject;
 	},
 
 });
