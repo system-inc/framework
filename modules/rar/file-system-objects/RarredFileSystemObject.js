@@ -1,4 +1,4 @@
-ZippedFileSystemObject = ArchivedFileSystemObject.extend({
+RarredFileSystemObject = ArchivedFileSystemObject.extend({
 
 	localHeader: null,
 	centralDirectoryHeader: null,

@@ -1,4 +1,4 @@
-ZipFile = ArchiveFile.extend({
+RarFile = ArchiveFile.extend({
 
 	centralDirectory: null,
 	decryptionHeader: null,
@@ -42,4 +42,4 @@ ZipFile = ArchiveFile.extend({
 });
 
 // Static properties
-ZipFile.minimumSizeInBytes = 22;
+RarFile.minimumSizeInBytes = 22;

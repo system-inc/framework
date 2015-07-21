@@ -1,4 +1,4 @@
-ZippedFile = ZippedFileSystemObject.extend({
+RarredFile = RarredFileSystemObject.extend({
 
 	// Mimic File properties
 	file: null,

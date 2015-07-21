@@ -2,6 +2,10 @@ ZipModule = Module.extend({
 
 	version: new Version('0.1.0'),
 
+	needs: [
+		'Archive',
+	],
+
 	uses: [
 		'ZipFile',
 		'ZipDecryptionHeader',
@@ -15,5 +19,15 @@ ZipModule = Module.extend({
 		'file-system-objects/headers/ZipLocalZippedFileSystemObjectHeader',
 		'file-system-objects/headers/ZipCentralDirectoryZippedFileSystemObjectHeader',
 	],
+
+	initialize: function(settings) {
+		this.super.apply(this, arguments);
+
+		// Register zip file formats as archive extensions
+		ArchiveFile.registerImplementation('Zip', [
+			'zip',
+			'cbz',
+		]);
+	},
 	
 });
