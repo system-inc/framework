@@ -23,6 +23,8 @@ WebServerModule = Module.extend({
 		'View',
 		'WebServer',
 		'errors/HttpError',
+		'errors/BadRequestError',
+		'errors/ForbiddenError',
 		'errors/InternalServerError',
 		'errors/NotFoundError',
 		'errors/RequestEntityTooLargeError',

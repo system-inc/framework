@@ -251,6 +251,10 @@ Time = Class.extend({
         return timePosted;
 	},
 
+	toString: function() {
+		return this.time.toISOString();
+	},
+
 });
 
 // Static properties
