@@ -252,7 +252,16 @@ Time = Class.extend({
 	},
 
 	toString: function() {
-		return this.time.toISOString();
+		var string = '';
+
+		if(this.time && this.time.toISOString) {
+			string = this.time.toISOString();
+		}
+		else if(this.time) {
+			string = this.time.toString();
+		}
+
+		return string;
 	},
 
 });
