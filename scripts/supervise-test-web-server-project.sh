@@ -20,13 +20,13 @@ workingDirectory=`pwd`
 scriptDirectory=$workingDirectory/`echo $scriptInvocationPath | sed -e s/$scriptInvocationBasename//`
 #echo "scriptDirectory $scriptDirectory"
 
-# The path to the test web server project from the scripts directory
-testWebServerProjectFile="$scriptDirectory../tests/projects/web-server/Project.js"
-#echo "testWebServerProjectFile $testWebServerProjectFile"
+# The path to the project from the scripts directory
+projectFile="$scriptDirectory../tests/projects/web-server/Project.js"
+#echo "projectFile $projectFile"
 
-# The path to the test project from the scripts directory
+# The path to the process manager from the scripts directory
 processManagerFile="$scriptDirectory../ProcessManager.js"
 #echo "processManagerFile $processManagerFile"
 
 # Run the script
-node --harmony "$processManagerFile" --harmony "$testWebServerProjectFile" $@
+node --harmony "$processManagerFile" --harmony --extensions js,json "$projectFile" $@

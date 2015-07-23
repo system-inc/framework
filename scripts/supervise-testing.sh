@@ -20,9 +20,9 @@ workingDirectory=`pwd`
 scriptDirectory=$workingDirectory/`echo $scriptInvocationPath | sed -e s/$scriptInvocationBasename//`
 #echo "scriptDirectory $scriptDirectory"
 
-# The path to the test project from the scripts directory
-testProjectFile="$scriptDirectory../tests/Project.js"
-#echo "testProjectFile $testProjectFile"
+# The path to the project from the scripts directory
+projectFile="$scriptDirectory../tests/Project.js"
+#echo "projectFile $projectFile"
 
 # Run the script
-node --harmony "$testProjectFile" -s $@
+node --harmony "$projectFile" -s $@

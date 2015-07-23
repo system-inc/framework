@@ -107,6 +107,31 @@ Time = Class.extend({
 		return dayWithDate;
 	},
 
+	getDayWithDateAndTime: function(preposition) {
+		preposition = preposition === undefined ? ' ' : ' '+preposition+' ';
+
+		var dayWithDateAndTime = this.getDayWithDate();
+		dayWithDateAndTime += preposition;
+		dayWithDateAndTime += this.getHour12()+':';
+		dayWithDateAndTime += this.getMinutePadded()+' ';
+		dayWithDateAndTime += this.getPeriod();
+
+		return dayWithDateAndTime;
+	},
+
+	getDayWithDateAndTimeWithSeconds: function(preposition) {
+		preposition = preposition === undefined ? ' ' : ' '+preposition+' ';
+
+		var dayWithDateAndTimeWithSeconds = this.getDayWithDate();
+		dayWithDateAndTimeWithSeconds += preposition;
+		dayWithDateAndTimeWithSeconds += this.getHour12()+':';
+		dayWithDateAndTimeWithSeconds += this.getMinutePadded()+':';
+		dayWithDateAndTimeWithSeconds += this.getSecondPadded()+' ';
+		dayWithDateAndTimeWithSeconds += this.getPeriod();
+
+		return dayWithDateAndTimeWithSeconds;
+	},
+
 	getYear: function() {
 		return this.time.getFullYear();
 	},
@@ -120,8 +145,7 @@ Time = Class.extend({
 	},
 
 	getMonthName: function() {
-		var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-		return monthNames[this.time.getMonth()];
+		return Time.monthNames[this.time.getMonth()];
 	},
 
 	getDay: function() {
@@ -133,8 +157,7 @@ Time = Class.extend({
 	},
 
 	getDayName: function() {
-		var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-		return dayNames[this.time.getDay()];
+		return Time.dayNames[this.time.getDay()];
 	},
 
 	getWeekDay: function() {
@@ -193,6 +216,18 @@ Time = Class.extend({
 		return dateTime;
 	},
 
+	getDateTimeWithHour12PaddedAndPeriod: function() {
+		var dateTime = this.getYear();
+		dateTime += '-'+this.getMonthPadded();
+		dateTime += '-'+this.getDayPadded();
+		dateTime += ' '+this.getHour12Padded();
+		dateTime += ':'+this.getMinutePadded();
+		dateTime += ':'+this.getSecondPadded();
+		dateTime += ' '+this.getPeriod();
+
+		return dateTime;
+	},
+
 	// The number of seconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
 	getUnixTime: function() {
 		return this.nowInSeconds().toFixed(0);
@@ -204,8 +239,6 @@ Time = Class.extend({
 	},
 
 	getTimePosted: function() {
-        var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         var now = new Date();
         var timePosted = '';
         var hours = this.time.getHours();
@@ -238,13 +271,13 @@ Time = Class.extend({
                 timePosted = 'Yesterday';
             }
             else if(dayDifference < 7) {
-                timePosted = dayNames[this.time.getDay()];
+                timePosted = Time.dayNames[this.time.getDay()];
             }
             else if(dayDifference < 14) {
-                timePosted = 'Last '+dayNames[this.time.getDay()];
+                timePosted = 'Last '+Time.dayNames[this.time.getDay()];
             }
             else if(dayDifference >= 14) {
-                timePosted = monthNames[this.time.getMonth()]+' '+this.time.getDate()+', '+this.time.getFullYear();
+                timePosted = Time.monthNames[this.time.getMonth()]+' '+this.time.getDate()+', '+this.time.getFullYear();
             }
         }
 
@@ -268,6 +301,8 @@ Time = Class.extend({
 
 // Static properties
 Time.precision = 'milliseconds';
+Time.dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+Time.monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 // Static methods
 Time.now = Time.prototype.now;
