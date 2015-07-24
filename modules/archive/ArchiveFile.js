@@ -6,8 +6,9 @@ ArchiveFile = File.extend({
 		var list = yield this.list();
 
 		var archivedFileSystemObject = null;
+
 		list.each(function(index, zippedFileSystemObject) {
-			//Console.out('Comparing', Terminal.style(archivedFileSystemObjectPath, 'red'), 'to', Terminal.style(zippedFileSystemObject.path, 'blue'));
+			//Console.out('Comparing', "\n", Terminal.style(archivedFileSystemObjectPath, 'red'), 'to', "\n", Terminal.style(zippedFileSystemObject.path, 'blue'));
 			if(archivedFileSystemObjectPath == zippedFileSystemObject.path) {
 				archivedFileSystemObject = zippedFileSystemObject;
 				return false; // break

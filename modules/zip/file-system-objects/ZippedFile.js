@@ -13,6 +13,12 @@ ZippedFile = ZippedFileSystemObject.extend({
 
 		// Use File's constructor to setup class variables based on path
 		File.prototype.construct.call(this, this.path);
+
+		// Force all path separators to be forward slashes
+		this.path = this.path.replace('\\', '/');
+		this.directory = this.directory.replace('\\', '/');
+		this.file = this.file.replace('\\', '/');
+		this.fileWithoutExtension = this.fileWithoutExtension.replace('\\', '/');
 	}
 
 });
