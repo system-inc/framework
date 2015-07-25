@@ -5,5 +5,10 @@ CryptographyModule = Module.extend({
 	uses: [
 		'Cryptography',
 	],
+
+	initialize: function(settings) {
+		this.super.apply(this, arguments);
+		//Console.out('WebServerModule initialize', this.settings);
+	},
 	
 });

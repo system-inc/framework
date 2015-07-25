@@ -102,20 +102,25 @@ Response = Class.extend({
 		// If the content is something
 		var contentType;
 		if(this.content) {
+			//Console.highlight(this.content);
+
 			// If the zip module is enabled and the content is a zipped file inside of a zip file
 			if(global['ZippedFile'] && Class.isInstance(this.content, ZippedFile)) {
 				// Set the Content-Type header
 				contentType = File.getContentType(this.content.path);
+				this.headers.set('Content-Type', contentType);
 
-				// If the zipped file is compressed with deflate and the requester has said they accept deflate, leave the zipped file compressed and make them deflate it
+				// Set the Content-Disposition header, by specifying inline the browser will try to display the content and if it cannot it will download it
+				this.headers.update('Content-Disposition', 'inline; filename="'+this.content.name+'"');
+
+				// If the zipped file is compressed with deflate and the requester has said they accept deflate, leave the zipped file compressed and let the client deflate it
 				if(this.content.compressionMethod == 'deflate' && this.request.headers.get('Accept-Encoding').contains('deflate')) {
 					this.headers.set('Content-Encoding', 'deflate');
 					this.content = yield this.content.toReadStream(false); // do not decompress
 				}
-				// Decompress the file
 				else {
-					this.content = yield this.content.toReadStream(); // decompress
-				}				
+					this.content = yield this.content.toReadStream();
+				}
 			}
 			// If the content is a file
 			else if(Class.isInstance(this.content, File)) {
@@ -127,6 +132,9 @@ Response = Class.extend({
 					// Set the Content-Type header
 					contentType = File.getContentType(this.content.path);
 					this.headers.set('Content-Type', contentType);
+
+					// Set the Content-Disposition header, by specifying inline the browser will try to display the content and if it cannot it will download it
+					this.headers.update('Content-Disposition', 'inline; filename="'+this.content.name+'"');
 
 					// Turn the file into a read stream
 					//this.content = yield File.read(this.content.path);

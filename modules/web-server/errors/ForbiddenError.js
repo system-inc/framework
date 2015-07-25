@@ -5,7 +5,7 @@ ForbiddenError = HttpError.extend({
 
 		this.identifier = 'forbidden';
 		if(!this.message) {
-			this.message = 'Request is valid but forbidden.';
+			this.message = 'Request is forbidden.';
 		}
 	},
 

@@ -28,6 +28,7 @@ WebServerModule = Module.extend({
 		'errors/InternalServerError',
 		'errors/NotFoundError',
 		'errors/RequestEntityTooLargeError',
+		'errors/UnauthorizedError',
 	],
 
 	webServers: {},

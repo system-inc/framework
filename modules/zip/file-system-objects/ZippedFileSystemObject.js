@@ -55,8 +55,8 @@ ZippedFileSystemObject = ArchivedFileSystemObject.extend({
 			end: this.centralDirectoryHeader.offsetToLocalZippedFileSystemObjectHeader + this.localHeader.sizeInBytes + this.centralDirectoryHeader.compressedSizeInBytes,
 		});
 
-		// If they want the file decompressed
-		if(decompress) {
+		// If they want the file decompressed and the file is compressed
+		if(decompress && this.compressionMethod == 'deflate') {
 			var deflate = Node.Zlib.createDeflate();
 			readStream = readStream.pipe(deflate);
 		}
