@@ -10,9 +10,18 @@ File = FileSystemObject.extend({
 		this.super.apply(this, arguments);
 		
         this.file = this.path;
-		this.fileWithoutExtension = this.file.substr(0, this.file.lastIndexOf('.'));
-		this.nameWithoutExtension = this.name.substr(0, this.name.lastIndexOf('.'));
-		this.extension = this.file.split('.').reverse()[0];
+
+        // Handle files starting with ., such as .DS_Store , or files without extensions
+        if((this.name.startsWith('.') && this.name.contains('.') == 1) || this.name.contains('.') == 0) {
+            this.fileWithoutExtension = this.file;
+            this.nameWithoutExtension = this.name;
+            this.extension = '';
+        }
+        else {
+            this.extension = this.name.split('.').reverse()[0];
+            this.nameWithoutExtension = this.name.substr(0, this.name.lastIndexOf('.'));
+            this.fileWithoutExtension = this.directory+this.nameWithoutExtension;
+        }
 	},
 
 	getContentType: function(file) {

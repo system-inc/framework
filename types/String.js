@@ -8,16 +8,26 @@ String.prototype.empty = function() {
     return (this.length === 0 || !this.trim());
 };
 
-String.prototype.contains = function(string, caseSensitive) {
+String.prototype.contains = function(stringOrRegularExpression, caseSensitive) {
 	caseSensitive = caseSensitive === undefined ? false : caseSensitive;
 	var count = 0;
 
-	if(caseSensitive) {
-		count = (this.match(new RegularExpression(string, 'g')) || []).length
+	var regularExpression = null;
+	if(RegularExpression.is(stringOrRegularExpression)) {
+		regularExpression = stringOrRegularExpression;
 	}
 	else {
-		count = (this.match(new RegularExpression(string, 'gi')) || []).length
+		var string = RegularExpression.escape(stringOrRegularExpression);
+
+		if(caseSensitive) {
+			regularExpression = new RegularExpression(string, 'g');
+		}
+		else {
+			regularExpression = new RegularExpression(string, 'gi');	
+		}
 	}
+
+	count = (this.match(regularExpression) || []).length;
 
 	return count;
 }
