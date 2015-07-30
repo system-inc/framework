@@ -6,6 +6,74 @@ OperatingSystem = Class.extend({
 
 	construct: function() {
 	},
+
+	parseUserAgent: function(userAgent) {
+		// Return immediately if there is no user agent
+		if(!userAgent) {
+			return this;
+		}
+		//Console.highlight(userAgent);
+
+		// Detect the matching operating system
+		var matchingOperatingSystem = null;
+		OperatingSystem.operatingSystems.each(function(index, operatingSystem) {
+			var userAgentMatch = userAgent.match(new RegularExpression('^.*'+operatingSystem.userAgentRegularExpressionString+'.*$', 'i'));
+			if(userAgentMatch) {
+				matchingOperatingSystem = operatingSystem;
+				return false; // break
+			}
+		});
+		//Console.highlight(matchingOperatingSystem);
+
+		// Get the version and break it out into major, minor, patch, and patch minor
+		if(matchingOperatingSystem !== null) {
+			this.name = matchingOperatingSystem.name;
+			this.manufacturer = matchingOperatingSystem.manufacturer;
+
+			var operatingSystemVersionRegularExpressionString = '^.*'+matchingOperatingSystem.userAgentRegularExpressionString+'.+?([\\d\\._]+).*$';
+			//Console.highlight(operatingSystemVersionRegularExpressionString);
+			var operatingSystemVersionMatches = userAgent.match(new RegularExpression(operatingSystemVersionRegularExpressionString, 'i'));
+			if(operatingSystemVersionMatches && operatingSystemVersionMatches[1]) {
+				this.version = new Version(operatingSystemVersionMatches[1]);
+			}
+		}
+
+		// Handle Windows names
+		if(this.name == 'Windows') {
+			if(this.version.major <= 4) {
+				this.name = 'Windows NT';
+			}
+			else if(this.version.major == 5 && this.version.minor == 0) {
+				this.name = 'Windows 2000';
+			}
+			else if(this.version.major == 5 && this.version.minor >= 1) {
+				this.name = 'Windows XP';
+			}
+			else if(this.version.major == 6 && this.version.minor == 0) {
+				this.name = 'Windows Vista';
+			}
+			else if(this.version.major == 6 && this.version.minor <= 1) {
+				this.name = 'Windows 7';
+				this.version.major = 7;
+				this.version.minor = 0;
+				this.version.patch = null;
+			}
+			else if(this.version.major == 6 && this.version.minor == 2) {
+				this.name = 'Windows 8';
+				this.version.major = 8;
+				this.version.minor = 0;
+				this.version.patch = null;
+			}
+			else if(this.version.major == 6 && this.version.minor == 3) {
+				this.name = 'Windows 8';
+				this.version.major = 8;
+				this.version.minor = 1;
+				this.version.patch = null;
+			}
+		}
+		
+		return this;
+	},
 	
 });
 
@@ -13,99 +81,41 @@ OperatingSystem = Class.extend({
 OperatingSystem.constructFromUserAgent = function(userAgent) {
 	var operatingSystem = new OperatingSystem();
 
-	// Return immediately if there is no user agent
-	if(!userAgent) {
-		return operatingSystem;
-	}
+	operatingSystem.parseUserAgent(userAgent);
 
-	var operatingSystemIndex = null;
-	var operatingSystems = [
-		{
-			'userAgentString': 'iPad',
-			'name': 'iOS',
-			'manufacturer': 'Apple',
-		},
-		{
-			'userAgentString': 'iPhone',
-			'name': 'iOS',
-			'manufacturer': 'Apple',
-		},
-		{
-			'userAgentString': 'iPod',
-			'name': 'iOS',
-			'manufacturer': 'Apple',
-		},
-		{
-			'userAgentString': 'OS X',
-			'name': 'OS X',
-			'manufacturer': 'Apple',
-		},
-		{
-			'userAgentString': 'Windows',
-			'name': 'Windows',
-			'manufacturer': 'Microsoft',
-		},
-		{
-			'userAgentString': 'Android',
-			'name': 'Android',
-			'manufacturer': 'Google',
-		},
-	];
-
-	// Detect the operating system
-	for(var key in operatingSystems) {
-		var userAgentMatch = userAgent.match(new RegularExpression('^.*'+operatingSystems[key].userAgentString+'.*$', 'i'));
-		//Console.out(operatingSystems[key].name, userAgentMatch);
-		if(userAgentMatch) {
-			operatingSystem.name = operatingSystems[key].name;
-			operatingSystem.manufacturer = operatingSystems[key].manufacturer;
-			operatingSystemIndex = key;
-			break;
-		}
-	}
-
-	// Get the version and break it out into major, minor, patch, and patch minor
-	if(operatingSystemIndex) {
-		var operatingSystemVersionMatches = userAgent.match(new RegularExpression('^.*'+operatingSystems[operatingSystemIndex].userAgentString+'.+?([\\d\\._]+).*$', 'i'));
-		//Console.out(operatingSystemVersionMatches);
-		if(operatingSystemVersionMatches && operatingSystemVersionMatches[1]) {
-			operatingSystem.version = new Version(operatingSystemVersionMatches[1]);
-		}
-	}
-
-	// Handle Windows names
-	if(operatingSystem.name == 'Windows') {
-		if(operatingSystem.version.major <= 4) {
-			operatingSystem.name = 'Windows NT';
-		}
-		else if(operatingSystem.version.major == 5 && operatingSystem.version.minor == 0) {
-			operatingSystem.name = 'Windows 2000';
-		}
-		else if(operatingSystem.version.major == 5 && operatingSystem.version.minor >= 1) {
-			operatingSystem.name = 'Windows XP';
-		}
-		else if(operatingSystem.version.major == 6 && operatingSystem.version.minor == 0) {
-			operatingSystem.name = 'Windows Vista';
-		}
-		else if(operatingSystem.version.major == 6 && operatingSystem.version.minor <= 1) {
-			operatingSystem.name = 'Windows 7';
-			operatingSystem.version.major = 7;
-			operatingSystem.version.minor = 0;
-			operatingSystem.version.patch = null;
-		}
-		else if(operatingSystem.version.major == 6 && operatingSystem.version.minor == 2) {
-			operatingSystem.name = 'Windows 8';
-			operatingSystem.version.major = 8;
-			operatingSystem.version.minor = 0;
-			operatingSystem.version.patch = null;
-		}
-		else if(operatingSystem.version.major == 6 && operatingSystem.version.minor == 3) {
-			operatingSystem.name = 'Windows 8';
-			operatingSystem.version.major = 8;
-			operatingSystem.version.minor = 1;
-			operatingSystem.version.patch = null;
-		}
-	}
-	
-	return operatingSystem;
+	return operatingSystem;	
 }
+
+// Static properties
+OperatingSystem.operatingSystems = [
+	{
+		'name': 'iOS',
+		'manufacturer': 'Apple',
+		'userAgentRegularExpressionString': 'iPad',
+	},
+	{
+		'name': 'iOS',
+		'manufacturer': 'Apple',
+		'userAgentRegularExpressionString': 'iPhone',
+	},
+	{
+		'name': 'iOS',
+		'manufacturer': 'Apple',
+		'userAgentRegularExpressionString': 'iPod',
+	},
+	{
+		'name': 'OS X',
+		'manufacturer': 'Apple',
+		'userAgentRegularExpressionString': 'OS X',
+	},
+	{
+		'name': 'Windows',
+		'manufacturer': 'Microsoft',
+		'userAgentRegularExpressionString': 'Windows',
+	},
+	{
+		'name': 'Android',
+		'manufacturer': 'Google',
+		'userAgentRegularExpressionString': 'Android',
+	},
+];
