@@ -48,14 +48,14 @@ Browser.constructFromUserAgent = function(userAgent) {
 	];
 
 	// Detect the browser
-	for(var key in browsers) {
-		if(userAgent.contains(browsers[key].userAgentString, false)) {
-			browser.name = browsers[key].name;
-			browser.manufacturer = browsers[key].manufacturer;
-			browserIndex = key;
-			break;
+	browsers.each(function(index, value) {
+		if(userAgent.contains(new RegularExpression(value.userAgentString, 'gi'))) {
+			browser.name = value.name;
+			browser.manufacturer = value.manufacturer;
+			browserIndex = index;
+			return false; // break
 		}
-	}
+	});
 
 	// Get the version and break it out into major, minor, patch, and patch minor
 	if(browserIndex) {
