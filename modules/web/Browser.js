@@ -56,28 +56,28 @@ Browser.constructFromUserAgent = function(userAgent) {
 // Static properties
 Browser.browsers = [
 	{
-		'userAgentRegularExpressionString': 'Chrome',
 		'name': 'Chrome',
 		'manufacturer': 'Google',
+		'userAgentRegularExpressionString': 'Chrome',
 	},
 	{
-		'userAgentRegularExpressionString': 'Firefox',
 		'name': 'Firefox',
 		'manufacturer': 'Mozilla',
+		'userAgentRegularExpressionString': 'Firefox',
 	},
 	{
-		'userAgentRegularExpressionString': '[iPhone|iPad|iPod].*Safari',
 		'name': 'Mobile Safari',
 		'manufacturer': 'Apple',
+		'userAgentRegularExpressionString': '[iPhone|iPad|iPod].*Safari',
 	},
 	{
-		'userAgentRegularExpressionString': 'Safari',
 		'name': 'Safari',
 		'manufacturer': 'Apple',
+		'userAgentRegularExpressionString': 'Safari',
 	},
 	{
-		'userAgentRegularExpressionString': 'MSIE',
 		'name': 'Internet Explorer',
 		'manufacturer': 'Microsoft',
+		'userAgentRegularExpressionString': 'MSIE',
 	},
 ];
