@@ -7,6 +7,40 @@ Browser = Class.extend({
 
 	construct: function() {
 	},
+
+	parseUserAgent: function(userAgent) {
+		// Return immediately if there is no user agent
+		if(!userAgent) {
+			return this;
+		}
+
+		// Store the user agent
+		this.userAgent = userAgent;
+
+		// Detect the matching browser
+		var matchingBrowser = null;
+		Browser.browsers.each(function(index, browser) {
+			if(userAgent.contains(new RegularExpression(browser.userAgentRegularExpressionString, 'i'))) {
+				matchingBrowser = browser;
+				return false; // break
+			}
+		});
+
+		// Get the version and break it out into major, minor, patch, and patch minor
+		if(matchingBrowser !== null) {
+			this.name = matchingBrowser.name;
+			this.manufacturer = matchingBrowser.manufacturer;
+
+			var browserVersionRegularExpressionString = '^.*'+matchingBrowser.userAgentRegularExpressionString+'.+?([\\d|\\.]+).*$';
+			//Console.highlight(browserVersionRegularExpressionString);
+			var browserVersionMatches = userAgent.match(new RegularExpression(browserVersionRegularExpressionString, 'i'));
+			if(browserVersionMatches && browserVersionMatches[1]) {
+				this.version = new Version(browserVersionMatches[1]);
+			}
+		}
+		
+		return this;
+	},
 	
 });
 
@@ -14,62 +48,36 @@ Browser = Class.extend({
 Browser.constructFromUserAgent = function(userAgent) {
 	var browser = new Browser();
 
-	// Return immediately if there is no user agent
-	if(!userAgent) {
-		return browser;
-	}
+	browser.parseUserAgent(userAgent);
 
-	browser.userAgent = userAgent;
-
-	var browsers = [
-		{
-			'userAgentString': 'Chrome',
-			'name': 'Chrome',
-			'manufacturer': 'Google',
-		},
-		{
-			'userAgentString': 'Firefox',
-			'name': 'Firefox',
-			'manufacturer': 'Mozilla',
-		},
-		{
-			'userAgentString': '[iPhone|iPad|iPod].*Safari',
-			'name': 'Mobile Safari',
-			'manufacturer': 'Apple',
-		},
-		{
-			'userAgentString': 'Safari',
-			'name': 'Safari',
-			'manufacturer': 'Apple',
-		},
-		{
-			'userAgentString': 'MSIE',
-			'name': 'Internet Explorer',
-			'manufacturer': 'Microsoft',
-		},
-	];
-	
-	// Detect the matching browser
-	var matchingBrowser = null;
-	browsers.each(function(currentBrowserIndex, currentBrowser) {
-		if(userAgent.contains(new RegularExpression(currentBrowser.userAgentString, 'i'))) {
-			matchingBrowser = currentBrowser;
-			return false; // break
-		}
-	});
-
-	// Get the version and break it out into major, minor, patch, and patch minor
-	if(matchingBrowser !== null) {
-		browser.name = matchingBrowser.name;
-		browser.manufacturer = matchingBrowser.manufacturer;
-
-		var browserVersionRegularExpressionString = '^.*'+matchingBrowser.userAgentString+'.+?([\\d|\\.]+).*$';
-		//Console.highlight(browserVersionRegularExpressionString);
-		var browserVersionMatches = userAgent.match(new RegularExpression(browserVersionRegularExpressionString, 'i'));
-		if(browserVersionMatches && browserVersionMatches[1]) {
-			browser.version = new Version(browserVersionMatches[1]);
-		}
-	}
-	
 	return browser;
 }
+
+// Static properties
+Browser.browsers = [
+	{
+		'userAgentRegularExpressionString': 'Chrome',
+		'name': 'Chrome',
+		'manufacturer': 'Google',
+	},
+	{
+		'userAgentRegularExpressionString': 'Firefox',
+		'name': 'Firefox',
+		'manufacturer': 'Mozilla',
+	},
+	{
+		'userAgentRegularExpressionString': '[iPhone|iPad|iPod].*Safari',
+		'name': 'Mobile Safari',
+		'manufacturer': 'Apple',
+	},
+	{
+		'userAgentRegularExpressionString': 'Safari',
+		'name': 'Safari',
+		'manufacturer': 'Apple',
+	},
+	{
+		'userAgentRegularExpressionString': 'MSIE',
+		'name': 'Internet Explorer',
+		'manufacturer': 'Microsoft',
+	},
+];
