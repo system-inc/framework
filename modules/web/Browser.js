@@ -3,6 +3,7 @@ Browser = Class.extend({
 	name: null,
 	manufacturer: null,
 	version: null,
+	userAgent: null,
 
 	construct: function() {
 	},
@@ -18,7 +19,8 @@ Browser.constructFromUserAgent = function(userAgent) {
 		return browser;
 	}
 
-	var browserIndex = null;
+	browser.userAgent = userAgent;
+
 	var browsers = [
 		{
 			'userAgentString': 'Chrome',
@@ -46,20 +48,24 @@ Browser.constructFromUserAgent = function(userAgent) {
 			'manufacturer': 'Microsoft',
 		},
 	];
-
-	// Detect the browser
-	browsers.each(function(index, value) {
-		if(userAgent.contains(new RegularExpression(value.userAgentString, 'gi'))) {
-			browser.name = value.name;
-			browser.manufacturer = value.manufacturer;
-			browserIndex = index;
+	
+	// Detect the matching browser
+	var matchingBrowser = null;
+	browsers.each(function(currentBrowserIndex, currentBrowser) {
+		if(userAgent.contains(new RegularExpression(currentBrowser.userAgentString, 'i'))) {
+			matchingBrowser = currentBrowser;
 			return false; // break
 		}
 	});
 
 	// Get the version and break it out into major, minor, patch, and patch minor
-	if(browserIndex) {
-		var browserVersionMatches = userAgent.match(new RegularExpression('^.*'+browsers[browserIndex].userAgentString+'.+?([\\d|\\.]+).*$', 'i'));
+	if(matchingBrowser !== null) {
+		browser.name = matchingBrowser.name;
+		browser.manufacturer = matchingBrowser.manufacturer;
+
+		var browserVersionRegularExpressionString = '^.*'+matchingBrowser.userAgentString+'.+?([\\d|\\.]+).*$';
+		//Console.highlight(browserVersionRegularExpressionString);
+		var browserVersionMatches = userAgent.match(new RegularExpression(browserVersionRegularExpressionString, 'i'));
 		if(browserVersionMatches && browserVersionMatches[1]) {
 			browser.version = new Version(browserVersionMatches[1]);
 		}
