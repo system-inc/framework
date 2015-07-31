@@ -172,14 +172,24 @@ Response = Class.extend({
 			this.setAcceptedEncodings(this.request.headers.get('Accept-Encoding'));
 		}
 
+		// If the request is a HEAD request, add a Connection: close header
+		if(this.request.method == 'HEAD') {
+			this.headers.update('Connection', 'close');
+		}
+
 		// Send the headers
 		this.sendHeaders();
 
-		// Send the content (yield until we finish)
-		var contentSent = yield this.sendContent();
-
-		// Wrap things up
-		this.sent();
+		// If the request is a HEAD request, end the request now
+		if(this.request.method.lowercase() == 'head') {
+			this.nodeResponse.end(function() {
+				this.sent();
+			}.bind(this));
+		}
+		// Send the content
+		else {
+			this.sendContent();
+		}
 	},
 
 	sendHeaders: function() {
@@ -200,6 +210,9 @@ Response = Class.extend({
 		// Track the elapsed time
 		this.stopwatches.process.stop();
 		this.headers.create('X-Processing-Time-in-'+this.stopwatches.process.precision.capitalize(), this.stopwatches.process.elapsedTime);
+
+		// Send the response ID to the client
+		this.headers.create('X-Response-ID', this.id);
 
 		// Add the response cookies to the headers
 		this.headers.addCookies(this.cookies);
@@ -222,32 +235,29 @@ Response = Class.extend({
 
 		// Handle streams
 		if(this.content instanceof Node.Stream.Stream) {
-			// Return a promise that resolves when the response is completely sent
-			return new Promise(function(resolve, reject) {
-				// If the content is not encoded and the encoding is deflate
-				if(!this.contentEncoded && this.encoding == 'deflate') {
-					var deflate = Node.Zlib.createDeflate();
-					this.content.pipe(deflate).pipe(this.nodeResponse).on('finish', function() {
-						//console.log('done sending!')
-						resolve(true);
-					});
-				}
-				// If the content is not encoded and the encoding is gzip
-				else if(!this.contentEncoded && this.encoding == 'gzip') {
-					var gzip = Node.Zlib.createGzip();
-					this.content.pipe(gzip).pipe(this.nodeResponse).on('finish', function() {
-						//console.log('done sending!')
-						resolve(true);
-					});
-				}
-				// If there is no encoding
-				else {
-					this.content.pipe(this.nodeResponse).on('finish', function() {
-						//console.log('done sending!')
-						resolve(true);
-					});
-				}
-			}.bind(this));
+			// If the content is not encoded and the encoding is deflate
+			if(!this.contentEncoded && this.encoding == 'deflate') {
+				var deflate = Node.Zlib.createDeflate();
+				this.content.pipe(deflate).pipe(this.nodeResponse).on('finish', function() {
+					//console.log('done sending!')
+					this.sent();
+				}.bind(this));
+			}
+			// If the content is not encoded and the encoding is gzip
+			else if(!this.contentEncoded && this.encoding == 'gzip') {
+				var gzip = Node.Zlib.createGzip();
+				this.content.pipe(gzip).pipe(this.nodeResponse).on('finish', function() {
+					//console.log('done sending!')
+					this.sent();
+				}.bind(this));
+			}
+			// If there is no encoding
+			else {
+				this.content.pipe(this.nodeResponse).on('finish', function() {
+					//console.log('done sending!')
+					this.sent();
+				}.bind(this));
+			}
 		}
 		else {
 			// If the content is not encoded and we need to encode
@@ -256,7 +266,10 @@ Response = Class.extend({
 			}
 
 			// End the response
-			this.nodeResponse.end(this.content);
+			this.nodeResponse.end(this.content, function() {
+				//Console.highlight('Ending response');
+				this.sent();
+			}.bind(this));
 		}
 	},
 

@@ -40,7 +40,7 @@ Request = Class.extend({
 		this.url = Url.constructFromNodeRequest(nodeRequest);
 
 		// Method
-		this.method = nodeRequest.method;
+		this.method = nodeRequest.method.uppercase();
 
 		// Headers
 		this.headers = Headers.constructFromNodeHeaders(nodeRequest.headers);
