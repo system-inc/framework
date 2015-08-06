@@ -68,7 +68,7 @@ HtmlDocument = XmlDocument.extend({
 				eventName = 'DOMContentLoaded';
 			}
 
-			//console.log('addEventListener', eventName);
+			//console.log('addEventListener', eventName, callback);
 			domDocument.addEventListener(eventName, callback);
 		}
 	},

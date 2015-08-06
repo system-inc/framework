@@ -63,11 +63,9 @@ Electron = new (Class.extend({
 		//console.log(htmlDocument);
 		
 		// Apply the HtmlDocument to the DOM (make sure not to strip out the current reference to Project.js in the head tag)
-		HtmlDocument.on('ready', function() {
-			htmlDocument.buildHead();
-			htmlDocument.head.apply();
-			htmlDocument.body.apply();	
-		});
+		htmlDocument.buildHead();
+		htmlDocument.head.apply();
+		htmlDocument.body.apply();
 
 		// Show the main browser window
 		this.mainBrowserWindow.show();
