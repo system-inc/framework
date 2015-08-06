@@ -30,16 +30,13 @@ Generator.run = function(generator, resolve, reject) {
 		if(next.value instanceof Promise) {
 			//Console.out('We have a promise we need to wait for!');
 
-			// This needs to be called before .done for reasons I don't fully understand when using Function.delay
+			// Catch errors from the promises
 			//next.value.catch(function(error) {
-				// Log the error
-				//Console.out('Caught error at Generator.js:', error);
-				//throw(error);
-				//reject(error);
-				//resolve(error);
+				// And emit them to the current domain
+				//Node.Process.domain.emit('error', error); // this does not work and causes race conditions because it is using the global domain whereas we need to use a reference to the correct domain
 			//});
 
-			// Tell the promise to pump the generator what it is done
+			// Tell the promise to pump the generator what it is done, done is a bluebird specific method
 			next.value.done(function(value) {
 				// Set next.value to the value from the finished promise
 				next.value = value;

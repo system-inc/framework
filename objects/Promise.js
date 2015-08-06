@@ -1,4 +1,6 @@
-// Use Bluebird for now until I write my own (so I understand what is going on)
-//Promise = require('./../libraries/bluebird/promise')();
-//Promise = require('bluebird');
+// Use Bluebird for now - need to start using native promises
 Promise = require('./../libraries/bluebird/bluebird.js');
+
+//Promise.is = function(object) {
+//	return Class.isInstance(object, Promise);
+//}
