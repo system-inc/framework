@@ -68,8 +68,15 @@ HtmlDocument = XmlDocument.extend({
 				eventName = 'DOMContentLoaded';
 			}
 
-			//console.log('addEventListener', eventName, callback);
-			domDocument.addEventListener(eventName, callback);
+			// If the document is already ready, just run the function
+			if(eventName == 'DOMContentLoaded' && domDocument.readyState == 'complete') {
+				callback();
+			}
+			// If the document isn't ready, add an event listener
+			else {
+				//console.log('addEventListener', eventName, callback);
+				domDocument.addEventListener(eventName, callback);
+			}			
 		}
 	},
 
