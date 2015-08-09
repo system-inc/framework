@@ -8,6 +8,8 @@ RarModule = Module.extend({
 
 	uses: [
 		'RarFile',
+		'RarFileHeader',
+		'RarBlockHeader',
 		'file-system-objects/RarredFileSystemObject',
 		'file-system-objects/RarredFile',
 		'file-system-objects/RarredDirectory',
@@ -19,6 +21,7 @@ RarModule = Module.extend({
 		// Register zip file formats as archive extensions
 		ArchiveFile.registerImplementation('Rar', [
 			'rar',
+			'cbr',
 		]);
 	},
 	

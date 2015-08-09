@@ -13,6 +13,7 @@ TestModule = Module.extend({
 		'Html',
 		'Network',
 		'OperatingSystem',
+		'Rar',
 		'Server',
 		'Web',
 		'WebServer',

@@ -23,7 +23,7 @@ ZipEndOfCentralDirectoryRecord = Class.extend({
 
 		// Make sure the zip file has a size and meets the minimum size requirement
 		if(!this.zipFile.size || this.zipFile.sizeInBytes() < ZipFile.minimumSizeInBytes) {
-			throw new Error('Invalid zip file. A zip file must be at least '+ZipFile.minimumSizeInBytes+' bytes, the file provided is '+this.zipFile.size+' bytes.');
+			throw new Error('Invalid ZIP file. A ZIP file must be at least '+ZipFile.minimumSizeInBytes+' bytes, the file provided is '+this.zipFile.size+' bytes.');
 		}
 		//Console.out('this.zipFile.sizeInBytes', this.zipFile.sizeInBytes());
 
@@ -64,7 +64,7 @@ ZipEndOfCentralDirectoryRecord = Class.extend({
 		if(endOfCentralDirectoryRecordBuffer) {
 			this.volumeNumberWhereCentralDirectoryEnds = endOfCentralDirectoryRecordBuffer.readUInt16LE(4);
 			if(this.volumeNumberWhereCentralDirectoryEnds !== 0) {
-				throw new Error('Multi-volume zip files are not supported yet, found volume number '+this.volumeNumberWhereCentralDirectoryEnds+'.');
+				throw new Error('Multi-volume ZIP files are not supported yet, found volume number '+this.volumeNumberWhereCentralDirectoryEnds+'.');
 			}
 
 			this.volumeNumberWhereCentralDirectoryStarts = endOfCentralDirectoryRecordBuffer.readUInt16LE(6);
@@ -82,7 +82,7 @@ ZipEndOfCentralDirectoryRecord = Class.extend({
 		}
 		// If we did not find an end of central directory record
 		else {
-			throw new Error('Invalid zip file. Could not find end of central directory record.');
+			throw new Error('Invalid ZIP file. Could not find end of central directory record.');
 		}
 
 		return this;

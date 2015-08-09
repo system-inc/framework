@@ -83,7 +83,7 @@ ZipCentralDirectoryZippedFileSystemObjectHeader.bufferOffsets = {
 	compressionMethodInteger: 10,
 	timeModifiedTimeInteger: 12,
 	timeModifiedDateInteger: 14,
-	crc32Checksum: 16,
+	crc32: 16,
 	compressedSizeInBytes: 20,
 	uncompressedSizeInBytes: 24,
 	pathSizeInBytes: 28,

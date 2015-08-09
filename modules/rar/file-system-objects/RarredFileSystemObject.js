@@ -1,44 +1,28 @@
 RarredFileSystemObject = ArchivedFileSystemObject.extend({
 
-	localHeader: null,
-	centralDirectoryHeader: null,
+	header: null,
 
-	construct: function(archiveFile, centralDirectoryHeader) {
+	construct: function(archiveFile, header) {
 		this.super.call(this, archiveFile);
 
-		this.centralDirectoryHeader = centralDirectoryHeader;
+		this.header = header;
 
 		// Initialize class variables from central directory header
-		this.path = this.centralDirectoryHeader.path;
-		this.compressionMethod = this.centralDirectoryHeader.compressionMethod;
-		this.compressionMethodOptions = this.centralDirectoryHeader.compressionMethodOptions;
-		this.compressedSizeInBytes = this.centralDirectoryHeader.compressedSizeInBytes;
-		this.uncompressedSizeInBytes = this.centralDirectoryHeader.uncompressedSizeInBytes;
-		this.comment = this.centralDirectoryHeader.comment;
+		this.path = this.header.path;
+		this.compressionMethod = this.header.compressionMethod;
+		this.compressionMethodOptions = this.header.compressionMethodOptions;
+		this.compressedSizeInBytes = this.header.compressedSizeInBytes;
+		this.uncompressedSizeInBytes = this.header.uncompressedSizeInBytes;
+		this.comment = this.header.comment;
 
 		// Just use time modified for all of these
-		this.timeAccessed = this.centralDirectoryHeader.timeModified;
-		this.timeModified = this.centralDirectoryHeader.timeModified;
-		this.timeStatusChanged = this.centralDirectoryHeader.timeModified;
-		this.timeCreated = this.centralDirectoryHeader.timeModified;
+		this.timeAccessed = this.header.timeModified;
+		this.timeModified = this.header.timeModified;
+		this.timeStatusChanged = this.header.timeModified;
+		this.timeCreated = this.header.timeModified;
 
 		// Use FileSystemObject's constructor to setup class variables based on path
 		FileSystemObject.prototype.construct.call(this, this.path);
-	},
-
-	readLocalHeader: function*() {
-		// Return the local header if it has already been read
-		if(this.localHeader) {
-			return this.localHeader;
-		}
-
-		// Create a new local header
-		this.localHeader = new ZipLocalZippedFileSystemObjectHeader();
-
-		// Read the local header using a the offset from the central directory header and the zip file
-		yield this.localHeader.read(this.centralDirectoryHeader.offsetToLocalZippedFileSystemObjectHeader, this.archiveFile);
-
-		return this.localHeader;
 	},
 
 	toReadStream: function*(decompress) {
@@ -51,8 +35,8 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 
 		// Create the read stream
 		var readStream = yield this.archiveFile.toReadStream({
-			start: this.centralDirectoryHeader.offsetToLocalZippedFileSystemObjectHeader + this.localHeader.sizeInBytes,
-			end: this.centralDirectoryHeader.offsetToLocalZippedFileSystemObjectHeader + this.localHeader.sizeInBytes + this.centralDirectoryHeader.compressedSizeInBytes,
+			start: this.header.offsetToLocalZippedFileSystemObjectHeader + this.localHeader.sizeInBytes,
+			end: this.header.offsetToLocalZippedFileSystemObjectHeader + this.localHeader.sizeInBytes + this.header.compressedSizeInBytes,
 		});
 
 		// If they want the file decompressed

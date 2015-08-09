@@ -19,7 +19,7 @@ ZipZippedFileSystemObjectHeader = Class.extend({
 	timeModifiedDateInteger: null,
 	timeModified: null,
 
-	crc32Checksum: null, // CRC-32 checksum	value computed over file data by CRC-32 algorithm with magic number 0xdebb20e3 (little endian)
+	crc32: null, // CRC-32 checksum	value computed over file data by CRC-32 algorithm with magic number 0xdebb20e3 (little endian)
 	
 	compressedSizeInBytes: null, // If archive is in ZIP64 format, this field is 0xffffffff and the length is stored in the extra field
 	uncompressedSizeInBytes: null, // If archive is in ZIP64 format, this field is 0xffffffff and the length is stored in the extra field
@@ -133,7 +133,7 @@ ZipZippedFileSystemObjectHeader = Class.extend({
 		this.timeModifiedDateInteger = buffer.readUInt16LE(startOffset + bufferOffsets.timeModifiedDateInteger);
 		this.timeModified = Time.constructFromDosDateTime(this.timeModifiedDateInteger, this.timeModifiedTimeInteger);
 
-		this.crc32Checksum = buffer.readUInt32LE(startOffset + bufferOffsets.crc32Checksum);
+		this.crc32 = buffer.readUInt32LE(startOffset + bufferOffsets.crc32);
 
 		this.compressedSizeInBytes = buffer.readUInt32LE(startOffset + bufferOffsets.compressedSizeInBytes);
 
