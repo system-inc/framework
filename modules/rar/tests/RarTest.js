@@ -43,4 +43,14 @@ RarTest = Test.extend({
 
 	},
 
+	testArchiveMethodNormal: function*() {
+		var rarFilePath = Node.Path.join(__dirname, 'files', 'rar-file-archive-method-normal.rar');
+		var rarFile = new RarFile(rarFilePath);
+		var rarredFileSystemObjects = yield rarFile.list();
+		var firstRarredFileSystemObject = rarredFileSystemObjects.first();
+		var firstRarredFileSystemObjectStream = yield firstRarredFileSystemObject.toReadStream();
+		var firstRarredFileSystemObjectStreamString = yield firstRarredFileSystemObjectStream.toString();
+		Console.out(firstRarredFileSystemObjectStreamString);
+	},
+
 });

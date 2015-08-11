@@ -47,7 +47,7 @@ Proctor = Class.extend({
 
 	supervise: function*() {
 		// Use ASCII art
-		require(Project.framework.directory+'modules'+Node.Path.separator+'ascii-art'+Node.Path.separator+'AsciiArt.js');
+		require(Node.Path.join(Project.framework.directory+'modules', 'ascii-art', 'AsciiArt.js'));
 
 		// Keep track of the last test class and methods changed
 		var activeTest = {
@@ -74,7 +74,7 @@ Proctor = Class.extend({
 			}
 			else {
 				// Spawn the child process
-			    var nodeChildProcess = exports.child = Node.ChildProcess.spawn('node', ['--harmony', 'tests'+Node.Path.separator+'Test.js', activeTest.class], {
+			    var nodeChildProcess = exports.child = Node.ChildProcess.spawn('node', ['--harmony', Node.Path.join('tests', 'Test.js'), activeTest.class], {
 			    	stdio: 'inherit',
 			    });
 

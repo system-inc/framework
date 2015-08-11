@@ -31,7 +31,7 @@ WebComponent = Class.extend({
 
 // Static methods
 WebComponent.load = function(webComponentName) {
-	var webComponentPath = Project.directory+'views'+Node.Path.separator+'web-components'+Node.Path.separator+webComponentName+'WebComponent.js';
+	var webComponentPath = Node.Path.join(Project.directory+'views', 'web-components', webComponentName+'WebComponent.js');
 	//console.log(webComponentPath);
 
 	return Framework.require(webComponentPath);

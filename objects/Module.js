@@ -80,7 +80,7 @@ Module.load = function(moduleNames) {
 		// Load the module
 		else {
 			// Construct the module path
-			var modulePath = __dirname.replaceLast('objects', 'modules')+Node.Path.separator+moduleName.toDashes()+Node.Path.separator+moduleName+'Module';
+			var modulePath = Node.Path.join(__dirname.replaceLast('objects', 'modules'), moduleName.toDashes(), moduleName+'Module');
 			
 			// Load the module
 			//console.log('Loading', modulePath, 'module...');

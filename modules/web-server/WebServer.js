@@ -78,12 +78,12 @@ WebServer = Server.extend({
 		
 		// Key file
 		if(!Object.isEmpty(httpsSettings.keyFile) && !httpsSettings.keyFile.startsWith(Node.Path.separator)) {
-			httpsSettings.keyFile = Project.directory+'settings'+Node.Path.separator+'environment'+Node.Path.separator+'modules'+Node.Path.separator+'web-server'+Node.Path.separator+'https'+Node.Path.separator+httpsSettings.keyFile;
+			httpsSettings.keyFile = Node.Path.join(Project.directory+'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.keyFile);
 		}
 
 		// Certificate file
 		if(!Object.isEmpty(httpsSettings.certificateFile) && !httpsSettings.certificateFile.startsWith(Node.Path.separator)) {
-			httpsSettings.certificateFile = Project.directory+'settings'+Node.Path.separator+'environment'+Node.Path.separator+'modules'+Node.Path.separator+'web-server'+Node.Path.separator+'https'+Node.Path.separator+httpsSettings.certificateFile;
+			httpsSettings.certificateFile = Node.Path.join(Project.directory+'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.certificateFile);
 		}
 
 		this.settings.set('protocols.https', httpsSettings);

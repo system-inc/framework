@@ -77,7 +77,7 @@ Framework = Class.extend({
 	loadProjectSettings: function() {
 		//Console.out('Loading project settings...');
 
-		this.settings = Settings.constructFromFile(this.directory+'settings'+Node.Path.separator+'settings.json');
+		this.settings = Settings.constructFromFile(Node.Path.join(this.directory+'settings', 'settings.json'));
 
 		// Set the default settings
 		this.settings.default({
@@ -87,7 +87,7 @@ Framework = Class.extend({
 
 		// Merge the environment settings
 		//Console.out('Integrating environment settings...')
-		this.settings.integrateSettingsFromFile(this.directory+'settings'+Node.Path.separator+'environment.json');
+		this.settings.integrateSettingsFromFile(Node.Path.join(this.directory+'settings', 'environment.json'));
 		//Console.out(this.settings);
 	},
 

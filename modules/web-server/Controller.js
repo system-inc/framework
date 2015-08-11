@@ -56,7 +56,7 @@ Controller = Class.extend({
 		}
 
 		// Create a file to reference the view
-		var viewFile = new File(Project.directory+'views'+Node.Path.separator+viewPath);
+		var viewFile = new File(Node.Path.join(Project.directory+'views', viewPath));
 		//console.log('viewFile', viewFile);
 
 		var viewFileExists = yield viewFile.exists();

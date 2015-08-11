@@ -4,7 +4,7 @@ ZipTest = Test.extend({
 		//var actual = yield FrameworkTestDatabase.query('SELECT * FROM user');
 		//Console.out(actual);
 	
-		var zipFilePath = __dirname+Node.Path.separator+'files'+Node.Path.separator+'zip-file-with-comment.zip';
+		var zipFilePath = Node.Path.join(__dirname, 'files', 'zip-file-with-comment.zip');
 		//var zipFilePath = '/Users/kirkouimet/Desktop/Share/comic.cbz';
 		//var zipFilePath = 'C:\\Users\\Kirk Ouimet\\Desktop\\Share\\Test Folder 1\\comic.cbz';
 		//Console.out(zipFilePath);
