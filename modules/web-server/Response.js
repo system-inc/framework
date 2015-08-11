@@ -114,7 +114,7 @@ Response = Class.extend({
 				this.headers.update('Content-Disposition', 'inline; filename="'+this.content.name+'"');
 
 				// If the zipped file is compressed with deflate and the requester has said they accept deflate, leave the zipped file compressed and let the client deflate it
-				if(this.content.compressionMethod == 'deflate' && this.request.headers.get('Accept-Encoding').contains('deflate')) {
+				if(this.content.archiveMethod == 'deflate' && this.request.headers.get('Accept-Encoding').contains('deflate')) {
 					this.headers.set('Content-Encoding', 'deflate');
 					this.content = yield this.content.toReadStream(false); // do not decompress
 				}

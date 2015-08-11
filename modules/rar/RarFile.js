@@ -5,8 +5,8 @@ RarFile = ArchiveFile.extend({
 	rarredFileSystemObjectHeaders: null,
 	rarredFileSystemObjects: null,
 
-	rarredFileSystemObjectsUncompressedSizeInBytes: null,
-	rarredFileSystemObjectsCompressedSizeInBytes: null,	
+	rarredFileSystemObjectsExtractedSizeInBytes: null,
+	rarredFileSystemObjectsArchivedSizeInBytes: null,	
 
 	readHeader: function*() {
 		// Create and read the header
@@ -28,8 +28,8 @@ RarFile = ArchiveFile.extend({
 		this.rarredFileSystemObjectHeaders = [];
 
 		// Track the data sizes
-		this.rarredFileSystemObjectsUncompressedSizeInBytes = 0;
-		this.rarredFileSystemObjectsCompressedSizeInBytes = 0;
+		this.rarredFileSystemObjectsExtractedSizeInBytes = 0;
+		this.rarredFileSystemObjectsArchivedSizeInBytes = 0;
 
 		// The offset starts at the first header
 		var offset = this.header.offsetToFirstRarBlockHeader;
@@ -43,8 +43,8 @@ RarFile = ArchiveFile.extend({
 			if(blockHeader.type == 'rarredFileSystemObjectHeader') {
 				this.rarredFileSystemObjectHeaders.append(blockHeader);
 
-				this.rarredFileSystemObjectsUncompressedSizeInBytes += blockHeader.uncompressedSizeInBytes;
-				this.rarredFileSystemObjectsCompressedSizeInBytes += blockHeader.compressedSizeInBytes;
+				this.rarredFileSystemObjectsExtractedSizeInBytes += blockHeader.extractedSizeInBytes;
+				this.rarredFileSystemObjectsArchivedSizeInBytes += blockHeader.archivedSizeInBytes;
 			}
 
 			// Break out of the while loop if we hit a terminator
@@ -90,7 +90,7 @@ RarFile = ArchiveFile.extend({
 			// Create RarredFileSystemObjects out of the headers in the RAR file
 			this.rarredFileSystemObjectHeaders.each(function(index, rarredFileSystemObjectHeader) {
 				//Console.out(rarredFileSystemObjectHeader.path);
-				//Console.out(rarredFileSystemObjectHeader.compressionMethod);
+				//Console.out(rarredFileSystemObjectHeader.archiveMethod);
 
 				var rarredFileSystemObject = null;
 

@@ -13,14 +13,14 @@ RarBlockHeader = Class.extend({
 	partial: null,
 	continuesFrom: null,
 	continues: null,
-	compressedSizeInBytes: null,
-	uncompressedSizeInBytes: null,
+	archivedSizeInBytes: null,
+	extractedSizeInBytes: null,
 	dataCrc32: null,
 	time: null,
 	operatingSystem: null,
 	version: null,
-	compressionMethodInteger: null,
-	compressionMethod: null,
+	archiveMethodInteger: null,
+	archiveMethod: null,
 	encrypted: null,
 	path: null,
 	name: null,
@@ -54,8 +54,8 @@ RarBlockHeader = Class.extend({
 			this.partial = ((this.flags & 0x01) !== 0 || (this.flags & 0x02) !== 0);
 			this.continuesFrom = ((this.flags & 0x01) !== 0);
 			this.continues = ((this.flags & 0x02) !== 0);
-			this.compressedSizeInBytes = moreBuffer.readUInt32LE(7);
-			this.uncompressedSizeInBytes = moreBuffer.readUInt32LE(11);
+			this.archivedSizeInBytes = moreBuffer.readUInt32LE(7);
+			this.extractedSizeInBytes = moreBuffer.readUInt32LE(11);
 			this.dataCrc32 = moreBuffer.readUInt32LE(16);
 			this.time = (function() {
 				var time = moreBuffer.readUInt32LE(20).toString(2);
@@ -83,15 +83,15 @@ RarBlockHeader = Class.extend({
 				}
 			})();
 			this.version = moreBuffer.readUInt8(24);
-			this.compressionMethodInteger = moreBuffer.readUInt8(25);
-			if(RarBlockHeader.compressionMethodMap[this.compressionMethodInteger]) {
-				this.compressionMethod = RarBlockHeader.compressionMethodMap[this.compressionMethodInteger];
+			this.archiveMethodInteger = moreBuffer.readUInt8(25);
+			if(RarBlockHeader.archiveMethodMap[this.archiveMethodInteger]) {
+				this.archiveMethod = RarBlockHeader.archiveMethodMap[this.archiveMethodInteger];
 			}
 			this.encrypted = ((this.flags & 0x04) !== 0);
 			var nameSize = moreBuffer.readUInt16LE(26);
 			if((this.flags & 0x100) !== 0) {
-				this.compressedSizeInBytes += moreBuffer.readUInt32LE(32) * 0x100000000;
-				this.uncompressedSizeInBytes += moreBuffer.readUInt32LE(36) * 0x100000000;
+				this.archivedSizeInBytes += moreBuffer.readUInt32LE(32) * 0x100000000;
+				this.extractedSizeInBytes += moreBuffer.readUInt32LE(36) * 0x100000000;
 				this.path = moreBuffer.toString(null, 40, 40 + nameSize);
 			}
 			else {
@@ -115,13 +115,13 @@ RarBlockHeader = Class.extend({
 			}
 		}
 		else {
-			this.compressedSizeInBytes = 0;
-			this.uncompressedSizeInBytes = 0;
+			this.archivedSizeInBytes = 0;
+			this.extractedSizeInBytes = 0;
 		}
 
-		this.sizeInBytes = this.blockSizeInBytes - this.compressedSizeInBytes;
+		this.sizeInBytes = this.blockSizeInBytes - this.archivedSizeInBytes;
 
-		Console.out('Found', this.path, 'at offset', this.offset, 'header size', this.sizeInBytes, 'block size', this.blockSizeInBytes, 'file bytes', this.compressedSizeInBytes, 'compressionMethod', this.compressionMethod, this.compressionMethodInteger, this.version);
+		Console.out('Found', this.path, 'at offset', this.offset, 'header size', this.sizeInBytes, 'block size', this.blockSizeInBytes, 'file bytes', this.archivedSizeInBytes, 'archiveMethod', this.archiveMethod, this.archiveMethodInteger, this.version);
 
 		return this;
 	},
@@ -142,7 +142,7 @@ RarBlockHeader.typeMap = {
 	0x7a: 'subBlock',
 	0x7b: 'terminator',
 };
-RarBlockHeader.compressionMethodMap = {
+RarBlockHeader.archiveMethodMap = {
 	0x30: 'store',
 	0x31: 'fastest',
 	0x32: 'fast',

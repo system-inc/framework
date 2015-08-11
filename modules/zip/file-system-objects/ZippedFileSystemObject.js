@@ -10,10 +10,10 @@ ZippedFileSystemObject = ArchivedFileSystemObject.extend({
 
 		// Initialize class variables from central directory header
 		this.path = this.centralDirectoryHeader.path;
-		this.compressionMethod = this.centralDirectoryHeader.compressionMethod;
-		this.compressionMethodOptions = this.centralDirectoryHeader.compressionMethodOptions;
-		this.compressedSizeInBytes = this.centralDirectoryHeader.compressedSizeInBytes;
-		this.uncompressedSizeInBytes = this.centralDirectoryHeader.uncompressedSizeInBytes;
+		this.archiveMethod = this.centralDirectoryHeader.archiveMethod;
+		this.archiveMethodOptions = this.centralDirectoryHeader.archiveMethodOptions;
+		this.archivedSizeInBytes = this.centralDirectoryHeader.archivedSizeInBytes;
+		this.extractedSizeInBytes = this.centralDirectoryHeader.extractedSizeInBytes;
 		this.comment = this.centralDirectoryHeader.comment;
 
 		// Just use time modified for all of these
@@ -52,11 +52,11 @@ ZippedFileSystemObject = ArchivedFileSystemObject.extend({
 		// Create the read stream
 		var readStream = yield this.archiveFile.toReadStream({
 			start: this.centralDirectoryHeader.offsetToLocalZippedFileSystemObjectHeader + this.localHeader.sizeInBytes,
-			end: this.centralDirectoryHeader.offsetToLocalZippedFileSystemObjectHeader + this.localHeader.sizeInBytes + this.centralDirectoryHeader.compressedSizeInBytes,
+			end: this.centralDirectoryHeader.offsetToLocalZippedFileSystemObjectHeader + this.localHeader.sizeInBytes + this.centralDirectoryHeader.archivedSizeInBytes,
 		});
 
 		// If they want the file decompressed and the file is compressed
-		if(decompress && this.compressionMethod == 'deflate') {
+		if(decompress && this.archiveMethod == 'deflate') {
 			var deflate = Node.Zlib.createDeflate();
 			readStream = readStream.pipe(deflate);
 		}

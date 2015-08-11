@@ -15,10 +15,10 @@ ArchivedFileSystemObject = Class.extend({
 	timeCreated: null,
 
 	// Archive properties
-	compressionMethod: null,
-	compressionMethodOptions: null,
-	compressedSizeInBytes: null,
-	uncompressedSizeInBytes: null,
+	archiveMethod: null,
+	archiveMethodOptions: null,
+	archivedSizeInBytes: null,
+	extractedSizeInBytes: null,
 	comment: null,
 
 	construct: function(archiveFile) {

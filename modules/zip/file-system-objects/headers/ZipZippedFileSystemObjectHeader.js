@@ -6,14 +6,14 @@ ZipZippedFileSystemObjectHeader = Class.extend({
 	generalPurposeBitFlag: null,
 	encrypted: null, // bit 0
 	localFileSystemObjectHeaderHasSomePropertiesSetToZero: null, // bit 3
-	compressedPatchedData: null, // bit 5
+	archivedPatchedData: null, // bit 5
 	usesStrongEncryption: null, // bit 6
 	usesUtf8: null, // bit 11
 	localFileSystemObjectHeaderMasksSomeProperties: null, // bit 13
 
-	compressionMethodInteger: null,
-	compressionMethod: null,
-	compressionMethodOptions: {},
+	archiveMethodInteger: null,
+	archiveMethod: null,
+	archiveMethodOptions: {},
 
 	timeModifiedTimeInteger: null,
 	timeModifiedDateInteger: null,
@@ -21,8 +21,8 @@ ZipZippedFileSystemObjectHeader = Class.extend({
 
 	crc32: null, // CRC-32 checksum	value computed over file data by CRC-32 algorithm with magic number 0xdebb20e3 (little endian)
 	
-	compressedSizeInBytes: null, // If archive is in ZIP64 format, this field is 0xffffffff and the length is stored in the extra field
-	uncompressedSizeInBytes: null, // If archive is in ZIP64 format, this field is 0xffffffff and the length is stored in the extra field
+	archivedSizeInBytes: null, // If archive is in ZIP64 format, this field is 0xffffffff and the length is stored in the extra field
+	extractedSizeInBytes: null, // If archive is in ZIP64 format, this field is 0xffffffff and the length is stored in the extra field
 	pathSizeInBytes: null, // The length of the path field below
 	extraFieldSizeInBytes: null, // The length of the extra field below
 
@@ -39,13 +39,13 @@ ZipZippedFileSystemObjectHeader = Class.extend({
 			minor: this.minimumZipVersionNeededToExtractInteger % 10,
 		});
 
-		// Set the compression method
-		this.compressionMethodInteger = buffer.readUInt16LE(startOffset + bufferOffsets.compressionMethodInteger);
-		if(ZipZippedFileSystemObjectHeader.compressionMethodMap[this.compressionMethodInteger]) {
-			this.compressionMethod = ZipZippedFileSystemObjectHeader.compressionMethodMap[this.compressionMethodInteger]
+		// Set the archive method
+		this.archiveMethodInteger = buffer.readUInt16LE(startOffset + bufferOffsets.archiveMethodInteger);
+		if(ZipZippedFileSystemObjectHeader.archiveMethodMap[this.archiveMethodInteger]) {
+			this.archiveMethod = ZipZippedFileSystemObjectHeader.archiveMethodMap[this.archiveMethodInteger]
 		}
-		if(!ZipZippedFileSystemObjectHeader.supportedCompressionMethodsMap.contains(this.compressionMethod)) {
-			throw new Error('Zip file contains a file system object compressed with an unsupported compression method, "'+this.compressionMethod+'".')
+		if(!ZipZippedFileSystemObjectHeader.supportedCompressionMethodsMap.contains(this.archiveMethod)) {
+			throw new Error('Zip file contains a file system object archived with an unsupported archive method, "'+this.archiveMethod+'".')
 		}
 
 		// Stores various information about the file system object
@@ -70,54 +70,54 @@ ZipZippedFileSystemObjectHeader = Class.extend({
 		// Encryption
 		this.encrypted = generalPurposeBitFlagBit0 ? true : false;
 
-		// Imploding compression method
-		if(this.compressionMethodInteger == 6) {
+		// Imploding archive method
+		if(this.archiveMethodInteger == 6) {
 			// Sliding dictionary size
 			if(generalPurposeBitFlagBit1) {
-				this.compressionMethodOptions.slidingDictionarySize = '8K';
+				this.archiveMethodOptions.slidingDictionarySize = '8K';
 			}
 			else {
-				this.compressionMethodOptions.slidingDictionarySize = '4K';
+				this.archiveMethodOptions.slidingDictionarySize = '4K';
 			}
 
 			// Shannon-Fano trees
 			if(generalPurposeBitFlagBit2) { // bit 2
-				this.compressionMethodOptions.shannonFanoTrees = 3;
+				this.archiveMethodOptions.shannonFanoTrees = 3;
 			}
 			else {
-				this.compressionMethodOptions.shannonFanoTrees = 2;
+				this.archiveMethodOptions.shannonFanoTrees = 2;
 			}
 		}
 		// Deflate and enhanced deflate
-		else if(this.compressionMethodInteger == 8 || this.compressionMethodInteger == 9) {
+		else if(this.archiveMethodInteger == 8 || this.archiveMethodInteger == 9) {
 			if(!generalPurposeBitFlagBit1 && !generalPurposeBitFlagBit2) {
-				this.compressionMethodOptions.compressionType = 'normal';
+				this.archiveMethodOptions.archiveType = 'normal';
 			}
 			else if(!generalPurposeBitFlagBit1 && generalPurposeBitFlagBit2) {
-				this.compressionMethodOptions.compressionType = 'maximum';
+				this.archiveMethodOptions.archiveType = 'maximum';
 			}
 			else if(generalPurposeBitFlagBit1 && !generalPurposeBitFlagBit2) {
-				this.compressionMethodOptions.compressionType = 'fast';
+				this.archiveMethodOptions.archiveType = 'fast';
 			}
 			else if(generalPurposeBitFlagBit1 && generalPurposeBitFlagBit2) {
-				this.compressionMethodOptions.compressionType = 'superFast';
+				this.archiveMethodOptions.archiveType = 'superFast';
 			}
 		}
 		// LZMA
-		else if(this.compressionMethodInteger == 14) {
+		else if(this.archiveMethodInteger == 14) {
 			if(generalPurposeBitFlagBit1) {
-				this.compressionMethodOptions.endOfStreamMarker = true;
+				this.archiveMethodOptions.endOfStreamMarker = true;
 			}
 			else {
-				this.compressionMethodOptions.endOfStreamMarker = false;
+				this.archiveMethodOptions.endOfStreamMarker = false;
 			}
 		}
 
-		// crc-32, compressed size, and uncompressed size properties in local header are set to 0 and the correct values are in the data descriptor immediately following the compressed data
+		// crc-32, archived size, and unarchived size properties in local header are set to 0 and the correct values are in the data descriptor immediately following the archived data
 		this.localFileSystemObjectHeaderHasSomePropertiesSetToZero = generalPurposeBitFlagBit3 ? true : false;
 
-		// File is compressed patched data, requires PKZIP version 2.70 or greater
-		this.compressedPatchedData = generalPurposeBitFlagBit5 ? true : false;
+		// File is archived patched data, requires PKZIP version 2.70 or greater
+		this.archivedPatchedData = generalPurposeBitFlagBit5 ? true : false;
 
 		// Uses strong encryption
 		this.usesStrongEncryption = generalPurposeBitFlagBit6 ? true : false;
@@ -135,9 +135,9 @@ ZipZippedFileSystemObjectHeader = Class.extend({
 
 		this.crc32 = buffer.readUInt32LE(startOffset + bufferOffsets.crc32);
 
-		this.compressedSizeInBytes = buffer.readUInt32LE(startOffset + bufferOffsets.compressedSizeInBytes);
+		this.archivedSizeInBytes = buffer.readUInt32LE(startOffset + bufferOffsets.archivedSizeInBytes);
 
-		this.uncompressedSizeInBytes = buffer.readUInt32LE(startOffset + bufferOffsets.uncompressedSizeInBytes);
+		this.extractedSizeInBytes = buffer.readUInt32LE(startOffset + bufferOffsets.extractedSizeInBytes);
 
 		this.pathSizeInBytes = buffer.readUInt16LE(startOffset + bufferOffsets.pathSizeInBytes);
 
@@ -159,9 +159,9 @@ ZipZippedFileSystemObjectHeader = Class.extend({
 		}
 
 		// Validate size
-		if(this.compressionMethod === 0) { // Stored with no compression
-			if(this.compressedSizeInBytes !== this.uncompressedSizeInBytes) {
-				throw new Error('Compressed size ('+this.compressedSizeInBytes+') does not match uncompressed size ('+this.uncompressedSizeInBytes+') for '+this.path+'.');
+		if(this.archiveMethod === 0) { // Stored with no compression
+			if(this.archivedSizeInBytes !== this.extractedSizeInBytes) {
+				throw new Error('Compressed size ('+this.archivedSizeInBytes+') does not match unarchived size ('+this.extractedSizeInBytes+') for '+this.path+'.');
 			}
 		}
 
@@ -215,7 +215,7 @@ ZipZippedFileSystemObjectHeader.supportedCompressionMethodsMap = [
 	'none',
 	'deflate',
 ];
-ZipZippedFileSystemObjectHeader.compressionMethodMap = {
+ZipZippedFileSystemObjectHeader.archiveMethodMap = {
 	0: 'none', // The file is stored (no compression)
 	1: 'shrunk', // The file is Shrunk
 	2: 'reduceWithCompressionFactor1', // The file is Reduced with compression factor 1
@@ -228,14 +228,14 @@ ZipZippedFileSystemObjectHeader.compressionMethodMap = {
 	9: 'enhancedDeflate', // Enhanced Deflating using Deflate64(tm)
 	10: 'imploding', // PKWARE Data Compression Library Imploding (old IBM TERSE)
 	11: 'unknown', // Reserved by PKWARE
-	12: 'bzip2', // File is compressed using BZIP2 algorithm
+	12: 'bzip2', // File is archived using BZIP2 algorithm
 	13: 'unknown', // Reserved by PKWARE
 	14: 'lzma', // LZMA (EFS)
 	15: 'unknown', // Reserved by PKWARE
 	16: 'unknown', // Reserved by PKWARE
 	17: 'unknown', // Reserved by PKWARE
-	18: 'terse', // File is compressed using IBM TERSE (new)
+	18: 'terse', // File is archived using IBM TERSE (new)
 	19: 'lz77', // IBM LZ77 z Architecture (PFS)
-	97: 'wavPack', // WavPack compressed data
+	97: 'wavPack', // WavPack archived data
 	98: 'ppmd', // PPMd version I, Rev 1
 };

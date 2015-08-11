@@ -9,10 +9,10 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 
 		// Initialize class variables from central directory header
 		this.path = this.header.path;
-		this.compressionMethod = this.header.compressionMethod;
-		this.compressionMethodOptions = this.header.compressionMethodOptions;
-		this.compressedSizeInBytes = this.header.compressedSizeInBytes;
-		this.uncompressedSizeInBytes = this.header.uncompressedSizeInBytes;
+		this.archiveMethod = this.header.archiveMethod;
+		this.archiveMethodOptions = this.header.archiveMethodOptions;
+		this.archivedSizeInBytes = this.header.archivedSizeInBytes;
+		this.extractedSizeInBytes = this.header.extractedSizeInBytes;
 		this.comment = this.header.comment;
 
 		// Just use time modified for all of these
@@ -30,7 +30,8 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 
 		// The archived data begins at the end of the block header
 		var start = this.header.offset + this.header.sizeInBytes;
-		var end = start + this.header.compressedSizeInBytes - 1;
+		// TODO: Why do I have to -1 here and not in the block header?
+		var end = start + this.header.archivedSizeInBytes - 1;
 
 		// If the rarred file system object has no bytes
 		if(end <= start) {
@@ -56,7 +57,7 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
     },
 
     extract: function*() {
-    	console.log('Extracting', this.path, 'compressed with', this.header.compressionMethod);
+    	console.log('Extracting', this.path, 'compressed with', this.header.archiveMethod);
 
 		var archiveMethodVersion = this.header.version;
 		if(archiveMethodVersion < 15) {
