@@ -113,7 +113,7 @@ ZipZippedFileSystemObjectHeader = Class.extend({
 			}
 		}
 
-		// crc-32, archived size, and unarchived size properties in local header are set to 0 and the correct values are in the data descriptor immediately following the archived data
+		// crc-32, archived size, and extracted size properties in local header are set to 0 and the correct values are in the data descriptor immediately following the archived data
 		this.localFileSystemObjectHeaderHasSomePropertiesSetToZero = generalPurposeBitFlagBit3 ? true : false;
 
 		// File is archived patched data, requires PKZIP version 2.70 or greater
@@ -161,7 +161,7 @@ ZipZippedFileSystemObjectHeader = Class.extend({
 		// Validate size
 		if(this.archiveMethod === 0) { // Stored with no compression
 			if(this.archivedSizeInBytes !== this.extractedSizeInBytes) {
-				throw new Error('Compressed size ('+this.archivedSizeInBytes+') does not match unarchived size ('+this.extractedSizeInBytes+') for '+this.path+'.');
+				throw new Error('Archived size ('+this.archivedSizeInBytes+') does not match extracted size ('+this.extractedSizeInBytes+') for '+this.path+'.');
 			}
 		}
 
