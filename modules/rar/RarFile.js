@@ -53,7 +53,7 @@ RarFile = ArchiveFile.extend({
 			}
 
 			// Set the offset to the next header
-			offset += blockHeader.sizeInBytes;
+			offset += blockHeader.blockSizeInBytes;
 		}
 
 		//Console.highlight(this.rarredFileSystemObjectHeaders);

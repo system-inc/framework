@@ -251,34 +251,44 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 
 Array.prototype.count = Array.prototype.contains;
 
+Array.prototype.nth = function(index) {
+	var item = null;
+
+	if(this[index] !== undefined) {
+		item = this[index];
+	}
+
+	return item;
+}
 Array.prototype.first = function() {
-	var first = null;
-
-	if(this[0] !== undefined) {
-		first = this[0];
-	}
-	
-	return first;
+	return this.nth(0);
 }
-
 Array.prototype.second = function() {
-	var second = null;
-
-	if(this[1] !== undefined) {
-		second = this[1];
-	}
-	
-	return second;
+	return this.nth(1);	
 }
-
-Array.prototype.secondToLast = function() {
-	var secondToLast = null;
-
-	if(this[this.length - 2] !== undefined) {
-		secondToLast = this[this.length - 2];
-	}
-	
-	return secondToLast;
+Array.prototype.third = function() {
+	return this.nth(2);	
+}
+Array.prototype.fourth = function() {
+	return this.nth(3);	
+}
+Array.prototype.fifth = function() {
+	return this.nth(4);	
+}
+Array.prototype.sixth = function() {
+	return this.nth(5);	
+}
+Array.prototype.seventh = function() {
+	return this.nth(6);	
+}
+Array.prototype.eighth = function() {
+	return this.nth(7);	
+}
+Array.prototype.ninth = function() {
+	return this.nth(8);	
+}
+Array.prototype.tenth = function() {
+	return this.nth(9);	
 }
 
 Array.prototype.last = function() {
@@ -289,6 +299,24 @@ Array.prototype.last = function() {
 	}
 	
 	return last;
+}
+Array.prototype.secondToLast = function() {
+	var secondToLast = null;
+
+	if(this[this.length - 2] !== undefined) {
+		secondToLast = this[this.length - 2];
+	}
+	
+	return secondToLast;
+}
+Array.prototype.thirdToLast = function() {
+	var thirdToLast = null;
+
+	if(this[this.length - 3] !== undefined) {
+		thirdToLast = this[this.length - 3];
+	}
+	
+	return thirdToLast;
 }
 
 Array.prototype.get = function(index) {

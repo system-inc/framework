@@ -2,15 +2,17 @@ RarBlockHeader = Class.extend({
 
 	rarFile: null,
 
+	offset: null,
+	sizeInBytes: null,
+
 	crc32: null,
 	typeInteger: null,
 	type: null,
 	flags: null,
-	sizeInBytes: null,
+	blockSizeInBytes: null,
 	partial: null,
 	continuesFrom: null,
 	continues: null,
-	offset: null,
 	compressedSizeInBytes: null,
 	uncompressedSizeInBytes: null,
 	dataCrc32: null,
@@ -22,14 +24,14 @@ RarBlockHeader = Class.extend({
 	encrypted: null,
 	path: null,
 	name: null,
-	headerSizeInBytes: null,
-	blockSizeInBytes: null,
 
 	construct: function(rarFile) {
 		this.rarFile = rarFile;
 	},
 
 	initializeFromBuffer: function*(buffer, offset) {
+		this.offset = offset;
+
 		this.crc32 = buffer.readUInt16LE(0);
 		this.typeInteger = buffer.readUInt8(2);
 
@@ -38,24 +40,22 @@ RarBlockHeader = Class.extend({
 		}
 
 		this.flags = buffer.readUInt16LE(3);
-		this.sizeInBytes = buffer.readUInt16LE(5);
+		this.blockSizeInBytes = buffer.readUInt16LE(5);
 		//Console.out('this.sizeInBytes', this.sizeInBytes);
 		if((this.flags & 0x8000) !== 0) {
-			this.sizeInBytes += buffer.readUInt32LE(7);
+			this.blockSizeInBytes += buffer.readUInt32LE(7);
 			//Console.out('changing this.sizeInBytes', this.sizeInBytes);
 		}
 
 		// Handle rarred file system object headers
 		if(this.type == 'rarredFileSystemObjectHeader') {
-			var moreBuffer = yield this.rarFile.readToBuffer(this.sizeInBytes, offset);
+			var moreBuffer = yield this.rarFile.readToBuffer(this.blockSizeInBytes, offset);
 			
 			this.partial = ((this.flags & 0x01) !== 0 || (this.flags & 0x02) !== 0);
 			this.continuesFrom = ((this.flags & 0x01) !== 0);
 			this.continues = ((this.flags & 0x02) !== 0);
-			this.offset = offset;
 			this.compressedSizeInBytes = moreBuffer.readUInt32LE(7);
 			this.uncompressedSizeInBytes = moreBuffer.readUInt32LE(11);
-			//Console.out('this.sizeInBytes', this.sizeInBytes);
 			this.dataCrc32 = moreBuffer.readUInt32LE(16);
 			this.time = (function() {
 				var time = moreBuffer.readUInt32LE(20).toString(2);
@@ -113,17 +113,15 @@ RarBlockHeader = Class.extend({
 			else {
 				this.name = this.name.substr(this.name.lastIndexOf('/') + 1);
 			}
-
-			this.headerSizeInBytes = this.sizeInBytes;
-			this.blockSizeInBytes = this.headerSizeInBytes + this.compressedSizeInBytes;
 		}
 		else {
-			//Console.out('Invalid type');
+			this.compressedSizeInBytes = 0;
+			this.uncompressedSizeInBytes = 0;
 		}
 
-		if((this.flags & 0x0001)) {
-			Console.highlight('directory!', this.path);
-		}
+		this.sizeInBytes = this.blockSizeInBytes - this.compressedSizeInBytes;
+
+		Console.out('Found', this.path, 'at offset', this.offset, 'header size', this.sizeInBytes, 'block size', this.blockSizeInBytes, 'file bytes', this.compressedSizeInBytes, 'compressionMethod', this.compressionMethod, this.compressionMethodInteger, this.version);
 
 		return this;
 	},

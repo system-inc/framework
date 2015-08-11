@@ -151,7 +151,7 @@ Response = Class.extend({
 				this.content = this.content.toString(false); // No indentation
 			}
 			// If the content isn't a string, buffer, or stream, JSON encode it
-			else if(!String.is(this.content) && !Buffer.is(this.content) && !(this.content instanceof Node.Stream.Stream)) {
+			else if(!String.is(this.content) && !Buffer.is(this.content) && !Stream.is(this.content)) {
 				this.headers.set('Content-Type', 'application/json');
 				this.content = Json.encode(this.content);
 			}
@@ -234,7 +234,7 @@ Response = Class.extend({
 		}
 
 		// Handle streams
-		if(this.content instanceof Node.Stream.Stream) {
+		if(Stream.is(this.content)) {
 			// If the content is not encoded and the encoding is deflate
 			if(!this.contentEncoded && this.encoding == 'deflate') {
 				var deflate = Node.Zlib.createDeflate();

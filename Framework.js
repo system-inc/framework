@@ -20,6 +20,7 @@ require('./types/Buffer');
 require('./types/Number');
 require('./types/Primitive');
 require('./types/RegularExpression');
+require('./types/Stream');
 require('./types/String');
 
 Framework = Class.extend({

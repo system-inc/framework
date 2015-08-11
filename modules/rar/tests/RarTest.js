@@ -11,15 +11,31 @@ RarTest = Test.extend({
 		//Console.out(rarFile);
 
 		// List the rar file's contents
-		var rarFileList = yield rarFile.list();
-		//Node.exit(rarFileList);
+		var rarredFileSystemObjects = yield rarFile.list();
+		//Node.exit(rarredFileSystemObjects);
 
-		//rarFileList.each(function(index, rarFileSystemObject) {
-			//Console.out(rarFileSystemObject);
-			//Console.out(rarFileSystemObject.path);
-		//});
+		var firstRarredFileSystemObject = rarredFileSystemObjects.first();
+		//Console.out(firstRarredFileSystemObject.path);
+		var firstRarredFileSystemObjectStream = yield firstRarredFileSystemObject.toReadStream();
+		var firstRarredFileSystemObjectStreamString = yield firstRarredFileSystemObjectStream.toString();
+		//Console.out(firstRarredFileSystemObjectStreamString);
+		Assert.equal(firstRarredFileSystemObjectStreamString, "File B!\r\n\r\nWowza.", 'Extracts first file stored with compression method "store"');
 
-		//var rarpedFile = rarFileList.last();
+		var secondRarredFileSystemObject = rarredFileSystemObjects.second();
+		//Console.out(secondRarredFileSystemObject.path);
+		var secondRarredFileSystemObjectStream = yield secondRarredFileSystemObject.toReadStream();
+		var secondRarredFileSystemObjectStreamString = yield secondRarredFileSystemObjectStream.toString();
+		//Console.out(secondRarredFileSystemObjectStreamString);
+		Assert.equal(secondRarredFileSystemObjectStreamString, "File C!\r\n\r\nYay.", 'Extracts second file stored with compression method "store"');
+
+		var thirdRarredFileSystemObject = rarredFileSystemObjects.third();
+		//Console.out(thirdRarredFileSystemObject.path);
+		var thirdRarredFileSystemObjectStream = yield thirdRarredFileSystemObject.toReadStream();
+		var thirdRarredFileSystemObjectStreamString = yield thirdRarredFileSystemObjectStream.toString();
+		//Console.out(thirdRarredFileSystemObjectStreamString);
+		Assert.equal(thirdRarredFileSystemObjectStreamString, "File D!\r\n\r\nWoo hoo.", 'Extracts third file stored with compression method "store"');
+
+		//var rarpedFile = rarredFileSystemObjects.last();
 		//Console.out(rarpedFile);
 
 		// Read the local header for the rarped file
