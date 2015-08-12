@@ -48,7 +48,7 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 			if(decompress) {
 				// Need to extraction stream to pipe the read stream into
 
-				readStream = yield this.extract(readStream);
+				//readStream = yield this.extract(readStream);
 
 				//var deflate = Node.Zlib.createDeflate();
 				//readStream = readStream.pipe(deflate);
@@ -101,7 +101,7 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 		//}
 		if(firstBit) {
 			throw new Error('Error while extracting RAR file. PPM not implemented yet.');
-		}		
+		}
 
 		//if (!bstream.readBits(1)) { //discard old table
 		//for (var i = UnpOldTable.length; i--;) UnpOldTable[i] = 0;
@@ -318,35 +318,35 @@ Rar.rLDC = 17;
 Rar.rRC = 28;
 Rar.rBC = 20;
 Rar.rHUFF_TABLE_SIZE = (Rar.rNC + Rar.rDC + Rar.rRC + Rar.rLDC);
-Rar.UnpBlockType = BLOCK_LZ;
+Rar.UnpBlockType = Rar.BLOCK_LZ;
 
 // Bit decode
 Rar.BD = { 
 	DecodeLen: new Array(16),
 	DecodePos: new Array(16),
-	DecodeNum: new Array(rBC),
+	DecodeNum: new Array(Rar.rBC),
 };
 // Lit decode
 Rar.LD = { 
 	DecodeLen: new Array(16),
 	DecodePos: new Array(16),
-	DecodeNum: new Array(rNC),
+	DecodeNum: new Array(Rar.rNC),
 };
 // dist decode
 Rar.DD = { 
 	DecodeLen: new Array(16),
 	DecodePos: new Array(16),
-	DecodeNum: new Array(rDC),
+	DecodeNum: new Array(Rar.rDC),
 };
 // Low dist decode
 Rar.LDD = { 
 	DecodeLen: new Array(16),
 	DecodePos: new Array(16),
-	DecodeNum: new Array(rLDC),
+	DecodeNum: new Array(Rar.rLDC),
 };
 // Rep decode
 Rar.RD = { 
 	DecodeLen: new Array(16),
 	DecodePos: new Array(16),
-	DecodeNum: new Array(rRC),
+	DecodeNum: new Array(Rar.rRC),
 };

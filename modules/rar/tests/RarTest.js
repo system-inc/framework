@@ -1,7 +1,7 @@
 RarTest = Test.extend({
 
 	testReadFromPath: function*() {
-		var rarFilePath = Node.Path.join(__dirname, 'files', 'rar-file-with-comment.rar');
+		var rarFilePath = Node.Path.join(__dirname, 'files', 'rar-with-comment.rar');
 		//var rarFilePath = '/Users/kirkouimet/Desktop/Share/comic.cbz';
 		//var rarFilePath = 'C:\\Users\\Kirk Ouimet\\Desktop\\Share\\Test Folder 1\\comic.cbz';
 		//Console.out(rarFilePath);
@@ -40,18 +40,50 @@ RarTest = Test.extend({
 
 		// Read the local header for the rarped file
 		//yield rarpedFile.readLocalHeader();
-
 	},
 
-	testArchiveMethodNormal: function*() {
-		var rarFilePath = Node.Path.join(__dirname, 'files', 'rar-file-archive-method-normal.rar');
-		var rarFile = new RarFile(rarFilePath);
-		var rarredFileSystemObjects = yield rarFile.list();
-		var firstRarredFileSystemObject = rarredFileSystemObjects.first();
-		var firstRarredFileSystemObjectStream = yield firstRarredFileSystemObject.toReadStream();
-		Console.out(firstRarredFileSystemObjectStream);
-		//var firstRarredFileSystemObjectStreamString = yield firstRarredFileSystemObjectStream.toString();
-		//Console.out(firstRarredFileSystemObjectStreamString);
+	testAllRarArchiveMethods: function*() {
+		var files = [
+			//'rar-archive-method-best.rar',
+			//'rar-archive-method-fast.rar',
+			//'rar-archive-method-fastest.rar',
+			//'rar-archive-method-good.rar',
+			//'rar-archive-method-normal.rar',
+			'rar-archive-method-store.rar',
+		];
+
+		yield files.each(function*(index, file) {
+			var rarFilePath = Node.Path.join(__dirname, 'files', file);
+			var rarFile = new RarFile(rarFilePath);
+			var rarredFileSystemObjects = yield rarFile.list();
+			var firstRarredFileSystemObject = rarredFileSystemObjects.first();
+			var firstRarredFileSystemObjectStream = yield firstRarredFileSystemObject.toReadStream();
+			//Console.out(firstRarredFileSystemObjectStream);
+			var firstRarredFileSystemObjectStreamString = yield firstRarredFileSystemObjectStream.toString();
+			Console.out(firstRarredFileSystemObjectStreamString);
+		});
 	},
+
+	//testAllRar5ArchiveMethods: function*() {
+	//	var files = [
+	//		'rar5-archive-method-best.rar',
+	//		'rar5-archive-method-fast.rar',
+	//		'rar5-archive-method-fastest.rar',
+	//		'rar5-archive-method-good.rar',
+	//		'rar5-archive-method-normal.rar',
+	//		'rar5-archive-method-store.rar',
+	//	];
+
+	//	yield files.each(function*(index, file) {
+	//		var rarFilePath = Node.Path.join(__dirname, 'files', file);
+	//		var rarFile = new RarFile(rarFilePath);
+	//		var rarredFileSystemObjects = yield rarFile.list();
+	//		var firstRarredFileSystemObject = rarredFileSystemObjects.first();
+	//		var firstRarredFileSystemObjectStream = yield firstRarredFileSystemObject.toReadStream();
+	//		Console.out(firstRarredFileSystemObjectStream);
+	//		//var firstRarredFileSystemObjectStreamString = yield firstRarredFileSystemObjectStream.toString();
+	//		//Console.out(firstRarredFileSystemObjectStreamString);
+	//	});
+	//},
 
 });
