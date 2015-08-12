@@ -48,7 +48,7 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 			if(decompress) {
 				// Need to extraction stream to pipe the read stream into
 
-				this.extract(readStream);
+				readStream = yield this.extract(readStream);
 
 				//var deflate = Node.Zlib.createDeflate();
 				//readStream = readStream.pipe(deflate);
@@ -80,6 +80,8 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 		else if(archiveMethodVersion == 29 || archiveMethodVersion == 36) {
 			extracted = yield this.extractRar3(readStream);
 		}
+
+		return extracted;
     },
 
 	// Read Huffman tables for RAR
@@ -88,12 +90,18 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 		var table = new Array(Rar.rHUFF_TABLE_SIZE);
 
 		// Before we start anything we need to get byte-aligned
+		var firstByte = readStream.read(1);
+		var firstBit = firstByte & 0x7;
+		Console.out('firstByte', firstByte);
 		//bstream.readBits( (8 - bstream.bitPtr) & 0x7 );
 
 		//if (bstream.readBits(1)) {
 		//info("Error!  PPM not implemented yet");
 		//return;
 		//}
+		if(firstBit) {
+			throw new Error('Error while extracting RAR file. PPM not implemented yet.');
+		}		
 
 		//if (!bstream.readBits(1)) { //discard old table
 		//for (var i = UnpOldTable.length; i--;) UnpOldTable[i] = 0;
@@ -180,12 +188,15 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 		var lastDist = 0;
 		var lastLength = 0;
 
-		//for(var i = Rar.unpackOldTable.length; i--;) {
-		//	Rar.unpackOldTable[i] = 0;
-		//}
+		var unpackOldTable = new Array(Rar.rHUFF_TABLE_SIZE);
+		for(var i = unpackOldTable.length; i--;) {
+			unpackOldTable[i] = 0;
+		}
 
 		// Read Huffman tables
-		//this.readHuffmanTables(readStream);
+		this.readHuffmanTables(readStream);
+
+		return 'hi';
 
 		//while (true) {
 		//var num = RarDecodeNumber(bstream, LD);
@@ -308,7 +319,7 @@ Rar.rRC = 28;
 Rar.rBC = 20;
 Rar.rHUFF_TABLE_SIZE = (Rar.rNC + Rar.rDC + Rar.rRC + Rar.rLDC);
 Rar.UnpBlockType = BLOCK_LZ;
-Rar.unpackOldTable = new Array(Rar.rHUFF_TABLE_SIZE);
+
 // Bit decode
 Rar.BD = { 
 	DecodeLen: new Array(16),

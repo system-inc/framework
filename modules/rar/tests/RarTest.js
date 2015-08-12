@@ -49,8 +49,9 @@ RarTest = Test.extend({
 		var rarredFileSystemObjects = yield rarFile.list();
 		var firstRarredFileSystemObject = rarredFileSystemObjects.first();
 		var firstRarredFileSystemObjectStream = yield firstRarredFileSystemObject.toReadStream();
-		var firstRarredFileSystemObjectStreamString = yield firstRarredFileSystemObjectStream.toString();
-		Console.out(firstRarredFileSystemObjectStreamString);
+		Console.out(firstRarredFileSystemObjectStream);
+		//var firstRarredFileSystemObjectStreamString = yield firstRarredFileSystemObjectStream.toString();
+		//Console.out(firstRarredFileSystemObjectStreamString);
 	},
 
 });
