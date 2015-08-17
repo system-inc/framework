@@ -13,6 +13,8 @@ RarModule = Module.extend({
 		'file-system-objects/RarredFileSystemObject',
 		'file-system-objects/RarredFile',
 		'file-system-objects/RarredDirectory',
+		'streams/ExtractRarStream',
+		'streams/ArchiveRarStream',
 	],
 
 	initialize: function(settings) {

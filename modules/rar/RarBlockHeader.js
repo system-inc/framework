@@ -121,7 +121,7 @@ RarBlockHeader = Class.extend({
 
 		this.sizeInBytes = this.blockSizeInBytes - this.archivedSizeInBytes;
 
-		Console.out('Found', this.path, 'at offset', this.offset, 'header size', this.sizeInBytes, 'block size', this.blockSizeInBytes, 'file bytes', this.archivedSizeInBytes, 'archiveMethod', this.archiveMethod, this.archiveMethodInteger, this.version);
+		//Console.out('Found', this.path, 'at offset', this.offset, 'header size', this.sizeInBytes, 'block size', this.blockSizeInBytes, 'file bytes', this.archivedSizeInBytes, 'archiveMethod', this.archiveMethod, this.archiveMethodInteger, this.version);
 
 		return this;
 	},
