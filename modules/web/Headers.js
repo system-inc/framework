@@ -20,7 +20,7 @@ Headers = Class.extend({
 	},
 
 	get: function(key, caseSensitive) {
-		caseSensitive = caseSensitive === true ? true : false;
+		caseSensitive = caseSensitive === true ? true : false; // Case insensitive by default
 		var header = null;
 
 		if(caseSensitive) {

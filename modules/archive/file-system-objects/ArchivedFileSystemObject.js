@@ -37,4 +37,8 @@ ArchivedFileSystemObject = Class.extend({
 		return this.type == 'directory';
 	},
 
+	sizeInBytes: function() {
+		return this.archivedSizeInBytes;
+	}
+
 });

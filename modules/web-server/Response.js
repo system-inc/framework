@@ -113,6 +113,12 @@ Response = Class.extend({
 				// Set the Content-Disposition header, by specifying inline the browser will try to display the content and if it cannot it will download it
 				this.headers.update('Content-Disposition', 'inline; filename="'+this.content.name+'"');
 
+				// Set the Last-Modified header
+				this.headers.set('Last-Modified', this.content.timeModified.time.toUTCString());
+
+				// Set the ETag header
+				this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.archivedSizeInBytes+'/'+this.content.extractedSizeInBytes).digest('hex'));
+
 				// If the zipped file is compressed with deflate and the requester has said they accept deflate, leave the zipped file compressed and let the client deflate it
 				if(this.content.archiveMethod == 'deflate' && this.request.headers.get('Accept-Encoding').contains('deflate')) {
 					this.headers.set('Content-Encoding', 'deflate');
@@ -136,6 +142,13 @@ Response = Class.extend({
 					// Set the Content-Disposition header, by specifying inline the browser will try to display the content and if it cannot it will download it
 					this.headers.update('Content-Disposition', 'inline; filename="'+this.content.name+'"');
 
+					// Set the Last-Modified header
+					yield this.content.initializeStatus();
+					this.headers.set('Last-Modified', this.content.timeModified.time.toUTCString());
+
+					// Set the ETag header
+					this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.sizeInBytes()).digest('hex'));
+
 					// Turn the file into a read stream
 					//this.content = yield File.read(this.content.path);
 					this.content = yield this.content.toReadStream();
@@ -149,11 +162,41 @@ Response = Class.extend({
 			else if(Class.isInstance(this.content, HtmlDocument)) {
 				this.headers.set('Content-Type', 'text/html');
 				this.content = this.content.toString(false); // No indentation
+
+				// Set the ETag header
+				this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.request.url+'/'+this.content).digest('hex'));
 			}
 			// If the content isn't a string, buffer, or stream, JSON encode it
 			else if(!String.is(this.content) && !Buffer.is(this.content) && !Stream.is(this.content)) {
 				this.headers.set('Content-Type', 'application/json');
 				this.content = Json.encode(this.content);
+
+				// Set the ETag header
+				this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.request.url+'/'+this.content).digest('hex'));
+			}
+		}
+
+		// Handle If-Modified-Since request header
+		var ifModifiedSince = this.request.headers.get('If-Modified-Since');
+		if(ifModifiedSince) {
+			var lastModified = this.headers.get('Last-Modified');
+			if(lastModified) {
+				//Console.out(ifModifiedSince, lastModified);
+				if(ifModifiedSince === lastModified) {
+					this.statusCode = 304; // Not Modified
+				}
+			}
+		}
+
+		// Handle If-None-Match request header
+		var ifNoneMatch = this.request.headers.get('If-None-Match');
+		if(ifNoneMatch) {
+			var eTag = this.headers.get('ETag');
+			if(eTag) {
+				//Console.out(ifNoneMatch, eTag);
+				if(ifNoneMatch === eTag) {
+					this.statusCode = 304; // Not Modified
+				}
 			}
 		}
 
@@ -172,16 +215,28 @@ Response = Class.extend({
 			this.setAcceptedEncodings(this.request.headers.get('Accept-Encoding'));
 		}
 
-		// If the request is a HEAD request, add a Connection: close header
-		if(this.request.method == 'HEAD') {
+		// Identify reasons to not send the content (just send the headers)
+		var doNotSendContent = false;
+
+		// If the request is a HEAD request
+		if(this.request.method.lowercase() == 'head') {
+			doNotSendContent = true;
+		}
+		// The status code is 304 (Not Modified)
+		else if(this.statusCode == 304) {
+			doNotSendContent = true;
+		}
+
+		// If we are not going to send content, add a Connection: close header
+		if(doNotSendContent) {
 			this.headers.update('Connection', 'close');
 		}
 
 		// Send the headers
 		this.sendHeaders();
-
-		// If the request is a HEAD request, end the request now
-		if(this.request.method.lowercase() == 'head') {
+		
+		if(doNotSendContent) {
+			//Console.out('not sending content');
 			this.nodeResponse.end(function() {
 				this.sent();
 			}.bind(this));
