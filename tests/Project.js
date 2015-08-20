@@ -4,9 +4,7 @@ Project = new (Framework.extend({
 
 	proctor: null,
 
-	initialize: function() {
-		this.super.apply(this, arguments);
-
+	run: function*() {
 		//Node.exit(this.command);
 
 		// Create a Proctor to oversee all of the tests as they run
@@ -24,4 +22,8 @@ Project = new (Framework.extend({
 
 }))(__dirname);
 
-Project.initialize();
+// Initialize and run the test project
+Generator.run(function*() {
+	yield Project.initialize();
+	yield Project.run();
+});

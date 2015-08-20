@@ -14,8 +14,9 @@ DatabaseModule = Module.extend({
 		'DatabaseManager',
 	],
 
-	initialize: function(settings) {
-		this.super.apply(this, arguments);
+	initialize: function*(settings) {
+		//Node.exit('DatabaseModule initialize');
+		yield this.super.apply(this, arguments);
 
 		// Add any databases to the database manager
 		var databases = this.settings.get('databases');

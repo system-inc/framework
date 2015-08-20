@@ -340,7 +340,9 @@ Response = Class.extend({
 
 		// Show the request in the console
 		var responsesLogEntry = this.prepareLogEntry();
-		Console.out(this.webServer.identifier+' response: '+responsesLogEntry);
+		if(this.webServer.settings.get('verbose')) {
+			Console.out(this.webServer.identifier+' response: '+responsesLogEntry);
+		}
 
 		// Conditionally log the request
 		if(this.webServer.logs.responses) {

@@ -29,21 +29,28 @@ Class.extend = function(childClassProperties) {
 	for(var childClassProperty in childClassProperties) {
 		// If we are overwriting an existing function on the parent then we create a super method
 		if(typeof(childClassProperties[childClassProperty]) == 'function' && typeof(parentClassPrototype[childClassProperty]) == 'function' && functionTest.test(childClassProperties[childClassProperty])) {
-			childClassPrototype[childClassProperty] = (function(childClassProperty, method) {
-				return function() {
-					// Have to store it as superMethod here because super is a reserved word when not in a class context
-					var superMethod = this.super;
+			childClassPrototype[childClassProperty] = (function(childClassProperty, childClassMethod) {
+				// If we are overwriting an existing function on the parent with a generator
+				if(childClassProperties[childClassProperty].isGenerator && childClassProperties[childClassProperty].isGenerator()) {
+					return function*() {
+						// Add a new .super() method that is the same method but on the parent class
+						this.super = parentClassPrototype[childClassProperty];
 
-					// Add a new .super() method that is the same method but on the parent-class
-					this.super = parentClassPrototype[childClassProperty];
+						// Execute the method (now .super will be accessible in the method)
+						return methodResults = yield childClassMethod.toPromise().apply(this, arguments);
+					}.toPromise();
+				}
+				// If we are overwriting an existing function on the parent with a normal function
+				else {
+					return function() {
+						// Add a new .super() method that is the same method but on the parent class
+						this.super = parentClassPrototype[childClassProperty];
 
-					// The method only need to be bound temporarily, so we remove it when we're done executing
-					var methodResults = method.apply(this, arguments);
-					this.super = superMethod;
-
-					return methodResults;
-				};
-			})(childClassProperty, childClassProperties[childClassProperty])
+						// Execute the method (now .super will be accessible in the method)
+						return methodResults = childClassMethod.apply(this, arguments);
+					};
+				}
+			})(childClassProperty, childClassProperties[childClassProperty]);
 		}
 		// If we have a generator
 		else if(childClassProperties[childClassProperty] && childClassProperties[childClassProperty].isGenerator && childClassProperties[childClassProperty].isGenerator()) {

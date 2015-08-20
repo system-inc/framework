@@ -31,6 +31,11 @@ Function.prototype.toPromise = function() {
 	}
 	else {
 		throw new Error('Only generator functions can be turned into promises.');
+
+		//var argumentsToApply = arguments;
+		//return new Promise(function(resolve, reject) {
+		//	resolve(this.apply(this, argumentsToApply));
+		//}.bind(this));
 	}
 }
 

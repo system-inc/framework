@@ -115,7 +115,9 @@ Request = Class.extend({
 	received: function() {
 		// Show the request in the console
 		var requestsLogEntry = this.prepareLogEntry();
-		Console.out(this.webServer.identifier+' request: '+requestsLogEntry);
+		if(this.webServer.settings.get('verbose')) {
+			Console.out(this.webServer.identifier+' request: '+requestsLogEntry);
+		}
 
 		// Conditionally log the request
 		if(this.webServer.logs.requests) {

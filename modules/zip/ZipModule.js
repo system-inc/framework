@@ -20,8 +20,8 @@ ZipModule = Module.extend({
 		'file-system-objects/headers/ZipCentralDirectoryZippedFileSystemObjectHeader',
 	],
 
-	initialize: function(settings) {
-		this.super.apply(this, arguments);
+	initialize: function*(settings) {
+		yield this.super.apply(this, arguments);
 
 		// Register zip file formats as archive extensions
 		ArchiveFile.registerImplementation('Zip', [

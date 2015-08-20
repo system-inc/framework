@@ -44,7 +44,7 @@ Framework = Class.extend({
 		this.directory = Node.Path.normalize(projectDirectory+Node.Path.separator);
 	},
 
-	initialize: function() {
+	initialize: function*() {
 		// Load the core modules
 		Module.loadCoreModules();
 
@@ -52,7 +52,7 @@ Framework = Class.extend({
 		//Console.out('Initializing Framework '+this.version+'...');
 
 		// Use core modules to load the project settings
-		this.loadProjectSettings();
+		yield this.loadProjectSettings();
 
 		// Load the command
 		this.command = new Command(Node.Process.argv, this.settings.get('command'));
@@ -64,17 +64,17 @@ Framework = Class.extend({
 		this.configureEnvironment();
 
 		// After the environment is initialized, initialize the Framework core modules
-		Module.initializeCoreModules();
+		yield Module.initializeCoreModules();
 
 		// Load all of the modules for the Project indicated in the project settings
-		this.loadAndInitializeProjectModules();
+		yield this.loadAndInitializeProjectModules();
 
 		//Console.out('Framework initialization complete.');
 		Console.out('Initialized "'+this.title+'" in '+this.environment+' environment.');
 		//Console.out('Modules: '+Module.modules.initialized.join(', '));
 	},
 
-	loadProjectSettings: function() {
+	loadProjectSettings: function*() {
 		//Console.out('Loading project settings...');
 
 		this.settings = Settings.constructFromFile(Node.Path.join(this.directory+'settings', 'settings.json'));
@@ -121,7 +121,7 @@ Framework = Class.extend({
 		}
 	},
 
-	loadAndInitializeProjectModules: function() {
+	loadAndInitializeProjectModules: function*() {
 		//Console.out('Loading modules for project...');
 
 		// Load and initialize project modules separately in case multiple project modules rely on each other
@@ -140,7 +140,7 @@ Framework = Class.extend({
 		}.bind(this));
 		
 		// Initialize the modules for the Project
-		Module.initialize(modulesForProject);
+		yield Module.initialize(modulesForProject);
 	},	
 
 });

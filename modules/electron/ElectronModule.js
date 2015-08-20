@@ -11,8 +11,8 @@ ElectronModule = Module.extend({
 		'WindowState',
 	],
 
-	initialize: function(settings) {
-		this.super.apply(this, arguments);
+	initialize: function*(settings) {
+		yield this.super.apply(this, arguments);
 
 		this.settings.default({
 			mainBrowserWindow: {

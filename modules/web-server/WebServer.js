@@ -1,6 +1,7 @@
 WebServer = Server.extend({
 
 	identifier: null,
+	directory: null,
 	requests: 0,
 	settings: null,
 	router: null,
@@ -22,6 +23,8 @@ WebServer = Server.extend({
 
 		// Set the default settings
 		this.settings.default({
+			directory: null,
+			verbose: true,
 			logs: {
 				general: {
 					enabled: true,
@@ -54,6 +57,19 @@ WebServer = Server.extend({
 			maximumRequestBodySizeInBytes: 20000000, // 20 megabytes
 		});
 
+		// Set the web server directory
+		var settingsDirectory = this.settings.get('directory');
+		if(settingsDirectory) {
+			if(!settingsDirectory.endsWith(Node.Path.separator)) {
+				settingsDirectory = settingsDirectory+Node.Path.separator;
+			}
+
+			this.directory = settingsDirectory;
+		}
+		else {
+			this.directory = Project.directory;
+		}
+
 		// Conditionally attach the general log
 		if(this.settings.get('logs.general.enabled')) {
 			this.logs.general = new Log(this.settings.get('logs.general.directory'), this.settings.get('logs.general.nameWithoutExtension'));
@@ -75,9 +91,6 @@ WebServer = Server.extend({
 		// Load the routes into the router
 		this.router = new Router(this);
 		this.router.loadRoutes(this.settings.get('router.routes'));
-
-		// Start listening
-		this.listen(this.settings.get('protocols'));
 	},
 	
 	resolveHttpsProtocolFiles: function() {
@@ -96,15 +109,17 @@ WebServer = Server.extend({
 		this.settings.set('protocols.https', httpsSettings);
 	},
 
-	listen: function(protocols) {
+	start: function*() {
+		var protocols = this.settings.get('protocols');
+
 		// Loop through the protocols (http/https)
-		protocols.each(function(protocol, protocolSettings) {
+		yield protocols.each(function*(protocol, protocolSettings) {
 			// Create a listener for each port they want to listen on
 			if(protocolSettings.ports) {
-				protocolSettings.ports.toArray().each(function(portIndex, port) {
+				yield protocolSettings.ports.toArray().each(function*(portIndex, port) {
 					// If we are already listening on that port
 					if(this.listeners[port]) {
-						Console.out('Could not create a web server listener on port '+port+', the port is already in use.');
+						Console.error('Could not create a web server listener on port '+port+', a listener is already using the port.');
 					}
 					// If the port is free
 					else {
@@ -163,11 +178,35 @@ WebServer = Server.extend({
 						this.listeners[port] = nodeServer;
 
 						// Make the web server listen on the port
-						this.listeners[port].listen(port.toString()); // Ports must be strings
-						Console.out('Listening for '+protocol.uppercase()+' requests on port '+port+'.');
+						yield new Promise(function(resolve, reject) {
+							// Ports must be strings
+							this.listeners[port].listen(port.toString(), function() {
+								if(this.settings.get('verbose')) {
+									Console.out('Listening for '+protocol.uppercase()+' requests on port '+port+'.');
+								}
+								resolve(true);
+							}.bind(this));
+						}.bind(this));
 					}
 				}.bind(this));
 			}
+		}.bind(this));
+	},
+
+	stop: function*() {
+		if(this.settings.get('verbose')) {
+			Console.warn('Stopping '+this.identifier+' web server...');
+		}
+
+		yield this.listeners.each(function*(port, nodeServer) {
+			yield new Promise(function(resolve, reject) {
+				nodeServer.close(function() {
+					if(this.settings.get('verbose')) {
+						Console.warn('No longer listening for HTTP requests on port '+port+'.');
+					}
+					resolve(true);
+				}.bind(this));
+			}.bind(this));
 		}.bind(this));
 	},
 

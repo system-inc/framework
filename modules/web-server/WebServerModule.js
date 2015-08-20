@@ -33,15 +33,15 @@ WebServerModule = Module.extend({
 
 	webServers: {},
 
-	initialize: function(settings) {
-		this.super.apply(this, arguments);
+	initialize: function*(settings) {
+		yield this.super.apply(this, arguments);
 		//Console.out('WebServerModule initialize', this.settings);
 
 		// Inspect the settings to see if they want a web server
 		var webServersSettings = this.settings.get('webServers');
 		if(webServersSettings) {
 			var webServerCount = 0;
-			webServersSettings.each(function(index, webServerSettingsObject) {
+			yield webServersSettings.each(function*(index, webServerSettingsObject) {
 				// Get an instance of class Settings to localize to the web server
 				var webServerSettings = Settings.constructFromObject(webServerSettingsObject);
 				var webServerIdentifier = webServerSettings.get('identifier');
@@ -57,10 +57,10 @@ WebServerModule = Module.extend({
 				//Console.out('Initializing web server...');
 
 				// Create the web server
-				var webServer = new WebServer(webServerIdentifier, webServerSettings);
-
-				// Add the web server to WebServerModule
-				this.webServers[webServer.identifier] = webServer;
+				this.webServers[webServerIdentifier] = new WebServer(webServerIdentifier, webServerSettings);
+				
+				// Listen
+				yield this.webServers[webServerIdentifier].start();
 
 				webServerCount++;
 			}.bind(this));

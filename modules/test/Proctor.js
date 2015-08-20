@@ -319,7 +319,7 @@ Proctor = Class.extend({
 
 		// If we are on a new test
 		if(!this.previousTest || (this.previousTest && this.previousTest.fileName != this.currentTest.fileName)) {
-			this.onNewTestClass();
+			yield this.onNewTestClass();
 		}
 
 		this.emit('TestReporter.startedRunningTestMethod', {
@@ -434,9 +434,7 @@ Proctor = Class.extend({
 		this.currentTestClass = this.testClasses[this.currentTest.name];
 
 		// Run .before on the test class
-		yield this.currentTestClass.before().catch(function(error) {
-			Console.out(error);
-		});
+		yield this.currentTestClass.before();
 
 		// Time all of the tests in the class
 		this.currentTestClassStopwatch = new Stopwatch();

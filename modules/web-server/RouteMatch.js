@@ -173,15 +173,13 @@ RouteMatch = Class.extend({
 
 			// If the file path is * or not set, use the URL path
 			if(this.route.filePath == '*' || Object.isEmpty(this.route.filePath)) {
-				filePath = Node.Path.normalize(Project.directory+'views'+this.request.url.path);
+				filePath = Node.Path.normalize(this.webServer.directory+'views'+this.request.url.path);
 			}
 			// If a file path is specified, use it
 			else if(this.route.filePath) {
-				filePath = Node.Path.normalize(Node.Path.join(Project.directory+'views', this.route.filePath));
+				filePath = Node.Path.normalize(Node.Path.join(this.webServer.directory+'views', this.route.filePath));
 			}
-
-			Console.error(filePath);
-			throw new Error('Need to make WebServer.directory instead of using Project.directory');
+			//Console.highlight(filePath);
 
 			this.response.content = new File(filePath);
 		}

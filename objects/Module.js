@@ -30,9 +30,9 @@ Module = Class.extend({
 		}.bind(this));
 	},
 
-	initialize: function(settings) {
+	initialize: function*(settings) {
 		// Initialize the modules this module needs
-		Module.initialize(this.needs);
+		yield Module.initialize(this.needs);
 
 		// Initialize the settings
 		this.settings = Settings.constructFromObject(settings);
@@ -64,10 +64,6 @@ Module.loadCoreModules = function() {
 	Module.load(Module.modules.core);
 }
 
-Module.initializeCoreModules = function() {
-	Module.initialize(Module.modules.core);
-}
-
 Module.load = function(moduleNames) {
 	//console.log('moduleNames', moduleNames);
 
@@ -91,14 +87,18 @@ Module.load = function(moduleNames) {
 
 			Module.modules.loaded.append(moduleName);
 		}
-	}.bind(this));
+	});
 }
 
-Module.initialize = function(moduleNames) {
+Module.initializeCoreModules = function*() {
+	yield Module.initialize(Module.modules.core);
+}.toPromise();
+
+Module.initialize = function*(moduleNames) {
 	//console.log('moduleNames', moduleNames);
 
 	// Initializing is necessary to do separate of .load because module code may be interdependent and require other code to be loaded first
-	moduleNames.toArray().each(function(index, moduleName) {
+	yield moduleNames.toArray().each(function*(index, moduleName) {
 		// Only initialize modules once
 		if(Module.modules.initialized.contains(moduleName)) {
 			//console.log('Already called Module.initialize for', moduleName);
@@ -113,10 +113,12 @@ Module.initialize = function(moduleNames) {
 				//Console.out('settings', settings);
 			}
 			
-			//console.log('moduleName', moduleName+'Module');
-			global[moduleName+'Module'].initialize(settings);
+			//console.log('initializing', moduleName+'Module');	
+			//console.log(global[moduleName+'Module'], settings);
+			yield global[moduleName+'Module'].initialize(settings);
+			//console.log('initialized', moduleName+'Module');
 
 			Module.modules.initialized.append(moduleName);
 		}
-	}.bind(this));
-}
+	});
+}.toPromise();
