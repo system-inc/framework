@@ -61,7 +61,7 @@ WebServer = Server.extend({
 		var settingsDirectory = this.settings.get('directory');
 		if(settingsDirectory) {
 			if(!settingsDirectory.endsWith(Node.Path.separator)) {
-				settingsDirectory = settingsDirectory+Node.Path.separator;
+				settingsDirectory = Node.Path.normalize(settingsDirectory+Node.Path.separator);
 			}
 
 			this.directory = settingsDirectory;
@@ -69,6 +69,8 @@ WebServer = Server.extend({
 		else {
 			this.directory = Project.directory;
 		}
+		// Update the settings to keep
+		this.settings.set('directory', this.directory);
 
 		// Conditionally attach the general log
 		if(this.settings.get('logs.general.enabled')) {
