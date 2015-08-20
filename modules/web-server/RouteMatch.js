@@ -70,6 +70,8 @@ RouteMatch = Class.extend({
 	},
 
 	follow: function*() {
+		//Console.out(this.route);
+
 		// Finalize route data
 		var finalizedRouteData = this.finalizeRouteData();
 
@@ -177,6 +179,9 @@ RouteMatch = Class.extend({
 			else if(this.route.filePath) {
 				filePath = Node.Path.normalize(Node.Path.join(Project.directory+'views', this.route.filePath));
 			}
+
+			Console.error(filePath);
+			throw new Error('Need to make WebServer.directory instead of using Project.directory');
 
 			this.response.content = new File(filePath);
 		}

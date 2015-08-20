@@ -285,6 +285,24 @@ String.prototype.indefiniteArticle = function(capitalizeFirstCharacter) {
     return indefiniteArticle;
 }
 
+String.uniqueIdentifier = function(length) {
+	length = length !== undefined ? length : 16;
+
+	var uniqueIdentifier = '';
+
+	var fourHexCharacters = function() {
+		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+	}
+
+	for(var i = 0; i < length; i = i + 4) {
+		uniqueIdentifier += fourHexCharacters();
+	}
+
+	uniqueIdentifier = uniqueIdentifier.substring(0, length);
+
+	return uniqueIdentifier;
+};
+
 String.random = function(length, characters) {
 	length = length === undefined ? 32 : length;
 	characters = characters === undefined ? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' : characters;

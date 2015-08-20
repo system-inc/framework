@@ -9,6 +9,8 @@ Request = Class.extend({
 	body: '',
 	data: null,
 
+	range: null,
+
 	ipAddress: null,
 	connectingIpAddress: null,
 
@@ -33,6 +35,9 @@ Request = Class.extend({
 			this.webServer = webServer;
 		}
 
+		// ID
+		this.id = String.uniqueIdentifier();
+
 		// Time
 		this.time = new Time();
 
@@ -49,10 +54,10 @@ Request = Class.extend({
 		this.cookies = new Cookies(this.headers.get('cookie'));
 
 		// Content
-		// this.content = {
-		// 	'length': this.headers.get('content-length'),
-		// 	'type': this.headers.get('type'),
-		// };
+		//this.content = {
+		//	'length': this.headers.get('content-length'),
+		//	'type': this.headers.get('type'),
+		//};
 
 		// IP address
 		//Console.out(Json.encode(nodeRequest.connection.remoteAddress));

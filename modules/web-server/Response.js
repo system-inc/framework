@@ -61,6 +61,9 @@ Response = Class.extend({
 		// Reference the associated request and and web server
 		this.request = request;
 		this.webServer = webServer;
+
+		// The response ID matches the request ID
+		this.id = this.request.id;
 	},
 
 	setAcceptedEncodings: function(acceptEncodeHeaderString) {

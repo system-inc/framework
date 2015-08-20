@@ -434,7 +434,9 @@ Proctor = Class.extend({
 		this.currentTestClass = this.testClasses[this.currentTest.name];
 
 		// Run .before on the test class
-		yield this.currentTestClass.before();
+		yield this.currentTestClass.before().catch(function(error) {
+			Console.out(error);
+		});
 
 		// Time all of the tests in the class
 		this.currentTestClassStopwatch = new Stopwatch();

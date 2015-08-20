@@ -14,6 +14,13 @@ WebServer = Server.extend({
 	construct: function(identifier, settings) {
 		this.identifier = identifier;
 		this.settings = (settings === undefined ? new Settings() : settings);
+
+		// If we received settings as an object, create a new Settings class
+		if(!Class.isInstance(settings, Settings)) {
+			this.settings = new Settings(settings);
+		}
+
+		// Set the default settings
 		this.settings.default({
 			logs: {
 				general: {
@@ -171,7 +178,6 @@ WebServer = Server.extend({
 		// Create the request object which wrap node's request object
 		try {
 			var request = new Request(nodeRequest, this);
-			request.id = this.requests - 1; // Subtract one because we already incremented above outside of the try catch
 		}
 		catch(error) {
 			this.handleInternalServerError(error, nodeResponse);
@@ -181,7 +187,6 @@ WebServer = Server.extend({
 		// Create the response object which wrap node's response object
 		try {
 			var response = new Response(nodeResponse, request, this);
-			response.id = request.id; // Match the responses ID to the request's ID
 		}
 		catch(error) {
 			this.handleInternalServerError(error, nodeResponse, request);

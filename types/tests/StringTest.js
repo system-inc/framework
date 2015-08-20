@@ -131,6 +131,36 @@ StringTest = Test.extend({
 		Assert.equal(actual, expected, 'breaks connected capital letters with a space and lowercases everything');
 	},
 
+	testUniqueIdentifier: function*() {
+		var uniqueIdentifier = String.uniqueIdentifier(8);
+		Assert.equal(uniqueIdentifier.length, 8, 'Unique identifier uses length parameter');
+
+		// Just having some fun collision hunting
+		//var generatedUniqueIdentifiers = {};
+
+		//for(var i = 0; i < 10000 * 10000; i++) {
+		//	//var uniqueIdentifier = yield String.cryptographicRandom(16);
+		//	//var uniqueIdentifier = String.random(16);
+		//	var uniqueIdentifier = String.uniqueIdentifier(8);
+
+		//	var collision = false;
+		//	if(generatedUniqueIdentifiers[uniqueIdentifier]) {
+		//		collision = uniqueIdentifier;
+		//	}
+
+		//	if(collision) {
+		//		throw new Error('Collision on unique identifier "'+collision+'" after '+i+' unique identifiers generated.');
+		//	}
+		//	else {
+		//		generatedUniqueIdentifiers[uniqueIdentifier] = true;
+		//	}
+
+		//	if((i + 1) % 10000 == 0) {
+		//		Console.out('Generated '+Number.addCommas(i + 1)+' unique identifiers without collision.');
+		//	}
+		//}
+	},
+
 	testRandom: function() {
 		var string = String.random(32);
 		Assert.equal(string.length, 32, 'observes length parameter');

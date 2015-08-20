@@ -10,9 +10,11 @@ Router = Class.extend({
 	loadRoutes: function(routes, project) {
 		//Console.out('Loading routes...');
 
-		routes.each(function(index, routeJson) {
-			this.routes.push(new Route(routeJson));
-		}.bind(this));
+		if(routes) {
+			routes.each(function(index, routeJson) {
+				this.routes.push(new Route(routeJson));
+			}.bind(this));
+		}
 
 		//Console.out(this.routes);
 	},
