@@ -63,13 +63,12 @@ WebServer = Server.extend({
 			if(!settingsDirectory.endsWith(Node.Path.separator)) {
 				settingsDirectory = Node.Path.normalize(settingsDirectory+Node.Path.separator);
 			}
-
 			this.directory = settingsDirectory;
 		}
 		else {
 			this.directory = Project.directory;
 		}
-		// Update the settings to keep
+		// Update the settings with this.directory
 		this.settings.set('directory', this.directory);
 
 		// Conditionally attach the general log
