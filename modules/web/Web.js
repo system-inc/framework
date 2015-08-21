@@ -67,8 +67,8 @@ Web.request = function(options) {
 
 				// If we are to decode the response
 				if(options.decode) {
-					// Gzip
-					if(contentEncoding == 'gzip') {
+					// Gzip or defalte
+					if(contentEncoding == 'gzip' || contentEncoding == 'deflate') {
 						webResponse.body = yield Data.decode(buffer, contentEncoding);
 					}
 					// No content encoding

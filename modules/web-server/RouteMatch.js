@@ -78,7 +78,7 @@ RouteMatch = Class.extend({
 		// ControllerRoute
 		if(this.route.type == 'controller') {
 			// Try to get the controller
-			var controller = Controller.getController(this.route.controllerName, this.request, this.response, this.route, finalizedRouteData);
+			var controller = Controller.getController(this.route.controllerName, this.webServer, this.request, this.response, this.route, finalizedRouteData);
 
 			// If the controller was found, invoke the method for the route
 			if(controller && controller[this.route.controllerMethodName]) {

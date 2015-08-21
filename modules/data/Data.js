@@ -15,6 +15,16 @@ Data.decode = function(data, encoding) {
 				}
 			});
 		}
+		else if(encoding == 'deflate') {
+			Node.Zlib.inflate(data, function(error, result) {
+				if(error) {
+					reject(error);
+				}
+				else {
+					resolve(result.toString());
+				}
+			});
+		}
 		else {
 			reject(new Error(encoding+' is an unsupported encoding type.'));
 		}
@@ -23,7 +33,7 @@ Data.decode = function(data, encoding) {
 
 Data.encode = function(data, encoding) {
     return new Promise(function(resolve, reject) {
-    	// Gzip
+    	// Gzip or deflate
 		if(encoding == 'gzip' || encoding == 'deflate') {
 			Node.Zlib[encoding](data, function(error, result) {
 				if(error) {

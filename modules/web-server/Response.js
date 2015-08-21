@@ -15,27 +15,6 @@ Response = Class.extend({
 	acceptedEncodings: [],
 	contentEncoded: false,
 
-	contentTypesToEncode: [
-	    'text/html',
-	    'application/x-javascript',
-	    'text/css',
-	    'application/javascript',
-	    'text/javascript',
-	    'text/plain',
-	    'text/xml',
-	    'application/json',
-	    'application/vnd.ms-fontobject',
-	    'application/x-font-opentype',
-	    'application/x-font-truetype',
-	    'application/x-font-ttf',
-	    'application/xml',
-	    'font/eot',
-	    'font/opentype',
-	    'font/otf',
-	    'image/svg+xml',
-	    'image/vnd.microsoft.icon',
-	],
-
 	// Headers
 	statusCode: null,
 	headers: new Headers(),
@@ -75,7 +54,7 @@ Response = Class.extend({
 
 			// Encode if we do not have a contentType (means we are probably text/html) or if we match a content type on the white list
 			var contentType = this.headers.get('Content-Type');
-			if(!contentType || this.contentTypesToEncode.contains(contentType)) {
+			if(!contentType || Response.contentTypesToEncode.contains(contentType)) {
 				// Deflate is faster than gzip
 				if(this.acceptedEncodings.contains('deflate', false)) {
 					this.encoding = 'deflate';
@@ -104,8 +83,10 @@ Response = Class.extend({
 
 		// Handle range requests
 		var requestRangeHeader = this.request.headers.get('Range');
+		//Console.out('requestRangeHeader', requestRangeHeader);
 		if(requestRangeHeader) {
 			this.request.range = new RangeHeader(requestRangeHeader);
+			//Console.out('this.request.range', this.request.range);
 		}
 
 		// If the content is something
@@ -149,7 +130,7 @@ Response = Class.extend({
 					this.headers.set('Content-Type', contentType);
 
 					// Set the Content-Disposition header, by specifying inline the browser will try to display the content and if it cannot it will download it
-					this.headers.update('Content-Disposition', 'inline; filename="'+this.content.name+'"');
+					this.headers.set('Content-Disposition', 'inline; filename="'+this.content.name+'"');
 
 					// Set the Last-Modified header
 					yield this.content.initializeStatus();
@@ -158,14 +139,26 @@ Response = Class.extend({
 					// Set the ETag header
 					this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.sizeInBytes()).digest('hex'));
 
-					// Turn the file into a read stream
-					//this.content = yield File.read(this.content.path);
-					if(this.request.range) {
+					// Support range requests (byte serving), currently do not support multiple ranges in a single request
+					if(this.request.range && this.request.range.ranges.length == 1) {
 						var readStreamRange = this.request.range.getReadStreamRange(this.content.sizeInBytes());
 						//Console.out('readStreamRange', readStreamRange);
+
+						// Always set the status code to 206 when we set Content-Range, even if we are sending the entire resource
+						this.statusCode = 206;
+
+						// Do not set the Content-Length header since we are sending a stream with transfer-encoding: chunked
+						//this.headers.set('Content-Length', this.request.range.getContentLength(this.content.sizeInBytes()));
+
+						// Set the Content-Range header
+						this.headers.set('Content-Range', this.request.range.getContentRange(this.content.sizeInBytes()));
+
+						// Turn the file into a read stream
 						this.content = yield this.content.toReadStream(readStreamRange);
 					}
+					// Send the entire file
 					else {
+						// Turn the file into a read stream
 						this.content = yield this.content.toReadStream();
 					}
 				}
@@ -380,3 +373,26 @@ Response = Class.extend({
 	},
 
 });
+
+// Static properties
+Response.contentTypesToEncode = [
+    'text/html',
+    'application/x-javascript',
+    'text/css',
+    'application/javascript',
+    'text/javascript',
+    'text/plain',
+    'text/xml',
+    'application/json',
+    'application/vnd.ms-fontobject',
+    'application/x-font-opentype',
+    'application/x-font-truetype',
+    'application/x-font-ttf',
+    'application/xml',
+    'font/eot',
+    'font/opentype',
+    'font/otf',
+    'image/svg+xml',
+    'image/vnd.microsoft.icon',
+    //'audio/mpeg', // Testing range requests with content-encoding
+];

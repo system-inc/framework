@@ -9,11 +9,18 @@ RangeHeader = Class.extend({
 
 		var matches = input.match(/^([^\s]+)=((?:(?:\d+-\d+|-\d+|\d+-),?)+)$/);
 
-		this.unit = matches[1];
+		if(matches && matches[1]) {
+			this.unit = matches[1];
 
-		matches[2].split(',').each(function(index, range) {
-			this.ranges.push(this.parseRange(range));
-		}.bind(this));
+			matches[2].split(',').each(function(index, range) {
+				this.ranges.push(this.parseRange(range));
+			}.bind(this));
+		}
+		// If we can't parse a range, send the entire resource
+		else {
+			this.unit = 'bytes';
+			this.ranges.push('0-');
+		}
 	},
 
 	parseRange: function(input) {
@@ -37,35 +44,73 @@ RangeHeader = Class.extend({
 
 	getReadStreamRange: function(size) {
 		var range = this.ranges[0];
-		Console.out('range', range);
 
 		var rangeToReturn = {
 			start: null,
 			end: null,
 		};
 
-		// Start is set
-		if(range.start !== undefined) {
-			rangeToReturn.start = range.start;
+		// There is no range
+		if(!range) {
+			rangeToReturn.start = 0;
+			rangeToReturn.end = size - 1;
 		}
-
-		// End is set
-		if(range.end !== undefined) {
+		else if(range.start !== undefined && range.end !== undefined) {
+			rangeToReturn.start = range.start;
 			rangeToReturn.end = range.end;
 		}
-
 		// End is set and start is not set
-		if(range.end !== undefined && range.start == undefined) {
-			//Console.out('range.start', range.start);
-			//Console.out('range.end', range.end);
-			//Console.out('size', size);
+		else if(range.end !== undefined && range.start == undefined) {
 			rangeToReturn.start = size - range.end;
 			rangeToReturn.end = size - 1;
-			//Console.out('rangeToReturn', rangeToReturn);
-			//Node.exit('end without start');
+		}
+		// Start is set and end is not set
+		else if(range.start !== undefined && range.end == undefined) {
+			rangeToReturn.start = range.start;
+			rangeToReturn.end = size - 1;
+		}
+		// Start and end are not set
+		else if(range.start == undefined && range.end == undefined) {
+			rangeToReturn.start = 0;
+			rangeToReturn.end = size - 1;
 		}
 
 		return rangeToReturn;
+	},
+
+	isPartial: function(size) {
+		var isPartial = true;
+		var readStreamRange = this.getReadStreamRange(size);
+
+		// Check to see if we are actually reading the entire file
+		if(readStreamRange.start == 0 && readStreamRange.end == (size - 1)) {
+			isPartial = false;
+		}
+
+		return isPartial;
+	},
+
+	getContentLength: function(size) {
+		var contentLength = null;
+		var readStreamRange = this.getReadStreamRange(size);
+
+		contentLength = readStreamRange.end - readStreamRange.start + 1;
+		//Console.out('contentLength', contentLength);
+
+		return contentLength;
+	},
+
+	getContentRange: function(size) {
+		var contentRange = this.unit+' ';
+		var readStreamRange = this.getReadStreamRange(size);
+
+		contentRange += readStreamRange.start+'-'+readStreamRange.end;
+
+		contentRange += '/'+size;
+
+		//Console.out('contentRange', contentRange);
+
+		return contentRange;
 	},
 
 	toString: function() {

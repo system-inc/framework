@@ -12,14 +12,20 @@ Controller = Class.extend({
 		this.data = data !== undefined ? data : this.data;
 	},
 
-	getController: function(controllerName, request, response, route, data) {
+	getController: function(controllerName, webServer, request, response, route, data) {
 		//Console.out(controllerName);
 		var controller = null;
+
+		// Set the directory containing the controllers folder
+		var directory = Project.directory;
+		if(webServer) {
+			directory = webServer.directory;
+		}
 
 		// If we don't have the controller load it
 		if(!global[controllerName]) {
 			// Look in the project controllers directory
-			var controllerPath = Project.directory+'controllers/'+controllerName+'.js';
+			var controllerPath = directory+'controllers/'+controllerName+'.js';
 			if(File.synchronous.exists(controllerPath)) {
 				//Console.out('Controller '+controllerPath+' exists.');
 				require(controllerPath);
