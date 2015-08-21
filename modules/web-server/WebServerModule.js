@@ -27,6 +27,7 @@ WebServerModule = Module.extend({
 		'errors/ForbiddenError',
 		'errors/InternalServerError',
 		'errors/NotFoundError',
+		'errors/RequestedRangeNotSatisfiableError',
 		'errors/RequestEntityTooLargeError',
 		'errors/UnauthorizedError',
 	],

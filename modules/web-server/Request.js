@@ -9,7 +9,7 @@ Request = Class.extend({
 	body: '',
 	data: null,
 
-	range: null,
+	range: null, // The parsed Range header, this property is set in Response.js to gracefully handle parsing exceptions
 
 	ipAddress: null,
 	connectingIpAddress: null,

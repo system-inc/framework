@@ -169,7 +169,7 @@ File.createReadStream = function() {
             resolve(readStream);
         });
         readStream.on('error', function(error) {
-            console.log(error);
+            Console.error(error);
             reject(error);
         });
     });
@@ -185,7 +185,7 @@ File.createWriteStream = function() {
     		resolve(writeStream);
     	});
     	writeStream.on('error', function(error) {
-    		console.log(error);
+    		Console.error(error);
     		reject(error);
     	});
     });

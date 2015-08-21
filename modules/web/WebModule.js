@@ -22,6 +22,7 @@ WebModule = Module.extend({
 		'Web',
 		'WebApi',
 		'components/WebComponent',
+		'headers/RangeHeader.js',
 		'interface/KeyboardShortcut',
 		'interface/KeyboardShortcuts',
 	],

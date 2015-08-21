@@ -102,6 +102,12 @@ Response = Class.extend({
 		// Mark the response as handled
 		this.handled = true;
 
+		// Handle range requests
+		var requestRangeHeader = this.request.headers.get('Range');
+		if(requestRangeHeader) {
+			this.request.range = new RangeHeader(requestRangeHeader);
+		}
+
 		// If the content is something
 		var contentType;
 		if(this.content) {
@@ -154,7 +160,14 @@ Response = Class.extend({
 
 					// Turn the file into a read stream
 					//this.content = yield File.read(this.content.path);
-					this.content = yield this.content.toReadStream();
+					if(this.request.range) {
+						var readStreamRange = this.request.range.getReadStreamRange(this.content.sizeInBytes());
+						//Console.out('readStreamRange', readStreamRange);
+						this.content = yield this.content.toReadStream(readStreamRange);
+					}
+					else {
+						this.content = yield this.content.toReadStream();
+					}
 				}
 				// If the file does not exist, send a 404
 				else {
@@ -264,13 +277,16 @@ Response = Class.extend({
 		else {
 			this.headers.update('Content-Encoding', this.encoding);	
 		}
+
+		// Advertise byte serving
+		this.headers.update('Accept-Ranges', 'bytes');
 		
 		// Track the elapsed time
 		this.stopwatches.process.stop();
-		this.headers.create('X-Processing-Time-in-'+this.stopwatches.process.precision.capitalize(), this.stopwatches.process.elapsedTime);
+		this.headers.update('X-Processing-Time-in-'+this.stopwatches.process.precision.capitalize(), this.stopwatches.process.elapsedTime);
 
 		// Send the response ID to the client
-		this.headers.create('X-Response-ID', this.id);
+		this.headers.update('X-Response-ID', this.id);
 
 		// Add the response cookies to the headers
 		this.headers.addCookies(this.cookies);
