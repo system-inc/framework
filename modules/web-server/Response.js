@@ -94,9 +94,10 @@ Response = Class.extend({
 		if(this.content) {
 			//Console.highlight(this.content);
 
-			// If the zip module is enabled and the content is a zipped file inside of a zip file
-			if(global['ZippedFile'] && Class.isInstance(this.content, ZippedFile)) {
+			// If the archive module is enabled and the content is an archived file inside of a archive file
+			if(global['ArchivedFileSystemObject'] && Class.isInstance(this.content, ArchivedFileSystemObject)) {
 				// Set the Content-Type header
+				//Console.highlight(this.content.path);
 				contentType = File.getContentType(this.content.path);
 				this.headers.set('Content-Type', contentType);
 
@@ -112,7 +113,7 @@ Response = Class.extend({
 				// Byte serving is not supported
 				this.headers.set('Accept-Ranges', 'none');
 
-				// If the zipped file is compressed with deflate and the requester has said they accept deflate, leave the zipped file compressed and let the client deflate it
+				// If the archived file is compressed with deflate and the requester has said they accept deflate, leave the archived file compressed and let the client deflate it
 				if(this.content.archiveMethod == 'deflate' && this.request.headers.get('Accept-Encoding').contains('deflate')) {
 					this.headers.set('Content-Encoding', 'deflate');
 					this.content = yield this.content.toReadStream(false); // do not decompress

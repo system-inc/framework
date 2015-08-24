@@ -1,99 +1,49 @@
 ExtractRarStream = Class.extend({
 
-    // member variables
-    nRarAlgorithm: null,
-    nStartPos: 0,
-    nCompressSize: 0,
-    nExtractSize:0,
-    strFilePath: null,
+    rarAlgorithm: null,
+    rarredFileSystemObject: null,
+
+    // Temp
     buffer: null,
-    bufExtract: null,
-    // member functions
-	construct: function*(rarAlgorithm, start, compress_size, extract_size, filePath) {
-		// Returns a transform stream based on the rarAlgorithm
-        this.nRarAlgorithm = 0;
 
-        if(rarAlgorithm == 'RAR 1.5') this.nRarAlgorithm = 15;
-        else if (rarAlgorithm == 'RAR 2.x') this.nRarAlgorithm = 20;
-        else if (rarAlgorithm == 'RAR 3.x') this.nRarAlgorithm = 30;
+	construct: function(rarAlgorithm, rarredFileSystemObject, buffer) {
+        this.rarAlgorithm = rarAlgorithm;
+        this.rarredFileSystemObject = rarredFileSystemObject;
 
-        this.nStartPos = start;
-        this.nCompressSize = compress_size;
-        this.nExtractSize = extract_size;
-        this.strFilePath = filePath;
+        // Create a byte array to store all of the archived bytes
+        var byteArray = new bitjs.io.ByteBuffer(this.rarredFileSystemObject.archivedSizeInBytes);
 
-        yield this.prepare();
+        // Insert the archived bytes into the byte array
+        byteArray.insertBytes(buffer);
 
-		// ...return Transform Stream
-        var  bStream = new bitjs.io.ByteStream(rBuffer.data, true, 0, this.nExtractSize);
-        //console.log(bStream.readString(this.nExtractSize));
-        return bStream;
+        // Create a bit stream
+        gBStream = new bitjs.io.BitStream(byteArray.data, true, 0, this.rarredFileSystemObject.archivedSizeInBytes);
+
+        // Create a byte buffer
+        rBuffer = new bitjs.io.ByteBuffer(this.rarredFileSystemObject.extractedSizeInBytes);
+
+        // Not sure what this is
+        var solid = 0x0010;
+
+        // 
+        var extractRarStream = null;
+        if(rarAlgorithm == 'RAR 1.5') {
+            extractRarStream = UnpackWrap15(solid);
+        }
+        else if(rarAlgorithm == 'RAR 2.x') {
+            extractRarStream = UnpackWrap20(solid);
+        }
+        else if(rarAlgorithm == 'RAR 3.x') {
+            extractRarStream = UnpackWrap29(solid);
+        }
+
+        // TODO: Supposed to return a transform stream
+        //extractRarStream = new bitjs.io.ByteStream(rBuffer.data, true, 0, this.rarredFileSystemObject.extractedSizeInBytes);
+        this.buffer = new Buffer(rBuffer.data);
+
+        return extractRarStream;
 	},
 
-    prepare: function*(){
-
-        var compressFile = new File(this.strFilePath);
-
-
-        if(!compressFile.statusInitialized) {
-            yield compressFile.initializeStatus();
-        }
-        this.buffer = yield compressFile.readToBuffer(this.nCompressSize, this.nStartPos);
-
-        // from here unrar the buffer data
-        yield this.unpack(this.buffer, this.nRarAlgorithm);
-        console.log("ExtractRarStream construct");
-    },
-
-    unpack: function*(buffer, rarVersion){
-        if(rarVersion == 30) this.unpack30(buffer);
-        else if(rarVersion == 20)  this.unpack20(buffer);
-        else if(rarVersion == 15)  this.unpack15(buffer);
-    },
-
-    unpack15: function*(buffer){
-        console.log("Rar Version 1.5");
-
-        var byteArray = new bitjs.io.ByteBuffer(this.nCompressSize);
-        byteArray.insertBytes(buffer);
-
-        gBStream = new bitjs.io.BitStream(byteArray.data, true, 0, this.nCompressSize);
-
-        rBuffer = new bitjs.io.ByteBuffer(this.nExtractSize);
-
-        var Solid = 0x0010;
-        UnpackWrap15(Solid);
-    },
-
-    unpack20: function*(buffer){
-        console.log("Rar Version 2.0");
-
-        var byteArray = new bitjs.io.ByteBuffer(this.nCompressSize);
-        byteArray.insertBytes(buffer);
-
-        gBStream = new bitjs.io.BitStream(byteArray.data, true, 0, this.nCompressSize);
-
-        rBuffer = new bitjs.io.ByteBuffer(this.nExtractSize);
-
-        var Solid = 0x0010;
-        UnpackWrap20(Solid);
-
-    },
-
-    unpack30: function*(buffer){
-        console.log("Rar Version 3.0");
-
-        var byteArray = new bitjs.io.ByteBuffer(this.nCompressSize);
-        byteArray.insertBytes(buffer);
-
-        gBStream = new bitjs.io.BitStream(byteArray.data, true, 0, this.nCompressSize);
-
-        rBuffer = new bitjs.io.ByteBuffer(this.nExtractSize);
-
-        var Solid = 0x0010;
-        UnpackWrap29(Solid);
-
-    },
 });
 
 /////////////////////////////////////////////////  io.js ///////////////////////////////////////////////////////
@@ -133,7 +83,7 @@ bitjs.io = bitjs.io || {};
      * @param {Number} opt_length The length of this BitStream
      */
     bitjs.io.BitStream = function(ab, rtl, opt_offset, opt_length) {
-        console.log(ab.toString());
+        //console.log(ab.toString());
         if (!ab || !ab.toString) {
             throw "Error! BitArray constructed with an invalid ArrayBuffer object";
         }
@@ -1441,7 +1391,7 @@ function Unpack29(bstream, Solid) {
         }
     }
 
-    console.log("end unpack data block");
+    //console.log("end unpack data block");
 }
 
 function RarReadEndOfBlock(bstream) {

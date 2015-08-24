@@ -14,7 +14,6 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 		this.archivedSizeInBytes = this.header.archivedSizeInBytes;
 		this.extractedSizeInBytes = this.header.extractedSizeInBytes;
 
-        ///////////////
         this.comment = this.header.comment;
 
 		// Just use time modified for all of these
@@ -28,11 +27,7 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 	},
 
 	toReadStream: function*(decompress) {
-
-        //////////////////////////////////////////////////////////////////////////////////
-        /// here from ycm code ////
-
-		console.log('Extracting', this.path, 'compressed with', this.header.archiveMethod);
+		//Console.out('Extracting', this.path, 'compressed with', this.header.archiveMethod);
 		decompress = decompress === undefined ? true : false; // decompress by default
 
 		// The archived data begins at the end of the block header
@@ -45,45 +40,52 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 			return false;
 		}
 		else {
-			// Create the read stream
-			var readStream = yield this.archiveFile.toReadStream({
-				start: start,
-				end: end,
-			});
-
-			// Determine the archive method version
-			var archiveMethodVersion = this.header.version;
-			if(archiveMethodVersion < 15) {
-				archiveMethodVersion = 15;
-			}
-
-			// Set the extraction method
-			var rarAlgorithm = null;
-
-			// RAR 1.5
-			if(archiveMethodVersion == 15) {
-				rarAlgorithm = 'RAR 1.5';
-			}
-			// RAR 2.x and files larger than 2 GB
-			else if(archiveMethodVersion == 20 || archiveMethodVersion == 26) {
-				rarAlgorithm = 'RAR 2.x';
-			}
-			// RAR 3.x and alternative hash
-			else if(archiveMethodVersion == 29 || archiveMethodVersion == 36) {
-				rarAlgorithm = 'RAR 3.x';
-			}
+			// The read stream to return
+			var readStream = null;
 
 			// If they want the file decompressed and the file is not archived with the store method
 			if(decompress && this.header.archiveMethod != 'store') {
+				// Determine the archive method version
+				var archiveMethodVersion = this.header.version;
+				if(archiveMethodVersion < 15) {
+					archiveMethodVersion = 15;
+				}
+
+				// Set the extraction method
+				var rarAlgorithm = null;
+
+				// RAR 1.5
+				if(archiveMethodVersion == 15) {
+					rarAlgorithm = 'RAR 1.5';
+				}
+				// RAR 2.x and files larger than 2 GB
+				else if(archiveMethodVersion == 20 || archiveMethodVersion == 26) {
+					rarAlgorithm = 'RAR 2.x';
+				}
+				// RAR 3.x and alternative hash
+				else if(archiveMethodVersion == 29 || archiveMethodVersion == 36) {
+					rarAlgorithm = 'RAR 3.x';
+				}
+
 				if(!rarAlgorithm) {
 					throw new Error('Unable to extract '+this.path+' from RAR file '+this.archiveFile.path+' which is archived with archive method '+archiveMethodVersion+'.');
 				}
 
-				// Create an extract RAR stream to pipe the read stream to
-				var extractRarStream = yield new ExtractRarStream(rarAlgorithm, start, this.archivedSizeInBytes, this.extractedSizeInBytes, this.archiveFile.file);
-				readStream = extractRarStream;
-			}
+				// bitjs uses buffers, not streams
+				var buffer = yield this.archiveFile.readToBuffer(this.archivedSizeInBytes, start);
 
+				// Create an extract RAR stream to pipe the read stream to
+				var extractRarStream = new ExtractRarStream(rarAlgorithm, this, buffer);
+				readStream = extractRarStream.buffer;
+				//readStream = readStream.pipe(extractRarStream);
+			}
+			else {
+				// Create the read stream
+				readStream = yield this.archiveFile.toReadStream({
+					start: start,
+					end: end,
+				});
+			}
 
 			return readStream;
 		}
