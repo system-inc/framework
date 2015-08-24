@@ -17,8 +17,8 @@ RarModule = Module.extend({
 		'streams/ArchiveRarStream',
 	],
 
-	initialize: function*(settings) {
-		yield this.super.apply(this, arguments);
+	initialize: function(settings) {
+		this.super.apply(this, arguments);
 
 		// Register zip file formats as archive extensions
 		ArchiveFile.registerImplementation('Rar', [

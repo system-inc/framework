@@ -91,7 +91,6 @@ RarFile = ArchiveFile.extend({
 			this.rarredFileSystemObjectHeaders.each(function(index, rarredFileSystemObjectHeader) {
 				//Console.out(rarredFileSystemObjectHeader.path);
 				//Console.out(rarredFileSystemObjectHeader.archiveMethod);
-
 				var rarredFileSystemObject = null;
 
 				// If the path ends with / then the file system object is a directory

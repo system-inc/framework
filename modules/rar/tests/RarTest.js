@@ -48,10 +48,13 @@ RarTest = Test.extend({
 
 		yield files.each(function*(index, file) {
 			var rarFilePath = Node.Path.join(__dirname, 'files', file);
-			var rarFile = new RarFile(rarFilePath);
+
+ 			var rarFile = new RarFile(rarFilePath);
 			var rarredFileSystemObjects = yield rarFile.list();
-			var firstRarredFileSystemObject = rarredFileSystemObjects.first();
-			var firstRarredFileSystemObjectStream = yield firstRarredFileSystemObject.toReadStream();
+
+            var firstRarredFileSystemObject = rarredFileSystemObjects.first();
+
+            var firstRarredFileSystemObjectStream = yield firstRarredFileSystemObject.toReadStream();
 			//Console.out(firstRarredFileSystemObjectStream);
 			var firstRarredFileSystemObjectStreamString = yield firstRarredFileSystemObjectStream.toString();
 			//Console.out(firstRarredFileSystemObjectStreamString);

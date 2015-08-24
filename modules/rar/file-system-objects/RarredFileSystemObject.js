@@ -13,7 +13,9 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 		this.archiveMethodOptions = this.header.archiveMethodOptions;
 		this.archivedSizeInBytes = this.header.archivedSizeInBytes;
 		this.extractedSizeInBytes = this.header.extractedSizeInBytes;
-		this.comment = this.header.comment;
+
+        ///////////////
+        this.comment = this.header.comment;
 
 		// Just use time modified for all of these
 		this.timeAccessed = this.header.timeModified;
@@ -26,8 +28,11 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 	},
 
 	toReadStream: function*(decompress) {
-		console.log('Extracting', this.path, 'compressed with', this.header.archiveMethod);
 
+        //////////////////////////////////////////////////////////////////////////////////
+        /// here from ycm code ////
+
+		console.log('Extracting', this.path, 'compressed with', this.header.archiveMethod);
 		decompress = decompress === undefined ? true : false; // decompress by default
 
 		// The archived data begins at the end of the block header
@@ -75,10 +80,10 @@ RarredFileSystemObject = ArchivedFileSystemObject.extend({
 				}
 
 				// Create an extract RAR stream to pipe the read stream to
-				var extractRarStream = new ExtractRarStream(rarAlgorithm);
-
-				readStream = readStream.pipe(extractRarStream);
+				var extractRarStream = yield new ExtractRarStream(rarAlgorithm, start, this.archivedSizeInBytes, this.extractedSizeInBytes, this.archiveFile.file);
+				readStream = extractRarStream;
 			}
+
 
 			return readStream;
 		}
