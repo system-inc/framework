@@ -101,13 +101,16 @@ Response = Class.extend({
 				this.headers.set('Content-Type', contentType);
 
 				// Set the Content-Disposition header, by specifying inline the browser will try to display the content and if it cannot it will download it
-				this.headers.update('Content-Disposition', 'inline; filename="'+this.content.name+'"');
+				this.headers.set('Content-Disposition', 'inline; filename="'+this.content.name+'"');
 
 				// Set the Last-Modified header
 				this.headers.set('Last-Modified', this.content.timeModified.time.toUTCString());
 
 				// Set the ETag header
 				this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.archivedSizeInBytes+'/'+this.content.extractedSizeInBytes).digest('hex'));
+
+				// Byte serving is not supported
+				this.headers.set('Accept-Ranges', 'none');
 
 				// If the zipped file is compressed with deflate and the requester has said they accept deflate, leave the zipped file compressed and let the client deflate it
 				if(this.content.archiveMethod == 'deflate' && this.request.headers.get('Accept-Encoding').contains('deflate')) {
@@ -138,6 +141,9 @@ Response = Class.extend({
 
 					// Set the ETag header
 					this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.sizeInBytes()).digest('hex'));
+
+					// Advertise byte serving
+					this.headers.set('Accept-Ranges', 'bytes');
 
 					// Support range requests (byte serving), currently do not support multiple ranges in a single request
 					if(this.request.range && this.request.range.ranges.length == 1) {
@@ -238,7 +244,7 @@ Response = Class.extend({
 
 		// If we are not going to send content, add a Connection: close header
 		if(doNotSendContent) {
-			this.headers.update('Connection', 'close');
+			this.headers.set('Connection', 'close');
 		}
 
 		// Send the headers
@@ -268,18 +274,15 @@ Response = Class.extend({
 		}
 		// If there is an encoding type specified, update the header
 		else {
-			this.headers.update('Content-Encoding', this.encoding);	
+			this.headers.set('Content-Encoding', this.encoding);	
 		}
-
-		// Advertise byte serving
-		this.headers.update('Accept-Ranges', 'bytes');
 		
 		// Track the elapsed time
 		this.stopwatches.process.stop();
-		this.headers.update('X-Processing-Time-in-'+this.stopwatches.process.precision.capitalize(), this.stopwatches.process.elapsedTime);
+		this.headers.set('X-Processing-Time-in-'+this.stopwatches.process.precision.capitalize(), this.stopwatches.process.elapsedTime);
 
 		// Send the response ID to the client
-		this.headers.update('X-Response-ID', this.id);
+		this.headers.set('X-Response-ID', this.id);
 
 		// Add the response cookies to the headers
 		this.headers.addCookies(this.cookies);

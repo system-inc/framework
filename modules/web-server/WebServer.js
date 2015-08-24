@@ -162,31 +162,39 @@ WebServer = Server.extend({
 						// Set a timeout on server connections
 						nodeServer.setTimeout(this.settings.get('serverTimeoutInMilliseconds'));
 
-						// Add an event listener for port collisions
-						nodeServer.on('error', function(error) {
-							if(error.code == 'EADDRINUSE') {
-								Console.error('Could not listen to '+protocol.uppercase()+' requests on port '+port+', the port is already in use.');
-							}
-							else if(error.code == 'EACCES') {
-								Console.error('Could not listen to '+protocol.uppercase()+' requests on port '+port+', your system user account does not have permission to use port '+port+'.');
-							}
-							else {
-								throw error;
-							}
-						});
-
 						// Create the web server
 						this.listeners[port] = nodeServer;
 
-						// Make the web server listen on the port
+						// Make the web server listen on the port, wait on this until either an error or the "listening" event is emitted
 						yield new Promise(function(resolve, reject) {
-							// Ports must be strings
-							this.listeners[port].listen(port.toString(), function() {
+							// Listen for errors
+							this.listeners[port].on('error', function(error) {
+								// Keep going if the address is in use
+								if(error.code == 'EADDRINUSE') {
+									Console.error('Could not listen to '+protocol.uppercase()+' requests on port '+port+', the port is already in use.');
+									resolve(true);
+								}
+								// Keep going if the user account does not have access
+								else if(error.code == 'EACCES') {
+									Console.error('Could not listen to '+protocol.uppercase()+' requests on port '+port+', your system user account does not have permission to use port '+port+'.');
+									resolve(true);
+								}
+								// Throw an error in all other cases
+								else {
+									reject(error);
+								}
+							});
+							
+							// Listen for the listening event
+							this.listeners[port].on('listening', function() {
 								if(this.settings.get('verbose')) {
 									Console.out('Listening for '+protocol.uppercase()+' requests on port '+port+'.');
 								}
 								resolve(true);
 							}.bind(this));
+
+							// Listen
+							this.listeners[port].listen(port.toString()); // Ports must be strings
 						}.bind(this));
 					}
 				}.bind(this));

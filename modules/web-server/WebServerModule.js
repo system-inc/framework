@@ -60,7 +60,7 @@ WebServerModule = Module.extend({
 				// Create the web server
 				this.webServers[webServerIdentifier] = new WebServer(webServerIdentifier, webServerSettings);
 				
-				// Listen
+				// Start the web server
 				yield this.webServers[webServerIdentifier].start();
 
 				webServerCount++;
