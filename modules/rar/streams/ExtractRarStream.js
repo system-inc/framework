@@ -1139,7 +1139,7 @@ bitjs.archive = bitjs.archive || {};
                 }
             };
 
-            this.worker_.postMessage({file: this.ab});
+            console.log({file: this.ab});
         }
     };
 
@@ -1193,13 +1193,13 @@ bitjs.archive = bitjs.archive || {};
 
 // Helper functions.
 var info = function(str) {
-    postMessage(new bitjs.archive.UnarchiveInfoEvent(str));
+    console.log(new bitjs.archive.UnarchiveInfoEvent(str));
 };
 var err = function(str) {
-    postMessage(new bitjs.archive.UnarchiveErrorEvent(str));
+    console.log(new bitjs.archive.UnarchiveErrorEvent(str));
 };
 var postProgress = function() {
-    postMessage(new bitjs.archive.UnarchiveProgressEvent(
+    console.log(new bitjs.archive.UnarchiveProgressEvent(
         currentFilename,
         currentFileNumber,
         currentBytesUnarchivedInFile,
