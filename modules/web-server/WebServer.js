@@ -11,7 +11,7 @@ WebServer = Server.extend({
 		requests: null,
 		responses: null,
 	},
-	
+
 	construct: function(identifier, settings) {
 		this.identifier = identifier;
 		this.settings = (settings === undefined ? new Settings() : settings);
@@ -52,8 +52,8 @@ WebServer = Server.extend({
 				},
 			},
 			serverTimeoutInMilliseconds: 60000, // 60 seconds
-			requestTimeoutInMilliseconds: 5000, // 5 seconds
-			responseTimeoutInMilliseconds: 5000, // 5 seconds
+			requestTimeoutInMilliseconds: 20000, // 20 seconds
+			responseTimeoutInMilliseconds: 20000, // 20 seconds
 			maximumRequestBodySizeInBytes: 20000000, // 20 megabytes
 		});
 
@@ -88,15 +88,15 @@ WebServer = Server.extend({
 
 		// Allow HTTPS files to be configured in settings just using a file name
 		this.resolveHttpsProtocolFiles();
-		
+
 		// Load the routes into the router
 		this.router = new Router(this);
 		this.router.loadRoutes(this.settings.get('router.routes'));
 	},
-	
+
 	resolveHttpsProtocolFiles: function() {
 		var httpsSettings = this.settings.get('protocols.https');
-		
+
 		// Key file
 		if(!Object.isEmpty(httpsSettings.keyFile) && !httpsSettings.keyFile.startsWith(Node.Path.separator)) {
 			httpsSettings.keyFile = Node.Path.join(Project.directory+'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.keyFile);
@@ -184,7 +184,7 @@ WebServer = Server.extend({
 									reject(error);
 								}
 							});
-							
+
 							// Listen for the listening event
 							this.listeners[port].on('listening', function() {
 								if(this.settings.get('verbose')) {
@@ -231,7 +231,7 @@ WebServer = Server.extend({
 			this.handleInternalServerError(error, nodeResponse);
 			return;
 		}
-		
+
 		// Create the response object which wrap node's response object
 		try {
 			var response = new Response(nodeResponse, request, this);
@@ -286,10 +286,10 @@ WebServer = Server.extend({
 			//var randomMilliseconds = Number.random(1, 100);
 			//Console.out('Waiting '+randomMilliseconds+' milliseconds...');
 			//yield Function.delay(randomMilliseconds);
-						
+
 			// Identify and follow the route
 			yield this.router.route(request, response);
-			
+
 			// Exit the domain
 			domain.exit();
 		}
@@ -362,5 +362,5 @@ WebServer = Server.extend({
 			this.logs.general.write(logEntry+"\n");
 		}
 	},
-	
+
 });
