@@ -36,7 +36,7 @@ Response = Class.extend({
 		// Track processing time and sending time
 		this.stopwatches.process = new Stopwatch();
 		this.stopwatches.send = new Stopwatch();
-		
+
 		// Reference the associated request and and web server
 		this.request = request;
 		this.webServer = webServer;
@@ -250,7 +250,7 @@ Response = Class.extend({
 
 		// Send the headers
 		this.sendHeaders();
-		
+
 		if(doNotSendContent) {
 			//Console.out('not sending content');
 			this.nodeResponse.end(function() {
@@ -275,9 +275,9 @@ Response = Class.extend({
 		}
 		// If there is an encoding type specified, update the header
 		else {
-			this.headers.set('Content-Encoding', this.encoding);	
+			this.headers.set('Content-Encoding', this.encoding);
 		}
-		
+
 		// Track the elapsed time
 		this.stopwatches.process.stop();
 		this.headers.set('X-Processing-Time-in-'+this.stopwatches.process.precision.capitalize(), this.stopwatches.process.elapsedTime);
@@ -298,11 +298,6 @@ Response = Class.extend({
 		//Console.out(this.content);
 		//Console.out(this.acceptedEncodings);
 		//Console.out('contentEncoded', this.contentEncoded);
-
-		// If the content is a string and is not a stream, turn it into a stream
-		if(String.is(this.content)) {
-			this.content = this.content.toStream();
-		}
 
 		// Handle streams
 		if(Stream.is(this.content)) {
