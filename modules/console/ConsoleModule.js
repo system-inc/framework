@@ -17,7 +17,7 @@ ConsoleModule = Module.extend({
 				'nameWithoutExtension': Console.identifier+'-command-history',
 			},
 			'log': {
-				'enabled': false,
+				'enabled': true,
 				'directory': Project.directory+'logs'+Node.Path.separator,
 				'nameWithoutExtension': Console.identifier,
 			},
