@@ -11,6 +11,7 @@ TestModule = Module.extend({
 		'Geolocation',
 		'Hardware',
 		'Html',
+		'Media',
 		'Network',
 		'OperatingSystem',
 		'Rar',
