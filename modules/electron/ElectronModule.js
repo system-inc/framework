@@ -15,6 +15,8 @@ ElectronModule = Module.extend({
 		yield this.super.apply(this, arguments);
 
 		this.settings.default({
+			mainControllerName: 'Main',
+			mainControllerMethodName: 'main',
 			mainBrowserWindow: {
 				windowState: {
 					remember: true, // Open the main browser window in same position when it was closed, can be either true or false

@@ -55,11 +55,11 @@ Electron = new (Class.extend({
 		// Add default keyboard shortcuts
 		this.addDefaultKeyboardShortcuts();
 
-		// Get the Main controller
-		var mainController = Controller.getController('Main');
+		// Get the main controller
+		var mainController = Controller.getController(ElectronModule.settings.get('mainControllerName'));
 
-		// Load the HtmlDocument from Main.main() (Main.main() should always return an HtmlDocument)
-		var htmlDocument = yield mainController.main();
+		// Load the HtmlDocument from the main controller (Main.main() should always return an HtmlDocument)
+		var htmlDocument = yield mainController[ElectronModule.settings.get('mainControllerMethodName')]();
 		//console.log(htmlDocument);
 		
 		// Apply the HtmlDocument to the DOM (make sure not to strip out the current reference to Project.js in the head tag)
