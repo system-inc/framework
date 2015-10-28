@@ -4,22 +4,21 @@ TestModule = Module.extend({
 
 	// Needs every module we want to test (except for core modules which are already loaded)
 	needs: [
+		'Archive',
 		'Cryptography',
 		'Data',
 		'Database',
 		'Email',
+		'Ffmpeg',
 		'Geolocation',
 		'Hardware',
 		'Html',
-		'Media',
 		'Network',
 		'OperatingSystem',
-		'Rar',
 		'Server',
 		'Web',
 		'WebServer',
 		'Xml',
-		'Zip',
 	],
 
 	uses: [

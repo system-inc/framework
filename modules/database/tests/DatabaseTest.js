@@ -1,4 +1,4 @@
-DatabaseTest = Test.extend({	
+DatabaseTest = Test.extend({
 
 	testQueryOnDatabaseGeneratedBySettings: function*() {
 		var actual = yield FrameworkTestDatabase.query('SELECT * FROM user');

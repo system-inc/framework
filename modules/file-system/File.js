@@ -88,9 +88,11 @@ File = FileSystemObject.extend({
 	},
 
     toReadStream: function*(options) {
-        var readStream = yield File.createReadStream(this.path, options);
+        if(!this.readStream) {
+            this.readStream = yield File.createReadStream(this.path, options);
+        }
 
-        return readStream;
+        return this.readStream;
     },
 
     toWriteStream: function*(options) {

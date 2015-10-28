@@ -1,5 +1,7 @@
 ArchiveFile = File.extend({
 
+	archivedFileSystemObjects: null,
+
 	comment: null,
 
 	getArchivedFileSystemObjectByPath: function*(archivedFileSystemObjectPath) {
@@ -7,10 +9,10 @@ ArchiveFile = File.extend({
 
 		var archivedFileSystemObject = null;
 
-		list.each(function(index, zippedFileSystemObject) {
-			//Console.out('Comparing', "\n", Terminal.style(archivedFileSystemObjectPath, 'red'), 'to', "\n", Terminal.style(zippedFileSystemObject.path, 'blue'));
-			if(archivedFileSystemObjectPath == zippedFileSystemObject.path) {
-				archivedFileSystemObject = zippedFileSystemObject;
+		list.each(function(index, currentArchivedFileSystemObject) {
+			//Console.out('Comparing', "\n", Terminal.style(archivedFileSystemObjectPath, 'red'), 'to', "\n", Terminal.style(currentArchivedFileSystemObject.path, 'blue'));
+			if(archivedFileSystemObjectPath == currentArchivedFileSystemObject.path) {
+				archivedFileSystemObject = currentArchivedFileSystemObject;
 				return false; // break
 			}
 		});
@@ -19,39 +21,24 @@ ArchiveFile = File.extend({
 	},
 
 	list: function*() {
-		throw new Error('ArchiveFile.list() must be implemented by all classes that extend ArchiveFile.');
+		if(!this.archivedFileSystemObjects) {
+			// Get the 7-Zip list from the command line executable
+			var sevenZipList = yield SevenZip.list(this.file);
+			//Console.out(sevenZipList);
+
+			this.archivedFileSystemObjects = [];
+
+			// Create new ArchivedFileSystemObjects from the list
+			sevenZipList.each(function(sevenZipArchivedFileSystemObjectPropertiesIndex, sevenZipArchivedFileSystemObjectProperties) {
+				//Console.out('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
+				var archivedFileSystemObject = ArchivedFileSystemObject.constructFromSevenZipArchivedFileSystemObjectProperties(this, sevenZipArchivedFileSystemObjectProperties);
+				this.archivedFileSystemObjects.append(archivedFileSystemObject);
+			}.bind(this));
+		}
+
+		//Console.highlight('this.archivedFileSystemObjects', this.archivedFileSystemObjects);
+
+		return this.archivedFileSystemObjects;
 	},
 
 });
-
-// Static properties
-
-// Archive modules must register their extensions
-ArchiveFile.registeredImplementations = {};
-
-// Static methods
-ArchiveFile.registerImplementation = function(moduleName, extensions) {
-	ArchiveFile.registeredImplementations[moduleName] = extensions;
-}
-
-ArchiveFile.constructFromPath = function(path) {
-	var archiveFile = null;
-
-	// Loop through all registered implementations
-	ArchiveFile.registeredImplementations.each(function(moduleName, extensions) {
-		// See if the path matches the current registered implentations extensions list
-		extensions.each(function(extensionIndex, extension) {
-			// Instantiate the appropriate archive file abstraction
-			if(path.lowercase().endsWith(extension.lowercase())) {
-				archiveFile = new global[moduleName+'File'](path);
-				return false; // break
-			}
-		});
-
-		if(archiveFile) {
-			return false; // break;
-		}
-	});
-
-	return archiveFile;
-}

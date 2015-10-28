@@ -121,6 +121,18 @@ Framework = Class.extend({
 		}
 	},
 
+	onWindows: function() {
+		return Node.Process.platform == 'win32';
+	},
+
+	onOsX: function() {
+		return Node.Process.platform == 'darwin';
+	},
+
+	onLinux: function() {
+		return Node.Process.platform == 'linux';
+	},
+
 	loadAndInitializeProjectModules: function*() {
 		//Console.out('Loading modules for project...');
 

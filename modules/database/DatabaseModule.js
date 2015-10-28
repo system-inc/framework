@@ -3,7 +3,7 @@ DatabaseModule = Module.extend({
 	version: new Version('0.1.0'),
 
 	uses: [
-		'adapter/NodeMySql',
+		'libraries/mysql/MySql',
 		'Database',
 		'DatabaseField',
 		'DatabaseTable',
