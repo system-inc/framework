@@ -20,6 +20,8 @@ FileSystemObject = Class.extend({
 	nodeStatus: null,
 
 	statusInitialized: false,
+
+	readStream: null,
 	
 	construct: function(path) {
 		this.path = Node.Path.normalize(path);
@@ -41,7 +43,7 @@ FileSystemObject = Class.extend({
 	constructFromPath: function*(path) {
 		// Make sure we have a path
 		if(!path) {
-			return false;
+			return null;
 		}
 
 		// Check to see if the file exists
@@ -62,7 +64,7 @@ FileSystemObject = Class.extend({
 			}
 		}
 
-		return false;
+		return null;
 	},
 
 	initializeStatus: function*() {

@@ -42,7 +42,7 @@ Database = Class.extend({
 	},
 
 	connect: function() {
-		this.databaseConnectionPool = Node.MySql.createPool({
+		this.databaseConnectionPool = MySql.createPool({
 			host: this.settings.get('host'), // host: The hostname of the database you are connecting to. (Default: localhost)
 			port: this.settings.get('port'), // port: The port number to connect to. (Default: 3306)
 			localAddress: this.settings.get('ipAddress'), // localAddress: The source IP address to use for TCP connection. (Optional)
@@ -79,7 +79,7 @@ Database = Class.extend({
 		// Time the query
 		var stopwatch = new Stopwatch();
 
-		var queryResults = yield Node.MySql.Adapter.query(this.databaseConnectionPool, query, values);
+		var queryResults = yield MySql.Adapter.query(this.databaseConnectionPool, query, values);
 
 		// Stop the stopwatch
 		stopwatch.stop();

@@ -114,13 +114,7 @@ Response = Class.extend({
 				this.headers.set('Accept-Ranges', 'none');
 
 				// If the archived file is compressed with deflate and the requester has said they accept deflate, leave the archived file compressed and let the client deflate it
-				if(this.content.archiveMethod == 'deflate' && this.request.headers.get('Accept-Encoding').contains('deflate')) {
-					this.headers.set('Content-Encoding', 'deflate');
-					this.content = yield this.content.toReadStream(false); // do not decompress
-				}
-				else {
-					this.content = yield this.content.toReadStream();
-				}
+				this.content = yield this.content.toReadStream();
 			}
 			// If the content is a file
 			else if(Class.isInstance(this.content, File)) {
