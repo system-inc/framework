@@ -80,7 +80,14 @@ HtmlDocument = XmlDocument.extend({
 		}
 	},
 
+	ready: function(callback) {
+		HtmlDocument.on('ready', callback);
+	},
+
 	apply: function() {
+		this.buildHead();
+		this.head.apply();
+		this.body.apply();
 	},
 
 	buildHead: function() {
@@ -174,3 +181,4 @@ HtmlDocument = XmlDocument.extend({
 
 // Static methods
 HtmlDocument.on = HtmlDocument.prototype.on;
+HtmlDocument.ready = HtmlDocument.prototype.ready;

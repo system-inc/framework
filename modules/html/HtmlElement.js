@@ -16,6 +16,15 @@ HtmlElement = XmlElement.extend({
 
 				// Append the child DOM element to this element's DOM element
 				this.domElement.appendChild(childDomElement);
+
+				// If we are adding a WebComponent
+				if(Class.isInstance(content, WebComponent)) {
+					// Set the WebComponent's element.domElement property
+					content.element.domElement = this.domElement.lastChild;
+
+					// Call the WebComponent's render() method
+					content.render();
+				}
 			}.bind(this));
 		}
 	},
@@ -60,6 +69,18 @@ HtmlElement = XmlElement.extend({
 		}
 
 		return this;
+	},
+
+	height: function(height) {
+		if(this.domElement) {
+			this.domElement.style.height = height+'px';
+		}
+	},
+
+	width: function(width) {
+		if(this.domElement) {
+			this.domElement.style.width = width+'px';
+		}
 	},
 
 	clone: function(options) {

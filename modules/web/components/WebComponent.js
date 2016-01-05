@@ -23,6 +23,11 @@ WebComponent = Class.extend({
 		this.element = new HtmlElement(this.settings.get('tag'));
 	},
 
+	// Called when the WebComponent is added to the DOM
+	render: function() {
+
+	},
+
 	toString: function() {
 		return this.element.toString();
 	},
