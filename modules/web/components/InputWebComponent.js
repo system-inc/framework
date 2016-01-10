@@ -1,0 +1,2 @@
+InputWebComponent = WebComponent.extend({
+});

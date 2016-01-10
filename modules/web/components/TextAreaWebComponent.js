@@ -1,0 +1,2 @@
+TextAreaWebComponent = TextInputWebComponent.extend({
+});
