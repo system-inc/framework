@@ -161,11 +161,13 @@ Framework = Class.extend({
 
 // Run all require calls through this method
 Framework.require = function(identifier) {
+	//console.log('Framework.require', identifier);
+
 	try {
 		return require(identifier);
 	}
 	catch(exception) {
-		console.log('Framework.require', identifier, exception);
+		console.error('Framework.require', identifier, exception);
 		return false;
 	}
 }

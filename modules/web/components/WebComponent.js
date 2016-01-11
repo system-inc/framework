@@ -43,7 +43,7 @@ WebComponent.load = function(webComponentName) {
 	else {
 		webComponentPath = Node.Path.join(Project.directory, 'components', webComponentName+'WebComponent.js');	
 	}
-	console.log(webComponentPath);
+	//console.log(webComponentPath);
 
 	return Framework.require(webComponentPath);
 }

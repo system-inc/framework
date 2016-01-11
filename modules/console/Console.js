@@ -264,8 +264,8 @@ Console = new (Class.extend({
 	},
 
 	listen: function() {
-		// Make sure we have Node.StandardIn
-		if(global['Node'] && global['Node'].StandardIn) {
+		// Make sure we have Node.StandardIn, don't do this if Electron is running
+		if(global['Node'] && global['Node'].StandardIn && !Node.Process.versions.electron) {
 			if(Node.StandardIn.setRawMode) {
 				Node.StandardIn.setRawMode(true); // Takes input character by character	
 			}

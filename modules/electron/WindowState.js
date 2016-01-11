@@ -90,6 +90,15 @@ WindowState = Class.extend({
 			this.browserWindow.setFullScreen(true);
 		}
 
+		// Temporary hack to fix Windows 10 browser window sizing issues until Electron is fixed
+		// Windows 10 Browser Window Bounds Calculating Incorrectly #4045
+		// https://github.com/atom/electron/issues/4045
+		if(Node.OperatingSystem.platform() == 'win32' && Node.OperatingSystem.release().startsWith('10.')) {
+			this.x = this.x - 7;
+			this.width = this.width + 14;
+			this.height = this.height + 7;
+		}
+
 		this.browserWindow.setBounds({
 			width: this.width,
 			height: this.height,
