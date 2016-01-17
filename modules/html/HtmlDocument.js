@@ -43,12 +43,11 @@ HtmlDocument = XmlDocument.extend({
 		if(global['document']) {
 			//console.log('document is a global variable', document, document.body);
 			this.domDocument = document;
+			//console.log('DOM present, HtmlDocument connected to DOM', this);
 
-			// Attach domElements to head and body when the document is ready
-			this.on('ready', function() {
-				this.head.domElement = this.domDocument.head;
-				this.body.domElement = this.domDocument.body;
-			}.bind(this));
+			// Connect the root domElements to head and body
+			this.head.domElement = this.domDocument.head;
+			this.body.domElement = this.domDocument.body;
 		}
 	},
 
@@ -70,6 +69,7 @@ HtmlDocument = XmlDocument.extend({
 
 			// If the document is already ready, just run the function
 			if(eventName == 'DOMContentLoaded' && domDocument.readyState == 'complete') {
+				//console.log('DOM already ready (readyState is complete)', callback);
 				callback();
 			}
 			// If the document isn't ready, add an event listener
@@ -84,10 +84,17 @@ HtmlDocument = XmlDocument.extend({
 		HtmlDocument.on('ready', callback);
 	},
 
-	apply: function() {
+	addToDom: function() {
 		this.buildHead();
-		this.head.apply();
-		this.body.apply();
+		this.head.addToDom();
+		this.body.addToDom();
+
+		// At this point the HtmlDocument has been added to the DOM
+		this.addedToDom();
+	},
+
+	addedToDom: function() {
+		//console.log('HtmlDocument added to DOM', this);
 	},
 
 	buildHead: function() {

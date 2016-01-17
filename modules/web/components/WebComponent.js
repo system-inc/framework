@@ -12,19 +12,12 @@ WebComponent = Class.extend({
 			elementTag: 'div',
 		}, settings);
 
-		// Initialize the component when the DOM document is ready
-		HtmlDocument.on('ready', function() {
-			this.initialize();
-		}.bind(this));
-	},
-
-	initialize: function() {
 		// Every web component must have an HtmlElement
 		this.element = new HtmlElement(this.settings.get('elementTag'));
 	},
 
-	// Called when the WebComponent is added to the DOM
-	render: function() {
+	// Called when added to the DOM
+	addedToDom: function() {
 	},
 
 	toString: function() {

@@ -1,5 +1,11 @@
 NotificationWebComponent = WebComponent.extend({
 
+	construct: function() {
+		this.super({
+			'id': 'notification',
+		});
+	},
+
 	show: function(text) {
 		this.element.setContent(text);
 		this.element.show();
@@ -7,12 +13,6 @@ NotificationWebComponent = WebComponent.extend({
 
 	hide: function() {
 		this.element.hide();
-	},
-
-	initialize: function() {
-		this.element = Html.div({
-			'id': 'notification',
-		});
 	},
 
 });

@@ -62,8 +62,8 @@ Electron = new (Class.extend({
 		var htmlDocument = yield mainController[ElectronModule.settings.get('mainControllerMethodName')]();
 		//console.log(htmlDocument);
 		
-		// Apply the HtmlDocument to the DOM (make sure not to strip out the current reference to Project.js in the head tag)
-		htmlDocument.apply();
+		// Add the HtmlDocument to the DOM (make sure not to strip out the current reference to Project.js in the head tag)
+		htmlDocument.addToDom();
 
 		// Show the main browser window
 		this.mainBrowserWindow.show();

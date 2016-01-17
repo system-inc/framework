@@ -2,31 +2,43 @@ HtmlElement = XmlElement.extend({
 
 	domElement: null,
 
-	apply: function() {
+	addToDom: function() {
+		// "this.domElement" is either be document.head or document.body
 		if(this.domElement) {
 			// Apply attribrutes
 			this.attributes.each(function(attributeName, attributeValue) {
 				this.domElement.setAttribute(attributeName, attributeValue);
 			}.bind(this));
 
-			// Set the content
-			this.content.each(function(index, content) {
+			// Add child content to the DOM
+			for(var i = 0; i < this.content.length; i++) {
+				var content = this.content[i];
+
 				// Create the child DOM element
 				var childDomElement = document.createRange().createContextualFragment(content);
 
 				// Append the child DOM element to this element's DOM element
 				this.domElement.appendChild(childDomElement);
 
+				// If we are adding an HtmlElement
+				if(Class.isInstance(content, HtmlElement)) {
+					content.domElement = this.domElement.lastChild;
+					content.addedToDom();
+				}
 				// If we are adding a WebComponent
-				if(Class.isInstance(content, WebComponent)) {
+				else if(Class.isInstance(content, WebComponent)) {
 					// Set the WebComponent's element.domElement property
 					content.element.domElement = this.domElement.lastChild;
-
-					// Call the WebComponent's render() method
-					content.render();
+					content.addedToDom();
 				}
-			}.bind(this));
+			}
+
+			this.addedToDom();
 		}
+	},
+
+	addedToDom: function() {
+		//console.log('HtmlElement added to DOM', this);
 	},
 
 	on: function(eventName, callback) {
