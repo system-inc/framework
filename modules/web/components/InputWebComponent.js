@@ -1,11 +1,11 @@
 InputWebComponent = WebComponent.extend({
 
 	getValue: function() {
-		return this.element.domElement.value;
+		return this.domElement.value;
 	},
 
 	setValue: function(value) {
-		this.element.domElement.value = value;
+		this.domElement.value = value;
 
 		return this.getValue();
 	},

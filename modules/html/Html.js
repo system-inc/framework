@@ -1,7 +1,5 @@
 Html = {};
 
-Html.find = HtmlElements.find;
-
 // Any tag
 
 Html.create = function(tag, options) {

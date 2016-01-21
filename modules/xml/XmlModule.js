@@ -5,7 +5,6 @@ XmlModule = Module.extend({
 	uses: [
 		'XmlDocument',
 		'XmlElement',
-		'XmlElements',
 	],
 	
 });

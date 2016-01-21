@@ -1,18 +1,16 @@
 NotificationWebComponent = WebComponent.extend({
 
-	construct: function() {
-		this.super({
-			'id': 'notification',
-		});
+	attributes: {
+		class: 'notification',
 	},
 
 	show: function(text) {
-		this.element.setContent(text);
-		this.element.show();
+		//this.setContent(text);
+		this.show();
 	},
 
 	hide: function() {
-		this.element.hide();
+		this.hide();
 	},
 
 });

@@ -1,3 +1,0 @@
-XmlElements = Class.extend({
-
-});

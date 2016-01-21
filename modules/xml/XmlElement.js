@@ -6,7 +6,9 @@ XmlElement = Class.extend({
 	content: [], // Array containing strings or elements
 
 	construct: function(tag, options, unary) {
-		this.tag = tag;
+		if(tag !== undefined) {
+			this.tag = tag;
+		}
 
 		// If unary is passed
 		if(unary !== undefined) {

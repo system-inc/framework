@@ -1,27 +1,14 @@
-WebComponent = Class.extend({
+WebComponent = HtmlElement.extend({
 
-	// Every web component must have an HtmlElement
-	element: null,
-
-	// Settings for the web component
+	// Settings for the WebComponent
 	settings: null,
 
 	construct: function(settings) {
 		this.settings = Settings.default({
-			// The default element tag for a web component is div
-			elementTag: 'div',
 		}, settings);
 
-		// Every web component must have an HtmlElement
-		this.element = new HtmlElement(this.settings.get('elementTag'));
-	},
-
-	// Called when added to the DOM
-	addedToDom: function() {
-	},
-
-	toString: function() {
-		return this.element.toString();
+		// Every WebComponent is an HtmlElement
+		this.super();
 	},
 
 });

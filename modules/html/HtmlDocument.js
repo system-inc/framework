@@ -3,6 +3,7 @@ HtmlDocument = XmlDocument.extend({
 	type: 'html',
 
 	domDocument: null,
+	onAddedToDom: null,
 
 	element: null,
 	head: null,
@@ -67,8 +68,24 @@ HtmlDocument = XmlDocument.extend({
 				eventName = 'DOMContentLoaded';
 			}
 
+			// If they want to use the custom onAddedToDom event
+			if(eventName == 'addedToDom') {
+				if(!this.onAddedToDom) {
+					this.onAddedToDom = callback;
+				}
+				else if(Function.is(this.onAddedToDom)) {
+					// Wrap the current function in an array
+					this.onAddedToDom = [this.onAddedToDom];
+
+					// Add the new callback to the array
+					this.onAddedToDom.append(callback);
+				}
+				else if(Array.is(this.onAddedToDom)) {
+					this.onAddedToDom.append(callback);
+				}
+			}
 			// If the document is already ready, just run the function
-			if(eventName == 'DOMContentLoaded' && domDocument.readyState == 'complete') {
+			else if(eventName == 'DOMContentLoaded' && domDocument.readyState == 'complete') {
 				//console.log('DOM already ready (readyState is complete)', callback);
 				callback();
 			}
@@ -95,6 +112,15 @@ HtmlDocument = XmlDocument.extend({
 
 	addedToDom: function() {
 		//console.log('HtmlDocument added to DOM', this);
+
+		if(Function.is(this.onAddedToDom)) {
+			this.onAddedToDom();
+		}
+		else if(Array.is(this.onAddedToDom)) {
+			this.onAddedToDom.each(function(index, callback) {
+				callback();
+			});
+		}
 	},
 
 	buildHead: function() {

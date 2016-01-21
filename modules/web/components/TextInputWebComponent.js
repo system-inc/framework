@@ -2,17 +2,21 @@ WebComponent.load('Input');
 
 TextInputWebComponent = InputWebComponent.extend({
 
+    insertText: function(text) {
+        document.execCommand('insertText', false, text);
+    },
+
 	getCursorPosition: function() {
         var position = 0;
 
-        if('selectionStart' in this.element) {
-            position = this.element.selectionStart;
+        if('selectionStart' in this.domElement) {
+            position = this.domElement.selectionStart;
         }
         else if('selection' in document) {
-            element.focus();
+            this.domElement.focus();
             var selectionRange = document.selection.createRange();
             var selectionLength = document.selection.createRange().text.length;
-            selectionRange.moveStart('character', -this.element.value.length);
+            selectionRange.moveStart('character', -this.domElement.value.length);
             position = selectionRange.text.length - selectionLength;
         }
 
@@ -24,24 +28,24 @@ TextInputWebComponent = InputWebComponent.extend({
     },
 
     selectRange: function(start, end) {
-        if(typeof end == 'undefined') {
+        if(end === undefined) {
             end = start;
         }
 
         if(start == -1) {
-            start = this.element.value.length;
+            start = this.domElement.value.length;
         }
 
         if(end == -1) {
-            end = this.element.value.length;
+            end = this.domElement.value.length;
         }
 
-        if(this.element.setSelectionRange) {
-            this.element.focus();
-            this.element.setSelectionRange(start, end);
+        if(this.domElement.setSelectionRange) {
+            this.domElement.focus();
+            this.domElement.setSelectionRange(start, end);
         }
-        else if(this.element.createTextRange) {
-            var range = this.element.createTextRange();
+        else if(this.domElement.createTextRange) {
+            var range = this.domElement.createTextRange();
             range.collapse(true);
             range.moveEnd('character', end);
             range.moveStart('character', start);
