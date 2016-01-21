@@ -95,6 +95,18 @@ HtmlElement = XmlElement.extend({
 		}
 	},
 
+	show: function() {
+		if(this.domElement) {
+			this.domElement.style.display = 'block';
+		}
+	},
+
+	hide: function() {
+		if(this.domElement) {
+			this.domElement.style.display = 'none';
+		}
+	},
+
 	clone: function(options) {
 		options = {
 			content: true,
