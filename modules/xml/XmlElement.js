@@ -116,7 +116,20 @@ XmlElement = Class.extend({
 
 		// Attributes
 		this.attributes.each(function(attributeName, attributeValue) {
-			string += ' '+attributeName+'="'+attributeValue+'"';
+			var attributeValueString = attributeValue;
+
+			// Attributes that are not strings are turned into a string, e.g., "property1: value1; property2: value2;""
+			if(!String.is(attributeValue)) {
+				attributeValueString = '';
+
+				attributeValue.each(function(subAttributeName, subAttributeValue) {
+					attributeValueString += subAttributeName+': '+subAttributeValue+'; ';
+				});
+
+				attributeValueString = attributeValueString.trim();
+			}
+
+			string += ' '+attributeName+'="'+attributeValueString+'"';				
 		});
 
 		if(this.unary) {

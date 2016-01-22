@@ -1,5 +1,8 @@
 WebComponent = HtmlElement.extend({
 
+	// All web components use a div tag unless otherwise specified
+	tag: 'div',
+
 	// Settings for the WebComponent
 	settings: null,
 

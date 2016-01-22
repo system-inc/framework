@@ -2,6 +2,16 @@ Array.is = function(value) {
 	return Object.prototype.toString.call(value) == '[object Array]';
 }
 
+Array.wrap = function(value) {
+	if(!Array.is(value)) {
+		value = [
+			value,
+		];
+	}
+
+	return value;
+}
+
 Array.isPrimitive = function(array) {
 	var isPrimitive = true;
 

@@ -5,12 +5,39 @@ HtmlElement = XmlElement.extend({
 	addToDom: function() {
 		// "this.domElement" is either be document.head or document.body
 		if(this.domElement) {
-			// Apply attribrutes
+			this.updateDom();
+			this.addedToDom();
+		}
+	},
+
+	addedToDom: function() {
+		//console.log('HtmlElement added to DOM', this);
+	},
+
+	updateDom: function() {
+		if(this.domElement) {
+			// Update the domElement's attributes
 			this.attributes.each(function(attributeName, attributeValue) {
-				this.domElement.setAttribute(attributeName, attributeValue);
+				var attributeValueString = attributeValue;
+
+				// Attributes that are not strings are turned into a string, e.g., "property1: value1; property2: value2;""
+				if(!String.is(attributeValue)) {
+					attributeValueString = '';
+
+					attributeValue.each(function(subAttributeName, subAttributeValue) {
+						attributeValueString += subAttributeName+': '+subAttributeValue+'; ';
+					});
+
+					attributeValueString = attributeValueString.trim();
+				}
+
+				this.domElement.setAttribute(attributeName, attributeValueString);
 			}.bind(this));
 
-			// Add child content to the DOM
+			// Empty the domElement
+			this.emptyDomElement();
+
+			// Update the domElement's content, maintaining domElement references for each HtmlElement
 			for(var i = 0; i < this.content.length; i++) {
 				var content = this.content[i];
 
@@ -32,13 +59,15 @@ HtmlElement = XmlElement.extend({
 					content.addedToDom();
 				}
 			}
-
-			this.addedToDom();
 		}
 	},
 
-	addedToDom: function() {
-		//console.log('HtmlElement added to DOM', this);
+	emptyDomElement: function() {
+		while(this.domElement.firstChild) {
+			this.domElement.removeChild(this.domElement.firstChild);
+		}
+
+		return this.domElement;
 	},
 
 	on: function(eventName, callback) {
@@ -84,27 +113,41 @@ HtmlElement = XmlElement.extend({
 	},
 
 	height: function(height) {
-		if(this.domElement) {
-			this.domElement.style.height = height+'px';
-		}
+		this.setStyle('height', height+'px');
 	},
 
 	width: function(width) {
-		if(this.domElement) {
-			this.domElement.style.width = width+'px';
-		}
+		this.setStyle('width', width+'px');
 	},
 
 	show: function() {
-		if(this.domElement) {
-			this.domElement.style.display = 'block';
-		}
+		this.setStyle('display', 'block');
 	},
 
 	hide: function() {
-		if(this.domElement) {
-			this.domElement.style.display = 'none';
+		this.setStyle('display', 'none');
+	},
+
+	setContent: function(content) {
+		this.content = Array.wrap(content);
+		
+		this.updateDom();
+	},
+
+	setStyle: function(property, value) {
+		if(!this.attributes.style) {
+			this.attributes.style = {};
 		}
+
+		this.attributes.style[property] = value;
+
+		this.updateDom();
+	},
+
+	empty: function() {
+		this.content = [];
+
+		this.updateDom();
 	},
 
 	clone: function(options) {
