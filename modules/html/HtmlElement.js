@@ -2,10 +2,13 @@ HtmlElement = XmlElement.extend({
 
 	domElement: null,
 
+	domUpdateScheduled: false,
+
 	addToDom: function() {
 		// "this.domElement" is either be document.head or document.body
 		if(this.domElement) {
-			this.updateDom();
+			// Immediately update the DOM
+			this.executeDomUpdate();
 			this.addedToDom();
 		}
 	},
@@ -15,51 +18,82 @@ HtmlElement = XmlElement.extend({
 	},
 
 	updateDom: function() {
-		if(this.domElement) {
-			// Update the domElement's attributes
-			this.attributes.each(function(attributeName, attributeValue) {
-				var attributeValueString = attributeValue;
+		//console.log('updateDom');
 
-				// Attributes that are not strings are turned into a string, e.g., "property1: value1; property2: value2;""
-				if(!String.is(attributeValue)) {
-					attributeValueString = '';
+		if(!this.domElement) {
+			return;
+		}
 
-					attributeValue.each(function(subAttributeName, subAttributeValue) {
-						attributeValueString += subAttributeName+': '+subAttributeValue+'; ';
-					});
+		if(!this.domUpdateScheduled) {
+			//console.log('scheduling executeDomUpdate')
 
-					attributeValueString = attributeValueString.trim();
-				}
+			this.domUpdateScheduled = true;
 
-				this.domElement.setAttribute(attributeName, attributeValueString);
+			window.requestAnimationFrame(function() {
+				this.executeDomUpdate();
 			}.bind(this));
+		}
+		else {
+			//console.log('executeDomUpdate already scheduled')
+		}
+	},
 
-			// Empty the domElement
-			this.emptyDomElement();
+	executeDomUpdate: function() {
+		//console.log('executeDomUpdate');
 
-			// Update the domElement's content, maintaining domElement references for each HtmlElement
-			for(var i = 0; i < this.content.length; i++) {
-				var content = this.content[i];
+		// TODO: Need to remove attributes no longer in the source of truth (HtmlElement)
+		// TODO: Should only update attributes that have changed
 
-				// Create the child DOM element
-				var childDomElement = document.createRange().createContextualFragment(content);
+		// Update the domElement's attributes
+		this.attributes.each(function(attributeName, attributeValue) {
+			var attributeValueString = attributeValue;
 
-				// Append the child DOM element to this element's DOM element
-				this.domElement.appendChild(childDomElement);
+			// Attributes that are not strings are turned into a string, e.g., "property1: value1; property2: value2;""
+			if(!String.is(attributeValue)) {
+				attributeValueString = '';
 
-				// If we are adding an HtmlElement
-				if(Class.isInstance(content, HtmlElement)) {
-					content.domElement = this.domElement.lastChild;
-					content.addedToDom();
-				}
-				// If we are adding a WebComponent
-				else if(Class.isInstance(content, WebComponent)) {
-					// Set the WebComponent's element.domElement property
-					content.element.domElement = this.domElement.lastChild;
-					content.addedToDom();
-				}
+				attributeValue.each(function(subAttributeName, subAttributeValue) {
+					attributeValueString += subAttributeName+': '+subAttributeValue+'; ';
+				});
+
+				attributeValueString = attributeValueString.trim();
+			}
+
+			this.domElement.setAttribute(attributeName, attributeValueString);
+		}.bind(this));
+
+		// TODO: This is not performant ---------------------------------------
+		// Should do comparisons between the source of truth (HtmlElement) and the existing domElements
+
+		// Empty the domElement
+		this.emptyDomElement();
+
+		// Update the domElement's content, maintaining domElement references for each HtmlElement
+		for(var i = 0; i < this.content.length; i++) {
+			var content = this.content[i];
+
+			// Create the child DOM element
+			var childDomElement = document.createRange().createContextualFragment(content);
+
+			// Append the child DOM element to this element's DOM element
+			this.domElement.appendChild(childDomElement);
+
+			// If we are adding an HtmlElement
+			if(Class.isInstance(content, HtmlElement)) {
+				content.domElement = this.domElement.lastChild;
+				content.addedToDom();
+			}
+			// If we are adding a WebComponent
+			else if(Class.isInstance(content, WebComponent)) {
+				// Set the WebComponent's element.domElement property
+				content.element.domElement = this.domElement.lastChild;
+				content.addedToDom();
 			}
 		}
+
+		// ---------------------------------------------------------------------
+
+		this.domUpdateScheduled = false;
 	},
 
 	emptyDomElement: function() {
@@ -120,15 +154,25 @@ HtmlElement = XmlElement.extend({
 		this.setStyle('width', width+'px');
 	},
 
+	focus: function() {
+		if(this.domElement) {
+			this.domElement.focus();	
+		}
+	},
+
 	show: function() {
+		//console.log('show');
 		this.setStyle('display', 'block');
 	},
 
 	hide: function() {
+		//console.log('hide');
 		this.setStyle('display', 'none');
 	},
 
 	setContent: function(content) {
+		//console.log('setContent');
+
 		this.content = Array.wrap(content);
 		
 		this.updateDom();

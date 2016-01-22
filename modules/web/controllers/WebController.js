@@ -1,0 +1,2 @@
+WebController = Class.extend({
+});

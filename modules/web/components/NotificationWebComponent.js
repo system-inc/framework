@@ -7,24 +7,14 @@ NotificationWebComponent = WebComponent.extend({
 		},
 	},
 
-	// What is a notification?
-	// appears anywhere in the UI to tell the user something
-	// may disapear over a period of time
-	// may require the user to acknowledge it to close it
-	// may have an x to dismiss
-
-	//construct: function(settings) {
-	//	this.settings = Settings.default({
-
-	//	}, settings);
-
-
-
-	//	this.super();
-	//},
-
-	show: function(content) {
+	show: function(content, options) {
 		this.setContent(content);
+
+		if(options && options.duration) {
+			Function.delay(options.duration, function() {
+				this.hide();
+			}.bind(this));
+		}
 		
 		this.super();
 	},

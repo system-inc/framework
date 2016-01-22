@@ -1,13 +1,19 @@
 InputWebComponent = WebComponent.extend({
 
+	value: null,
+
 	getValue: function() {
-		return this.domElement.value;
+		if(this.domElement) {
+			this.value = this.domElement.value;	
+		}
+
+		return this.value;
 	},
 
 	setValue: function(value) {
-		this.domElement.value = value;
+		this.value = this.domElement.value = value;
 
-		return this.getValue();
+		return this.value;
 	},
 
 });
