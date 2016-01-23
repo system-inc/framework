@@ -121,6 +121,14 @@ Framework = Class.extend({
 		}
 	},
 
+	getUserDirectory: function() {
+		return Node.Process.env[this.onWindows() ? 'USERPROFILE' : 'HOME'];
+	},
+
+	getUserDesktopDirectory: function() {
+		return Node.Path.join(this.getUserDirectory(), 'Desktop');
+	},
+
 	onWindows: function() {
 		return Node.Process.platform == 'win32';
 	},

@@ -4,6 +4,7 @@ Electron = new (Class.extend({
 	application: null,
 	shell: null,
 	screen: null,
+	dialog: null,
 	menu: null,
 	menuItem: null,
 	browserWindow: null,
@@ -20,11 +21,14 @@ Electron = new (Class.extend({
 		// Remotely access Application variables in this renderer process
 		this.remote = require('remote');
 
-		// Set the application
+		// Set application
 		this.application = this.remote.require('app');
 
-		// Set the shell
+		// Set shell
 		this.shell = this.remote.require('shell');
+
+		// Set dialog
+		this.dialog = this.remote.require('dialog');
 
 		// Set the menu
 		this.menu = this.remote.require('menu');
@@ -56,14 +60,16 @@ Electron = new (Class.extend({
 		this.addDefaultKeyboardShortcuts();
 
 		// Get the main controller
-		var mainController = Controller.getController(ElectronModule.settings.get('mainControllerName'));
+		var mainWebController = Controller.getController(ElectronModule.settings.get('mainWebControllerName'));
 
 		// Load the HtmlDocument from the main controller (Main.main() should always return an HtmlDocument)
-		var htmlDocument = yield mainController[ElectronModule.settings.get('mainControllerMethodName')]();
+		var htmlDocument = yield mainWebController[ElectronModule.settings.get('mainWebControllerMethodName')]();
 		//console.log(htmlDocument);
 		
 		// Add the HtmlDocument to the DOM (make sure not to strip out the current reference to Project.js in the head tag)
 		htmlDocument.addToDom();
+
+		window.mainWebController = mainWebController;
 
 		// Show the main browser window
 		this.mainBrowserWindow.show();

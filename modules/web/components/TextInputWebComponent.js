@@ -24,8 +24,6 @@ TextInputWebComponent = InputWebComponent.extend({
     },
 
     setCursorPosition: function(index) {
-        console.log('setCursorPosition not working');
-
         this.selectRange(index, index);
     },
 
