@@ -1,8 +1,12 @@
 HtmlElement = XmlElement.extend({
 
+	identifier: '0', // Used to uniquely identify HtmlElements for tree comparisons againt the DOM
+	counter: 0, // Used to ensure unique identifiers
+
 	domElement: null,
 
 	domUpdateScheduled: false,
+	domUpdates: {},
 
 	addToDom: function() {
 		// "this.domElement" is either be document.head or document.body
@@ -39,33 +43,72 @@ HtmlElement = XmlElement.extend({
 	},
 
 	executeDomUpdate: function() {
-		//console.log('executeDomUpdate');
+		console.log('this is getting called twice when I change theme, should only getting called once')
+		console.log('executeDomUpdate');
 
-		// TODO: Need to remove attributes no longer in the source of truth (HtmlElement)
-		// TODO: Should only update attributes that have changed
+		var domElementAttributesToUpdate = {};
+		var domElementAttributeNames = {};
 
-		// Update the domElement's attributes
-		this.attributes.each(function(attributeName, attributeValue) {
-			var attributeValueString = attributeValue;
+		// TODO: Maybe instead of looping everytime I can just keep track of what has changed on the HtmlElement class?
 
-			// Attributes that are not strings are turned into a string, e.g., "property1: value1; property2: value2;""
-			if(!String.is(attributeValue)) {
-				attributeValueString = '';
+		// Loop through all of the DOM element's attributes
+		this.domElement.attributes.each(function(domElementAttributeIndex, domElementAttribute) {
+			//console.log(domElementAttributeIndex, domElementAttribute, domElementAttribute.name, domElementAttribute.value);
 
-				attributeValue.each(function(subAttributeName, subAttributeValue) {
-					attributeValueString += subAttributeName+': '+subAttributeValue+'; ';
-				});
+			// Keep track of all DOM element attribute names so we know later on if we need to add anything
+			domElementAttributeNames[domElementAttribute.name] = true;
 
-				attributeValueString = attributeValueString.trim();
+			// If the DOM element attribute still exists on the HtmlElement we need to check if they still match
+			if(this.attributes[domElementAttribute.name] !== undefined) {
+				var attributeValue = HtmlElement.attributeValueToString(this.attributes[domElementAttribute.name]);
+
+				// If they do not match, mark the attribute to be updated
+				if(attributeValue != domElementAttribute.value) {
+					domElementAttributesToUpdate[domElementAttribute.name] = {
+						value: attributeValue,
+						action: 'set',
+					};
+				}
 			}
+			// If the DOM element attribute does not exist on the HtmlElement anymore, mark it for removal
+			else {
+				domElementAttributesToUpdate[domElementAttribute.name] = {
+					action: 'remove',
+				};
+			}
+		}.bind(this));
 
-			this.domElement.setAttribute(attributeName, attributeValueString);
+		// Loop through all of the HtmlElement's attributes looking to see if we have any new attributes to set
+		this.attributes.each(function(attributeName, attributeValue) {
+			// If the attribute does not exist in domElementAttributesToUpdate, then we must set it
+			if(domElementAttributeNames[attributeName] === undefined) {
+				domElementAttributesToUpdate[attributeName] = {
+					value: HtmlElement.attributeValueToString(attributeValue),
+					action: 'set',
+				};
+			}
+		}.bind(this));
+
+		//console.log('domElementAttributesToUpdate', domElementAttributesToUpdate);
+
+		// Update the DOM element's attributes
+		domElementAttributesToUpdate.each(function(domElementAttributeToUpdateName, domElementAttributeToUpdate) {
+			if(domElementAttributeToUpdate.action == 'remove') {
+				console.log('removeAttribute', domElementAttributeToUpdateName);
+				this.domElement.removeAttribute(domElementAttributeToUpdateName);
+			}
+			else if(domElementAttributeToUpdate.action == 'set') {
+				console.log('setAttribute', domElementAttributeToUpdateName, domElementAttributeToUpdate.value);
+				this.domElement.setAttribute(domElementAttributeToUpdateName, domElementAttributeToUpdate.value);
+			}
 		}.bind(this));
 
 		// TODO: This is not performant ---------------------------------------
 		// Should do comparisons between the source of truth (HtmlElement) and the existing domElements
 
 		// Empty the domElement
+		// TODO: Don't do this - it wipes out state for text inputs
+		console.log('Don\'t do this - it wipes out state for text inputs');
 		this.emptyDomElement();
 
 		// Update the domElement's content, maintaining domElement references for each HtmlElement
@@ -96,6 +139,14 @@ HtmlElement = XmlElement.extend({
 		this.domUpdateScheduled = false;
 	},
 
+	createIdentifier: function(stringOrElement) {
+		if(Class.isInstance(stringOrElement, HtmlElement)) {
+			stringOrElement.identifier = stringOrElement.parent.identifier+'.'+this.counter;
+			stringOrElement.setAttribute('data-identifier', stringOrElement.identifier);
+			this.counter++;
+		}
+	},
+
 	emptyDomElement: function() {
 		while(this.domElement.firstChild) {
 			this.domElement.removeChild(this.domElement.firstChild);
@@ -108,6 +159,8 @@ HtmlElement = XmlElement.extend({
 		if(this.domElement && this.domElement.addEventListener) {
 			domElement.addEventListener(eventName, callback);
 		}
+
+		return this;
 	},
 
 	addClass: function(className) {
@@ -148,34 +201,52 @@ HtmlElement = XmlElement.extend({
 
 	height: function(height) {
 		this.setStyle('height', height+'px');
+
+		return this;
 	},
 
 	width: function(width) {
 		this.setStyle('width', width+'px');
+
+		return this;
 	},
 
 	focus: function() {
 		if(this.domElement) {
 			this.domElement.focus();	
 		}
+
+		return this;
 	},
 
 	show: function() {
 		//console.log('show');
 		this.setStyle('display', 'block');
+
+		return this;
 	},
 
 	hide: function() {
 		//console.log('hide');
 		this.setStyle('display', 'none');
+
+		return this;
 	},
 
-	setContent: function(content) {
-		//console.log('setContent');
+	setAttribute: function(attributeName, attributeValue) {
+		this.super.apply(this, arguments);
 
-		this.content = Array.wrap(content);
-		
 		this.updateDom();
+
+		return this;
+	},
+
+	removeAttribute: function(attributeName) {
+		this.super.apply(this, arguments);
+
+		this.updateDom();
+
+		return this;
 	},
 
 	setStyle: function(property, value) {
@@ -184,14 +255,45 @@ HtmlElement = XmlElement.extend({
 		}
 
 		this.attributes.style[property] = value;
-
 		this.updateDom();
+
+		return this;
 	},
 
-	empty: function() {
-		this.content = [];
+	setContent: function(content) {
+		//console.log('setContent');
+
+		this.content = Array.wrap(content);
+		this.updateDom();
+
+		return this;
+	},
+
+	append: function(stringOrElement) {
+		this.super.apply(this, arguments);
+
+		this.createIdentifier(stringOrElement);
 
 		this.updateDom();
+
+		return this;
+	},
+
+	prepend: function(stringOrElement) {
+		this.super.apply(this, arguments);
+
+		this.createIdentifier(stringOrElement);
+
+		this.updateDom();
+
+		return this;
+	},	
+
+	empty: function() {
+		this.super.apply(this, arguments);
+		this.updateDom();
+
+		return this;
 	},
 
 	clone: function(options) {

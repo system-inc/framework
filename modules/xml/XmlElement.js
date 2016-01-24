@@ -3,6 +3,7 @@ XmlElement = Class.extend({
 	tag: null,
 	unary: false, // Tags are not unary (self-closing) by default
 	attributes: {},
+
 	content: [], // Array containing strings or elements
 
 	construct: function(tag, options, unary) {
@@ -24,7 +25,7 @@ XmlElement = Class.extend({
 			options.each(function(optionName, optionValue) {
 				// Handle content
 				if(optionName == 'content') {
-					this.append(optionValue);
+					this.content.append(optionValue);
 				}
 				// Handle unary being passed as an option
 				else if(optionName == 'unary') {
@@ -70,11 +71,21 @@ XmlElement = Class.extend({
 	prepend: function(stringOrElement) {
 		this.content.prepend(stringOrElement);
 
+		// Establish parent/child relationship
+		if(Class.isInstance(stringOrElement, XmlElement)) {
+			stringOrElement.parent = this;
+		}
+
 		return this;
 	},	
 
 	append: function(stringOrElement) {
 		this.content.append(stringOrElement);
+
+		// Establish parent/child relationship
+		if(Class.isInstance(stringOrElement, XmlElement)) {
+			stringOrElement.parent = this;
+		}
 
 		return this;
 	},
@@ -116,20 +127,7 @@ XmlElement = Class.extend({
 
 		// Attributes
 		this.attributes.each(function(attributeName, attributeValue) {
-			var attributeValueString = attributeValue;
-
-			// Attributes that are not strings are turned into a string, e.g., "property1: value1; property2: value2;""
-			if(!String.is(attributeValue)) {
-				attributeValueString = '';
-
-				attributeValue.each(function(subAttributeName, subAttributeValue) {
-					attributeValueString += subAttributeName+': '+subAttributeValue+'; ';
-				});
-
-				attributeValueString = attributeValueString.trim();
-			}
-
-			string += ' '+attributeName+'="'+attributeValueString+'"';				
+			string += ' '+attributeName+'="'+XmlElement.attributeValueToString(attributeValue)+'"';
 		});
 
 		if(this.unary) {
@@ -150,3 +148,20 @@ XmlElement = Class.extend({
 	},
 
 });
+
+XmlElement.attributeValueToString = function(attributeValue) {
+	var attributeValueString = attributeValue;
+
+	// Attributes that are not strings are turned into a string, e.g., "property1: value1; property2: value2;""
+	if(!String.is(attributeValue)) {
+		attributeValueString = '';
+
+		attributeValue.each(function(subAttributeName, subAttributeValue) {
+			attributeValueString += subAttributeName+': '+subAttributeValue+'; ';
+		});
+
+		attributeValueString = attributeValueString.trim();
+	}
+
+	return attributeValueString;
+}

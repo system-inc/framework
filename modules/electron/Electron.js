@@ -1,13 +1,16 @@
 Electron = new (Class.extend({
 
+	// Classes
+	Menu: null,
+	MenuItem: null,
+	BrowserWindow: null,
+
+	// Properties
 	remote: null,
 	application: null,
 	shell: null,
 	screen: null,
 	dialog: null,
-	menu: null,
-	menuItem: null,
-	browserWindow: null,
 	mainBrowserWindow: null,
 	mainBrowserWindowState: null,
 
@@ -31,9 +34,9 @@ Electron = new (Class.extend({
 		this.dialog = this.remote.require('dialog');
 
 		// Set the menu
-		this.menu = this.remote.require('menu');
-		this.menuItem = this.remote.require('menu-item');
-		this.menu.setApplicationMenu(this.getDefaultMenu());
+		this.Menu = this.remote.require('menu');
+		this.MenuItem = this.remote.require('menu-item');
+		this.Menu.setApplicationMenu(this.getDefaultMenu());
 
 		// Set the screen
 		this.screen = require('screen');
@@ -42,7 +45,7 @@ Electron = new (Class.extend({
 		this.screen.removeAllListeners();
 
 		// Set the BrowserWindow
-		this.browserWindow = this.remote.require('browser-window');
+		this.BrowserWindow = this.remote.require('browser-window');
 
 		// Set the main browser window
 		this.mainBrowserWindow = this.remote.getCurrentWindow();
@@ -123,10 +126,33 @@ Electron = new (Class.extend({
 	},
 
 	closeFocusedWindow: function() {
-		var focusedWindow = this.browserWindow.getFocusedWindow();
+		var focusedWindow = this.BrowserWindow.getFocusedWindow();
 		if(focusedWindow) {
 			focusedWindow.close();
 		}
+	},
+
+	reset: function(callback) {
+		this.mainBrowserWindow.webContents.session.clearStorageData(
+			{
+				storages: [
+					'appcache',
+					'cookies',
+					'filesystem',
+					'indexdb',
+					'localstorage',
+					'shadercache',
+					'websql',
+					'serviceworkers',
+				],
+				quotas: [
+					'temporary',
+					'persistent',
+					'syncable',
+				],
+			},
+			callback
+		);
 	},
 
 	exit: function() {
@@ -134,21 +160,21 @@ Electron = new (Class.extend({
 	},
 
 	reloadFocusedWindow: function() {
-		var focusedWindow = this.browserWindow.getFocusedWindow();
+		var focusedWindow = this.BrowserWindow.getFocusedWindow();
 		if(focusedWindow) {
 			focusedWindow.reload();
 		}
 	},
 
 	toggleFullScreenOnFocusedWindow: function() {
-		var focusedWindow = this.browserWindow.getFocusedWindow();
+		var focusedWindow = this.BrowserWindow.getFocusedWindow();
 		if(focusedWindow) {
 			focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
 		}
 	},
 
 	toggleDeveloperToolsOnFocusedWindow: function() {
-		var focusedWindow = this.browserWindow.getFocusedWindow();
+		var focusedWindow = this.BrowserWindow.getFocusedWindow();
 		if(focusedWindow) {
 			focusedWindow.toggleDevTools();
 		}
@@ -159,7 +185,7 @@ Electron = new (Class.extend({
 		var defaultMenu = this.getDefaultMenuTemplate();
 
 		if(defaultMenu) {
-			menu = this.menu.buildFromTemplate(this.getDefaultMenuTemplate());	
+			menu = this.Menu.buildFromTemplate(this.getDefaultMenuTemplate());	
 		}
 
 		return menu;

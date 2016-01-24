@@ -7,6 +7,7 @@ HtmlModule = Module.extend({
 	],
 
 	uses: [
+		'HtmlNode',
 		'HtmlElement',
 		'Html',
 		'HtmlDocument',

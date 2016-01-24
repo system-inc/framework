@@ -1,0 +1,3 @@
+XmlNode = Class.extend({
+	
+});
