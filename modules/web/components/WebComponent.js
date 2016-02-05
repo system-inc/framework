@@ -14,6 +14,16 @@ WebComponent = HtmlElement.extend({
 		this.super();
 	},
 
+	addedToDom: function() {
+		// Register event listeners
+		this.listen();
+	},
+
+	// Abstract method
+	listen: function() {
+		// By default we listen to nothing
+	},
+
 });
 
 // Static methods

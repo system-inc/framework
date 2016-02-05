@@ -1,7 +1,7 @@
 HtmlElement = XmlElement.extend({
 
 	identifier: '0', // Used to uniquely identify HtmlElements for tree comparisons againt the DOM
-	counter: 0, // Used to ensure unique identifiers
+	identifierCounter: 0, // Used to ensure unique identifiers
 
 	domElement: null,
 
@@ -18,7 +18,7 @@ HtmlElement = XmlElement.extend({
 	},
 
 	addedToDom: function() {
-		//console.log('HtmlElement added to DOM', this);
+		//console.log('----------- HtmlElement added to DOM', this);
 	},
 
 	updateDom: function() {
@@ -141,9 +141,14 @@ HtmlElement = XmlElement.extend({
 
 	createIdentifier: function(stringOrElement) {
 		if(Class.isInstance(stringOrElement, HtmlElement)) {
-			stringOrElement.identifier = stringOrElement.parent.identifier+'.'+this.counter;
-			stringOrElement.setAttribute('data-identifier', stringOrElement.identifier);
-			this.counter++;
+			// Set the identifier on the HtmlElement
+			stringOrElement.identifier = stringOrElement.parent.identifier+'.'+this.identifierCounter;
+
+			// Set the identifier on the domElement
+			//stringOrElement.setAttribute('data-identifier', stringOrElement.identifier);
+
+			// Increment the identifier counter
+			this.identifierCounter++;
 		}
 	},
 
@@ -157,7 +162,7 @@ HtmlElement = XmlElement.extend({
 
 	on: function(eventName, callback) {
 		if(this.domElement && this.domElement.addEventListener) {
-			domElement.addEventListener(eventName, callback);
+			this.domElement.addEventListener(eventName, callback);
 		}
 
 		return this;
@@ -199,13 +204,13 @@ HtmlElement = XmlElement.extend({
 		return this;
 	},
 
-	height: function(height) {
+	setHeight: function(height) {
 		this.setStyle('height', height+'px');
 
 		return this;
 	},
 
-	width: function(width) {
+	setWidth: function(width) {
 		this.setStyle('width', width+'px');
 
 		return this;

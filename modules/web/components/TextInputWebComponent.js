@@ -2,8 +2,20 @@ WebComponent.load('Input');
 
 TextInputWebComponent = InputWebComponent.extend({
 
+    listen: function() {
+        this.on('change', function() {
+            this.valueChangedOnDomElement();
+        }.bind(this));
+
+        this.on('keyup', function() {
+            this.valueChangedOnDomElement();
+        }.bind(this));
+    },
+
     insertText: function(text) {
         document.execCommand('insertText', false, text);
+
+        this.valueChangedOnDomElement();
     },
 
 	getCursorPosition: function() {
