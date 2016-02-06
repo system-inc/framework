@@ -3,13 +3,12 @@ HtmlElement = XmlElement.extend({
 	identifier: '0', // Used to uniquely identify HtmlElements for tree comparisons againt the DOM
 	identifierCounter: 0, // Used to ensure unique identifiers
 
+	htmlDocument: null,
+
 	domElement: null,
 
-	domUpdateScheduled: false,
-	domUpdates: {},
-
 	addToDom: function() {
-		// "this.domElement" is either be document.head or document.body
+		// "this.domElement" is either document.head or document.body
 		if(this.domElement) {
 			// Immediately update the DOM
 			this.executeDomUpdate();
@@ -18,33 +17,28 @@ HtmlElement = XmlElement.extend({
 	},
 
 	addedToDom: function() {
-		//console.log('----------- HtmlElement added to DOM', this);
+		//console.log('HtmlElement added to DOM', this);
 	},
 
+	// Called whenever the HtmlElement changes
 	updateDom: function() {
-		//console.log('updateDom');
+		//console.log('HtmlElement.updateDom()');
 
-		if(!this.domElement) {
-			return;
+		// Register an update with the HtmlDocument
+		if(!this.htmlDocument) {
+			Console.warn('Unable to updateDom, HtmlElement is missing the htmlDocument property.', this);
 		}
-
-		if(!this.domUpdateScheduled) {
-			//console.log('scheduling executeDomUpdate')
-
-			this.domUpdateScheduled = true;
-
-			window.requestAnimationFrame(function() {
-				this.executeDomUpdate();
-			}.bind(this));
+		else if(!this.domElement) {
+			Console.warn('Unable to updateDom, HtmlElement is missing the domElement property.', this);
 		}
 		else {
-			//console.log('executeDomUpdate already scheduled')
+			this.htmlDocument.updateDom(this);
 		}
 	},
 
 	executeDomUpdate: function() {
 		console.log('this is getting called twice when I change theme, should only getting called once')
-		console.log('executeDomUpdate');
+		console.log('executeDomUpdate', this);
 
 		var domElementAttributesToUpdate = {};
 		var domElementAttributeNames = {};
@@ -137,19 +131,6 @@ HtmlElement = XmlElement.extend({
 		// ---------------------------------------------------------------------
 
 		this.domUpdateScheduled = false;
-	},
-
-	createIdentifier: function(stringOrElement) {
-		if(Class.isInstance(stringOrElement, HtmlElement)) {
-			// Set the identifier on the HtmlElement
-			stringOrElement.identifier = stringOrElement.parent.identifier+'.'+this.identifierCounter;
-
-			// Set the identifier on the domElement
-			//stringOrElement.setAttribute('data-identifier', stringOrElement.identifier);
-
-			// Increment the identifier counter
-			this.identifierCounter++;
-		}
 	},
 
 	emptyDomElement: function() {
@@ -277,7 +258,7 @@ HtmlElement = XmlElement.extend({
 	append: function(stringOrElement) {
 		this.super.apply(this, arguments);
 
-		this.createIdentifier(stringOrElement);
+		this.processChild(stringOrElement);
 
 		this.updateDom();
 
@@ -287,12 +268,29 @@ HtmlElement = XmlElement.extend({
 	prepend: function(stringOrElement) {
 		this.super.apply(this, arguments);
 
-		this.createIdentifier(stringOrElement);
+		this.processChild(stringOrElement);
 
 		this.updateDom();
 
 		return this;
-	},	
+	},
+
+	processChild: function(stringOrElement) {
+		// Handle HtmlElement objects
+		if(Class.isInstance(stringOrElement, HtmlElement)) {
+			// Set a reference to the htmlDocument
+			stringOrElement.htmlDocument = this.htmlDocument;
+
+			// Set the identifier on the HtmlElement
+			stringOrElement.identifier = stringOrElement.parent.identifier+'.'+this.identifierCounter;
+
+			// Set the identifier on the domElement
+			stringOrElement.setAttribute('data-identifier', stringOrElement.identifier);
+
+			// Increment the identifier counter
+			this.identifierCounter++;
+		}
+	},
 
 	empty: function() {
 		this.super.apply(this, arguments);
@@ -309,7 +307,10 @@ HtmlElement = XmlElement.extend({
 		// Create a new HtmlElement
 		var htmlElement = new HtmlElement(this.tag, null, this.unary);
 
-		// Link the DOM element
+		// Link the htmlDocument
+		htmlElement.htmlDocument = this.htmlDocument;
+
+		// Link the domElement
 		htmlElement.domElement = this.domElement;
 
 		// Clone the attributes

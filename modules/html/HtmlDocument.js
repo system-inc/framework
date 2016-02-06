@@ -13,13 +13,21 @@ HtmlDocument = XmlDocument.extend({
 	scripts: [],
 	styles: [],
 
+	//shouldScheduleDomUpdates: true,
+	shouldScheduleDomUpdates: false,
+	domUpdatesScheduled: false,
+	domUpdates: {},
+
 	construct: function(head, body) {
 		// An <html> tag to store the head and body
 		this.element = Html.html();
 
+		// Establish a reference to the HtmlDocument
+		this.element.htmlDocument = this;
+
 		// Conditionally create the head tag
 		if(head === undefined) {
-			this.head = Html.head();	
+			this.head = Html.head();
 		}
 		else {
 			this.head = head;
@@ -33,23 +41,30 @@ HtmlDocument = XmlDocument.extend({
 			this.body = body;
 		}
 
-		// Append the head and body to the element
-		this.element.append(this.head);
-		this.element.append(this.body);
-
-		// Append the <html> tag to the content array
-		this.content.append(this.element);
-
-		// If we have a DOM, reference the document and document head and body elements
+		// If we the DOM is present, reference the DOM document
 		if(global['document']) {
-			//console.log('document is a global variable', document, document.body);
+			// Connect this.domDocument to the global document
 			this.domDocument = document;
 			//console.log('DOM present, HtmlDocument connected to DOM', this);
 
-			// Connect the root domElements to head and body
+			// Manually connect the head and body to this HtmlDocument
+			this.head.htmlDocument = this;
+			this.body.htmlDocument = this;
+
+			// Manually connect this <html> HtmlElement to document.documentElement
+			this.element.domElement = this.domDocument.documentElement;
+
+			// Manually connect the head and body domElement's to the domDocument's head and body properties
 			this.head.domElement = this.domDocument.head;
 			this.body.domElement = this.domDocument.body;
 		}
+
+		// Manually append the head and body to the element's content (not using the element's .append() method)
+		this.element.content.append(this.head);
+		this.element.content.append(this.body);
+
+		// Manually append the <html> tag to the content array
+		this.content.append(this.element);
 	},
 
 	on: function(eventName, callback) {
@@ -102,6 +117,8 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	addToDom: function() {
+		console.log('HtmlDocument.addToDom', this);
+
 		this.buildHead();
 		this.head.addToDom();
 		this.body.addToDom();
@@ -121,6 +138,51 @@ HtmlDocument = XmlDocument.extend({
 				callback();
 			});
 		}
+	},
+
+	updateDom: function(htmlElement) {
+		console.log('HtmlDocument.updateDom', htmlElement);
+		console.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
+
+		// If DOM update scheduling is enabled
+		if(this.shouldScheduleDomUpdates) {
+			this.scheduleDomUpdate(htmlElement);
+		}
+		// If not, immediately update the DOM
+		else {
+			htmlElement.executeDomUpdate();
+		}
+	},
+
+	scheduleDomUpdate: function(htmlElement) {
+		// If an update isn't scheduled already, use the next animation frame to run all updates
+		if(!this.domUpdatesScheduled) {
+			console.log('scheduling executeDomUpdates');
+			this.domUpdatesScheduled = true;
+
+			// Use an object instead of an array so we get the speed of the hash table for deduping updates
+			this.domUpdates[htmlElement.identifier] = htmlElement;
+
+			window.requestAnimationFrame(function() {
+				this.executeDomUpdates();
+			}.bind(this));	
+		}
+		else {
+			console.log('executeDomUpdates already scheduled')
+		}
+	},
+
+	executeDomUpdates: function() {
+		console.log('HtmlDocument.executeDomUpdates', htmlElement);
+
+		// Iterate over all DOM updates
+		this.domUpdates.each(function(htmlElementIdentifier, htmlElement) {
+			// Run the DOM updates for the HtmlElement
+			htmlElement.executeDomUpdates();
+
+			// Remove the HtmlElement from the domUpdates objects
+			delete this.domUpdates[htmlElementIdentifier];
+		}.bind(this));
 	},
 
 	buildHead: function() {
