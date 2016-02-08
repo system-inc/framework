@@ -289,6 +289,8 @@ HtmlElement = XmlElement.extend({
 	},
 
 	focus: function() {
+		console.log('.focus()', this);
+
 		if(this.domElement) {
 			this.domElement.focus();	
 		}
@@ -298,7 +300,7 @@ HtmlElement = XmlElement.extend({
 
 	show: function() {
 		//console.log('show');
-		this.setStyle('display', 'block');
+		this.setStyle('display', 'flex');
 
 		return this;
 	},

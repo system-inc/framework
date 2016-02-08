@@ -47,7 +47,9 @@ WebComponent.components = {
 		'Input',
 		'TextInput',
 		'TextArea',
-		'Notification',		
+		'Notification',
+		'Modal',
+		'Form',
 	],
 	// TODO: Keep track of loaded components
 	loaded: [],

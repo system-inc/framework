@@ -2,6 +2,12 @@ WebComponent.load('Input');
 
 TextInputWebComponent = InputWebComponent.extend({
 
+    tag: 'input',
+
+    attributes: {
+        type: 'text',
+    },
+
     listen: function() {
         this.on('change', function() {
             this.valueChangedOnDomElement();
