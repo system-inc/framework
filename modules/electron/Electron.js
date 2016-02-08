@@ -68,8 +68,13 @@ Electron = new (Class.extend({
 		// Load the HtmlDocument from the main controller (Main.main() should always return an HtmlDocument)
 		var htmlDocument = yield mainWebController[ElectronModule.settings.get('mainWebControllerMethodName')]();
 		//console.log(htmlDocument);
+
+		// Clear the head and body in preparation for writing the new HTML document to the DOm
+		// Even though we are removing the reference to Project.js, the code from Project.js is still live and available
+		HtmlElement.emptyDomElement(document.head);
+		HtmlElement.emptyDomElement(document.body);
 		
-		// Add the HtmlDocument to the DOM (make sure not to strip out the current reference to Project.js in the head tag)
+		// Add the HtmlDocument to the DOM
 		htmlDocument.addToDom();
 
 		window.mainWebController = mainWebController;

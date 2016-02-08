@@ -4,52 +4,43 @@ HtmlDocument = XmlDocument.extend({
 
 	domDocument: null,
 	onAddedToDom: null,
+	isAddedToDom: false,
 
 	element: null,
 	head: null,
 	body: null,
 
-	title: null,
-	scripts: [],
-	styles: [],
+	titleHtmlElement: null,
 
-	//shouldScheduleDomUpdates: true,
-	shouldScheduleDomUpdates: false,
+	shouldScheduleDomUpdates: true,
+	//shouldScheduleDomUpdates: false,
 	domUpdatesScheduled: false,
 	domUpdates: {},
 
-	construct: function(head, body) {
+	construct: function(declaration) {
+		// Set the declaration
+		if(declaration) {
+			this.declaration = declaration;
+		}
+		else {
+			this.declaration = '<!DOCTYPE '+this.type+'>';	
+		}
+
 		// An <html> tag to store the head and body
 		this.element = Html.html();
 
 		// Establish a reference to the HtmlDocument
 		this.element.htmlDocument = this;
 
-		// Conditionally create the head tag
-		if(head === undefined) {
-			this.head = Html.head();
-		}
-		else {
-			this.head = head;
-		}
-
-		// Conditionally create the body tag
-		if(body === undefined) {
-			this.body = Html.body();	
-		}
-		else {
-			this.body = body;
-		}
+		// Create the head and body tags
+		this.head = Html.head();
+		this.body = Html.body();
 
 		// If we the DOM is present, reference the DOM document
 		if(global['document']) {
 			// Connect this.domDocument to the global document
 			this.domDocument = document;
 			//console.log('DOM present, HtmlDocument connected to DOM', this);
-
-			// Manually connect the head and body to this HtmlDocument
-			this.head.htmlDocument = this;
-			this.body.htmlDocument = this;
 
 			// Manually connect this <html> HtmlElement to document.documentElement
 			this.element.domElement = this.domDocument.documentElement;
@@ -59,12 +50,13 @@ HtmlDocument = XmlDocument.extend({
 			this.body.domElement = this.domDocument.body;
 		}
 
-		// Manually append the head and body to the element's content (not using the element's .append() method)
-		this.element.content.append(this.head);
-		this.element.content.append(this.body);
+		this.element.append(this.head);
+		this.element.append(this.body);
 
-		// Manually append the <html> tag to the content array
-		this.content.append(this.element);
+		// Manually set the <html> tag to the content array
+		this.content = [
+			this.element,
+		];
 	},
 
 	on: function(eventName, callback) {
@@ -117,18 +109,20 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	addToDom: function() {
-		console.log('HtmlDocument.addToDom', this);
+		//console.log('HtmlDocument.addToDom', this);
 
-		this.buildHead();
-		this.head.addToDom();
-		this.body.addToDom();
+		// Add this.element to the DOM
+		this.element.addToDom();
 
 		// At this point the HtmlDocument has been added to the DOM
 		this.addedToDom();
 	},
 
 	addedToDom: function() {
-		//console.log('HtmlDocument added to DOM', this);
+		//console.log('HtmlDocument.addedToDom', this);
+
+		// The HtmlDocument is now added to the DOM
+		this.isAddedToDom = true;
 
 		if(Function.is(this.onAddedToDom)) {
 			this.onAddedToDom();
@@ -138,14 +132,38 @@ HtmlDocument = XmlDocument.extend({
 				callback();
 			});
 		}
+
+		//this.printDomUpdates();
+
+		// Now that all of the callbacks have run, execute any pending DOM updates
+		this.executeDomUpdates();
+	},
+
+	printDomUpdates: function() {
+		console.info('**************************************')
+		console.info('Pending DOM Updates:')
+
+		if(Object.isEmpty(this.domUpdates)) {
+			console.info('No updates.');
+		}
+		else {
+			this.domUpdates.each(function(htmlElementIdentifier, htmlElement) {
+				console.info(htmlElementIdentifier, htmlElement.tag, Json.encode(htmlElement.attributes));
+			});
+		}
+		console.info('**************************************')
 	},
 
 	updateDom: function(htmlElement) {
-		console.log('HtmlDocument.updateDom', htmlElement);
-		console.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
+		//console.log('HtmlDocument.updateDom', htmlElement);
+		//console.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
 
+		// Do nothing if the HtmlDocument is not added to the DOM yet
+		if(!this.isAddedToDom) {
+			//console.info('HtmlDocument.updateDom ignored because HtmlDocument.isAddedToDom is false');
+		}
 		// If DOM update scheduling is enabled
-		if(this.shouldScheduleDomUpdates) {
+		else if(this.shouldScheduleDomUpdates) {
 			this.scheduleDomUpdate(htmlElement);
 		}
 		// If not, immediately update the DOM
@@ -155,121 +173,70 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	scheduleDomUpdate: function(htmlElement) {
-		// If an update isn't scheduled already, use the next animation frame to run all updates
-		if(!this.domUpdatesScheduled) {
-			console.log('scheduling executeDomUpdates');
-			this.domUpdatesScheduled = true;
+		//console.log('HtmlDocument.scheduleDomUpdate', htmlElement.tag, Json.encode(htmlElement.attributes));
 
+		// Add the HtmlElement to the list of updates to do
+		if(htmlElement) {
 			// Use an object instead of an array so we get the speed of the hash table for deduping updates
 			this.domUpdates[htmlElement.identifier] = htmlElement;
+		}
+
+		// If an update isn't scheduled already, use the next animation frame to run all updates
+		if(!this.domUpdatesScheduled) {
+			//console.log('scheduling executeDomUpdates');
+			this.domUpdatesScheduled = true;
 
 			window.requestAnimationFrame(function() {
+				//console.info('window.requestAnimationFrame');
 				this.executeDomUpdates();
 			}.bind(this));	
 		}
 		else {
-			console.log('executeDomUpdates already scheduled')
+			//console.log('executeDomUpdates already scheduled')
 		}
+
+		//console.log('this.domUpdates', this.domUpdates);
 	},
 
 	executeDomUpdates: function() {
-		console.log('HtmlDocument.executeDomUpdates', htmlElement);
+		//console.log('HtmlDocument.executeDomUpdates', 'this.domUpdates', this.domUpdates);
 
 		// Iterate over all DOM updates
 		this.domUpdates.each(function(htmlElementIdentifier, htmlElement) {
 			// Run the DOM updates for the HtmlElement
-			htmlElement.executeDomUpdates();
+			htmlElement.executeDomUpdate();
 
 			// Remove the HtmlElement from the domUpdates objects
 			delete this.domUpdates[htmlElementIdentifier];
 		}.bind(this));
+
+		// Mark all updates as completed
+		this.domUpdatesScheduled = false;
 	},
 
-	buildHead: function() {
-		// Handle title
-		if(this.title) {
-			this.head.append(Html.title(this.title));
+	setTitle: function(title) {
+		// Create the title tag if it doesn't exist
+		if(!this.titleHtmlElement) {
+			this.titleHtmlElement = Html.title(title);
+			this.head.append(this.titleHtmlElement);
 		}
-
-		// Handle scripts
-		this.scripts.each(function(index, script) {
-			this.head.append(Html.script({
-				src: script,
-			}));
-		}.bind(this));
-
-		// Handle styles
-		this.styles.each(function(index, style) {
-			this.head.append(Html.link({
-				rel: 'stylesheet',
-				href: style,
-			}));
-		}.bind(this));
-
-		return this.head;
+		// If it title tag does exist, use domDocument to change it
+		else if(this.domDocument) {
+			this.domDocument.title = title;
+		}
 	},
 
-	headToString: function(indent) {
-		// Use cloning to prevent duplicate appending
-		var htmlDocumentClone = this.clone();
-
-		// Build the head element on the clone
-		htmlDocumentClone.buildHead();
-
-		return htmlDocumentClone.head.toString(indent);
+	addScript: function(path) {
+		this.head.append(Html.script({
+			src: path,
+		}));
 	},
 
-	headContentToString: function(indent) {
-		// Use cloning to prevent duplicate appending
-		var htmlDocumentClone = this.clone();
-
-		// Build the head element on the clone
-		htmlDocumentClone.buildHead();
-
-		return htmlDocumentClone.head.contentToString(indent);	
-	},
-
-	bodyToString: function(indent) {
-		return this.body.toString(indent);
-	},
-
-	toString: function(indent) {
-		// Use cloning to prevent duplicate appending
-		var htmlDocument = this.clone();
-		//Console.highlight(this.body.toString());
-
-		// Set the declaration
-		htmlDocument.declaration = '<!DOCTYPE '+htmlDocument.type+'>';
-
-		// Build the head tag
-		htmlDocument.buildHead();
-
-		// Use XmlDocument's toString method (basically calling .super)
-		var string = XmlDocument.prototype.toString.apply(htmlDocument, arguments);
-
-		return string;
-	},
-
-	clone: function() {
-		// Clone the head and body elements to pass into the HtmlDocument constructor
-		var head = this.head.clone();
-		var body = this.body.clone();
-
-		var htmlDocument = new HtmlDocument(head, body);
-
-		// XML properties
-		htmlDocument.type = Object.clone(this.type);
-		htmlDocument.declaration = Object.clone(this.declaration);
-		htmlDocument.version = Object.clone(this.version);
-		htmlDocument.encoding = Object.clone(this.encoding);
-
-		// HTML properties
-		htmlDocument.domDocument = this.domDocument;
-		htmlDocument.title = Object.clone(this.title);
-		htmlDocument.scripts = this.scripts.clone();
-		htmlDocument.styles = this.styles.clone();
-
-		return htmlDocument;
+	addStyleSheet: function(path) {
+		this.head.append(Html.link({
+			rel: 'stylesheet',
+			href: path,
+		}));
 	},
 
 });
