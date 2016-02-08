@@ -46,6 +46,11 @@ HtmlElement = XmlElement.extend({
 	executeDomUpdate: function() {
 		//console.log('executeDomUpdate', this);
 
+		// TODO:
+		// Because the virtual DOM is the state of truth, can we just keep track of all changes
+		// on HtmlElement and then loop through and apply them? This would be more performant than
+		// reading all of the attributes on the DOM and comparing them
+
 		if(this.shouldExecuteDomUpdate) {
 			// Update the DOM element's attributes
 			this.updateDomElementAttributes();
@@ -62,11 +67,6 @@ HtmlElement = XmlElement.extend({
 	},
 
 	updateDomElementAttributes: function() {
-		// TODO:
-		// Because the virtual DOM is the state of truth, can we just keep track of all changes
-		// on HtmlElement and then loop through and apply them? This would be more performant than
-		// reading all of the attributes on the DOM and comparing them
-
 		//console.log('updateDomElementAttributes', this.tag, Json.encode(this.attributes));
 
 		var domElementAttributesToUpdate = {};
