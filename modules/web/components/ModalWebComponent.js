@@ -3,7 +3,7 @@ ModalWebComponent = WebComponent.extend({
 	modal: null,
 
 	attributes: {
-		class: 'modal-container',
+		class: 'modalContainer',
 		style: {
 			display: 'none',
 		},
@@ -17,6 +17,9 @@ ModalWebComponent = WebComponent.extend({
 		});
 
 		this.append(this.modal);
+
+		console.warn('missing .domElement reference, need to figure out why:')
+		console.warn('this.modal.domElement', this.modal.domElement, this.modal);
 	},
 
 });

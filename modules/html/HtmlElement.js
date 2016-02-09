@@ -134,6 +134,13 @@ HtmlElement = XmlElement.extend({
 
 		// Update the domElement's content, maintaining domElement references for each HtmlElement
 		this.content.each(function(contentIndex, content) {
+			var contentIsHtmlElement = Class.isInstance(content, HtmlElement);
+
+			// Make sure we have a reference to htmlDocument, we may not if the child HtmlElement is created in the constructor of its parent HtmlElement
+			if(contentIsHtmlElement && !content.htmlDocument) {
+				content.htmlDocument = this.htmlDocument;
+			}
+
 			// If there is a corresponding child DOM element for the context index, we will do a comparison
 			if(contentIndex < domElementChildNodesLength) {
 				var currentChildDomElement = this.domElement.childNodes[contentIndex];
@@ -141,7 +148,7 @@ HtmlElement = XmlElement.extend({
 				//console.log('Comparing to current domElement', 'currentChildDomElement', currentChildDomElement, 'content', content);
 
 				// If we are working with an HtmlElement
-				if(Class.isInstance(content, HtmlElement)) {
+				if(contentIsHtmlElement) {
 					// If the content's domElement matches the current child DOM element
 					if(content.domElement === currentChildDomElement) {
 						// Update the HtmlElement
@@ -192,7 +199,7 @@ HtmlElement = XmlElement.extend({
 				this.domElement.appendChild(childDomElement);
 
 				// If we are adding an HtmlElement
-				if(Class.isInstance(content, HtmlElement)) {
+				if(contentIsHtmlElement) {
 					content.domElement = this.domElement.lastChild;
 					content.addedToDom();
 				}
@@ -202,7 +209,7 @@ HtmlElement = XmlElement.extend({
 		}.bind(this));
 
 		// If there are more child DOM elements than content, we must remove them
-		if(this.content.length > domElementChildNodesLength) {
+		if(domElementChildNodesLength > this.content.length) {
 			for(var i = this.content.length; i < domElementChildNodesLength; i++) {
 				this.domElement.removeChild(this.domElement.childNodes[contentIndex]);
 			}
@@ -227,7 +234,31 @@ HtmlElement = XmlElement.extend({
 			content = this;
 		}
 
-		var domElement = document.createRange().createContextualFragment(content);
+		console.error('document fragments do not track when they are actually added to the DOM, so references to them are pointless')
+
+		var domElement;
+		if(Class.isInstance(content, HtmlElement)) {
+			domElement = document.createRange().createContextualFragment(content.tagToString());
+		}
+		else {
+			domElement = document.createRange().createContextualFragment(content);
+		}
+		content.domElement = domElement;
+
+		if(Class.isInstance(content, HtmlElement)) {
+			// Loop through the children of the child and create DOM
+			content.content.each(function(currentChildIndex, currentChild) {
+				var childDomElement = HtmlElement.createDomElement(currentChild);
+
+				if(Class.isInstance(currentChild, HtmlElement)) {
+					currentChild.domElement = childDomElement;
+				}
+
+				content.domElement.appendChild(childDomElement);
+			});
+		}
+
+		console.error(content);
 
 		return domElement;
 	},

@@ -90,6 +90,25 @@ XmlElement = Class.extend({
 		return this;
 	},
 
+	tagToString: function() {
+		var string = '<'+this.tag;
+
+		// Attributes
+		this.attributes.each(function(attributeName, attributeValue) {
+			string += ' '+attributeName+'="'+XmlElement.attributeValueToString(attributeValue)+'"';
+		});
+
+		if(this.unary) {
+			string += ' />';
+		}
+		else {
+			string += '>';
+			string += '</'+this.tag+'>';
+		}
+
+		return string;
+	},
+
 	contentToString: function(indent, indentationLevel, indentationCharacter, indentationRepetitions) {
 		var string = '';
 
@@ -141,7 +160,7 @@ XmlElement = Class.extend({
 			if(this.content.length && indent) {
 				string += String.newline+indentationCharacter.repeat(indentationRepetitions * indentationLevel);
 			}
-			string += '</'+this.tag+'>';	
+			string += '</'+this.tag+'>';
 		}
 
 		return string;
