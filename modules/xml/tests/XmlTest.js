@@ -39,9 +39,9 @@ XmlTest = Test.extend({
 		});
 		Assert.equal(actual.toString(false), '<p class="testClass" style="font-size: 12px;">Hello!</p>', 'toString of an XML element with attributes and content');
 
-		actual = new XmlElement('p');
-		actual.setAttribute('class', 'testClass');
-		Assert.equal(actual.toString(false), '<p class="testClass"></p>', 'setAttribute');
+		//actual = new XmlElement('p');
+		//actual.setAttribute('class', 'testClass');
+		//Assert.equal(actual.toString(false), '<p class="testClass"></p>', 'setAttribute');
 		//Console.out(actual.toString());
 	},
 

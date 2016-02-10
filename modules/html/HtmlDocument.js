@@ -53,8 +53,8 @@ HtmlDocument = XmlDocument.extend({
 		this.element.append(this.head);
 		this.element.append(this.body);
 
-		// Manually set the <html> tag to the content array
-		this.content = [
+		// Manually set the <html> tag to the children array
+		this.children = [
 			this.element,
 		];
 	},
@@ -112,7 +112,7 @@ HtmlDocument = XmlDocument.extend({
 		//console.log('HtmlDocument.addToDom', this);
 
 		// Add this.element to the DOM
-		this.element.addToDom();
+		this.element.executeDomUpdate();
 
 		// At this point the HtmlDocument has been added to the DOM
 		this.addedToDom();

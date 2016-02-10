@@ -16,6 +16,10 @@ Class.isInstance = function(value, classType) {
 
 var classInitializing = false; // This must stay outside of the extend method
 Class.extend = function(childClassProperties) {
+	if(childClassProperties === undefined) {
+		childClassProperties = {};
+	}
+
 	var functionTest = /xyz/.test(function() {xyz;}) ? /\bsuper\b/ : /.*/;
 	var parentClass = this;
 	var parentClassPrototype = this.prototype;

@@ -1,42 +1,57 @@
 HtmlTest = Test.extend({
 
-	testHtmlDocument: function*() {
-		// Blank HTML document
-		var actual = new HtmlDocument();
-		Assert.equal(actual.toString(false), '<!DOCTYPE html><html><head></head><body></body></html>', 'toString of an empty HTML document');
+	testHtml: function() {
+		var actual = new HtmlElement('p');
+
+		Console.out(actual);
+
+		
+		Assert.true(HtmlElement.is(actual), 'HtmlElement is of type HtmlElement');
+		Assert.true(XmlNode.is(actual), 'HtmlElement is of type XmlNode');
+		Assert.true(XmlElement.is(actual), 'HtmlElement is of type XmlElement');
+		Assert.true(HtmlNode.is(actual), 'HtmlElement is of type HtmlNode');
+
+
+		
 	},
 
-	testHtmlElementAddClass: function*() {
-		var actual = new HtmlElement('div');
-		Assert.strictEqual(actual.getAttribute('class'), null, 'No class attribute by default');
+	//testHtmlDocument: function*() {
+	//	// Blank HTML document
+	//	var actual = new HtmlDocument();
+	//	Assert.equal(actual.toString(false), '<!DOCTYPE html><html><head></head><body></body></html>', 'toString of an empty HTML document');
+	//},
 
-		actual.addClass('myClass1');
-		Assert.equal(actual.getAttribute('class'), 'myClass1', 'Add a single class');
+	//testHtmlElementAddClass: function*() {
+	//	var actual = new HtmlElement('div');
+	//	Assert.strictEqual(actual.getAttribute('class'), null, 'No class attribute by default');
 
-		actual = new HtmlElement('div');
-		actual.addClass('myClass1 myClass2');
-		Assert.equal(actual.getAttribute('class'), 'myClass1 myClass2', 'Add two classes in one call');
+	//	actual.addClass('myClass1');
+	//	Assert.equal(actual.getAttribute('class'), 'myClass1', 'Add a single class');
 
-		actual = new HtmlElement('div');
-		actual.addClass('myClass1');
-		actual.addClass('myClass2');
-		Assert.equal(actual.getAttribute('class'), 'myClass1 myClass2', 'Add two classes in two calls');
-	},
+	//	actual = new HtmlElement('div');
+	//	actual.addClass('myClass1 myClass2');
+	//	Assert.equal(actual.getAttribute('class'), 'myClass1 myClass2', 'Add two classes in one call');
 
-	testHtmlElementRemoveClass: function*() {
-		var actual = new HtmlElement('div');
-		actual.addClass('myClass1');
-		actual.removeClass('myClass1');
-		//Console.highlight(actual.toString());
-		Assert.strictEqual(actual.getAttribute('class'), null, 'Remove a class');
+	//	actual = new HtmlElement('div');
+	//	actual.addClass('myClass1');
+	//	actual.addClass('myClass2');
+	//	Assert.equal(actual.getAttribute('class'), 'myClass1 myClass2', 'Add two classes in two calls');
+	//},
 
-		actual = new HtmlElement('div');
-		actual.addClass('myClass1');
-		actual.addClass('myClass2');
-		actual.addClass('myClass3');
-		actual.removeClass('myClass2');
-		//Console.highlight(actual.toString());
-		Assert.strictEqual(actual.getAttribute('class'), 'myClass1 myClass3', 'Remove a class out of three classes');
-	},
+	//testHtmlElementRemoveClass: function*() {
+	//	var actual = new HtmlElement('div');
+	//	actual.addClass('myClass1');
+	//	actual.removeClass('myClass1');
+	//	//Console.highlight(actual.toString());
+	//	Assert.strictEqual(actual.getAttribute('class'), null, 'Remove a class');
+
+	//	actual = new HtmlElement('div');
+	//	actual.addClass('myClass1');
+	//	actual.addClass('myClass2');
+	//	actual.addClass('myClass3');
+	//	actual.removeClass('myClass2');
+	//	//Console.highlight(actual.toString());
+	//	Assert.strictEqual(actual.getAttribute('class'), 'myClass1 myClass3', 'Remove a class out of three classes');
+	//},
 
 });

@@ -4,7 +4,7 @@ XmlDocument = Class.extend({
 	version: null, // The version of XML
 	encoding: null, // The encoding type
 
-	content: [], // An array containing strings or XmlElements
+	children: [], // An array containing XmlNodes
 
 	construct: function() {
 	},
@@ -46,7 +46,7 @@ XmlDocument = Class.extend({
 
 		string += declaration;
 
-		this.content.each(function(index, stringOrElement) {
+		this.children.each(function(index, stringOrElement) {
 			string += stringOrElement.toString(indent);
 		});
 

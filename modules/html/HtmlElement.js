@@ -1,91 +1,41 @@
+// TODO: Is this super sketchy?
+// HtmlElement inherits from both the XmlElement as well as HtmlNode
+
 HtmlElement = XmlElement.extend({
 
-	identifier: '0', // Used to uniquely identify HtmlElements for tree comparisons againt the DOM
-	identifierCounter: 0, // Used to ensure unique identifiers
+	applyToDom: function() {
+		// Update the DOM element's attributes
+		this.updateDomNodeAttributes();
 
-	htmlDocument: null,
-
-	domElement: null,
-	shouldExecuteDomUpdate: false, // Keep track of whether or not the HtmlElement is different from the DOM
-
-	// This method assumes this.domElement is set already
-	addToDom: function() {
-		// Run execute DOM update to sync with the DOM
-		this.executeDomUpdate();
-
-		// Call addedToDom
-		this.addedToDom();
+		// Update the DOM element's children
+		this.updateDomNodeChildren();
 	},
 
-	addedToDom: function() {
-		//console.log('HtmlElement.addedToDom', this);
-	},
-
-	// Called whenever the HtmlElement changes
-	updateDom: function() {
-		//console.log('HtmlElement.updateDom()');
-
-		// Mark the object as dirty
-		this.shouldExecuteDomUpdate = true;
-
-		// Don't do anything if we aren't connected to the DOM
-		if(!this.htmlDocument) {
-			//Console.warn('Unable to updateDom, HtmlElement is missing the htmlDocument property.', this);
-		}
-		// Don't do anything if we don't have a domElement
-		else if(!this.domElement) {
-			//Console.warn('Unable to updateDom, HtmlElement is missing the domElement property.', this);
-		}
-		// Register an update with the HtmlDocument
-		else {
-			this.htmlDocument.updateDom(this);
-		}
-	},
-
-	// Apply the current state of this HtmlElement to the DOM
-	executeDomUpdate: function() {
-		//console.log('executeDomUpdate', this);
+	updateDomNodeAttributes: function() {
+		//console.log('updateDomNodeAttributes', this.tag, Json.encode(this.attributes));
 
 		// TODO:
 		// Because the virtual DOM is the state of truth, can we just keep track of all changes
 		// on HtmlElement and then loop through and apply them? This would be more performant than
 		// reading all of the attributes on the DOM and comparing them
 
-		if(this.shouldExecuteDomUpdate) {
-			// Update the DOM element's attributes
-			this.updateDomElementAttributes();
-
-			// Update the DOM element's content
-			this.updateDomElementContent();
-
-			// Mark the object as clean
-			this.shouldExecuteDomUpdate = false;
-		}
-		else {
-			//console.info('No need to run updates on this element', this);
-		}
-	},
-
-	updateDomElementAttributes: function() {
-		//console.log('updateDomElementAttributes', this.tag, Json.encode(this.attributes));
-
-		var domElementAttributesToUpdate = {};
-		var domElementAttributeNames = {};
+		var domNodeAttributesToUpdate = {};
+		var domNodeAttributeNames = {};
 
 		// Loop through all of the DOM element's attributes
-		this.domElement.attributes.each(function(domElementAttributeIndex, domElementAttribute) {
-			//console.log(domElementAttributeIndex, domElementAttribute, domElementAttribute.name, domElementAttribute.value);
+		this.domNode.attributes.each(function(domNodeAttributeIndex, domNodeAttribute) {
+			//console.log(domNodeAttributeIndex, domNodeAttribute, domNodeAttribute.name, domNodeAttribute.value);
 
 			// Keep track of all DOM element attribute names so we know later on if we need to add anything
-			domElementAttributeNames[domElementAttribute.name] = true;
+			domNodeAttributeNames[domNodeAttribute.name] = true;
 
 			// If the DOM element attribute still exists on the HtmlElement we need to check if they still match
-			if(this.attributes[domElementAttribute.name] !== undefined) {
-				var attributeValue = HtmlElement.attributeValueToString(this.attributes[domElementAttribute.name]);
+			if(this.attributes[domNodeAttribute.name] !== undefined) {
+				var attributeValue = HtmlElement.attributeValueToString(this.attributes[domNodeAttribute.name]);
 
 				// If they do not match, mark the attribute to be updated
-				if(attributeValue != domElementAttribute.value) {
-					domElementAttributesToUpdate[domElementAttribute.name] = {
+				if(attributeValue != domNodeAttribute.value) {
+					domNodeAttributesToUpdate[domNodeAttribute.name] = {
 						value: attributeValue,
 						action: 'set',
 					};
@@ -93,7 +43,7 @@ HtmlElement = XmlElement.extend({
 			}
 			// If the DOM element attribute does not exist on the HtmlElement anymore, mark it for removal
 			else {
-				domElementAttributesToUpdate[domElementAttribute.name] = {
+				domNodeAttributesToUpdate[domNodeAttribute.name] = {
 					action: 'remove',
 				};
 			}
@@ -101,39 +51,39 @@ HtmlElement = XmlElement.extend({
 
 		// Loop through all of the HtmlElement's attributes looking to see if we have any new attributes to set
 		this.attributes.each(function(attributeName, attributeValue) {
-			// If the attribute does not exist in domElementAttributesToUpdate, then we must set it
-			if(domElementAttributeNames[attributeName] === undefined) {
-				domElementAttributesToUpdate[attributeName] = {
+			// If the attribute does not exist in domNodeAttributesToUpdate, then we must set it
+			if(domNodeAttributeNames[attributeName] === undefined) {
+				domNodeAttributesToUpdate[attributeName] = {
 					value: HtmlElement.attributeValueToString(attributeValue),
 					action: 'set',
 				};
 			}
 		}.bind(this));
 
-		//console.log('domElementAttributesToUpdate', domElementAttributesToUpdate);
+		//console.log('domNodeAttributesToUpdate', domNodeAttributesToUpdate);
 
 		// Update the DOM element's attributes
-		domElementAttributesToUpdate.each(function(domElementAttributeToUpdateName, domElementAttributeToUpdate) {
-			if(domElementAttributeToUpdate.action == 'remove') {
-				//console.log('removeAttribute', domElementAttributeToUpdateName);
-				this.domElement.removeAttribute(domElementAttributeToUpdateName);
+		domNodeAttributesToUpdate.each(function(domNodeAttributeToUpdateName, domNodeAttributeToUpdate) {
+			if(domNodeAttributeToUpdate.action == 'remove') {
+				//console.log('removeAttribute', domNodeAttributeToUpdateName);
+				this.domNode.removeAttribute(domNodeAttributeToUpdateName);
 			}
-			else if(domElementAttributeToUpdate.action == 'set') {
-				//console.log('setAttribute', domElementAttributeToUpdateName, domElementAttributeToUpdate.value);
-				this.domElement.setAttribute(domElementAttributeToUpdateName, domElementAttributeToUpdate.value);
+			else if(domNodeAttributeToUpdate.action == 'set') {
+				//console.log('setAttribute', domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
+				this.domNode.setAttribute(domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
 			}
 		}.bind(this));
 	},
 
-	updateDomElementContent: function() {
+	updateDomNodeChildren: function() {
 		// TODO:
 		// This seems like it is going to be slow and not good... will need to fix this
 
 		// Keep track of how many DOM element children actually exist
-		var domElementChildNodesLength = this.domElement.childNodes.length;
+		var domNodeChildNodesLength = this.domNode.childNodes.length;
 
-		// Update the domElement's content, maintaining domElement references for each HtmlElement
-		this.content.each(function(contentIndex, content) {
+		// Update the domNode's content, maintaining domNode references for each HtmlElement
+		this.chidren.each(function(contentIndex, content) {
 			var contentIsHtmlElement = Class.isInstance(content, HtmlElement);
 
 			// Make sure we have a reference to htmlDocument, we may not if the child HtmlElement is created in the constructor of its parent HtmlElement
@@ -142,130 +92,60 @@ HtmlElement = XmlElement.extend({
 			}
 
 			// If there is a corresponding child DOM element for the context index, we will do a comparison
-			if(contentIndex < domElementChildNodesLength) {
-				var currentChildDomElement = this.domElement.childNodes[contentIndex];
+			if(contentIndex < domNodeChildNodesLength) {
+				var currentChildDomNode = this.domNode.childNodes[contentIndex];
 
-				//console.log('Comparing to current domElement', 'currentChildDomElement', currentChildDomElement, 'content', content);
+				//console.log('Comparing to current domNode', 'currentChildDomNode', currentChildDomNode, 'content', content);
 
-				// If we are working with an HtmlElement
-				if(contentIsHtmlElement) {
-					// If the content's domElement matches the current child DOM element
-					if(content.domElement === currentChildDomElement) {
-						// Update the HtmlElement
-						content.executeDomUpdate();
-					}
-					// If the current child DOM element does not match, we need to replace it
-					else {
-						// Create a new DOM element for the content
-						var newChildDomElement = content.createDomElement();
-
-						// Replace the old one
-						this.domElement.replaceChild(newChildDomElement, currentChildDomElement);
-
-						// Update the domElement reference for the child HtmlElement
-						content.domElement = this.domElement.childNodes[contentIndex];
-
-						// Mark the content as being added to the DOM
-						content.addedToDom();
-					}					
+				// If the content's domNode matches the current child DOM element
+				if(content.domNode === currentChildDomNode) {
+					// Update the HtmlElement
+					content.executeDomUpdate();
 				}
-				// If the content is not an HtmlElement, it must be string
+				// If the current child DOM element does not match, we need to replace it
 				else {
-					//console.log('Comparing to current domElement', 'currentChildDomElement', currentChildDomElement, currentChildDomElement.nodeValue, 'content', content);
-					
-					// If we have any DOM node type that is not an element
-					if(currentChildDomElement.nodeType != 1) {
-						// Make sure the string matches
-						// Must use nodeValue here because innerHTML does not exist on DOM nodes which just have text
-						if(content != currentChildDomElement.nodeValue) {
-							currentChildDomElement.nodeValue = content;
-						}
-					}
-					// We have a DOM node which is an element, so we use innerHTML
-					else {
-						// Make sure the string matches
-						if(content != currentChildDomElement.innerHTML) {
-							currentChildDomElement.innerHTML = content;
-						}
-					}
+					// Create a new DOM element for the content
+					var newChildDomNode = content.createDomNode();
+
+					// Replace the old one
+					this.domNode.replaceChild(newChildDomNode, currentChildDomNode);
+
+					// Update the domNode reference for the child HtmlElement
+					content.domNode = this.domNode.childNodes[contentIndex];
+
+					// Mark the content as being added to the DOM
+					content.addedToDom();
 				}
 			}
 			// If there is no corresponding child DOM element for the current index, we will create one
 			else {
 				// Create the child DOM element
-				var childDomElement = HtmlElement.createDomElement(content);
+				var childDomNode = HtmlElement.createDomNode(content);
 
 				// Append the child DOM element to this element's DOM element
-				this.domElement.appendChild(childDomElement);
+				this.domNode.appendChild(childDomNode);
 
 				// If we are adding an HtmlElement
 				if(contentIsHtmlElement) {
-					content.domElement = this.domElement.lastChild;
+					content.domNode = this.domNode.lastChild;
 					content.addedToDom();
 				}
 
-				//console.log('Created new domElement', 'childDomElement', childDomElement, 'content', content);
+				//console.log('Created new domNode', 'childDomNode', childDomNode, 'content', content);
 			}
 		}.bind(this));
 
 		// If there are more child DOM elements than content, we must remove them
-		if(domElementChildNodesLength > this.content.length) {
-			for(var i = this.content.length; i < domElementChildNodesLength; i++) {
-				this.domElement.removeChild(this.domElement.childNodes[contentIndex]);
+		if(domNodeChildNodesLength > this.chidren.length) {
+			for(var i = this.chidren.length; i < domNodeChildNodesLength; i++) {
+				this.domNode.removeChild(this.domNode.childNodes[contentIndex]);
 			}
 		}
 	},
 
-	emptyDomElement: function(domElement) {
-		if(!domElement) {
-			domElement = this.domElement;
-		}
-
-		while(domElement.firstChild) {
-			domElement.removeChild(domElement.firstChild);
-		}
-
-		return domElement;
-	},
-
-	createDomElement: function(content) {
-		// Allow this method to be called statically
-		if(!content) {
-			content = this;
-		}
-
-		console.error('document fragments do not track when they are actually added to the DOM, so references to them are pointless')
-
-		var domElement;
-		if(Class.isInstance(content, HtmlElement)) {
-			domElement = document.createRange().createContextualFragment(content.tagToString());
-		}
-		else {
-			domElement = document.createRange().createContextualFragment(content);
-		}
-		content.domElement = domElement;
-
-		if(Class.isInstance(content, HtmlElement)) {
-			// Loop through the children of the child and create DOM
-			content.content.each(function(currentChildIndex, currentChild) {
-				var childDomElement = HtmlElement.createDomElement(currentChild);
-
-				if(Class.isInstance(currentChild, HtmlElement)) {
-					currentChild.domElement = childDomElement;
-				}
-
-				content.domElement.appendChild(childDomElement);
-			});
-		}
-
-		console.error(content);
-
-		return domElement;
-	},
-
 	on: function(eventName, callback) {
-		if(this.domElement && this.domElement.addEventListener) {
-			this.domElement.addEventListener(eventName, callback);
+		if(this.domNode && this.domNode.addEventListener) {
+			this.domNode.addEventListener(eventName, callback);
 		}
 
 		return this;
@@ -322,8 +202,8 @@ HtmlElement = XmlElement.extend({
 	focus: function() {
 		console.log('.focus()', this);
 
-		if(this.domElement) {
-			this.domElement.focus();	
+		if(this.domNode) {
+			this.domNode.focus();	
 		}
 
 		return this;
@@ -373,7 +253,7 @@ HtmlElement = XmlElement.extend({
 	setContent: function(content) {
 		//console.log('setContent');
 
-		this.content = Array.wrap(content);
+		this.chidren = Array.wrap(content);
 		this.updateDom();
 
 		return this;
@@ -399,21 +279,16 @@ HtmlElement = XmlElement.extend({
 		return this;
 	},
 
-	processChild: function(stringOrElement) {
-		// Handle HtmlElement objects
-		if(Class.isInstance(stringOrElement, HtmlElement)) {
-			// Set a reference to the htmlDocument
-			stringOrElement.htmlDocument = this.htmlDocument;
+	prepend: function(stringOrHtmlNode) {
+		this.children.prepend(HtmlNode.makeHtmlNode(stringOrHtmlNode, this));
 
-			// Set the identifier on the HtmlElement
-			stringOrElement.identifier = stringOrElement.parent.identifier+'.'+this.identifierCounter;
+		return this;
+	},	
 
-			// Set the identifier on the domElement
-			//stringOrElement.setAttribute('data-identifier', stringOrElement.identifier);
+	append: function(stringOrHtmlNode) {
+		this.children.append(HtmlNode.makeHtmlNode(stringOrHtmlNode, this));
 
-			// Increment the identifier counter
-			this.identifierCounter++;
-		}
+		return this;
 	},
 
 	empty: function() {
@@ -423,46 +298,9 @@ HtmlElement = XmlElement.extend({
 		return this;
 	},
 
-	clone: function(options) {
-		options = {
-			content: true,
-		}.merge(options);
-
-		// Create a new HtmlElement
-		var htmlElement = new HtmlElement(this.tag, null, this.unary);
-
-		// Link the htmlDocument
-		htmlElement.htmlDocument = this.htmlDocument;
-
-		// Link the domElement
-		htmlElement.domElement = this.domElement;
-
-		// Clone the attributes
-		htmlElement.attributes = Object.clone(this.attributes);
-
-		// Conditionally clone the content
-		if(options.content) {
-			this.content.each(function(index, stringOrElement) {
-				var content;
-
-				// Bring primitives over, no need to clone
-				if(Primitive.is(stringOrElement)) {
-					content = stringOrElement;
-				}
-				// Clone anything else
-				else {
-					content = stringOrElement.clone();
-				}
-
-				htmlElement.content.append(content);
-			});
-		}
-
-		return htmlElement;
-	},
-
 });
 
 // Static methods
-HtmlElement.emptyDomElement = HtmlElement.prototype.emptyDomElement;
-HtmlElement.createDomElement = HtmlElement.prototype.createDomElement;
+HtmlElement.is = function(value) {
+	return Class.isInstance(value, HtmlElement);
+}
