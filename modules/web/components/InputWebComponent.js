@@ -7,7 +7,7 @@ InputWebComponent = WebComponent.extend({
 	},
 
 	setValue: function(value) {
-		this.value = this.domElement.value = value;
+		this.value = this.domNode.value = value;
 
 		return this.value;
 	},
@@ -16,7 +16,7 @@ InputWebComponent = WebComponent.extend({
 	valueChangedOnDomElement: function() {
 		//console.log('Value changed on DOM, updating InputWebComponent');
 		
-		this.value = this.domElement.value;	
+		this.value = this.domNode.value;	
 
 		return this.value;
 	},

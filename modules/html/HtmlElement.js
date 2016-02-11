@@ -1,7 +1,91 @@
-// TODO: Is this super sketchy?
-// HtmlElement inherits from both the XmlElement as well as HtmlNode
+HtmlElement = HtmlNode.extend({
 
-HtmlElement = XmlElement.extend({
+	// HtmlElement cannot be a subclass of both XmlElement and HtmlNode
+	// So, we will extend from HtmlNode and reference the properties and methods we want from XmlElement
+	// As a consequence, instanceof XmlElement will not return true for objects of type HtmlElement
+
+	// XmlNode properties
+	type: 'element',
+
+	// XmlElement properties
+	tag: null,
+	unary: false, // Tags are not unary (self-closing) by default
+	attributes: {},
+	children: null, // Array containing strings or elements
+
+	// XmlElement methods
+	getAttribute: XmlElement.prototype.getAttribute,
+	//setAttribute: XmlElement.prototype.setAttribute,
+	//removeAttribute: XmlElement.prototype.removeAttribute,
+	//empty: XmlElement.prototype.empty,
+	//prepend: XmlElement.prototype.prepend,
+	//append: XmlElement.prototype.append,
+	tagOpeningToString: XmlElement.prototype.tagOpeningToString,
+	tagClosingToString: XmlElement.prototype.tagClosingToString,
+	tagToString: XmlElement.prototype.tagToString,
+	childrenToString: XmlElement.prototype.childrenToString,
+	toString: XmlElement.prototype.toString,
+
+	// Uses XmlElement
+	construct: function() {
+		// Use XmlElement's constructor
+		XmlElement.prototype.construct.apply(this, arguments);
+	},
+
+	// Method exists on XmlElement as well
+	setAttribute: function(attributeName, attributeValue) {
+		XmlElement.prototype.setAttribute.apply(this, arguments);
+
+		this.updateDom();
+
+		return this;
+	},
+
+	// Method exists on XmlElement as well
+	removeAttribute: function(attributeName) {
+		XmlElement.prototype.removeAttribute.apply(this, arguments);
+
+		this.updateDom();
+
+		return this;
+	},
+
+	// Method exists on XmlElement as well
+	empty: function() {
+		XmlElement.prototype.empty.apply(this, arguments);
+
+		this.updateDom();
+
+		return this;
+	},
+
+	// Method exists on XmlElement as well
+	prepend: function(stringOrHtmlNode) {
+		this.children.prepend(HtmlElement.makeHtmlNode(stringOrHtmlNode, this));
+
+		this.updateDom();
+
+		return this;
+	},
+
+	// Method exists on XmlElement as well
+	append: function(stringOrHtmlNode) {
+		this.children.append(HtmlElement.makeHtmlNode(stringOrHtmlNode, this));
+
+		this.updateDom();
+
+		return this;
+	},
+
+	descendFromParent: function(parent) {
+		// Use HtmlNode's method
+		this.super.apply(this, arguments);
+
+		// Recurse through all children to make sure they descend
+		this.children.each(function(childIndex, child) {
+			child.descendFromParent(this);
+		}.bind(this));
+	},
 
 	applyToDom: function() {
 		// Update the DOM element's attributes
@@ -31,7 +115,7 @@ HtmlElement = XmlElement.extend({
 
 			// If the DOM element attribute still exists on the HtmlElement we need to check if they still match
 			if(this.attributes[domNodeAttribute.name] !== undefined) {
-				var attributeValue = HtmlElement.attributeValueToString(this.attributes[domNodeAttribute.name]);
+				var attributeValue = XmlElement.attributeValueToString(this.attributes[domNodeAttribute.name]);
 
 				// If they do not match, mark the attribute to be updated
 				if(attributeValue != domNodeAttribute.value) {
@@ -54,7 +138,7 @@ HtmlElement = XmlElement.extend({
 			// If the attribute does not exist in domNodeAttributesToUpdate, then we must set it
 			if(domNodeAttributeNames[attributeName] === undefined) {
 				domNodeAttributesToUpdate[attributeName] = {
-					value: HtmlElement.attributeValueToString(attributeValue),
+					value: XmlElement.attributeValueToString(attributeValue),
 					action: 'set',
 				};
 			}
@@ -79,68 +163,50 @@ HtmlElement = XmlElement.extend({
 		// TODO:
 		// This seems like it is going to be slow and not good... will need to fix this
 
-		// Keep track of how many DOM element children actually exist
+		// Keep track of how many DOM node children actually exist
 		var domNodeChildNodesLength = this.domNode.childNodes.length;
 
-		// Update the domNode's content, maintaining domNode references for each HtmlElement
-		this.chidren.each(function(contentIndex, content) {
-			var contentIsHtmlElement = Class.isInstance(content, HtmlElement);
+		// Update the domNode's children, maintaining domNode references for each HtmlNode
+		this.children.each(function(childIndex, child) {
+			// If there is a corresponding child DOM node for the childIndex, we will do a comparison
+			if(childIndex < domNodeChildNodesLength) {
+				var currentChildDomNode = this.domNode.childNodes[childIndex];
 
-			// Make sure we have a reference to htmlDocument, we may not if the child HtmlElement is created in the constructor of its parent HtmlElement
-			if(contentIsHtmlElement && !content.htmlDocument) {
-				content.htmlDocument = this.htmlDocument;
-			}
+				//console.log('Comparing to current domNode', 'currentChildDomNode', currentChildDomNode, 'child', child);
 
-			// If there is a corresponding child DOM element for the context index, we will do a comparison
-			if(contentIndex < domNodeChildNodesLength) {
-				var currentChildDomNode = this.domNode.childNodes[contentIndex];
-
-				//console.log('Comparing to current domNode', 'currentChildDomNode', currentChildDomNode, 'content', content);
-
-				// If the content's domNode matches the current child DOM element
-				if(content.domNode === currentChildDomNode) {
-					// Update the HtmlElement
-					content.executeDomUpdate();
+				// If the child's domNode matches the current child DOM node
+				if(child.domNode === currentChildDomNode) {
+					// Call executeDomUpdate which will update the DOM node if necessary
+					child.executeDomUpdate();
 				}
-				// If the current child DOM element does not match, we need to replace it
+				// If the current child DOM node does not match, we need to replace it
 				else {
-					// Create a new DOM element for the content
-					var newChildDomNode = content.createDomNode();
-
-					// Replace the old one
-					this.domNode.replaceChild(newChildDomNode, currentChildDomNode);
-
-					// Update the domNode reference for the child HtmlElement
-					content.domNode = this.domNode.childNodes[contentIndex];
-
-					// Mark the content as being added to the DOM
-					content.addedToDom();
+					child.replaceDomNode(childIndex);
 				}
 			}
-			// If there is no corresponding child DOM element for the current index, we will create one
+			// If there is no corresponding child DOM node for the current index, we will create one
 			else {
-				// Create the child DOM element
-				var childDomNode = HtmlElement.createDomNode(content);
-
-				// Append the child DOM element to this element's DOM element
-				this.domNode.appendChild(childDomNode);
-
-				// If we are adding an HtmlElement
-				if(contentIsHtmlElement) {
-					content.domNode = this.domNode.lastChild;
-					content.addedToDom();
-				}
-
-				//console.log('Created new domNode', 'childDomNode', childDomNode, 'content', content);
+				child.appendDomNode();
 			}
 		}.bind(this));
 
-		// If there are more child DOM elements than content, we must remove them
-		if(domNodeChildNodesLength > this.chidren.length) {
-			for(var i = this.chidren.length; i < domNodeChildNodesLength; i++) {
-				this.domNode.removeChild(this.domNode.childNodes[contentIndex]);
-			}
+		// If there are more child DOM elements than child, we must remove them
+		for(var i = this.children.length; i < domNodeChildNodesLength; i++) {
+			this.domNode.removeChild(this.domNode.childNodes[childIndex]);
 		}
+	},
+
+	createDomFragment: function(htmlElement) {
+		// Allow this method to be called statically
+		if(!htmlElement) {
+			htmlElement = this;
+		}
+
+		// The DOM fragment is just for the tag, not for the children
+		var domFragment = document.createRange().createContextualFragment(htmlElement.tagToString());
+		//var domFragment = document.createRange().createContextualFragment(htmlElement);
+
+		return domFragment;
 	},
 
 	on: function(eventName, callback) {
@@ -200,10 +266,10 @@ HtmlElement = XmlElement.extend({
 	},
 
 	focus: function() {
-		console.log('.focus()', this);
+		//console.log('.focus()', this.domNode);
 
 		if(this.domNode) {
-			this.domNode.focus();	
+			this.domNode.focus();
 		}
 
 		return this;
@@ -223,22 +289,6 @@ HtmlElement = XmlElement.extend({
 		return this;
 	},
 
-	setAttribute: function(attributeName, attributeValue) {
-		this.super.apply(this, arguments);
-
-		this.updateDom();
-
-		return this;
-	},
-
-	removeAttribute: function(attributeName) {
-		this.super.apply(this, arguments);
-
-		this.updateDom();
-
-		return this;
-	},
-
 	setStyle: function(property, value) {
 		if(!this.attributes.style) {
 			this.attributes.style = {};
@@ -250,57 +300,26 @@ HtmlElement = XmlElement.extend({
 		return this;
 	},
 
-	setContent: function(content) {
-		//console.log('setContent');
-
-		this.chidren = Array.wrap(content);
-		this.updateDom();
-
-		return this;
-	},
-
-	append: function(stringOrElement) {
-		this.super.apply(this, arguments);
-
-		this.processChild(stringOrElement);
-
-		this.updateDom();
-
-		return this;
-	},
-
-	prepend: function(stringOrElement) {
-		this.super.apply(this, arguments);
-
-		this.processChild(stringOrElement);
-
-		this.updateDom();
-
-		return this;
-	},
-
-	prepend: function(stringOrHtmlNode) {
-		this.children.prepend(HtmlNode.makeHtmlNode(stringOrHtmlNode, this));
-
-		return this;
-	},	
-
-	append: function(stringOrHtmlNode) {
-		this.children.append(HtmlNode.makeHtmlNode(stringOrHtmlNode, this));
-
-		return this;
-	},
-
-	empty: function() {
-		this.super.apply(this, arguments);
-		this.updateDom();
-
-		return this;
-	},
-
 });
 
 // Static methods
+HtmlElement.createDomFragment = HtmlElement.prototype.createDomFragment;
+
+HtmlElement.makeHtmlNode = function(value, parent, type) {
+	var alreadyIsHtmlNode = HtmlNode.is(value);
+
+	// If the value is currently not of type HtmlNode (it must be a string), turn it into an HtmlNode
+	if(!alreadyIsHtmlNode) {
+		value = new HtmlNode(value, parent, type);
+	}
+	// If the value is already an HtmlNode, make sure it inherits traits from the parent 
+	else {
+		value.descendFromParent(parent);
+	}
+
+	return value;
+}
+
 HtmlElement.is = function(value) {
 	return Class.isInstance(value, HtmlElement);
 }

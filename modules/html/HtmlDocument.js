@@ -3,8 +3,8 @@ HtmlDocument = XmlDocument.extend({
 	type: 'html',
 
 	domDocument: null,
-	onAddedToDom: null,
-	isAddedToDom: false,
+	isAppliedToDom: false,
+	afterAppliedToDom: null,
 
 	element: null,
 	head: null,
@@ -43,11 +43,11 @@ HtmlDocument = XmlDocument.extend({
 			//console.log('DOM present, HtmlDocument connected to DOM', this);
 
 			// Manually connect this <html> HtmlElement to document.documentElement
-			this.element.domElement = this.domDocument.documentElement;
+			this.element.domNode = this.domDocument.documentElement;
 
-			// Manually connect the head and body domElement's to the domDocument's head and body properties
-			this.head.domElement = this.domDocument.head;
-			this.body.domElement = this.domDocument.body;
+			// Manually connect the head and body domNode's to the domDocument's head and body properties
+			this.head.domNode = this.domDocument.head;
+			this.body.domNode = this.domDocument.body;
 		}
 
 		this.element.append(this.head);
@@ -75,20 +75,20 @@ HtmlDocument = XmlDocument.extend({
 				eventName = 'DOMContentLoaded';
 			}
 
-			// If they want to use the custom onAddedToDom event
-			if(eventName == 'addedToDom') {
-				if(!this.onAddedToDom) {
-					this.onAddedToDom = callback;
+			// If they want to use the custom afterAppliedToDom event
+			if(eventName == 'afterAppliedToDom') {
+				if(!this.afterAppliedToDom) {
+					this.afterAppliedToDom = callback;
 				}
-				else if(Function.is(this.onAddedToDom)) {
+				else if(Function.is(this.afterAppliedToDom)) {
 					// Wrap the current function in an array
-					this.onAddedToDom = [this.onAddedToDom];
+					this.afterAppliedToDom = [this.afterAppliedToDom];
 
 					// Add the new callback to the array
-					this.onAddedToDom.append(callback);
+					this.afterAppliedToDom.append(callback);
 				}
-				else if(Array.is(this.onAddedToDom)) {
-					this.onAddedToDom.append(callback);
+				else if(Array.is(this.afterAppliedToDom)) {
+					this.afterAppliedToDom.append(callback);
 				}
 			}
 			// If the document is already ready, just run the function
@@ -108,27 +108,27 @@ HtmlDocument = XmlDocument.extend({
 		HtmlDocument.on('ready', callback);
 	},
 
-	addToDom: function() {
-		//console.log('HtmlDocument.addToDom', this);
+	applyToDom: function() {
+		//console.log('HtmlDocument.applyToDom', this);
 
 		// Add this.element to the DOM
 		this.element.executeDomUpdate();
 
 		// At this point the HtmlDocument has been added to the DOM
-		this.addedToDom();
+		this.appliedToDom();
 	},
 
-	addedToDom: function() {
-		//console.log('HtmlDocument.addedToDom', this);
+	appliedToDom: function() {
+		//console.log('HtmlDocument.appliedToDom', this);
 
 		// The HtmlDocument is now added to the DOM
-		this.isAddedToDom = true;
+		this.isAppliedToDom = true;
 
-		if(Function.is(this.onAddedToDom)) {
-			this.onAddedToDom();
+		if(Function.is(this.afterAppliedToDom)) {
+			this.afterAppliedToDom();
 		}
-		else if(Array.is(this.onAddedToDom)) {
-			this.onAddedToDom.each(function(index, callback) {
+		else if(Array.is(this.afterAppliedToDom)) {
+			this.afterAppliedToDom.each(function(index, callback) {
 				callback();
 			});
 		}
@@ -159,8 +159,8 @@ HtmlDocument = XmlDocument.extend({
 		//console.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
 
 		// Do nothing if the HtmlDocument is not added to the DOM yet
-		if(!this.isAddedToDom) {
-			//console.info('HtmlDocument.updateDom ignored because HtmlDocument.isAddedToDom is false');
+		if(!this.isAppliedToDom) {
+			//console.info('HtmlDocument.updateDom ignored because HtmlDocument.isAppliedToDom is false');
 		}
 		// If DOM update scheduling is enabled
 		else if(this.shouldScheduleDomUpdates) {

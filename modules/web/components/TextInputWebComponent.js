@@ -27,14 +27,14 @@ TextInputWebComponent = InputWebComponent.extend({
 	getCursorPosition: function() {
         var position = 0;
 
-        if('selectionStart' in this.domElement) {
-            position = this.domElement.selectionStart;
+        if('selectionStart' in this.domNode) {
+            position = this.domNode.selectionStart;
         }
         else if('selection' in document) {
-            this.domElement.focus();
+            this.domNode.focus();
             var selectionRange = document.selection.createRange();
             var selectionLength = document.selection.createRange().text.length;
-            selectionRange.moveStart('character', -this.domElement.value.length);
+            selectionRange.moveStart('character', -this.domNode.value.length);
             position = selectionRange.text.length - selectionLength;
         }
 
@@ -51,19 +51,19 @@ TextInputWebComponent = InputWebComponent.extend({
         }
 
         if(start == -1) {
-            start = this.domElement.value.length;
+            start = this.domNode.value.length;
         }
 
         if(end == -1) {
-            end = this.domElement.value.length;
+            end = this.domNode.value.length;
         }
 
-        if(this.domElement.setSelectionRange) {
-            this.domElement.focus();
-            this.domElement.setSelectionRange(start, end);
+        if(this.domNode.setSelectionRange) {
+            this.domNode.focus();
+            this.domNode.setSelectionRange(start, end);
         }
-        else if(this.domElement.createTextRange) {
-            var range = this.domElement.createTextRange();
+        else if(this.domNode.createTextRange) {
+            var range = this.domNode.createTextRange();
             range.collapse(true);
             range.moveEnd('character', end);
             range.moveStart('character', start);

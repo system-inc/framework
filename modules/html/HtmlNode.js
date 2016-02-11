@@ -30,6 +30,8 @@ HtmlNode = XmlNode.extend({
 				this.parent.identifier = '0';
 			}
 
+			console.error('these identifiers are wrong after inspecting the DOM');
+
 			// Set the identifier
 			this.identifier = this.parent.identifier+'.'+this.identifierCounter;
 
@@ -93,39 +95,51 @@ HtmlNode = XmlNode.extend({
 		}
 	},
 
-	createDomNode: function(content) {
+	createDomFragment: function(htmlNode) {
 		// Allow this method to be called statically
-		if(!content) {
-			content = this;
+		if(!htmlNode) {
+			htmlNode = this;
 		}
 
-		console.error('document fragments do not track when they are actually added to the DOM, so references to them are pointless')
+		var domFragment = document.createRange().createContextualFragment(htmlNode.toString());
 
-		var domNode;
-		if(Class.isInstance(content, HtmlElement)) {
-			domNode = document.createRange().createContextualFragment(content.tagToString());
-		}
-		else {
-			domNode = document.createRange().createContextualFragment(content);
-		}
-		content.domNode = domNode;
+		return domFragment;
+	},
 
-		if(Class.isInstance(content, HtmlElement)) {
-			// Loop through the children of the child and create DOM
-			content.content.each(function(currentChildIndex, currentChild) {
-				var childDomNode = HtmlElement.createDomNode(currentChild);
+	appendDomNode: function() {
+		//console.log('HtmlNode.appendDomNode');
 
-				if(Class.isInstance(currentChild, HtmlElement)) {
-					currentChild.domNode = childDomNode;
-				}
+		// Append the child DOM node to this node's DOM node
+		this.parent.domNode.appendChild(this.createDomFragment());
 
-				content.domNode.appendChild(childDomNode);
-			});
-		}
+		// Have the child reference the newly created DOM node
+		this.domNode = this.parent.domNode.lastChild;
 
-		console.error(content);
+		this.mountedToDom();
+	},
 
-		return domNode;
+	replaceDomNode: function(indexOfChildDomNodeToReplace) {
+		//console.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace);
+
+		// Replace the DOM node with the replacement fragment
+		this.parent.domNode.replaceChild(this.createDomFragment(), indexOfChildDomNodeToReplace);
+
+		// Have the child reference the replaced DOM node
+		this.domNode = this.parent.domNode.childNodes[indexOfChildDomNodeToReplace];
+
+		this.mountedToDom();
+	},
+
+	mountedToDom: function() {
+		// Execute DOM updates if necessary
+		this.executeDomUpdate();
+
+		// Run the callback
+		this.onMountedToDom();
+	},
+
+	onMountedToDom: function() {
+		// This method can be implemented and will execute when an HtmlNode is mounted to the DOM
 	},
 
 	emptyDomNode: function(domNode) {
@@ -143,18 +157,9 @@ HtmlNode = XmlNode.extend({
 });
 
 // Static methods
-HtmlNode.createDomNode = HtmlNode.prototype.createDomNode;
+HtmlNode.createDomFragment = HtmlNode.prototype.createDomFragment;
 HtmlNode.emptyDomNode = HtmlNode.prototype.emptyDomNode;
 
 HtmlNode.is = function(value) {
 	return Class.isInstance(value, HtmlNode);
-}
-
-HtmlNode.makeHtmlNode = function(value, parent, type) {
-	// If the value is currently not of type HtmlNode, make turn it into an HtmlNode
-	if(!HtmlNode.is(value)) {
-		value = new HtmlNode(value, parent, type);
-	}
-
-	return value;
 }

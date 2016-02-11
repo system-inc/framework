@@ -14,7 +14,7 @@ WebComponent = HtmlElement.extend({
 		this.super();
 	},
 
-	addedToDom: function() {
+	onMountedToDom: function() {
 		// Register event listeners
 		this.listen();
 	},
