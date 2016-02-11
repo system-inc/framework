@@ -77,6 +77,14 @@ HtmlElement = HtmlNode.extend({
 		return this;
 	},
 
+	setContent: function(content) {
+		// Empty the current content
+		this.empty();
+
+		// Append the new content
+		this.append(content);
+	},
+
 	descendFromParent: function(parent) {
 		// Use HtmlNode's method
 		this.super.apply(this, arguments);
@@ -210,8 +218,14 @@ HtmlElement = HtmlNode.extend({
 	},
 
 	on: function(eventName, callback) {
-		if(this.domNode && this.domNode.addEventListener) {
+		if(this.domNode) {
 			this.domNode.addEventListener(eventName, callback);
+		}
+		else {
+			this.afterMountedToDom(function() {
+				console.log('this.afterMountedToDom addEventListener');
+				this.domNode.addEventListener(eventName, callback);
+			}.bind(this));
 		}
 
 		return this;
@@ -253,6 +267,17 @@ HtmlElement = HtmlNode.extend({
 		return this;
 	},
 
+	setStyle: function(property, value) {
+		if(!this.attributes.style) {
+			this.attributes.style = {};
+		}
+
+		this.attributes.style[property] = value;
+		this.updateDom();
+
+		return this;
+	},
+
 	setHeight: function(height) {
 		this.setStyle('height', height+'px');
 
@@ -261,16 +286,6 @@ HtmlElement = HtmlNode.extend({
 
 	setWidth: function(width) {
 		this.setStyle('width', width+'px');
-
-		return this;
-	},
-
-	focus: function() {
-		//console.log('.focus()', this.domNode);
-
-		if(this.domNode) {
-			this.domNode.focus();
-		}
 
 		return this;
 	},
@@ -289,16 +304,14 @@ HtmlElement = HtmlNode.extend({
 		return this;
 	},
 
-	setStyle: function(property, value) {
-		if(!this.attributes.style) {
-			this.attributes.style = {};
-		}
+    focus: function() {        
+        // Remember, this.domNode must be visible on the screen to be focused, so if the virtual DOM is scheduled to show this.domNode but it hasn't updated yet, this call will not work
+        if(this.domNode) {
+            this.domNode.focus();
+        }
 
-		this.attributes.style[property] = value;
-		this.updateDom();
-
-		return this;
-	},
+        return this;
+    },
 
 });
 

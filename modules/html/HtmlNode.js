@@ -4,6 +4,8 @@ HtmlNode = XmlNode.extend({
 
 	domNode: null,
 	shouldExecuteDomUpdate: false, // Keep track of whether or not the HtmlElement is different from the DOM
+	afterNextExecutedDomUpdateFunctions: [],
+	afterMountedToDomFunctions: [],
 
 	identifier: null, // Used to uniquely identify HtmlNodes for tree comparisons againt the DOM
 	identifierCounter: 0, // Used to ensure unique identifiers
@@ -80,6 +82,22 @@ HtmlNode = XmlNode.extend({
 	domUpdateExecuted: function() {
 		// Mark the object as clean
 		this.shouldExecuteDomUpdate = false;
+
+		this.executePendingFunctions(this.afterNextExecutedDomUpdateFunctions);
+	},
+
+	executePendingFunctions: function(functionArray) {
+		// Run callbacks
+		functionArray.each(function(currentFunctionIndex, currentFunction) {
+			currentFunction();
+		}.bind(this));
+
+		// Clear the function array
+		functionArray = [];
+	},
+
+	afterNextExecutedDomUpdate: function(afterNextExecutedDomUpdateFunction) {
+		this.afterNextExecutedDomUpdateFunctions.append(afterNextExecutedDomUpdateFunction);
 	},
 
 	applyToDom: function() {
@@ -122,7 +140,7 @@ HtmlNode = XmlNode.extend({
 		//console.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace);
 
 		// Replace the DOM node with the replacement fragment
-		this.parent.domNode.replaceChild(this.createDomFragment(), indexOfChildDomNodeToReplace);
+		this.parent.domNode.replaceChild(this.createDomFragment(), this.parent.domNode.childNodes[indexOfChildDomNodeToReplace]);
 
 		// Have the child reference the replaced DOM node
 		this.domNode = this.parent.domNode.childNodes[indexOfChildDomNodeToReplace];
@@ -134,8 +152,14 @@ HtmlNode = XmlNode.extend({
 		// Execute DOM updates if necessary
 		this.executeDomUpdate();
 
+		this.executePendingFunctions(this.afterMountedToDomFunctions);
+
 		// Run the callback
 		this.onMountedToDom();
+	},
+
+	afterMountedToDom: function(afterMountedToDomFunction) {
+		this.afterMountedToDomFunctions.append(afterMountedToDomFunction);
 	},
 
 	onMountedToDom: function() {
