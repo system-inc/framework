@@ -147,15 +147,15 @@ HtmlDocument = XmlDocument.extend({
 			console.info('No updates.');
 		}
 		else {
-			this.domUpdates.each(function(htmlElementIdentifier, htmlElement) {
-				console.info(htmlElementIdentifier, htmlElement.tag, Json.encode(htmlElement.attributes));
+			this.domUpdates.each(function(htmlNodeIdentifier, htmlNode) {
+				console.info(htmlNodeIdentifier, htmlNode.tag, Json.encode(htmlNode.attributes));
 			});
 		}
 		console.info('**************************************')
 	},
 
-	updateDom: function(htmlElement) {
-		//console.log('HtmlDocument.updateDom', htmlElement);
+	updateDom: function(htmlNode) {
+		//console.log('HtmlDocument.updateDom', htmlNode);
 		//console.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
 
 		// Do nothing if the HtmlDocument is not added to the DOM yet
@@ -164,21 +164,22 @@ HtmlDocument = XmlDocument.extend({
 		}
 		// If DOM update scheduling is enabled
 		else if(this.shouldScheduleDomUpdates) {
-			this.scheduleDomUpdate(htmlElement);
+			this.scheduleDomUpdate(htmlNode);
 		}
 		// If not, immediately update the DOM
 		else {
-			htmlElement.executeDomUpdate();
+			htmlNode.executeDomUpdate();
 		}
 	},
 
-	scheduleDomUpdate: function(htmlElement) {
-		//console.log('HtmlDocument.scheduleDomUpdate', htmlElement.tag, Json.encode(htmlElement.attributes));
+	scheduleDomUpdate: function(htmlNode) {
+		console.log('HtmlDocument.scheduleDomUpdate', htmlNode.tag, Json.encode(htmlNode.attributes));
 
 		// Add the HtmlElement to the list of updates to do
-		if(htmlElement) {
+		if(htmlNode) {
 			// Use an object instead of an array so we get the speed of the hash table for deduping updates
-			this.domUpdates[htmlElement.identifier] = htmlElement;
+			console.error('my identifiers are wrong so my updates will fail');
+			this.domUpdates[htmlNode.identifier] = htmlNode;
 		}
 
 		// If an update isn't scheduled already, use the next animation frame to run all updates
@@ -202,12 +203,12 @@ HtmlDocument = XmlDocument.extend({
 		//console.log('HtmlDocument.executeDomUpdates', 'this.domUpdates', this.domUpdates);
 
 		// Iterate over all DOM updates
-		this.domUpdates.each(function(htmlElementIdentifier, htmlElement) {
+		this.domUpdates.each(function(htmlNodeIdentifier, htmlNode) {
 			// Run the DOM updates for the HtmlElement
-			htmlElement.executeDomUpdate();
+			htmlNode.executeDomUpdate();
 
 			// Remove the HtmlElement from the domUpdates objects
-			delete this.domUpdates[htmlElementIdentifier];
+			delete this.domUpdates[htmlNodeIdentifier];
 		}.bind(this));
 
 		// Mark all updates as completed

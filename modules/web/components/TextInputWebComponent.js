@@ -18,6 +18,10 @@ TextInputWebComponent = InputWebComponent.extend({
         }.bind(this));
     },
 
+    clear: function() {
+        this.setValue('');
+    },
+
     insertText: function(text) {
         document.execCommand('insertText', false, text);
 

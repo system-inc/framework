@@ -1,6 +1,13 @@
 InputWebComponent = WebComponent.extend({
 
 	value: null,
+	originalValue: null,
+
+	construct: function() {
+		this.super.apply(this, arguments);
+
+		this.originalValue = this.value;
+	},
 
 	getValue: function() {
 		return this.value;
@@ -10,6 +17,10 @@ InputWebComponent = WebComponent.extend({
 		this.value = this.domNode.value = value;
 
 		return this.value;
+	},
+
+	reset: function() {
+		this.setValue(this.originalValue);
 	},
 
 	// Two-way data binding: if the user changes the value on the DOM, the InputWebComponent is updated to reflect the new value

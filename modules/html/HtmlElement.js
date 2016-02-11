@@ -223,7 +223,7 @@ HtmlElement = HtmlNode.extend({
 		}
 		else {
 			this.afterMountedToDom(function() {
-				console.log('this.afterMountedToDom addEventListener');
+				//console.log('this.afterMountedToDom addEventListener');
 				this.domNode.addEventListener(eventName, callback);
 			}.bind(this));
 		}
