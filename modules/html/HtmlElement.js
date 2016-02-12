@@ -89,6 +89,12 @@ HtmlElement = HtmlNode.extend({
 		// Use HtmlNode's method
 		this.super.apply(this, arguments);
 
+		// Add a DOM attribute for testing
+		//this.setAttribute('data-identifier', this.identifier);
+
+		// Reset the identifierCounter
+		this.identifierCounter = 0;
+
 		// Recurse through all children to make sure they descend
 		this.children.each(function(childIndex, child) {
 			child.descendFromParent(this);

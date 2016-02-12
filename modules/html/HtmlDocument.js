@@ -140,7 +140,7 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	printDomUpdates: function() {
-		console.info('**************************************')
+		console.info('**************************************');
 		console.info('Pending DOM Updates:')
 
 		if(Object.isEmpty(this.domUpdates)) {
@@ -151,7 +151,7 @@ HtmlDocument = XmlDocument.extend({
 				console.info(htmlNodeIdentifier, htmlNode.tag, Json.encode(htmlNode.attributes));
 			});
 		}
-		console.info('**************************************')
+		console.info('**************************************');
 	},
 
 	updateDom: function(htmlNode) {
@@ -173,12 +173,11 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	scheduleDomUpdate: function(htmlNode) {
-		console.log('HtmlDocument.scheduleDomUpdate', htmlNode.tag, Json.encode(htmlNode.attributes));
+		//console.log('HtmlDocument.scheduleDomUpdate', htmlNode.tag, Json.encode(htmlNode.attributes));
 
 		// Add the HtmlElement to the list of updates to do
 		if(htmlNode) {
 			// Use an object instead of an array so we get the speed of the hash table for deduping updates
-			console.error('my identifiers are wrong so my updates will fail');
 			this.domUpdates[htmlNode.identifier] = htmlNode;
 		}
 

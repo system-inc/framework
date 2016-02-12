@@ -32,13 +32,9 @@ HtmlNode = XmlNode.extend({
 				this.parent.identifier = '0';
 			}
 
-			console.error('these identifiers are wrong after inspecting the DOM');
-
 			// Set the identifier
-			this.identifier = this.parent.identifier+'.'+this.identifierCounter;
-
-			// Increment the identifier counter
-			this.identifierCounter++;
+			this.identifier = this.parent.identifier+'.'+this.parent.identifierCounter;
+			this.parent.identifierCounter++;			
 		}
 	},
 

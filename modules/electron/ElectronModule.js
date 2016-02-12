@@ -46,7 +46,7 @@ ElectronModule = Module.extend({
 					defaultWindowStateKeyboardShortcut: true, // Boolean, if true, the shortcut Alt-Ctrl+W (Windows) or Option+Cmd+W (OS X) resets the window state the default position
 				},
 				developerTools: {
-					show: true, // Show the developer tools on start
+					show: false, // Show the developer tools on start
 				},
 			},
 			keyboardShortcuts: {
