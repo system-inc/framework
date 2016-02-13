@@ -5,13 +5,13 @@ HtmlElement = HtmlNode.extend({
 	// As a consequence, instanceof XmlElement will not return true for objects of type HtmlElement
 
 	// XmlNode properties
-	type: 'element',
+	type: XmlElement.prototype.type,
 
 	// XmlElement properties
-	tag: null,
-	unary: false, // Tags are not unary (self-closing) by default
-	attributes: {},
-	children: null, // Array containing strings or elements
+	tag: XmlElement.prototype.tag,
+	unary: XmlElement.prototype.unary, // Tags are not unary (self-closing) by default
+	attributes: XmlElement.prototype.attributes,
+	children: XmlElement.prototype.children, // Array containing strings or elements
 
 	// XmlElement methods
 	getAttribute: XmlElement.prototype.getAttribute,
