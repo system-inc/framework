@@ -1,6 +1,6 @@
 RangeHeader = Class.extend({
 
-	unit: null, // Usually "bytes"
+	unit: null, // Usually 'bytes'
 	ranges: [], // Range requests can have multiple ranges
 	input: null, // Store the original input for debugging
 

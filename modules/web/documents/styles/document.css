@@ -1,0 +1,74 @@
+* {
+    all: unset;
+}
+
+html {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    line-height: 1;
+    font-family: sans-serif;
+}
+
+iframe {
+}
+
+ul,
+ol {
+}
+
+li {
+    display: block;
+}
+
+dl {
+}
+
+dd {
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-size: inherit;
+}
+
+blockquote {
+}
+
+p {
+}
+
+b,
+strong {
+    font-weight: bold;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+}
+
+a {
+    cursor: pointer;
+}
+
+button {
+    text-align: inherit;
+    text-transform: inherit;
+    font: inherit;
+    -webkit-font-smoothing: inherit;
+    letter-spacing: inherit;
+    background: none;
+    cursor: pointer;
+    overflow: visible;
+}
