@@ -101,7 +101,7 @@ HtmlElement = HtmlNode.extend({
 		}.bind(this));
 	},
 
-	applyToDom: function() {
+	applyDomUpdates: function() {
 		// Update the DOM element's attributes
 		this.updateDomNodeAttributes();
 

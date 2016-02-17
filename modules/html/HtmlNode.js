@@ -3,6 +3,7 @@ HtmlNode = XmlNode.extend({
 	htmlDocument: null,
 
 	domNode: null,
+	isMountedToDom: false,
 	shouldExecuteDomUpdate: false, // Keep track of whether or not the HtmlElement is different from the DOM
 	afterNextExecutedDomUpdateFunctions: [],
 	afterMountedToDomFunctions: [],
@@ -34,7 +35,7 @@ HtmlNode = XmlNode.extend({
 
 			// Set the identifier
 			this.identifier = this.parent.identifier+'.'+this.parent.identifierCounter;
-			this.parent.identifierCounter++;			
+			this.parent.identifierCounter++;
 		}
 	},
 
@@ -65,7 +66,7 @@ HtmlNode = XmlNode.extend({
 		// If we should execute an update
 		if(this.shouldExecuteDomUpdate) {
 			// Apply the current state to the DOM
-			this.applyToDom();
+			this.applyDomUpdates();
 
 			// Mark the update as complete
 			this.domUpdateExecuted();	
@@ -96,7 +97,7 @@ HtmlNode = XmlNode.extend({
 		this.afterNextExecutedDomUpdateFunctions.append(afterNextExecutedDomUpdateFunction);
 	},
 
-	applyToDom: function() {
+	applyDomUpdates: function() {
 		// Update the DOM node's value
 		this.updateDomNodeValue();
 	},
@@ -145,6 +146,10 @@ HtmlNode = XmlNode.extend({
 	},
 
 	mountedToDom: function() {
+		//console.log('mountedToDom', this);
+
+		this.isMountedToDom = true;
+
 		// Execute DOM updates if necessary
 		this.executeDomUpdate();
 

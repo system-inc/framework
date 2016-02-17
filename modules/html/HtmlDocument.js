@@ -3,8 +3,8 @@ HtmlDocument = XmlDocument.extend({
 	type: 'html',
 
 	domDocument: null,
-	isAppliedToDom: false,
-	afterAppliedToDom: null,
+	isMountedToDom: false,
+	afterMountedToDom: null,
 
 	element: null,
 	head: null,
@@ -42,6 +42,9 @@ HtmlDocument = XmlDocument.extend({
 			this.domDocument = document;
 			//console.log('DOM present, HtmlDocument connected to DOM', this);
 
+			// Set window.HtmlDocument to this
+			window.htmlDocument = this;
+
 			// Manually connect this <html> HtmlElement to document.documentElement
 			this.element.domNode = this.domDocument.documentElement;
 
@@ -75,20 +78,20 @@ HtmlDocument = XmlDocument.extend({
 				eventName = 'DOMContentLoaded';
 			}
 
-			// If they want to use the custom afterAppliedToDom event
-			if(eventName == 'afterAppliedToDom') {
-				if(!this.afterAppliedToDom) {
-					this.afterAppliedToDom = callback;
+			// If they want to use the custom afterMountedToDom event
+			if(eventName == 'afterMountedToDom') {
+				if(!this.afterMountedToDom) {
+					this.afterMountedToDom = callback;
 				}
-				else if(Function.is(this.afterAppliedToDom)) {
+				else if(Function.is(this.afterMountedToDom)) {
 					// Wrap the current function in an array
-					this.afterAppliedToDom = [this.afterAppliedToDom];
+					this.afterMountedToDom = [this.afterMountedToDom];
 
 					// Add the new callback to the array
-					this.afterAppliedToDom.append(callback);
+					this.afterMountedToDom.append(callback);
 				}
-				else if(Array.is(this.afterAppliedToDom)) {
-					this.afterAppliedToDom.append(callback);
+				else if(Array.is(this.afterMountedToDom)) {
+					this.afterMountedToDom.append(callback);
 				}
 			}
 			// If the document is already ready, just run the function
@@ -108,27 +111,32 @@ HtmlDocument = XmlDocument.extend({
 		HtmlDocument.on('ready', callback);
 	},
 
-	applyToDom: function() {
-		//console.log('HtmlDocument.applyToDom', this);
+	mountToDom: function() {
+		// Clear the head and body in preparation for writing the HTML document to the DOM
+		// Even though we are removing script references from <head>, any previously included scripts will still have code available (we want this to be the case)
+		this.head.emptyDomNode();
+		this.body.emptyDomNode();
+
+		//console.log('HtmlDocument.mountToDom', this);
 
 		// Add this.element to the DOM
 		this.element.executeDomUpdate();
 
 		// At this point the HtmlDocument has been added to the DOM
-		this.appliedToDom();
+		this.mountedToDom();
 	},
 
-	appliedToDom: function() {
-		//console.log('HtmlDocument.appliedToDom', this);
+	mountedToDom: function() {
+		//console.log('HtmlDocument.mountedToDom', this);
 
 		// The HtmlDocument is now added to the DOM
-		this.isAppliedToDom = true;
+		this.isMountedToDom = true;
 
-		if(Function.is(this.afterAppliedToDom)) {
-			this.afterAppliedToDom();
+		if(Function.is(this.afterMountedToDom)) {
+			this.afterMountedToDom();
 		}
-		else if(Array.is(this.afterAppliedToDom)) {
-			this.afterAppliedToDom.each(function(index, callback) {
+		else if(Array.is(this.afterMountedToDom)) {
+			this.afterMountedToDom.each(function(index, callback) {
 				callback();
 			});
 		}
@@ -159,8 +167,8 @@ HtmlDocument = XmlDocument.extend({
 		//console.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
 
 		// Do nothing if the HtmlDocument is not added to the DOM yet
-		if(!this.isAppliedToDom) {
-			//console.info('HtmlDocument.updateDom ignored because HtmlDocument.isAppliedToDom is false');
+		if(!this.isMountedToDom) {
+			//console.info('HtmlDocument.updateDom ignored because HtmlDocument.isMountedToDom is false');
 		}
 		// If DOM update scheduling is enabled
 		else if(this.shouldScheduleDomUpdates) {
