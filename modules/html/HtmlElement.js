@@ -90,7 +90,7 @@ HtmlElement = HtmlNode.extend({
 		this.super.apply(this, arguments);
 
 		// Add a DOM attribute for testing
-		//this.setAttribute('data-identifier', this.identifier);
+		this.setAttribute('data-identifier', this.identifier);
 
 		// Reset the identifierCounter
 		this.identifierCounter = 0;
@@ -174,6 +174,9 @@ HtmlElement = HtmlNode.extend({
 	},
 
 	updateDomNodeChildren: function() {
+		// TODO: do I need to do this if I am already mounted to the DOM? each of my children should register changes if necessary
+		// which means I do not need to loop through them
+
 		// TODO:
 		// This seems like it is going to be slow and not good... will need to fix this
 
