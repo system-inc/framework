@@ -92,7 +92,7 @@ Electron = new (Class.extend({
 		var windowStateSettings = ElectronModule.settings.get('mainBrowserWindow.windowState');
 
 		// Create a window state for the main browser window
-		this.mainBrowserWindowState = new WindowState('main', this.mainBrowserWindow, windowStateSettings);
+		this.mainBrowserWindowState = new ElectronWindowState('main', this.mainBrowserWindow, windowStateSettings);
 	},
 
 	addDefaultKeyboardShortcuts: function() {

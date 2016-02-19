@@ -8,7 +8,8 @@ ElectronModule = Module.extend({
 
 	uses: [
 		'Electron',
-		'WindowState',
+		'ElectronMenu',
+		'ElectronWindowState',
 	],
 
 	initialize: function*(settings) {

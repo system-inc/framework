@@ -1,4 +1,4 @@
-WindowState = Class.extend({
+ElectronWindowState = Class.extend({
 
 	identifier: null,
 	browserWindow: null,
