@@ -62,10 +62,10 @@ Electron = new (Class.extend({
 		// Add default keyboard shortcuts
 		this.addDefaultKeyboardShortcuts();
 
-		// Get the main controller
+		// Require and construct the main WebController
 		window.webController = Controller.getController(ElectronModule.settings.get('mainBrowserWindow.webControllerName'));
 
-		// Load the HtmlDocument from the main controller (Main.main() should always return an HtmlDocument)
+		// Load the HtmlDocument from the main WebController
 		window.htmlDocument = yield webController[ElectronModule.settings.get('mainBrowserWindow.webControllerMethodName')]();
 		//console.log(htmlDocument);
 		

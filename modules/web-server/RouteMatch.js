@@ -177,7 +177,7 @@ RouteMatch = Class.extend({
 			}
 			// If a file path is specified, use it
 			else if(this.route.filePath) {
-				filePath = Node.Path.normalize(Node.Path.join(this.webServer.directory+'views', this.route.filePath));
+				filePath = Node.Path.normalize(Node.Path.join(this.webServer.directory, 'views', this.route.filePath));
 			}
 			//Console.highlight(filePath);
 

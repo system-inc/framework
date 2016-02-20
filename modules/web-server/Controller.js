@@ -25,7 +25,7 @@ Controller = Class.extend({
 		// If we don't have the controller load it
 		if(!global[controllerName]) {
 			// Look in the project controllers directory
-			var controllerPath = Node.Path.join(directory+'controllers', controllerName+'.js');
+			var controllerPath = Node.Path.join(directory, 'controllers', controllerName+'.js');
 			if(File.synchronous.exists(controllerPath)) {
 				//Console.out('Controller '+controllerPath+' exists.');
 				require(controllerPath);
@@ -62,7 +62,7 @@ Controller = Class.extend({
 		}
 
 		// Create a file to reference the view
-		var viewFile = new File(Node.Path.join(Project.directory+'views', viewPath));
+		var viewFile = new File(Node.Path.join(Project.directory, 'views', viewPath));
 		//console.log('viewFile', viewFile);
 
 		var viewFileExists = yield viewFile.exists();

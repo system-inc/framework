@@ -509,20 +509,24 @@ function CapturedTrace$captureStackTrace(ignoreUntil, isTopLevel) {
 CapturedTrace.possiblyUnhandledRejection =
 function CapturedTrace$PossiblyUnhandledRejection(reason) {
     if (typeof console === "object") {
-        var message;
-        if (typeof reason === "object" || typeof reason === "function") {
-            var stack = reason.stack;
-            message = "Possibly unhandled " + formatStack(stack, reason);
-        } else {
-            message = "Possibly unhandled " + String(reason);
-        }
-        if (typeof console.error === "function" ||
-            typeof console.error === "object") {
-            console.error(message);
-        } else if (typeof console.log === "function" ||
-            typeof console.log === "object") {
-            console.log(message);
-        }
+
+        // Use Framework to log errors
+        Console.error(reason, reason.toObject());
+
+        //var message;
+        //if (typeof reason === "object" || typeof reason === "function") {
+        //    var stack = reason.stack;
+        //    message = "Possibly unhandled " + formatStack(stack, reason);
+        //} else {
+        //    message = "Possibly unhandled " + String(reason);
+        //}
+        //if (typeof console.error === "function" ||
+        //    typeof console.error === "object") {
+        //    console.error(message);
+        //} else if (typeof console.log === "function" ||
+        //    typeof console.log === "object") {
+        //    console.log(message);
+        //}
     }
 };
 

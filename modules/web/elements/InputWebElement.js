@@ -1,4 +1,4 @@
-InputWebComponent = WebComponent.extend({
+InputWebElement = WebElement.extend({
 
 	value: null,
 	originalValue: null,
@@ -23,9 +23,9 @@ InputWebComponent = WebComponent.extend({
 		this.setValue(this.originalValue);
 	},
 
-	// Two-way data binding: if the user changes the value on the DOM, the InputWebComponent is updated to reflect the new value
+	// Two-way data binding: if the user changes the value on the DOM, the InputWebElement is updated to reflect the new value
 	valueChangedOnDomElement: function() {
-		//console.log('Value changed on DOM, updating InputWebComponent');
+		//console.log('Value changed on DOM, updating InputWebElement');
 		
 		this.value = this.domNode.value;	
 

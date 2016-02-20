@@ -1,6 +1,6 @@
-WebComponent.load('Input');
+WebElement.require('Input');
 
-TextInputWebComponent = InputWebComponent.extend({
+TextInputWebElement = InputWebElement.extend({
 
     tag: 'input',
 

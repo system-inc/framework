@@ -20,7 +20,7 @@ Module = Class.extend({
 		this.name = moduleName;
 
 		// Load the modules this module needs
-		Module.load(this.needs);
+		Module.require(this.needs);
 
 		// Require the files this module uses
 		this.uses.each(function(index, fileToRequire) {
@@ -52,40 +52,36 @@ Module.modules = {
 		'Settings',
 		'Time',
 	],
-	// Keep track of loaded modules
-	loaded: [],
+	// Keep track of required modules
+	required: [],
 	// Keep track of initialized modules
 	initialized: [],
 }
 
 // Static methods
 
-Module.loadCoreModules = function() {
-	Module.load(Module.modules.core);
+Module.requireCoreModules = function() {
+	Module.require(Module.modules.core);
 }
 
-Module.load = function(moduleNames) {
+Module.require = function(moduleNames) {
 	//console.log('moduleNames', moduleNames);
 
 	// Load each module
 	moduleNames.toArray().each(function(index, moduleName) {
-		// Only load modules once
-		if(Module.modules.loaded.contains(moduleName)) {
-			//console.log('Already called Module.load for', moduleName);
+		// Only require modules once
+		if(Module.modules.required.contains(moduleName)) {
+			//console.log('Already called Module.require for', moduleName);
 		}
 		// Load the module
 		else {
-			// Construct the module path
-			var modulePath = Node.Path.join(__dirname.replaceLast('objects', 'modules'), moduleName.toDashes(), moduleName+'Module');
-			
 			// Load the module
-			//console.log('Loading', modulePath, 'module...');
-			Framework.require(modulePath);
+			Framework.require('modules', moduleName.toDashes(), moduleName+'Module');
 
-			// Construct the module and store it as a global variable
+			// Construct the module and store it as a global variable, replacing the module class
 			global[moduleName+'Module'] = new global[moduleName+'Module'](moduleName);
 
-			Module.modules.loaded.append(moduleName);
+			Module.modules.required.append(moduleName);
 		}
 	});
 }
@@ -97,7 +93,7 @@ Module.initializeCoreModules = function*() {
 Module.initialize = function*(moduleNames) {
 	//console.log('moduleNames', moduleNames);
 
-	// Initializing is necessary to do separate of .load because module code may be interdependent and require other code to be loaded first
+	// Initializing is necessary to do separate of .require because module code may be interdependent and require other code to be required first
 	yield moduleNames.toArray().each(function*(index, moduleName) {
 		// Only initialize modules once
 		if(Module.modules.initialized.contains(moduleName)) {

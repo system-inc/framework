@@ -45,8 +45,8 @@ Framework = Class.extend({
 	},
 
 	initialize: function*() {
-		// Load the core modules
-		Module.loadCoreModules();
+		// Require the core modules
+		Module.requireCoreModules();
 
 		// Announce starting
 		//Console.out('Initializing Framework '+this.version+'...');
@@ -67,7 +67,7 @@ Framework = Class.extend({
 		yield Module.initializeCoreModules();
 
 		// Load all of the modules for the Project indicated in the project settings
-		yield this.loadAndInitializeProjectModules();
+		yield this.requireAndInitializeProjectModules();
 
 		//Console.out('Framework initialization complete.');
 		Console.out('Initialized "'+this.title+'" in '+this.environment+' environment.');
@@ -77,7 +77,7 @@ Framework = Class.extend({
 	loadProjectSettings: function*() {
 		//Console.out('Loading project settings...');
 
-		this.settings = Settings.constructFromFile(Node.Path.join(this.directory+'settings', 'settings.json'));
+		this.settings = Settings.constructFromFile(Node.Path.join(this.directory, 'settings', 'settings.json'));
 
 		// Set the default settings
 		this.settings.default({
@@ -87,7 +87,7 @@ Framework = Class.extend({
 
 		// Merge the environment settings
 		//Console.out('Integrating environment settings...')
-		this.settings.integrateSettingsFromFile(Node.Path.join(this.directory+'settings', 'environment.json'));
+		this.settings.integrateSettingsFromFile(Node.Path.join(this.directory, 'settings', 'environment.json'));
 		//Console.out(this.settings);
 	},
 
@@ -141,7 +141,7 @@ Framework = Class.extend({
 		return Node.Process.platform == 'linux';
 	},
 
-	loadAndInitializeProjectModules: function*() {
+	requireAndInitializeProjectModules: function*() {
 		//Console.out('Loading modules for project...');
 
 		// Load and initialize project modules separately in case multiple project modules rely on each other
@@ -153,7 +153,7 @@ Framework = Class.extend({
 			
 			//Console.out('Loading "'+moduleName+'" module...');
 
-			Module.load(moduleName);
+			Module.require(moduleName);
 
 			// Store the module name for initialization later
 			modulesForProject.append(moduleName);
@@ -161,24 +161,38 @@ Framework = Class.extend({
 		
 		// Initialize the modules for the Project
 		yield Module.initialize(modulesForProject);
-	},	
+	},
+
+	// Run all require calls through this method
+	require: function(/* identifier, ... */) {
+		//console.log('Framework.require', arguments);
+
+		var argumentsArray = Array.fromObject(arguments);
+
+		// If we are calling the method as an instance of Framework using Project.require, use the Project directory
+		if(Class.isInstance(this, Framework)) {
+			argumentsArray.prepend(Project.directory);
+		}
+		// If we are calling the method statically using Framework.require, use the Framework directory
+		else {
+			argumentsArray.prepend(Project.framework.directory);
+		}
+
+		var identifier = Node.Path.join.apply(this, argumentsArray);
+
+		try {
+			return require(identifier);
+		}
+		catch(exception) {
+			console.error('Framework.require', identifier, exception);
+			return false;
+		}
+	},
 
 });
 
 // Static methods and properties
-
-// Run all require calls through this method
-Framework.require = function(identifier) {
-	//console.log('Framework.require', identifier);
-
-	try {
-		return require(identifier);
-	}
-	catch(exception) {
-		console.error('Framework.require', identifier, exception);
-		return false;
-	}
-}
+Framework.require = Framework.prototype.require;
 
 // Attach an event emitter
 Framework.eventEmitter = new EventEmitter();

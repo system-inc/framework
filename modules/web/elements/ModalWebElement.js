@@ -1,4 +1,4 @@
-ModalWebComponent = WebComponent.extend({
+ModalWebElement = WebElement.extend({
 
 	modal: null,
 

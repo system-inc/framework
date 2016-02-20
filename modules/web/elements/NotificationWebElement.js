@@ -1,4 +1,4 @@
-NotificationWebComponent = WebComponent.extend({
+NotificationWebElement = WebElement.extend({
 
 	attributes: {
 		class: 'notification',

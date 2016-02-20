@@ -436,6 +436,16 @@ Array.prototype.prepend = Array.prototype.unshift;
 
 Array.prototype.toString = Object.prototype.toString;
 
+Array.fromObject = function(object) {
+	var array = [];
+
+	object.each(function(key, value) {
+		array.append(value);
+	});
+
+	return array;
+}
+
 Array.toObject = function(array) {
 	var object = {};
 

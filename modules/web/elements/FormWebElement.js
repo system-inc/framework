@@ -1,4 +1,4 @@
-FormWebComponent = WebComponent.extend({
+FormWebElement = WebElement.extend({
 
 	tag: 'form',
 
