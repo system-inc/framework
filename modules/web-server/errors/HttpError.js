@@ -1,4 +1,5 @@
-HttpError = Error.extend({
+// Class
+var HttpError = Error.extend({
 
 	construct: function(code, message) {
 		// Invoke Error's contructor
@@ -12,3 +13,6 @@ HttpError = Error.extend({
 	},
 
 });
+
+// Export
+module.exports = HttpError;

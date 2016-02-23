@@ -1,19 +1,23 @@
-Test = Class.extend({
+// Class
+var Test = Class.extend({
 
 	before: function*() {
-		//Console.out('Before');
+		//Console.log('Before');
 	},
 
 	beforeEach: function*() {
-		//Console.out('Before each');
+		//Console.log('Before each');
 	},
 
 	after: function*() {
-		//Console.out('After');
+		//Console.log('After');
 	},
 
 	afterEach: function*() {
-		//Console.out('After each');
+		//Console.log('After each');
 	},
 	
 });
+
+// Export
+module.exports = Test;

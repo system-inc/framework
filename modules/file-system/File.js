@@ -1,4 +1,8 @@
-File = FileSystemObject.extend({
+// Dependencies
+var FileFormats = Framework.require('modules/file-system/FileFormats.js');
+
+// Class
+var File = FileSystemObject.extend({
 
 	file: null, // The full path to the file, e.g., /directory/file.extension; same as path
 	fileWithoutExtension: null, // The full path the file without the extension
@@ -44,7 +48,7 @@ File = FileSystemObject.extend({
 	},
 
 	open: function*(flags) {
-		//console.log('Running file.open on', this.file, 'with flags', flags);
+		//Console.log('Running file.open on', this.file, 'with flags', flags);
 		this.descriptor = yield File.open(this.file, flags);
 
 		return this.descriptor;
@@ -57,12 +61,12 @@ File = FileSystemObject.extend({
     },
 
     readToBuffer: function*(length, position) {
-        //Console.out('length', length, 'position', position);
+        //Console.log('length', length, 'position', position);
         
         // If there is no file descriptor, open the file in read only mode
         if(!this.descriptor) {
             yield this.open('r');
-            //Console.out('Opened file in read mode', this.descriptor);
+            //Console.log('Opened file in read mode', this.descriptor);
         }
 
         return new Promise(function(resolve, reject) {
@@ -73,7 +77,7 @@ File = FileSystemObject.extend({
                     reject(error);
                 }
                 else {
-                    //Console.out('bytesRead', bytesRead);
+                    //Console.log('bytesRead', bytesRead);
                     resolve(buffer);
                 }
             });
@@ -81,7 +85,7 @@ File = FileSystemObject.extend({
     },
 
 	write: function*(data) {
-		//console.log('Running file.write', 'with descriptor', this.descriptor, data);
+		//Console.log('Running file.write', 'with descriptor', this.descriptor, data);
 		var response = yield File.write(this.descriptor, data);
 
         return response;
@@ -117,7 +121,7 @@ File.read = function(path, options) {
     		}
     	});
     });
-}
+};
 
 File.open = function(path, flags, mode) {
     return new Promise(function(resolve, reject) {
@@ -130,7 +134,7 @@ File.open = function(path, flags, mode) {
     		}
     	});
     });
-}
+};
 
 File.write = function(fileDescriptor, buffer, offset, length, position) {
     return new Promise(function(resolve, reject) {
@@ -146,7 +150,7 @@ File.write = function(fileDescriptor, buffer, offset, length, position) {
     		}
     	});
     });
-}
+};
 
 File.create = function(file, data, options) {
     return new Promise(function(resolve, reject) {
@@ -159,7 +163,7 @@ File.create = function(file, data, options) {
             }
         });
     });
-}
+};
 
 File.createReadStream = function() {
     var storedContext = this;
@@ -175,7 +179,7 @@ File.createReadStream = function() {
             reject(error);
         });
     });
-}
+};
 
 File.createWriteStream = function() {
 	var storedContext = this;
@@ -191,7 +195,7 @@ File.createWriteStream = function() {
     		reject(error);
     	});
     });
-}
+};
 
 File.synchronous = {};
 
@@ -213,4 +217,7 @@ File.synchronous.read.json = function(file) {
 	}
 
 	return result;
-}
+};
+
+// Export
+module.exports = File;

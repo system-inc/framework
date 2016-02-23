@@ -1,4 +1,5 @@
-XmlDocument = Class.extend({
+// Class
+var XmlDocument = Class.extend({
 
 	declaration: null,
 	version: null, // The version of XML
@@ -54,3 +55,6 @@ XmlDocument = Class.extend({
 	},
 
 });
+
+// Export
+module.exports = XmlDocument;

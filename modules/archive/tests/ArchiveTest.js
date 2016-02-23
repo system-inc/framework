@@ -1,8 +1,12 @@
-ArchiveTest = Test.extend({
+// Dependencies
+var ArchiveFile = Framework.require('modules/archive/ArchiveFile.js');
+
+// Class
+var ArchiveTest = Test.extend({
 
 	testZipWithComment: function*() {
 		var archiveFilePath = Node.Path.join(__dirname, 'files', 'zip-with-comment.zip');
-		//Console.out('archiveFilePath', archiveFilePath);
+		//Console.log('archiveFilePath', archiveFilePath);
 
 		var archiveFile = new ArchiveFile(archiveFilePath);
 
@@ -23,7 +27,7 @@ ArchiveTest = Test.extend({
 
 	testRarWithComment: function*() {
 		var archiveFilePath = Node.Path.join(__dirname, 'files', 'rar-with-comment.rar');
-		//Console.out('archiveFilePath', archiveFilePath);
+		//Console.log('archiveFilePath', archiveFilePath);
 
 		var archiveFile = new ArchiveFile(archiveFilePath);
 
@@ -44,7 +48,7 @@ ArchiveTest = Test.extend({
 
 	testRar5WithComment: function*() {
 		var archiveFilePath = Node.Path.join(__dirname, 'files', 'rar5-with-comment.rar');
-		//Console.out('archiveFilePath', archiveFilePath);
+		//Console.log('archiveFilePath', archiveFilePath);
 
 		var archiveFile = new ArchiveFile(archiveFilePath);
 
@@ -64,3 +68,6 @@ ArchiveTest = Test.extend({
 	},
 
 });
+
+// Export
+module.exports = ArchiveTest;

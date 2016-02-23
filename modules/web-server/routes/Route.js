@@ -1,4 +1,8 @@
-Route = Class.extend({
+// Dependencies
+var RouteFactory = Framework.require('modules/web-server/routes/RouteFactory.js');
+
+// Class
+var Route = Class.extend({
 	
 	// Any type
 	type: null, // controller, redirect, file, or proxy
@@ -14,129 +18,103 @@ Route = Class.extend({
 	parent: null,
 	children: [],
 
-	construct: function(routeSettings, parent) {
-		// Make sure child routes without types are subclassed the same as their parent
-		if(!routeSettings.type && parent && parent.type) {
-			routeSettings.type = parent.type;
-		}
-
-		// Instantiate a subclass of route to handle specific routing behavior (in other words, you can't create a Route, instantiating a new route will always return a subclass of Route)
-		var route = null;
-
-		// RedirectRoute
-		if(routeSettings.type == 'redirect') {
-			route = new RedirectRoute();
-			route.inheritProperty('redirectStatusCode', routeSettings, parent);
-			route.inheritProperty('redirectHost', routeSettings, parent);
-			route.inheritProperty('redirectLocation', routeSettings, parent);
-		}
-		// FileRoute
-		else if(routeSettings.type == 'file') {
-			route = new FileRoute();
-			route.inheritProperty('filePath', routeSettings, parent);
-
-			// Make sure filePath is a normalized path
-			if(!Object.isEmpty(route.filePath)) {
-				route.filePath = Node.Path.normalize(route.filePath);
-			}
-		}
-		// ProxyRoute
-		else if(routeSettings.type == 'proxy') {
-			route = new ProxyRoute();
-			route.inheritProperty('proxyUrl', routeSettings, parent);
-			// Make sure we are working with a URL object
-			if(route.proxyUrl) {
-				route.proxyUrl = new Url(route.proxyUrl);
-			}
-			route.inheritProperty('proxyHeaders', routeSettings, parent);
-		}
-		// ControllerRoute is the default subclass
-		else {
-			route = new ControllerRoute();
-			route.inheritProperty('controllerName', routeSettings, parent);
-			route.inheritProperty('controllerMethodName', routeSettings, parent);
-		}
-
+	construct: function(settings, parent) {
 		// If we have a parent, set it
-		route.parent = (parent === undefined ? null : parent);
+		this.parent = (parent === undefined ? null : parent);
 
-		// Inherit properties (either from routeSettings or from the parent route)
-		route.inheritProperty('context', routeSettings, parent);
-		route.inheritProperty('protocols', routeSettings, parent);
-		route.inheritProperty('hosts', routeSettings, parent);
-		route.inheritProperty('ports', routeSettings, parent);
-		route.inheritProperty('methods', routeSettings, parent);
-		route.inheritProperty('expression', routeSettings, parent);
+		// Inherit properties (either from settings or from the parent route)
+		this.inheritProperty('context', settings, parent);
+		this.inheritProperty('protocols', settings, parent);
+		this.inheritProperty('hosts', settings, parent);
+		this.inheritProperty('ports', settings, parent);
+		this.inheritProperty('methods', settings, parent);
+		this.inheritProperty('expression', settings, parent);
 
-		// If we have data in routeSettings, set it
-		if(routeSettings.data) {
-			route.data = routeSettings.data;
+		// If we have data in settings, set it
+		if(settings.data) {
+			this.data = settings.data;
 		}
 
 		// If we have a parent, merge our data with the parent's data
-		if(route.parent) {
-			route.data = Object.clone(route.parent.data).merge(route.data);
+		if(this.parent) {
+			this.data = Object.clone(this.parent.data).merge(this.data);
 		}
 
 		// If we have a description, set it
-		if(routeSettings.description) {
-			route.description = routeSettings.description;
+		if(settings.description) {
+			this.description = settings.description;
 		}
 
 		// Get and set the fullExpression
-		route.fullExpression = route.getFullExpression();
+		this.fullExpression = this.getFullExpression();
 
 		// Make sure we have a default context of project
-		if(route.context == null) {
-			route.context = 'project';
+		if(this.context == null) {
+			this.context = 'project';
 		}
 
 		// Make sure we have default methods
-		if(route.methods == null) {
-			route.methods = '*';
+		if(this.methods == null) {
+			this.methods = '*';
 		}
 
 		// Make sure we have default protocols
-		if(route.protocols == null) {
-			route.protocols = '*';
+		if(this.protocols == null) {
+			this.protocols = '*';
 		}
 
 		// Make sure we have default hosts
-		if(route.hosts == null) {
-			route.hosts = '*';
+		if(this.hosts == null) {
+			this.hosts = '*';
 		}
 
 		// Make sure we have default ports
-		if(route.ports == null) {
-			route.ports = '*';
+		if(this.ports == null) {
+			this.ports = '*';
 		}
 
 		// Create route children if they exist
-		if(routeSettings.children) {
-			routeSettings.children.each(function(index, childRoute) {
-				route.children.push(new Route(childRoute, route));
+		if(settings.children) {
+			settings.children.each(function(index, childRouteSettings) {
+				this.children.push(RouteFactory.create(childRouteSettings, this));
 			}.bind(this));
 		}
-
-		return route;
 	},
 
-	match: function(request) {
-		// Use the RouteMatch data structure to be able to keep track of match meta data without running into concurrency issues that would happen as a result of storing data on the route object
-		var routeMatch = new RouteMatch();
+	inheritProperty: function(propertyName, settings, parent) {
+		// If the property is declared in the route settings, set it
+		if(settings[propertyName] !== undefined) {
+			this[propertyName] = settings[propertyName];
+		}
+		
+		// If the property is null, inherit the parent's property
+		if(this[propertyName] === null && parent && parent[propertyName] !== null) {
+			this[propertyName] = parent[propertyName];
+		}
+
+		return this;
+	},
+
+	match: function(request, response) {
+		// Use the routeMatch data structure to be able to keep track of match meta data without running into concurrency issues that would happen as a result of storing data on the route object
+		var routeMatch = {
+			route: null, // Will be populated on complete matches
+			partial: null,
+			complete: null,
+		};
 
 		// Check the request's expression against the route's fullExpression
 		var requestExpression = request.url.path;
-		//Console.out("\n"+'Checking if request expression', requestExpression, 'matches with route full expression', this.fullExpression);
+		//Console.log("\n"+'Checking if request expression', requestExpression, 'matches with route full expression', this.fullExpression);
 
 		routeMatch.partial = requestExpression.match(new RegularExpression(this.fullExpression));
 		if(routeMatch.partial) {
-			//Console.out('Partially!');
+			//Console.log('Partially!');
 		}
 		routeMatch.complete = requestExpression.match(new RegularExpression('^'+this.fullExpression+'$'));
 		if(routeMatch.complete) {
 			routeMatch.route = this;
-			//Console.out('Completely! Setting match.');
+			//Console.log('Completely! Setting match.');
 		}
 
 		// If we have a partial match (the match may be complete as well)
@@ -159,36 +137,36 @@ Route = Class.extend({
 		// If we have a match
 		if(routeMatch.route) {
 			// Check the methods
-			//Console.out('Comparing methods', routeMatch.route.methods, 'against', request.method);
+			//Console.log('Comparing methods', routeMatch.route.methods, 'against', request.method);
 			if(routeMatch.route && routeMatch.route.methods != '*' && !routeMatch.route.methods.contains(request.method)) {
-				//Console.out('Method match failed!');
+				//Console.log('Method match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the protocols
-			//Console.out('Comparing protocols', routeMatch.route.protocols, 'against', request.url.protocol);
+			//Console.log('Comparing protocols', routeMatch.route.protocols, 'against', request.url.protocol);
 			if(routeMatch.route && routeMatch.route.protocols != '*' && !routeMatch.route.protocols.contains(request.url.protocol)) {
-				//Console.out('Protocol match failed!');
+				//Console.log('Protocol match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the host
-			//Console.out('Comparing hosts', routeMatch.route.hosts.toArray(), 'against', request.url.host);
+			//Console.log('Comparing hosts', routeMatch.route.hosts.toArray(), 'against', request.url.host);
 			if(routeMatch.route && routeMatch.route.hosts != '*' && !routeMatch.route.hosts.toArray().contains(request.url.host, false, 'either')) {
-				//Console.out('Host match failed!');
+				//Console.log('Host match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the ports
-			//Console.out('Comparing ports', routeMatch.route.ports, 'against', request.url.port);
+			//Console.log('Comparing ports', routeMatch.route.ports, 'against', request.url.port);
 			if(routeMatch.route && routeMatch.route.ports != '*' && !routeMatch.route.ports.contains(request.url.port)) {
-				//Console.out('Port match failed!');
+				//Console.log('Port match failed!');
 				routeMatch.route = null;
 			}
 			
 			// If we do not completely match
 			if(routeMatch.route && !routeMatch.complete) {
-				//Console.out('We do not have a complete match!');
+				//Console.log('We do not have a complete match!');
 				routeMatch.route = null;
 			}
 		}
@@ -196,18 +174,8 @@ Route = Class.extend({
 		return routeMatch;
 	},
 
-	inheritProperty: function(propertyName, routeSettings, parent) {
-		// If the property is declared in the route settings, set it
-		if(routeSettings[propertyName]) {
-			this[propertyName] = routeSettings[propertyName];
-		}
-		
-		// If the property is null, inherit the parent's property
-		if(!this[propertyName] && parent && parent[propertyName]) {
-			this[propertyName] = parent[propertyName];
-		}
-
-		return this;
+	follow: function*(request, response) {
+		throw new Error('Route.follow() must be implemented by a subclass.');
 	},
 
 	getFullExpression: function() {
@@ -227,11 +195,61 @@ Route = Class.extend({
 
 		var currentParent = this.parent;
 		while(currentParent) {
-			parents.push(currentParent);
+			parents.append(currentParent);
 			currentParent = currentParent.parent;
 		}
 
 		return parents;
 	},
+
+	collectData: function(request) {
+		var collectedData = {};
+
+		// Go through each capture group named in the route and its parents and assign the proper key and value for the capture group name and its matches
+		var count = 1;
+		this.getCaptureGroupNames().each(function(index, captureGroupName) {
+			collectedData[captureGroupName] = this.complete[count];
+			count++;
+		}.bind(this));
+
+		// Merge what we have so far with the route data
+		collectedData = this.route.data.clone().merge(collectedData);
+
+		// Strip out all of the capture group integer keys
+		collectedData.each(function(key, value) {
+			if(Number.isInteger(key)) {
+				delete collectedData[key];
+			}
+		});
+
+		// Merge request.data into data
+		collectedData = collectedData.merge(request.data);
+
+		// Sort the data by keys
+		collectedData = collectedData.sort();
+
+		return collectedData;
+	},
+
+	getCaptureGroupNames: function() {
+		var captureGroupNames = [];
+
+		// Make a flattened array of the route and it's parents
+		var routeArray = this.getParents();
+		routeArray.append(this);
+
+		routeArray.each(function(index, route) {
+			route.data.each(function(dataKey, dataValue) {
+				if(Number.isInteger(dataKey)) {
+					captureGroupNames.append(dataValue);
+				}
+			});
+		});
+
+		return captureGroupNames;
+	},
 	
 });
+
+// Export
+module.exports = Route;

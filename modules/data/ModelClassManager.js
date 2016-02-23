@@ -1,7 +1,12 @@
-ModelClassManager = Class.extend({
-});
+// Dependencies
+var Model = Framework.require('modules/data/Model.js');
+var ModelProperty = Framework.require('modules/data/ModelProperty.js');
+
+// Class
+var ModelClassManager = {};
 
 // Static methods
+
 ModelClassManager.addModelPropertyToModelClass = function(modelProperty, modelClass) {
 	// Add the model property to properties
 	modelClass.prototype.properties[modelProperty.name] = modelProperty;
@@ -17,7 +22,7 @@ ModelClassManager.addModelPropertyToModelClass = function(modelProperty, modelCl
 	}
 
 	return modelClass;
-}
+};
 
 ModelClassManager.addModelPropertiesToModelClass = function(modelProperties, modelClass) {
 	modelProperties.each(function(modelPropertyIndex, modelProperty) {
@@ -25,7 +30,7 @@ ModelClassManager.addModelPropertiesToModelClass = function(modelProperties, mod
 	});
 
 	return modelClass;
-}
+};
 
 ModelClassManager.generateModelClassFromSchemaModel = function(schemaModel) {
 	var modelClass = Model.extend({
@@ -42,4 +47,7 @@ ModelClassManager.generateModelClassFromSchemaModel = function(schemaModel) {
 	modelClass = ModelClassManager.addModelPropertiesToModelClass(modelProperties, modelClass);
 
 	return modelClass;
-}
+};
+
+// Export
+module.exports = ModelClassManager;

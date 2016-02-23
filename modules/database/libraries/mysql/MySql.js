@@ -1,4 +1,11 @@
-MySql = require('./npm-mysql.js');
+// Dependencies
+var DatabaseField = Framework.require('modules/database/DatabaseField.js');
+
+// Class
+var MySql = Framework.require('modules/database/libraries/mysql/npm-mysql.js');
+
+// Static methods
+
 MySql.Adapter = {};
 
 MySql.Adapter.reformFields = function(fields) {
@@ -34,7 +41,7 @@ MySql.Adapter.reformFields = function(fields) {
 MySql.Adapter.query = function(connection, query, values) {
     return new Promise(function(resolve, reject) {
 		var queryResults = connection.query(query, values, function(error, rows, fields) {
-			//Console.out(queryResults.sql);
+			//Console.log(queryResults.sql);
 
 			if(error) {
 				resolve(error);
@@ -50,7 +57,8 @@ MySql.Adapter.query = function(connection, query, values) {
 				resolve(result);
 			}
 		});
-
-
     });
 }
+
+// Export
+module.exports = MySql;

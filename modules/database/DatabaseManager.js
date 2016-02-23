@@ -1,4 +1,8 @@
-DatabaseManager = new (Class.extend({
+// Dependencies
+var Database = Framework.require('modules/database/Database.js');
+
+// Class
+var DatabaseManager = Class.extend({
 
 	databases: {},
 
@@ -15,4 +19,7 @@ DatabaseManager = new (Class.extend({
 		return this.databases.getKeyForValue(databaseIdentifier);
 	},
 
-}))();
+});
+
+// Export
+module.exports = DatabaseManager;

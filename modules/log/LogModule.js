@@ -1,9 +1,9 @@
-LogModule = Module.extend({
+// Class
+var LogModule = Module.extend({
 
 	version: new Version('0.1.0'),
-
-	uses: [
-		'Log',
-	],
 	
 });
+
+// Export
+module.exports = LogModule;

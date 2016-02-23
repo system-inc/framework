@@ -1,4 +1,9 @@
-HtmlElement = HtmlNode.extend({
+// Dependencies
+var HtmlNode = Framework.require('modules/html/HtmlNode.js');
+var XmlElement = Framework.require('modules/xml/XmlElement.js');
+
+// Class
+var HtmlElement = HtmlNode.extend({
 
 	// HtmlElement cannot be a subclass of both XmlElement and HtmlNode
 	// So, we will extend from HtmlNode and reference the properties and methods we want from XmlElement
@@ -110,7 +115,7 @@ HtmlElement = HtmlNode.extend({
 	},
 
 	updateDomNodeAttributes: function() {
-		//console.log('updateDomNodeAttributes', this.tag, Json.encode(this.attributes));
+		//Console.log('updateDomNodeAttributes', this.tag, Json.encode(this.attributes));
 
 		// TODO:
 		// Because the virtual DOM is the state of truth, can we just keep track of all changes
@@ -122,7 +127,7 @@ HtmlElement = HtmlNode.extend({
 
 		// Loop through all of the DOM element's attributes
 		this.domNode.attributes.each(function(domNodeAttributeIndex, domNodeAttribute) {
-			//console.log(domNodeAttributeIndex, domNodeAttribute, domNodeAttribute.name, domNodeAttribute.value);
+			//Console.log(domNodeAttributeIndex, domNodeAttribute, domNodeAttribute.name, domNodeAttribute.value);
 
 			// Keep track of all DOM element attribute names so we know later on if we need to add anything
 			domNodeAttributeNames[domNodeAttribute.name] = true;
@@ -158,16 +163,16 @@ HtmlElement = HtmlNode.extend({
 			}
 		}.bind(this));
 
-		//console.log('domNodeAttributesToUpdate', domNodeAttributesToUpdate);
+		//Console.log('domNodeAttributesToUpdate', domNodeAttributesToUpdate);
 
 		// Update the DOM element's attributes
 		domNodeAttributesToUpdate.each(function(domNodeAttributeToUpdateName, domNodeAttributeToUpdate) {
 			if(domNodeAttributeToUpdate.action == 'remove') {
-				//console.log('removeAttribute', domNodeAttributeToUpdateName);
+				//Console.log('removeAttribute', domNodeAttributeToUpdateName);
 				this.domNode.removeAttribute(domNodeAttributeToUpdateName);
 			}
 			else if(domNodeAttributeToUpdate.action == 'set') {
-				//console.log('setAttribute', domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
+				//Console.log('setAttribute', domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
 				this.domNode.setAttribute(domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
 			}
 		}.bind(this));
@@ -189,7 +194,7 @@ HtmlElement = HtmlNode.extend({
 			if(childIndex < domNodeChildNodesLength) {
 				var currentChildDomNode = this.domNode.childNodes[childIndex];
 
-				//console.log('Comparing to current domNode', 'currentChildDomNode', currentChildDomNode, 'child', child);
+				//Console.log('Comparing to current domNode', 'currentChildDomNode', currentChildDomNode, 'child', child);
 
 				// If the child's domNode matches the current child DOM node
 				if(child.domNode === currentChildDomNode) {
@@ -232,7 +237,7 @@ HtmlElement = HtmlNode.extend({
 		}
 		else {
 			this.afterMountedToDom(function() {
-				//console.log('this.afterMountedToDom addEventListener');
+				//Console.log('this.afterMountedToDom addEventListener');
 				this.domNode.addEventListener(eventName, callback);
 			}.bind(this));
 		}
@@ -300,14 +305,14 @@ HtmlElement = HtmlNode.extend({
 	},
 
 	show: function() {
-		//console.log('show');
+		//Console.log('show');
 		this.setStyle('display', 'flex');
 
 		return this;
 	},
 
 	hide: function() {
-		//console.log('hide');
+		//Console.log('hide');
 		this.setStyle('display', 'none');
 
 		return this;
@@ -325,6 +330,7 @@ HtmlElement = HtmlNode.extend({
 });
 
 // Static methods
+
 HtmlElement.createDomFragment = HtmlElement.prototype.createDomFragment;
 
 HtmlElement.makeHtmlNode = function(value, parent, type) {
@@ -340,8 +346,11 @@ HtmlElement.makeHtmlNode = function(value, parent, type) {
 	}
 
 	return value;
-}
+};
 
 HtmlElement.is = function(value) {
 	return Class.isInstance(value, HtmlElement);
-}
+};
+
+// Export
+module.exports = HtmlElement;

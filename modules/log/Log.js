@@ -1,4 +1,5 @@
-Log = Class.extend({
+// Class
+var Log = Class.extend({
 
 	directory: null,
 	nameWithoutExtension: null,
@@ -10,7 +11,7 @@ Log = Class.extend({
 	construct: function(directory, nameWithoutExtension) {
 		this.directory = directory;
 		this.nameWithoutExtension = nameWithoutExtension;
-		this.file = new File(this.directory+this.nameWithoutExtension+'.log');
+		this.file = new File(Node.Path.join(this.directory, this.nameWithoutExtension+'.log'));
 	},
 
 	write: function*(data) {
@@ -21,12 +22,12 @@ Log = Class.extend({
 
 		// Troubleshooting why modifying or deleting the log file breaks things, writable is unreliable
 		//if(this.writeStream) {
-		//	console.log(this.writeStream);
+		//	Console.log(this.writeStream);
 		//	if(!this.writeStream.writable) {
-		//		console.log('!!!!!!!!!! unwritable!');
+		//		Console.log('!!!!!!!!!! unwritable!');
 		//	}
 		//	else {
-		//		console.log('writable!');
+		//		Console.log('writable!');
 		//	}
 		//}
 
@@ -64,7 +65,7 @@ Log = Class.extend({
 
 			// Write to the log
 			this.writeStream.write(data); // No need to yield here since we aren't doing anything with the results
-			//console.log(this.writeStream);
+			//Console.log(this.writeStream);
 		}
 		// If we don't have a write stream, add the data to the buffer
 		else {
@@ -73,3 +74,6 @@ Log = Class.extend({
 	}
 
 });
+
+// Export
+module.exports = Log;

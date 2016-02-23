@@ -1,4 +1,8 @@
-IpV6Address = IpAddress.extend({
+// Dependencies
+var IpAddress = Framework.require('modules/network/IpAddress.js');
+
+// Class
+var IpV6Address = IpAddress.extend({
 
 	version: 6,
 
@@ -7,3 +11,6 @@ IpV6Address = IpAddress.extend({
 	},
 	
 });
+
+// Export
+module.exports = IpV6Address;

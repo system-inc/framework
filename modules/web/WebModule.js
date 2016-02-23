@@ -1,31 +1,13 @@
-WebModule = Module.extend({
+// Globals
+Url = Framework.require('modules/web/Url.js');
+WebRequest = Framework.require('modules/web/WebRequest.js');
 
-	version: new Version('1.0'),
+// Class
+var WebModule = Module.extend({
 
-	needs: [
-		'Data',
-		'Geolocation',
-		'Html',
-		'Network',
-		'OperatingSystem',
-	],
+	version: new Version('0.1.0'),
 
-	uses: [
-		'Browser',
-		'Cookie',
-		'Cookies',
-		'Header',
-		'Headers',
-		'LocalStorage',
-		'Url',
-		'WebRequest',
-		'Web',
-		'WebApi',
-		'controllers/WebController',
-		'elements/WebElement',
-		'headers/RangeHeader.js',
-		'interface/KeyboardShortcut',
-		'interface/KeyboardShortcuts',
-	],
-	
 });
+
+// Export
+module.exports = WebModule;

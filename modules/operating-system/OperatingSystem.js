@@ -1,11 +1,9 @@
-OperatingSystem = Class.extend({
+// Class
+var OperatingSystem = Class.extend({
 
 	name: null,
 	manufacturer: null,
 	version: null,
-
-	construct: function() {
-	},
 
 	parseUserAgent: function(userAgent) {
 		// Return immediately if there is no user agent
@@ -77,16 +75,8 @@ OperatingSystem = Class.extend({
 	
 });
 
-// Static methods
-OperatingSystem.constructFromUserAgent = function(userAgent) {
-	var operatingSystem = new OperatingSystem();
-
-	operatingSystem.parseUserAgent(userAgent);
-
-	return operatingSystem;	
-}
-
 // Static properties
+
 OperatingSystem.operatingSystems = [
 	{
 		'name': 'iOS',
@@ -119,3 +109,16 @@ OperatingSystem.operatingSystems = [
 		'userAgentRegularExpressionString': 'Android',
 	},
 ];
+
+// Static methods
+
+OperatingSystem.constructFromUserAgent = function(userAgent) {
+	var operatingSystem = new OperatingSystem();
+
+	operatingSystem.parseUserAgent(userAgent);
+
+	return operatingSystem;	
+};
+
+// Export
+module.exports = OperatingSystem;

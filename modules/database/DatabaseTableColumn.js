@@ -1,4 +1,5 @@
-DatabaseTableColumn = Class.extend({
+// Class
+var DatabaseTableColumn = Class.extend({
 
 	database: null,
 	databaseName: null,
@@ -93,3 +94,6 @@ DatabaseTableColumn = Class.extend({
 	},
 
 });
+
+// Export
+module.exports = DatabaseTableColumn;

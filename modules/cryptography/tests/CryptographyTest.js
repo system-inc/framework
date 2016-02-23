@@ -1,4 +1,5 @@
-CryptographyTest = Test.extend({
+// Class
+var CryptographyTest = Test.extend({
 
 	testRandom: function*() {
 		var actual = yield Cryptography.random();
@@ -7,3 +8,6 @@ CryptographyTest = Test.extend({
 	},
 
 });
+
+// Export
+module.exports = CryptographyTest;

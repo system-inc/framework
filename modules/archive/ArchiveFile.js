@@ -1,4 +1,9 @@
-ArchiveFile = File.extend({
+// Dependencies
+var SevenZip = Framework.require('modules/archive/libraries/7-zip/SevenZip.js');
+var ArchivedFileSystemObject = Framework.require('modules/archive/file-system-objects/ArchivedFileSystemObject.js');
+
+// Class
+var ArchiveFile = File.extend({
 
 	archivedFileSystemObjects: null,
 
@@ -10,7 +15,7 @@ ArchiveFile = File.extend({
 		var archivedFileSystemObject = null;
 
 		list.each(function(index, currentArchivedFileSystemObject) {
-			//Console.out('Comparing', "\n", Terminal.style(archivedFileSystemObjectPath, 'red'), 'to', "\n", Terminal.style(currentArchivedFileSystemObject.path, 'blue'));
+			//Console.log('Comparing', "\n", Terminal.style(archivedFileSystemObjectPath, 'red'), 'to', "\n", Terminal.style(currentArchivedFileSystemObject.path, 'blue'));
 			if(archivedFileSystemObjectPath == currentArchivedFileSystemObject.path) {
 				archivedFileSystemObject = currentArchivedFileSystemObject;
 				return false; // break
@@ -24,13 +29,13 @@ ArchiveFile = File.extend({
 		if(!this.archivedFileSystemObjects) {
 			// Get the 7-Zip list from the command line executable
 			var sevenZipList = yield SevenZip.list(this.file);
-			//Console.out(sevenZipList);
+			//Console.log(sevenZipList);
 
 			this.archivedFileSystemObjects = [];
 
 			// Create new ArchivedFileSystemObjects from the list
 			sevenZipList.each(function(sevenZipArchivedFileSystemObjectPropertiesIndex, sevenZipArchivedFileSystemObjectProperties) {
-				//Console.out('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
+				//Console.log('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
 				var archivedFileSystemObject = ArchivedFileSystemObject.constructFromSevenZipArchivedFileSystemObjectProperties(this, sevenZipArchivedFileSystemObjectProperties);
 				this.archivedFileSystemObjects.append(archivedFileSystemObject);
 			}.bind(this));
@@ -42,3 +47,6 @@ ArchiveFile = File.extend({
 	},
 
 });
+
+// Export
+module.exports = ArchiveFile;

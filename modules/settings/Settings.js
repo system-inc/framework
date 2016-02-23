@@ -1,116 +1,71 @@
-Settings = Class.extend({
+// Class
+var Settings = Class.extend({
 
-	settings: {},
+	object: null,
+	defaults: null,
 
-	construct: function(settings, defaultSettings) {
-		if(settings && Object.is(settings)) {
-			this.settings = settings;
+	construct: function(object, defaults) {
+		if(object && Object.is(object)) {
+			this.object = object;
+		}
+		else {
+			this.object = {};
 		}
 
-		if(defaultSettings !== undefined) {
-			this.default(defaultSettings);
+		if(defaults) {
+			this.setDefaults(defaults);
 		}
 	},
 
-	default: function(defaultSettings) {
-		this.settings = defaultSettings.merge(this.settings);
+	setDefaults: function(defaults) {
+		this.defaults = defaults.clone();
+
+		this.object = defaults.merge(this.object);
 
 		return this;
 	},
 
-	mergeSettingsFromFile: function(path) {
-		var settings = File.synchronous.read.json(path);
-		//Console.out('Settings from', path, 'to merge:', settings);
-		this.settings.merge(settings);
+	mergeSettingsFromFile: function(filePath) {
+		var object = File.synchronous.read.json(filePath);
+		//Console.log('Settings from', filePath, 'to merge:', object);
+
+		this.object.merge(object);
 
 		return this;
 	},
 
-	integrateSettingsFromFile: function(path) {
-		var settings = File.synchronous.read.json(path);
-		//Console.out('Settings from', path, 'to integrate:', settings);
-		this.settings.integrate(settings);
+	integrateSettingsFromFile: function(filePath) {
+		var object = File.synchronous.read.json(filePath);
+		//Console.log('Settings from', filePath, 'to integrate:', object);
+		
+		this.object.integrate(object);
 
 		return this;
 	},
 
 	isEmpty: function() {
-		return this.settings.isEmpty();
+		return this.object.isEmpty();
 	},
 
-	get: function(selector) {
-		var keys = selector.split('.');
-		var value = null;
-		var current = this.settings;
-
-		// Search for they key they specified
-		for(var i = 0; i < keys.length; i++) {
-			// If the key exists assign it
-			if(current[keys[i]] !== undefined) {
-				current = current[keys[i]];
-			}
-			// If the key does not exist, exit the loop
-			else {
-				current = null;
-				break;
-			}
-		}
-
-		// Set the value to return to be the last value found for the last key
-		value = current;
-
-		return value;
+	get: function(path) {
+		return this.object.getValueByPath(path);
 	},
 
-	set: function(selector, value) {
-		var keys = selector.split('.');
-		var current = this.settings;
-
-		// Search for they key they specified
-		for(var i = 0; i < keys.length; i++) {
-			// If the key isn't set and it isn't the last, create an object
-			if(!current[keys[i]] && i != keys.length - 1) {
-				current[keys[i]] = {};
-			}
-
-			// If the key is the last key, set the value
-			if(i == keys.length - 1) {
-				current[keys[i]] = value;
-			}
-			// If the key is not the last key, set current to the most recent key and loop again
-			else {
-				current = current[keys[i]];
-			}
-		}
-
-		return this;
+	set: function(path, value) {
+		return this.object.setValueByPath(path, value);
 	},
 
 });
 
 // Static methods
-Settings.constructFromFile = function(path) {
-	var settings = new Settings();
-	settings.settings = File.synchronous.read.json(path);
 
-	return settings;
-}
+Settings.constructFromFile = function(filePath, defaults) {
+	var object = File.synchronous.read.json(filePath);
 
-Settings.constructFromObject = function(object) {
-	var settings = new Settings();
-	if(object) {
-		settings.settings = object;	
-	}
-	
-	return settings;
-}
+	var object = new Settings(object, defaults);
 
-Settings.default = function(defaultSettings, settings) {
-	// Create a settings object from the settings they provided
-	var settings = Settings.constructFromObject(settings);
+	return object;
+};
 
-	// Merge in the defaults
-	settings.default(defaultSettings);
-
-	return settings;
-}
+// Export
+module.exports = Settings;

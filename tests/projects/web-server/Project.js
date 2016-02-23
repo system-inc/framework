@@ -1,4 +1,4 @@
-require('./../../../Framework.js');
+Framework = require('./../../../Framework.js');
 Project = new Framework(__dirname);
 Project.initialize();
 
@@ -6,12 +6,12 @@ Project.initialize();
 //if(Node.Cluster.isMaster) {
 //    // Fork workers
 //    for(var i = 0; i < Node.OperatingSystem.cpus().length; i++) {
-//        console.log('Forking...');
+//        Console.log('Forking...');
 //        Node.Cluster.fork();
 //    }
 
 //    Node.Cluster.on('exit', function(worker, code, signal) {
-//        console.log('Worker "'+worker.process.pid+'" died.');
+//        Console.log('Worker "'+worker.process.pid+'" died.');
 //    });
 //}
 //else {

@@ -1,4 +1,10 @@
-DatabaseTable = Class.extend({
+// Dependencies
+var DatabaseTableColumn = Framework.require('modules/database/DatabaseTableColumn.js');
+var DatabaseTableIndex = Framework.require('modules/database/DatabaseTableIndex.js');
+var DatabaseTableRelationship = Framework.require('modules/database/DatabaseTableRelationship.js');
+
+// Class
+var DatabaseTable = Class.extend({
 
 	database: null,
 	databaseName: null,
@@ -260,3 +266,6 @@ DatabaseTable = Class.extend({
 	},
 
 });
+
+// Export
+module.exports = DatabaseTable;

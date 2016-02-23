@@ -1,4 +1,12 @@
-HtmlTest = Test.extend({
+// Dependencies
+var HtmlDocument = Framework.require('modules/html/HtmlDocument.js');
+var HtmlElement = Framework.require('modules/html/HtmlElement.js');
+var HtmlNode = Framework.require('modules/html/HtmlNode.js');
+var XmlElement = Framework.require('modules/xml/XmlElement.js');
+var XmlNode = Framework.require('modules/xml/XmlNode.js');
+
+// Class
+var HtmlTest = Test.extend({
 
 	testHtmlDocument: function*() {
 		// Blank HTML document
@@ -49,3 +57,6 @@ HtmlTest = Test.extend({
 	},
 
 });
+
+// Export
+module.exports = HtmlTest;

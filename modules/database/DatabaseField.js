@@ -1,4 +1,5 @@
-DatabaseField = Class.extend({
+// Class
+var DatabaseField = Class.extend({
 
 	//database: null,
 	databaseName: null,
@@ -21,3 +22,6 @@ DatabaseField = Class.extend({
 	//protocol41: null,
 
 });
+
+// Export
+module.exports = DatabaseField;

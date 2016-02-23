@@ -1,4 +1,10 @@
-Database = Class.extend({
+// Dependencies
+var MySql = Framework.require('modules/database/libraries/mysql/MySql.js');
+var DatabaseTable = Framework.require('modules/database/DatabaseTable.js');
+var Stopwatch = Framework.require('modules/time/Stopwatch.js');
+
+// Class
+var Database = Class.extend({
 
 	name: null,
 	
@@ -22,7 +28,7 @@ Database = Class.extend({
 	},
 
 	construct: function(settings) {
-		this.settings = Settings.default({
+		this.settings = new Settings(settings, {
 			host: 'localhost',
 			port: '3306',
 			ipAddress: null,
@@ -33,7 +39,7 @@ Database = Class.extend({
 			connectionLimit: 10,
 			timeZone: 'local',
 			connectTimeout: 10000,
-		}, settings);
+		});
 
 		this.name = this.settings.get('databaseName');
 
@@ -85,7 +91,7 @@ Database = Class.extend({
 		stopwatch.stop();
 
 		// Debug
-		//Console.out(stopwatch.elapsedTime+'ms', queryResults.sql);
+		//Console.log(stopwatch.elapsedTime+'ms', queryResults.sql);
 
 		// Calculate the average query time
 		this.statistics.averageQueryTimeInMilliseconds = (this.statistics.averageQueryTimeInMilliseconds + stopwatch.elapsedTime) / 2;
@@ -123,22 +129,22 @@ Database = Class.extend({
 		var tables = [];
 
 		var allTables = yield this.query('SHOW TABLE STATUS');
-		//Console.out(allTables);
+		//Console.log(allTables);
 
 		var allTableCharacterSets = yield this.query('SELECT `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`character_set_name`, `information_schema`.`TABLES`.`table_name` FROM `information_schema`.`TABLES`, `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY` WHERE `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`collation_name` = `information_schema`.`TABLES`.`table_collation` AND `table_schema` = ?', [this.name]);
-		//Console.out(allTableCharacterSets);
+		//Console.log(allTableCharacterSets);
 
 		var allTableColumns = yield this.query('SELECT * FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? ORDER BY `ORDINAL_POSITION` ASC', [this.name]);
-		//Console.out(allTableColumns);
+		//Console.log(allTableColumns);
 
 		var allTableIndexes = yield this.query('SELECT DISTINCT `TABLE_NAME`, `STATISTICS`.* FROM `information_schema`.`STATISTICS` WHERE `TABLE_SCHEMA` = ?', [this.name]);
-		//Console.out(allTableColumns);
+		//Console.log(allTableColumns);
 
 		var allTableRelationships = yield this.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.name]);
-		//Console.out(allTableRelationships);
+		//Console.log(allTableRelationships);
 
 		var allTableRelationshipConstraints = yield this.query('SELECT * FROM `information_schema`.`REFERENTIAL_CONSTRAINTS` WHERE `CONSTRAINT_SCHEMA` = ?', [this.name]);
-		//Console.out(allTableRelationshipConstraints);
+		//Console.log(allTableRelationshipConstraints);
 		
 		yield allTables.rows.each(function*(allTablesIndex, allTablesTable) {
 			// Create the table
@@ -265,3 +271,6 @@ Database = Class.extend({
 	},
 
 });
+
+// Export
+module.exports = Database;

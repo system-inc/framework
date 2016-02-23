@@ -1,4 +1,5 @@
-FileFormats = {
+// Object
+var FileFormats = {
 	'123': 			{ 'extension': '123',			'type': 'application/vnd.lotus-1-2-3',														'description': 'Lotus 1-2-3' },
 	'3dml': 		{ 'extension': '3dml',			'type': 'text/vnd.in3d.3dml',																'description': 'In3D - 3DML' },
 	'3g2': 			{ 'extension': '3g2',			'type': 'video/3gpp2',																		'description': '3GP2' },
@@ -686,3 +687,6 @@ FileFormats = {
 	'zir': 			{ 'extension': 'zir',			'type': 'application/vnd.zul',																'description': 'Z.U.L. Geometry' },
 	'zmm': 			{ 'extension': 'zmm',			'type': 'application/vnd.handheld-entertainment+xml',																		'description': 'ZVUE Media Manager' }
 };
+
+// Export
+module.exports = FileFormats;

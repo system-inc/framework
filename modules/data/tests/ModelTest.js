@@ -1,4 +1,8 @@
-ModelTest = Test.extend({
+// Dependencies
+var ModelClassManager = Framework.require('modules/data/ModelClassManager.js');
+
+// Class
+var ModelTest = Test.extend({
 
 	testModelSchema: {
 		name: 'TestModel',
@@ -81,3 +85,6 @@ ModelTest = Test.extend({
 	},
 
 });
+
+// Export
+module.exports = ModelTest;

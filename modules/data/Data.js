@@ -1,7 +1,8 @@
-Data = Class.extend({
-});
+// Class
+var Data = {}
 
 // Static methods
+
 Data.decode = function(data, encoding) {
     return new Promise(function(resolve, reject) {
     	// Gzip
@@ -29,7 +30,7 @@ Data.decode = function(data, encoding) {
 			reject(new Error(encoding+' is an unsupported encoding type.'));
 		}
     });
-}
+};
 
 Data.encode = function(data, encoding) {
     return new Promise(function(resolve, reject) {
@@ -48,4 +49,7 @@ Data.encode = function(data, encoding) {
 			reject(new Error(encoding+' is an unsupported encoding type.'));
 		}
     });
-}
+};
+
+// Export
+module.exports = Data;

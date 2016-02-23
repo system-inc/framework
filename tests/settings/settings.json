@@ -1,5 +1,5 @@
 {
-	title: "Test Proctor",
+	title: 'Test Proctor',
 	command: {
 		options: [
 			{
@@ -44,18 +44,42 @@
 			},
 		],
 	},
+	// List all modules to test
 	modules: {
+		archive: {},
+		asciiArt: {},
+		command: {},
+		console: {},
+		cryptography: {},
+		data: {},
 		database: {
 			databases: {
 				frameworkTest: {
-					host: "localhost",
-					username: "framework_test",
-					password: "framework_test",
-					databaseName: "framework_test",
+					host: 'localhost',
+					username: 'framework_test',
+					password: 'framework_test',
+					databaseName: 'framework_test',
 				}
 			}
 		},
-		test: {
-		},
+		electron: {},
+		email: {},
+		ffmpeg: {},
+		fileSystem: {},
+		geolocation: {},
+		hardware: {},
+		html: {},
+		log: {},
+		network: {},
+		operatingSystem: {},
+		server: {},
+		settings: {},
+		test: {},
+		time: {},
+		version: {},
+		web: {},
+		webInterface: {},
+		webServer: {},
+		xml: {},
 	}
 }

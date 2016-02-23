@@ -1,4 +1,5 @@
-DatabaseTableRelationship = Class.extend({
+// Class
+var DatabaseTableRelationship = Class.extend({
 
 	database: null,
 	databaseName: null,
@@ -66,3 +67,6 @@ DatabaseTableRelationship = Class.extend({
 	},
 
 });
+
+// Export
+module.exports = DatabaseTableRelationship;

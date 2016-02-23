@@ -1,9 +1,9 @@
-OperatingSystemModule = Module.extend({
+// Class
+var OperatingSystemModule = Module.extend({
 
 	version: new Version('0.1.0'),
-
-	uses: [
-		'OperatingSystem',
-	],
 	
 });
+
+// Export
+module.exports = OperatingSystemModule;

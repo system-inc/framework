@@ -1,4 +1,9 @@
-HtmlDocument = XmlDocument.extend({
+// Dependencies
+var Html = Framework.require('modules/html/Html.js');
+var XmlDocument = Framework.require('modules/xml/XmlDocument.js');
+
+// Class
+var HtmlDocument = XmlDocument.extend({
 
 	type: 'html',
 
@@ -40,7 +45,7 @@ HtmlDocument = XmlDocument.extend({
 		if(global['document']) {
 			// Connect this.domDocument to the global document
 			this.domDocument = document;
-			//console.log('DOM present, HtmlDocument connected to DOM', this);
+			//Console.log('DOM present, HtmlDocument connected to DOM', this);
 
 			// Set window.HtmlDocument to this
 			window.htmlDocument = this;
@@ -70,7 +75,7 @@ HtmlDocument = XmlDocument.extend({
 		else {
 			domDocument = document;
 		}
-		//console.log('on', eventName, domDocument);
+		//Console.log('on', eventName, domDocument);
 
 		if(domDocument) {
 			// Alias ready to DOMContentLoaded
@@ -96,12 +101,12 @@ HtmlDocument = XmlDocument.extend({
 			}
 			// If the document is already ready, just run the function
 			else if(eventName == 'DOMContentLoaded' && domDocument.readyState == 'complete') {
-				//console.log('DOM already ready (readyState is complete)', callback);
+				//Console.log('DOM already ready (readyState is complete)', callback);
 				callback();
 			}
 			// If the document isn't ready, add an event listener
 			else {
-				//console.log('addEventListener', eventName, callback);
+				//Console.log('addEventListener', eventName, callback);
 				domDocument.addEventListener(eventName, callback);
 			}			
 		}
@@ -117,7 +122,7 @@ HtmlDocument = XmlDocument.extend({
 		this.head.emptyDomNode();
 		this.body.emptyDomNode();
 
-		//console.log('HtmlDocument.mountToDom', this);
+		//Console.log('HtmlDocument.mountToDom', this);
 
 		// Add this.element to the DOM
 		this.element.executeDomUpdate();
@@ -127,7 +132,7 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	mountedToDom: function() {
-		//console.log('HtmlDocument.mountedToDom', this);
+		//Console.log('HtmlDocument.mountedToDom', this);
 
 		// The HtmlDocument is now added to the DOM
 		this.isMountedToDom = true;
@@ -163,8 +168,8 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	updateDom: function(htmlNode) {
-		//console.log('HtmlDocument.updateDom', htmlNode);
-		//console.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
+		//Console.log('HtmlDocument.updateDom', htmlNode);
+		//Console.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
 
 		// Do nothing if the HtmlDocument is not added to the DOM yet
 		if(!this.isMountedToDom) {
@@ -181,7 +186,7 @@ HtmlDocument = XmlDocument.extend({
 	},
 
 	scheduleDomUpdate: function(htmlNode) {
-		//console.log('HtmlDocument.scheduleDomUpdate', htmlNode.tag, Json.encode(htmlNode.attributes));
+		//Console.log('HtmlDocument.scheduleDomUpdate', htmlNode.tag, Json.encode(htmlNode.attributes));
 
 		// Add the HtmlElement to the list of updates to do
 		if(htmlNode) {
@@ -191,7 +196,7 @@ HtmlDocument = XmlDocument.extend({
 
 		// If an update isn't scheduled already, use the next animation frame to run all updates
 		if(!this.domUpdatesScheduled) {
-			//console.log('scheduling executeDomUpdates');
+			//Console.log('scheduling executeDomUpdates');
 			this.domUpdatesScheduled = true;
 
 			window.requestAnimationFrame(function() {
@@ -200,14 +205,14 @@ HtmlDocument = XmlDocument.extend({
 			}.bind(this));	
 		}
 		else {
-			//console.log('executeDomUpdates already scheduled')
+			//Console.log('executeDomUpdates already scheduled')
 		}
 
-		//console.log('this.domUpdates', this.domUpdates);
+		//Console.log('this.domUpdates', this.domUpdates);
 	},
 
 	executeDomUpdates: function() {
-		//console.log('HtmlDocument.executeDomUpdates', 'this.domUpdates', this.domUpdates);
+		//Console.log('HtmlDocument.executeDomUpdates', 'this.domUpdates', this.domUpdates);
 
 		// Iterate over all DOM updates
 		this.domUpdates.each(function(htmlNodeIdentifier, htmlNode) {
@@ -250,5 +255,10 @@ HtmlDocument = XmlDocument.extend({
 });
 
 // Static methods
+
 HtmlDocument.on = HtmlDocument.prototype.on;
+
 HtmlDocument.ready = HtmlDocument.prototype.ready;
+
+// Export
+module.exports = HtmlDocument;

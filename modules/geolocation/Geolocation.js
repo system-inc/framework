@@ -1,10 +1,11 @@
-Geolocation = Class.extend({
+// Class
+var Geolocation = Class.extend({
 
 	latitude: null,
 	longitude: null,
 	country: null,
 
-	construct: function() {
-	},
-
 });
+
+// Export
+module.exports = Geolocation;

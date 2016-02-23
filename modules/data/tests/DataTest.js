@@ -1,12 +1,16 @@
-DataTest = Test.extend({
+// Dependencies
+var Data = Framework.require('modules/data/Data.js');
+
+// Class
+var DataTest = Test.extend({
 
 	testGzipEncodeDecode: function*() {
 		var actual = 'Encode and decode me.';
 
 		actual = yield Data.encode(actual, 'gzip');
-		//Console.out(actual.toString());
+		//Console.log(actual.toString());
 		actual = yield Data.decode(actual, 'gzip');
-		//Console.out(actual);
+		//Console.log(actual);
 
 		var expected = 'Encode and decode me.';
 
@@ -14,3 +18,6 @@ DataTest = Test.extend({
 	},
 
 });
+
+// Export
+module.exports = DataTest;

@@ -1,10 +1,9 @@
-GeolocationModule = Module.extend({
+// Class
+var GeolocationModule = Module.extend({
 
 	version: new Version('0.1.0'),
-
-	uses: [
-		'Country',
-		'Geolocation',
-	],
 	
 });
+
+// Export
+module.exports = GeolocationModule;

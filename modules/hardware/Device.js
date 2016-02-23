@@ -1,13 +1,11 @@
-Device = Class.extend({
+// Class
+var Device = Class.extend({
 
 	type: null, // mobile, tablet, desktop, robot
 	name: null,
 	model: null,
 	manufacturer: null,
 	architecture: null,
-
-	construct: function() {
-	},
 
 	isMobile: function() {
 		return this.type == 'mobile';
@@ -60,10 +58,14 @@ Device = Class.extend({
 });
 
 // Static methods
+
 Device.constructFromUserAgent = function(userAgent) {
 	var device = new Device();
 
 	device.parseUserAgent(userAgent);
 
 	return device;
-}
+};
+
+// Export
+module.exports = Device;

@@ -1,4 +1,16 @@
-Request = Class.extend({
+// Dependencies
+var Headers = Framework.require('modules/web/headers/Headers.js');
+var Cookies = Framework.require('modules/web/headers/Cookies.js');
+var IpAddressFactory = Framework.require('modules/network/IpAddressFactory.js');
+var Browser = Framework.require('modules/web/Browser.js');
+var Device = Framework.require('modules/hardware/Device.js');
+var OperatingSystem = Framework.require('modules/operating-system/OperatingSystem.js');
+var Geolocation = Framework.require('modules/geolocation/Geolocation.js');
+var Country = Framework.require('modules/geolocation/Country.js');
+var RequestEntityTooLargeError = Framework.require('modules/web-server/errors/RequestEntityTooLargeError.js');
+
+// Class
+var Request = Class.extend({
 
 	id: null, // Unique identifier for the request
 
@@ -60,8 +72,8 @@ Request = Class.extend({
 		//};
 
 		// IP address
-		//Console.out(Json.encode(nodeRequest.connection.remoteAddress));
-		this.ipAddress = this.connectingIpAddress = new IpAddress(nodeRequest.connection.remoteAddress);
+		//Console.log(Json.encode(nodeRequest.connection.remoteAddress));
+		this.ipAddress = this.connectingIpAddress = IpAddressFactory.create(nodeRequest.connection.remoteAddress);
 		
 		// Referrer
 		this.referrer = new Url(this.headers.get('referer'));
@@ -74,10 +86,10 @@ Request = Class.extend({
 		if(xForwardedFor) {
 			// Catch x.x.x.x,y.y.y.y format
 			if(xForwardedFor.contains(',')) {
-				this.ipAddress = new IpAddress(xForwardedFor.split(',').first());
+				this.ipAddress = IpAddressFactory.create(xForwardedFor.split(',').first());
 			}
 			else {
-				this.ipAddress = new IpAddress(xForwardedFor);	
+				this.ipAddress = IpAddressFactory.create(xForwardedFor);	
 			}
 		}
 
@@ -116,7 +128,7 @@ Request = Class.extend({
 		// Show the request in the console
 		var requestsLogEntry = this.prepareLogEntry();
 		if(this.webServer.settings.get('verbose')) {
-			Console.out(this.webServer.identifier+' request: '+requestsLogEntry);
+			Console.log(this.webServer.identifier+' request: '+requestsLogEntry);
 		}
 
 		// Conditionally log the request
@@ -152,6 +164,8 @@ Request = Class.extend({
 	
 });
 
+// Static methods
+
 Request.receiveNodeRequest = function(request, maximumRequestBodySizeInBytes) {
     return new Promise(function(resolve, reject) {
     	// Build the request body
@@ -174,4 +188,7 @@ Request.receiveNodeRequest = function(request, maximumRequestBodySizeInBytes) {
 			resolve(request.nodeRequest);
 		});
     });
-}
+};
+
+// Export
+module.exports = Request;

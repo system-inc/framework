@@ -1,4 +1,5 @@
-RangeHeader = Class.extend({
+// Class
+var RangeHeader = Class.extend({
 
 	unit: null, // Usually 'bytes'
 	ranges: [], // Range requests can have multiple ranges
@@ -95,7 +96,7 @@ RangeHeader = Class.extend({
 		var readStreamRange = this.getReadStreamRange(size);
 
 		contentLength = readStreamRange.end - readStreamRange.start + 1;
-		//Console.out('contentLength', contentLength);
+		//Console.log('contentLength', contentLength);
 
 		return contentLength;
 	},
@@ -108,7 +109,7 @@ RangeHeader = Class.extend({
 
 		contentRange += '/'+size;
 
-		//Console.out('contentRange', contentRange);
+		//Console.log('contentRange', contentRange);
 
 		return contentRange;
 	},
@@ -118,3 +119,6 @@ RangeHeader = Class.extend({
 	},
 
 });
+
+// Exports
+module.exports = RangeHeader;

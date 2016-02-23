@@ -1,7 +1,10 @@
-Terminal = Class.extend({
-});
+// Class
+var Terminal = {};
 
-// Static methods
+Terminal.write = function(data) {
+    Node.StandardOut.write(data);
+};
+
 Terminal.color = function(string, colorName) {
 	return Terminal.style(string, colorName);
 };
@@ -26,8 +29,8 @@ Terminal.style = function(string, stylesString) {
 Terminal.width = function() {
 	var width;
 
-	if(process.stdout.getWindowSize) {
-		width = process.stdout.getWindowSize()[0];
+	if(Node.Process.stdout.getWindowSize) {
+		width = Node.Process.stdout.getWindowSize()[0];
 	}
 
 	return width;
@@ -36,29 +39,29 @@ Terminal.width = function() {
 Terminal.height = function() {
 	var height;
 
-	if(process.stdout.getWindowSize) {
-		height = process.stdout.getWindowSize()[1];
+	if(Node.Process.stdout.getWindowSize) {
+		height = Node.Process.stdout.getWindowSize()[1];
 	}
 
 	return height;
 };
 
 Terminal.eraseDisplay = function() {
-	Console.write('\033[2J\033[0f');
+	Terminal.write('\033[2J\033[0f');
 };
 
 Terminal.clear = Terminal.reset = Terminal.eraseDisplay;
 
 Terminal.clearLine = function() {
-    Console.write('\033[2K');
+    Terminal.write('\033[2K');
 }
 
 Terminal.clearLineFromCursor = function() {
-    Console.write('\033[1K');
+    Terminal.write('\033[1K');
 }
 
 Terminal.cursorToBeginningOfLine = function() {
-    Console.write('\033b');
+    Terminal.write('\033b');
 };
 
 Terminal.cursorUp = function(distance) {
@@ -67,7 +70,7 @@ Terminal.cursorUp = function(distance) {
     }
 
 	distance = (distance === undefined ? 1 : distance);
-	Console.write('\x1b['+distance+'A');
+	Terminal.write('\x1b['+distance+'A');
 };
 
 Terminal.cursorDown = function(distance) {
@@ -76,7 +79,7 @@ Terminal.cursorDown = function(distance) {
     }
 
 	distance = (distance === undefined ? 1 : distance);
-	Console.write('\x1b['+distance+'B');
+	Terminal.write('\x1b['+distance+'B');
 };
 
 Terminal.cursorLeft = function(distance) {
@@ -85,7 +88,7 @@ Terminal.cursorLeft = function(distance) {
     }
 
 	distance = (distance === undefined ? 1 : distance);
-	Console.write('\x1b['+distance+'D');
+	Terminal.write('\x1b['+distance+'D');
 };
 
 Terminal.cursorBack = Terminal.cursorLeft;
@@ -96,29 +99,29 @@ Terminal.cursorRight = function(distance) {
     }
 
 	distance = (distance === undefined ? 1 : distance);
-	Console.write('\x1b['+distance+'C');
+	Terminal.write('\x1b['+distance+'C');
 };
 
 Terminal.cursorForward = Terminal.cursorRight;
 
 Terminal.nextLine = function(distance) {
 	distance = (distance === undefined ? 1 : distance);
-	Console.write('\x1b['+distance+'E');
+	Terminal.write('\x1b['+distance+'E');
 };
 
 Terminal.previousLine = function(distance) {
 	distance = (distance === undefined ? 1 : distance);
-	Console.write('\x1b['+distance+'F');
+	Terminal.write('\x1b['+distance+'F');
 };
 
 Terminal.scrollDown = function(distance) {
 	distance = (distance === undefined ? 1 : distance);
-	Console.write('\x1b['+distance+'T');
+	Terminal.write('\x1b['+distance+'T');
 };
 
 Terminal.scrollUp = function(distance) {
 	distance = (distance === undefined ? 1 : distance);
-	Console.write('\x1b['+distance+'S');
+	Terminal.write('\x1b['+distance+'S');
 };
 
 Terminal.moveCursor = function(x, y) {
@@ -140,16 +143,16 @@ Terminal.moveCursor = function(x, y) {
 };
 
 Terminal.moveCursorTo = function(x, y) {
-	Console.write('\x1b[' + y + ';' + x + 'H');
+	Terminal.write('\x1b[' + y + ';' + x + 'H');
 };
 
 Terminal.beep = function() {
-	Console.write('\x07');
+	Terminal.write('\x07');
 };
 
 Terminal.demonstrateStyles = function() {
     Terminal.ansiStyles.each(function(style) {
-        Console.out(Terminal.color('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', style)+' '+style);
+        Console.log(Terminal.color('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', style)+' '+style);
     });
 }
 
@@ -260,3 +263,6 @@ Terminal.ansiStyles = {
         close: '\u001b[49m',
     },
 };
+
+// Export
+module.exports = Terminal;

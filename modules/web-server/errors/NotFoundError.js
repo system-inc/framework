@@ -1,4 +1,8 @@
-NotFoundError = HttpError.extend({
+// Dependencies
+var HttpError = Framework.require('modules/web-server/errors/HttpError.js');
+
+// Class
+var NotFoundError = HttpError.extend({
 
 	construct: function(message) {
 		this.super.apply(this, [404, message]);
@@ -10,3 +14,6 @@ NotFoundError = HttpError.extend({
 	},
 
 });
+
+// Export
+module.exports = NotFoundError;

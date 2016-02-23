@@ -1,13 +1,14 @@
-FileSystemModule = Module.extend({
+// Globals
+FileSystemObject = Framework.require('modules/file-system/FileSystemObject.js');
+File = Framework.require('modules/file-system/File.js');
+Directory = Framework.require('modules/file-system/Directory.js');
+
+// Class
+var FileSystemModule = Module.extend({
 
 	version: new Version('0.1.0'),
-
-	uses: [
-		'FileSystem',
-		'FileSystemObject',
-		'Directory',
-		'File',
-		'FileFormats',
-	],
 	
 });
+
+// Export
+module.exports = FileSystemModule;

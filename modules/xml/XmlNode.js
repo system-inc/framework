@@ -1,4 +1,5 @@
-XmlNode = Class.extend({
+// Class
+var XmlNode = Class.extend({
 
 	content: null,
 	parent: null,
@@ -28,9 +29,10 @@ XmlNode = Class.extend({
 });
 
 // Static methods
+
 XmlNode.is = function(value) {
 	return Class.isInstance(value, XmlNode);
-}
+};
 
 XmlNode.makeXmlNode = function(value, parent, type) {
 	// If the value is currently not of type XmlNode, make turn it into an XmlNode
@@ -39,4 +41,7 @@ XmlNode.makeXmlNode = function(value, parent, type) {
 	}
 
 	return value;
-}
+};
+
+// Export
+module.exports = XmlNode;

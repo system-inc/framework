@@ -1,4 +1,8 @@
-Main = Controller.extend({
+// Dependencies
+var Controller = Framework.require('modules/web-server/Controller.js');
+
+// Class
+var Main = Controller.extend({
 
 	main: function*() {
 		return {
@@ -12,3 +16,6 @@ Main = Controller.extend({
 	},
 	
 });
+
+// Export
+module.exports = Main;

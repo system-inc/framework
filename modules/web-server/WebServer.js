@@ -1,4 +1,13 @@
-WebServer = Server.extend({
+// Dependencies
+var Server = Framework.require('modules/server/Server.js');
+var Log = Framework.require('modules/log/Log.js');
+var Router = Framework.require('modules/web-server/routes/Router.js');
+var Request = Framework.require('modules/web-server/Request.js');
+var Response = Framework.require('modules/web-server/Response.js');
+var InternalServerError = Framework.require('modules/web-server/errors/InternalServerError.js');
+
+// Class
+var WebServer = Server.extend({
 
 	identifier: null,
 	directory: null,
@@ -22,23 +31,23 @@ WebServer = Server.extend({
 		}
 
 		// Set the default settings
-		this.settings.default({
+		this.settings.setDefaults({
 			directory: null,
 			verbose: true,
 			logs: {
 				general: {
 					enabled: true,
-					directory: Project.directory+'logs/',
+					directory: Node.Path.join(Project.directory, 'logs'),
 					nameWithoutExtension: 'web-server-'+this.identifier.toDashes(),
 				},
 				requests: {
 					enabled: true,
-					directory: Project.directory+'logs/',
+					directory: Node.Path.join(Project.directory, 'logs'),
 					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-requests',
 				},
 				responses: {
 					enabled: true,
-					directory: Project.directory+'logs/',
+					directory: Node.Path.join(Project.directory, 'logs'),
 					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-responses',
 				},
 			},
@@ -90,7 +99,7 @@ WebServer = Server.extend({
 		this.resolveHttpsProtocolFiles();
 
 		// Load the routes into the router
-		this.router = new Router(this);
+		this.router = new Router();
 		this.router.loadRoutes(this.settings.get('router.routes'));
 	},
 
@@ -150,7 +159,7 @@ WebServer = Server.extend({
 								key: File.synchronous.read(protocolSettings.keyFile).toString(),
 								cert: File.synchronous.read(protocolSettings.certificateFile).toString(),
 							};
-							//Console.out(httpsServerSettings);
+							//Console.log(httpsServerSettings);
 
 							nodeServer = Node.Https.createServer(httpsServerSettings, this.handleRequestConnection.bind(this));
 						}
@@ -188,7 +197,7 @@ WebServer = Server.extend({
 							// Listen for the listening event
 							this.listeners[port].on('listening', function() {
 								if(this.settings.get('verbose')) {
-									Console.out('Listening for '+protocol.uppercase()+' requests on port '+port+'.');
+									Console.log('Listening for '+protocol.uppercase()+' requests on port '+port+'.');
 								}
 								resolve(true);
 							}.bind(this));
@@ -284,7 +293,7 @@ WebServer = Server.extend({
 
 			// Use this to troubleshoot race conditions
 			//var randomMilliseconds = Number.random(1, 100);
-			//Console.out('Waiting '+randomMilliseconds+' milliseconds...');
+			//Console.log('Waiting '+randomMilliseconds+' milliseconds...');
 			//yield Function.delay(randomMilliseconds);
 
 			// Identify and follow the route
@@ -303,7 +312,8 @@ WebServer = Server.extend({
 
 	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
 	handleError: function(request, response, error) {
-		var logEntry = Console.out('WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData());
+		var logEntry = Console.prepareMessage('WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData());
+		Console.log('WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData());
 
 		// Mark the response as handled
 		response.handled = true;
@@ -333,7 +343,7 @@ WebServer = Server.extend({
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
 	handleInternalServerError: function(error, nodeResponse, request) {
-		var logEntry = Console.out('WebServer.handleInternalServerError() called. Error:', error);
+		var logEntry = Console.log('WebServer.handleInternalServerError() called. Error:', error);
 		nodeResponse.writeHead(500, [['Content-Type', 'application/json']]);
 
 		// Make sure we are working with an error object
@@ -364,3 +374,6 @@ WebServer = Server.extend({
 	},
 
 });
+
+// Export
+module.exports = WebServer;

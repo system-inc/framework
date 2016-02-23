@@ -1,4 +1,9 @@
-WebServerTest = Test.extend({
+// Dependencies
+var WebServer = Framework.require('modules/web-server/WebServer.js');
+var WebRequest = Framework.require('modules/web/WebRequest.js');
+
+// Class
+var WebServerTest = Test.extend({
 
 	webServer: null,
 
@@ -35,6 +40,8 @@ WebServerTest = Test.extend({
 				],
 			},
 		});
+
+		//Console.highlight(this.webServer);
 
 		yield this.webServer.start();
 
@@ -118,6 +125,7 @@ WebServerTest = Test.extend({
 		});
 	},
 
+	// This is not implemented yet
 	//testMultipleRangeRequestsOnFile: function*() {
 	//	var rangesToTest = [
 	//		{
@@ -332,6 +340,7 @@ WebServerTest = Test.extend({
 		});
 	},
 
+	// This is not implemented yet
 	//testSingleRangeRequestsOnString: function*() {
 	//	var rangesToTest = [
 	//		{
@@ -407,3 +416,6 @@ WebServerTest = Test.extend({
 	//},
 
 });
+
+// Export
+module.exports = WebServerTest;

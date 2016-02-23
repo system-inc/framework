@@ -1,4 +1,7 @@
-Assert = Node.Assert = require('assert');
+// Class
+var Assert = Node.Assert = require('assert');
+
+// Static methods
 
 Assert.true = function(value, message) {
 	try {
@@ -52,7 +55,7 @@ Assert.false = function(value, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.equal = function(actual, expected, message) {
 	try {
@@ -79,7 +82,7 @@ Assert.equal = function(actual, expected, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.notEqual = function(actual, expected, message) {
 	try {
@@ -106,7 +109,7 @@ Assert.notEqual = function(actual, expected, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.isDeepEqual = function(actual, expected) {
 	// All identical values are equivalent, as determined by ===.
@@ -156,7 +159,7 @@ Assert.isDeepEqual = function(actual, expected) {
 	else {
 		return Assert.isEquivalentObject(actual, expected);
 	}
-}
+};
 
 Assert.isEquivalentObject = function(a, b) {
 	if(Node.Utility.isNullOrUndefined(a) || Node.Utility.isNullOrUndefined(b)) {
@@ -215,11 +218,11 @@ Assert.isEquivalentObject = function(a, b) {
 	}
 
 	return true;
-}
+};
 
 Assert.isArguments = function(object) {
 	return Object.prototype.toString.call(object) == '[object Arguments]';
-}
+};
 
 Assert.deepEqual = function(actual, expected, message) {
 	try {
@@ -246,7 +249,7 @@ Assert.deepEqual = function(actual, expected, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.notDeepEqual = function(actual, expected, message) {
 	try {
@@ -273,7 +276,7 @@ Assert.notDeepEqual = function(actual, expected, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.strictEqual = function(actual, expected, message) {
 	try {
@@ -300,7 +303,7 @@ Assert.strictEqual = function(actual, expected, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.notStrictEqual = function(actual, expected, message) {
 	try {
@@ -327,7 +330,7 @@ Assert.notStrictEqual = function(actual, expected, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.greaterThan = function(actual, minimum, message) {
 	try {
@@ -354,7 +357,7 @@ Assert.greaterThan = function(actual, minimum, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.greaterThanOrEqualTo = function(actual, minimum, message) {
 	try {
@@ -381,7 +384,7 @@ Assert.greaterThanOrEqualTo = function(actual, minimum, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.lessThan = function(actual, maximum, message) {
 	try {
@@ -408,7 +411,7 @@ Assert.lessThan = function(actual, maximum, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.lessThanOrEqualTo = function(actual, maximum, message) {
 	try {
@@ -435,7 +438,7 @@ Assert.lessThanOrEqualTo = function(actual, maximum, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.doesThrow = function(shouldThrow, block, expected, message) {
 	var actual;
@@ -465,7 +468,7 @@ Assert.doesThrow = function(shouldThrow, block, expected, message) {
 	if((shouldThrow && actual && expected && !Assert.expectedException(actual, expected)) || (!shouldThrow && actual)) {
 		throw actual;
 	}
-}
+};
 
 Assert.expectedException =  function(actual, expected) {
 	if(!actual || !expected) {
@@ -483,7 +486,7 @@ Assert.expectedException =  function(actual, expected) {
 	}
 
 	return false;
-}
+};
 
 Assert.throws = function(block, error, message) {
 	try {
@@ -508,7 +511,7 @@ Assert.throws = function(block, error, message) {
 
 		throw error;
 	}
-}
+};
 
 Assert.doesNotThrow = function(block, message) {
 	try {
@@ -533,4 +536,7 @@ Assert.doesNotThrow = function(block, message) {
 
 		throw error;
 	}
-}
+};
+
+// Export
+module.exports = Assert;

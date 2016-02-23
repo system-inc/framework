@@ -1,4 +1,8 @@
-ArchivedFile = ArchivedFileSystemObject.extend({
+// Dependencies
+var ArchivedFileSystemObject = Framework.require('modules/archive/file-system-objects/ArchivedFileSystemObject.js');
+
+// Class
+var ArchivedFile = ArchivedFileSystemObject.extend({
 
 	// Mimic File properties
 	file: null,
@@ -22,3 +26,6 @@ ArchivedFile = ArchivedFileSystemObject.extend({
 	},
 
 });
+
+// Export
+module.exports = ArchivedFile;

@@ -1,4 +1,5 @@
-SchemaModel = Class.extend({
+// Class
+var SchemaModel = Class.extend({
 
 	name: null,
 	description: '',
@@ -11,3 +12,6 @@ SchemaModel = Class.extend({
 	},
 
 });
+
+// Exports
+module.exports = SchemaModel;

@@ -1,4 +1,9 @@
-Electron = new (Class.extend({
+// Dependencies
+var ElectronModule = Modules.ElectronModule;
+var WindowState = Framework.require('modules/electron/WindowState.js');
+
+// Class
+var Electron = Class.extend({
 
 	// Classes
 	Menu: null,
@@ -59,6 +64,15 @@ Electron = new (Class.extend({
 		// Initialize the developer tools
 		this.initializeDeveloperTools();
 
+		// Create a Proctor to oversee all of the tests as they run
+		Module.require('Test');
+		var proctor = new Proctor();
+		proctor.getAndRunTests();
+
+		console.log('having fun ^');
+
+		return; // Debug
+
 		// Add default keyboard shortcuts
 		this.addDefaultKeyboardShortcuts();
 
@@ -67,7 +81,7 @@ Electron = new (Class.extend({
 
 		// Load the HtmlDocument from the main WebController
 		window.htmlDocument = yield webController[ElectronModule.settings.get('mainBrowserWindow.webControllerMethodName')]();
-		//console.log(htmlDocument);
+		//Console.log(htmlDocument);
 		
 		// Mount the HtmlDocument onto the DOM
 		window.htmlDocument.mountToDom();
@@ -92,12 +106,12 @@ Electron = new (Class.extend({
 		var windowStateSettings = ElectronModule.settings.get('mainBrowserWindow.windowState');
 
 		// Create a window state for the main browser window
-		this.mainBrowserWindowState = new ElectronWindowState('main', this.mainBrowserWindow, windowStateSettings);
+		this.mainBrowserWindowState = new WindowState('main', this.mainBrowserWindow, windowStateSettings);
 	},
 
 	addDefaultKeyboardShortcuts: function() {
 		var keyboardShortcutSettings = ElectronModule.settings.get('keyboardShortcuts');
-		//console.log(keyboardShortcutSettings); 
+		//Console.log(keyboardShortcutSettings); 
 
 		if(keyboardShortcutSettings.closeFocusedWindow) {
 			KeyboardShortcuts.add(['Ctrl+W'], this.closeFocusedWindow.bind(this));
@@ -117,7 +131,7 @@ Electron = new (Class.extend({
 	},
 
 	applyDefaultWindowStateOnFocusedWindow: function() {
-		//console.log(applyDefaultWindowStateOnFocusedWindow);
+		//Console.log(applyDefaultWindowStateOnFocusedWindow);
 
 		// TODO: For apps with multiple windows, need to make this work on the focused window
 		this.mainBrowserWindowState.applyDefault();
@@ -302,4 +316,7 @@ Electron = new (Class.extend({
 		return template;
 	},
 
-}))();
+};
+
+// Export
+module.exports = Electron;

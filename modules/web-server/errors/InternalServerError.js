@@ -1,4 +1,8 @@
-InternalServerError = HttpError.extend({
+// Dependencies
+var HttpError = Framework.require('modules/web-server/errors/HttpError.js');
+
+// Class
+var InternalServerError = HttpError.extend({
 
 	construct: function(message) {
 		this.super.apply(this, [500, message]);
@@ -10,3 +14,6 @@ InternalServerError = HttpError.extend({
 	},
 
 });
+
+// Export
+module.exports = InternalServerError;

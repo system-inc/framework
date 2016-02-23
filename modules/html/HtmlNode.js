@@ -1,4 +1,8 @@
-HtmlNode = XmlNode.extend({
+// Dependencies
+var XmlNode = Framework.require('modules/xml/XmlNode.js');
+
+// Class
+var HtmlNode = XmlNode.extend({
 
 	htmlDocument: null,
 
@@ -41,7 +45,7 @@ HtmlNode = XmlNode.extend({
 
 	// Called whenever the HtmlElement changes
 	updateDom: function() {
-		//console.log('HtmlElement.updateDom()');
+		//Console.log('HtmlElement.updateDom()');
 
 		// Mark the object as dirty
 		this.shouldExecuteDomUpdate = true;
@@ -61,7 +65,7 @@ HtmlNode = XmlNode.extend({
 	},
 
 	executeDomUpdate: function() {
-		//console.log('HtmlNode.executeDomUpdate', this);
+		//Console.log('HtmlNode.executeDomUpdate', this);
 
 		// If we should execute an update
 		if(this.shouldExecuteDomUpdate) {
@@ -122,7 +126,7 @@ HtmlNode = XmlNode.extend({
 	},
 
 	appendDomNode: function() {
-		//console.log('HtmlNode.appendDomNode');
+		//Console.log('HtmlNode.appendDomNode');
 
 		// Append the child DOM node to this node's DOM node
 		this.parent.domNode.appendChild(this.createDomFragment());
@@ -134,7 +138,7 @@ HtmlNode = XmlNode.extend({
 	},
 
 	replaceDomNode: function(indexOfChildDomNodeToReplace) {
-		//console.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace);
+		//Console.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace);
 
 		// Replace the DOM node with the replacement fragment
 		this.parent.domNode.replaceChild(this.createDomFragment(), this.parent.domNode.childNodes[indexOfChildDomNodeToReplace]);
@@ -146,7 +150,7 @@ HtmlNode = XmlNode.extend({
 	},
 
 	mountedToDom: function() {
-		//console.log('mountedToDom', this);
+		//Console.log('mountedToDom', this);
 
 		this.isMountedToDom = true;
 
@@ -182,9 +186,14 @@ HtmlNode = XmlNode.extend({
 });
 
 // Static methods
+
 HtmlNode.createDomFragment = HtmlNode.prototype.createDomFragment;
+
 HtmlNode.emptyDomNode = HtmlNode.prototype.emptyDomNode;
 
 HtmlNode.is = function(value) {
 	return Class.isInstance(value, HtmlNode);
-}
+};
+
+// Export
+module.exports = HtmlNode;

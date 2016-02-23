@@ -1,4 +1,5 @@
-Url = Class.extend({
+// Class
+var Url = Class.extend({
 
 	url: null,
 	protocol: null,
@@ -116,3 +117,6 @@ Url.constructFromNodeRequest = function(nodeRequest) {
 
 Url.encode = encodeURIComponent;
 Url.decode = decodeURIComponent;
+
+// Export
+module.exports = Url;

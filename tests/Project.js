@@ -1,5 +1,7 @@
-require('./../Framework.js');
+// Globals
+Framework = require('./../Framework.js');
 
+// Class
 Project = new (Framework.extend({
 
 	proctor: null,

@@ -1,4 +1,8 @@
-BadRequestError = HttpError.extend({
+// Dependencies
+var HttpError = Framework.require('modules/web-server/errors/HttpError.js');
+
+// Class
+var BadRequestError = HttpError.extend({
 
 	construct: function(message) {
 		this.super.apply(this, [400, message]);
@@ -10,3 +14,6 @@ BadRequestError = HttpError.extend({
 	},
 
 });
+
+// Export
+module.exports = BadRequestError;

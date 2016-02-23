@@ -1,12 +1,10 @@
-Browser = Class.extend({
+// Class
+var Browser = Class.extend({
 
 	name: null,
 	manufacturer: null,
 	version: null,
 	userAgent: null,
-
-	construct: function() {
-	},
 
 	parseUserAgent: function(userAgent) {
 		// Return immediately if there is no user agent
@@ -44,16 +42,8 @@ Browser = Class.extend({
 	
 });
 
-// Static methods
-Browser.constructFromUserAgent = function(userAgent) {
-	var browser = new Browser();
-
-	browser.parseUserAgent(userAgent);
-
-	return browser;
-}
-
 // Static properties
+
 Browser.browsers = [
 	{
 		'name': 'Chrome',
@@ -81,3 +71,16 @@ Browser.browsers = [
 		'userAgentRegularExpressionString': 'MSIE',
 	},
 ];
+
+// Static methods
+
+Browser.constructFromUserAgent = function(userAgent) {
+	var browser = new Browser();
+
+	browser.parseUserAgent(userAgent);
+
+	return browser;
+};
+
+// Export
+module.exports = Browser;

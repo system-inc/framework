@@ -1,4 +1,5 @@
-ModelProperty = Class.extend({
+// Class
+var ModelProperty = Class.extend({
 
 	name: null,
 	description: '',
@@ -51,6 +52,7 @@ ModelProperty = Class.extend({
 });
 
 // Static methods
+
 ModelProperty.constructFromSchemaModelProperty = function(schemaModelProperty) {
 	var modelProperty = new ModelProperty(schemaModelProperty.name);
 
@@ -80,3 +82,6 @@ ModelProperty.constructFromSchemaModelProperty = function(schemaModelProperty) {
 
 	return modelProperty;
 }
+
+// Export
+module.exports = ModelProperty;

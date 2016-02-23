@@ -1,4 +1,5 @@
-Stopwatch = Class.extend({
+// Class
+var Stopwatch = Class.extend({
 
 	precision: 'milliseconds',
 	startTime: null,
@@ -55,3 +56,6 @@ Stopwatch = Class.extend({
 	}
 
 });
+
+// Export
+module.exports = Stopwatch;

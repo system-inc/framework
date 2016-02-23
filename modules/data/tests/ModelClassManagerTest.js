@@ -1,4 +1,10 @@
-ModelClassManagerTest = Test.extend({
+// Dependencies
+var Model = Framework.require('modules/data/Model.js');
+var ModelProperty = Framework.require('modules/data/ModelProperty.js');
+var ModelClassManager = Framework.require('modules/data/ModelClassManager.js');
+
+// Class
+var ModelClassManagerTest = Test.extend({
 
 	testAddPropertyToModel: function*() {
 		// Create a new model
@@ -10,7 +16,7 @@ ModelClassManagerTest = Test.extend({
 		var testModelProperty = new ModelProperty('test');
 
 		// Add the model property to the class
-		TestModel = ModelClassManager.addModelPropertyToModelClass(testModelProperty, TestModel);
+		var TestModel = ModelClassManager.addModelPropertyToModelClass(testModelProperty, TestModel);
 
 		// Instantiate a new model
 		var testModel = new TestModel();
@@ -25,3 +31,6 @@ ModelClassManagerTest = Test.extend({
 	},
 
 });
+
+// Export
+module.exports = ModelClassManagerTest;

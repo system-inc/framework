@@ -1,4 +1,8 @@
-IpV4Address = IpAddress.extend({
+// Dependencies
+var IpAddress = Framework.require('modules/network/IpAddress.js');
+
+// Class
+var IpV4Address = IpAddress.extend({
 
 	version: 4,
 
@@ -7,3 +11,6 @@ IpV4Address = IpAddress.extend({
 	},
 
 });
+
+// Export
+module.exports = IpV4Address;

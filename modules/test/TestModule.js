@@ -1,35 +1,14 @@
-TestModule = Module.extend({
+// Globals
+Test = Framework.require('modules/test/Test.js');
+Assert = Framework.require('modules/test/Assert.js');
+Proctor = Framework.require('modules/test/Proctor.js');
+
+// Class
+var TestModule = Module.extend({
 
 	version: new Version('0.1.0'),
-
-	// Needs every module we want to test (except for core modules which are already loaded)
-	needs: [
-		'Archive',
-		'Cryptography',
-		'Data',
-		'Database',
-		'Email',
-		'Ffmpeg',
-		'Geolocation',
-		'Hardware',
-		'Html',
-		'Network',
-		'OperatingSystem',
-		'Server',
-		'Web',
-		'WebServer',
-		'Xml',
-	],
-
-	uses: [
-		'Assert',
-		'Test',
-		'Proctor',
-		'Fixture',
-		'test-reporter/TestReporter',
-		'test-reporter/StandardTestReporter',
-		'test-reporter/ConciseTestReporter',
-		'test-reporter/DotTestReporter',
-	],
 	
 });
+
+// Export
+module.exports = TestModule;

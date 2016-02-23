@@ -1,4 +1,5 @@
-Directory = FileSystemObject.extend({
+// Class
+var Directory = FileSystemObject.extend({
 
 	construct: function(path) {
 		this.super.apply(this, arguments);
@@ -10,13 +11,13 @@ Directory = FileSystemObject.extend({
 	},
 
 	list: function*(recursive) {
-		var list = yield FileSystem.list(this.path, recursive);
+		var list = yield FileSystemObject.list(this.path, recursive);
 
 		return list;
 	},
 
 	create: function*(directory, mode) {
-		//Console.out('Creating directory: ', directory);
+		//Console.log('Creating directory: ', directory);
 
 		// Normalize the path for the operating system
 		var directory = Node.Path.normalize(directory);
@@ -29,7 +30,7 @@ Directory = FileSystemObject.extend({
 		if(directory.endsWith(Node.Path.separator)) {
 			directory = directory.replaceLast(Node.Path.separator, '');
 		}
-		//Console.out(directory);
+		//Console.log(directory);
 
 		var directories = directory.split(Node.Path.separator);
 
@@ -46,17 +47,17 @@ Directory = FileSystemObject.extend({
 		// Loop through each directory starting at root and make sure the directory exists and if it doesn't create it
 		yield directories.each(function*(index, currentDirectory) {
 			currentFullDirectory = currentFullDirectory+currentDirectory+Node.Path.separator;
-			//Console.out(currentFullDirectory);
+			//Console.log(currentFullDirectory);
 
 			// Check if the directory exists
 			if(yield Directory.exists(currentFullDirectory)) {
-				//console.log(currentFullDirectory, 'exists');
+				//Console.log(currentFullDirectory, 'exists');
 			}
 			// If the directory does not exist, create it
 			else {
-				//console.log(currentFullDirectory, 'DOES NOT exist, creating');
+				//Console.log(currentFullDirectory, 'DOES NOT exist, creating');
 				yield Directory.make(currentFullDirectory, mode);
-				//Console.out('Created directory', currentFullDirectory);
+				//Console.log('Created directory', currentFullDirectory);
 			}
 		});
 	},
@@ -83,4 +84,7 @@ Directory.make = function(path, mode) {
     		}
     	});
     });
-}
+};
+
+// Export
+module.exports = Directory;

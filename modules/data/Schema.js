@@ -1,4 +1,9 @@
-Schema = Class.extend({
+// Dependencies
+var SchemaModel = Framework.require('modules/data/SchemaModel.js');
+var SchemaModelProperty = Framework.require('modules/data/SchemaModelProperty.js');
+
+// Class
+var Schema = Class.extend({
 
 	name: null,
 	description: '',
@@ -7,6 +12,7 @@ Schema = Class.extend({
 });
 
 // Static methods
+
 Schema.constructFromDatabaseSchema = function(databaseSchema) {
 	var schema = new Schema();
 	schema.name = databaseSchema.name.toCamelCase(true);
@@ -86,4 +92,7 @@ Schema.constructFromDatabaseSchema = function(databaseSchema) {
 	});
 
 	return schema;
-}
+};
+
+// Export
+module.exports = Schema;

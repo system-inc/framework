@@ -1,5 +1,7 @@
-Cryptography = function() {
-}
+// Class
+var Cryptography = {};
+
+// Static methods
 
 Cryptography.random = function() {
 	return new Promise(function(resolve) {
@@ -11,11 +13,14 @@ Cryptography.random = function() {
 			resolve(random);
 		});
 	});
-}
+};
 
 Cryptography.hash = function(algorithm, string, encoding) {
 	return Node.Cryptography
         .createHash(algorithm || 'md5')
         .update(string, 'utf8')
         .digest(encoding || 'hex');
-}
+};
+
+// Export
+module.exports = Cryptography;

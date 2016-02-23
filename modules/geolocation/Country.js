@@ -1,9 +1,10 @@
-Country = Class.extend({
+// Class
+var Country = Class.extend({
 
 	name: null,
 	code: null,
 
-	construct: function() {
-	},
-
 });
+
+// Export
+module.exports = Country;

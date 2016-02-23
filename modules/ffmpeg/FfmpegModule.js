@@ -1,30 +1,16 @@
-FfmpegModule = Module.extend({
+// Class
+var FfmpegModule = Module.extend({
 
 	version: new Version('0.1.0'),
 
-	uses: [
-		'Ffmpeg',
-	],
-
-	initialize: function*(settings) {
-		yield this.super.apply(this, arguments);
-
-		// The ffmpeg binary file
-		var file = Node.Path.join(Project.directory, 'libraries', 'ffmpeg');
-		if(Project.onWindows()) {
-			file = Node.Path.join(file, 'windows', 'ffmpeg.exe');
-		}
-		else if(Project.onOsX()) {
-			file = Node.Path.join(file, 'os-x', 'ffmpeg');
-		}
-		else if(Project.onLinux()) {
-			file = Node.Path.join(file, 'linux', 'ffmpeg');
-		}
-		//Console.out(file);
-
-		this.settings.default({
-			file: file,
-		});
+	defaultSettings: {
+		executable:
+			Project.onWindows() ? Node.Path.join(Project.directory, 'libraries', 'ffmpeg', 'windows', 'ffmpeg.exe') :
+			Project.onOsX() ? Node.Path.join(Project.directory, 'libraries', 'ffmpeg', 'os-x', 'ffmpeg') :
+			Project.onLinux() ? Node.Path.join(Project.directory, 'libraries', 'ffmpeg', 'linux', 'ffmpeg') : null,
 	},
 	
 });
+
+// Export
+module.exports = FfmpegModule;

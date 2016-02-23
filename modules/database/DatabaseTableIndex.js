@@ -1,4 +1,5 @@
-DatabaseTableIndex = Class.extend({
+// Class
+var DatabaseTableIndex = Class.extend({
 
 	database: null,
 	databaseName: null,
@@ -76,3 +77,6 @@ DatabaseTableIndex = Class.extend({
 	},
 
 });
+
+// Export
+module.exports = DatabaseTableIndex;

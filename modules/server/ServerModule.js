@@ -1,9 +1,9 @@
-ServerModule = Module.extend({
+// Class
+var ServerModule = Module.extend({
 
 	version: new Version('0.1.0'),
-
-	uses: [
-		'Server',
-	],
 	
 });
+
+// Export
+module.exports = ServerModule;

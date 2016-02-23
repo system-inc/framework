@@ -1,4 +1,5 @@
-DatabaseConnection = Class.extend({
+// Class
+var DatabaseConnection = Class.extend({
 
 	name: null,
 	socket: null,
@@ -16,3 +17,6 @@ DatabaseConnection = Class.extend({
 	},
 
 });
+
+// Export
+module.exports = DatabaseConnection;

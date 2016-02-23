@@ -1,4 +1,8 @@
-ArchivedDirectory = ArchivedFileSystemObject.extend({
+// Dependencies
+var ArchivedFileSystemObject = Framework.require('modules/archive/file-system-objects/ArchivedFileSystemObject.js');
+
+// Class
+var ArchivedDirectory = ArchivedFileSystemObject.extend({
 
 	construct: function(archiveFile, path) {
 		this.super.apply(this, arguments);
@@ -14,3 +18,6 @@ ArchivedDirectory = ArchivedFileSystemObject.extend({
 	},
 
 });
+
+// Export
+module.exports = ArchivedDirectory;

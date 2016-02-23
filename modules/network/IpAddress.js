@@ -1,16 +1,8 @@
-IpAddress = Class.extend({
+// Class
+var IpAddress = Class.extend({
 
 	address: null,
 	version: null,
-
-	construct: function(address) {
-		if(address.contains(':')) {
-			return new IpV6Address(address);
-		}
-		else {
-			return new IpV4Address(address);
-		}
-	},
 
 	toString: function() {
 		return this.address;
@@ -20,3 +12,6 @@ IpAddress = Class.extend({
 	//http://docs.oracle.com/javase/7/docs/api/java/net/InetAddress.html
 	
 });
+
+// Export
+module.exports = IpAddress;

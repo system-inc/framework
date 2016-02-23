@@ -1,4 +1,5 @@
-MediaTest = Test.extend({
+// Class
+var FfmpegTest = Test.extend({
 
 	//testResizeImage: function*() {
 	//	var testFilePath = Node.Path.join(Project.framework.directory, 'modules', 'media', 'tests', 'files', 'images', 'test-1.jpg');
@@ -21,3 +22,6 @@ MediaTest = Test.extend({
 	//},
 
 });
+
+// Export
+module.exports = FfmpegTest;

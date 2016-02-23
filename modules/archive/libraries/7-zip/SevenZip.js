@@ -1,4 +1,10 @@
+// Dependencies
+var ArchiveModule = Modules.Archive;
+
+// Class
 SevenZip = {};
+
+// Static methods
 
 SevenZip.execute = function*(argumentsArray) {
 	// Use the module settings to know where the 7zip binary is
@@ -13,7 +19,7 @@ SevenZip.execute = function*(argumentsArray) {
 	sevenZipArguments = sevenZipArguments.merge(argumentsArray);
 
 	// Log the executable and arguments
-	//Console.out('sevenZipExecutable', sevenZipExecutable, 'sevenZipArguments', sevenZipArguments);
+	//Console.log('sevenZipExecutable', sevenZipExecutable, 'sevenZipArguments', sevenZipArguments);
 
 	// Spawn 7-Zip as a new child process
 	var sevenZipChildProcess = Node.ChildProcess.spawn(sevenZipExecutable, sevenZipArguments, {
@@ -22,23 +28,23 @@ SevenZip.execute = function*(argumentsArray) {
 
 	// When data is sent to standard in
 	sevenZipChildProcess.stdin.on('data', function(data) {
-		//Console.out('7-Zip standard in data');
+		//Console.log('7-Zip standard in data');
 	});
 
 	// When standard in has an error
 	sevenZipChildProcess.stdin.on('error', function(data) {
-		//Console.out('7-Zip standard in error', data);
+		//Console.log('7-Zip standard in error', data);
 	});
 
 	// When data is sent to standard out
 	sevenZipChildProcess.stdout.on('data', function(data) {
-		//Console.out('7-Zip standard out', data);
-		//Console.out('7-Zip standard out data');
+		//Console.log('7-Zip standard out', data);
+		//Console.log('7-Zip standard out data');
 	});
 
 	// When standard out has an error
 	sevenZipChildProcess.stdout.on('error', function(data) {
-		//Console.out('7-Zip standard out error', data);
+		//Console.log('7-Zip standard out error', data);
 	});
 
 	// When data is sent to standard error
@@ -48,7 +54,7 @@ SevenZip.execute = function*(argumentsArray) {
 
 	// When 7-Zip exits
 	sevenZipChildProcess.on('exit', function(code) {
-		//Console.out('7-Zip terminated with code', code);
+		//Console.log('7-Zip terminated with code', code);
 	});
 
 	// When 7-Zip has an error
@@ -132,22 +138,22 @@ SevenZip.list = function*(source) {
 	var archivedFileSystemObjectsDelimiter = '----------';
 
 	var indexOfArchivedFileSystemObjectsDelimiter = listString.indexOf(archivedFileSystemObjectsDelimiter);
-	//Console.out(indexOfArchivedFileSystemObjectsDelimiter);
+	//Console.log(indexOfArchivedFileSystemObjectsDelimiter);
 
 	//var archiveFileString = listString.substring(0, indexOfArchivedFileSystemObjectsDelimiter + archivedFileSystemObjectsDelimiter.length).trim();
-	//Console.out('archiveFileString', archiveFileString);
+	//Console.log('archiveFileString', archiveFileString);
 	//var archiveFile = SevenZip.parseArchiveFileString(archiveFileString);
-	//Console.out('archiveFile', archiveFile);
+	//Console.log('archiveFile', archiveFile);
 
 	var archivedFileSystemObjectsString = listString.substring(indexOfArchivedFileSystemObjectsDelimiter + archivedFileSystemObjectsDelimiter.length).trim();
-	//Console.out('archivedFileSystemObjectsString', archivedFileSystemObjectsString);
+	//Console.log('archivedFileSystemObjectsString', archivedFileSystemObjectsString);
 
 	var archivedFileSystemObjectsStringArray = archivedFileSystemObjectsString.split('Path = ');
 	archivedFileSystemObjectsStringArray = archivedFileSystemObjectsStringArray.delete(0);
-	//Console.out('archivedFileSystemObjectsStringArray', archivedFileSystemObjectsStringArray);
+	//Console.log('archivedFileSystemObjectsStringArray', archivedFileSystemObjectsStringArray);
 
 	archivedFileSystemObjectsStringArray.each(function(index, archivedFileSystemObjectString) {
-		//Console.out('archivedFileSystemObjectString', archivedFileSystemObjectString);
+		//Console.log('archivedFileSystemObjectString', archivedFileSystemObjectString);
 
 		// Parse the string
 		var archivedFileSystemObjectProperties = SevenZip.parseArchivedFileSystemObjectString(archivedFileSystemObjectString);
@@ -173,7 +179,7 @@ SevenZip.parseArchiveFileString = function(archiveFileString) {
 	archiveFileProperties.comment = archiveFileString.match(/.*Comment\s=\s((.|[\r\n])*)?----------/).second().trim();
 
 	return archiveFileProperties;
-}
+};
 
 SevenZip.parseArchivedFileSystemObjectString = function(archivedFileSystemObjectString) {
 	//Console.highlight('archivedFileSystemObjectString', archivedFileSystemObjectString);
@@ -222,4 +228,7 @@ SevenZip.parseArchivedFileSystemObjectString = function(archivedFileSystemObject
 	}	
 
 	return archivedFileSystemObjectProperties;
-}
+};
+
+// Export
+module.exports = SevenZip;

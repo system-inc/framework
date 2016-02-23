@@ -23,7 +23,7 @@ Main = Controller.extend({
 		var schema = Schema.constructFromDatabaseSchema(databaseSchema);
 
 		return schema;
-		//Console.out(FrameworkTestDatabase.statistics);
+		//Console.log(FrameworkTestDatabase.statistics);
 		//return 'Hi';
 		//return response;
 
@@ -39,7 +39,7 @@ Main = Controller.extend({
 		//var response = Json.encode(yield new WebRequest('http://www.increase.com').execute());
 		//var response = yield new WebRequest('http://localhost/').execute();
 		//var response = Json.encode(yield Directory.list('/var/www/'));
-		//Console.out(response);
+		//Console.log(response);
 		//var response = Json.encode(yield Directory.list('/var/www/framework/project/views/images/'));
 		//var response = yield String.random(1024 * 1, '01');
 		//var response = Json.encode(this.request);

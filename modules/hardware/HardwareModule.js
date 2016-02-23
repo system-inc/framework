@@ -1,10 +1,9 @@
-HardwareModule = Module.extend({
+// Class
+var HardwareModule = Module.extend({
 
 	version: new Version('0.1.0'),
-
-	uses: [
-		'Device',
-		'Hardware',
-	],
 	
 });
+
+// Export
+module.exports = HardwareModule;

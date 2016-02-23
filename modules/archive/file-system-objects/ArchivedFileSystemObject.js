@@ -1,4 +1,5 @@
-ArchivedFileSystemObject = Class.extend({
+// Class
+var ArchivedFileSystemObject = Class.extend({
 
 	archiveFile: null,
 
@@ -53,7 +54,12 @@ ArchivedFileSystemObject = Class.extend({
 });
 
 // Static methods
+
 ArchivedFileSystemObject.constructFromSevenZipArchivedFileSystemObjectProperties = function(archiveFile, sevenZipArchivedFileSystemObjectProperties) {
+	// Dependencies - can not include these outside of this function as it would create a cyclicle error
+	var ArchivedFile = Framework.require('modules/archive/file-system-objects/ArchivedFile.js');
+	var ArchivedDirectory = Framework.require('modules/archive/file-system-objects/ArchivedDirectory.js');
+
 	//Console.highlight('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
 
 	var archivedFileSystemObject = null;
@@ -61,12 +67,12 @@ ArchivedFileSystemObject.constructFromSevenZipArchivedFileSystemObjectProperties
 	// Directories
 	if(sevenZipArchivedFileSystemObjectProperties.folder == '+') {
 		archivedFileSystemObject = new ArchivedDirectory(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
-		//Console.out('ArchivedDirectory', archivedFileSystemObject);
+		//Console.log('ArchivedDirectory', archivedFileSystemObject);
 	}
 	// Files
 	else {
 		archivedFileSystemObject = new ArchivedFile(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
-		//Console.out('ArchivedFile', archivedFileSystemObject);
+		//Console.log('ArchivedFile', archivedFileSystemObject);
 	}
 
 	archivedFileSystemObject.extractedSizeInBytes = sevenZipArchivedFileSystemObjectProperties.size;
@@ -85,3 +91,6 @@ ArchivedFileSystemObject.constructFromSevenZipArchivedFileSystemObjectProperties
 
 	return archivedFileSystemObject;
 }
+
+// Export
+module.exports = ArchivedFileSystemObject;

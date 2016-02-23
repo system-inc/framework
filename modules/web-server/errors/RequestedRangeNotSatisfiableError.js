@@ -1,4 +1,8 @@
-RequestedRangeNotSatisfiableError = HttpError.extend({
+// Dependencies
+var HttpError = Framework.require('modules/web-server/errors/HttpError.js');
+
+// Class
+var RequestedRangeNotSatisfiableError = HttpError.extend({
 
 	construct: function(message) {
 		this.super.apply(this, [416, message]);
@@ -10,3 +14,6 @@ RequestedRangeNotSatisfiableError = HttpError.extend({
 	},
 
 });
+
+// Export
+module.exports = RequestedRangeNotSatisfiableError;

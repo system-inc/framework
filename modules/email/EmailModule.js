@@ -1,10 +1,9 @@
+// Class
 EmailModule = Module.extend({
 
 	version: new Version('0.1.0'),
-
-	uses: [
-		'EmailAddress',
-		'Email',
-	],
 	
 });
+
+// Export
+module.exports = EmailModule;

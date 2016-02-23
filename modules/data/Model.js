@@ -1,4 +1,5 @@
-Model = Class.extend({
+// Class
+var Model = Class.extend({
 
 	name: 'Model',
 
@@ -109,4 +110,5 @@ Model = Class.extend({
 
 });
 
-// Static methods
+// Export
+module.exports = Model;

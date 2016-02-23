@@ -1,15 +1,24 @@
-Response = Class.extend({
+// Dependencies
+var Headers = Framework.require('modules/web/headers/Headers.js');
+var Cookies = Framework.require('modules/web/headers/Cookies.js');
+var RangeHeader = Framework.require('modules/web/headers/RangeHeader.js');
+var Stopwatch = Framework.require('modules/time/Stopwatch.js');
+var HtmlDocument = Framework.require('modules/html/HtmlDocument.js');
+var Data = Framework.require('modules/data/Data.js');
+
+// Class
+var Response = Class.extend({
 
 	id: null, // Unique identifier for the response
+
 	request: null,
-	webServer: null,
+
 	stopwatches: {
 		process: null,
 		send: null,
 	},
 	buildStopwatch: null,
-	nodeResponse: null,
-
+	
 	// Encodings
 	encoding: 'identity',
 	acceptedEncodings: [],
@@ -28,6 +37,9 @@ Response = Class.extend({
 
 	// The time the request is completely sent
 	time: null,
+
+	nodeResponse: null,
+	webServer: null,
 
 	construct: function(nodeResponse, request, webServer) {
 		// Hold onto Node's response object
@@ -83,10 +95,10 @@ Response = Class.extend({
 
 		// Handle range requests
 		var requestRangeHeader = this.request.headers.get('Range');
-		//Console.out('requestRangeHeader', requestRangeHeader);
+		//Console.log('requestRangeHeader', requestRangeHeader);
 		if(requestRangeHeader) {
 			this.request.range = new RangeHeader(requestRangeHeader);
-			//Console.out('this.request.range', this.request.range);
+			//Console.log('this.request.range', this.request.range);
 		}
 
 		// If the content is something
@@ -143,7 +155,7 @@ Response = Class.extend({
 					// Support range requests (byte serving), currently do not support multiple ranges in a single request
 					if(this.request.range && this.request.range.ranges.length == 1) {
 						var readStreamRange = this.request.range.getReadStreamRange(this.content.sizeInBytes());
-						//Console.out('readStreamRange', readStreamRange);
+						//Console.log('readStreamRange', readStreamRange);
 
 						// Always set the status code to 206 when we set Content-Range, even if we are sending the entire resource
 						this.statusCode = 206;
@@ -191,7 +203,7 @@ Response = Class.extend({
 		if(ifModifiedSince) {
 			var lastModified = this.headers.get('Last-Modified');
 			if(lastModified) {
-				//Console.out(ifModifiedSince, lastModified);
+				//Console.log(ifModifiedSince, lastModified);
 				if(ifModifiedSince === lastModified) {
 					this.statusCode = 304; // Not Modified
 				}
@@ -203,7 +215,7 @@ Response = Class.extend({
 		if(ifNoneMatch) {
 			var eTag = this.headers.get('ETag');
 			if(eTag) {
-				//Console.out(ifNoneMatch, eTag);
+				//Console.log(ifNoneMatch, eTag);
 				if(ifNoneMatch === eTag) {
 					this.statusCode = 304; // Not Modified
 				}
@@ -246,7 +258,7 @@ Response = Class.extend({
 		this.sendHeaders();
 
 		if(doNotSendContent) {
-			//Console.out('not sending content');
+			//Console.log('not sending content');
 			this.nodeResponse.end(function() {
 				this.sent();
 			}.bind(this));
@@ -289,9 +301,9 @@ Response = Class.extend({
 	},
 
 	sendContent: function*() {
-		//Console.out(this.content);
-		//Console.out(this.acceptedEncodings);
-		//Console.out('contentEncoded', this.contentEncoded);
+		//Console.log(this.content);
+		//Console.log(this.acceptedEncodings);
+		//Console.log('contentEncoded', this.contentEncoded);
 
 		// Handle streams
 		if(Stream.is(this.content)) {
@@ -299,7 +311,7 @@ Response = Class.extend({
 			if(!this.contentEncoded && this.encoding == 'deflate') {
 				var deflate = Node.Zlib.createDeflate();
 				this.content.pipe(deflate).pipe(this.nodeResponse).on('finish', function() {
-					//console.log('done sending!')
+					//Console.log('done sending!')
 					this.sent();
 				}.bind(this));
 			}
@@ -307,14 +319,14 @@ Response = Class.extend({
 			else if(!this.contentEncoded && this.encoding == 'gzip') {
 				var gzip = Node.Zlib.createGzip();
 				this.content.pipe(gzip).pipe(this.nodeResponse).on('finish', function() {
-					//console.log('done sending!')
+					//Console.log('done sending!')
 					this.sent();
 				}.bind(this));
 			}
 			// If there is no encoding
 			else {
 				this.content.pipe(this.nodeResponse).on('finish', function() {
-					//console.log('done sending!')
+					//Console.log('done sending!')
 					this.sent();
 				}.bind(this));
 			}
@@ -343,7 +355,7 @@ Response = Class.extend({
 		// Show the request in the console
 		var responsesLogEntry = this.prepareLogEntry();
 		if(this.webServer.settings.get('verbose')) {
-			Console.out(this.webServer.identifier+' response: '+responsesLogEntry);
+			Console.log(this.webServer.identifier+' response: '+responsesLogEntry);
 		}
 
 		// Conditionally log the request
@@ -368,6 +380,7 @@ Response = Class.extend({
 });
 
 // Static properties
+
 Response.contentTypesToEncode = [
     'text/html',
     'application/x-javascript',
@@ -389,3 +402,6 @@ Response.contentTypesToEncode = [
     'image/vnd.microsoft.icon',
     //'audio/mpeg', // Testing range requests with content-encoding
 ];
+
+// Export
+module.exports = Response;

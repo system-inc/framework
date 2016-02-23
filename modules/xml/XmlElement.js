@@ -1,4 +1,8 @@
-XmlElement = XmlNode.extend({
+// Dependencies
+var XmlNode = Framework.require('modules/xml/XmlNode.js');
+
+// Class
+var XmlElement = XmlNode.extend({
 
 	// XmlNode properties
 	type: 'element',
@@ -28,7 +32,7 @@ XmlElement = XmlNode.extend({
 		}
 		// Allow options to be an object
 		else if(options) {
-			//Console.out(options);
+			//Console.log(options);
 
 			options.each(function(optionName, optionValue) {
 				// Handle content (children)
@@ -183,9 +187,10 @@ XmlElement = XmlNode.extend({
 });
 
 // Static methods
+
 XmlElement.is = function(value) {
 	return Class.isInstance(value, XmlElement);
-}
+};
 
 XmlElement.attributeValueToString = function(attributeValue) {
 	var attributeValueString = attributeValue;
@@ -202,4 +207,7 @@ XmlElement.attributeValueToString = function(attributeValue) {
 	}
 
 	return attributeValueString;
-}
+};
+
+// Export
+module.exports = XmlElement;

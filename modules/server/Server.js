@@ -1,4 +1,5 @@
-Server = Class.extend({
+// Class
+var Server = Class.extend({
 
 	construct: function() {
 	},
@@ -7,3 +8,6 @@ Server = Class.extend({
 	},
 	
 });
+
+// Export
+module.exports = Server;

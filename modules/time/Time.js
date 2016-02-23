@@ -1,4 +1,5 @@
-Time = Class.extend({
+// Class
+var Time = Class.extend({
 
 	time: null,
 	precision: 'milliseconds',
@@ -300,15 +301,18 @@ Time = Class.extend({
 });
 
 // Static properties
+
 Time.precision = 'milliseconds';
 Time.dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 Time.monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 // Static methods
+
 Time.now = Time.prototype.now;
 Time.nowInMilliseconds = Time.prototype.nowInSeconds;
 Time.nowInMilliseconds = Time.prototype.nowInMilliseconds;
 Time.nowInMicroseconds = Time.prototype.nowInMicroseconds;
+
 Time.constructFromDosDateTime = function(date, time) {
 	var day = date & 0x1f; // 1-31
 	var month = (date >> 5 & 0xf) - 1; // 1-12, 0-11
@@ -321,3 +325,6 @@ Time.constructFromDosDateTime = function(date, time) {
 
 	return new Time(new Date(year, month, day, hour, minute, second, millisecond));
 }
+
+// Export
+module.exports = Time;

@@ -1,4 +1,9 @@
-XmlTest = Test.extend({
+// Dependencies
+var XmlDocument = Framework.require('modules/xml/XmlDocument.js');
+var XmlElement = Framework.require('modules/xml/XmlElement.js');
+
+// Class
+var XmlTest = Test.extend({
 
 	testXmlDocumentDeclarations: function*() {
 		// Blank XML document
@@ -23,7 +28,7 @@ XmlTest = Test.extend({
 	testXmlDocumentWithElements: function*() {
 		// Blank XML document
 		var actual = new XmlDocument();
-		//Console.out(actual);
+		//Console.log(actual);
 	},
 
 	testXmlElements: function*() {
@@ -42,7 +47,10 @@ XmlTest = Test.extend({
 		//actual = new XmlElement('p');
 		//actual.setAttribute('class', 'testClass');
 		//Assert.equal(actual.toString(false), '<p class="testClass"></p>', 'setAttribute');
-		//Console.out(actual.toString());
+		//Console.log(actual.toString());
 	},
 
 });
+
+// Export
+module.exports = XmlTest;

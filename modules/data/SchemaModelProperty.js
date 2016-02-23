@@ -1,3 +1,4 @@
+// Class
 SchemaModelProperty = Class.extend({
 
 	name: null,
@@ -15,6 +16,7 @@ SchemaModelProperty = Class.extend({
 });
 
 // Static methods
+
 SchemaModelProperty.getTypeFromMySqlSchema = function(dataType) {
 	var type;
 
@@ -52,7 +54,7 @@ SchemaModelProperty.getTypeFromMySqlSchema = function(dataType) {
 	}
 
 	return type;
-}
+};
 
 SchemaModelProperty.getTypeOptionsFromMySqlSchema = function(dataType, dataLength, autoIncrement, unsigned, zeroFill) {
 	var typeOptions = {};
@@ -86,4 +88,7 @@ SchemaModelProperty.getTypeOptionsFromMySqlSchema = function(dataType, dataLengt
 	}
 
 	return typeOptions;
-}
+};
+
+// Export
+module.exports = SchemaModelProperty;
