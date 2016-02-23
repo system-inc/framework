@@ -1,3 +1,6 @@
+// Dependencies
+var Settings = Framework.require('modules/settings/Settings.js');
+
 // Class
 var Command = Class.extend({
 

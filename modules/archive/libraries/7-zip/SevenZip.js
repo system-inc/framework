@@ -1,5 +1,5 @@
 // Dependencies
-var ArchiveModule = Modules.Archive;
+var ArchiveModule = Project.modules.archiveModule;
 
 // Class
 SevenZip = {};

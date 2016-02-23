@@ -1,5 +1,6 @@
-// Globals
-Time = Framework.require('modules/time/Time.js');
+// Dependencies
+var Module = Framework.require('modules/module/Module.js');
+var Version = Framework.require('modules/version/Version.js');
 
 // Class
 var TimeModule = Module.extend({

@@ -1,6 +1,9 @@
 // Globals
 Framework = require('./../Framework.js');
 
+// Dependencies
+var Proctor = Framework.require('modules/test/Proctor.js');
+
 // Class
 Project = new (Framework.extend({
 

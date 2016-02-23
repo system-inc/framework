@@ -1,3 +1,6 @@
+// Dependencies
+var FileSystemObjectFactory = Framework.require('modules/file-system/FileSystemObjectFactory.js');
+
 // Class
 var FileSystemObject = Class.extend({
 
@@ -39,33 +42,6 @@ var FileSystemObject = Class.extend({
 			// Figure out the directory
 			this.directory = this.path.substr(0, this.path.lastIndexOf(Node.Path.separator) + 1);
 		}
-	},
-
-	constructFromPath: function*(path) {
-		// Make sure we have a path
-		if(!path) {
-			return null;
-		}
-
-		// Check to see if the file exists
-		if(yield FileSystemObject.exists(path)) {
-			// Get the file object status
-			var nodeStatus = yield FileSystemObject.stat(path);
-
-			// Make sure to always be an instance of File or Directory
-			if(nodeStatus.isFile()) {
-				var file = new File(path);
-				yield file.initializeStatus();
-				return file;
-			}
-			else if(nodeStatus.isDirectory()) {
-				var directory = new Directory(path);
-				yield directory.initializeStatus();
-				return directory;
-			}
-		}
-
-		return null;
 	},
 
 	initializeStatus: function*() {
@@ -184,8 +160,6 @@ var FileSystemObject = Class.extend({
 
 // Static methods
 
-FileSystemObject.constructFromPath = FileSystemObject.prototype.constructFromPath;
-
 FileSystemObject.exists = FileSystemObject.prototype.exists;
 
 FileSystemObject.stat = function(path) {
@@ -215,6 +189,9 @@ FileSystemObject.listFileNames = function(path) {
 };
 
 FileSystemObject.list = function(path, recursive) {
+    // Dependencies
+    var Directory = Framework.require('modules/file-system/Directory.js');
+
     return new Promise(function(resolve, reject) {
         Generator.run(function*() {
             var list = [];
@@ -222,7 +199,7 @@ FileSystemObject.list = function(path, recursive) {
 
             // Make sure we have the full path
             yield fileNames.each(function*(index, fileName) {
-                var fileSystemObject = yield FileSystemObject.constructFromPath(path+fileName);
+                var fileSystemObject = yield FileSystemObjectFactory.create(path+fileName);
 
                 // Handle recursion
                 if(recursive && Class.isInstance(fileSystemObject, Directory)) {
@@ -258,7 +235,7 @@ FileSystemObject.watch = function(paths, callback) {
                 //Console.log('path', path);
 
                 // Instantiate a file or directory from the path
-                var fileSystemObject = yield FileSystemObject.constructFromPath(path);
+                var fileSystemObject = yield FileSystemObjectFactory.create(path);
 
                 // Create an array to store file system objects to watch
                 fileSystemObjectsToWatch.append(fileSystemObject);

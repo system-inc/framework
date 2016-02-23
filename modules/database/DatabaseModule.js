@@ -1,4 +1,6 @@
 // Dependencies
+var Module = Framework.require('modules/module/Module.js');
+var Version = Framework.require('modules/version/Version.js');
 var DatabaseManager = Framework.require('modules/database/DatabaseManager.js');
 
 // Class

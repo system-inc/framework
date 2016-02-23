@@ -2,6 +2,7 @@
 var Headers = Framework.require('modules/web/headers/Headers.js');
 var Cookies = Framework.require('modules/web/headers/Cookies.js');
 var Url = Framework.require('modules/web/Url.js');
+var Version = Framework.require('modules/version/Version.js');
 var Stopwatch = Framework.require('modules/time/Stopwatch.js');
 var IpAddress = Framework.require('modules/network/IpAddress.js');
 var Data = Framework.require('modules/data/Data.js');

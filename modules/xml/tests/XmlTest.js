@@ -1,6 +1,9 @@
 // Dependencies
+var Test = Framework.require('modules/test/Test.js');
+var Assert = Framework.require('modules/test/Assert.js');
 var XmlDocument = Framework.require('modules/xml/XmlDocument.js');
 var XmlElement = Framework.require('modules/xml/XmlElement.js');
+var Version = Framework.require('modules/version/Version.js');
 
 // Class
 var XmlTest = Test.extend({

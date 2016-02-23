@@ -3,7 +3,6 @@ var RouteFactory = {};
 
 // Static methods
 RouteFactory.create = function(settings, parent) {
-
 	var route = null;
 
 	// Make sure child routes without types are subclassed the same as their parent

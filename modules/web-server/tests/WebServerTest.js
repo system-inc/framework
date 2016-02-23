@@ -1,4 +1,6 @@
 // Dependencies
+var Test = Framework.require('modules/test/Test.js');
+var Assert = Framework.require('modules/test/Assert.js');
 var WebServer = Framework.require('modules/web-server/WebServer.js');
 var WebRequest = Framework.require('modules/web/WebRequest.js');
 

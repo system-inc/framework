@@ -1,7 +1,6 @@
-// Globals
-Test = Framework.require('modules/test/Test.js');
-Assert = Framework.require('modules/test/Assert.js');
-Proctor = Framework.require('modules/test/Proctor.js');
+// Dependencies
+var Module = Framework.require('modules/module/Module.js');
+var Version = Framework.require('modules/version/Version.js');
 
 // Class
 var TestModule = Module.extend({

@@ -2,6 +2,7 @@
 var DatabaseTableColumn = Framework.require('modules/database/DatabaseTableColumn.js');
 var DatabaseTableIndex = Framework.require('modules/database/DatabaseTableIndex.js');
 var DatabaseTableRelationship = Framework.require('modules/database/DatabaseTableRelationship.js');
+var Version = Framework.require('modules/version/Version.js');
 
 // Class
 var DatabaseTable = Class.extend({

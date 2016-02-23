@@ -1,5 +1,6 @@
 // Dependencies
 var Server = Framework.require('modules/server/Server.js');
+var Settings = Framework.require('modules/settings/Settings.js');
 var Log = Framework.require('modules/log/Log.js');
 var Router = Framework.require('modules/web-server/routes/Router.js');
 var Request = Framework.require('modules/web-server/Request.js');

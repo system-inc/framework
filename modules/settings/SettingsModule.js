@@ -1,5 +1,6 @@
-// Globals
-Settings = Framework.require('modules/settings/Settings.js');
+// Dependencies
+var Module = Framework.require('modules/module/Module.js');
+var Version = Framework.require('modules/version/Version.js');
 
 // Class
 var SettingsModule = Module.extend({

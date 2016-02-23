@@ -1,4 +1,5 @@
 // Dependencies
+var Settings = Framework.require('modules/settings/Settings.js');
 var MySql = Framework.require('modules/database/libraries/mysql/MySql.js');
 var DatabaseTable = Framework.require('modules/database/DatabaseTable.js');
 var Stopwatch = Framework.require('modules/time/Stopwatch.js');

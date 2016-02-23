@@ -1,4 +1,5 @@
 // Dependencies
+var FileSystemObject = Framework.require('modules/file-system/FileSystemObject.js');
 var FileFormats = Framework.require('modules/file-system/FileFormats.js');
 
 // Class

@@ -1,6 +1,6 @@
-// Globals
-Url = Framework.require('modules/web/Url.js');
-WebRequest = Framework.require('modules/web/WebRequest.js');
+// Dependencies
+var Module = Framework.require('modules/module/Module.js');
+var Version = Framework.require('modules/version/Version.js');
 
 // Class
 var WebModule = Module.extend({

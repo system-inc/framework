@@ -85,6 +85,9 @@ Number.random = function(minimum, maximum, precision) {
 
 // Minimum and maximum are both inclusive
 Number.cryptographicRandom = function*(minimum, maximum, precision) {
+	// Dependencies
+	var Cryptography = Framework.require('modules/cryptography/Cryptography.js');
+
 	minimum = minimum === undefined ? 0 : minimum;
 	maximum = maximum === undefined ? 9007199254740992 : maximum;
 	precision = precision === undefined ? 0 : precision;

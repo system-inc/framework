@@ -1,5 +1,8 @@
 // Dependencies
 var Log = Framework.require('modules/log/Log.js');
+var File = Framework.require('modules/file-system/File.js');
+var Directory = Framework.require('modules/file-system/Directory.js');
+var Terminal = Framework.require('modules/console/Terminal.js');
 
 // Class
 var ConsoleSession = Class.extend({

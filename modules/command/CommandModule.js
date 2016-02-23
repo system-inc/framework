@@ -1,5 +1,6 @@
-// Globals
-Command = Framework.require('modules/command/Command.js');
+// Dependencies
+var Module = Framework.require('modules/module/Module.js');
+var Version = Framework.require('modules/version/Version.js');
 
 // Class
 var CommandModule = Module.extend({

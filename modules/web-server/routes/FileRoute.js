@@ -1,5 +1,6 @@
 // Dependencies
 var Route = Framework.require('modules/web-server/routes/Route.js');
+var File = Framework.require('modules/file-system/File.js');
 
 // Class
 var FileRoute = Route.extend({

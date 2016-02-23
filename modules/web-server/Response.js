@@ -5,6 +5,7 @@ var RangeHeader = Framework.require('modules/web/headers/RangeHeader.js');
 var Stopwatch = Framework.require('modules/time/Stopwatch.js');
 var HtmlDocument = Framework.require('modules/html/HtmlDocument.js');
 var Data = Framework.require('modules/data/Data.js');
+var File = Framework.require('modules/file-system/File.js');
 
 // Class
 var Response = Class.extend({

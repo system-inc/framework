@@ -1,3 +1,7 @@
+// Dependencies
+var FileSystemObject = Framework.require('modules/file-system/FileSystemObject.js');
+var SevenZip = Framework.require('modules/archive/libraries/7-zip/SevenZip.js');
+
 // Class
 var ArchivedFileSystemObject = Class.extend({
 
@@ -52,45 +56,6 @@ var ArchivedFileSystemObject = Class.extend({
 	}
 
 });
-
-// Static methods
-
-ArchivedFileSystemObject.constructFromSevenZipArchivedFileSystemObjectProperties = function(archiveFile, sevenZipArchivedFileSystemObjectProperties) {
-	// Dependencies - can not include these outside of this function as it would create a cyclicle error
-	var ArchivedFile = Framework.require('modules/archive/file-system-objects/ArchivedFile.js');
-	var ArchivedDirectory = Framework.require('modules/archive/file-system-objects/ArchivedDirectory.js');
-
-	//Console.highlight('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
-
-	var archivedFileSystemObject = null;
-
-	// Directories
-	if(sevenZipArchivedFileSystemObjectProperties.folder == '+') {
-		archivedFileSystemObject = new ArchivedDirectory(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
-		//Console.log('ArchivedDirectory', archivedFileSystemObject);
-	}
-	// Files
-	else {
-		archivedFileSystemObject = new ArchivedFile(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
-		//Console.log('ArchivedFile', archivedFileSystemObject);
-	}
-
-	archivedFileSystemObject.extractedSizeInBytes = sevenZipArchivedFileSystemObjectProperties.size;
-	archivedFileSystemObject.archivedSizeInBytes = sevenZipArchivedFileSystemObjectProperties.packedSize;
-	archivedFileSystemObject.timeAccessed = new Time(sevenZipArchivedFileSystemObjectProperties.accessed);
-	archivedFileSystemObject.timeModified = new Time(sevenZipArchivedFileSystemObjectProperties.modified);
-	archivedFileSystemObject.timeStatusChanged = new Time(sevenZipArchivedFileSystemObjectProperties.modified);
-	archivedFileSystemObject.timeCreated = new Time(sevenZipArchivedFileSystemObjectProperties.created);
-	archivedFileSystemObject.archiveMethod = sevenZipArchivedFileSystemObjectProperties.method.lowercase();
-	archivedFileSystemObject.comment = sevenZipArchivedFileSystemObjectProperties.comment;
-	//archivedFileSystemObject.version = sevenZipArchivedFileSystemObjectProperties.version;
-	//archivedFileSystemObject.hostOperatingSystem = sevenZipArchivedFileSystemObjectProperties.hostOperatingSystem;
-	//archivedFileSystemObject.encrypted = sevenZipArchivedFileSystemObjectProperties.encrypted;
-	//archivedFileSystemObject.attributes = sevenZipArchivedFileSystemObjectProperties.attributes;
-	//archivedFileSystemObject.crc = sevenZipArchivedFileSystemObjectProperties.crc;
-
-	return archivedFileSystemObject;
-}
 
 // Export
 module.exports = ArchivedFileSystemObject;

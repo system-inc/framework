@@ -1,7 +1,6 @@
-// Globals
-FileSystemObject = Framework.require('modules/file-system/FileSystemObject.js');
-File = Framework.require('modules/file-system/File.js');
-Directory = Framework.require('modules/file-system/Directory.js');
+// Dependencies
+var Module = Framework.require('modules/module/Module.js');
+var Version = Framework.require('modules/version/Version.js');
 
 // Class
 var FileSystemModule = Module.extend({

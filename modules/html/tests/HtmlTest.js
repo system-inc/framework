@@ -1,4 +1,6 @@
 // Dependencies
+var Test = Framework.require('modules/test/Test.js');
+var Assert = Framework.require('modules/test/Assert.js');
 var HtmlDocument = Framework.require('modules/html/HtmlDocument.js');
 var HtmlElement = Framework.require('modules/html/HtmlElement.js');
 var HtmlNode = Framework.require('modules/html/HtmlNode.js');

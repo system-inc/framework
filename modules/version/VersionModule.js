@@ -1,5 +1,6 @@
-// Globals
-//Version = Framework.require('modules/version/Version.js'); // This is a special case as it is already set as a global in Framework.js
+// Dependencies
+var Module = Framework.require('modules/module/Module.js');
+var Version = Framework.require('modules/version/Version.js');
 
 // Class
 var VersionModule = Module.extend({

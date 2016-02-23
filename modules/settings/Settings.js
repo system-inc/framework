@@ -1,3 +1,6 @@
+// Dependencies
+var File = Framework.require('modules/file-system/File.js');
+
 // Class
 var Settings = Class.extend({
 

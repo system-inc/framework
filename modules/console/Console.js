@@ -1,5 +1,4 @@
 // Dependencies
-var Time = require('./../time/Time.js'); // Although this will be a global, we need it immediately
 var Terminal = require('./Terminal.js');
 
 // Class

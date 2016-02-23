@@ -1,4 +1,6 @@
 // Dependencies
+var Test = Framework.require('modules/test/Test.js');
+var Assert = Framework.require('modules/test/Assert.js');
 var Data = Framework.require('modules/data/Data.js');
 
 // Class

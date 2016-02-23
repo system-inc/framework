@@ -16,6 +16,7 @@ Class = require('./globals/custom/Class.js');
 Generator = require('./globals/custom/Generator.js');
 Json = require('./globals/custom/Json.js');
 Primitive = require('./globals/custom/Primitive.js');
+Time = require('./globals/custom/Time.js');
 
 // Globals - Standard - depend on Class
 Error = require('./globals/standard/Error.js');
@@ -24,13 +25,15 @@ Error = require('./globals/standard/Error.js');
 Number = require('./globals/standard/Number.js');
 String = require('./globals/standard/String.js');
 
-// Globals - Dependencies for the Framework Class to instantiate
+// Globals
 Console = require('./modules/console/Console.js');
-Version = require('./modules/version/Version.js');
-Module = require('./modules/module/Module.js');
 
-// Dependencies
-var AsciiArt = require('./modules/ascii-art/AsciiArt.js');
+// Dependencies - populate these in initialize as we need the Framework global
+var AsciiArt = null;
+var Command = null;
+var Module = null;
+var Settings = null;
+var Version = null;
 
 // Class
 var Framework = Class.extend({
@@ -38,7 +41,7 @@ var Framework = Class.extend({
 	title: null,
 	identifier: null,
 
-	version: new Version('0.1.0'),
+	version: null,
 	settings: null,
 	environment: null,
 	command: null,
@@ -49,29 +52,29 @@ var Framework = Class.extend({
 		directory: __dirname+Node.Path.separator,
 	},
 
-	// Core modules
-	coreModules: [
-		'Command',
-		'Console',
-		'Cryptography',
-		'FileSystem',
-		'Log',
-		'Settings',
-		'Time',
-		'Version',
-	],
+	modules: {},
 
 	construct: function(projectDirectory) {
-		// Make it obvious we are starting
-		Console.writeLine(AsciiArt.framework.version[this.version.toString()]);
-
 		// Set the project directory
 		this.directory = Node.Path.normalize(projectDirectory+Node.Path.separator);
 	},
 
 	initialize: function*() {
+		// Dependencies
+		AsciiArt = Framework.require('modules/ascii-art/AsciiArt.js');
+		Command = Framework.require('modules/command/Command.js');
+		Module = Framework.require('modules/module/Module.js');
+		Settings = Framework.require('modules/settings/Settings.js');
+		Version = Framework.require('modules/version/Version.js');
+
+		// Set the version
+		this.version = new Version('0.1.0');
+
+		// Make it obvious we are starting
+		Console.writeLine(AsciiArt.framework.version[this.version.toString()]);
+
 		// Require the core modules
-		Module.require(this.coreModules);
+		Module.require(Framework.coreModules);
 
 		// Announce starting
 		//Console.log('Initializing Framework '+this.version+'...');
@@ -89,7 +92,7 @@ var Framework = Class.extend({
 		this.configureEnvironment();
 
 		// After the environment is initialized, initialize the Framework core modules
-		yield Module.initialize(this.coreModules);
+		yield Module.initialize(Framework.coreModules);
 
 		// Load all of the modules for the Project indicated in the project settings
 		yield this.requireAndInitializeProjectModules();
@@ -229,6 +232,10 @@ var Framework = Class.extend({
 // Static properties
 
 Framework.directory = __dirname+Node.Path.separator;
+
+Framework.coreModules = [
+	'Console',
+];
 
 // Static methods
 

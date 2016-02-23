@@ -1,5 +1,6 @@
-// Globals
-Cryptography = Framework.require('modules/cryptography/Cryptography.js');
+// Dependencies
+var Module = Framework.require('modules/module/Module.js');
+var Version = Framework.require('modules/version/Version.js');
 
 // Class
 var CryptographyModule = Module.extend({

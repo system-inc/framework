@@ -2,17 +2,36 @@
 var FileSystemObjectFactory = {};
 
 // Static methods
-FileSystemObjectFactory.create = function(archiveFile, path) {
+FileSystemObjectFactory.create = function*(path) {
+	// Make sure we have a path
+	if(!path) {
+		return null;
+	}
 
 	var fileSystemObject = null;
 
-	if(1) {
-		var File = Framework.require('modules/file-system/File.js');
+	var FileSystemObject = Framework.require('modules/file-system/FileSystemObject.js');
+
+	// Check to see if the file exists
+	if(yield FileSystemObject.exists(path)) {
+		// Get the file object status
+		var nodeStatus = yield FileSystemObject.stat(path);
+
+		// Make sure to always be an instance of File or Directory
+		if(nodeStatus.isFile()) {
+			var File = Framework.require('modules/file-system/File.js');
+			fileSystemObject = new File(path);
+			yield fileSystemObject.initializeStatus();
+		}
+		else if(nodeStatus.isDirectory()) {
+			var Directory = Framework.require('modules/file-system/Directory.js');
+			fileSystemObject = new Directory(path);
+			yield fileSystemObject.initializeStatus();
+		}
 	}
-	else {
-		var Directory = Framework.require('modules/file-system/Directory.js');
-	}
-};
+
+	return fileSystemObject;
+}.toPromise();
 
 // Export
 module.exports = FileSystemObjectFactory;

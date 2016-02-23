@@ -1,12 +1,14 @@
 // Dependencies
 var Headers = Framework.require('modules/web/headers/Headers.js');
 var Cookies = Framework.require('modules/web/headers/Cookies.js');
+var Url = Framework.require('modules/web/Url.js');
 var IpAddressFactory = Framework.require('modules/network/IpAddressFactory.js');
 var Browser = Framework.require('modules/web/Browser.js');
 var Device = Framework.require('modules/hardware/Device.js');
 var OperatingSystem = Framework.require('modules/operating-system/OperatingSystem.js');
 var Geolocation = Framework.require('modules/geolocation/Geolocation.js');
 var Country = Framework.require('modules/geolocation/Country.js');
+var Version = Framework.require('modules/version/Version.js');
 var RequestEntityTooLargeError = Framework.require('modules/web-server/errors/RequestEntityTooLargeError.js');
 
 // Class

@@ -1,5 +1,5 @@
-// Globals
-Modules = {};
+// Dependencies
+var Settings = Framework.require('modules/settings/Settings.js');
 
 // Class
 var Module = Class.extend({
@@ -45,8 +45,10 @@ Module.require = function(moduleNames) {
 
 	// Load each module
 	moduleNames.toArray().each(function(moduleNameIndex, moduleName) {
+		var modulePropertyName = moduleName.lowercaseFirstCharacter()+'Module';
+
 		// Only require modules once
-		if(Modules[moduleName]) {
+		if(Project.modules[modulePropertyName]) {
 			//Console.info('Already called Module.require for '+moduleName+'.');
 		}
 		// Require the module
@@ -55,7 +57,7 @@ Module.require = function(moduleNames) {
 			var moduleClass = Framework.require('modules/'+moduleName.toDashes()+'/'+moduleName+'Module.js');
 			var moduleInstance = new (moduleClass)(moduleName);
 
-			Modules[moduleName] = moduleInstance;
+			Project.modules[modulePropertyName] = moduleInstance;
 		}
 	});
 }
@@ -65,7 +67,9 @@ Module.initialize = function*(moduleNames) {
 
 	// Initializing is necessary to do separate of .require because module code may be interdependent and require other code to be required first
 	yield moduleNames.toArray().each(function*(moduleNameIndex, moduleName) {
-		var moduleInstance = Modules[moduleName];
+		var modulePropertyName = moduleName.lowercaseFirstCharacter()+'Module';
+
+		var moduleInstance = Project.modules[modulePropertyName];
 
 		// Only initialize modules once
 		if(moduleInstance.isInitialized) {

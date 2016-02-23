@@ -1,5 +1,6 @@
 // Dependencies
 var ArchivedFileSystemObject = Framework.require('modules/archive/file-system-objects/ArchivedFileSystemObject.js');
+var Directory = Framework.require('modules/file-system/Directory.js');
 
 // Class
 var ArchivedDirectory = ArchivedFileSystemObject.extend({

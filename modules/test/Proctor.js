@@ -4,6 +4,8 @@ var DotTestReporter = Framework.require('modules/test/test-reporter/DotTestRepor
 var ConciseTestReporter = Framework.require('modules/test/test-reporter/ConciseTestReporter.js');
 var Stopwatch = Framework.require('modules/time/Stopwatch.js');
 var Terminal = Framework.require('modules/console/Terminal.js');
+var FileSystemObjectFactory = Framework.require('modules/file-system/FileSystemObjectFactory.js');
+var Test = Framework.require('modules/test/Test.js');
 
 // Class
 var Proctor = Class.extend({
@@ -154,7 +156,7 @@ var Proctor = Class.extend({
 		}
 
 		// Create a file or directory from the path
-		var fileSystemObjectFromPath = yield FileSystemObject.constructFromPath(path);
+		var fileSystemObjectFromPath = yield FileSystemObjectFactory.create(path);
 		//Node.exit(fileSystemObject);
 
 		// Store all of the file system objects

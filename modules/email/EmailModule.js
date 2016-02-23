@@ -1,5 +1,9 @@
+// Dependencies
+var Module = Framework.require('modules/module/Module.js');
+var Version = Framework.require('modules/version/Version.js');
+
 // Class
-EmailModule = Module.extend({
+var EmailModule = Module.extend({
 
 	version: new Version('0.1.0'),
 	

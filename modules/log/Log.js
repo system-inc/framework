@@ -1,3 +1,7 @@
+// Dependencies
+var File = Framework.require('modules/file-system/File.js');
+var Directory = Framework.require('modules/file-system/Directory.js');
+
 // Class
 var Log = Class.extend({
 
