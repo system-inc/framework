@@ -471,7 +471,7 @@ var Proctor = Class.extend({
 
 		// Exit the process if we are on a terminal
 		if(Console.onTerminal()) {
-			//Node.Process.exit();
+			Node.Process.exit();
 		}
 	},
 
