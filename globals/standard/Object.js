@@ -13,11 +13,11 @@ Object.prototype.getValueForKey = function(key, caseSensitive) {
     var result = null;
 
     if(!caseSensitive) {
-        for(var currentKey in this) {
-            if(currentKey.toLowerCase() == key.toLowerCase()) {
-                result = this[key];
-                break;
-            }
+        if(key && this[key] !== undefined) {
+            result = this[key];
+        }
+        else if(key && this[key.lowercase()] !== undefined) {
+            result = this[key.lowercase()];
         }
     }
     else {

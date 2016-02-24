@@ -25,4 +25,4 @@ projectFile="$scriptDirectory../tests/Project.js"
 #echo "projectFile $projectFile"
 
 # Run the script
-node --harmony "$projectFile" -s $@
+node --harmony "$projectFile" -s true $@

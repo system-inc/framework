@@ -10,13 +10,10 @@ var DatabaseManager = Class.extend({
 		var database = new Database(databaseSettings);
 
 		this.databases[databaseIdentifier] = database;
-
-		// Make a global reference to the database for convenience
-		global[databaseIdentifier.capitalize()+'Database'] = database;
 	},
 
 	get: function(databaseIdentifier) {
-		return this.databases.getKeyForValue(databaseIdentifier);
+		return this.databases.getValueForKey(databaseIdentifier);
 	},
 
 });

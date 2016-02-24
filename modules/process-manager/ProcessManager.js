@@ -29,69 +29,69 @@ ProcessManager.fileExtensionPattern = null;
 ProcessManager.crashQueued = false;
 ProcessManager.isWindowsWithoutWatchFile = NodeProcess.platform === 'win32' && parseInt(NodeVersion[1]) <= 6;
 ProcessManager.argumentsArray = NodeProcess.argv.slice(1);
-ProcessManager.log = Console.log;
+ProcessManager.log = console.log;
 
 ProcessManager.help = function() {
-    Console.log('');
-    Console.log('Usage:');
-    Console.log('    ProcessManager.js [options] <program>');
-    Console.log('    ProcessManager.js [options] -- <program> [args ...]');
-    Console.log('');
-    Console.log('Required:');
-    Console.log('    <program>');
-    Console.log('        The program to run.');
-    Console.log('');
-    Console.log('Options:');
-    Console.log('    -w|--watch <watchItems>');
-    Console.log('        A comma-delimited list of folders or js files to watch for changes.');
-    Console.log('        When a change to a js file occurs, reload the program');
-    Console.log('        Default is \'.\'');
-    Console.log('');
-    Console.log('    -i|--ignore <ignoreItems>');
-    Console.log('        A comma-delimited list of folders to ignore for changes.');
-    Console.log('        No default');
-    Console.log('');
-    Console.log('    -p|--poll-interval <milliseconds>');
-    Console.log('        How often to poll watched files for changes.');
-    Console.log('        Defaults to Node default.');
-    Console.log('');
-    Console.log('    -e|--extensions <extensions>');
-    Console.log('        Specific file extensions to watch in addition to defaults.');
-    Console.log('        Used when --watch option includes folders');
-    Console.log('        Default is \'node,js\'');
-    Console.log('');
-    Console.log('    -x|--exec <executable>');
-    Console.log('        The executable that runs the specified program.');
-    Console.log('        Default is \'node\'');
-    Console.log('');
-    Console.log('    --debug');
-    Console.log('        Start node with --debug flag.');
-    Console.log('');
-    Console.log('    --debug-brk[=port]');
-    Console.log('        Start node with --debug-brk[=port] flag.');
-    Console.log('');
-    Console.log('    --harmony');
-    Console.log('        Start node with --harmony flag.');
-    Console.log('');
-    Console.log('    -n|--no-restart-on error|exit');
-    Console.log('        Don\'t automatically restart the supervised program if it ends.');
-    Console.log('        Supervisor will wait for a change in the source files.');
-    Console.log('        If \'error\', an exit code of 0 will still restart.');
-    Console.log('        If \'exit\', no restart regardless of exit code.');
-    Console.log('');
-    Console.log('    --force-watch');
-    Console.log('        Use fs.watch instead of fs.watchFile.');
-    Console.log('        This may be useful if you see a high cpu load on a windows machine.');
-    Console.log('');
-    Console.log('    -h|--help|-?');
-    Console.log('        Display these usage instructions.');
-    Console.log('');
-    Console.log('    -q|--quiet');
-    Console.log('        Suppress debug messages');
-    Console.log('');
-    Console.log('    -V|--verbose');
-    Console.log('        Show extra debug messages');
-    Console.log('');
+    console.log('');
+    console.log('Usage:');
+    console.log('    ProcessManager.js [options] <program>');
+    console.log('    ProcessManager.js [options] -- <program> [args ...]');
+    console.log('');
+    console.log('Required:');
+    console.log('    <program>');
+    console.log('        The program to run.');
+    console.log('');
+    console.log('Options:');
+    console.log('    -w|--watch <watchItems>');
+    console.log('        A comma-delimited list of folders or js files to watch for changes.');
+    console.log('        When a change to a js file occurs, reload the program');
+    console.log('        Default is \'.\'');
+    console.log('');
+    console.log('    -i|--ignore <ignoreItems>');
+    console.log('        A comma-delimited list of folders to ignore for changes.');
+    console.log('        No default');
+    console.log('');
+    console.log('    -p|--poll-interval <milliseconds>');
+    console.log('        How often to poll watched files for changes.');
+    console.log('        Defaults to Node default.');
+    console.log('');
+    console.log('    -e|--extensions <extensions>');
+    console.log('        Specific file extensions to watch in addition to defaults.');
+    console.log('        Used when --watch option includes folders');
+    console.log('        Default is \'node,js\'');
+    console.log('');
+    console.log('    -x|--exec <executable>');
+    console.log('        The executable that runs the specified program.');
+    console.log('        Default is \'node\'');
+    console.log('');
+    console.log('    --debug');
+    console.log('        Start node with --debug flag.');
+    console.log('');
+    console.log('    --debug-brk[=port]');
+    console.log('        Start node with --debug-brk[=port] flag.');
+    console.log('');
+    console.log('    --harmony');
+    console.log('        Start node with --harmony flag.');
+    console.log('');
+    console.log('    -n|--no-restart-on error|exit');
+    console.log('        Don\'t automatically restart the supervised program if it ends.');
+    console.log('        Supervisor will wait for a change in the source files.');
+    console.log('        If \'error\', an exit code of 0 will still restart.');
+    console.log('        If \'exit\', no restart regardless of exit code.');
+    console.log('');
+    console.log('    --force-watch');
+    console.log('        Use fs.watch instead of fs.watchFile.');
+    console.log('        This may be useful if you see a high cpu load on a windows machine.');
+    console.log('');
+    console.log('    -h|--help|-?');
+    console.log('        Display these usage instructions.');
+    console.log('');
+    console.log('    -q|--quiet');
+    console.log('        Suppress debug messages');
+    console.log('');
+    console.log('    -V|--verbose');
+    console.log('        Show extra debug messages');
+    console.log('');
 };
 
 ProcessManager.crash = function() {
@@ -216,7 +216,7 @@ ProcessManager.startProgram = function(program, executor) {
     if(nodeChildProcess.stdout) {
         // node < 0.8 doesn't understand the 'inherit' option, so pass through manually
         nodeChildProcess.stdout.addListener('data', function(chunk) {
-            chunk && Console.log(chunk);
+            chunk && console.log(chunk);
         });
 
         nodeChildProcess.stderr.addListener('data', function(chunk) {
@@ -420,7 +420,7 @@ ProcessManager.start = function() {
     var baseNameofCurrentArgument;
     var currentArgument;
 
-    //Console.log(ProcessManager.argumentsArray);
+    //console.log(ProcessManager.argumentsArray);
     //return;
 
     // Shift arguments off of the arguments array until the arguments array is just what is relevant

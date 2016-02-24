@@ -248,13 +248,13 @@ WebRequest.request = function(options) {
 			// Resolve the promise when the response ends
 			response.on('end', function() {
 				//Console.log('end event');
-				Generator.run(finish);
+				finish.run();
 			});
 
 			// Resolve the promise when the response ends
 			response.on('close', function() {
 				//Console.log('close event');
-				Generator.run(finish);
+				finish.run();
 			});
 		});
 

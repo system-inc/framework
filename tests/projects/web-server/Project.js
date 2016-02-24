@@ -1,20 +1,8 @@
+// Global - Framework class
 Framework = require('./../../../Framework.js');
+
+// Global - Framework instance
 Project = new Framework(__dirname);
+
+// Initialize
 Project.initialize();
-
-// This runs on all cores
-//if(Node.Cluster.isMaster) {
-//    // Fork workers
-//    for(var i = 0; i < Node.OperatingSystem.cpus().length; i++) {
-//        Console.log('Forking...');
-//        Node.Cluster.fork();
-//    }
-
-//    Node.Cluster.on('exit', function(worker, code, signal) {
-//        Console.log('Worker "'+worker.process.pid+'" died.');
-//    });
-//}
-//else {
-//	Project = new Framework(__dirname);
-//	Project.initialize();	
-//}

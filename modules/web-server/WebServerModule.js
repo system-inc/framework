@@ -2,6 +2,7 @@
 var Module = Framework.require('modules/module/Module.js');
 var Version = Framework.require('modules/version/Version.js');
 var WebServer = Framework.require('modules/web-server/WebServer.js');
+var Settings = Framework.require('modules/settings/Settings.js');
 
 // Class
 var WebServerModule = Module.extend({
@@ -24,7 +25,7 @@ var WebServerModule = Module.extend({
 			var webServerCount = 0;
 			yield webServersSettings.each(function*(webServerSettingsObjectIndex, webServerSettingsObject) {
 				// Get an instance of class Settings to localize to the web server
-				var webServerSettings = Settings.constructFromObject(webServerSettingsObject);
+				var webServerSettings = new Settings(webServerSettingsObject);
 				var webServerIdentifier = webServerSettings.get('identifier');
 
 				// Make sure the web server has an identifier

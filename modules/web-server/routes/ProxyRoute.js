@@ -1,5 +1,6 @@
 // Dependencies
 var Route = Framework.require('modules/web-server/routes/Route.js');
+var Url = Framework.require('modules/web/Url.js');
 
 // Class
 var ProxyRoute = Route.extend({

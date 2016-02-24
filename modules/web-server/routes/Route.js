@@ -213,7 +213,7 @@ var Route = Class.extend({
 		}.bind(this));
 
 		// Merge what we have so far with the route data
-		collectedData = this.route.data.clone().merge(collectedData);
+		collectedData = this.data.clone().merge(collectedData);
 
 		// Strip out all of the capture group integer keys
 		collectedData.each(function(key, value) {

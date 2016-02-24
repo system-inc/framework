@@ -2,7 +2,7 @@
 var ArchiveModule = Project.modules.archiveModule;
 
 // Class
-SevenZip = {};
+var SevenZip = {};
 
 // Static methods
 

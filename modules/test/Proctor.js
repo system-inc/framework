@@ -1,11 +1,13 @@
 // Dependencies
+var Test = Framework.require('modules/test/Test.js');
+var Stopwatch = Framework.require('modules/time/Stopwatch.js');
+var Terminal = Framework.require('modules/console/Terminal.js');
 var StandardTestReporter = Framework.require('modules/test/test-reporter/StandardTestReporter.js');
 var DotTestReporter = Framework.require('modules/test/test-reporter/DotTestReporter.js');
 var ConciseTestReporter = Framework.require('modules/test/test-reporter/ConciseTestReporter.js');
-var Stopwatch = Framework.require('modules/time/Stopwatch.js');
-var Terminal = Framework.require('modules/console/Terminal.js');
+var FileSystemObject = Framework.require('modules/file-system/FileSystemObject.js');
 var FileSystemObjectFactory = Framework.require('modules/file-system/FileSystemObjectFactory.js');
-var Test = Framework.require('modules/test/Test.js');
+var AsciiArt = Framework.require('modules/ascii-art/AsciiArt.js');
 
 // Class
 var Proctor = Class.extend({
@@ -52,8 +54,7 @@ var Proctor = Class.extend({
 	},
 
 	supervise: function*() {
-		// Use ASCII art
-		require(Node.Path.join(Project.framework.directory, 'modules', 'ascii-art', 'AsciiArt.js'));
+		Console.log('Test supervising enabled. Tests will run whenever a test class file is updated.');
 
 		// Keep track of the last test class and methods changed
 		var activeTest = {
@@ -62,37 +63,41 @@ var Proctor = Class.extend({
 		};
 		
 		// Watch the project and framework directories
-		var watchedFileSystemObjects = yield FileSystem.watch([Project.directory, Project.framework.directory], function(fileSystemObject, currentStatus, previousStatus) {
+		var watchedFileSystemObjects = yield FileSystemObject.watch([Project.directory, Project.framework.directory], function(fileSystemObject, currentStatus, previousStatus) {
+			//Console.log(fileSystemObject.path, 'updated.');
+
 			if(fileSystemObject.path.endsWith('Test.js')) {
 				// Set the active test class
-				activeTest.class = fileSystemObject.path.replace(Project.framework.directory+'tests'+Node.Path.separator, '');
-			}
+				//Console.info(fileSystemObject.path);
+				activeTest.class = fileSystemObject.nameWithoutExtension;
+				//Console.info(activeTest.class);
 
-			Console.log("\r\n".repeat(64));
+				//Console.log("\r\n".repeat(64));
 
-			Console.log(fileSystemObject.path, 'updated.');
-			Console.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingRight, 'blue'));
+				Console.log(fileSystemObject.path, 'updated.');
+				Console.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingRight, 'blue'));
 
-			// If there is no active test file
-			if(!activeTest.class) {
-				Console.log(Terminal.style("\r\n"+'Did not run tests, please update (touch) the test class file you would like to run.', 'red'));
-				Console.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
-			}
-			else {
-				// Spawn the child process
-			    var nodeChildProcess = exports.child = Node.ChildProcess.spawn('node', ['--harmony', Node.Path.join('tests', 'Test.js'), activeTest.class], {
-			    	stdio: 'inherit',
-			    });
-
-				nodeChildProcess.on('close', function(code) {
+				// If there is no active test file
+				if(!activeTest.class) {
+					Console.log(Terminal.style("\r\n"+'Did not run tests, please update (touch) the test class file you would like to run.', 'red'));
 					Console.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
-					Console.log('Tests finished. Child process exited with code '+code+'. Will run tests on next file update...'+String.newline);
-				});
+				}
+				else {
+					// Spawn the child process
+				    var nodeChildProcess = exports.child = Node.ChildProcess.spawn('node', ['--harmony', Node.Path.join('tests', 'Project.js'), '-f', activeTest.class], {
+				    	stdio: 'inherit',
+				    });
+
+					nodeChildProcess.on('close', function(code) {
+						Console.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
+						Console.log('Tests finished. Child process exited with code '+code+'. Will run tests on next file update...'+String.newline);
+					});
+				}
 			}
 		});
 
 		// Tell the user how many objects we are watching
-		Console.log("\r\n"+'Watching', watchedFileSystemObjects.length, 'file system objects for updates...'+"\r\n");
+		Console.log('Watching', watchedFileSystemObjects.length, 'file system objects for updates...');
 	},
 
 	emit: function(eventName, data) {
@@ -466,7 +471,7 @@ var Proctor = Class.extend({
 
 		// Exit the process if we are on a terminal
 		if(Console.onTerminal()) {
-			Node.Process.exit();
+			//Node.Process.exit();
 		}
 	},
 

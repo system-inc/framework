@@ -7,7 +7,9 @@ var Database = Framework.require('modules/database/Database.js');
 var DatabaseTest = Test.extend({
 
 	testQueryOnDatabaseGeneratedBySettings: function*() {
-		var actual = yield FrameworkTestDatabase.query('SELECT * FROM user');
+		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
+
+		var actual = yield frameworkTestDatabase.query('SELECT * FROM user');
 		//Console.log(actual);
 
 		Assert.true(actual.hasKey('sql'), 'Database.query() returns an object which has the key "sql"');
@@ -32,7 +34,9 @@ var DatabaseTest = Test.extend({
 	},
 
 	testGetSchema: function*() {
-		var actual = yield FrameworkTestDatabase.getSchema();
+		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
+
+		var actual = yield frameworkTestDatabase.getSchema();
 		//Console.log(actual);
 
 		Assert.true(actual.hasKey('name'), 'Database.getSchema() returns an object which has the key "name"');

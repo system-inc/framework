@@ -46,7 +46,7 @@ Class.extend = function(childClassProperties) {
 						this.super = parentClassPrototype[childClassProperty];
 
 						// Execute the method (now .super will be accessible in the method)
-						return methodResults = yield childClassMethod.toPromise().apply(this, arguments);
+						return yield childClassMethod.toPromise().apply(this, arguments);
 					}.toPromise();
 				}
 				// If we are overwriting an existing function on the parent with a normal function
@@ -56,7 +56,7 @@ Class.extend = function(childClassProperties) {
 						this.super = parentClassPrototype[childClassProperty];
 
 						// Execute the method (now .super will be accessible in the method)
-						return methodResults = childClassMethod.apply(this, arguments);
+						return childClassMethod.apply(this, arguments);
 					};
 				}
 			})(childClassProperty, childClassProperties[childClassProperty]);

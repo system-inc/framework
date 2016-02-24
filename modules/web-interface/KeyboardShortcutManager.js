@@ -1,4 +1,5 @@
-KeyboardShortcuts = new (Class.extend({
+// Class
+var KeyboardShortcutManager = Class.extend({
 
 	listeningToKeyboardEvents: false,
 	keyboardShortcuts: [],
@@ -219,4 +220,7 @@ KeyboardShortcuts = new (Class.extend({
 		this.keyboardActivity = [];
 	},
 
-}))();
+});
+
+// Export
+module.exports = KeyboardShortcutManager;

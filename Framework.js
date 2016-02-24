@@ -28,13 +28,6 @@ String = require('./globals/standard/String.js');
 // Globals
 Console = require('./modules/console/Console.js');
 
-// Dependencies - populate these in initialize as we need the Framework global
-var AsciiArt = null;
-var Command = null;
-var Module = null;
-var Settings = null;
-var Version = null;
-
 // Class
 var Framework = Class.extend({
 
@@ -59,21 +52,17 @@ var Framework = Class.extend({
 		this.directory = Node.Path.normalize(projectDirectory+Node.Path.separator);
 	},
 
-	initialize: function*() {
-		// Dependencies
-		AsciiArt = Framework.require('modules/ascii-art/AsciiArt.js');
-		Command = Framework.require('modules/command/Command.js');
-		Module = Framework.require('modules/module/Module.js');
-		Settings = Framework.require('modules/settings/Settings.js');
-		Version = Framework.require('modules/version/Version.js');
-
+	initialize: function*(callback) {
 		// Set the version
+		var Version = Framework.require('modules/version/Version.js');
 		this.version = new Version('0.1.0');
 
 		// Make it obvious we are starting
+		var AsciiArt = Framework.require('modules/ascii-art/AsciiArt.js');
 		Console.writeLine(AsciiArt.framework.version[this.version.toString()]);
 
 		// Require the core modules
+		var Module = Framework.require('modules/module/Module.js');
 		Module.require(Framework.coreModules);
 
 		// Announce starting
@@ -83,6 +72,7 @@ var Framework = Class.extend({
 		yield this.loadProjectSettings();
 
 		// Load the command
+		var Command = Framework.require('modules/command/Command.js');
 		this.command = new Command(Node.Process.argv, this.settings.get('command'));
 
 		// Use project settings to set the title and the identifier
@@ -100,11 +90,17 @@ var Framework = Class.extend({
 		//Console.log('Framework initialization complete.');
 		Console.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
 		//Console.log('Modules: '+Module.modules.initialized.join(', '));
+
+		// Run the callback (which may be a generator)
+		if(callback) {
+			callback.bind(this).run();
+		}
 	},
 
 	loadProjectSettings: function*() {
 		//Console.log('Loading project settings...');
 
+		var Settings = Framework.require('modules/settings/Settings.js');
 		this.settings = Settings.constructFromFile(Node.Path.join(this.directory, 'settings', 'settings.json'));
 
 		// Set the default settings
@@ -172,12 +168,14 @@ var Framework = Class.extend({
 	requireAndInitializeProjectModules: function*() {
 		//Console.log('Loading modules for project...');
 
+		var Module = Framework.require('modules/module/Module.js');
+
 		// Load and initialize project modules separately in case multiple project modules rely on each other
 		var modulesForProject = [];
 
 		// Load the modules
 		this.settings.get('modules').each(function(moduleName, moduleSettings) {
-			moduleName = moduleName.uppercaseFirstCharacter();
+			moduleName = moduleName.uppercaseFirstCharacter()+'Module';
 			
 			//Console.log('Loading "'+moduleName+'" module...');
 
@@ -192,14 +190,11 @@ var Framework = Class.extend({
 	},
 
 	// Run all require calls through this method
-	require: function(/* identifier, ... */) {
+	require: function(identifier) {
 		//Console.log('Framework.require', arguments);
 
-		var identifier = Node.Path.join.apply(this, arguments);
-
 		// Ensure consistency of calls to .require()
-
-		if(!(identifier.endsWith('.js'))) {
+		if(!identifier.endsWith('.js')) {
 			throw new Error(identifier+' must end with ".js".');
 		}
 
@@ -234,7 +229,7 @@ var Framework = Class.extend({
 Framework.directory = __dirname+Node.Path.separator;
 
 Framework.coreModules = [
-	'Console',
+	'ConsoleModule',
 ];
 
 // Static methods

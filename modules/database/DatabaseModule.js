@@ -11,7 +11,7 @@ var DatabaseModule = Module.extend({
 	databaseManager: null,
 
 	initialize: function*(settings) {
-		//Node.exit('DatabaseModule initialize');
+		//Node.exit('DatabaseModule initialize', settings);
 		yield this.super.apply(this, arguments);
 
 		this.databaseManager = new DatabaseManager();

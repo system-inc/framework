@@ -366,7 +366,7 @@ var ArrayTest = Test.extend({
 			'b',
 			'c',
 		];
-		object = Array.toObject(array);
+		var object = Array.toObject(array);
 
 		var actual = object.toJson();
 		var expected = '{"0":"a","1":"b","2":"c"}';

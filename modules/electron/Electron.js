@@ -27,7 +27,7 @@ var Electron = Class.extend({
 		}
 
 		// Remotely access Application variables in this renderer process
-		this.remote = require('remote');
+		this.remote = Node.require('remote');
 
 		// Set application
 		this.application = this.remote.require('app');
@@ -44,7 +44,7 @@ var Electron = Class.extend({
 		this.Menu.setApplicationMenu(this.getDefaultMenu());
 
 		// Set the screen
-		this.screen = require('screen');
+		this.screen = Node.require('screen');
 
 		// Remove all screen event listeners to prevent duplicate listeners from being attached on browser window refresh
 		this.screen.removeAllListeners();
@@ -65,7 +65,7 @@ var Electron = Class.extend({
 		this.initializeDeveloperTools();
 
 		// Create a Proctor to oversee all of the tests as they run
-		Module.require('Test');
+		Module.require('TestModule');
 		var proctor = new Proctor();
 		proctor.getAndRunTests();
 
@@ -77,7 +77,7 @@ var Electron = Class.extend({
 		this.addDefaultKeyboardShortcuts();
 
 		// Require and construct the main WebController
-		window.webController = Controller.getController(ElectronModule.settings.get('mainBrowserWindow.webControllerName'));
+		window.webController = Controller.getControllerInstance(ElectronModule.settings.get('mainBrowserWindow.webControllerName'));
 
 		// Load the HtmlDocument from the main WebController
 		window.htmlDocument = yield webController[ElectronModule.settings.get('mainBrowserWindow.webControllerMethodName')]();

@@ -19,7 +19,7 @@ var ControllerRoute = Route.extend({
 
 	follow: function*(request, response) {
 		// Try to get the controller
-		var controller = Controller.getController(this.controllerName, request, response, this);
+		var controller = Controller.getControllerInstance(this.controllerName, request, response, this);
 
 		// If the controller was found, invoke the method for the route
 		if(controller && controller[this.controllerMethodName]) {
@@ -28,8 +28,8 @@ var ControllerRoute = Route.extend({
 			var controllerMethodArgumentNames = controller[this.controllerMethodName].getParameters();
 
 			controllerMethodArgumentNames.each(function(index, controllerMethodArgumentName) {
-				if(finalizedRouteData[controllerMethodArgumentName]) {
-					controllerMethodArguments.append(finalizedRouteData[controllerMethodArgumentName]);
+				if(controller.data[controllerMethodArgumentName]) {
+					controllerMethodArguments.append(controller.data[controllerMethodArgumentName]);
 				}
 				else {
 					controllerMethodArguments.append(undefined);

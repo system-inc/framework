@@ -1,4 +1,8 @@
-Main = Controller.extend({
+// Dependencies
+var Controller = Framework.require('modules/web-server/Controller.js');
+
+// Class
+var Main = Controller.extend({
 
 	main: function*() {
 		//throw new InternalServerError();
@@ -19,10 +23,7 @@ Main = Controller.extend({
 		//});
 		//var response = yield frameworkTestDatabase.query('SELECT * FROM `user1`');
 		//var response = yield FrameworkTestDatabase.query('SELECT * FROM `user`');
-		var databaseSchema = yield FrameworkTestDatabase.getSchema();
-		var schema = Schema.constructFromDatabaseSchema(databaseSchema);
-
-		return schema;
+		
 		//Console.log(FrameworkTestDatabase.statistics);
 		//return 'Hi';
 		//return response;
@@ -81,3 +82,6 @@ Main = Controller.extend({
 	},
 	
 });
+
+// Export
+module.exports = Main;

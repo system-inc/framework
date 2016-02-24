@@ -10,15 +10,16 @@ var Controller = Class.extend({
 		this.request = request;
 		this.response = response;
 		this.route = route;
-		this.data = this.route.collectData();
+		this.data = this.route.collectData(request);
 	},
 	
 });
 
 // Static methods
 
-Controller.getController = function(controllerName, request, response, route) {
-	//Console.log(controllerName);
+Controller.getControllerInstance = function(controllerName, request, response, route) {
+	Console.highlight(controllerName);
+	
 	var controller = null;
 
 	// Set the directory containing the controllers folder

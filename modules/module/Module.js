@@ -45,7 +45,7 @@ Module.require = function(moduleNames) {
 
 	// Load each module
 	moduleNames.toArray().each(function(moduleNameIndex, moduleName) {
-		var modulePropertyName = moduleName.lowercaseFirstCharacter()+'Module';
+		var modulePropertyName = moduleName.lowercaseFirstCharacter();
 
 		// Only require modules once
 		if(Project.modules[modulePropertyName]) {
@@ -54,7 +54,7 @@ Module.require = function(moduleNames) {
 		// Require the module
 		else {
 			// Require the module
-			var moduleClass = Framework.require('modules/'+moduleName.toDashes()+'/'+moduleName+'Module.js');
+			var moduleClass = Framework.require('modules/'+moduleName.replaceLast('Module', '').toDashes()+'/'+moduleName+'.js');
 			var moduleInstance = new (moduleClass)(moduleName);
 
 			Project.modules[modulePropertyName] = moduleInstance;
@@ -67,7 +67,7 @@ Module.initialize = function*(moduleNames) {
 
 	// Initializing is necessary to do separate of .require because module code may be interdependent and require other code to be required first
 	yield moduleNames.toArray().each(function*(moduleNameIndex, moduleName) {
-		var modulePropertyName = moduleName.lowercaseFirstCharacter()+'Module';
+		var modulePropertyName = moduleName.lowercaseFirstCharacter();
 
 		var moduleInstance = Project.modules[modulePropertyName];
 
@@ -77,13 +77,7 @@ Module.initialize = function*(moduleNames) {
 		}
 		else {
 			//Console.log('Initializing', moduleName, 'module...');
-			var settings = {};
-
-			// Conditionally get the module settings from the project
-			if(global['Project']) {
-				settings = Project.settings.get('modules.'+moduleName.lowercaseFirstCharacter());
-				//Console.log('settings', settings);
-			}
+			var settings = Project.settings.get('modules.'+moduleName.replaceLast('Module', '').lowercaseFirstCharacter());
 			
 			//Console.log('initializing', moduleName+'Module');
 			//Console.log(moduleInstance, settings);

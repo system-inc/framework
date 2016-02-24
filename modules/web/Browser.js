@@ -1,3 +1,6 @@
+// Dependencies
+var Version = Framework.require('modules/version/Version.js');
+
 // Class
 var Browser = Class.extend({
 

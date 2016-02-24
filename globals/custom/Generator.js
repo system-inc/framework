@@ -1,7 +1,77 @@
 // Class
 var Generator = {};
 
+// Instance methods
+
+Function.prototype.isGenerator = function() {
+	return Function.isGenerator(this);
+};
+
+Function.prototype.toPromise = function() {
+	if(this.isGenerator()) {
+		return Generator.toPromise(this);
+	}
+	else {
+		throw new Error('Only generator functions can be turned into promises.');
+
+		//var argumentsToApply = arguments;
+		//return new Promise(function(resolve, reject) {
+		//	resolve(this.apply(this, argumentsToApply));
+		//}.bind(this));
+	}
+};
+
+Function.prototype.run = function() {
+	var result = undefined;
+
+	if(this.isGenerator()) {
+		result = this.toPromise().apply(this, arguments);
+	}
+	else {
+		result = this.apply(this, arguments);
+	}
+
+	return result;
+}
+
+// Calling .bind() on a generator function does not return a generator
+// This fixes it, inspired by https://www.npmjs.org/package/generator-bind
+Function.prototype.standardBind = Function.prototype.bind;
+Function.prototype.bind = function(context) {
+	// Normal functions use the standard bind
+	if(this.constructor.name !== 'GeneratorFunction') {
+		return Function.prototype.standardBind.apply(this, arguments);
+	}
+	// Generator functions return a generator
+	else {
+		var functionToBind = this;
+		return function*() {
+			// Have the generator return a Promise that resolves when the generator finishes
+			return Generator.toPromise(functionToBind).apply(context, arguments);
+		}
+	}
+};
+
 // Static methods
+
+Function.isGenerator = function(fn) {
+	if(!fn) {
+		return false;
+	}
+
+	var isGenerator = false;
+
+	// Faster method first
+	if(fn.constructor.name === 'GeneratorFunction') {
+		isGenerator = true;
+	}
+	// Slower method second
+	else if(/^function\s*\*/.test(fn.toString())) {
+		isGenerator = true;
+	}
+
+	return isGenerator;
+};
 
 Generator.is = Function.isGenerator;
 
