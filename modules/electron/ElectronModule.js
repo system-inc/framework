@@ -43,7 +43,7 @@ var ElectronModule = Module.extend({
 				show: false, // Show the developer tools on start
 			},
 		},
-		keyboardShortcuts: {
+		shortcuts: {
 			closeFocusedWindow: true,
 			reloadFocusedWindow: true,
 			toggleFullScreenOnFocusedWindow: true,

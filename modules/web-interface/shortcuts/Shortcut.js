@@ -2,10 +2,10 @@
 var Settings = Framework.require('modules/settings/Settings.js');
 
 // Class
-var KeyboardShortcut = Class.extend({
+var Shortcut = Class.extend({
 
 	keys: null, // Store what the user asked for requested
-	sequence: [], // Most of this time this will just have one entry, but we can handle a sequence of keyboard events, e.g., the user can press 'up up down down down left right'
+	sequence: [], // Most of this time this will just have one entry, but we can handle a sequence of events, e.g., the user can press 'up up down down down left right'
 
 	callback: null,
 	settings: null,
@@ -31,7 +31,7 @@ var KeyboardShortcut = Class.extend({
 			var firstSequenceEntry = this.sequence.first();
 
 			// Use keyPress by default
-			if(KeyboardShortcut.keyCodes[firstSequenceEntry.key]) {
+			if(Shortcut.keyCodes[firstSequenceEntry.key]) {
 				this.settings.set('trigger', 'keyDown');
 			}
 			else {
@@ -66,8 +66,8 @@ var KeyboardShortcut = Class.extend({
 			// Walk through the split keys to find modifiers
 			keysForSequenceArray.each(function(keysForSequenceArrayIndex, keysForSequenceArrayKey) {
 				// Use modifier aliases
-				if(KeyboardShortcut.modifierAliases[keysForSequenceArrayKey]) {
-					keysForSequenceArrayKey = KeyboardShortcut.modifierAliases[keysForSequenceArrayKey];
+				if(Shortcut.modifierAliases[keysForSequenceArrayKey]) {
+					keysForSequenceArrayKey = Shortcut.modifierAliases[keysForSequenceArrayKey];
 				}
 
 				if(this.isModifier(keysForSequenceArrayKey)) {
@@ -89,42 +89,42 @@ var KeyboardShortcut = Class.extend({
 		var isModifier = false;
 		var modifiers = ['shift', 'alt', 'ctrl', 'meta'];
 
-		if(modifiers.contains(string) || KeyboardShortcut.modifierAliases[string]) {
+		if(modifiers.contains(string) || Shortcut.modifierAliases[string]) {
 			isModifier = true;
 		}
 
 		return isModifier;
 	},
 
-	matchesKeyboardActivity: function(keyboardActivity) {
-		var matchesKeyboardActivity = false;
+	matchesActivity: function(activity) {
+		var matchesActivity = false;
 
-		// TODO build keyboard sequences
-		// Just use the last keyboard event for now
-		var keyboardEvent = keyboardActivity.last();
+		// TODO build sequences
+		// Just use the last event for now
+		var event = activity.last();
 		var sequenceEntry = this.sequence.first();
 
-		//Console.log('comparing', keyboardEvent, 'to', sequenceEntry);
+		//Console.log('comparing', event, 'to', sequenceEntry);
 		// If the event is the same
-		if(keyboardEvent.type == this.settings.get('trigger')) {
+		if(event.type == this.settings.get('trigger')) {
 			// If the key is the same
-			if(keyboardEvent.key == sequenceEntry.key) {
+			if(event.key == sequenceEntry.key) {
 				// If the modifiers are the same
-				//Console.log('comparing', keyboardEvent.modifiers.sort().join(','), 'to', sequenceEntry.modifiers.sort().join(','));
-				if(keyboardEvent.modifiers.sort().join(',') === sequenceEntry.modifiers.sort().join(',')) {
-					matchesKeyboardActivity = true;
+				//Console.log('comparing', event.modifiers.sort().join(','), 'to', sequenceEntry.modifiers.sort().join(','));
+				if(event.modifiers.sort().join(',') === sequenceEntry.modifiers.sort().join(',')) {
+					matchesActivity = true;
 				}
 			}
 		}
 
-		return matchesKeyboardActivity;
+		return matchesActivity;
 	},
 
 });
 
 // Static properties
 
-KeyboardShortcut.modifierAliases = {
+Shortcut.modifierAliases = {
 	'control': 'ctrl',
 	'option': 'alt',
     'command': 'meta',
@@ -135,7 +135,7 @@ KeyboardShortcut.modifierAliases = {
 };
 
 // Special key codes cannot use keypress events so it has to be here to map to the correct keycodes for keyup/keydown events
-KeyboardShortcut.keyCodes = {
+Shortcut.keyCodes = {
 	'0': '96',
 	'1': '97',
 	'2': '98',
@@ -266,7 +266,7 @@ KeyboardShortcut.keyCodes = {
 };
 
 // Keys that require a shift on a U.S. keyboard
-KeyboardShortcut.shiftMap = {
+Shortcut.shiftMap = {
 	'~': '`',
     '!': 1,
     '@': 2,
@@ -289,4 +289,4 @@ KeyboardShortcut.shiftMap = {
 };
 
 // Export
-module.exports = KeyboardShortcut;
+module.exports = Shortcut;

@@ -1,7 +1,7 @@
 // Dependencies
 var Html = Framework.require('modules/html/Html.js');
 var XmlDocument = Framework.require('modules/xml/XmlDocument.js');
-var KeyboardShortcutManager = Framework.require('modules/web-interface/keyboard-shortcuts/KeyboardShortcutManager.js');
+var ShortcutManager = Framework.require('modules/web-interface/shortcuts/ShortcutManager.js');
 
 // Class
 var HtmlDocument = XmlDocument.extend({
@@ -18,7 +18,7 @@ var HtmlDocument = XmlDocument.extend({
 
 	titleHtmlElement: null,
 
-	keyboardShortcutManager: null,
+	shortcutManager: null,
 
 	shouldScheduleDomUpdates: true,
 	//shouldScheduleDomUpdates: false,
@@ -70,7 +70,7 @@ var HtmlDocument = XmlDocument.extend({
 		];
 
 		// Keyboard shortcut manager
-		this.keyboardShortcutManager = new KeyboardShortcutManager(this);
+		this.shortcutManager = new ShortcutManager(this);
 	},
 
 	on: function(eventName, callback) {
