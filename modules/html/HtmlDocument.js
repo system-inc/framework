@@ -1,6 +1,7 @@
 // Dependencies
 var Html = Framework.require('modules/html/Html.js');
 var XmlDocument = Framework.require('modules/xml/XmlDocument.js');
+var KeyboardShortcutManager = Framework.require('modules/web-interface/keyboard-shortcuts/KeyboardShortcutManager.js');
 
 // Class
 var HtmlDocument = XmlDocument.extend({
@@ -11,11 +12,13 @@ var HtmlDocument = XmlDocument.extend({
 	isMountedToDom: false,
 	afterMountedToDom: null,
 
-	element: null,
+	view: null,
 	head: null,
 	body: null,
 
 	titleHtmlElement: null,
+
+	keyboardShortcutManager: null,
 
 	shouldScheduleDomUpdates: true,
 	//shouldScheduleDomUpdates: false,
@@ -32,10 +35,10 @@ var HtmlDocument = XmlDocument.extend({
 		}
 
 		// An <html> tag to store the head and body
-		this.element = Html.html();
+		this.view = Html.html();
 
 		// Establish a reference to the HtmlDocument
-		this.element.htmlDocument = this;
+		this.view.htmlDocument = this;
 
 		// Create the head and body tags
 		this.head = Html.head();
@@ -51,20 +54,23 @@ var HtmlDocument = XmlDocument.extend({
 			window.htmlDocument = this;
 
 			// Manually connect this <html> HtmlElement to document.documentElement
-			this.element.domNode = this.domDocument.documentElement;
+			this.view.domNode = this.domDocument.documentElement;
 
 			// Manually connect the head and body domNode's to the domDocument's head and body properties
 			this.head.domNode = this.domDocument.head;
 			this.body.domNode = this.domDocument.body;
 		}
 
-		this.element.append(this.head);
-		this.element.append(this.body);
+		this.view.append(this.head);
+		this.view.append(this.body);
 
 		// Manually set the <html> tag to the children array
 		this.children = [
-			this.element,
+			this.view,
 		];
+
+		// Keyboard shortcut manager
+		this.keyboardShortcutManager = new KeyboardShortcutManager(this);
 	},
 
 	on: function(eventName, callback) {
@@ -124,8 +130,8 @@ var HtmlDocument = XmlDocument.extend({
 
 		//Console.log('HtmlDocument.mountToDom', this);
 
-		// Add this.element to the DOM
-		this.element.executeDomUpdate();
+		// Add this.view to the DOM
+		this.view.executeDomUpdate();
 
 		// At this point the HtmlDocument has been added to the DOM
 		this.mountedToDom();

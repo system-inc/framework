@@ -11,8 +11,7 @@ var ElectronModule = Module.extend({
 
 	defaultSettings: {
 		mainBrowserWindow: {
-			webControllerName: 'MainWebController',
-			webControllerMethodName: 'getHtmlDocument',
+			viewControllerName: 'MainViewController',
 			windowState: {
 				remember: true, // Open the main browser window in same position when it was closed, can be either true or false
 				defaultWindowState: {

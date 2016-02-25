@@ -5,10 +5,11 @@ var ViewController = Class.extend({
 	parent: null,
 	children: [],
 
-	element: null,
+	htmlDocument: null,
+
+	view: null,
 
 	construct: function() {
-		
 	},
 
 	prepend: function(webController) {
