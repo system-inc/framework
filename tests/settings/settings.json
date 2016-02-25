@@ -62,7 +62,7 @@
 				}
 			}
 		},
-		electron: {},
+		//electron: {},
 		email: {},
 		ffmpeg: {},
 		fileSystem: {},

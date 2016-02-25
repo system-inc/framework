@@ -125,6 +125,12 @@ var TestReporter = Class.extend({
 				Console.writeLine("\n"+Terminal.style(stackTrace, 'gray'));
 			});
 		}
+
+		if(data.leakedGlobals.length) {
+			Console.writeLine(Terminal.style('Leaked global variables: '+data.leakedGlobals.join(', '), 'red'));
+		}
+
+		Console.write("\n");
 	},
 
 	getElapsedTimeString: function(elapsedTime, precision, useThresholds, warningThreshold, errorThreshhold) {

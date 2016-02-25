@@ -1,4 +1,5 @@
-LocalStorage = {};
+// Class
+var LocalStorage = {};
 
 LocalStorage.get = function(keyName) {
 	var value = localStorage.getItem(keyName);
@@ -27,3 +28,6 @@ LocalStorage.delete = LocalStorage.remove = function(keyName) {
 LocalStorage.clear = function() {
 	return localStorage.clear();
 }
+
+// Export
+module.exports = LocalStorage;

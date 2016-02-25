@@ -1,4 +1,8 @@
-InputWebElement = WebElement.extend({
+// Dependencies
+var View = Framework.require('modules/web-interface/views/View.js');
+
+// Class
+var InputView = View.extend({
 
 	value: null,
 	originalValue: null,
@@ -23,9 +27,9 @@ InputWebElement = WebElement.extend({
 		this.setValue(this.originalValue);
 	},
 
-	// Two-way data binding: if the user changes the value on the DOM, the InputWebElement is updated to reflect the new value
+	// Two-way data binding: if the user changes the value on the DOM, the InputView is updated to reflect the new value
 	valueChangedOnDomElement: function() {
-		//Console.log('Value changed on DOM, updating InputWebElement');
+		//Console.log('Value changed on DOM, updating InputView');
 		
 		this.value = this.domNode.value;	
 
@@ -33,3 +37,6 @@ InputWebElement = WebElement.extend({
 	},
 
 });
+
+// Export
+module.exports = InputView;

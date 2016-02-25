@@ -1,11 +1,13 @@
 // Dependencies
 var Module = Framework.require('modules/module/Module.js');
 var Version = Framework.require('modules/version/Version.js');
+var Electron = Framework.require('modules/electron/Electron.js');
 
 // Class
 var ElectronModule = Module.extend({
 
 	version: new Version('0.1.0'),
+	electron: null,
 
 	defaultSettings: {
 		mainBrowserWindow: {
@@ -49,6 +51,13 @@ var ElectronModule = Module.extend({
 			toggleDeveloperToolsOnFocusedWindow: true,
 			applyDefaultWindowStateOnFocusedWindow: true,
 		},
+	},
+
+	initialize: function*() {
+		yield this.super.apply(this, arguments);
+
+		this.electron = new Electron();
+		this.electron.initialize();
 	},
 	
 });

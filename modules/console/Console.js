@@ -101,6 +101,13 @@ Console.writeToDeveloperTools = function(passedArguments, messageType) {
 		messageType = 'log';
 	}
 
+	// Remove ANSI escape codes from strings
+	passedArguments.each(function(passedArgumentIndex, passedArgument) {
+		if(String.is(passedArgument)) {
+			passedArguments[passedArgumentIndex] = Terminal.removeAnsiEscapeCodesFromString(passedArgument);
+		}
+	});
+
 	if(messageType == 'log' || messageType == 'write') {
 		Console.standardLog.apply(this, passedArguments);
 	}
@@ -111,6 +118,12 @@ Console.writeToDeveloperTools = function(passedArguments, messageType) {
 		Console.standardWarn.apply(this, passedArguments);
 	}
 	else if(messageType == 'error') {
+		//passedArguments.each(function(passedArgumentIndex, passedArgument) {
+		//	if(Error.is(passedArgument)) {
+		//		Console.log(passedArgument.toObject().toJson());
+		//	}
+		//});
+
 		Console.standardError.apply(this, passedArguments);
 	}
 	else if(messageType == 'highlight') {

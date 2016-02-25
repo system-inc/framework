@@ -1,21 +1,18 @@
 // Dependencies
-var ElectronModule = Modules.ElectronModule;
-var WindowState = Framework.require('modules/electron/WindowState.js');
+var ElectronRemote = Node.require('remote');
+var ElectronApplication = ElectronRemote.require('app');
+var ElectronShell = ElectronRemote.require('shell');
+var ElectronDialog = ElectronRemote.require('dialog');
+var ElectronScreen = ElectronRemote.require('screen');
+var ElectronMenu = ElectronRemote.require('menu');
+var ElectronMenuItem = ElectronRemote.require('menu-item');
+var ElectronBrowserWindow = ElectronRemote.require('browser-window');
+var BrowserWindowState = Framework.require('modules/electron/BrowserWindowState.js');
+var Controller = Framework.require('modules/web-server/Controller.js');
 
 // Class
 var Electron = Class.extend({
 
-	// Classes
-	Menu: null,
-	MenuItem: null,
-	BrowserWindow: null,
-
-	// Properties
-	remote: null,
-	application: null,
-	shell: null,
-	screen: null,
-	dialog: null,
 	mainBrowserWindow: null,
 	mainBrowserWindowState: null,
 
@@ -26,34 +23,14 @@ var Electron = Class.extend({
 			return;
 		}
 
-		// Remotely access Application variables in this renderer process
-		this.remote = Node.require('remote');
-
-		// Set application
-		this.application = this.remote.require('app');
-
-		// Set shell
-		this.shell = this.remote.require('shell');
-
-		// Set dialog
-		this.dialog = this.remote.require('dialog');
-
-		// Set the menu
-		this.Menu = this.remote.require('menu');
-		this.MenuItem = this.remote.require('menu-item');
-		this.Menu.setApplicationMenu(this.getDefaultMenu());
-
-		// Set the screen
-		this.screen = Node.require('screen');
+		// Set the application menu
+		ElectronMenu.setApplicationMenu(this.getDefaultMenu());
 
 		// Remove all screen event listeners to prevent duplicate listeners from being attached on browser window refresh
-		this.screen.removeAllListeners();
-
-		// Set the BrowserWindow
-		this.BrowserWindow = this.remote.require('browser-window');
+		ElectronScreen.removeAllListeners();
 
 		// Set the main browser window
-		this.mainBrowserWindow = this.remote.getCurrentWindow();
+		this.mainBrowserWindow = ElectronRemote.getCurrentWindow();
 
 		// Set the Project title
 		this.mainBrowserWindow.setTitle(Project.title);
@@ -64,24 +41,24 @@ var Electron = Class.extend({
 		// Initialize the developer tools
 		this.initializeDeveloperTools();
 
-		// Create a Proctor to oversee all of the tests as they run
-		Module.require('TestModule');
-		var proctor = new Proctor();
-		proctor.getAndRunTests();
+		// Testing
+		//var Proctor = Framework.require('modules/test/Proctor.js');
+		//var proctor = new Proctor('electron');
+		//proctor.getAndRunTests();
+		//return;
 
-		console.log('having fun ^');
+		// Require and construct the main controller
+		var ControllerClass = Project.require('controllers/'+Project.modules.electronModule.settings.get('mainBrowserWindow.webControllerName')+'.js');
+		window.webController = new ControllerClass();
 
-		return; // Debug
+		return;
+
+		// Load the HtmlDocument from the main controller
+		window.htmlDocument = yield webController[Project.modules.electronModule.settings.get('mainBrowserWindow.webControllerMethodName')]();
+		//Console.log(htmlDocument);
 
 		// Add default keyboard shortcuts
-		this.addDefaultKeyboardShortcuts();
-
-		// Require and construct the main WebController
-		window.webController = Controller.getControllerInstance(ElectronModule.settings.get('mainBrowserWindow.webControllerName'));
-
-		// Load the HtmlDocument from the main WebController
-		window.htmlDocument = yield webController[ElectronModule.settings.get('mainBrowserWindow.webControllerMethodName')]();
-		//Console.log(htmlDocument);
+		this.addDefaultKeyboardShortcuts(window.htmlDocument);
 		
 		// Mount the HtmlDocument onto the DOM
 		window.htmlDocument.mountToDom();
@@ -92,7 +69,7 @@ var Electron = Class.extend({
 
 	initializeDeveloperTools: function() {
 		// Handle developer tools settings
-		var developerToolsSettings = ElectronModule.settings.get('mainBrowserWindow.developerTools');
+		var developerToolsSettings = Project.modules.electronModule.settings.get('mainBrowserWindow.developerTools');
 
 		// Show the developer tools
 		if(developerToolsSettings.show) {
@@ -103,14 +80,14 @@ var Electron = Class.extend({
 
 	initializeWindowState: function() {
 		// Get the window state settings
-		var windowStateSettings = ElectronModule.settings.get('mainBrowserWindow.windowState');
+		var windowStateSettings = Project.modules.electronModule.settings.get('mainBrowserWindow.windowState');
 
 		// Create a window state for the main browser window
-		this.mainBrowserWindowState = new WindowState('main', this.mainBrowserWindow, windowStateSettings);
+		this.mainBrowserWindowState = new BrowserWindowState('main', this.mainBrowserWindow, windowStateSettings);
 	},
 
 	addDefaultKeyboardShortcuts: function() {
-		var keyboardShortcutSettings = ElectronModule.settings.get('keyboardShortcuts');
+		var keyboardShortcutSettings = Project.modules.electronModule.settings.get('keyboardShortcuts');
 		//Console.log(keyboardShortcutSettings); 
 
 		if(keyboardShortcutSettings.closeFocusedWindow) {
@@ -197,7 +174,7 @@ var Electron = Class.extend({
 		var defaultMenu = this.getDefaultMenuTemplate();
 
 		if(defaultMenu) {
-			menu = this.Menu.buildFromTemplate(this.getDefaultMenuTemplate());	
+			menu = ElectronMenu.buildFromTemplate(this.getDefaultMenuTemplate());	
 		}
 
 		return menu;
@@ -316,7 +293,7 @@ var Electron = Class.extend({
 		return template;
 	},
 
-};
+});
 
 // Export
 module.exports = Electron;

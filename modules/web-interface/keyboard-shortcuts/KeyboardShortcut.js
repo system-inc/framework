@@ -1,4 +1,8 @@
-KeyboardShortcut = Class.extend({
+// Dependencies
+var Settings = Framework.require('modules/settings/Settings.js');
+
+// Class
+var KeyboardShortcut = Class.extend({
 
 	keys: null, // Store what the user asked for requested
 	sequence: [], // Most of this time this will just have one entry, but we can handle a sequence of keyboard events, e.g., the user can press 'up up down down down left right'
@@ -8,12 +12,12 @@ KeyboardShortcut = Class.extend({
 
 	construct: function(keys, callback, settings) {
 		// Initialize settings
-		this.settings = Settings.default({
+		this.settings = new Settings(settings, {
 			trigger: 'automatic', // automatic (looks at keys and determines keyDown or keyPress), keyDown, keyUp, keyPress
 			triggerFromInputAcceptingElements: true,
 			triggerFromTextInputs: true,
 			triggerFromContentEditable: true,
-		}, settings);
+		});
 
 		// Set the callback
 		this.callback = callback;
@@ -119,6 +123,7 @@ KeyboardShortcut = Class.extend({
 });
 
 // Static properties
+
 KeyboardShortcut.modifierAliases = {
 	'control': 'ctrl',
 	'option': 'alt',
@@ -128,3 +133,6 @@ KeyboardShortcut.modifierAliases = {
     'plus': '+',
     'mod': (global['navigator'] && /Mac|iPod|iPhone|iPad/.test(navigator.platform)) ? 'meta' : 'ctrl',
 };
+
+// Export
+module.exports = KeyboardShortcut;

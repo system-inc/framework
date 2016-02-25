@@ -1,4 +1,8 @@
-ModalWebElement = WebElement.extend({
+// Dependencies
+var View = Framework.require('modules/web-interface/views/View.js');
+
+// Class
+var ModalView = View.extend({
 
 	modal: null,
 
@@ -20,3 +24,6 @@ ModalWebElement = WebElement.extend({
 	},
 
 });
+
+// Export
+module.exports = ModalView;

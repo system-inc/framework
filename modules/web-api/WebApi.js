@@ -1,4 +1,8 @@
-WebApi = Class.extend({
+// Dependencies
+var Url = Framework.require('modules/web/Url.js');
+
+// Class
+var WebApi = Class.extend({
 
     protocol: 'https', // https or http
     host: null,
@@ -34,3 +38,6 @@ WebApi = Class.extend({
     },
     
 });
+
+// Export
+module.exports = WebApi;

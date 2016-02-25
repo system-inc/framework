@@ -1,6 +1,8 @@
-WebElement.require('Input');
+// Dependencies
+var InputView = Framework.require('modules/web-interface/views/InputView.js');
 
-TextInputWebElement = InputWebElement.extend({
+// Class
+var TextInputView = InputView.extend({
 
     tag: 'input',
 
@@ -98,3 +100,6 @@ TextInputWebElement = InputWebElement.extend({
     },
 
 });
+
+// Export
+module.exports = TextInputView;

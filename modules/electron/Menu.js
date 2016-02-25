@@ -1,7 +1,7 @@
 // Class
 var Menu = Class.extend({
 
-	menu: null,
+	electronMenu: null,
 
 	construct: function() {
 		this.create();
@@ -18,7 +18,7 @@ var Menu = Class.extend({
 	},
 
 	show: function() {
-		this.menu.popup();
+		this.electronMenu.popup();
 	},
 
 });

@@ -217,7 +217,6 @@ var Framework = Class.extend({
 			return Node.require(identifier);
 		}
 		catch(exception) {
-			//console.error('Framework.require', identifier, exception);
 			throw exception;
 		}
 	},

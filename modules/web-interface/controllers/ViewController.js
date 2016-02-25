@@ -1,4 +1,5 @@
-WebController = Class.extend({
+// Class
+var ViewController = Class.extend({
 
 	root: null,
 	parent: null,
@@ -19,3 +20,6 @@ WebController = Class.extend({
 	},
 
 });
+
+// Export
+module.exports = ViewController;

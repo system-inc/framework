@@ -1,4 +1,8 @@
-NotificationWebElement = WebElement.extend({
+// Dependencies
+var View = Framework.require('modules/web-interface/views/View.js');
+
+// Class
+var NotificationView = View.extend({
 
 	attributes: {
 		class: 'notification',
@@ -20,3 +24,6 @@ NotificationWebElement = WebElement.extend({
 	},
 
 });
+
+// Export
+module.exports = NotificationView;

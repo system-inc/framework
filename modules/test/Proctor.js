@@ -5,6 +5,7 @@ var Terminal = Framework.require('modules/console/Terminal.js');
 var StandardTestReporter = Framework.require('modules/test/test-reporter/StandardTestReporter.js');
 var DotTestReporter = Framework.require('modules/test/test-reporter/DotTestReporter.js');
 var ConciseTestReporter = Framework.require('modules/test/test-reporter/ConciseTestReporter.js');
+var ElectronTestReporter = Framework.require('modules/test/test-reporter/ElectronTestReporter.js');
 var FileSystemObject = Framework.require('modules/file-system/FileSystemObject.js');
 var FileSystemObjectFactory = Framework.require('modules/file-system/FileSystemObjectFactory.js');
 var AsciiArt = Framework.require('modules/ascii-art/AsciiArt.js');
@@ -47,6 +48,9 @@ var Proctor = Class.extend({
 		}
 		else if(testReporterIdentifier.lowercase() == 'concise') {
 			this.testReporter = new ConciseTestReporter();
+		}
+		else if(testReporterIdentifier.lowercase() == 'electron') {
+			this.testReporter = new ElectronTestReporter();
 		}
 		else {
 			this.testReporter = new StandardTestReporter();
@@ -461,18 +465,34 @@ var Proctor = Class.extend({
 		// Stop the stopwatch
 		this.stopwatch.stop();
 
+		// Check for leaked globals
+		var leakedGlobals = this.getLeakedGlobals();
+
 		// Finished running tests
 		this.emit('TestReporter.finishedRunningTests', {
 			passes: this.passes,
 			failures: this.failures,
 			stopwatch: this.stopwatch,
 			failedTests: this.failedTests,
+			leakedGlobals: leakedGlobals,
 		});
 
 		// Exit the process if we are on a terminal
 		if(Console.onTerminal()) {
 			Node.Process.exit();
 		}
+	},
+
+	getLeakedGlobals: function() {
+		var leakedGlobals = [];
+
+		for(var key in global) {
+			if(!Proctor.globals.expected.contains(key, true)) {
+				leakedGlobals.append(key);	
+			}
+		}
+
+		return leakedGlobals;
 	},
 
 	exit: function(message) {
@@ -488,6 +508,56 @@ var Proctor = Class.extend({
 	},
 
 });
+
+// Static properties
+
+Proctor.globals = {
+	expected: [
+		'Console',
+		'GLOBAL',
+		'Generator',
+		'Json',
+		'Node',
+		'Primitive',
+		'Project',
+		'console',
+		'global',
+		'length',
+		'process',
+		'root',
+		'Buffer',
+		'Class',
+		'DTRACE_HTTP_CLIENT_REQUEST',
+		'DTRACE_HTTP_CLIENT_RESPONSE',
+		'DTRACE_HTTP_SERVER_REQUEST',
+		'DTRACE_HTTP_SERVER_RESPONSE',
+		'DTRACE_NET_SERVER_CONNECTION',
+		'DTRACE_NET_STREAM_END',
+		'Framework',
+		'RegularExpression',
+		'Stream',
+		'Time',
+		'clearImmediate',
+		'clearInterval',
+		'clearTimeout',
+		'clone',
+		'each',
+		'getValueByPath',
+		'getValueForKey',
+		'hasKey',
+		'integrate',
+		'isEmpty',
+		'merge',
+		'setImmediate',
+		'setInterval',
+		'setTimeout',
+		'setValueByPath',
+		'sort',
+		'toArray',
+		'toJson',
+	],
+	leaked: [],
+};
 
 // Export
 module.exports = Proctor;

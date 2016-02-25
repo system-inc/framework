@@ -1,6 +1,8 @@
 // Class
 var KeyboardShortcutManager = Class.extend({
 
+	htmlDocument: null,
+
 	listeningToKeyboardEvents: false,
 	keyboardShortcuts: [],
 	keyboardActivity: [],
@@ -72,7 +74,9 @@ var KeyboardShortcutManager = Class.extend({
         '|': '\\',
 	},
 
-	construct: function() {
+	construct: function(htmlDocument) {
+		this.htmlDocument = htmlDocument;
+
 		// Build the key codes programmatically
 		this.buildKeyCodes();
 	},
@@ -118,9 +122,9 @@ var KeyboardShortcutManager = Class.extend({
 	listenToKeyboardEvents: function() {
 		//Console.log('listenToKeyboardEvents');
 
-		HtmlDocument.on('keyup', this.handleKeyboardEvent.bind(this));
-		HtmlDocument.on('keydown', this.handleKeyboardEvent.bind(this));
-		HtmlDocument.on('keypress', this.handleKeyboardEvent.bind(this));
+		this.htmlDocument.on('keyup', this.handleKeyboardEvent.bind(this));
+		this.htmlDocument.on('keydown', this.handleKeyboardEvent.bind(this));
+		this.htmlDocument.on('keypress', this.handleKeyboardEvent.bind(this));
 
 		this.listeningToKeyboardEvents = true;
 	},
