@@ -1,5 +1,6 @@
 // Dependencies
 var Settings = Framework.require('modules/settings/Settings.js');
+//var KeyboardShortcutManager = Framework.require('modules/web-interface/keyboard-shortcuts/KeyboardShortcutManager.js');
 
 // Class
 var KeyboardShortcut = Class.extend({
@@ -31,7 +32,7 @@ var KeyboardShortcut = Class.extend({
 			var firstSequenceEntry = this.sequence.first();
 
 			// Use keyPress by default
-			if(KeyboardShortcuts.keyCodes[firstSequenceEntry.key]) {
+			if(KeyboardShortcutManager.keyCodes[firstSequenceEntry.key]) {
 				this.settings.set('trigger', 'keyDown');
 			}
 			else {

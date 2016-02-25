@@ -1,5 +1,6 @@
 // Dependencies
 var View = Framework.require('modules/web-interface/views/View.js');
+var Html = Framework.require('modules/html/Html.js');
 
 // Class
 var ModalView = View.extend({

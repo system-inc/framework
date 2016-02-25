@@ -9,12 +9,14 @@ var ElectronMenuItem = ElectronRemote.require('menu-item');
 var ElectronBrowserWindow = ElectronRemote.require('browser-window');
 var BrowserWindowState = Framework.require('modules/electron/BrowserWindowState.js');
 var Controller = Framework.require('modules/web-server/Controller.js');
+var KeyboardShortcutManager = Framework.require('modules/web-interface/keyboard-shortcuts/KeyboardShortcutManager.js');
 
 // Class
 var Electron = Class.extend({
 
 	mainBrowserWindow: null,
 	mainBrowserWindowState: null,
+	keyboardShortcutManager: null,
 
 	initialize: function*() {
 		// Do nothing if Electron is not active (e.g., we are running a Framework app that uses Electron but from the console so there is no Electron window)
@@ -51,8 +53,6 @@ var Electron = Class.extend({
 		var ControllerClass = Project.require('controllers/'+Project.modules.electronModule.settings.get('mainBrowserWindow.webControllerName')+'.js');
 		window.webController = new ControllerClass();
 
-		return;
-
 		// Load the HtmlDocument from the main controller
 		window.htmlDocument = yield webController[Project.modules.electronModule.settings.get('mainBrowserWindow.webControllerMethodName')]();
 		//Console.log(htmlDocument);
@@ -86,24 +86,26 @@ var Electron = Class.extend({
 		this.mainBrowserWindowState = new BrowserWindowState('main', this.mainBrowserWindow, windowStateSettings);
 	},
 
-	addDefaultKeyboardShortcuts: function() {
+	addDefaultKeyboardShortcuts: function(htmlDocument) {
+		this.keyboardShortcutManager = new KeyboardShortcutManager(htmlDocument);
+
 		var keyboardShortcutSettings = Project.modules.electronModule.settings.get('keyboardShortcuts');
 		//Console.log(keyboardShortcutSettings); 
 
 		if(keyboardShortcutSettings.closeFocusedWindow) {
-			KeyboardShortcuts.add(['Ctrl+W'], this.closeFocusedWindow.bind(this));
+			this.keyboardShortcutManager.add(['Ctrl+W'], this.closeFocusedWindow.bind(this));
 		}
 		if(keyboardShortcutSettings.reloadFocusedWindow) {
-			KeyboardShortcuts.add(['Ctrl+R', 'Command+R'], this.reloadFocusedWindow.bind(this));
+			this.keyboardShortcutManager.add(['Ctrl+R', 'Command+R'], this.reloadFocusedWindow.bind(this));
 		}
 		if(keyboardShortcutSettings.toggleFullScreenOnFocusedWindow) {
-			KeyboardShortcuts.add(['F11', 'Ctrl+Command+F'], this.toggleFullScreenOnFocusedWindow.bind(this));
+			this.keyboardShortcutManager.add(['F11', 'Ctrl+Command+F'], this.toggleFullScreenOnFocusedWindow.bind(this));
 		}
 		if(keyboardShortcutSettings.toggleDeveloperToolsOnFocusedWindow) {
-			KeyboardShortcuts.add(['Ctrl+Alt+I', 'Ctrl+Command+I', 'Alt+Command+I'], this.toggleDeveloperToolsOnFocusedWindow.bind(this));
+			this.keyboardShortcutManager.add(['Ctrl+Alt+I', 'Ctrl+Command+I', 'Alt+Command+I'], this.toggleDeveloperToolsOnFocusedWindow.bind(this));
 		}
 		if(keyboardShortcutSettings.applyDefaultWindowStateOnFocusedWindow) {
-			KeyboardShortcuts.add(['Ctrl+Alt+W', 'Ctrl+Command+W', 'Alt+Command+W'], this.applyDefaultWindowStateOnFocusedWindow.bind(this));
+			this.keyboardShortcutManager.add(['Ctrl+Alt+W', 'Ctrl+Command+W', 'Alt+Command+W'], this.applyDefaultWindowStateOnFocusedWindow.bind(this));
 		}
 	},
 

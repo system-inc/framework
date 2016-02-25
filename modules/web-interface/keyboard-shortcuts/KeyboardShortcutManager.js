@@ -1,3 +1,6 @@
+// Dependencies
+var KeyboardShortcut = Framework.require('modules/web-interface/keyboard-shortcuts/KeyboardShortcut.js');
+
 // Class
 var KeyboardShortcutManager = Class.extend({
 
@@ -7,72 +10,6 @@ var KeyboardShortcutManager = Class.extend({
 	keyboardShortcuts: [],
 	keyboardActivity: [],
 	keyboardActivityTimer: null,
-
-	// Special key codes cannot use keypress events so it has to be here to map to the correct keycodes for keyup/keydown events
-	keyCodes: {
-		8: 'backspace',
-        9: 'tab',
-        13: 'enter',
-        16: 'shift',
-        17: 'ctrl',
-        18: 'alt',
-        20: 'capslock',
-        27: 'esc',
-        32: 'space',
-        33: 'pageup',
-        34: 'pagedown',
-        35: 'end',
-        36: 'home',
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down',
-        45: 'ins',
-        46: 'del',
-        91: 'meta',
-        93: 'meta',
-        224: 'meta',
-
-        106: '*',
-        107: '+',
-        109: '-',
-        110: '.',
-        111 : '/',
-        186: ';',
-        187: '=',
-        188: ',',
-        189: '-',
-        190: '.',
-        191: '/',
-        192: '`',
-        219: '[',
-        220: '\\',
-        221: ']',
-        222: '\'',
-	},
-
-	// Keys that require a shift on a U.S. keyboard
-	shiftMap: {
-		'~': '`',
-        '!': 1,
-        '@': 2,
-        '#': 3,
-        '$': 4,
-        '%': 5,
-        '^': 6,
-        '&': 7,
-        '*': 8,
-        '(': 9,
-        ')': 0,
-        '_': '-',
-        '+': '=',
-        ':': ';',
-        '\"': '\'',
-        '<': ',',
-        '>': '.',
-        '?': '/',
-        '|': '\\',
-	},
 
 	construct: function(htmlDocument) {
 		this.htmlDocument = htmlDocument;
@@ -84,17 +21,17 @@ var KeyboardShortcutManager = Class.extend({
 	buildKeyCodes: function() {
 		// Loop through the f keys, f1 to f19 and add them to the map programatically
 		for(var i = 1; i < 20; ++i) {
-			this.keyCodes[111 + i] = 'f'+i;
+			KeyboardShortcutManager.keyCodes[111 + i] = 'f'+i;
 		}
 
 		// Loop through to map numbers on the numeric keypad
 		for(i = 0; i <= 9; ++i) {
-			this.keyCodes[i + 96] = i;
+			KeyboardShortcutManager.keyCodes[i + 96] = i;
 		}
 
 		// Store the reverse as well
-		this.keyCodes.each(function(key, value) {
-			this.keyCodes[value] = key;
+		KeyboardShortcutManager.keyCodes.each(function(key, value) {
+			KeyboardShortcutManager.keyCodes[value] = key;
 		}.bind(this));
 	},
 
@@ -167,8 +104,8 @@ var KeyboardShortcutManager = Class.extend({
 	        	key = key.lowercase();
 		    }
 		}
-		else if(this.keyCodes[event.which]) {
-			key = this.keyCodes[event.which];
+		else if(KeyboardShortcutManager.keyCodes[event.which]) {
+			key = KeyboardShortcutManager.keyCodes[event.which];
 		}
 		// If it is not in the special maps
 		else {
@@ -225,6 +162,74 @@ var KeyboardShortcutManager = Class.extend({
 	},
 
 });
+
+// Static properties
+
+// Special key codes cannot use keypress events so it has to be here to map to the correct keycodes for keyup/keydown events
+KeyboardShortcutManager.keyCodes = {
+	8: 'backspace',
+    9: 'tab',
+    13: 'enter',
+    16: 'shift',
+    17: 'ctrl',
+    18: 'alt',
+    20: 'capslock',
+    27: 'esc',
+    32: 'space',
+    33: 'pageup',
+    34: 'pagedown',
+    35: 'end',
+    36: 'home',
+    37: 'left',
+    38: 'up',
+    39: 'right',
+    40: 'down',
+    45: 'ins',
+    46: 'del',
+    91: 'meta',
+    93: 'meta',
+    224: 'meta',
+
+    106: '*',
+    107: '+',
+    109: '-',
+    110: '.',
+    111 : '/',
+    186: ';',
+    187: '=',
+    188: ',',
+    189: '-',
+    190: '.',
+    191: '/',
+    192: '`',
+    219: '[',
+    220: '\\',
+    221: ']',
+    222: '\'',
+};
+
+// Keys that require a shift on a U.S. keyboard
+KeyboardShortcutManager.shiftMap = {
+	'~': '`',
+    '!': 1,
+    '@': 2,
+    '#': 3,
+    '$': 4,
+    '%': 5,
+    '^': 6,
+    '&': 7,
+    '*': 8,
+    '(': 9,
+    ')': 0,
+    '_': '-',
+    '+': '=',
+    ':': ';',
+    '\"': '\'',
+    '<': ',',
+    '>': '.',
+    '?': '/',
+    '|': '\\',
+};
 
 // Export
 module.exports = KeyboardShortcutManager;
