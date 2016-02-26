@@ -549,6 +549,14 @@ Proctor.globals = {
 		'toArray',
 		'toJson',
 
+		// Windows
+		'COUNTER_NET_SERVER_CONNECTION',
+		'COUNTER_NET_SERVER_CONNECTION_CLOSE',
+		'COUNTER_HTTP_SERVER_REQUEST',
+		'COUNTER_HTTP_SERVER_RESPONSE',
+		'COUNTER_HTTP_CLIENT_REQUEST',
+		'COUNTER_HTTP_CLIENT_RESPONSE',
+
 		// Electron
 		'document',
 		'require',

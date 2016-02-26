@@ -39,10 +39,10 @@ var Electron = Class.extend({
 		this.initializeDeveloperTools();
 
 		// Testing
-		var Proctor = Framework.require('modules/test/Proctor.js');
-		var proctor = new Proctor('electron');
-		proctor.getAndRunTests();
-		return;
+		//var Proctor = Framework.require('modules/test/Proctor.js');
+		//var proctor = new Proctor('electron');
+		//proctor.getAndRunTests();
+		//return;
 
 		// Require and construct the main controller
 		var ControllerClass = Project.require('controllers/'+Project.modules.electronModule.settings.get('mainBrowserWindow.viewControllerName')+'.js');
