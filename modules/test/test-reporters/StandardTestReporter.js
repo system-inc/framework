@@ -1,6 +1,6 @@
 // Dependencies
-var TestReporter = Framework.require('modules/test/test-reporter/TestReporter.js');
-var ConciseTestReporter = Framework.require('modules/test/test-reporter/ConciseTestReporter.js');
+var TestReporter = Framework.require('modules/test/test-reporters/TestReporter.js');
+var ConciseTestReporter = Framework.require('modules/test/test-reporters/ConciseTestReporter.js');
 var Terminal = Framework.require('modules/console/Terminal.js');
 
 // Class

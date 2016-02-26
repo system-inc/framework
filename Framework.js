@@ -42,14 +42,14 @@ var Framework = Class.extend({
 	// Directories
 	directory: null,
 	framework: {
-		directory: __dirname+Node.Path.separator,
+		directory: __dirname,
 	},
 
 	modules: {},
 
 	construct: function(projectDirectory) {
 		// Set the project directory
-		this.directory = Node.Path.normalize(projectDirectory+Node.Path.separator);
+		this.directory = Node.Path.normalize(projectDirectory);
 	},
 
 	initialize: function*(callback) {
@@ -225,7 +225,7 @@ var Framework = Class.extend({
 
 // Static properties
 
-Framework.directory = __dirname+Node.Path.separator;
+Framework.directory = __dirname;
 
 Framework.coreModules = [
 	'ConsoleModule',

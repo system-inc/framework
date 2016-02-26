@@ -70,10 +70,7 @@ var WebServer = Server.extend({
 		// Set the web server directory
 		var settingsDirectory = this.settings.get('directory');
 		if(settingsDirectory) {
-			if(!settingsDirectory.endsWith(Node.Path.separator)) {
-				settingsDirectory = Node.Path.normalize(settingsDirectory+Node.Path.separator);
-			}
-			this.directory = settingsDirectory;
+			this.directory = Node.Path.normalize(settingsDirectory);
 		}
 		else {
 			this.directory = Project.directory;
@@ -105,16 +102,24 @@ var WebServer = Server.extend({
 	},
 
 	resolveHttpsProtocolFiles: function() {
+		// Make key and certificate file paths in settings absolute if they are initially provided as relative file paths
+
 		var httpsSettings = this.settings.get('protocols.https');
 
 		// Key file
-		if(!Object.isEmpty(httpsSettings.keyFile) && !httpsSettings.keyFile.startsWith(Node.Path.separator)) {
-			httpsSettings.keyFile = Node.Path.join(Project.directory, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.keyFile);
+		if(!Object.isEmpty(httpsSettings.keyFile)) {
+			httpsSettings.keyFile = Node.Path.normalize(httpsSettings.keyFile);
+			if(!Node.Path.isAbsolute(httpsSettings.keyFile)) {
+				httpsSettings.keyFile = Node.Path.join(Project.directory, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.keyFile);
+			}
 		}
 
 		// Certificate file
-		if(!Object.isEmpty(httpsSettings.certificateFile) && !httpsSettings.certificateFile.startsWith(Node.Path.separator)) {
-			httpsSettings.certificateFile = Node.Path.join(Project.directory, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.certificateFile);
+		if(!Object.isEmpty(httpsSettings.certificateFile)) {
+			httpsSettings.certificateFile = Node.Path.normalize(httpsSettings.certificateFile);
+			if(!Node.Path.isAbsolute(httpsSettings.certificateFile)) {
+				httpsSettings.certificateFile = Node.Path.join(Project.directory, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.certificateFile);
+			}
 		}
 
 		this.settings.set('protocols.https', httpsSettings);

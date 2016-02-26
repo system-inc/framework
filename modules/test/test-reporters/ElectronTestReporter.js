@@ -1,5 +1,5 @@
 // Dependencies
-var TestReporter = Framework.require('modules/test/test-reporter/TestReporter.js');
+var TestReporter = Framework.require('modules/test/test-reporters/TestReporter.js');
 
 // Class
 var ElectronTestReporter = TestReporter.extend({
@@ -10,9 +10,7 @@ var ElectronTestReporter = TestReporter.extend({
 	},
 
 	startedRunningTest: function(data) {
-		var testLocation = data.directory.replace(Project.framework.directory+'tests'+Node.Path.separator, '')+data.fileName;
-
-		Console.log('  '+data.name.replaceLast('Test', '')+' ('+testLocation+')'+"\n");
+		Console.log('  '+data.name.replaceLast('Test', '')+' ('+Node.Path.join(data.directory, data.fileName)+')');
 	},
 
 	finishedRunningTestMethod: function(data) {

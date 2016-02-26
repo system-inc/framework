@@ -6,8 +6,8 @@ var Assert = Framework.require('modules/test/Assert.js');
 var ModuleTest = Test.extend({
 
 	testInitialize: function() {
-		// Hardware is a core module so it should already have been initialized, this test should be renamed or moved
-		Assert.true(Object.hasKey(Project.modules.hardwareModule, 'settings'), 'HardwareModule has key "settings" after Module.initialize()');
+		// Console is a core module so it should already have been initialized
+		Assert.true(Object.hasKey(Project.modules.consoleModule, 'settings'), 'ConsoleModule has key "settings" after Module.initialize()');
 	},
 
 });

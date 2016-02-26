@@ -76,9 +76,7 @@ var TestReporter = Class.extend({
 	},
 
 	startedRunningTest: function(data) {
-		var testLocation = data.directory.replace(Project.framework.directory+'tests'+Node.Path.separator, '')+data.fileName;
-
-		Console.writeLine("\n"+'  '+data.name.replaceLast('Test', '')+' '+Terminal.style('('+testLocation+')', 'gray')+"\n");
+		Console.writeLine("\n"+'  '+data.name.replaceLast('Test', '')+' '+Terminal.style('('+Node.Path.join(data.directory, data.fileName)+')', 'gray')+"\n");
 	},
 
 	startedRunningTestMethod: function(data) {

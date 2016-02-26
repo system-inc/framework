@@ -51,7 +51,7 @@ var HtmlDocument = XmlDocument.extend({
 			//Console.log('DOM present, HtmlDocument connected to DOM', this);
 
 			// Set window.HtmlDocument to this
-			window.htmlDocument = this;
+			//window.htmlDocument = this;
 
 			// Manually connect this <html> HtmlElement to document.documentElement
 			this.view.domNode = this.domDocument.documentElement;
