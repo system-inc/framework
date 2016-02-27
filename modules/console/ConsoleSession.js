@@ -13,7 +13,7 @@ var ConsoleSession = Class.extend({
 	// Command history
 	commandHistoryFile: null,
 	commandHistory: [],
-	currentCommandHistoryIndex : 1,
+	currentCommandHistoryIndex: -1,
 	currentCommandString: '',
 	currentCommandCursorIndex: 0,
 	commandColor : 'cyan',
@@ -32,6 +32,7 @@ var ConsoleSession = Class.extend({
 			Node.StandardIn.resume();
 			Node.StandardIn.setEncoding('utf8');
 			Node.StandardIn.on('data', function(key) {
+				//console.log('key', key);
 				this.handleKey(key);
 			}.bind(this));
 		}
@@ -39,12 +40,14 @@ var ConsoleSession = Class.extend({
 
 	write: function(message) {
 		if(this.log) {
-			this.log.write(message);
+			this.log.write(Terminal.removeAnsiEscapeCodesFromString(message));
 		}
 	},
 
 	attachLog: function(directory) {
 		this.log = new Log(directory, 'console');
+
+		this.write("\n"+'['+new Time().getDateTime()+'] Attached log to console session. Console activity is recorded to "'+this.log.file.path+'".'+"\n");
 	},
 
 	loadCommandHistory: function*(directory, fileNameWithoutExtension) {
@@ -62,7 +65,7 @@ var ConsoleSession = Class.extend({
 		if(File.synchronous.exists(file)) {
 			commandHistory = File.synchronous.read(file);
 		}
-		//Console.log(commandHistory);
+		//Console.log('commandHistory', commandHistory);
 
 		if(!commandHistory) {
 			//Console.log('No history found.');
@@ -93,7 +96,7 @@ var ConsoleSession = Class.extend({
 		}
 		// Up
 		else if(key == '\u001b[A') {
-			//Console.log('up');
+			//Console.log('up', 'this.currentCommandHistoryIndex', this.currentCommandHistoryIndex);
 
 			if(this.currentCommandHistoryIndex < this.commandHistory.length - 1) {
 				this.currentCommandHistoryIndex++;
@@ -118,11 +121,11 @@ var ConsoleSession = Class.extend({
 			this.currentCommandCursorIndex = this.currentCommandString.length;
 
 			// Write the current string (this moves the cursor right)
-			Console.write(this.currentCommandString);
+			Console.writeToTerminal(this.currentCommandString, false);
 		}
 		// Down
 		else if(key == '\u001b[B') {
-			//Console.log('down');
+			//Console.log('down', 'this.currentCommandHistoryIndex', this.currentCommandHistoryIndex);
 
 			if(this.currentCommandHistoryIndex > -1) {
 				this.currentCommandHistoryIndex--;
@@ -150,7 +153,7 @@ var ConsoleSession = Class.extend({
 			this.currentCommandCursorIndex = this.currentCommandString.length;
 
 			// Write the current string (this moves the cursor right)
-			Console.write(this.currentCommandString);
+			Console.writeToTerminal(this.currentCommandString, false);
 		}
 		// Left
 		else if(key == '\u001b[D') {
@@ -205,18 +208,34 @@ var ConsoleSession = Class.extend({
 		// Enter
 		else if(key == "\n" || key == "\r") {
 			if(this.currentCommandString) {
+				var shouldAddCurrentCommandToCommandHistory = null;
+
+				// Add if there is nothing in the command history
+				if(this.commandHistory.length == 0) {
+					//Console.log('this.commandHistory is empty, adding "'+this.currentCommandString+'"');
+					shouldAddCurrentCommandToCommandHistory = true;
+				}
 				// Don't stack multiple of the same commands
-				if(this.currentCommandString != this.commandHistory.first()) {
-					this.commandHistory.unshift(this.currentCommandString);
+				else if(this.currentCommandString == this.commandHistory[0]) {
+					//Console.log('this.currentCommandString "'+this.currentCommandString+'" is the same as the last command entered, not adding to command history');
+					shouldAddCurrentCommandToCommandHistory = false;
+				}
+				else {
+					//Console.log('Adding "'+this.currentCommandString+'" to this.commandHistory');
+					shouldAddCurrentCommandToCommandHistory = true;
+				}
+
+				// Write the history to disk
+				if(shouldAddCurrentCommandToCommandHistory && this.commandHistoryFile) {
+					this.commandHistory.prepend(this.currentCommandString);
+					this.commandHistoryFile.write(this.currentCommandString+"\n");
 				}
 				
 				this.currentCommandHistoryIndex = -1;
-
-				// Write the history to disk
-				if(this.commandHistoryFile) {
-					this.commandHistoryFile.write(this.currentCommandString+"\n");
-				}
 			}
+
+			// Log the command
+			this.write('> '+this.currentCommandString);
 
 			//Console.log('enter');
 			this.handleCommand(this.currentCommandString);
@@ -240,7 +259,7 @@ var ConsoleSession = Class.extend({
 			Terminal.cursorLeft(this.currentCommandCursorIndex + 1);
 			
 			// Write the new string, this moves the cursor right
-			Console.write(this.currentCommandString);
+			Console.writeToTerminal(this.currentCommandString, false);
 
 			// Move back to where the cursor should be
 			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
@@ -257,7 +276,7 @@ var ConsoleSession = Class.extend({
 			Terminal.cursorLeft(this.currentCommandCursorIndex);
 			
 			// Write the new string, this moves the cursor right
-			Console.write(this.currentCommandString);
+			Console.writeToTerminal(this.currentCommandString, false);
 
 			// Move back to where the cursor should be
 			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
@@ -276,7 +295,7 @@ var ConsoleSession = Class.extend({
 			Terminal.cursorLeft(this.currentCommandCursorIndex - 1);
 
 			// Write the current string (this moves the cursor right)
-			Console.write(this.currentCommandString);
+			Console.writeToTerminal(this.currentCommandString, false);
 
 			// Move back to where the cursor should be
 			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
@@ -381,7 +400,7 @@ var ConsoleSession = Class.extend({
 			if(!command.endsWith('.')) {
 				this.currentCommandCursorIndex++;
 				this.currentCommandString += '.';
-				Console.write('.');
+				Console.writeToTerminal('.', false);
 			}
 
 			// Nothing happens
@@ -415,7 +434,7 @@ var ConsoleSession = Class.extend({
 					charactersWritten++;
 					this.currentCommandCursorIndex++;
 					this.currentCommandString += currentCharacterToTest;
-					Console.write(currentCharacterToTest);
+					Console.writeToTerminal(currentCharacterToTest, false);
 				}
 				else {
 					break;
@@ -452,18 +471,19 @@ var ConsoleSession = Class.extend({
 		}
 
 		if(response) {
-			Console.showTime = false;
-			Console.showFile = false;
-			Console.log("\n"+Terminal.style("\n"+'   '+response.join("\n   ")+"\n", this.commandColor));
-			Console.showTime = true;
-			Console.showFile = true;
+			// Log the command
+			this.write('> '+this.currentCommandString+'\\t');
+
+			Console.writeToTerminal("\n");
+			Console.writeToTerminal(Terminal.style("\n"+'   '+response.join("\n   ")+"\n", this.commandColor));
+			Console.writeToTerminal("\n");
 		}
 
 		this.currentCommandCursorIndex = this.currentCommandString.length;
 		this.currentCommandString = command;
 		Terminal.clearLine();
 		Terminal.cursorLeft(this.currentCommandString.length + 1);
-		Console.write(this.currentCommandString);
+		Console.writeToTerminal(this.currentCommandString, false);
 	},
 
 	handleCommand: function(command) {
@@ -477,6 +497,8 @@ var ConsoleSession = Class.extend({
 		//Console.log('Command:', command);
 
 		var response;
+
+		Console.writeToTerminal("\n");
 
 		if(global[command] !== undefined) {
 			response = global[command];
@@ -500,37 +522,25 @@ var ConsoleSession = Class.extend({
 			}
 		}
 
-		Console.showTime = false;
-		Console.showFile = false;
-
 		if(Generator.is(response)) {
-			Console.log("\n"+Terminal.style(Console.prepareMessage.call(this, ['function '+command+'*() { ... }']), this.commandColor));	
+			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['function '+command+'*() { ... }'], 'write'), this.commandColor)+"\n");
 		}
 		else if(Function.is(response)) {
-			Console.log("\n"+Terminal.style(Console.prepareMessage.call(this, ['function '+command+'() { ... }']), this.commandColor));	
+			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['function '+command+'() { ... }'], 'write'), this.commandColor)+"\n");	
 		}
 		else if(Promise.is(response)) {
-			Console.log("\n"+Terminal.style(Console.prepareMessage.call(this, [response]), this.commandColor));	
+			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['[Promise]'+"\n"], 'write'), 'gray'));	
+			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, [response], 'write'), this.commandColor)+"\n");	
 
 			response.then(function() {
-				Console.showTime = false;
-				Console.showFile = false;
-				Console.log(Terminal.style(Console.prepareMessage.call(this, ['Promise completed:']), this.commandColor));	
-				Console.log(Terminal.style(Console.prepareMessage.call(this, arguments), this.commandColor));	
-				Console.showTime = true;
-				Console.showFile = true;
+				Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['[Promise Fulfilled]'], 'write'), 'gray')+"\n");	
+				Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, arguments, 'write'), this.commandColor)+"\n");	
 			}.bind(this));
 		}
 		else if(!command.isEmpty()) {
-			Console.log("\n"+Terminal.style(Console.prepareMessage.call(this, [response]), this.commandColor));	
-		}
-		else {
-			Console.write("\n");
+			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, [response], 'write'), this.commandColor)+"\n");	
 		}
 		
-		Console.showTime = true;
-		Console.showFile = true;
-
 		return;
 	},
 

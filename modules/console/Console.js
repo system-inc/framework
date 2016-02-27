@@ -15,10 +15,6 @@ Console.standardError = Console.error;
 // Session for logging
 Console.session = null;
 
-// Display options
-Console.showTime = true;
-Console.showFile = true;
-
 // Where the console is reading from and writing to
 Console.location = (process && process.versions && process.versions.electron) ? 'developerTools' : 'terminal';
 
@@ -132,15 +128,18 @@ Console.writeToDeveloperTools = function(passedArguments, messageType) {
 	}
 
 	// Write to ConsoleSession
-	if(messageType == 'write') {
-		Console.writeToSession(passedArguments);	
-	}
-	else {
-		Console.writeToSession(Console.prepareMessage(passedArguments, messageType));
-	}
+	Console.writeToSession(Console.prepareMessage(passedArguments, 'write'));
+
+	// For logging, always write a newline to the session (developer tools display always uses newlines)
+	Console.writeToSession("\n");
 };
 
-Console.writeToTerminal = function(message) {
+Console.writeToTerminal = function(message, shouldWriteToSession) {
+	// shouldWriteToSession defaults to true
+	if(shouldWriteToSession === undefined) {
+		shouldWriteToSession = true;
+	}
+
 	// Try to write to standard out
 	try {
 		// Write the message to standard out
@@ -153,7 +152,9 @@ Console.writeToTerminal = function(message) {
 	}
 
 	// Write to ConsoleSession
-	Console.writeToSession(message);
+	if(shouldWriteToSession) {
+		Console.writeToSession(message);
+	}
 };
 
 Console.writeToSession = function(message) {
@@ -196,7 +197,7 @@ Console.prepareMessage = function(passedArguments, messageType) {
 		}
 	}
 
-	// Messages with messageType 'write' do not show extra data
+	// Show extra data on all messages except for those of messageType 'write'
 	if(messageType != 'write') {
 		// Create a new error
 		var error = new Error('Error manually created to get stack trace.');
@@ -216,13 +217,8 @@ Console.prepareMessage = function(passedArguments, messageType) {
 	    //Console.log('Column Number'+': '+columnNumber);
 	    //Console.log('File Name'+': '+fileName);
 
-	    if(Console.showFile) {
-	    	message = '('+fileName+':'+lineNumber+') '+message;
-	    }
-
-	    if(Console.showTime) {
-	    	message = '['+new Time().getDateTime()+'] '+message;
-	    }
+    	message = '('+fileName+':'+lineNumber+') '+message;
+    	message = '['+new Time().getDateTime()+'] '+message;
     }
 
     // Style message types

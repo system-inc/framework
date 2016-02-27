@@ -133,9 +133,9 @@ var StackTrace = Class.extend({
 				string += ')';
 				string += "\n";
 			}
-
-			return string;
 		}
+
+		return string;
 	},
 
 });

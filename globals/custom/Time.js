@@ -183,11 +183,11 @@ var Time = Class.extend({
 	},
 
 	getHour: function() {
-		return this.time.getHours() + 1;
+		return this.time.getHours();
 	},
 
 	getHourPadded: function() {
-		return ('0'+(this.time.getHours() + 1)).slice(-2);
+		return ('0'+(this.time.getHours())).slice(-2);
 	},
 
 	getMinute: function() {
@@ -199,11 +199,19 @@ var Time = Class.extend({
 	},
 
 	getSecond: function() {
-		return this.time.getSeconds() + 1;
+		return this.time.getSeconds();
 	},
 
 	getSecondPadded: function() {
-		return ('0'+(this.time.getSeconds() + 1)).slice(-2);
+		return ('0'+(this.time.getSeconds())).slice(-2);
+	},
+
+	getMillisecond: function() {
+		return this.time.getMilliseconds();
+	},
+
+	getMillisecondPadded: function() {
+		return ('00'+(this.time.getMilliseconds())).slice(-3);
 	},
 
 	getDateTime: function() {
@@ -213,6 +221,13 @@ var Time = Class.extend({
 		dateTime += ' '+this.getHourPadded();
 		dateTime += ':'+this.getMinutePadded();
 		dateTime += ':'+this.getSecondPadded();
+
+		return dateTime;
+	},
+
+	getDateTimeWithMilliseconds: function() {
+		var dateTime = this.getDateTime();
+		dateTime += ':'+this.getMillisecondPadded();
 
 		return dateTime;
 	},
