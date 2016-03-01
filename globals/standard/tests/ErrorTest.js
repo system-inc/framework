@@ -6,17 +6,49 @@ var Assert = Framework.require('modules/test/Assert.js');
 var ErrorTest = Test.extend({
 
 	testError: function() {
-		var error = new Error();
+		var actual = new Error();
 
-		Assert.true(error.hasKey('code'), 'has code');
-		Assert.true(error.hasKey('identifier'), 'has identifier');
-		Assert.true(error.hasKey('message'), 'has message');
-		Assert.true(error.hasKey('location'), 'has location');
-		Assert.true(error.hasKey('data'), 'has data');
-		Assert.true(error.hasKey('url'), 'has url');
-		Assert.true(error.hasKey('stackTrace'), 'has stackTrace');
-		Assert.true(error.hasKey('callSite'), 'has callSite');
+		Assert.true(actual.hasKey('identifier'), 'has identifier');
+		Assert.true(actual.hasKey('message'), 'has message');
+		Assert.true(actual.hasKey('location'), 'has location');
+		Assert.true(actual.hasKey('data'), 'has data');
+		Assert.true(actual.hasKey('time'), 'has time');
+		Assert.true(actual.hasKey('stackTrace'), 'has stackTrace');
+
+		//console.info(actual);
+		//console.info(actual.toString());
 	},
+
+	testReferenceError: function*() {
+		var actual;
+
+		try {
+			// Throw a ReferenceError
+			eval('zzz');
+		}
+		catch(error) {
+			actual = error;
+		}
+
+		console.warn(actual);
+		console.warn(actual.toString());
+
+		Assert.true(actual.hasKey('identifier'), 'has identifier');
+		Assert.true(actual.hasKey('message'), 'has message');
+		Assert.true(actual.hasKey('location'), 'has location');
+		Assert.true(actual.hasKey('data'), 'has data');
+		Assert.true(actual.hasKey('time'), 'has time');
+		Assert.true(actual.hasKey('stackTrace'), 'has stackTrace');
+	},
+
+	//Error
+	//EvalError
+	//InternalError
+	//RangeError
+	//ReferenceError
+	//SyntaxError
+	//TypeError
+	//URIError
 
 });
 
