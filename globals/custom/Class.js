@@ -98,7 +98,7 @@ Class.extend = function(childClassProperties) {
 
 		// All construction is actually done in the construct method
 		if(!classInitializing && this.construct) {
-			return this.construct.apply(this, arguments); // The return here allows a construct method to return a new Object other than itself
+			return this.construct.apply(this, arguments);
 		}
 	}
 

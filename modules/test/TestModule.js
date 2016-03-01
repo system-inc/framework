@@ -14,6 +14,8 @@ var TestModule = Module.extend({
 
 		// Create a Proctor to oversee all of the tests as they run
 		this.proctor = new Proctor(Project.command.options.reporter);
+		
+		//return; // Debug
 
 		// If test supervising is enabled
 		if(Project.command.options.supervise) {

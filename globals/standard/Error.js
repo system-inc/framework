@@ -1,6 +1,8 @@
 // Dependencies
 var StackTrace = require('./StackTrace.js');
 
+// I cannot create my own Error class, if I do, the stack trace gets messed up
+
 // Instance properties
 
 Error.prototype.code = null;
@@ -9,6 +11,7 @@ Error.prototype.message = null;
 Error.prototype.location = null;
 Error.prototype.data = null;
 Error.prototype.url = null;
+Error.prototype.time = null;
 Error.prototype.stack = null;
 Error.prototype.stackTrace = null;
 Error.prototype.callSite = null;
@@ -17,8 +20,7 @@ Error.prototype.callSite = null;
 
 // Create a custom constructor for Error
 Error.prototype.construct = function() {
-	// Create a new error and capture the stack trace
-	//var error = this;
+	// Create a new error and capture the stack trace (must do this to get the right line number)
 	var error = Error.apply(this, arguments);
 	Error.captureStackTrace(error, arguments.callee);
 
@@ -109,6 +111,33 @@ Error.prototype.getPublicData = function() {
 
 Error.prototype.toJson = function() {
 	return Json.encode(this.toObject());
+};
+
+Error.prototype.toString = function() {
+	//return Json.indent(this.toObject(true));
+
+	var string = '[Framework] ';
+	
+	// The error name
+	if(this.name) {
+		string += this.name+': ';
+	}
+
+	// The error message
+	if(this.message) {
+		var message = this.message.split("\n");
+		string += message[message.length - 1]+"\n";
+	}
+
+	// Add a new line if we need one
+	if(string[string.length - 1] && string[string.length - 1] != "\n") {
+		string += "\n";	
+	}
+
+	// Add stack trace
+	string += this.stack.stackTraceToString();
+
+	return string;
 };
 
 // Static properties

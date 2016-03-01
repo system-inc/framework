@@ -81,48 +81,55 @@ var StackTrace = Class.extend({
 	},
 
 	// WARNING: This method is super fragile and any changes could cause the app to crash and it is super hard to figure out why if this is broken
-	toString: function() {
-		var string = '[Framework] ';
-		
-		// The error name
-		if(this.error && this.error.name) {
-			string += this.error.name+': ';
-		}
-
-		// The error message
-		if(this.error && this.error.message) {
-			var message = this.error.message.split("\n");
-			string += message[message.length - 1]+"\n";
-		}
-
-		// Add a new line if we need one
-		if(string[string.length - 1] && string[string.length - 1] != "\n") {
-			string += "\n";	
-		}		
+	stackTraceToString: function() {
+		var string = '';
 		
 		// Generate the stack track string
 		if(this.callSites) {
-			for(var i = 0; i< this.callSites.length; i++) {
+			for(var i = 0; i < this.callSites.length; i++) {
 				var callSite = this.callSites[i];
 
-				string += "    at ";
-
+				string += '    at ';
+				
 				// Calling callSite.getTypeName() can sometimes throw an error for reasons I don't know, so I use this try catch block to fix it
+				var callSiteTypeName;
 				try {
-					string += callSite.getTypeName()+'.';	
+					callSiteTypeName = callSite.getTypeName();
 				}
 				catch(error) {
-					string += '<unknown>.';
-				}			
+				}
 
-				if(callSite.getFunctionName()) {
-					string += callSite.getFunctionName()+' ';
+				// Call site function name
+				var callSiteFunctionName;
+				try {
+					callSiteFunctionName = callSite.getFunctionName();
 				}
-				else {
-					string += '<anonymous>'+' ';
+				catch(error) {
 				}
+
+				// Build the string
+				if(callSiteTypeName && callSiteFunctionName) {
+					string += callSiteTypeName+'.'+callSiteFunctionName;
+				}
+				else if(callSiteTypeName && !callSiteFunctionName) {
+					if(callSiteTypeName == 'Object') {
+						string += 'anonymous';
+					}
+					else {
+						string += callSiteTypeName;
+					}
+				}
+				else if(!callSiteTypeName && callSiteFunctionName) {
+					string += callSiteFunctionName;
+				}
+				string += ' ';
 			
-				if(callSite.getMethodName() && callSite.getFunctionName() && callSite.getMethodName() != callSite.getFunctionName() && !(callSite.getFunctionName().indexOf('.'+callSite.getMethodName(), callSite.getFunctionName().length - ('.'+callSite.getMethodName()).length) !== -1)) {
+				if(
+					callSite.getMethodName() &&
+					callSite.getFunctionName() &&
+					callSite.getMethodName() != callSite.getFunctionName() &&
+					!(callSite.getFunctionName().indexOf('.'+callSite.getMethodName(), callSite.getFunctionName().length - ('.'+callSite.getMethodName()).length) !== -1)
+				) {
 					string += '[as '+callSite.getMethodName()+'] ';
 				}
 
@@ -136,6 +143,11 @@ var StackTrace = Class.extend({
 		}
 
 		return string;
+	},
+
+	// StackTrace.toString is called when errors happen, so we use this.error.toString which will call StackTrace.stackTraceToString
+	toString: function() {
+		return this.error.toString();
 	},
 
 });

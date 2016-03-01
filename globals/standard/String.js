@@ -401,9 +401,17 @@ String.uniqueIdentifier = function(length) {
 	return uniqueIdentifier;
 };
 
+String.makeString = function(value) {
+	if(!String.is(value)) {
+		value = String(value);
+	}
+
+	return value;
+};
+
 String.random = function(length, characters) {
 	length = length === undefined ? 32 : length;
-	characters = characters === undefined ? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' : characters;
+	characters = characters === undefined ? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' : String.makeString(characters);
 
 	var maxIndex = characters.length - 1;
 	var string = '';
@@ -417,7 +425,7 @@ String.random = function(length, characters) {
 
 String.cryptographicRandom = function*(length, characters) {
 	length = length === undefined ? 32 : length;
-	characters = characters === undefined ? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' : characters;
+	characters = characters === undefined ? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' : String.makeString(characters);
 
 	var maxIndex = characters.length - 1;
 	var string = '';

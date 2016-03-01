@@ -529,11 +529,11 @@ var ConsoleSession = Class.extend({
 			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['function '+command+'() { ... }'], 'write'), this.commandColor)+"\n");	
 		}
 		else if(Promise.is(response)) {
-			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['[Promise]'+"\n"], 'write'), 'gray'));	
+			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['Promise:'+"\n"], 'write'), 'gray'));	
 			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, [response], 'write'), this.commandColor)+"\n");	
 
 			response.then(function() {
-				Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['[Promise Fulfilled]'], 'write'), 'gray')+"\n");	
+				Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['Promise Fulfilled:'], 'write'), 'gray')+"\n");	
 				Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, arguments, 'write'), this.commandColor)+"\n");	
 			}.bind(this));
 		}
