@@ -1,7 +1,7 @@
 // Dependencies
-var Test = Framework.require('modules/test/Test.js');
-var Assert = Framework.require('modules/test/Assert.js');
-var Version = Framework.require('modules/version/Version.js');
+var Test = Framework.require('system/test/Test.js');
+var Assert = Framework.require('system/test/Assert.js');
+var Version = Framework.require('system/version/Version.js');
 
 // Class
 var ObjectTest = Test.extend({

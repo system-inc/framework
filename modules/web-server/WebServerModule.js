@@ -1,8 +1,8 @@
 // Dependencies
-var Module = Framework.require('modules/module/Module.js');
-var Version = Framework.require('modules/version/Version.js');
-var WebServer = Framework.require('modules/web-server/WebServer.js');
-var Settings = Framework.require('modules/settings/Settings.js');
+var Module = Framework.require('system/module/Module.js');
+var Version = Framework.require('system/version/Version.js');
+var WebServer = Framework.require('system/web-server/WebServer.js');
+var Settings = Framework.require('system/settings/Settings.js');
 
 // Class
 var WebServerModule = Module.extend({

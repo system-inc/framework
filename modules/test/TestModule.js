@@ -1,7 +1,7 @@
 // Dependencies
-var Module = Framework.require('modules/module/Module.js');
-var Version = Framework.require('modules/version/Version.js');
-var Proctor = Framework.require('modules/test/Proctor.js');
+var Module = Framework.require('system/module/Module.js');
+var Version = Framework.require('system/version/Version.js');
+var Proctor = Framework.require('system/test/Proctor.js');
 
 // Class
 var TestModule = Module.extend({

@@ -1,7 +1,7 @@
 // Dependencies
-var Module = Framework.require('modules/module/Module.js');
-var Version = Framework.require('modules/version/Version.js');
-var ConsoleSession = Framework.require('modules/console/ConsoleSession.js');
+var Module = Framework.require('system/module/Module.js');
+var Version = Framework.require('system/version/Version.js');
+var ConsoleSession = Framework.require('system/console/ConsoleSession.js');
 
 // Class
 var ConsoleModule = Module.extend({

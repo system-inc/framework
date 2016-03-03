@@ -47,11 +47,7 @@
 	// List all modules to test
 	modules: {
 		archive: {},
-		asciiArt: {},
-		command: {},
 		console: {},
-		cryptography: {},
-		data: {},
 		database: {
 			databases: {
 				frameworkTest: {
@@ -63,23 +59,8 @@
 			}
 		},
 		//electron: {},
-		email: {},
 		ffmpeg: {},
-		fileSystem: {},
-		geolocation: {},
-		hardware: {},
-		html: {},
-		log: {},
-		network: {},
-		operatingSystem: {},
-		server: {},
-		settings: {},
 		test: {},
-		time: {},
-		version: {},
-		web: {},
-		webInterface: {},
 		webServer: {},
-		xml: {},
 	}
 }

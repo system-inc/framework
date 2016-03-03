@@ -1,6 +1,6 @@
 // Dependencies
-var Module = Framework.require('modules/module/Module.js');
-var Version = Framework.require('modules/version/Version.js');
+var Module = Framework.require('system/module/Module.js');
+var Version = Framework.require('system/version/Version.js');
 
 // Class
 var FfmpegModule = Module.extend({

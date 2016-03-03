@@ -1,7 +1,7 @@
 // Dependencies
-var Test = Framework.require('modules/test/Test.js');
-var Assert = Framework.require('modules/test/Assert.js');
-var Stopwatch = Framework.require('modules/time/Stopwatch.js');
+var Test = Framework.require('system/test/Test.js');
+var Assert = Framework.require('system/test/Assert.js');
+var Stopwatch = Framework.require('system/time/Stopwatch.js');
 
 // Class
 var FunctionTest = Test.extend({
@@ -48,7 +48,8 @@ var FunctionTest = Test.extend({
 		//Console.log(stopwatch.elapsedTime);
 
 		// http://stackoverflow.com/questions/21097421/what-is-the-reason-javascript-settimeout-is-so-inaccurate
-		Assert.greaterThanOrEqualTo(stopwatch.elapsedTime, 50, 'delaying 50 milliseconds should make the stopwatch elapsed time at least 50 milliseconds');
+		Assert.greaterThanOrEqualTo(stopwatch.elapsedTime, 35, 'delaying 50 milliseconds should make the stopwatch elapsed time at least 35 (50 +/- 15) milliseconds');
+		Assert.lessThanOrEqualTo(stopwatch.elapsedTime, 65, 'delaying 50 milliseconds should make the stopwatch elapsed time at least 65 (50 +/- 15) milliseconds');
 	},
 
 });

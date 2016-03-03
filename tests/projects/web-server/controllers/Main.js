@@ -1,5 +1,5 @@
 // Dependencies
-var Controller = Framework.require('modules/web-server/Controller.js');
+var Controller = Framework.require('system/web-server/Controller.js');
 
 // Class
 var Main = Controller.extend({

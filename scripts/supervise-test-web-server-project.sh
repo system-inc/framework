@@ -25,7 +25,7 @@ projectFile="$scriptDirectory../tests/projects/web-server/Project.js"
 #echo "projectFile $projectFile"
 
 # The path to the process manager from the scripts directory
-processManagerFile="$scriptDirectory../modules/process-manager/ProcessManager.js"
+processManagerFile="$scriptDirectory../system/process-manager/ProcessManager.js"
 #echo "processManagerFile $processManagerFile"
 
 # Run the script

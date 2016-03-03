@@ -26,7 +26,7 @@ Number = require('./globals/standard/Number.js');
 String = require('./globals/standard/String.js');
 
 // Globals
-Console = require('./modules/console/Console.js');
+Console = require('./system/console/Console.js');
 
 // Class
 var Framework = Class.extend({
@@ -54,15 +54,15 @@ var Framework = Class.extend({
 
 	initialize: function*(callback) {
 		// Set the version
-		var Version = Framework.require('modules/version/Version.js');
+		var Version = Framework.require('system/version/Version.js');
 		this.version = new Version('0.1.0');
 
 		// Make it obvious we are starting
-		var AsciiArt = Framework.require('modules/ascii-art/AsciiArt.js');
+		var AsciiArt = Framework.require('system/ascii-art/AsciiArt.js');
 		Console.writeLine(AsciiArt.framework.version[this.version.toString()]);
 
 		// Require the core modules
-		var Module = Framework.require('modules/module/Module.js');
+		var Module = Framework.require('system/module/Module.js');
 		Module.require(Framework.coreModules);
 
 		// Announce starting
@@ -72,7 +72,7 @@ var Framework = Class.extend({
 		yield this.loadProjectSettings();
 
 		// Load the command
-		var Command = Framework.require('modules/command/Command.js');
+		var Command = Framework.require('system/command/Command.js');
 		this.command = new Command(Node.Process.argv, this.settings.get('command'));
 
 		// Use project settings to set the title and the identifier
@@ -100,7 +100,7 @@ var Framework = Class.extend({
 	loadProjectSettings: function*() {
 		//Console.log('Loading project settings...');
 
-		var Settings = Framework.require('modules/settings/Settings.js');
+		var Settings = Framework.require('system/settings/Settings.js');
 		this.settings = Settings.constructFromFile(Node.Path.join(this.directory, 'settings', 'settings.json'));
 
 		// Set the default settings
@@ -168,7 +168,7 @@ var Framework = Class.extend({
 	requireAndInitializeProjectModules: function*() {
 		//Console.log('Loading modules for project...');
 
-		var Module = Framework.require('modules/module/Module.js');
+		var Module = Framework.require('system/module/Module.js');
 
 		// Load and initialize project modules separately in case multiple project modules rely on each other
 		var modulesForProject = [];
