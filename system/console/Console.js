@@ -206,9 +206,10 @@ Console.prepareMessage = function(passedArguments, messageType) {
 	    Error.captureStackTrace(error, passedArguments.callee);
 
 	    // Format the stack trace
-		var lineNumber = error.stack.callSites.first().getLineNumber();
-		var columnNumber = error.stack.callSites.first().getColumnNumber();
-		var fileName = error.stack.callSites.first().getFileName();
+	    var firstCallSite = error.stack.callSites.first();
+		var lineNumber = firstCallSite.getLineNumber();
+		var columnNumber = firstCallSite.getColumnNumber();
+		var fileName = firstCallSite.getFileName();
 		if(fileName) {
 			fileName = fileName.split(Node.Path.separator).reverse()[0];
 		}

@@ -5,7 +5,8 @@ var StackTrace = Class.extend({
 	callSites: null,
 	
 	construct: function(error, callSites) {
-		this.error = error;
+		this.error = error; // This is orinally the StandardError, later we call StackTrace.setError() to change it to Error
+
 		// CallSite properties:
 		//   getThis: returns the value of this
 		//   getTypeName: returns the type of this as a string. This is the name of the function stored in the constructor field of this, if available, otherwise the object's [[Class]] internal property.
@@ -78,6 +79,10 @@ var StackTrace = Class.extend({
 		}
 
 		return callSiteData;
+	},
+
+	setError: function(error) {
+		this.error = error;
 	},
 
 	// WARNING: This method is super fragile and any changes could cause the app to crash and it is super hard to figure out why if this is broken

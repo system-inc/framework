@@ -334,7 +334,7 @@ var WebServer = Server.extend({
 
 		// Set the content
 		response.content = Json.encode({
-			errors: [error.getPublicData()],
+			errors: [error.getPublicObject()],
 			request: request.getPublicErrorData(),
 		});
 
@@ -359,7 +359,7 @@ var WebServer = Server.extend({
 
 		// The content to return in the request
 		var content = {
-			errors: [error.getPublicData()],
+			errors: [error.getPublicObject()],
 		};
 
 		// Add request data to the content if we have it
