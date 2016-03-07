@@ -1,5 +1,7 @@
 // Class
-var EvalError = Error;
+var EvalError = Error.extend({
+	
+});
 
 // Export
 module.exports = EvalError;

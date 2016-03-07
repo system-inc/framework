@@ -5,20 +5,30 @@ var Assert = Framework.require('system/test/Assert.js');
 // Class
 var ErrorTest = Test.extend({
 
-	testErrorConstruction: function() {
+	testErrorConstruction: function*() {
 		var actual = new Error('testErrorConstruction error message.');
 
+		//Console.info(actual);
+		//Console.info(actual.toString());
+
+		Assert.true(Error.is(actual), 'Error.is()');
+		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
 		Assert.equal(actual.identifier, 'Error', 'identifier is set correctly');
 		Assert.equal(actual.message, 'testErrorConstruction error message.', 'message is set correctly');
 		Assert.true(actual.location, 'has location');
+		Assert.true(actual.location.contains('ErrorTest.js'), 'location is accurate');
 		Assert.true(Class.isInstance(actual.time, Time), 'time is set correctly');
 		Assert.true(actual.stackTrace, 'has stackTrace');
+		Assert.true(Object.is(actual.toObject()), 'toObject()');
+		Assert.true(String.is(actual.toJson()), 'toJson()');
 
-		Console.info(actual);
-		//Console.info(actual.toString());
+		var publicObject = actual.toPublicObject();
+		Assert.false(publicObject.hasKey('location'), 'toPublicObject() does not have location');
+		Assert.false(publicObject.hasKey('stack'), 'toPublicObject() does not have stack');
+		Assert.false(publicObject.hasKey('stackTrace'), 'toPublicObject() does not have stackTrace');
 	},
 
-	testThrowError: function() {
+	testThrowError: function*() {
 		var actual = null;
 
 		try {
@@ -28,37 +38,55 @@ var ErrorTest = Test.extend({
 			actual = error;
 		}
 
+		//Console.info(actual);
+		//Console.info(actual.toString());
+
+		Assert.true(Error.is(actual), 'Error.is()');
+		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
 		Assert.equal(actual.identifier, 'Error', 'identifier is set correctly');
 		Assert.equal(actual.message, 'testThrowError error message.', 'message is set correctly');
 		Assert.true(actual.location, 'has location');
+		Assert.true(actual.location.contains('ErrorTest.js'), 'location is accurate');
 		Assert.true(Class.isInstance(actual.time, Time), 'time is set correctly');
 		Assert.true(actual.stackTrace, 'has stackTrace');
+		Assert.true(Object.is(actual.toObject()), 'toObject()');
+		Assert.true(String.is(actual.toJson()), 'toJson()');
 
-		Console.info(actual);
-		//Console.info(actual.toString());
+		var publicObject = actual.toPublicObject();
+		Assert.false(publicObject.hasKey('location'), 'toPublicObject() does not have location');
+		Assert.false(publicObject.hasKey('stack'), 'toPublicObject() does not have stack');
+		Assert.false(publicObject.hasKey('stackTrace'), 'toPublicObject() does not have stackTrace');
 	},
 
-	//testThrowReferenceError: function*() {
-	//	var actual = null;
+	testThrowReferenceError: function() {
 
-	//	try {
-	//		// Throw a ReferenceError
-	//		eval('zzz');
-	//	}
-	//	catch(error) {
-	//		actual = error;
-	//	}
+		//Assert.equal('hi', 'ho', 'message');
 
-	//	Console.warn(actual);
-	//	Console.warn(actual.toString());
+		//var actual = null;
 
-	//	Assert.true(actual.hasKey('identifier'), 'has identifier');
-	//	Assert.true(actual.hasKey('message'), 'has message');
-	//	Assert.true(actual.hasKey('location'), 'has location');
-	//	Assert.true(actual.hasKey('data'), 'has data');
-	//	Assert.true(actual.hasKey('time'), 'has time');
-	//	Assert.true(actual.hasKey('stackTrace'), 'has stackTrace');
-	//},
+		zzz
+
+		
+
+		//try {
+			// Throw a ReferenceError
+			//eval('zzz');
+		//}
+		//catch(error) {
+			//actual = error;
+		//}
+
+		//Console.warn(actual.toString());
+		//Console.warn(actual.stack);
+		//Console.warn(actual.toObject);
+
+		//Assert.true(Error.is(actual), 'Error.is()');
+		//Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
+		//Assert.true(Class.isInstance(actual, ReferenceError), 'is instance of ReferenceError');
+
+		//Console.warn(actual);
+		//Console.warn(actual.toString());
+	},
 
 	//Error
 	//EvalError

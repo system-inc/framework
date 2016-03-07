@@ -508,11 +508,10 @@ function CapturedTrace$captureStackTrace(ignoreUntil, isTopLevel) {
 
 CapturedTrace.possiblyUnhandledRejection =
 function CapturedTrace$PossiblyUnhandledRejection(reason) {
-    if (typeof console === "object") {
+    // Use Framework to log errors
+    Console.error(reason);
 
-        // Use Framework to log errors
-        Console.error(reason, reason.toObject());
-
+    //if (typeof console === "object") {
         //var message;
         //if (typeof reason === "object" || typeof reason === "function") {
         //    var stack = reason.stack;
@@ -527,7 +526,7 @@ function CapturedTrace$PossiblyUnhandledRejection(reason) {
         //    typeof console.log === "object") {
         //    console.log(message);
         //}
-    }
+    //}
 };
 
 CapturedTrace.combine = function CapturedTrace$Combine(current, prev) {

@@ -27,11 +27,11 @@ var Error = function() {
 		return object;
 	};
 
-	this.getPublicObject = function() {
+	this.toPublicObject = function() {
 		var object = this.toObject();
 		
 		delete object['location'];
-		delete object['data'];
+		delete object['stackTrace'];
 
 		return object;
 	};
@@ -43,11 +43,12 @@ var Error = function() {
 	this.toString = function() {
 		//return Json.indent(this.toObject(true));
 
-		var string = '[Framework] ';
+		//var string = '[Framework] ';
+		var string = '';
 		
-		// The error name
-		if(this.name) {
-			string += this.name+': ';
+		// The error identifier
+		if(this.identifier) {
+			string += this.identifier+': ';
 		}
 
 		// The error message
@@ -62,7 +63,10 @@ var Error = function() {
 		}
 
 		// Add stack trace
-		string += this.stackTrace;
+		string += this.stack.stackTraceToString();
+
+		// Add the time
+		string += '    at '+this.time;
 
 		return string;
 	};
@@ -95,20 +99,20 @@ var Error = function() {
 	this.location = firstCallSite.file+':'+firstCallSite.lineNumber+':'+firstCallSite.columnNumber;
 
 	// Generate the stack trace string
-	this.stackTrace = this.stack.stackTraceToString();
+	this.stackTrace = this.toString();
 };
 
 // Static properties
 
-Error.stackTraceLimit = 100;
+Error.stackTraceLimit = StandardError.stackTraceLimit;
 
 // Static methods
-
-Error.extend = Class.extend; // Allow Error to be extended
 
 Error.is = function(value) {
 	return value instanceof Error;
 };
+
+Error.extend = Class.extend; // Allow Error to be extended
 
 Error.captureStackTrace = StandardError.captureStackTrace;
 

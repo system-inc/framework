@@ -22,7 +22,6 @@ Assert.true = function(value, message) {
 			status: 'failed',
 			assertion: 'true',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -49,7 +48,6 @@ Assert.false = function(value, message) {
 			status: 'failed',
 			assertion: 'false',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -76,7 +74,6 @@ Assert.equal = function(actual, expected, message) {
 			status: 'failed',
 			assertion: 'equal',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -103,7 +100,6 @@ Assert.notEqual = function(actual, expected, message) {
 			status: 'failed',
 			assertion: 'notEqual',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -243,7 +239,6 @@ Assert.deepEqual = function(actual, expected, message) {
 			status: 'failed',
 			assertion: 'deepEqual',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -270,7 +265,6 @@ Assert.notDeepEqual = function(actual, expected, message) {
 			status: 'failed',
 			assertion: 'notDeepEqual',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -297,7 +291,6 @@ Assert.strictEqual = function(actual, expected, message) {
 			status: 'failed',
 			assertion: 'strictEqual',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -324,7 +317,6 @@ Assert.notStrictEqual = function(actual, expected, message) {
 			status: 'failed',
 			assertion: 'notStrictEqual',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -351,7 +343,6 @@ Assert.greaterThan = function(actual, minimum, message) {
 			status: 'failed',
 			assertion: 'greaterThan',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -378,7 +369,6 @@ Assert.greaterThanOrEqualTo = function(actual, minimum, message) {
 			status: 'failed',
 			assertion: 'greaterThanOrEqualTo',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -405,7 +395,6 @@ Assert.lessThan = function(actual, maximum, message) {
 			status: 'failed',
 			assertion: 'lessThan',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -432,7 +421,6 @@ Assert.lessThanOrEqualTo = function(actual, maximum, message) {
 			status: 'failed',
 			assertion: 'lessThanOrEqualTo',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -505,7 +493,6 @@ Assert.throws = function(block, error, message) {
 			status: 'failed',
 			assertion: 'throws',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 
@@ -530,7 +517,6 @@ Assert.doesNotThrow = function(block, message) {
 			status: 'failed',
 			assertion: 'doesNotThrow',
 			message: message,
-			errorObject: error.toObject(),
 			error: error,
 		});
 

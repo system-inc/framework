@@ -152,7 +152,8 @@ var StackTrace = Class.extend({
 
 	// StackTrace.toString is called when errors happen, so we use this.error.toString which will call StackTrace.stackTraceToString
 	toString: function() {
-		return this.error.toString();
+		return 'stacktostring';
+		//return this.error.toString();
 	},
 
 });

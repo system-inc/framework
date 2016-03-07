@@ -174,7 +174,9 @@ Console.prepareMessage = function(passedArguments, messageType) {
 	for(var i = 0; i < passedArguments.length; i++) {
 		// If we have an instance of an Error object
 		if(passedArguments[i] && Error.is(passedArguments[i])) {
-			message += Json.indent(passedArguments[i].toObject(true));
+			// Don't show the .stack property
+			message += Json.indent(passedArguments[i].toObject());
+			//message += passedArguments[i].toString();
 		}
 		// If we have a function
 		else if(passedArguments[i] && Function.is(passedArguments[i])) {

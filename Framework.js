@@ -19,7 +19,9 @@ Primitive = require('./globals/custom/Primitive.js');
 Time = require('./globals/custom/Time.js');
 
 // Globals - Standard - depend on Class
-Error = require('./globals/standard/errors/Error.js');
+Error = require('./globals/standard/errors/Error.test.js');
+FrameworkError = require('./globals/standard/errors/FrameworkError.js');
+//Error = require('./globals/standard/errors/Error.js');
 //EvalError = require('./globals/standard/errors/EvalError.js');
 //InternalError = require('./globals/standard/errors/InternalError.js');
 //RangeError = require('./globals/standard/errors/RangeError.js');

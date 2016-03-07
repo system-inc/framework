@@ -348,6 +348,7 @@ var Proctor = Class.extend({
 
 		// Add an event listener to listen for errors on the domain
 		domain.on('error', function(error) {
+			//Console.log('Domain error');
 			//Console.log('Caught unhandled domain error!', error);
 
 			// Stop the stopwatch for the test
@@ -358,7 +359,6 @@ var Proctor = Class.extend({
 			this.failedTests.push({
 				'test': this.tests[this.currentTest.name],
 				'method': this.currentTest.method,
-				'errorObject': error.toObject(),
 				'error': error,
 			});
 
@@ -390,6 +390,10 @@ var Proctor = Class.extend({
 		}
 		// If the test fails
 		catch(error) {
+			Console.warn('Caught error');
+			Console.warn(error);
+			Console.warn(error.stack.toString());
+
 			// Stop the stopwatch for the test
 			this.currentTestMethodStopwatch.stop();
 
@@ -398,7 +402,6 @@ var Proctor = Class.extend({
 			this.failedTests.push({
 				'test': this.tests[this.currentTest.name],
 				'method': this.currentTest.method,
-				'errorObject': error.toObject(),
 				'error': error,
 			});
 
@@ -472,7 +475,7 @@ var Proctor = Class.extend({
 
 		// Exit the process if we are on a terminal
 		if(Console.onTerminal()) {
-			Node.Process.exit();
+			Node.exit();
 		}
 	},
 
@@ -496,7 +499,7 @@ var Proctor = Class.extend({
 
 		// Exit the process if we are on a terminal
 		if(Console.onTerminal()) {
-			Node.Process.exit();
+			Node.exit();
 		}
 	},
 

@@ -109,18 +109,12 @@ var TestReporter = Class.extend({
 			Console.writeLine(Terminal.style(data.failures+' failing ('+this.failedAssertionCount+' assertions)', 'red'));
 
 			data.failedTests.each(function(index, failedTest) {
-				Console.writeLine("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+failedTest.errorObject.identifier+' '+Terminal.style('('+failedTest.errorObject.message+')', 'gray'));
-				if(!failedTest.errorObject.data.actual) {
-					Console.writeLine('    '+Terminal.style(failedTest.errorObject.message, 'red'));
-				}
-				else {
-					Console.writeLine('    '+Terminal.style(failedTest.errorObject.data.actual+' '+failedTest.errorObject.data.operator+' '+failedTest.errorObject.data.expected, 'red'));
-				}
-				
-				Console.writeLine('    '+failedTest.errorObject.location);
+				//Console.log(index, failedTest);
 
-				var stackTrace = Console.prepareMessage.call(this, [failedTest.error]);
-				Console.writeLine("\n"+Terminal.style(stackTrace, 'gray'));
+				Console.writeLine("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+failedTest.error.identifier);
+				//Console.writeLine('    '+Terminal.style(failedTest.error.data.actual+' '+failedTest.error.data.operator+' '+failedTest.error.data.expected, 'red'));
+				
+				//Console.writeLine('    '+failedTest.error.stackTrace.replace("\n", "\n  "));
 			});
 		}
 
