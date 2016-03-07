@@ -1,5 +1,5 @@
 // Class
-var HttpError = FrameworkError.extend({
+var HttpError = Exception.extend({
 
 	code: null,
 

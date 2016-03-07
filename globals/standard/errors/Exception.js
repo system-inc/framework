@@ -1,7 +1,7 @@
 // Class
-var FrameworkError = Class.extend({
+var Exception = Class.extend({
 
-	identifier: 'FrameworkError',
+	identifier: 'Exception',
 	message: null,
 	location: null,
 	time: new Time(),
@@ -9,6 +9,11 @@ var FrameworkError = Class.extend({
 	stackTrace: null,
 
 	construct: function(message) {
+		var error = Error.apply(this, arguments);
+
+		// https://github.com/v8/v8/wiki/Stack%20Trace%20API#stack-trace-collection-for-custom-exceptions
+  		Error.captureStackTrace(error, Exception);
+
 		// Create an error
 		var error = Error.apply(this, arguments);
 
@@ -95,9 +100,9 @@ var FrameworkError = Class.extend({
 
 // Static methods
 
-FrameworkError.is = function(value) {
-	return value instanceof FrameworkError;
+Exception.is = function(value) {
+	return value instanceof Exception;
 };
 
 // Export
-module.exports = FrameworkError;
+module.exports = Exception;

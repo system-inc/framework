@@ -348,8 +348,8 @@ var Proctor = Class.extend({
 
 		// Add an event listener to listen for errors on the domain
 		domain.on('error', function(error) {
-			//Console.log('Domain error');
-			//Console.log('Caught unhandled domain error!', error);
+			Console.log('Domain error');
+			Console.log('Caught unhandled domain error!', error);
 
 			// Stop the stopwatch for the test
 			this.currentTestMethodStopwatch.stop();

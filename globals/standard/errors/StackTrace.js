@@ -5,7 +5,7 @@ var StackTrace = Class.extend({
 	callSites: null,
 	
 	construct: function(error, callSites) {
-		this.error = error; // This is orinally the StandardError, later we call StackTrace.setError() to change it to Error
+		this.error = error;
 
 		// CallSite properties:
 		//   getThis: returns the value of this
@@ -79,10 +79,6 @@ var StackTrace = Class.extend({
 		}
 
 		return callSiteData;
-	},
-
-	setError: function(error) {
-		this.error = error;
 	},
 
 	// WARNING: This method is super fragile and any changes could cause the app to crash and it is super hard to figure out why if this is broken
