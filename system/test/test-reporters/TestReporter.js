@@ -91,10 +91,10 @@ var TestReporter = Class.extend({
 		//Console.writeLine('    finishedRunningTestMethod', data);	
 
 		if(data.status == 'passed') {
-			Console.writeLine('    '+Terminal.style('✓', 'green')+' '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' ('+this.currentTestMethodAssertionCount+' '+(this.currentTestMethodAssertionCount == 1 ? 'assertion' : 'assertions')+') '+this.getElapsedTimeString(data.stopwatch.elapsedTime, data.stopwatch.time.precision, true, 5, 30));
+			Console.writeLine('    '+Terminal.style('✓', 'green')+' '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' ('+this.currentTestMethodAssertionCount+' '+(this.currentTestMethodAssertionCount == 1 ? 'assertion' : 'assertions')+') '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30));
 		}
 		else if(data.status == 'failed') {
-			Console.writeLine('    '+Terminal.style('✗ ('+data.failedTests.length+') '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(data.stopwatch.elapsedTime, data.stopwatch.time.precision, true, 5, 30), 'red'));
+			Console.writeLine('    '+Terminal.style('✗ ('+data.failedTests.length+') '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30), 'red'));
 		}
 	},
 
@@ -104,7 +104,7 @@ var TestReporter = Class.extend({
 
 	finishedRunningTests: function(data) {
 		// Show the total passing tests
-		Console.writeLine(Terminal.style("\n"+data.passes+' passing ('+this.passedAssertionCount+' assertions)', 'green')+' '+this.getElapsedTimeString(data.stopwatch.elapsedTime, data.stopwatch.time.precision));
+		Console.writeLine(Terminal.style("\n"+data.passes+' passing ('+this.passedAssertionCount+' assertions)', 'green')+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision));
 		
 		// If we have failures
 		if(data.failures > 0) {

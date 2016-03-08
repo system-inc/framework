@@ -2,9 +2,17 @@
 var Stopwatch = Class.extend({
 
 	precision: 'milliseconds',
+
 	startTime: null,
+	highResolutionStartTime: null,
+
 	stopTime: null,
+	highResolutionStopTime: null,
+
 	elapsedTime: null,
+	highResolutionElapsedTime: null,
+	highResolutionElapsedTimeInNanoseconds: null,
+
 	laps: [],
 	time: null,
 
@@ -20,16 +28,48 @@ var Stopwatch = Class.extend({
 	},
 
 	start: function() {
+		this.highResolutionStartTime = Node.Process.hrtime();
 		this.startTime = this.time.now();
 
 		return this;
 	},
 
 	stop: function() {
+		this.highResolutionStopTime = Node.Process.hrtime();
 		this.stopTime = this.time.now();
+
+		this.highResolutionElapsedTime = [
+			this.highResolutionStopTime[0] - this.highResolutionStartTime[0], // seconds
+			this.highResolutionStopTime[1] - this.highResolutionStartTime[1], // nanoseconds
+		];
+
+		this.highResolutionElapsedTimeInNanoseconds =  (this.highResolutionElapsedTime[0] * 1e9) + this.highResolutionElapsedTime[1]; // (seconds * 1e9) + nanoseconds
 		this.elapsedTime = this.stopTime - this.startTime;
 
 		return this;
+	},
+
+	getHighResolutionElapsedTime: function(precision) {
+		if(precision === undefined) {
+			precision = this.precision;
+		}
+
+		var highResolutionElapsedTime = null;
+
+		// Milliseconds
+		if(precision == 'milliseconds') {
+			highResolutionElapsedTime = this.highResolutionElapsedTimeInNanoseconds / 1000000;
+		}
+		// Microseconds
+		else if(precision == 'microseconds') {
+			highResolutionElapsedTime = this.highResolutionElapsedTimeInNanoseconds / 1000;
+		}
+		// Nanoseconds
+		else if(precision == 'nanoseconds') {
+			highResolutionElapsedTime = this.highResolutionElapsedTimeInNanoseconds;
+		}
+
+		return highResolutionElapsedTime;
 	},
 
 	lap: function(note) {
@@ -53,7 +93,7 @@ var Stopwatch = Class.extend({
 		});
 
 		return this;
-	}
+	},
 
 });
 
