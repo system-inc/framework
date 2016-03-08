@@ -172,20 +172,18 @@ Console.prepareMessage = function(passedArguments, messageType) {
 
 	// Build the message
 	for(var i = 0; i < passedArguments.length; i++) {
-		// If we have an instance of an Error object
-		if(passedArguments[i] && Error.is(passedArguments[i])) {
-			// Don't show the .stack property
-			//message += Json.indent(passedArguments[i].toObject());
-			//message += passedArguments[i];
-			message += Json.indent(passedArguments[i]);
-		}
 		// If we have a function
-		else if(passedArguments[i] && Function.is(passedArguments[i])) {
+		if(passedArguments[i] && Function.is(passedArguments[i])) {
 			message += Node.Utility.inspect(passedArguments[i], {
 				'showHidden': true,
 				'depth': 2,
 				'colors': true,
 			});
+		}
+		// If we have an error
+		else if(passedArguments[i] && Error.is(passedArguments[i])) {
+			// Use StackTrace.toString() and style it red
+			message += Terminal.style(passedArguments[i].stack, 'red');
 		}
 		// If we have an non-primitive encode it into Json and indent it
 		else if(passedArguments[i] && !Primitive.is(passedArguments[i])) {
@@ -208,20 +206,10 @@ Console.prepareMessage = function(passedArguments, messageType) {
 		// Capture the stack trace from the callee
 	    Error.captureStackTrace(error, passedArguments.callee);
 
-	    // Format the stack trace
-	    var firstCallSite = error.stack.callSites.first();
-		var lineNumber = firstCallSite.getLineNumber();
-		var columnNumber = firstCallSite.getColumnNumber();
-		var fileName = firstCallSite.getFileName();
-		if(fileName) {
-			fileName = fileName.split(Node.Path.separator).reverse()[0];
-		}
+	    // Get the location data of the first call site
+	    var callSiteData = error.stack.getCallSiteData(0);
 
-	    //Console.log('Line Number'+': '+lineNumber);
-	    //Console.log('Column Number'+': '+columnNumber);
-	    //Console.log('File Name'+': '+fileName);
-
-    	message = '('+fileName+':'+lineNumber+') '+message;
+    	message = '('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+message;
     	message = '['+new Time().getDateTime()+'] '+message;
     }
 

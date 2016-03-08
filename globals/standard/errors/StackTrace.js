@@ -146,10 +146,29 @@ var StackTrace = Class.extend({
 		return string;
 	},
 
-	// StackTrace.toString is called when errors happen, so we use this.error.toString which will call StackTrace.stackTraceToString
 	toString: function() {
-		return 'stacktostring';
-		//return this.error.toString();
+		var string = '';
+		
+		// The error identifier
+		string += this.error.name+': ';
+
+		// The error message
+		if(this.error.message) {
+			string += this.error.message;	
+		}
+		else {
+			string += '(no error message)';
+		}		
+
+		// Add a new line if we need one
+		if(string[string.length - 1] && string[string.length - 1] != "\n") {
+			string += "\n";	
+		}
+
+		// Add stack trace
+		string += this.stackTraceToString();
+
+		return string;
 	},
 
 });

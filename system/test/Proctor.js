@@ -348,8 +348,7 @@ var Proctor = Class.extend({
 
 		// Add an event listener to listen for errors on the domain
 		domain.on('error', function(error) {
-			Console.log('Domain error');
-			Console.log('Caught unhandled domain error!', error);
+			//Console.log('Caught domain error', error);
 
 			// Stop the stopwatch for the test
 			this.currentTestMethodStopwatch.stop();
@@ -390,9 +389,7 @@ var Proctor = Class.extend({
 		}
 		// If the test fails
 		catch(error) {
-			Console.warn('Caught error');
-			Console.warn(error);
-			Console.warn(error.stack.toString());
+			//Console.warn('Caught error', error);
 
 			// Stop the stopwatch for the test
 			this.currentTestMethodStopwatch.stop();
@@ -510,6 +507,7 @@ var Proctor = Class.extend({
 Proctor.globals = {
 	expected: [
 		'Console',
+		'Exception',
 		'GLOBAL',
 		'Generator',
 		'Json',

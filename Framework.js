@@ -21,14 +21,6 @@ Time = require('./globals/custom/Time.js');
 // Globals - Standard - depend on Class
 Error = require('./globals/standard/errors/Error.js');
 Exception = require('./globals/standard/errors/Exception.js');
-//Error = require('./globals/standard/errors/Error.js');
-//EvalError = require('./globals/standard/errors/EvalError.js');
-//InternalError = require('./globals/standard/errors/InternalError.js');
-//RangeError = require('./globals/standard/errors/RangeError.js');
-//ReferenceError = require('./globals/standard/errors/ReferenceError.js');
-//SyntaxError = require('./globals/standard/errors/SyntaxError.js');
-//TypeError = require('./globals/standard/errors/TypeError.js');
-//URIError = require('./globals/standard/errors/URIError.js');
 
 // Globals - Standard - depend on Generator
 Number = require('./globals/standard/Number.js');

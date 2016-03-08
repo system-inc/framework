@@ -7,92 +7,86 @@ var ErrorTest = Test.extend({
 
 	testErrorConstruction: function*() {
 		var actual = new Error('testErrorConstruction error message.');
+		//Console.info(actual);
 
-		Console.info(actual);
-		Console.info(actual.toString());
-
-		//Assert.true(Error.is(actual), 'Error.is()');
-		//Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
-		//Assert.equal(actual.identifier, 'Error', 'identifier is set correctly');
-		//Assert.equal(actual.message, 'testErrorConstruction error message.', 'message is set correctly');
-		//Assert.true(actual.location, 'has location');
-		//Assert.true(actual.location.contains('ErrorTest.js'), 'location is accurate');
-		//Assert.true(Class.isInstance(actual.time, Time), 'time is set correctly');
-		//Assert.true(actual.stackTrace, 'has stackTrace');
-		//Assert.true(Object.is(actual.toObject()), 'toObject()');
-		//Assert.true(String.is(actual.toJson()), 'toJson()');
-
-		//var publicObject = actual.toPublicObject();
-		//Assert.false(publicObject.hasKey('location'), 'toPublicObject() does not have location');
-		//Assert.false(publicObject.hasKey('stack'), 'toPublicObject() does not have stack');
-		//Assert.false(publicObject.hasKey('stackTrace'), 'toPublicObject() does not have stackTrace');
+		Assert.true(Error.is(actual), 'Error.is()');
+		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
+		Assert.equal(actual.name, 'Error', 'name is set correctly');
+		Assert.equal(actual.message, 'testErrorConstruction error message.', 'message is set correctly');
 	},
 
-	//testThrowError: function*() {
-	//	var actual = null;
+	testThrowError: function*() {
+		var actual = null;
 
-	//	try {
-	//		throw new Error('testThrowError error message.');
-	//	}
-	//	catch(error) {
-	//		actual = error;
-	//	}
+		try {
+			throw new Error('testThrowError error message.');
+		}
+		catch(error) {
+			actual = error;
+		}
+		//Console.info(actual);
+		
+		Assert.true(Error.is(actual), 'Error.is()');
+		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
+		Assert.equal(actual.name, 'Error', 'name is set correctly');
+		Assert.equal(actual.message, 'testThrowError error message.', 'message is set correctly');
+	},
 
-	//	//Console.info(actual);
-	//	//Console.info(actual.toString());
+	testCatchReferenceErrorInNormalFunction: function() { // <- this is a normal function, not a generator
+		var actual = null;
 
-	//	Assert.true(Error.is(actual), 'Error.is()');
-	//	Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
-	//	Assert.equal(actual.identifier, 'Error', 'identifier is set correctly');
-	//	Assert.equal(actual.message, 'testThrowError error message.', 'message is set correctly');
-	//	Assert.true(actual.location, 'has location');
-	//	Assert.true(actual.location.contains('ErrorTest.js'), 'location is accurate');
-	//	Assert.true(Class.isInstance(actual.time, Time), 'time is set correctly');
-	//	Assert.true(actual.stackTrace, 'has stackTrace');
-	//	Assert.true(Object.is(actual.toObject()), 'toObject()');
-	//	Assert.true(String.is(actual.toJson()), 'toJson()');
-
-	//	var publicObject = actual.toPublicObject();
-	//	Assert.false(publicObject.hasKey('location'), 'toPublicObject() does not have location');
-	//	Assert.false(publicObject.hasKey('stack'), 'toPublicObject() does not have stack');
-	//	Assert.false(publicObject.hasKey('stackTrace'), 'toPublicObject() does not have stackTrace');
-	//},
-
-	//testThrowReferenceError: function() {
-
-		//Assert.equal('hi', 'ho', 'message');
-
-		//var actual = null;
-	
-
-		//try {
+		try {
 			// Throw a ReferenceError
-			//eval('zzz');
-		//}
-		//catch(error) {
-			//actual = error;
-		//}
+			eval('zzz');
+		}
+		catch(error) {
+			actual = error;
+		}
+		//Console.info(actual);
 
-		//Console.warn(actual.toString());
-		//Console.warn(actual.stack);
-		//Console.warn(actual.toObject);
+		Assert.true(Error.is(actual), 'Error.is()');
+		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
+		Assert.true(Class.isInstance(actual, ReferenceError), 'is instance of ReferenceError');
+		Assert.equal(actual.name, 'ReferenceError', 'name is set correctly');
+		Assert.equal(actual.message, 'zzz is not defined', 'message is set correctly');
 
-		//Assert.true(Error.is(actual), 'Error.is()');
-		//Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
-		//Assert.true(Class.isInstance(actual, ReferenceError), 'is instance of ReferenceError');
+		var firstCallSiteData = actual.stack.getCallSiteData(0);
+		//Console.info(firstCallSiteData);
+		Assert.equal(firstCallSiteData.functionName, 'eval', 'first call site data is correct');
+		
+		var secondCallSiteData = actual.stack.getCallSiteData(1);
+		//Console.info(secondCallSiteData);
+		Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInNormalFunction'), 'second call site data function name is correct');
+		Assert.equal(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site data fileName is correct');
+	},
 
-		//Console.warn(actual);
-		//Console.warn(actual.toString());
-	//},
+	testCatchReferenceErrorInGeneratorFunction: function*() {
+		var actual = null;
 
-	//Error
-	//EvalError
-	//InternalError
-	//RangeError
-	//ReferenceError
-	//SyntaxError
-	//TypeError
-	//URIError
+		try {
+			// Throw a ReferenceError
+			eval('zzz');
+		}
+		catch(error) {
+			actual = error;
+		}
+		//Console.info(actual);
+
+		Assert.true(Error.is(actual), 'Error.is()');
+		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
+		Assert.true(Class.isInstance(actual, ReferenceError), 'is instance of ReferenceError');
+		Assert.equal(actual.name, 'ReferenceError', 'name is set correctly');
+		Assert.equal(actual.message, 'zzz is not defined', 'message is set correctly');
+
+		var firstCallSiteData = actual.stack.getCallSiteData(0);
+		//Console.info(firstCallSiteData);
+		Assert.equal(firstCallSiteData.functionName, 'eval', 'first call site data is correct');
+		
+		var secondCallSiteData = actual.stack.getCallSiteData(1);
+		//Console.info(secondCallSiteData);
+		Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInGeneratorFunction'), 'second call site data function name is correct');
+		Assert.equal(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site data fileName is correct');
+	},
 
 });
 

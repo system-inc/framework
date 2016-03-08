@@ -103,21 +103,35 @@ var TestReporter = Class.extend({
 	},	
 
 	finishedRunningTests: function(data) {
+		// Show the total passing tests
 		Console.writeLine(Terminal.style("\n"+data.passes+' passing ('+this.passedAssertionCount+' assertions)', 'green')+' '+this.getElapsedTimeString(data.stopwatch.elapsedTime, data.stopwatch.time.precision));
 		
+		// If we have failures
 		if(data.failures > 0) {
+			// Show the total failed tests
 			Console.writeLine(Terminal.style(data.failures+' failing ('+this.failedAssertionCount+' assertions)', 'red'));
 
+			// Show each failed test
 			data.failedTests.each(function(index, failedTest) {
 				//Console.log(index, failedTest);
 
-				Console.writeLine("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+failedTest.error.identifier);
-				//Console.writeLine('    '+Terminal.style(failedTest.error.data.actual+' '+failedTest.error.data.operator+' '+failedTest.error.data.expected, 'red'));
+				Console.writeLine("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+failedTest.error.name);	
+
+				// Show the location of the failed test
+				var firstCallSiteData = failedTest.error.stack.getCallSiteData(0);
+				Console.writeLine(Terminal.style('    ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));
+
+				// If we have AssertionError data
+				if(failedTest.error.actual) {
+					Console.writeLine('    '+Terminal.style(failedTest.error.actual+' '+failedTest.error.operator+' '+failedTest.error.expected, 'red'));	
+				}
 				
-				//Console.writeLine('    '+failedTest.error.stackTrace.replace("\n", "\n  "));
+				// Show the full error with stack trace
+				Console.writeLine('    '+failedTest.error.stack.toString().replace("\n", "\n    ").trim());
 			});
 		}
 
+		// Show the total leaked variables
 		if(data.leakedGlobals.length) {
 			Console.writeLine(Terminal.style('Leaked global variables: '+data.leakedGlobals.join(', '), 'red'));
 		}
