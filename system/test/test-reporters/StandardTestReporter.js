@@ -21,14 +21,14 @@ var StandardTestReporter = TestReporter.extend({
 				Console.writeLine('      '+Terminal.style('✗ Assert.'+assertionData.assertion+(assertionData.message ? ' ('+assertionData.message+')' : ' (no message)'), 'red'));
 
 				// If we have AssertionError data (Node's AssertionError has the properties 'actual', 'operator', and 'expected')
-				if(assertionData.error.actual) {
+				if(assertionData.error.actual !== undefined) {
 					// Show the AssertionError data
 					Console.writeLine('      '+Terminal.style('  '+assertionData.error.actual+' '+assertionData.error.operator+' '+assertionData.error.expected, 'red'));
 				}
 				
 				// Show the location of the failed assertion
 				var firstCallSiteData = assertionData.error.stack.getCallSiteData(0);
-				Console.writeLine('      '+Terminal.style('  '+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber, 'red'));
+				Console.writeLine(Terminal.style('        ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'red'));
 			}
 		});
 	},

@@ -122,7 +122,7 @@ var TestReporter = Class.extend({
 				Console.writeLine(Terminal.style('    ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));
 
 				// If we have AssertionError data
-				if(failedTest.error.actual) {
+				if(failedTest.error.actual !== undefined) {
 					Console.writeLine('    '+Terminal.style(failedTest.error.actual+' '+failedTest.error.operator+' '+failedTest.error.expected, 'red'));	
 				}
 				
