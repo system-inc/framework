@@ -1,5 +1,5 @@
 // Class
-var HttpError = Class.extend({
+var HttpError = Error.extend({
 
 	code: null,
 

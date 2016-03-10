@@ -115,11 +115,17 @@ var TestReporter = Class.extend({
 			data.failedTests.each(function(index, failedTest) {
 				//Console.log(index, failedTest);
 
-				Console.writeLine("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+failedTest.error.name);	
+				var errorIdentifier = failedTest.error.name;
+				if(!errorIdentifier) {
+					errorIdentifier = Json.encode(failedTest.error);
+				}
+				Console.writeLine("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+errorIdentifier);	
 
 				// Show the location of the failed test
-				var firstCallSiteData = failedTest.error.stack.getCallSiteData(0);
-				Console.writeLine(Terminal.style('    ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));
+				if(failedTest.error.stack) {
+					var firstCallSiteData = failedTest.error.stack.getCallSiteData(0);
+					Console.writeLine(Terminal.style('    ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));	
+				}
 
 				// If we have AssertionError data
 				if(failedTest.error.actual !== undefined) {
@@ -127,7 +133,9 @@ var TestReporter = Class.extend({
 				}
 				
 				// Show the full error with stack trace
-				Console.writeLine('    '+failedTest.error.stack.toString().replace("\n", "\n    ").trim());
+				if(failedTest.error.stack) {
+					Console.writeLine('    '+failedTest.error.stack.toString().replace("\n", "\n    ").trim());
+				}
 			});
 		}
 

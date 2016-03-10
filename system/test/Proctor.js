@@ -455,6 +455,8 @@ var Proctor = Class.extend({
 	},
 
 	noMoreTests: function() {
+		//Console.log('noMoreTests');
+
 		// Stop the stopwatch
 		this.stopwatch.stop();
 
@@ -469,6 +471,8 @@ var Proctor = Class.extend({
 			failedTests: this.failedTests,
 			leakedGlobals: leakedGlobals,
 		});
+
+		//Console.log('noMoreTests');
 
 		// Exit the process if we are on a terminal
 		if(Console.onTerminal()) {

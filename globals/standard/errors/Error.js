@@ -16,5 +16,7 @@ Error.prepareStackTrace = function(error, callSites) {
 	return new StackTrace(error, callSites);
 };
 
+Error.extend = Class.extend; // Make Error extendable
+
 // Export
 module.exports = Error;
