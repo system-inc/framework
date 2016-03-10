@@ -18,5 +18,15 @@ Error.prepareStackTrace = function(error, callSites) {
 
 Error.extend = Class.extend; // Make Error extendable
 
+Error.toObject = function(error) {
+	var object = {
+		name: error.name,
+		message: error.message,
+		stack: error.stack,
+	};
+
+	return object;
+};
+
 // Export
 module.exports = Error;

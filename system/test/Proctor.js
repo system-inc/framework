@@ -348,7 +348,7 @@ var Proctor = Class.extend({
 
 		// Add an event listener to listen for errors on the domain
 		domain.on('error', function(error) {
-			//Console.log('Caught domain error', error);
+			//Console.warn('Caught domain error', error);
 
 			// Stop the stopwatch for the test
 			this.currentTestMethodStopwatch.stop();
@@ -511,7 +511,6 @@ var Proctor = Class.extend({
 Proctor.globals = {
 	expected: [
 		'Console',
-		'Exception',
 		'GLOBAL',
 		'Generator',
 		'Json',

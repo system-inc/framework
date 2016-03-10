@@ -1,5 +1,5 @@
 // Class
-var Assert = Node.Assert = Node.require('assert');
+var Assert = Node.Assert;
 
 // Static methods
 

@@ -1,17 +1,18 @@
 // Class
 var HttpError = Error.extend({
 
+	name: 'HttpError',
+	identifier: 'httpError',
 	code: null,
+	message: null,
 
-	construct: function(code, message) {
-		// Invoke Error's constructor
-		//this.super.call(this, message);
+	construct: function(message) {
+		// Capture the stack trace (https://github.com/v8/v8/wiki/Stack%20Trace%20API#stack-trace-collection-for-custom-exceptions)
+  		Error.captureStackTrace(this, this.constructor);
 
-		// Shift the stack down two more to start at the real problem
-		//this.stack.shift(2);
-
-		this.code = code;
-		this.identifier = 'http';
+  		if(message) {
+  			this.message = message;	
+  		}
 	},
 
 });

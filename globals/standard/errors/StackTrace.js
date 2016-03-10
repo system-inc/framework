@@ -154,7 +154,7 @@ var StackTrace = Class.extend({
 
 		// The error message
 		if(this.error.message) {
-			string += this.error.message;	
+			string += this.error.message;
 		}
 		else {
 			string += '(no error message)';

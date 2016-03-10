@@ -4,14 +4,10 @@ var HttpError = Framework.require('system/web-server/errors/HttpError.js');
 // Class
 var ForbiddenError = HttpError.extend({
 
-	construct: function(message) {
-		this.super.apply(this, [403, message]);
-
-		this.identifier = 'forbidden';
-		if(!this.message) {
-			this.message = 'Request is forbidden.';
-		}
-	},
+	name: 'ForbiddenError',
+	identifier: 'forbiddenError',
+	code: 403,
+	message: 'Request is forbidden.',
 
 });
 

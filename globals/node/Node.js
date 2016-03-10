@@ -3,6 +3,7 @@ var Node = {};
 
 // Static properties
 
+Node.Assert = require('assert');
 Node.ChildProcess = require('child_process');
 Node.Cluster = require('cluster');
 Node.Cryptography = require('crypto');

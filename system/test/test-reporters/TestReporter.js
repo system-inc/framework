@@ -1,5 +1,6 @@
 // Dependencies
 var Terminal = Framework.require('system/console/Terminal.js');
+var AssertionError = Node.Assert.AssertionError;
 
 // Class
 var TestReporter = Class.extend({
@@ -72,7 +73,7 @@ var TestReporter = Class.extend({
 		//Terminal.clear();
 
 		// Tell the user what we are doing
-		Console.writeLine("\r\n"+'Running '+data.testMethodCount+' '+(data.testMethodCount == 1 ? 'test' : 'tests')+' in '+data.testCount+' test '+(data.testCount == 1 ? 'class' : 'classes')+'...');
+		Console.writeLine("\n"+'Running '+data.testMethodCount+' '+(data.testMethodCount == 1 ? 'test' : 'tests')+' in '+data.testCount+' test '+(data.testCount == 1 ? 'class' : 'classes')+'...');
 	},
 
 	startedRunningTest: function(data) {
@@ -91,10 +92,10 @@ var TestReporter = Class.extend({
 		//Console.writeLine('    finishedRunningTestMethod', data);	
 
 		if(data.status == 'passed') {
-			Console.writeLine('    '+Terminal.style('✓', 'green')+' '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' ('+this.currentTestMethodAssertionCount+' '+(this.currentTestMethodAssertionCount == 1 ? 'assertion' : 'assertions')+') '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30));
+			Console.writeLine(Terminal.style('    ✓', 'green')+' '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' ('+this.currentTestMethodAssertionCount+' '+(this.currentTestMethodAssertionCount == 1 ? 'assertion' : 'assertions')+') '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30));
 		}
 		else if(data.status == 'failed') {
-			Console.writeLine('    '+Terminal.style('✗ ('+data.failedTests.length+') '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30), 'red'));
+			Console.writeLine(Terminal.style('    ✗ ('+data.failedTests.length+') '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30), 'red'));
 		}
 	},
 
@@ -122,19 +123,28 @@ var TestReporter = Class.extend({
 				Console.writeLine("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+errorIdentifier);	
 
 				// Show the location of the failed test
-				if(failedTest.error.stack) {
+				if(Error.is(failedTest.error)) {
 					var firstCallSiteData = failedTest.error.stack.getCallSiteData(0);
 					Console.writeLine(Terminal.style('    ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));	
 				}
+				else {
+					Console.writeLine(Terminal.style('    (unknown location)', 'red'));
+				}				
 
-				// If we have AssertionError data
-				if(failedTest.error.actual !== undefined) {
+				// If we have AssertionError data (Node's AssertionError has the properties 'actual', 'operator', and 'expected')
+				if(Class.isInstance(failedTest.error, AssertionError)) {
 					Console.writeLine('    '+Terminal.style(failedTest.error.actual+' '+failedTest.error.operator+' '+failedTest.error.expected, 'red'));	
+				}
+				else {
+					Console.writeLine(Terminal.style('    (error is not an AssertionError)', 'red'));
 				}
 				
 				// Show the full error with stack trace
-				if(failedTest.error.stack) {
+				if(Error.is(failedTest.error)) {
 					Console.writeLine('    '+failedTest.error.stack.toString().replace("\n", "\n    ").trim());
+				}
+				else {
+					Console.writeLine('    (stack trace not available)');
 				}
 			});
 		}

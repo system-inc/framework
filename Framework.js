@@ -20,7 +20,6 @@ Time = require('./globals/custom/Time.js');
 
 // Globals - Standard - depend on Class
 Error = require('./globals/standard/errors/Error.js');
-Exception = require('./globals/standard/errors/Exception.js');
 
 // Globals - Standard - depend on Generator
 Number = require('./globals/standard/Number.js');
