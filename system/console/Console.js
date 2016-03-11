@@ -97,38 +97,26 @@ Console.writeToDeveloperTools = function(passedArguments, messageType) {
 		messageType = 'log';
 	}
 
-	// Remove ANSI escape codes from strings
-	passedArguments.each(function(passedArgumentIndex, passedArgument) {
-		if(String.is(passedArgument)) {
-			passedArguments[passedArgumentIndex] = Terminal.removeAnsiEscapeCodesFromString(passedArgument);
-		}
-	});
-
 	if(messageType == 'log' || messageType == 'write') {
-		Console.standardLog.apply(this, passedArguments);
+		Console.standardLog.call(this, Console.prepareMessage(passedArguments, messageType, true));
 	}
 	else if(messageType == 'info') {
-		Console.standardInfo.apply(this, passedArguments);
+		Console.standardInfo.call(this, Console.prepareMessage(passedArguments, messageType, true));
 	}
 	else if(messageType == 'warn') {
-		Console.standardWarn.apply(this, passedArguments);
+		Console.standardWarn.call(this, Console.prepareMessage(passedArguments, messageType, true));
 	}
 	else if(messageType == 'error') {
-		//passedArguments.each(function(passedArgumentIndex, passedArgument) {
-		//	if(Error.is(passedArgument)) {
-		//		Console.log(passedArgument.toObject().toJson());
-		//	}
-		//});
-
-		Console.standardError.apply(this, passedArguments);
+		Console.standardError.call(this, Console.prepareMessage(passedArguments, messageType, true));
 	}
 	else if(messageType == 'highlight') {
-		Console.standardLog("%c\n\n                                                |>>>\r\n                                                |\r\n                                            _  _|_  _\r\n                                           |;|_|;|_|;|\r\n                                           \\\\.    .  \/\r\n                                            \\\\:  .  \/\r\n                                             ||:   |\r\n                                             ||:.  |\r\n                                             ||:  .|\r\n                                             ||:   |       \\,\/\r\n                                             ||: , |            \/`\\\r\n                                             ||:   |\r\n                                             ||: . |\r\n              __                            _||_   |\r\n     ____--`~    \'--~~__            __ ----~    ~`---,              ___\r\n-~--~                   ~---__ ,--~\'                  ~~----_____-~\'   `~----~~\n\n\n\n", 'color: #CCC');
-		Console.standardLog.apply(this, passedArguments);
+		var highlight = "%c\n\n                                                |>>>\r\n                                                |\r\n                                            _  _|_  _\r\n                                           |;|_|;|_|;|\r\n                                           \\\\.    .  \/\r\n                                            \\\\:  .  \/\r\n                                             ||:   |\r\n                                             ||:.  |\r\n                                             ||:  .|\r\n                                             ||:   |       \\,\/\r\n                                             ||: , |            \/`\\\r\n                                             ||:   |\r\n                                             ||: . |\r\n              __                            _||_   |\r\n     ____--`~    \'--~~__            __ ----~    ~`---,              ___\r\n-~--~                   ~---__ ,--~\'                  ~~----_____-~\'   `~----~~\n\n\n\n";
+		Console.standardLog.call(this, highlight, 'color: #CCC');
+		Console.standardLog.call(this, Console.prepareMessage(passedArguments, messageType, true));
 	}
 
 	// Write to ConsoleSession
-	Console.writeToSession(Console.prepareMessage(passedArguments, 'write'));
+	Console.writeToSession(Console.prepareMessage(passedArguments, messageType));
 
 	// For logging, always write a newline to the session (developer tools display always uses newlines)
 	Console.writeToSession("\n");
@@ -163,9 +151,15 @@ Console.writeToSession = function(message) {
 	}
 };
 
-Console.prepareMessage = function(passedArguments, messageType) {
+Console.prepareMessage = function(passedArguments, messageType, removeAnsiEscapeCodesFromString) {
+	// messageType defaults to normal
 	if(messageType === undefined) {
 		messageType = 'normal';
+	}
+
+	// removeAnsiEscapeCodesFromString defaults to false
+	if(removeAnsiEscapeCodesFromString === undefined) {
+		removeAnsiEscapeCodesFromString = false;
 	}
 
 	var message = '';
@@ -214,18 +208,23 @@ Console.prepareMessage = function(passedArguments, messageType) {
     }
 
     // Style message types
-    if(messageType == 'info') {
-    	message = Terminal.style(message, 'cyan');
+    if(removeAnsiEscapeCodesFromString) {
+    	message = Terminal.removeAnsiEscapeCodesFromString(message);
     }
-    else if(messageType == 'warn') {
-    	message = Terminal.style(message, 'yellow');
-    }
-    else if(messageType == 'error') {
-    	message = Terminal.style(message, 'red');
-    }
-    else if(messageType == 'highlight') {
-    	// Wrap the message in ASCII
-		message = Terminal.style("\n\n                                                |>>>\r\n                                                |\r\n                                            _  _|_  _\r\n                                           |;|_|;|_|;|\r\n                                           \\\\.    .  \/\r\n                                            \\\\:  .  \/\r\n                                             ||:   |\r\n                                             ||:.  |\r\n                                             ||:  .|\r\n                                             ||:   |       \\,\/\r\n                                             ||: , |            \/`\\\r\n                                             ||:   |\r\n                                             ||: . |\r\n              __                            _||_   |\r\n     ____--`~    \'--~~__            __ ----~    ~`---,              ___\r\n-~--~                   ~---__ ,--~\'                  ~~----_____-~\'   `~----~~\n\n\n\n", 'gray')+Terminal.style(message+"\n\n", 'green');
+    else {
+    	if(messageType == 'info') {
+	    	message = Terminal.style(message, 'cyan');
+	    }
+	    else if(messageType == 'warn') {
+	    	message = Terminal.style(message, 'yellow');
+	    }
+	    else if(messageType == 'error') {
+	    	message = Terminal.style(message, 'red');
+	    }
+	    else if(messageType == 'highlight') {
+	    	// Wrap the message in ASCII
+			message = Terminal.style("\n\n                                                |>>>\r\n                                                |\r\n                                            _  _|_  _\r\n                                           |;|_|;|_|;|\r\n                                           \\\\.    .  \/\r\n                                            \\\\:  .  \/\r\n                                             ||:   |\r\n                                             ||:.  |\r\n                                             ||:  .|\r\n                                             ||:   |       \\,\/\r\n                                             ||: , |            \/`\\\r\n                                             ||:   |\r\n                                             ||: . |\r\n              __                            _||_   |\r\n     ____--`~    \'--~~__            __ ----~    ~`---,              ___\r\n-~--~                   ~---__ ,--~\'                  ~~----_____-~\'   `~----~~\n\n\n\n", 'gray')+Terminal.style(message+"\n\n", 'green');
+	    }
     }
 
     return message;

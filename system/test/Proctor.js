@@ -476,7 +476,10 @@ var Proctor = Class.extend({
 
 		// Exit the process if we are on a terminal
 		if(Console.onTerminal()) {
-			Node.exit();
+			// Give the console session logger some time to finish writing to disk
+			Function.delay(250, function() {
+				Node.exit();
+			});
 		}
 	},
 
@@ -490,18 +493,6 @@ var Proctor = Class.extend({
 		}
 
 		return leakedGlobals;
-	},
-
-	exit: function(message) {
-		// Finished running tests
-		this.emit('TestReporter.finishedRunningTests');
-
-		Console.log(message+"\n");
-
-		// Exit the process if we are on a terminal
-		if(Console.onTerminal()) {
-			Node.exit();
-		}
 	},
 
 });
