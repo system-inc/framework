@@ -1,9 +1,11 @@
 {
 	title: 'Test Proctor',
 	command: {
+		version: '0.1.0',
 		options: [
 			{
 				identifier: 'path',
+				type: 'string',
 				defaultValue: null,
 				description: 'The path containing tests to run.',
 				aliases: [
@@ -12,6 +14,7 @@
 			},
 			{
 				identifier: 'filePattern',
+				type: 'string',
 				defaultValue: null,
 				description: 'A pattern used to filter which test files will be run.',
 				aliases: [
@@ -20,6 +23,7 @@
 			},
 			{
 				identifier: 'methodPattern',
+				type: 'string',
 				defaultValue: null,
 				description: 'A pattern used to filter which test class methods will be run.',
 				aliases: [
@@ -28,6 +32,7 @@
 			},
 			{
 				identifier: 'reporter',
+				type: 'string',
 				defaultValue: 'standard',
 				description: 'The test reporter to use. Currently, "standard", "dot", and "concise" are available, with "standard" being the default.',
 				aliases: [
@@ -36,6 +41,7 @@
 			},
 			{
 				identifier: 'supervise',
+				type: 'boolean',
 				defaultValue: false,
 				description: 'Watch for changes and run tests when changes happen. Either "true" or "false", with "false" being the default.',
 				aliases: [
@@ -44,6 +50,7 @@
 			},
 			{
 				identifier: 'breakOnError',
+				type: 'boolean',
 				defaultValue: false,
 				description: 'Stop running tests on the first error encountered. Either "true" or "false", with "false" being the default.',
 				aliases: [
@@ -71,5 +78,5 @@
 		ffmpeg: {},
 		test: {},
 		webServer: {},
-	}
+	},
 }
