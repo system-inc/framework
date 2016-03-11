@@ -34,8 +34,10 @@ var Proctor = Class.extend({
 	currentTestMethodStopwatch: null,
 
 	currentTestMethodStatus: null,
+
+	breakOnError: false,
 	
-	construct: function(testReporterIdentifier) {
+	construct: function(testReporterIdentifier, breakOnError) {
 		// Instantiate a test reporter
 		if(testReporterIdentifier === undefined) {
 			this.testReporter = new StandardTestReporter();
@@ -54,6 +56,11 @@ var Proctor = Class.extend({
 		}
 		else {
 			this.testReporter = new StandardTestReporter();
+		}
+
+		// Break on error
+		if(breakOnError !== undefined) {
+			this.breakOnError = breakOnError;
 		}
 	},
 
@@ -424,7 +431,13 @@ var Proctor = Class.extend({
 
 		//yield Function.delay(50);
 
-		this.runNextTest();
+		// Break on errors if we should
+		if(this.breakOnError && this.failedTests.length) {
+			this.noMoreTests();
+		}
+		else {
+			this.runNextTest();
+		}
 	},
 
 	onNewTestClass: function*() {

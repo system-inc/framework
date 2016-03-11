@@ -13,7 +13,7 @@ var TestModule = Module.extend({
 		yield this.super.apply(this, arguments);
 
 		// Create a Proctor to oversee all of the tests as they run
-		this.proctor = new Proctor(Project.command.options.reporter);
+		this.proctor = new Proctor(Project.command.options.reporter, Project.command.options.breakOnError);
 		
 		//return; // Debug
 

@@ -42,6 +42,15 @@
 					's',
 				],
 			},
+			{
+				identifier: 'breakOnError',
+				defaultValue: false,
+				description: 'Stop running tests on the first error encountered. Either "true" or "false", with "false" being the default.',
+				aliases: [
+					'b',
+					'break',
+				],
+			},
 		],
 	},
 	// List all modules to test

@@ -88,6 +88,10 @@ var ErrorTest = Test.extend({
 		Assert.equal(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site data fileName is correct');
 	},
 
+	testBlaeh: function() {
+		Assert.true(false);	
+	},
+
 });
 
 // Export
