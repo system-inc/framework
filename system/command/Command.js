@@ -93,6 +93,14 @@ var Command = Class.extend({
 			this.showHelp();
 		}
 
+		// Show command options
+		argumentsArray.each(function(argumentIndex, argumentValue) {
+			if(this.argumentToOptionIdentifier(argumentValue) == 'showCommandOptions') {
+				this.showCommandOptions();
+				return false; // break
+			}
+		}.bind(this));
+
 		//Node.exit(this);
 
 		return this;
@@ -148,6 +156,17 @@ var Command = Class.extend({
 		}
 
 		Node.exit();
+	},
+
+	showCommandOptions: function() {
+		Console.writeLine('Command Options:');
+
+		var optionsSettings = this.settings.get('options');
+		optionsSettings.each(function(optionSettingsIndex, optionSettings) {
+			Console.writeLine('  '+optionSettings.identifier+': '+Terminal.style(this.options[optionSettings.identifier], 'cyan'));
+		}.bind(this));
+
+		Console.writeLine();
 	},
 
 	getOptionValue: function(optionSettings, argumentsArray) {
