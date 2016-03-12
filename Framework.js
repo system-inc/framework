@@ -33,6 +33,7 @@ var Framework = Class.extend({
 
 	title: null,
 	identifier: null,
+	description: null,
 
 	version: null,
 	settings: null,
@@ -55,11 +56,11 @@ var Framework = Class.extend({
 	initialize: function*(callback) {
 		// Set the version
 		var Version = Framework.require('system/version/Version.js');
-		this.version = new Version('0.1.0');
+		Framework.version = new Version('0.1.0');
 
 		// Make it obvious we are starting
 		var AsciiArt = Framework.require('system/ascii-art/AsciiArt.js');
-		Console.writeLine(AsciiArt.framework.version[this.version.toString()]);
+		Console.writeLine(AsciiArt.framework.version[Framework.version.toString()]);
 
 		// Require the core modules
 		var Module = Framework.require('system/module/Module.js');
@@ -71,14 +72,14 @@ var Framework = Class.extend({
 		// Use core modules to load the project settings
 		yield this.loadProjectSettings();
 
+		// Use project settings to set the title and the identifier
+		this.setPropertiesFromProjectSettings();
+
 		// Load the command
 		var Command = Framework.require('system/command/Command.js');
 		this.command = new Command(Node.Process.argv, this.settings.get('command'));
 
-		// Use project settings to set the title and the identifier
-		this.setTitleAndIdentifier();
-
-		// Use projet settings to configure the environment
+		// Use project settings to configure the environment
 		this.configureEnvironment();
 
 		// After the environment is initialized, initialize the Framework core modules
@@ -115,23 +116,36 @@ var Framework = Class.extend({
 		//Console.log(this.settings);
 	},
 
-	setTitleAndIdentifier: function() {
+	setPropertiesFromProjectSettings: function() {
 		// Set the title
-		var title = this.settings.get('title');
-		if(title) {
-			this.title = title;
+		var titleFromSettings = this.settings.get('title');
+		if(titleFromSettings) {
+			this.title = titleFromSettings;
 		}
 
 		// Anounce project title
 		//Console.log('Settings for project "'+this.title+'" loaded.');
 
 		// Set the identifier
-		var identifier = this.settings.get('identifier');
-		if(identifier) {
-			this.identifier = identifier;
+		var identifierFromSettings = this.settings.get('identifier');
+		if(identifierFromSettings) {
+			this.identifier = identifierFromSettings;
 		}
 		else {
 			this.identifier = this.title.toCamelCase();
+		}
+
+		// Set the description
+		var descriptionFromSettings = this.settings.get('description');
+		if(descriptionFromSettings) {
+			this.description = descriptionFromSettings;
+		}
+
+		// Set the version
+		var Version = Framework.require('system/version/Version.js');
+		var versionFromSettings = this.settings.get('version');
+		if(versionFromSettings) {
+			this.version = new Version(versionFromSettings);
 		}
 	},
 
@@ -224,6 +238,8 @@ var Framework = Class.extend({
 });
 
 // Static properties
+
+Framework.version = null;
 
 Framework.directory = __dirname;
 

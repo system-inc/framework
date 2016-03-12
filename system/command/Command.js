@@ -1,13 +1,16 @@
 // Dependencies
 var Settings = Framework.require('system/settings/Settings.js');
 var Version = Framework.require('system/version/Version.js');
+var Terminal = Framework.require('system/console/Terminal.js');
 
 // Class
 var Command = Class.extend({
 
 	settings: null,
 
-	version: null,
+	usage: null,
+	supplementalNotes: null,
+
 	command: null,
 	file: null,
 	arguments: null,
@@ -15,10 +18,12 @@ var Command = Class.extend({
 
 	construct: function(argumentsArray, settings) {
 		this.settings = new Settings(settings, {
-			version: null,
-			usage: '',
-			requiredArguments: [],
-			optionalArguments: [],
+			usage: null,
+			supplementalNotes: null,
+
+			//requiredArguments: [],
+			//optionalArguments: [],
+
 			options: [
 				/* 
 				An option looks like:
@@ -37,11 +42,9 @@ var Command = Class.extend({
 			],
 		});
 
-		// Set the version
-		var versionSettings = this.settings.get('version');
-		if(versionSettings) {
-			this.version = new Version(versionSettings);
-		}
+		// Set the usage and supplemental notes
+		this.usage = this.settings.get('usage');
+		this.supplementalNotes = this.settings.get('supplementalNotes');
 
 		// Create an identifiers field on all options
 		var optionsSettings = this.settings.get('options');
@@ -75,6 +78,12 @@ var Command = Class.extend({
 		var argumentsToProcess = argumentsArray.slice(2);
 		//Node.exit('parse', 'argumentsToProcess', argumentsToProcess);
 
+		// Loop over the options settings
+		this.settings.get('options').each(function(index, optionSettings) {
+			// Set the option value
+			this.options[optionSettings.identifier] = this.getOptionValue(optionSettings, argumentsToProcess);
+		}.bind(this));
+
 		// Version
 		if(Command.versionOptions.contains(this.argumentToOptionIdentifier(argumentsToProcess.first()))) {
 			this.showVersion();
@@ -84,26 +93,59 @@ var Command = Class.extend({
 			this.showHelp();
 		}
 
-		// Loop over the options settings
-		this.settings.get('options').each(function(index, optionSettings) {
-			// Set the option value
-			this.options[optionSettings.identifier] = this.getOptionValue(optionSettings, argumentsToProcess);
-		}.bind(this));
-
 		//Node.exit(this);
 
 		return this;
 	},
 
 	showVersion: function() {
-		Console.writeLine('Version '+this.version.toString());
+		Console.writeLine(Project.title+' '+(Project.version ? Project.version : '(unknown version)'));
 
 		Node.exit();
 	},
 
 	showHelp: function() {
-		Console.writeLine('Help');
-		Console.writeLine(this);
+		//Node.exit(this);
+
+		Console.writeLine(Project.title+' '+(Project.version ? Project.version : '(unknown version)'));
+		Console.writeLine();
+
+		if(this.usage) {
+			Console.writeLine('Usage:');
+			Console.writeLine('  '+this.usage.replace("\n", "\n  "));
+			Console.writeLine();
+		}
+
+		if(Project.description) {
+			Console.writeLine(Project.description);
+			Console.writeLine();
+		}
+		
+		var optionsSettings = this.settings.get('options');
+		if(optionsSettings.length) {
+			Console.writeLine('Options:');
+			optionsSettings.each(function(optionSettingsIndex, optionSettings) {
+				var optionLine = '  --'+optionSettings.identifier;
+				if(optionSettings.aliases.length) {
+					optionLine += ' (-'+optionSettings.aliases.join(', -')+')';
+				}
+				optionLine += Terminal.style(' (default: '+optionSettings.defaultValue+')', 'gray');
+				Console.writeLine(optionLine);
+
+				if(optionSettings.description) {
+					Console.writeLine('    '+optionSettings.description);
+					Console.writeLine();
+				}
+			});
+		}
+
+		if(!optionsSettings.length) {
+			Console.writeLine();
+		}
+
+		if(this.supplementalNotes) {
+			Console.writeLine(this.supplementalNotes);
+		}
 
 		Node.exit();
 	},
@@ -213,6 +255,7 @@ Command.versionOptions = [
 
 Command.helpOptions = [
 	'?',
+	'h',
 	'help',
 ];
 

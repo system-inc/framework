@@ -1,7 +1,10 @@
 {
 	title: 'Test Proctor',
+	version: '0.1.0',
+	description: 'Test Proctor runs tests and reports if they succeeded or failed.',
 	command: {
-		version: '0.1.0',
+		usage: "node framework/tests/Project.js (Node)\n./framework/scripts/test.sh (OS X)\nsh framework\\scripts\\test.sh (Windows)",
+		supplementalNotes: 'Visit https://www.system.inc/framework/documentation/testing/ to learn more about testing.',
 		options: [
 			{
 				identifier: 'path',
@@ -34,7 +37,7 @@
 				identifier: 'reporter',
 				type: 'string',
 				defaultValue: 'standard',
-				description: 'The test reporter to use. Currently, "standard", "dot", and "concise" are available, with "standard" being the default.',
+				description: 'The test reporter to use. Currently, "standard", "dot", and "concise" are available.',
 				aliases: [
 					'r',
 				],
@@ -43,7 +46,7 @@
 				identifier: 'supervise',
 				type: 'boolean',
 				defaultValue: false,
-				description: 'Watch for changes and run tests when changes happen. Either "true" or "false", with "false" being the default.',
+				description: 'Watch for changes and run tests when changes happen. Either "true" or "false".',
 				aliases: [
 					's',
 				],
@@ -52,7 +55,7 @@
 				identifier: 'breakOnError',
 				type: 'boolean',
 				defaultValue: false,
-				description: 'Stop running tests on the first error encountered. Either "true" or "false", with "false" being the default.',
+				description: 'Stop running tests on the first error encountered. Either "true" or "false".',
 				aliases: [
 					'b',
 					'break',
