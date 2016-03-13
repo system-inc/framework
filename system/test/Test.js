@@ -1,6 +1,10 @@
 // Class
 var Test = Class.extend({
 
+	shouldRun: function*() {
+		return true;
+	},
+
 	before: function*() {
 		//Console.log('Before');
 	},

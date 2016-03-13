@@ -460,6 +460,13 @@ var Proctor = Class.extend({
 		// Get the instantiated test class
 		this.currentTestClassInstance = this.testClassInstances[this.currentTest.name];
 
+		// Check to see if we should run the test
+		var shouldRunTestClass = yield this.currentTestClassInstance.shouldRun();
+
+		if(!shouldRunTestClass)	{
+			Node.exit('skip this test');
+		}
+
 		// Run .before on the test class
 		yield this.currentTestClassInstance.before();
 

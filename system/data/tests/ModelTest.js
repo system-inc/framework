@@ -2,6 +2,7 @@
 var Test = Framework.require('system/test/Test.js');
 var Assert = Framework.require('system/test/Assert.js');
 var ModelClassManager = Framework.require('system/data/ModelClassManager.js');
+var DatabaseTest = Framework.require('system/database/tests/DatabaseTest.js');
 
 // Class
 var ModelTest = Test.extend({
@@ -52,6 +53,8 @@ var ModelTest = Test.extend({
 	},
 
 	testModel: null,
+
+	shouldRun: DatabaseTest.prototype.shouldRun, // Use DatabaseTests's shouldRun method
 
 	before: function() {
 		this.testModel = ModelClassManager.generateModelClassFromSchemaModel(this.testModelSchema);

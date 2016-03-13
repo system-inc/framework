@@ -100,7 +100,8 @@ var Database = Class.extend({
 		// Handle errors
 		if(Error.is(queryResults)) {
 			this.statistics.failedQueries++;
-			throw queryResults;
+			//throw queryResults;
+			return queryResults;
 		}
 		else {
 			this.statistics.successfulQueries++;

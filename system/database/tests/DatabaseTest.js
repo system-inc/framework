@@ -6,6 +6,20 @@ var Database = Framework.require('system/database/Database.js');
 // Class
 var DatabaseTest = Test.extend({
 
+	shouldRun: function*() {
+		var shouldRun = true;
+
+		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
+		var testQueryResults = yield frameworkTestDatabase.query('SELECT 1 + 1 as `solution`');
+		//Console.info(testQueryResults);
+
+		if(Error.is(testQueryResults)) {
+			shouldRun = false;
+		}
+
+		return shouldRun;
+	},
+
 	testQueryOnDatabaseGeneratedBySettings: function*() {
 		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
 
