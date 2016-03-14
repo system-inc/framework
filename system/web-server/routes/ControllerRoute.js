@@ -1,7 +1,7 @@
 // Dependencies
 var Route = Framework.require('system/web-server/routes/Route.js');
 var NotFoundError = Framework.require('system/web-server/errors/NotFoundError.js');
-var Controller = Framework.require('system/web-server/Controller.js');
+var WebServerController = Framework.require('system/web-server/WebServerController.js');
 
 // Class
 var ControllerRoute = Route.extend({
@@ -19,7 +19,7 @@ var ControllerRoute = Route.extend({
 
 	follow: function*(request, response) {
 		// Try to get the controller
-		var controller = Controller.getControllerInstance(this.controllerName, request, response, this);
+		var controller = WebServerController.getControllerInstance(this.controllerName, request, response, this);
 
 		// If the controller was found, invoke the method for the route
 		if(controller && controller[this.controllerMethodName]) {

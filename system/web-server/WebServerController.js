@@ -1,5 +1,8 @@
+// Dependencies
+var ServerController = Framework.require('system/server/ServerController.js');
+
 // Class
-var Controller = Class.extend({
+var WebServerController = ServerController.extend({
 
 	request: null,
 	response: null,
@@ -7,20 +10,20 @@ var Controller = Class.extend({
 	data: null,
 
 	construct: function(request, response, route) {
-		this.request = request;
-		this.response = response;
+		this.super.apply(this, arguments);
+
 		this.route = route;
 		this.data = this.route.collectData(request);
 	},
-	
+
 });
 
 // Static methods
 
-Controller.getControllerInstance = function(controllerName, request, response, route) {
+WebServerController.getControllerInstance = function(controllerName, request, response, route) {
 	Console.highlight(controllerName);
 	
-	var controller = null;
+	var controllerInstance = null;
 
 	// Set the directory containing the controllers folder
 	var directory = Project.directory;
@@ -33,12 +36,12 @@ Controller.getControllerInstance = function(controllerName, request, response, r
 	var controllerClass = Framework.require(controllerPath);
 
 	// Instantiate the controller
-	controller = new controllerClass(request, response, route);
+	controllerInstance = new controllerClass(request, response, route);
 
-	return controller;
+	return controllerInstance;
 };
 
-Controller.getView = function*(viewPath, data) {
+WebServerController.getView = function*(viewPath, data) {
 	// See if the viewPath ends in a valid extension
 	var validExtensions = [
 		'.html',
@@ -87,4 +90,4 @@ Controller.getView = function*(viewPath, data) {
 }.toPromise();
 
 // Export
-module.exports = Controller;
+module.exports = WebServerController;

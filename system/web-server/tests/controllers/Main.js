@@ -1,8 +1,8 @@
 // Dependencies
-var Controller = Framework.require('system/web-server/Controller.js');
+var WebServerController = Framework.require('system/web-server/WebServerController.js');
 
 // Class
-var Main = Controller.extend({
+var Main = WebServerController.extend({
 
 	main: function*() {
 		return {
