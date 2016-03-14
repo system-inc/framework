@@ -72,7 +72,7 @@
 				frameworkTest: {
 					host: 'localhost',
 					username: 'framework_test',
-					password: 'framework_test1',
+					password: 'framework_test',
 					databaseName: 'framework_test',
 				}
 			}

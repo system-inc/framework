@@ -25,6 +25,9 @@ var DotTestReporter = TestReporter.extend({
 		else if(data.status == 'failed') {
 			Console.write(Terminal.style('●', 'red'));
 		}
+		else if(data.status == 'skipped') {
+			Console.write(Terminal.style('●', 'gray'));
+		}
 	},
 
 	finishedRunningTests: function(data) {

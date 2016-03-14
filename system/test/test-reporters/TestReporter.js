@@ -5,7 +5,7 @@ var AssertionError = Node.Assert.AssertionError;
 // Class
 var TestReporter = Class.extend({
 
-	currentTestName: null,
+	currentTestClassName: null,
 	currentTestMethod: null,
 	totalTestMethodCount: 0,
 	currentTestMethodCount: 0,
@@ -20,23 +20,13 @@ var TestReporter = Class.extend({
 		}.bind(this));
 
 		this.on('TestReporter.startedRunningTest', function(data) {
-			this.currentTestName = data.name;
+			this.currentTestClassName = data.name;
 
 			this.startedRunningTest(data);
 		}.bind(this));
 
 		this.on('TestReporter.startedRunningTestMethod', function(data) {
 			this.startedRunningTestMethod(data);
-		}.bind(this));
-
-		this.on('TestReporter.finishedRunningTests', function(data) {
-			this.finishedRunningTests(data);
-		}.bind(this));
-
-		this.on('TestReporter.finishedRunningTest', function(data) {
-			this.finishedRunningTest(data);
-
-			this.currentTestMethodCount = 0;
 		}.bind(this));
 
 		this.on('TestReporter.finishedRunningTestMethod', function(data) {
@@ -47,6 +37,16 @@ var TestReporter = Class.extend({
 
 			this.currentTestMethodAssertionCount = 0;
 			this.currentAssertions = [];
+		}.bind(this));
+
+		this.on('TestReporter.finishedRunningTest', function(data) {
+			this.finishedRunningTest(data);
+
+			this.currentTestMethodCount = 0;
+		}.bind(this));
+
+		this.on('TestReporter.finishedRunningTests', function(data) {
+			this.finishedRunningTests(data);
 		}.bind(this));
 
 		this.on('Assert.finished', function(data) {
@@ -95,7 +95,10 @@ var TestReporter = Class.extend({
 			Console.writeLine(Terminal.style('    ✓', 'green')+' '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' ('+this.currentTestMethodAssertionCount+' '+(this.currentTestMethodAssertionCount == 1 ? 'assertion' : 'assertions')+') '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30));
 		}
 		else if(data.status == 'failed') {
-			Console.writeLine(Terminal.style('    ✗ ('+data.failedTests.length+') '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30), 'red'));
+			Console.writeLine(Terminal.style('    ✗ ('+data.failedTestMethods.length+') '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30), 'red'));
+		}
+		else if(data.status == 'skipped') {
+			Console.writeLine(Terminal.style('    ↓ (skipped) ', 'gray')+data.name.replaceFirst('test', '').lowercaseFirstCharacter());
 		}
 	},
 
@@ -104,16 +107,32 @@ var TestReporter = Class.extend({
 	},	
 
 	finishedRunningTests: function(data) {
-		// Show the total passing tests
-		Console.writeLine(Terminal.style("\n"+data.passes+' passing ('+this.passedAssertionCount+' assertions)', 'green')+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision));
-		
-		// If we have failures
-		if(data.failures > 0) {
-			// Show the total failed tests
-			Console.writeLine(Terminal.style(data.failures+' failing ('+this.failedAssertionCount+' assertions)', 'red'));
+		//Console.info('finishedRunningTests data', data);
 
+		// Show the total passing tests
+		//var testClassesPassed = 
+		Console.writeLine(Terminal.style("\n"+data.passedTestMethods.length+' method'+(data.passedTestMethods.length == 1 ? '' : 's')+' passing with '+this.passedAssertionCount+' assertion'+(this.passedAssertionCount == 1 ? '' : 's')+' in '+data.passedTestClasses.length+' test class'+(data.passedTestClasses.length == 1 ? '' : 'es')+' ', 'green')+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision));
+
+		// If we have failures
+		if(data.failedTestMethods.length > 0) {
+			// Show the total failed tests
+			Console.writeLine(Terminal.style(data.failedTestMethods.length+' method'+(data.failedTestMethods.length == 1 ? '' : 's')+' failing with '+this.failedAssertionCount+' assertion'+(this.failedAssertionCount == 1 ? '' : 's')+' in '+data.failedTestClasses.length+' test class'+(data.failedTestClasses.length == 1 ? '' : 'es')+': '+data.failedTestClasses.join(', '), 'red'));
+		}
+
+		// Show the total skipped tests
+		if(data.skippedTestMethods.length) {
+			Console.writeLine(Terminal.style(data.skippedTestMethods.length+' method'+(data.skippedTestMethods.length == 1 ? '' : 's')+' skipped in '+data.skippedTestClasses.length+' test class'+(data.skippedTestClasses.length == 1 ? '' : 'es')+': '+data.skippedTestClasses.join(', '), 'gray'));
+		}
+		
+		// Show the total leaked variables
+		if(data.leakedGlobals.length) {
+			Console.writeLine(Terminal.style(data.leakedGlobals.length+' leaked global variable'+(data.leakedGlobals.length == 1 ? '' : 's')+': '+data.leakedGlobals.join(', '), 'red'));
+		}
+
+		// If we have failures
+		if(data.failedTestMethods.length > 0) {
 			// Show each failed test
-			data.failedTests.each(function(index, failedTest) {
+			data.failedTestMethods.each(function(index, failedTest) {
 				//Console.log(index, failedTest);
 
 				var errorIdentifier = failedTest.error.name;
@@ -128,7 +147,7 @@ var TestReporter = Class.extend({
 					Console.writeLine(Terminal.style('    ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));	
 				}
 				else {
-					Console.writeLine(Terminal.style('    (unknown location)', 'red'));
+					Console.writeLine(Terminal.style('    (unknown location)', 'gray'));
 				}				
 
 				// If we have AssertionError data (Node's AssertionError has the properties 'actual', 'operator', and 'expected')
@@ -147,11 +166,6 @@ var TestReporter = Class.extend({
 					Console.writeLine('    (stack trace not available)');
 				}
 			});
-		}
-
-		// Show the total leaked variables
-		if(data.leakedGlobals.length) {
-			Console.writeLine(Terminal.style('Leaked global variables: '+data.leakedGlobals.join(', '), 'red'));
 		}
 
 		Console.write("\n");

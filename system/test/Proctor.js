@@ -13,27 +13,31 @@ var AsciiArt = Framework.require('system/ascii-art/AsciiArt.js');
 // Class
 var Proctor = Class.extend({
 
-	tests: {},
-	testQueue: [],
-	testClassInstances: {},
-
-	previousTest: null,
-	currentTest: null,
-	currentTestClassInstance: null,
-	nextTest: null,
-
-	failedTests: [],
-	
-	passes: 0,
-	failures: 0,
-
 	testReporter: null,
 
 	stopwatch: null,
-	currentTestClassInstanceStopwatch: null,
-	currentTestMethodStopwatch: null,
 
+	testMethods: {},
+	testMethodQueue: [],
+	testClassInstances: {},
+
+	previousTestMethod: null,
+	nextTestMethod: null,
+	currentTestMethod: null,
+	currentTestMethodStopwatch: null,
 	currentTestMethodStatus: null,
+	currentTestClassStatus: null,
+	currentTestClassInstance: null,
+	currentTestClassInstanceStopwatch: null,
+
+	passedTestMethods: [],
+	passedTestClasses: [],
+	failedTestMethods: [],
+	failedTestClasses: [],
+	skippedTestMethods: [],
+	skippedTestClasses: [],
+
+	shouldRunCurrentTestClass: false,
 
 	breakOnError: false,
 	
@@ -136,7 +140,7 @@ var Proctor = Class.extend({
 	getTestCount: function() {
 		var count = 0;
 
-		this.tests.each(function(key, value) {
+		this.testMethods.each(function(key, value) {
 			count++;
 		});
 
@@ -146,7 +150,7 @@ var Proctor = Class.extend({
 	getTestMethodCount: function() {
 		var count = 0;
 
-		this.tests.each(function(key, value) {
+		this.testMethods.each(function(key, value) {
 			count = count + value.methods.length;
 		});
 
@@ -222,7 +226,7 @@ var Proctor = Class.extend({
 										// Filter test methods
 										if(methodPattern == null || key.lowercase().match(methodPattern)) {
 											//Console.log(key.lowercase(), 'matched against', methodPattern);
-											this.tests[testClassName].methods.append(key);
+											this.testMethods[testClassName].methods.append(key);
 										}
 										else {
 											//Console.log(key.lowercase(), 'did not match against', methodPattern);
@@ -246,8 +250,8 @@ var Proctor = Class.extend({
 	},
 
 	addTest: function(name, fileName, directory) {
-		if(!this.tests[name]) {
-			this.tests[name] = {
+		if(!this.testMethods[name]) {
+			this.testMethods[name] = {
 				'name': name,
 				'fileName': fileName,
 				'directory': directory,
@@ -274,7 +278,7 @@ var Proctor = Class.extend({
 	},
 
 	buildTestQueue: function() {
-		this.tests.each(function(testClassName, test) {
+		this.testMethods.each(function(testClassName, test) {
 			test.methods.each(function(filePatternIndex, filePattern) {
 				// Build a new structure for tests in the test queue
 				var testToAddToQueue = {
@@ -288,7 +292,7 @@ var Proctor = Class.extend({
 				delete testToAddToQueue['methods'];
 
 				// Add the test to the queue
-				this.testQueue.push(testToAddToQueue);
+				this.testMethodQueue.push(testToAddToQueue);
 			}.bind(this));
 		}.bind(this));
 	},
@@ -300,7 +304,7 @@ var Proctor = Class.extend({
 
 		// Build the test queue
 		this.buildTestQueue();
-		//Console.log(this.testQueue);
+		//Console.log(this.testMethodQueue);
 
 		// Started running tests
 		this.emit('TestReporter.startedRunningTests', {
@@ -315,36 +319,65 @@ var Proctor = Class.extend({
 		this.runNextTest();
 	},
 
-	runNextTest: function*() {
+	moveToNextTest: function() {
 		// Set the first test
-		if(!this.currentTest && !this.testQueue.isEmpty()) {
-			this.previousTest = null;
-			this.currentTest = this.testQueue.first();
-			this.nextTest = this.testQueue.get(1);
+		if(!this.currentTestMethod && !this.testMethodQueue.isEmpty()) {
+			this.previousTestMethod = null;
+			this.currentTestMethod = this.testMethodQueue.first();
+			this.nextTestMethod = this.testMethodQueue.get(1);
 		}
 		// If we aren't on the first test, move on to the next test
-		else if(this.currentTest) {
-			this.previousTest = this.currentTest;
+		else if(this.currentTestMethod) {
+			this.previousTestMethod = this.currentTestMethod;
 
 			// Remove the first test off of the test queue
-			this.testQueue.shift();
+			this.testMethodQueue.shift();
 
-			this.currentTest = this.testQueue.first();
-			this.nextTest = this.testQueue.get(1);
+			this.currentTestMethod = this.testMethodQueue.first();
+			this.nextTestMethod = this.testMethodQueue.get(1);
 		}
+	},
+
+	skipCurrentTest: function() {
+		//Console.log('Skipping this.currentTestMethod', this.currentTestMethod);
+
+		this.currentTestMethodStatus = 'skipped';
+		this.currentTestClassStatus = 'skipped';
+
+		this.skippedTestMethods.append(this.currentTestMethod);
+
+		this.emit('TestReporter.finishedRunningTestMethod', {
+			status: this.currentTestMethodStatus,
+			name: this.currentTestMethod.method,
+			stopwatch: null,
+			failedTestMethods: null,
+		});
+
+		return this.runNextTest();
+	},
+
+	runNextTest: function*() {
+		this.moveToNextTest();
 
 		// If we are out of tests
-		if(!this.currentTest) {
+		if(!this.currentTestMethod) {
 			return this.noMoreTests();
 		}
 
 		// If we are on a new test
-		if(!this.previousTest || (this.previousTest && this.previousTest.fileName != this.currentTest.fileName)) {
+		if(!this.previousTestMethod || (this.previousTestMethod && this.previousTestMethod.fileName != this.currentTestMethod.fileName)) {
+			// This method sets this.shouldRunCurrentTestClass
 			yield this.onNewTestClass();
 		}
 
+		// If we shouldn't run this test
+		if(!this.shouldRunCurrentTestClass) {
+			// Skip tests until we get to the next test class (or end of all tests)
+			return this.skipCurrentTest();
+		}
+
 		this.emit('TestReporter.startedRunningTestMethod', {
-			name: this.currentTest.method,
+			name: this.currentTestMethod.method,
 		});
 
 		// Run .beforeEach on the test class
@@ -356,21 +389,7 @@ var Proctor = Class.extend({
 		// Add an event listener to listen for errors on the domain
 		domain.on('error', function(error) {
 			//Console.warn('Caught domain error', error);
-
-			// Stop the stopwatch for the test
-			this.currentTestMethodStopwatch.stop();
-
-			// Record the failure
-			this.failures++;
-			this.failedTests.push({
-				'test': this.tests[this.currentTest.name],
-				'method': this.currentTest.method,
-				'error': error,
-			});
-
-			this.currentTestMethodStatus = 'failed';
-
-			this.finishedRunningNextTest(domain);
+			this.failCurrentTestMethod(error, domain);
 		}.bind(this));
 
 		// Enter the domain
@@ -382,37 +401,44 @@ var Proctor = Class.extend({
 		// Put a try catch block around the test
 		try {
 			// Run the test
-			yield this.currentTestClassInstance[this.currentTest.method]();
+			yield this.currentTestClassInstance[this.currentTestMethod.method]();
 
-			// Stop the stopwatch for the test
-			this.currentTestMethodStopwatch.stop();
-
-			// Record the pass
-			this.passes++;
-
-			this.currentTestMethodStatus = 'passed';
-
-			this.finishedRunningNextTest(domain);
+			this.passCurrentTestMethod(domain);
 		}
 		// If the test fails
 		catch(error) {
 			//Console.warn('Caught error', error);
-
-			// Stop the stopwatch for the test
-			this.currentTestMethodStopwatch.stop();
-
-			// Record the failure
-			this.failures++;
-			this.failedTests.push({
-				'test': this.tests[this.currentTest.name],
-				'method': this.currentTest.method,
-				'error': error,
-			});
-
-			this.currentTestMethodStatus = 'failed';
-
-			this.finishedRunningNextTest(domain);
+			this.failCurrentTestMethod(error, domain);
 		}
+	},
+
+	passCurrentTestMethod: function(domain) {
+		// Stop the stopwatch for the test
+		this.currentTestMethodStopwatch.stop();
+
+		// Record the pass
+		this.passedTestMethods.append(this.currentTestMethod);
+
+		this.currentTestMethodStatus = 'passed';
+
+		this.finishedRunningNextTest(domain);
+	},
+
+	failCurrentTestMethod: function(error, domain) {
+		// Stop the stopwatch for the test
+		this.currentTestMethodStopwatch.stop();
+
+		// Record the failure
+		this.failedTestMethods.push({
+			'test': this.testMethods[this.currentTestMethod.name],
+			'method': this.currentTestMethod.method,
+			'error': error,
+		});
+
+		this.currentTestMethodStatus = 'failed';
+		this.currentTestClassStatus = 'failed';
+
+		this.finishedRunningNextTest(domain);
 	},
 
 	finishedRunningNextTest: function*(domain) {
@@ -424,15 +450,15 @@ var Proctor = Class.extend({
 
 		this.emit('TestReporter.finishedRunningTestMethod', {
 			status: this.currentTestMethodStatus,
-			name: this.currentTest.method,
+			name: this.currentTestMethod.method,
 			stopwatch: this.currentTestMethodStopwatch,
-			failedTests: this.failedTests,
+			failedTestMethods: this.failedTestMethods,
 		});
 
 		//yield Function.delay(50);
 
 		// Break on errors if we should
-		if(this.breakOnError && this.failedTests.length) {
+		if(this.breakOnError && this.failedTestMethods.length) {
 			this.noMoreTests();
 		}
 		else {
@@ -450,32 +476,55 @@ var Proctor = Class.extend({
 			yield this.currentTestClassInstance.after();
 
 			this.emit('TestReporter.finishedRunningTest', {
-				name: this.previousTest.name.replaceLast('Test', ''),
+				name: this.previousTestMethod.name.replaceLast('Test', ''),
 			});
+
+			// Store passing, failing, and skipped test classes
+			this.recordCurrentTestClassStatus();
+
+			// Reset
+			this.currentTestClassStatus = 'passed';
 		}
+
+		// Prepare for the new test
+		this.currentTestClassStatus = 'passed';
 
 		// Start up the new test
-		this.emit('TestReporter.startedRunningTest', this.tests[this.currentTest.name]);
+		this.emit('TestReporter.startedRunningTest', this.testMethods[this.currentTestMethod.name]);
 
 		// Get the instantiated test class
-		this.currentTestClassInstance = this.testClassInstances[this.currentTest.name];
+		this.currentTestClassInstance = this.testClassInstances[this.currentTestMethod.name];
 
 		// Check to see if we should run the test
-		var shouldRunTestClass = yield this.currentTestClassInstance.shouldRun();
-
-		if(!shouldRunTestClass)	{
-			Node.exit('skip this test');
-		}
-
-		// Run .before on the test class
-		yield this.currentTestClassInstance.before();
+		this.shouldRunCurrentTestClass = yield this.currentTestClassInstance.shouldRun();
 
 		// Time all of the tests in the class
 		this.currentTestClassInstanceStopwatch = new Stopwatch();
+
+		if(this.shouldRunCurrentTestClass) {
+			// Run .before on the test class
+			yield this.currentTestClassInstance.before();
+		}
+	},
+
+	recordCurrentTestClassStatus: function() {
+		// Store passing, failing, and skipped test classes
+		if(this.currentTestClassStatus == 'failed') {
+			this.failedTestClasses.append(this.previousTestMethod.name);
+		}
+		else if(this.currentTestClassStatus == 'passed') {
+			this.passedTestClasses.append(this.previousTestMethod.name);
+		}
+		else if(this.currentTestClassStatus == 'skipped') {
+			this.skippedTestClasses.append(this.previousTestMethod.name);
+		}
 	},
 
 	noMoreTests: function() {
 		//Console.log('noMoreTests');
+
+		// Store passing, failing, and skipped test classes
+		this.recordCurrentTestClassStatus();
 
 		// Stop the stopwatch
 		this.stopwatch.stop();
@@ -485,10 +534,13 @@ var Proctor = Class.extend({
 
 		// Finished running tests
 		this.emit('TestReporter.finishedRunningTests', {
-			passes: this.passes,
-			failures: this.failures,
 			stopwatch: this.stopwatch,
-			failedTests: this.failedTests,
+			passedTestMethods: this.passedTestMethods,
+			passedTestClasses: this.passedTestClasses,
+			failedTestMethods: this.failedTestMethods,
+			failedTestClasses: this.failedTestClasses,
+			skippedTestMethods: this.skippedTestMethods,
+			skippedTestClasses: this.skippedTestClasses,
 			leakedGlobals: leakedGlobals,
 		});
 
