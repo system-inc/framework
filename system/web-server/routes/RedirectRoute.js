@@ -11,11 +11,11 @@ var RedirectRoute = Route.extend({
 	redirectLocation: null,
 
 	construct: function(settings, parent) {
-		this.super.apply(this, arguments);
-		
 		this.inheritProperty('redirectStatusCode', settings, parent);
 		this.inheritProperty('redirectHost', settings, parent);
 		this.inheritProperty('redirectLocation', settings, parent);
+
+		this.super.apply(this, arguments);
 	},
 
 	follow: function*(request, response) {

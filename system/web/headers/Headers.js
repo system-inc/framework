@@ -1,6 +1,7 @@
 // Dependencies
 var Header = Framework.require('system/web/headers/Header.js');
 var Cookies = Framework.require('system/web/headers/Cookies.js');
+var Cookie = Framework.require('system/web/headers/Cookie.js');
 
 // Class
 var Headers = Class.extend({
@@ -8,20 +9,6 @@ var Headers = Class.extend({
 	headers: [],
 
 	construct: function(string) {
-	},
-
-	constructFromNodeHeaders: function(nodeHeaders) {
-		var headers = new Headers();
-
-		if(nodeHeaders) {
-			for(var key in nodeHeaders) {
-				if(String.is(nodeHeaders[key])) {
-					headers.create(key, nodeHeaders[key]);	
-				}
-			}	
-		}
-		
-		return headers;
 	},
 
 	get: function(key, caseSensitive) {
@@ -169,7 +156,27 @@ var Headers = Class.extend({
 });
 
 // Static methods
-Headers.constructFromNodeHeaders = Headers.prototype.constructFromNodeHeaders;
+Headers.constructFromNodeHeaders = function(nodeHeaders) {
+	//Console.highlight(nodeHeaders); Node.exit();
+
+	var headers = new Headers();
+
+	if(nodeHeaders) {
+		nodeHeaders.each(function(headerName, headerValue) {
+			// Handle multiple headers of the same key (e.g., "Set-Cookie")
+			if(Array.is(headerValue)) {
+				headerValue.each(function(headerValueIndex, headerValueValue) {
+					headers.create(headerName, headerValueValue);
+				});
+			}
+			else {
+				headers.create(headerName, headerValue);
+			}
+		});	
+	}
+	
+	return headers;
+};
 
 Headers.nodeRawHeadersToString = function(rawHeaders) {
 	var rawHeadersString = '';

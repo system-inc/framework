@@ -388,7 +388,8 @@ var Proctor = Class.extend({
 
 		// Add an event listener to listen for errors on the domain
 		domain.on('error', function(error) {
-			//Console.warn('Caught domain error', error);
+			//Console.warn('Caught domain error', error); Node.exit();
+
 			this.failCurrentTestMethod(error, domain);
 		}.bind(this));
 
@@ -407,7 +408,8 @@ var Proctor = Class.extend({
 		}
 		// If the test fails
 		catch(error) {
-			//Console.warn('Caught error', error);
+			//Console.warn('Caught error', error); Node.exit();
+
 			this.failCurrentTestMethod(error, domain);
 		}
 	},
@@ -508,15 +510,21 @@ var Proctor = Class.extend({
 	},
 
 	recordCurrentTestClassStatus: function() {
+		var testMethod = this.previousTestMethod;
+		// In case the first test is failing	
+		if(!testMethod) {
+			testMethod = this.currentTestMethod;
+		}
+
 		// Store passing, failing, and skipped test classes
 		if(this.currentTestClassStatus == 'failed') {
-			this.failedTestClasses.append(this.previousTestMethod.name);
+			this.failedTestClasses.append(testMethod.name);
 		}
 		else if(this.currentTestClassStatus == 'passed') {
-			this.passedTestClasses.append(this.previousTestMethod.name);
+			this.passedTestClasses.append(testMethod.name);
 		}
 		else if(this.currentTestClassStatus == 'skipped') {
-			this.skippedTestClasses.append(this.previousTestMethod.name);
+			this.skippedTestClasses.append(testMethod.name);
 		}
 	},
 

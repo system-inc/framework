@@ -28,5 +28,14 @@ Error.toObject = function(error) {
 	return object;
 };
 
+Error.toPublicObject = function(error) {
+	var object = {
+		name: error.name,
+		message: error.message,
+	};
+
+	return object;
+};
+
 // Export
 module.exports = Error;

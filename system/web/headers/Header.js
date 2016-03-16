@@ -8,6 +8,10 @@ var Header = Class.extend({
 		this.key = key;
 		this.value = value;
 	},
+
+	toString: function() {
+		return this.value;
+	},
 	
 });
 

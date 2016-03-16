@@ -11,10 +11,12 @@ var ControllerRoute = Route.extend({
 	controllerMethodName: null,
 
 	construct: function(settings, parent) {
-		this.super.apply(this, arguments);
-
 		this.inheritProperty('controllerName', settings, parent);
 		this.inheritProperty('controllerMethodName', settings, parent);
+
+		this.super.apply(this, arguments);
+
+		//Console.info('ControllerRoute.construct', 'settings', settings, 'parent', parent);
 	},
 
 	follow: function*(request, response) {

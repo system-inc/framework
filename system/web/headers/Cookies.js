@@ -16,7 +16,7 @@ var Cookies = Class.extend({
 		string.split(';').each(function(index, cookie) {
 			if(!cookie.empty()) {
 				var parts = cookie.split('=');
-	        	this.cookies.push(new Cookie(parts.shift().trim(), unescape(parts.join('='))));
+	        	this.cookies.append(new Cookie(parts.shift().trim(), unescape(parts.join('='))));
 			}
 		}.bind(this));
 	},
@@ -70,13 +70,13 @@ var Cookies = Class.extend({
 	},
 
 	add: function(cookie) {
-		this.cookies.push(cookie);
+		this.cookies.append(cookie);
 	},
 
 	create: function(key, value) {
 		var cookie = new Cookie(key, value);
 
-		this.cookies.push(cookie);
+		this.cookies.append(cookie);
 
 		return cookie;
 	},
@@ -90,7 +90,12 @@ var Cookies = Class.extend({
 		var cookie = this.getCookie(key, false);
 
 		if(cookie != null) {
-			cookie.value = value;
+			if(Primitive.is(value)) {
+				cookie.value = value;	
+			}
+			else {
+				cookie.value = Json.encode(value);
+			}
 		}
 		else {
 			cookie = this.create(key, value);
@@ -111,7 +116,7 @@ var Cookies = Class.extend({
 		var headersArray = [];
 
 		this.cookies.each(function(index, cookie) {
-			headersArray.push(cookie.toHeader());
+			headersArray.append(cookie.toHeader());
 		});
 
 		return headersArray;

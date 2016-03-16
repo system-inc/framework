@@ -21,7 +21,7 @@ var WebServerController = ServerController.extend({
 // Static methods
 
 WebServerController.getControllerInstance = function(controllerName, request, response, route) {
-	Console.highlight(controllerName);
+	//Console.highlight(controllerName);
 	
 	var controllerInstance = null;
 

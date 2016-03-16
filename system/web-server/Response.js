@@ -287,7 +287,7 @@ var Response = Class.extend({
 
 		// Track the elapsed time
 		this.stopwatches.process.stop();
-		this.headers.set('X-Processing-Time-in-'+this.stopwatches.process.precision.capitalize(), this.stopwatches.process.elapsedTime);
+		this.headers.set('X-Processing-Time-in-'+this.stopwatches.process.precision.capitalize(), this.stopwatches.process.getHighResolutionElapsedTime());
 
 		// Send the response ID to the client
 		this.headers.set('X-Response-ID', this.id);
@@ -372,8 +372,8 @@ var Response = Class.extend({
 		responsesLogEntry += ',"'+this.time.getDateTime()+'"';
 		responsesLogEntry += ',"'+this.statusCode+'"';
 		responsesLogEntry += ',"'+this.stopwatches.process.precision+'"';
-		responsesLogEntry += ',"'+this.stopwatches.process.elapsedTime+'"';
-		responsesLogEntry += ',"'+this.stopwatches.send.elapsedTime+'"';
+		responsesLogEntry += ',"'+this.stopwatches.process.getHighResolutionElapsedTime()+'"';
+		responsesLogEntry += ',"'+this.stopwatches.send.getHighResolutionElapsedTime()+'"';
 
 		return responsesLogEntry;
 	},

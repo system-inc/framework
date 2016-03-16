@@ -174,7 +174,7 @@ WebRequest.request = function(options) {
 				statusMessage: response.statusMessage,
 				headers: Headers.constructFromNodeHeaders(response.headers),
 				rawHeaders: response.rawHeaders,
-				cookies: null,
+				cookies: null, // This is set further down
 				body: '',
 				data: null,
 				trailers: response.trailers,
@@ -192,6 +192,11 @@ WebRequest.request = function(options) {
 				ipAddress: new IpAddress(response.connection.remoteAddress),
 			};
 			//Console.log('webResponse (before finish)', webResponse);
+
+			// Header debugging
+			//Console.warn(webResponse.headers);
+			//Node.exit(response.rawHeaders);
+			//Node.exit(response.headers);
 
 			// Set the cookies from the headers
 			webResponse.cookies = webResponse.headers.getCookies();

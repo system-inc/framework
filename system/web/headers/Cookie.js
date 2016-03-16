@@ -9,7 +9,13 @@ var Cookie = Class.extend({
 
 	construct: function(key, value) {
 		this.key = key;
-		this.value = value;
+
+		if(Primitive.is(value)) {
+			this.value = value;
+		}
+		else {
+			this.value = Json.encode(value);
+		}
 	},
 
 	toHeader: function() {
@@ -28,10 +34,15 @@ var Cookie = Class.extend({
 
 // Static methods
 Cookie.constructFromHeaderString = function(headerString) {
-	var key = headerString.split('=').first();
+	var headerStringArray = headerString.split('=');
+	var key = headerStringArray.first();
+
+	// Remove the first item (the key)
+	headerStringArray.delete(0);
+	var value = headerStringArray.join('=').replaceLast(';', '');
 
 	// TODO: This needs to be fixed
-	var cookie = new Cookie(key, headerString);
+	var cookie = new Cookie(key, value);
 
 	return cookie;
 }

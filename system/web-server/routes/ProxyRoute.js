@@ -10,14 +10,14 @@ var ProxyRoute = Route.extend({
 	proxyHeaders: null,
 
 	construct: function(settings, parent) {
-		this.super.apply(this, arguments);
-		
 		this.inheritProperty('proxyUrl', settings, parent);
 		// Make sure we are working with a URL object
 		if(this.proxyUrl) {
 			this.proxyUrl = new Url(this.proxyUrl);
 		}
 		this.inheritProperty('proxyHeaders', settings, parent);
+
+		this.super.apply(this, arguments);
 	},
 
 	getFullProxyUrl: function(requestUrl) {

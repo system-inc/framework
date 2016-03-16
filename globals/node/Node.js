@@ -29,7 +29,7 @@ Node.require = require;
 
 Node.exit = function() {
 	if(arguments.length) {
-		Console.error(Console.prepareMessage.call(this, arguments));
+		Console.writeLine(Console.prepareMessage.call(this, arguments, 'error'));
 	}
 	
 	Node.Process.exit(1);

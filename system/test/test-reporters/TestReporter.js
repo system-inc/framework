@@ -110,8 +110,11 @@ var TestReporter = Class.extend({
 		//Console.info('finishedRunningTests data', data);
 
 		// Show the total passing tests
-		//var testClassesPassed = 
-		Console.writeLine(Terminal.style("\n"+data.passedTestMethods.length+' method'+(data.passedTestMethods.length == 1 ? '' : 's')+' passing with '+this.passedAssertionCount+' assertion'+(this.passedAssertionCount == 1 ? '' : 's')+' in '+data.passedTestClasses.length+' test class'+(data.passedTestClasses.length == 1 ? '' : 'es')+' ', 'green')+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision));
+		var passingTestClassesCount = data.passedTestClasses.length;
+		if(passingTestClassesCount == 0 && data.passedTestMethods.length) {
+			passingTestClassesCount = 1;
+		}
+		Console.writeLine(Terminal.style("\n"+data.passedTestMethods.length+' method'+(data.passedTestMethods.length == 1 ? '' : 's')+' passing with '+this.passedAssertionCount+' assertion'+(this.passedAssertionCount == 1 ? '' : 's')+' in '+passingTestClassesCount+' test class'+(passingTestClassesCount == 1 ? '' : 'es')+' ', 'green')+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision));
 
 		// If we have failures
 		if(data.failedTestMethods.length > 0) {

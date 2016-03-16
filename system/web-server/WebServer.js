@@ -99,6 +99,7 @@ var WebServer = Server.extend({
 		// Load the routes into the router
 		this.router = new Router();
 		this.router.loadRoutes(this.settings.get('router.routes'));
+		//Console.info('this.router', this.router); Node.exit();
 	},
 
 	resolveHttpsProtocolFiles: function() {
@@ -319,7 +320,9 @@ var WebServer = Server.extend({
 	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
 	handleError: function(request, response, error) {
 		var logEntry = Console.prepareMessage('WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData());
-		Console.log('WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData());
+		if(this.settings.get('verbose')) {
+			Console.log(logEntry);
+		}
 
 		// Mark the response as handled
 		response.handled = true;
@@ -334,7 +337,7 @@ var WebServer = Server.extend({
 
 		// Set the content
 		response.content = Json.encode({
-			errors: [error.toPublicObject()],
+			errors: [Error.toPublicObject(error)],
 			request: request.getPublicErrorData(),
 		});
 
@@ -349,7 +352,11 @@ var WebServer = Server.extend({
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
 	handleInternalServerError: function(error, nodeResponse, request) {
-		var logEntry = Console.log('WebServer.handleInternalServerError() called. Error:', error);
+		var logEntry = Console.prepareMessage('WebServer.handleInternalServerError() called. Error:', error);
+		if(this.settings.get('verbose')) {
+			Console.log(logEntry);
+		}
+		
 		nodeResponse.writeHead(500, [['Content-Type', 'application/json']]);
 
 		// Make sure we are working with an error object
@@ -359,7 +366,7 @@ var WebServer = Server.extend({
 
 		// The content to return in the request
 		var content = {
-			errors: [error.toPublicObject()],
+			errors: [Error.toPublicObject(error)],
 		};
 
 		// Add request data to the content if we have it

@@ -9,14 +9,14 @@ var FileRoute = Route.extend({
 	filePath: null,
 
 	construct: function(settings, parent) {
-		this.super.apply(this, arguments);
-		
 		this.inheritProperty('filePath', settings, parent);
 
 		// Make sure filePath is a normalized path
 		if(!Object.isEmpty(this.filePath)) {
 			this.filePath = Node.Path.normalize(this.filePath);
 		}
+
+		this.super.apply(this, arguments);
 	},
 
 	follow: function*(request, response) {
