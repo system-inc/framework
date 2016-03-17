@@ -90,12 +90,7 @@ var Cookies = Class.extend({
 		var cookie = this.getCookie(key, false);
 
 		if(cookie != null) {
-			if(Primitive.is(value)) {
-				cookie.value = value;	
-			}
-			else {
-				cookie.value = Json.encode(value);
-			}
+			cookie.value = value;
 		}
 		else {
 			cookie = this.create(key, value);

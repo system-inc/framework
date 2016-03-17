@@ -101,9 +101,12 @@ var WebRequest = Class.extend({
 		}
 		
 		// Accept gzip encoding by default
-		if(!this.headers.get('Accept-Encoding')) {
+		if(!this.headers.getHeader('Accept-Encoding')) {
 			this.headers.create('Accept-Encoding', 'gzip');
 		}
+
+		// Do not send any headers that are null
+		this.headers.removeNullHeaders();
 
 		// Add cookies to the headers
 		this.headers.addCookies(this.cookies);

@@ -53,7 +53,7 @@ var WebServerTest = Test.extend({
 							{
 								type: 'redirect',
 								redirectStatusCode: 301,
-								redirectHost: 'http://www.system.inc/',
+								redirectHost: 'www.system.inc',
 								expression: 'redirect',
 							},
 							{
@@ -156,21 +156,21 @@ var WebServerTest = Test.extend({
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
-		Assert.strictEqual(webRequestResponse.statusCode, 200, 'Response for Controller Route (/): statusCode is correct');
-		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'Response for Controller Route (/): statusMessage is correct');
-		Assert.strictEqual(webRequestResponse.body, 'Root data.', 'Response for Controller Route (/): body is correct');
-		Assert.strictEqual(webRequestResponse.data, null, 'Response for Controller Route (/): data is correct');
-		Assert.false(webRequestResponse.headers.getHeader('content-type'), 'Response for Controller Route (/): "Content-Type" header is not set');
-		Assert.false(webRequestResponse.headers.getHeader('content-disposition'), 'Response for Controller Route (/): "Content-Disposition" header is not set');
-		Assert.false(webRequestResponse.headers.getHeader('last-modified'), 'Response for Controller Route (/): "Last-Modified" header is set');
-		Assert.false(webRequestResponse.headers.getHeader('etag'), 'Response for Controller Route (/): "ETag" header is set');
-		Assert.false(webRequestResponse.headers.getHeader('accept-ranges'), 'Response for Controller Route (/): "Accept-Ranges" header is not set');
-		Assert.equal(webRequestResponse.headers.getHeader('content-encoding'), 'gzip', 'Response for Controller Route (/): "Content-Encoding" header is correct');
-		Assert.true(webRequestResponse.headers.getHeader('x-processing-time-in-milliseconds'), 'Response for Controller Route (/): "X-Processing-Time-in-Milliseconds" header is set');
-		Assert.true(webRequestResponse.headers.getHeader('x-response-id'), 'Response for Controller Route (/): "X-Response-Id" header is set');
-		Assert.true(webRequestResponse.headers.getHeader('date'), 'Response for Controller Route (/): "Date" header is set');
-		Assert.equal(webRequestResponse.headers.getHeader('connection'), 'close', 'Response for Controller Route (/): "Connection" header is correct');
-		Assert.equal(webRequestResponse.headers.getHeader('transfer-encoding'), 'chunked', 'Response for Controller Route (/): "Transfer-Encoding" header is correct');
+		Assert.strictEqual(webRequestResponse.statusCode, 200, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'statusMessage is correct');
+		Assert.strictEqual(webRequestResponse.body, 'Root data.', 'body is correct');
+		Assert.strictEqual(webRequestResponse.data, null, 'data is correct');
+		Assert.false(webRequestResponse.headers.getHeader('content-type'), '"Content-Type" header is not set');
+		Assert.false(webRequestResponse.headers.getHeader('content-disposition'), '"Content-Disposition" header is not set');
+		Assert.false(webRequestResponse.headers.getHeader('last-modified'), '"Last-Modified" header is set');
+		Assert.false(webRequestResponse.headers.getHeader('etag'), '"ETag" header is set');
+		Assert.false(webRequestResponse.headers.getHeader('accept-ranges'), '"Accept-Ranges" header is not set');
+		Assert.equal(webRequestResponse.headers.getHeader('content-encoding'), 'gzip', '"Content-Encoding" header is correct');
+		Assert.true(webRequestResponse.headers.getHeader('x-processing-time-in-milliseconds'), '"X-Processing-Time-in-Milliseconds" header is set');
+		Assert.true(webRequestResponse.headers.getHeader('x-response-id'), '"X-Response-Id" header is set');
+		Assert.true(webRequestResponse.headers.getHeader('date'), '"Date" header is set');
+		Assert.equal(webRequestResponse.headers.getHeader('connection'), 'close', '"Connection" header is correct');
+		Assert.equal(webRequestResponse.headers.getHeader('transfer-encoding'), 'chunked', '"Transfer-Encoding" header is correct');
 	},
 
 	// File Route for .txt File - /files/text/data.txt;
@@ -180,21 +180,56 @@ var WebServerTest = Test.extend({
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 		
-		Assert.strictEqual(webRequestResponse.statusCode, 200, 'Response for File Route (data.txt): statusCode is correct');
-		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'Response for File Route (data.txt): statusMessage is correct');
-		Assert.strictEqual(webRequestResponse.body, '0123456789', 'Response for File Route (data.txt): body is correct');
-		Assert.strictEqual(webRequestResponse.data, null, 'Response for File Route (data.txt): data is correct');
-		Assert.equal(webRequestResponse.headers.getHeader('content-type'), 'text/plain', 'Response for File Route (data.txt): "Content-Type" header is correct');
-		Assert.equal(webRequestResponse.headers.getHeader('content-disposition'), 'inline; filename="data.txt"', 'Response for File Route (data.txt): "Content-Disposition" header is correct');
-		Assert.true(webRequestResponse.headers.getHeader('last-modified'), 'Response for File Route (data.txt): "Last-Modified" header is set');
-		Assert.true(webRequestResponse.headers.getHeader('etag'), 'Response for File Route (data.txt): "ETag" header is set');
-		Assert.equal(webRequestResponse.headers.getHeader('accept-ranges'), 'bytes', 'Response for File Route (data.txt): "Accept-Ranges" header is correct');
-		Assert.equal(webRequestResponse.headers.getHeader('content-encoding'), 'gzip', 'Response for File Route (data.txt): "Content-Encoding" header is correct');
-		Assert.true(webRequestResponse.headers.getHeader('x-processing-time-in-milliseconds'), 'Response for File Route (data.txt): "X-Processing-Time-in-Milliseconds" header is set');
-		Assert.true(webRequestResponse.headers.getHeader('x-response-id'), 'Response for File Route (data.txt): "X-Response-Id" header is set');
-		Assert.true(webRequestResponse.headers.getHeader('date'), 'Response for File Route (data.txt): "Date" header is set');
-		Assert.equal(webRequestResponse.headers.getHeader('connection'), 'close', 'Response for File Route (data.txt): "Connection" header is correct');
-		Assert.equal(webRequestResponse.headers.getHeader('transfer-encoding'), 'chunked', 'Response for File Route (data.txt): "Transfer-Encoding" header is correct');
+		Assert.strictEqual(webRequestResponse.statusCode, 200, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'statusMessage is correct');
+		Assert.strictEqual(webRequestResponse.body, '0123456789', 'body is correct');
+		Assert.strictEqual(webRequestResponse.data, null, 'data is correct');
+		Assert.equal(webRequestResponse.headers.getHeader('content-type'), 'text/plain', '"Content-Type" header is correct');
+		Assert.equal(webRequestResponse.headers.getHeader('content-disposition'), 'inline; filename="data.txt"', '"Content-Disposition" header is correct');
+		Assert.true(webRequestResponse.headers.getHeader('last-modified'), '"Last-Modified" header is set');
+		Assert.true(webRequestResponse.headers.getHeader('etag'), '"ETag" header is set');
+		Assert.equal(webRequestResponse.headers.getHeader('accept-ranges'), 'bytes', '"Accept-Ranges" header is correct');
+		Assert.equal(webRequestResponse.headers.getHeader('content-encoding'), 'gzip', '"Content-Encoding" header is correct');
+		Assert.true(webRequestResponse.headers.getHeader('x-processing-time-in-milliseconds'), '"X-Processing-Time-in-Milliseconds" header is set');
+		Assert.true(webRequestResponse.headers.getHeader('x-response-id'), '"X-Response-Id" header is set');
+		Assert.true(webRequestResponse.headers.getHeader('date'), '"Date" header is set');
+		Assert.equal(webRequestResponse.headers.getHeader('connection'), 'close', '"Connection" header is correct');
+		Assert.equal(webRequestResponse.headers.getHeader('transfer-encoding'), 'chunked', '"Transfer-Encoding" header is correct');
+	},
+
+	testFileRouteForTextFileWithAcceptEncodingIdentity: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'files/text/data.txt', {
+			headers: {
+				'Accept-Encoding': 'identity',
+			},
+		});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+		
+		Assert.strictEqual(webRequestResponse.statusCode, 200, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'statusMessage is correct');
+		Assert.strictEqual(webRequestResponse.body, '0123456789', 'body is correct');
+		Assert.equal(webRequestResponse.headers.getHeader('content-encoding'), 'identity', '"Content-Encoding" header is correct');
+		Assert.equal(webRequestResponse.headers.getHeader('transfer-encoding'), 'chunked', '"Transfer-Encoding" header is correct');
+	},
+
+	testFileRouteForTextFileWithAcceptEncodingNull: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'files/text/data.txt', {
+			headers: {
+				'Accept-Encoding': null,
+			},
+		});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+		
+		Assert.strictEqual(webRequest.headers.getHeader('accept-encoding'), null, '"Accept-Encoding" header is not set');
+		Assert.strictEqual(webRequestResponse.statusCode, 200, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'statusMessage is correct');
+		Assert.strictEqual(webRequestResponse.body, '0123456789', 'body is correct');
+		Assert.equal(webRequestResponse.headers.getHeader('content-encoding'), 'identity', '"Content-Encoding" header is correct');
+		Assert.equal(webRequestResponse.headers.getHeader('transfer-encoding'), 'chunked', '"Transfer-Encoding" header is correct');
 	},
 
 	testControllerRouteWithCookies: function*() {
@@ -203,8 +238,12 @@ var WebServerTest = Test.extend({
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
-		Assert.equal(webRequestResponse.cookies.get('testCookie1'), 'testCookie1Value', 'Response for Controller Route with Cookies (/cookies): First "Set-Cookie" header is correct');
-		Assert.equal(webRequestResponse.cookies.get('testCookie2'), '{\"cookieObjectKey1\":[\"a\",\"b\",\"c\"]}', 'Response for Controller Route with Cookies (/cookies): Second "Set-Cookie" header is correct');
+		Assert.equal(webRequestResponse.cookies.get('testCookie1'), 'testCookie1Value', 'First "Set-Cookie" header is correct');
+		var expectedTestCookie2 = {
+			cookieObjectKey1: ['a', 'b', 'c'],
+			cookieObjectKey2: ['d', 'e', 'f'],
+		};
+		Assert.deepEqual(webRequestResponse.cookies.get('testCookie2'), expectedTestCookie2, 'Second "Set-Cookie" header is correct');
 	},
 
 	testUnmatchedRoute: function*() {
@@ -213,8 +252,8 @@ var WebServerTest = Test.extend({
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
-		Assert.strictEqual(webRequestResponse.statusCode, 404, 'Response for unmatched route: statusCode is correct');
-		Assert.strictEqual(webRequestResponse.statusMessage, 'Not Found', 'Response for unmatched route: statusMessage is correct');
+		Assert.strictEqual(webRequestResponse.statusCode, 404, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Not Found', 'statusMessage is correct');
 	},
 
 	testRouteThrowsInternalServerErrorInFunction: function*() {
@@ -239,8 +278,15 @@ var WebServerTest = Test.extend({
 		Assert.strictEqual(webRequestResponse.data.errors.first().message, 'Internal Server Error thrown in generator.', 'Error message is correct');
 	},
 
-	testNoGzipEncoding: function() {
+	testRedirectRoute: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'redirect', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
 
+		Assert.strictEqual(webRequestResponse.statusCode, 301, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Moved Permanently', 'statusMessage is correct');
+		Assert.strictEqual(webRequestResponse.headers.get('location'), 'http://www.system.inc:8181/redirect', 'Location header is correct');
 	},
 
 	//test all routes above

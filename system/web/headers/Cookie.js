@@ -10,11 +10,12 @@ var Cookie = Class.extend({
 	construct: function(key, value) {
 		this.key = key;
 
-		if(Primitive.is(value)) {
-			this.value = value;
+		// Decode JSON strings into objects
+		if(Json.is(value)) {
+			this.value = Json.decode(value);
 		}
 		else {
-			this.value = Json.encode(value);
+			this.value = value;	
 		}
 	},
 
@@ -25,7 +26,14 @@ var Cookie = Class.extend({
 	},
 
 	toHeaderString: function() {
-		var headerString = this.key+'='+this.value+';';
+		var value = this.value;
+
+		// Encode non-primitives into JSON strings
+		if(!Primitive.is(this.value)) {
+			value = Json.encode(this.value);
+		}
+
+		var headerString = this.key+'='+value+';';
 
 		return headerString;
 	},
@@ -41,7 +49,6 @@ Cookie.constructFromHeaderString = function(headerString) {
 	headerStringArray.delete(0);
 	var value = headerStringArray.join('=').replaceLast(';', '');
 
-	// TODO: This needs to be fixed
 	var cookie = new Cookie(key, value);
 
 	return cookie;

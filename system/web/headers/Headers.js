@@ -129,6 +129,18 @@ var Headers = Class.extend({
 		}.bind(this));
 	},
 
+	removeNullHeaders: function() {
+		var headers = [];
+
+		this.headers.each(function(index, header) {
+			if(header.value !== null) {
+				headers.append(header);
+			}
+		});
+
+		this.headers = headers;
+	},
+
 	length: function() {
 		return this.headers.length;
 	},

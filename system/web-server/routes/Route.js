@@ -175,7 +175,8 @@ var Route = Class.extend({
 	},
 
 	follow: function*(request, response) {
-		throw new Error('Route.follow() must be implemented by a subclass.');
+		// Send the response
+		yield response.send();
 	},
 
 	getFullExpression: function() {

@@ -1,6 +1,7 @@
 // Dependencies
 var Route = Framework.require('system/web-server/routes/Route.js');
 var InternalServerError = Framework.require('system/web-server/errors/InternalServerError.js');
+var Url = Framework.require('system/web/Url.js');
 
 // Class
 var RedirectRoute = Route.extend({
@@ -45,7 +46,7 @@ var RedirectRoute = Route.extend({
 		}
 
 		// Send the response
-		response.send();
+		yield this.super.apply(this, arguments);
 	},
 
 });

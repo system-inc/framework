@@ -71,7 +71,7 @@ var ProxyRoute = Route.extend({
 		//Console.log(content);
 
 		// Send the response
-		response.send();
+		yield this.super.apply(this, arguments);
 	},
 
 });

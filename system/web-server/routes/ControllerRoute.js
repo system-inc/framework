@@ -47,7 +47,7 @@ var ControllerRoute = Route.extend({
 		}
 
 		// Send the response
-		response.send();
+		yield this.super.apply(this, arguments);
 	},
 
 });
