@@ -1,5 +1,6 @@
 // Dependencies
 var WebServerController = Framework.require('system/web-server/WebServerController.js');
+var InternalServerError = Framework.require('system/web-server/errors/InternalServerError.js');
 
 // Class
 var TestWebServerController = WebServerController.extend({
@@ -22,6 +23,14 @@ var TestWebServerController = WebServerController.extend({
 		//Console.warn(this.response.cookies);
 
 		return 'Route with cookies.';
+	},
+
+	throwInternalServerErrorInFunction: function() {
+		throw new InternalServerError('Internal Server Error thrown in function.');
+	},
+
+	throwInternalServerErrorInGenerator: function*() {
+		throw new InternalServerError('Internal Server Error thrown in generator.');
 	},
 
 	apiHelloWorld: function() {

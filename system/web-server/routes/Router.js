@@ -38,13 +38,13 @@ var Router = Class.extend({
 		return route;
 	},
 
-	route: function(request, response) {
+	route: function*(request, response) {
 		var route = this.matchRoute(request, response);
 		//Console.log(route);
 
 		// Handle no route found
 		if(route) {
-			route.follow(request, response);
+			yield route.follow(request, response);
 		}
 		else {
 			// Change this to getting error routes

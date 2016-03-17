@@ -43,6 +43,14 @@ var WebServerTest = Test.extend({
 								controllerMethodName: 'cookies',
 							},
 							{
+								expression: 'throw-internal-server-error-in-function',
+								controllerMethodName: 'throwInternalServerErrorInFunction',
+							},
+							{
+								expression: 'throw-internal-server-error-in-generator',
+								controllerMethodName: 'throwInternalServerErrorInGenerator',
+							},
+							{
 								type: 'redirect',
 								redirectStatusCode: 301,
 								redirectHost: 'http://www.system.inc/',
@@ -209,13 +217,33 @@ var WebServerTest = Test.extend({
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Not Found', 'Response for unmatched route: statusMessage is correct');
 	},
 
-	testRouteThrowsInternalServerError: function() {
+	testRouteThrowsInternalServerErrorInFunction: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'throw-internal-server-error-in-function', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
 
+		Assert.strictEqual(webRequestResponse.statusCode, 500, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Internal Server Error', 'statusMessage is correct');
+		Assert.strictEqual(webRequestResponse.data.errors.first().message, 'Internal Server Error thrown in function.', 'Error message is correct');
+	},
+
+	testRouteThrowsInternalServerErrorInGenerator: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'throw-internal-server-error-in-generator', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 500, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Internal Server Error', 'statusMessage is correct');
+		Assert.strictEqual(webRequestResponse.data.errors.first().message, 'Internal Server Error thrown in generator.', 'Error message is correct');
 	},
 
 	testNoGzipEncoding: function() {
 
 	},
+
+	//test all routes above
 
 	testSingleRangeRequestsOnFile: function*() {
 		var rangesToTest = [
