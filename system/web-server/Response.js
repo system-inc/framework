@@ -6,6 +6,7 @@ var Stopwatch = Framework.require('system/time/Stopwatch.js');
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 var Data = Framework.require('system/data/Data.js');
 var File = Framework.require('system/file-system/File.js');
+var ArchivedFile = Framework.require('system/archive/file-system-objects/ArchivedFile.js');
 
 // Class
 var Response = Class.extend({
@@ -87,6 +88,7 @@ var Response = Class.extend({
 
 	send: function*(evenIfHandled) {
 		// Don't send the request if it is already handled unless forced
+		// evenIfHandled allows us to send an error response in the case of the code in this method failing
 		if(this.handled && !evenIfHandled) {
 			return;
 		}
@@ -103,99 +105,24 @@ var Response = Class.extend({
 		}
 
 		// If the content is something
-		var contentType;
 		if(this.content) {
 			//Console.highlight(this.content);
 
-			// If the archive module is enabled and the content is an archived file inside of a archive file
-			if(global['ArchivedFileSystemObject'] && Class.isInstance(this.content, ArchivedFileSystemObject)) {
-				// Set the Content-Type header
-				//Console.highlight(this.content.path);
-				contentType = File.getContentType(this.content.path);
-				this.headers.set('Content-Type', contentType);
-
-				// Set the Content-Disposition header, by specifying inline the browser will try to display the content and if it cannot it will download it
-				this.headers.set('Content-Disposition', 'inline; filename="'+this.content.name+'"');
-
-				// Set the Last-Modified header
-				this.headers.set('Last-Modified', this.content.timeModified.time.toUTCString());
-
-				// Set the ETag header
-				this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.archivedSizeInBytes+'/'+this.content.extractedSizeInBytes).digest('hex'));
-
-				// Byte serving is not supported
-				this.headers.set('Accept-Ranges', 'none');
-
-				// If the archived file is compressed with deflate and the requester has said they accept deflate, leave the archived file compressed and let the client deflate it
-				this.content = yield this.content.toReadStream();
+			// Handle when the content is an ArchivedFile
+			if(Class.isInstance(this.content, ArchivedFile)) {
+				yield this.handleContentIsArchivedFile();
 			}
-			// If the content is a file
+			// Handle when the content is a File
 			else if(Class.isInstance(this.content, File)) {
-				// Check if the file exists
-				var fileExists = yield this.content.exists();
-
-				// If the file exists
-				if(fileExists) {
-					// Set the Content-Type header
-					contentType = File.getContentType(this.content.path);
-					this.headers.set('Content-Type', contentType);
-
-					// Set the Content-Disposition header, by specifying inline the browser will try to display the content and if it cannot it will download it
-					this.headers.set('Content-Disposition', 'inline; filename="'+this.content.name+'"');
-
-					// Set the Last-Modified header
-					yield this.content.initializeStatus();
-					this.headers.set('Last-Modified', this.content.timeModified.time.toUTCString());
-
-					// Set the ETag header
-					this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.sizeInBytes()).digest('hex'));
-
-					// Advertise byte serving
-					this.headers.set('Accept-Ranges', 'bytes');
-
-					// Support range requests (byte serving), currently do not support multiple ranges in a single request
-					if(this.request.range && this.request.range.ranges.length == 1) {
-						var readStreamRange = this.request.range.getReadStreamRange(this.content.sizeInBytes());
-						//Console.log('readStreamRange', readStreamRange);
-
-						// Always set the status code to 206 when we set Content-Range, even if we are sending the entire resource
-						this.statusCode = 206;
-
-						// Do not set the Content-Length header since we are sending a stream with transfer-encoding: chunked
-						//this.headers.set('Content-Length', this.request.range.getContentLength(this.content.sizeInBytes()));
-
-						// Set the Content-Range header
-						this.headers.set('Content-Range', this.request.range.getContentRange(this.content.sizeInBytes()));
-
-						// Turn the file into a read stream
-						this.content = yield this.content.toReadStream(readStreamRange);
-					}
-					// Send the entire file
-					else {
-						// Turn the file into a read stream
-						this.content = yield this.content.toReadStream();
-					}
-				}
-				// If the file does not exist, send a 404
-				else {
-					throw new NotFoundError(this.content.name+' not found.');
-				}
+				yield this.handleContentIsFile();
 			}
-			// If the content is an HtmlDocument
+			// Handle when the content is an HtmlDocument
 			else if(Class.isInstance(this.content, HtmlDocument)) {
-				this.headers.set('Content-Type', 'text/html');
-				this.content = this.content.toString(false); // No indentation
-
-				// Set the ETag header
-				this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.request.url+'/'+this.content).digest('hex'));
+				yield this.handleContentIsHtmlDocument();
 			}
 			// If the content isn't a string, buffer, or stream, JSON encode it
 			else if(!String.is(this.content) && !Buffer.is(this.content) && !Stream.is(this.content)) {
-				this.headers.set('Content-Type', 'application/json');
-				this.content = Json.encode(this.content);
-
-				// Set the ETag header
-				this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.request.url+'/'+this.content).digest('hex'));
+				yield this.handleContentIsObject();
 			}
 		}
 
@@ -299,6 +226,96 @@ var Response = Class.extend({
 		this.nodeResponse.writeHead(this.statusCode, this.headers.toArray());
 
 		//Console.highlight(this.headers.toArray());
+	},
+
+	handleContentIsArchivedFile: function*() {
+		// Set the Content-Type header
+		//Console.highlight(this.content.path);
+		var contentType = File.getContentType(this.content.path);
+		this.headers.set('Content-Type', contentType);
+
+		// Set the Content-Disposition header, by specifying inline the browser will try to display the content and if it cannot it will download it
+		this.headers.set('Content-Disposition', 'inline; filename="'+this.content.name+'"');
+
+		// Set the Last-Modified header
+		this.headers.set('Last-Modified', this.content.timeModified.time.toUTCString());
+
+		// Set the ETag header
+		this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.archivedSizeInBytes+'/'+this.content.extractedSizeInBytes).digest('hex'));
+
+		// Byte serving is not supported
+		this.headers.set('Accept-Ranges', 'none');
+
+		// If the archived file is compressed with deflate and the requester has said they accept deflate, leave the archived file compressed and let the client deflate it
+		this.content = yield this.content.toReadStream();
+	},
+
+	handleContentIsFile: function*() {
+		// Check if the file exists
+		var fileExists = yield this.content.exists();
+
+		// If the file exists
+		if(fileExists) {
+			// Set the Content-Type header
+			var contentType = File.getContentType(this.content.path);
+			this.headers.set('Content-Type', contentType);
+
+			// Set the Content-Disposition header, by specifying inline the browser will try to display the content and if it cannot it will download it
+			this.headers.set('Content-Disposition', 'inline; filename="'+this.content.name+'"');
+
+			// Set the Last-Modified header
+			yield this.content.initializeStatus();
+			this.headers.set('Last-Modified', this.content.timeModified.time.toUTCString());
+
+			// Set the ETag header
+			this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.sizeInBytes()).digest('hex'));
+
+			// Advertise byte serving
+			this.headers.set('Accept-Ranges', 'bytes');
+
+			// Support range requests (byte serving), currently do not support multiple ranges in a single request
+			if(this.request.range && this.request.range.ranges.length == 1) {
+				var readStreamRange = this.request.range.getReadStreamRange(this.content.sizeInBytes());
+				//Console.log('readStreamRange', readStreamRange);
+
+				// Always set the status code to 206 when we set Content-Range, even if we are sending the entire resource
+				this.statusCode = 206;
+
+				// Do not set the Content-Length header since we are sending a stream with transfer-encoding: chunked
+				//this.headers.set('Content-Length', this.request.range.getContentLength(this.content.sizeInBytes()));
+
+				// Set the Content-Range header
+				this.headers.set('Content-Range', this.request.range.getContentRange(this.content.sizeInBytes()));
+
+				// Turn the file into a read stream
+				this.content = yield this.content.toReadStream(readStreamRange);
+			}
+			// Send the entire file
+			else {
+				// Turn the file into a read stream
+				this.content = yield this.content.toReadStream();
+			}
+		}
+		// If the file does not exist, send a 404
+		else {
+			throw new NotFoundError(this.content.name+' not found.');
+		}
+	},
+
+	handleContentIsHtmlDocument: function*() {
+		this.headers.set('Content-Type', 'text/html');
+		this.content = this.content.toString(false); // No indentation
+
+		// Set the ETag header
+		this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.request.url+'/'+this.content).digest('hex'));
+	},
+
+	handleContentIsObject: function*() {
+		this.headers.set('Content-Type', 'application/json');
+		this.content = Json.encode(this.content);
+
+		// Set the ETag header
+		this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.request.url+'/'+this.content).digest('hex'));
 	},
 
 	sendContent: function*() {

@@ -341,7 +341,7 @@ var WebServer = Server.extend({
 			request: request.getPublicErrorData(),
 		});
 
-		// Send the response
+		// Forcefully send the response (this will send the response even if response.send() has already been triggered)
 		response.send(true);
 
 		// Conditionally log the failed request to the general log
