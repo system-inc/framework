@@ -58,74 +58,66 @@ var WebServerTest = Test.extend({
 							},
 							{
 								type: 'proxy',
-								proxyUrl: 'http://www.system.inc/',
+								proxyUrl: 'http://www.google.com/',
 								expression: 'proxy',
 							},
 							{
-								expression: 'users/(\\w+?)/?',
+								expression: 'items/(\\w+?)/?',
+								controllerMethodName: 'item',
 								data: {
-									view: 'user',
-									1: 'username',
+									view: 'item',
+									1: 'itemIdentifier',
 								},
-								description: 'Users!',
 								children: [
 									{
-										expression: 'story/(\\w+?)/?',
+										expression: 'related-items/(\\w+?)/?',
 										data: {
-											view: 'userStory',
-											1: 'story',
+											view: 'relatedItem',
+											1: 'relatedItemIdentifier',
 										},
 									},
 								],
 							},
 							{
-								methods: 'PUT',
-								controllerMethodName: 'main',
 								expression: 'put-only',
-								data: {
-									view: 'putOnly',
-								},
+								controllerMethodName: 'putOnly',
+								methods: 'PUT',
 							},
+							// TODO: test
 							{
-								controllerMethodName: 'contact',
-								expression: 'contact',
+								expression: 'level-one/?',
+								controllerMethodName: 'levelOne',
 								data: {
-									contactData: 'contact!',
-									view: 'contact',
-								},
-							},
-							{
-								controllerMethodName: 'legal',
-								expression: 'legal/?',
-								data: {
-									legalData: 'legal',
-									view: 'legal',
+									levelOne: 'levelOne',
+									view: 'levelOne',
 								},
 								children: [
 									{
-										controllerMethodName: 'legalTermsOfService',
-										expression: 'terms-of-service/?',
+										expression: 'level-two/?',
+										controllerMethodName: 'levelOneLevelTwo',
 										data: {
-											legalTermsOfServiceData: 'legalTermsOfService',
-											view: 'legalTermsOfService',
+											levelOneLevelTwo: 'levelOneLevelTwo',
+											view: 'levelOneLevelTwo',
 										},
 										children: [
 											{
-												controllerMethodName: 'legalTermsOfServiceIOs',
-												expression: 'ios/?',
+												expression: 'levelThree/?',
+												controllerMethodName: 'levelOneLevelTwoLevelThree',
 												data: {
-													legalTermsOfServiceIOsData: 'legalTermsOfServiceIOs',
-													view: 'legalTermsOfServiceIOs',
+													levelOneLevelTwoLevelThree: 'levelOneLevelTwoLevelThree',
+													view: 'levelOneLevelTwoLevelThree',
 												},
 											},
 										],
 									},
 								],
 							},
+							// TODO: test
 							{
 								expression: 'api/data/numbers',
 								controllerMethodName: 'apiDataNumbers',
 							},
+							// TODO: test
 							{
 								expression: '(.*?)(images|scripts|styles|files)/(.*)',
 								type: 'file',
@@ -287,6 +279,63 @@ var WebServerTest = Test.extend({
 		Assert.strictEqual(webRequestResponse.statusCode, 301, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Moved Permanently', 'statusMessage is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('location'), 'http://www.system.inc:8181/redirect', 'Location header is correct');
+	},
+
+	//testProxyRoute: function*() {
+	//	var webRequest = new WebRequest(this.baseUrl+'proxy', {});
+	//	var webRequestResponse = yield webRequest.execute();
+	//	Console.log('webRequest', webRequest);
+	//	Console.info('webRequestResponse', webRequestResponse);
+
+	//	//Assert.strictEqual(webRequestResponse.statusCode, 301, 'statusCode is correct');
+	//	//Assert.strictEqual(webRequestResponse.statusMessage, 'Moved Permanently', 'statusMessage is correct');
+	//	//Assert.strictEqual(webRequestResponse.headers.get('location'), 'http://www.system.inc:8181/redirect', 'Location header is correct');
+	//},
+
+	testItemRoute: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'items/item1', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.data.itemIdentifier, 'item1', 'Captured data is correct');
+		Assert.strictEqual(webRequestResponse.data.view, 'item', 'Data is correct');
+		Assert.strictEqual(webRequestResponse.data.root, 'Root data.', 'Inherited data is correct');
+	},
+
+	testRelatedItemRoute: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'items/item1/related-items/related1', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.data.itemIdentifier, 'item1', 'Captured data is correct');
+		Assert.strictEqual(webRequestResponse.data.relatedItemIdentifier, 'related1', 'Captured data is correct');
+		Assert.strictEqual(webRequestResponse.data.view, 'relatedItem', 'Data is correct');
+		Assert.strictEqual(webRequestResponse.data.root, 'Root data.', 'Inherited data is correct');
+	},
+
+	testPutOnlyRoute: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'put-only', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 404, 'Route does not match when method is not PUT');
+
+		webRequest = new WebRequest(this.baseUrl+'put-only', {
+			method: 'PUT',
+		});
+		webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 200, 'Route matches when the method is PUT');
+		Assert.strictEqual(webRequestResponse.body, 'This method is only invoked on requests using the PUT method.', 'PUT only route body is correct');
+	},
+
+	testChildRoutes: function*() {
+		
 	},
 
 	//test all routes above

@@ -34,6 +34,18 @@ var TestWebServerController = WebServerController.extend({
 		throw new InternalServerError('Internal Server Error thrown in generator.');
 	},
 
+	item: function() {
+		return this.data;
+	},
+
+	relatedItem: function() {
+		return this.data;
+	},
+
+	putOnly: function() {
+		return 'This method is only invoked on requests using the PUT method.';
+	},
+
 	apiHelloWorld: function() {
 		return {
 			data: {

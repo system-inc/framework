@@ -319,7 +319,7 @@ var WebServer = Server.extend({
 
 	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
 	handleError: function(request, response, error) {
-		var logEntry = Console.prepareMessage('WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData());
+		var logEntry = Console.prepareMessage.call(this, ['WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData()], 'write');
 		if(this.settings.get('verbose')) {
 			Console.log(logEntry);
 		}
@@ -352,7 +352,7 @@ var WebServer = Server.extend({
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
 	handleInternalServerError: function(error, nodeResponse, request) {
-		var logEntry = Console.prepareMessage('WebServer.handleInternalServerError() called. Error:', error);
+		var logEntry = Console.prepareMessage.call(this, ['WebServer.handleInternalServerError() called. Error:', error], 'write');
 		if(this.settings.get('verbose')) {
 			Console.log(logEntry);
 		}

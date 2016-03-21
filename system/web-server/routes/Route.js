@@ -14,6 +14,7 @@ var Route = Class.extend({
 	expression: null,
 	fullExpression: null,
 	data: {},
+	capturedData: null,
 	description: null,
 	parent: null,
 	children: [],
@@ -114,6 +115,7 @@ var Route = Class.extend({
 		routeMatch.complete = requestExpression.match(new RegularExpression('^'+this.fullExpression+'$'));
 		if(routeMatch.complete) {
 			routeMatch.route = this;
+			this.capturedData = routeMatch.complete;
 			//Console.log('Completely! Setting match.');
 		}
 
@@ -209,9 +211,10 @@ var Route = Class.extend({
 		// Go through each capture group named in the route and its parents and assign the proper key and value for the capture group name and its matches
 		var count = 1;
 		this.getCaptureGroupNames().each(function(index, captureGroupName) {
-			collectedData[captureGroupName] = this.complete[count];
+			collectedData[captureGroupName] = this.capturedData[count];
 			count++;
 		}.bind(this));
+		//Node.exit(collectedData);
 
 		// Merge what we have so far with the route data
 		collectedData = this.data.clone().merge(collectedData);
