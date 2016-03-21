@@ -83,7 +83,6 @@ var WebServerTest = Test.extend({
 								controllerMethodName: 'putOnly',
 								methods: 'PUT',
 							},
-							// TODO: test
 							{
 								expression: 'level-one/?',
 								controllerMethodName: 'levelOne',
@@ -101,7 +100,7 @@ var WebServerTest = Test.extend({
 										},
 										children: [
 											{
-												expression: 'levelThree/?',
+												expression: 'level-three/?',
 												controllerMethodName: 'levelOneLevelTwoLevelThree',
 												data: {
 													levelOneLevelTwoLevelThree: 'levelOneLevelTwoLevelThree',
@@ -112,14 +111,12 @@ var WebServerTest = Test.extend({
 									},
 								],
 							},
-							// TODO: test
 							{
 								expression: 'api/data/numbers',
 								controllerMethodName: 'apiDataNumbers',
 							},
-							// TODO: test
 							{
-								expression: '(.*?)(images|scripts|styles|files)/(.*)',
+								expression: '(.*?)(images|scripts|style-sheets|files)/(.*)',
 								type: 'file',
 								filePath: '*',
 							},
@@ -335,7 +332,35 @@ var WebServerTest = Test.extend({
 	},
 
 	testChildRoutes: function*() {
-		
+		// Level one
+		var webRequest = new WebRequest(this.baseUrl+'level-one/', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.data.levelOne, 'levelOne', 'First level data is correct');
+		Assert.strictEqual(webRequestResponse.data.view, 'levelOne', 'First level data is correct');
+
+		// Level two
+		webRequest = new WebRequest(this.baseUrl+'level-one/level-two', {});
+		webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.data.levelOne, 'levelOne', 'Data is inherited correctly');
+		Assert.strictEqual(webRequestResponse.data.view, 'levelOneLevelTwo', 'Data is inherited correctly');
+		Assert.strictEqual(webRequestResponse.data.levelOneLevelTwo, 'levelOneLevelTwo', 'Data is correct');
+
+		// Level three
+		webRequest = new WebRequest(this.baseUrl+'level-one/level-two/level-three', {});
+		webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.data.levelOne, 'levelOne', 'Data is inherited correctly');
+		Assert.strictEqual(webRequestResponse.data.levelOneLevelTwo, 'levelOneLevelTwo', 'Data is inherited correctly');
+		Assert.strictEqual(webRequestResponse.data.view, 'levelOneLevelTwoLevelThree', 'Data is inherited correctly');
+		Assert.strictEqual(webRequestResponse.data.levelOneLevelTwoLevelThree, 'levelOneLevelTwoLevelThree', 'Data is correct');
 	},
 
 	//test all routes above

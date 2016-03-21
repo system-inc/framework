@@ -40,7 +40,7 @@ var ConsoleSession = Class.extend({
 
 	write: function(message) {
 		if(this.log) {
-			this.log.write(Terminal.removeAnsiEscapeCodesFromString(message));
+			this.log.write(message);
 		}
 	},
 

@@ -46,6 +46,18 @@ var TestWebServerController = WebServerController.extend({
 		return 'This method is only invoked on requests using the PUT method.';
 	},
 
+	levelOne: function() {
+		return this.data;
+	},
+
+	levelOneLevelTwo: function() {
+		return this.data;
+	},
+
+	levelOneLevelTwoLevelThree: function() {
+		return this.data;
+	},
+
 	apiHelloWorld: function() {
 		return {
 			data: {

@@ -1,6 +1,7 @@
 // Dependencies
 var File = Framework.require('system/file-system/File.js');
 var Directory = Framework.require('system/file-system/Directory.js');
+var Terminal = Framework.require('system/console/Terminal.js');
 
 // Class
 var Log = Class.extend({
@@ -18,10 +19,20 @@ var Log = Class.extend({
 		this.file = new File(Node.Path.join(this.directory, this.nameWithoutExtension+'.log'));
 	},
 
-	write: function*(data) {
+	write: function*(data, removeAnsiEscapeCodesFromString) {
+		// removeAnsiEscapeCodesFromString defaults to true
+		if(removeAnsiEscapeCodesFromString === undefined) {
+			removeAnsiEscapeCodesFromString = true;
+		}
+
 		// Make sure we have something to write
 		if(!data) {
 			return;
+		}
+
+		// Conditionally remove ANSI escape codes
+		if(removeAnsiEscapeCodesFromString && String.is(data)) {
+			data = Terminal.removeAnsiEscapeCodesFromString(data);
 		}
 
 		// Troubleshooting why modifying or deleting the log file breaks things, writable is unreliable
