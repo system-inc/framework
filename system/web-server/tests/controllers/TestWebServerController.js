@@ -1,6 +1,11 @@
 // Dependencies
 var WebServerController = Framework.require('system/web-server/WebServerController.js');
 var InternalServerError = Framework.require('system/web-server/errors/InternalServerError.js');
+var BadRequestError = Framework.require('system/web-server/errors/BadRequestError.js');
+var ForbiddenError = Framework.require('system/web-server/errors/ForbiddenError.js');
+var RequestedRangeNotSatisfiableError = Framework.require('system/web-server/errors/RequestedRangeNotSatisfiableError.js');
+var RequestEntityTooLargeError = Framework.require('system/web-server/errors/RequestEntityTooLargeError.js');
+var UnauthorizedError = Framework.require('system/web-server/errors/UnauthorizedError.js');
 
 // Class
 var TestWebServerController = WebServerController.extend({
@@ -32,6 +37,26 @@ var TestWebServerController = WebServerController.extend({
 
 	throwInternalServerErrorInGenerator: function*() {
 		throw new InternalServerError('Internal Server Error thrown in generator.');
+	},
+
+	throwBadRequestError: function*() {
+		throw new BadRequestError();
+	},
+
+	throwForbiddenError: function*() {
+		throw new ForbiddenError();
+	},
+
+	throwRequestedRangeNotSatisfiableError: function*() {
+		throw new RequestedRangeNotSatisfiableError();
+	},
+
+	throwRequestEntityTooLargeError: function*() {
+		throw new RequestEntityTooLargeError();
+	},
+
+	throwUnauthorizedError: function*() {
+		throw new UnauthorizedError();
 	},
 
 	item: function() {

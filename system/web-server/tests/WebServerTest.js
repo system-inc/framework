@@ -51,6 +51,26 @@ var WebServerTest = Test.extend({
 								controllerMethodName: 'throwInternalServerErrorInGenerator',
 							},
 							{
+								expression: 'throw-bad-request-error',
+								controllerMethodName: 'throwBadRequestError',
+							},
+							{
+								expression: 'throw-forbidden-error',
+								controllerMethodName: 'throwForbiddenError',
+							},
+							{
+								expression: 'throw-requested-range-not-satisfiable-error',
+								controllerMethodName: 'throwRequestedRangeNotSatisfiableError',
+							},
+							{
+								expression: 'throw-request-entity-too-large-error',
+								controllerMethodName: 'throwRequestEntityTooLargeError',
+							},
+							{
+								expression: 'throw-unauthorized-error',
+								controllerMethodName: 'throwUnauthorizedError',
+							},
+							{
 								type: 'redirect',
 								redirectStatusCode: 301,
 								redirectHost: 'www.system.inc',
@@ -235,38 +255,6 @@ var WebServerTest = Test.extend({
 		Assert.deepEqual(webRequestResponse.cookies.get('testCookie2'), expectedTestCookie2, 'Second "Set-Cookie" header is correct');
 	},
 
-	testUnmatchedRoute: function*() {
-		var webRequest = new WebRequest(this.baseUrl+'404', {});
-		var webRequestResponse = yield webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
-
-		Assert.strictEqual(webRequestResponse.statusCode, 404, 'statusCode is correct');
-		Assert.strictEqual(webRequestResponse.statusMessage, 'Not Found', 'statusMessage is correct');
-	},
-
-	testRouteThrowsInternalServerErrorInFunction: function*() {
-		var webRequest = new WebRequest(this.baseUrl+'throw-internal-server-error-in-function', {});
-		var webRequestResponse = yield webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
-
-		Assert.strictEqual(webRequestResponse.statusCode, 500, 'statusCode is correct');
-		Assert.strictEqual(webRequestResponse.statusMessage, 'Internal Server Error', 'statusMessage is correct');
-		Assert.strictEqual(webRequestResponse.data.errors.first().message, 'Internal Server Error thrown in function.', 'Error message is correct');
-	},
-
-	testRouteThrowsInternalServerErrorInGenerator: function*() {
-		var webRequest = new WebRequest(this.baseUrl+'throw-internal-server-error-in-generator', {});
-		var webRequestResponse = yield webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
-
-		Assert.strictEqual(webRequestResponse.statusCode, 500, 'statusCode is correct');
-		Assert.strictEqual(webRequestResponse.statusMessage, 'Internal Server Error', 'statusMessage is correct');
-		Assert.strictEqual(webRequestResponse.data.errors.first().message, 'Internal Server Error thrown in generator.', 'Error message is correct');
-	},
-
 	testRedirectRoute: function*() {
 		var webRequest = new WebRequest(this.baseUrl+'redirect', {});
 		var webRequestResponse = yield webRequest.execute();
@@ -363,7 +351,87 @@ var WebServerTest = Test.extend({
 		Assert.strictEqual(webRequestResponse.data.levelOneLevelTwoLevelThree, 'levelOneLevelTwoLevelThree', 'Data is correct');
 	},
 
-	//test all routes above
+	testHttpErrorNotFoundError: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'404', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 404, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Not Found', 'statusMessage is correct');
+	},
+
+	testHttpErrorInternalServerErrorThrownInFunction: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'throw-internal-server-error-in-function', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 500, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Internal Server Error', 'statusMessage is correct');
+		Assert.strictEqual(webRequestResponse.data.errors.first().message, 'Internal Server Error thrown in function.', 'Error message is correct');
+	},
+
+	testHttpErrorInternalServerErrorThrownInGenerator: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'throw-internal-server-error-in-generator', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 500, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Internal Server Error', 'statusMessage is correct');
+		Assert.strictEqual(webRequestResponse.data.errors.first().message, 'Internal Server Error thrown in generator.', 'Error message is correct');
+	},
+
+	testHttpErrorBadRequestError: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'throw-bad-request-error', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 400, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Bad Request', 'statusMessage is correct');
+	},
+
+	testHttpErrorForbiddenError: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'throw-forbidden-error', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 403, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Forbidden', 'statusMessage is correct');
+	},
+
+	testHttpErrorRequestedRangeNotSatisfiableError: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'throw-requested-range-not-satisfiable-error', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 416, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Range Not Satisfiable', 'statusMessage is correct');
+	},
+
+	testHttpErrorRequestEntityTooLargeError: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'throw-request-entity-too-large-error', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 413, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Payload Too Large', 'statusMessage is correct');
+	},
+
+	testHttpErrorUnauthorizedError: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'throw-unauthorized-error', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.statusCode, 401, 'statusCode is correct');
+		Assert.strictEqual(webRequestResponse.statusMessage, 'Unauthorized', 'statusMessage is correct');
+	},
 
 	testSingleRangeRequestsOnFile: function*() {
 		var rangesToTest = [
