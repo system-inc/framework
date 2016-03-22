@@ -6,6 +6,10 @@ var ForbiddenError = Framework.require('system/web-server/errors/ForbiddenError.
 var RequestedRangeNotSatisfiableError = Framework.require('system/web-server/errors/RequestedRangeNotSatisfiableError.js');
 var RequestEntityTooLargeError = Framework.require('system/web-server/errors/RequestEntityTooLargeError.js');
 var UnauthorizedError = Framework.require('system/web-server/errors/UnauthorizedError.js');
+var ArchiveFile = Framework.require('system/archive/ArchiveFile.js');
+var File = Framework.require('system/file-system/File.js');
+var Html = Framework.require('system/html/Html.js');
+var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 
 // Class
 var TestWebServerController = WebServerController.extend({
@@ -81,6 +85,63 @@ var TestWebServerController = WebServerController.extend({
 
 	levelOneLevelTwoLevelThree: function() {
 		return this.data;
+	},
+
+	contentArchivedFile: function*() {
+		var archiveFile = new ArchiveFile(Node.Path.join(Framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'archives', 'archive-text.zip'));
+		//Console.log('archiveFile', archiveFile);
+
+		var archivedFileSystemObjects = yield archiveFile.list();
+		//Console.log('archivedFileSystemObjects', archivedFileSystemObjects);
+
+		var archivedFileText = archivedFileSystemObjects.first();
+
+		return archivedFileText;
+	},
+
+	contentFile: function() {
+		var file = new File(Node.Path.join(Framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'text', 'data.txt'));
+
+		return file;
+	},
+
+	contentHtmlDocument: function() {
+		var htmlDocument = new HtmlDocument();
+
+		htmlDocument.body.append(Html.p('Test HTML document.'));
+
+		return htmlDocument;
+	},
+
+	contentObject: function() {
+		return {
+			a: 1,
+			b: 2,
+			c: 3,
+		};
+	},
+
+	contentString: function() {
+		return 'Content is string.';
+	},
+
+	contentBuffer: function() {
+		return new Buffer('Content is buffer.');
+	},
+
+	contentStream: function() {
+		var stream = new Stream();
+		stream.readable = true;
+		var c = 64;
+		var iv = setInterval(function () {
+			if(++c >= 75) {
+				clearInterval(iv);
+				stream.emit('end');
+			}
+			else stream.emit('data', String.fromCharCode(c));
+		}, 1);
+
+		return stream;
 	},
 
 	apiHelloWorld: function() {

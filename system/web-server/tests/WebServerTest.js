@@ -132,6 +132,39 @@ var WebServerTest = Test.extend({
 								],
 							},
 							{
+								expression: 'content/',
+								children: [
+									{
+										expression: 'archived-file',
+										controllerMethodName: 'contentArchivedFile',
+									},
+									{
+										expression: 'file',
+										controllerMethodName: 'contentFile',
+									},
+									{
+										expression: 'html-document',
+										controllerMethodName: 'contentHtmlDocument',
+									},
+									{
+										expression: 'object',
+										controllerMethodName: 'contentObject',
+									},
+									{
+										expression: 'string',
+										controllerMethodName: 'contentString',
+									},
+									{
+										expression: 'buffer',
+										controllerMethodName: 'contentBuffer',
+									},
+									{
+										expression: 'stream',
+										controllerMethodName: 'contentStream',
+									},
+								],
+							},
+							{
 								expression: 'api/data/numbers',
 								controllerMethodName: 'apiDataNumbers',
 							},
@@ -431,6 +464,75 @@ var WebServerTest = Test.extend({
 
 		Assert.strictEqual(webRequestResponse.statusCode, 401, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Unauthorized', 'statusMessage is correct');
+	},
+
+	testContentIsArchivedFile: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'content/archived-file', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.body, 'Text in an archived file inside of an archive file.', 'body is correct');
+		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'text/plain', '"Content-Type" header is correct');
+		Assert.strictEqual(webRequestResponse.headers.get('Content-Disposition'), 'inline; filename="archived-file-text.txt"', '"Content-Disposition" header is correct');
+	},
+
+	testContentIsFile: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'content/file', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.body, '0123456789', 'body is correct');
+		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'text/plain', '"Content-Type" header is correct');
+		Assert.strictEqual(webRequestResponse.headers.get('Content-Disposition'), 'inline; filename="data.txt"', '"Content-Disposition" header is correct');
+	},
+
+	testContentIsHtmlDocument: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'content/html-document', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.body, '<!DOCTYPE html><html><head></head><body><p>Test HTML document.</p></body></html>', 'body is correct');
+		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'text/html', '"Content-Type" header is correct');
+	},
+
+	testContentIsObject: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'content/object', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.body, '{"a":1,"b":2,"c":3}', 'body is correct');
+		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'application/json', '"Content-Type" header is correct');
+	},
+
+	testContentIsString: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'content/string', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.body, 'Content is string.', 'body is correct');
+	},
+
+	testContentIsBuffer: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'content/buffer', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.body, 'Content is buffer.', 'body is correct');
+	},
+
+	testContentIsStream: function*() {
+		var webRequest = new WebRequest(this.baseUrl+'content/stream', {});
+		var webRequestResponse = yield webRequest.execute();
+		//Console.log('webRequest', webRequest);
+		//Console.info('webRequestResponse', webRequestResponse);
+
+		Assert.strictEqual(webRequestResponse.body, 'ABCDEFGHIJ', 'body is correct');
 	},
 
 	testSingleRangeRequestsOnFile: function*() {
