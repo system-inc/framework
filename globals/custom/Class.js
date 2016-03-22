@@ -17,6 +17,32 @@ Class.isInstance = function(value, classType) {
 	return is;
 };
 
+Class.doesImplement = function(classToCheck, classExpectedToBeImplemented) {
+	var doesImplement = true;
+
+	// Check static properties and methods
+	for(var key in classExpectedToBeImplemented) {
+		if(classToCheck[key] === undefined) {
+			//console.log('Class does not have property', key);
+			doesImplement = false;
+			break;
+		}
+	}
+
+	// Check prototype properties and methods
+	if(doesImplement) {
+		for(var key in classExpectedToBeImplemented.prototype) {
+			if(classToCheck.prototype[key] === undefined) {
+				//console.log('Class does not have prototype property', key);
+				doesImplement = false;
+				break;
+			}
+		}		
+	}
+
+	return doesImplement;
+};
+
 // This must stay outside of the extend method
 var classInitializing = false;
 
@@ -121,6 +147,28 @@ Class.extend = function(childClassProperties) {
 
 	// And make this class extendable
 	Class.extend = arguments.callee;
+
+	// Allow classes to implement other classes
+	Class.implement = function(classToImplement) {
+		//Class = Node.Utility.inherits(classToImplement);
+
+		for(var classToImplementProperty in classToImplement) {
+			//console.log('classToImplementProperty', classToImplementProperty);
+			if(Class[classToImplementProperty] === undefined) {
+				//console.log(classToImplementProperty, 'does not exist on class, copying');
+				Class[classToImplementProperty] = cloneProperty(classToImplement[classToImplementProperty]);
+			}
+		}
+
+		for(var classToImplementPrototypeProperty in classToImplement.prototype) {
+			if(Class.prototype[classToImplementPrototypeProperty] === undefined) {
+				//console.log(classToImplementPrototypeProperty, 'does not exist on class prototype, copying');
+				Class.prototype[classToImplementPrototypeProperty] = cloneProperty(classToImplement.prototype[classToImplementPrototypeProperty]);
+			}
+		}
+		
+		return Class;
+	};
 
 	// Copy over any static methods from the parent class prototype to the child class that don't already exist
 	for(var parentClassProperty in parentClassPrototype) {

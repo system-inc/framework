@@ -204,6 +204,82 @@ var ClassTest = Test.extend({
 		Assert.true(Class.isInstance(actual, Promise), 'generator class methods return promise when not yielded');
 	},
 
+	testImplement: function*() {
+		// Class which will implement ClassToImplement
+		var MainClass = Class.extend({
+
+			existingProperty: 'MainClass.existingProperty',
+
+			existingMethod: function() {
+				return 'MainClass.existingMethod';
+			},
+
+		});
+
+		MainClass.existingStaticProperty = 'MainClass.existingStaticProperty';
+
+		MainClass.existingStaticMethod = function() {
+			return 'MainClass.existingStaticMethod';
+		};
+
+		// The class which will be implemented
+		var ClassToImplement = Class.extend({
+
+			existingProperty: 'ClassToImplement.existingProperty',
+			implementedProperty: 'ClassToImplement.implementedProperty',
+
+			existingMethod: function() {
+				return 'ClassToImplement.existingMethod';
+			},
+
+			implementedMethod: function() {
+				return 'ClassToImplement.implementedMethod';
+			},
+
+			implementedGeneratorMethod: function*() {
+				return 'ClassToImplement.implementedGeneratorMethod';
+			},
+
+		});
+
+		ClassToImplement.existingStaticProperty = 'ClassToImplement.existingStaticProperty';
+		ClassToImplement.implementedStaticProperty = 'ClassToImplement.implementedStaticProperty';
+
+		ClassToImplement.existingStaticMethod = function() {
+			return 'ClassToImplement.existingStaticMethod';
+		};
+
+		ClassToImplement.implementedStaticMethod = function() {
+			return 'ClassToImplement.implementedStaticMethod';
+		};
+
+		// Make sure MainClass does not implement ClassToImplement yet
+		Assert.false(Class.doesImplement(MainClass, ClassToImplement), 'Class.doesImplement() works');
+
+		// MainClass implements ClassToImplement
+		MainClass.implement(ClassToImplement);
+
+		// Verify MainClass implements ClassToImplement
+		Assert.true(Class.doesImplement(MainClass, ClassToImplement), 'Class.doesImplement() works');
+
+		// Test static properties and methods
+		Assert.strictEqual(MainClass.existingStaticProperty, 'MainClass.existingStaticProperty', 'Existing static properties are not overwritten');
+		Assert.strictEqual(MainClass.implementedStaticProperty, 'ClassToImplement.implementedStaticProperty', 'Implemented static properties are copied to the implementing class');
+		Assert.strictEqual(MainClass.existingStaticMethod(), 'MainClass.existingStaticMethod', 'Existing static methods are not overwritten');
+		Assert.strictEqual(MainClass.implementedStaticMethod(), 'ClassToImplement.implementedStaticMethod', 'Implemented static methods are copied to the implementing class');
+
+		// Construct an instance of MainClass
+		var mainClass = new MainClass();
+
+		// Test instance properties and methods
+		Assert.strictEqual(mainClass.existingProperty, 'MainClass.existingProperty', 'Existing properties are not overwritten');
+		Assert.strictEqual(mainClass.implementedProperty, 'ClassToImplement.implementedProperty', 'Implemented properties are copied to the implementing class');
+		Assert.strictEqual(mainClass.existingMethod(), 'MainClass.existingMethod', 'Existing methods are not overwritten');
+		Assert.strictEqual(mainClass.implementedMethod(), 'ClassToImplement.implementedMethod', 'Implemented methods are copied to the implementing class');
+		var yieldedImplementedGeneratorMethodValue = yield mainClass.implementedGeneratorMethod();
+		Assert.equal(yieldedImplementedGeneratorMethodValue, 'ClassToImplement.implementedGeneratorMethod', 'Implemented generator methods are copied to the implementing class');
+	},
+
 });
 
 // Export
