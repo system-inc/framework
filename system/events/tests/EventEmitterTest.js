@@ -13,4 +13,4 @@ var EventEmitterTest = Test.extend({
 });
 
 // Export
-module.exports = ClassTest;
+module.exports = EventEmitterTest;

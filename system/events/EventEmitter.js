@@ -9,16 +9,16 @@ var EventEmitter = Class.extend({
 	*/
 	events: {},
 
-	maximumListeners: EventEmitter.defaultMaximumListeners,
+	maximumListeners: null,
 
 	construct: function() {
-
+		this.maximumListeners = EventEmitter.defaultMaximumListeners;
 	},
 
 	on: function(eventIdentifier, callback) {
-		if(this.events[eventIdentifier]) {
-			this.events[eventIdentifier].listeners = 
-		}
+		//if(this.events[eventIdentifier]) {
+		//	this.events[eventIdentifier].listeners = 
+		//}
 	},
 
 	emit: function() {
