@@ -8,16 +8,19 @@ var Event = Framework.require('system/events/Event.js');
 var EventEmitterTest = Test.extend({
 
 	testEventEmitter: function*() {
-		//var eventEmitter = new EventEmitter();
+		var actual = null;
+		var eventEmitter = new EventEmitter();
 
-		//eventEmitter.on('event1', function(event) {
-		//	console.log('event');
-		//});
+		eventEmitter.on('event1', function(event) {
+			actual = event;
+		});
 
-		//eventEmitter.emit('event1');
+		yield eventEmitter.emit('event1', 'event1Data');
 
-		//var actual = yield 
+		Assert.true(Event.is(actual), 'EventEmitter emitted an instance of Event');
+		Assert.strictEqual(actual.data, 'event1Data', 'Event data is set correctly');
 
+		//console.log('actual', actual);
 	},
 
 	/*

@@ -1,16 +1,11 @@
 // Dependencies
 var Event = Framework.require('system/events/Event.js');
+var EventListener = Framework.require('system/events/EventListener.js');
 
 // Class
 var EventEmitter = Class.extend({
 
-	/* {
-			eventIdentifier: {
-				listeners: [], array of functions to evoke
-			},
-		}
-	*/
-	events: {},
+	eventListeners: {}, // eventIdentifer: EventListener
 
 	maximumListeners: null,
 
@@ -18,12 +13,16 @@ var EventEmitter = Class.extend({
 		this.maximumListeners = EventEmitter.defaultMaximumListeners;
 	},
 
-	emit: function(eventIdentifier, data) {
-		// Loop through all of the listeners for the eventIdentifier and trigger their callback
+	emit: function*(eventIdentifier, data) {
+		//Console.log('EventEmitter.emit', 'eventIdentifier', eventIdentifier, 'data', data);
+
+		if(this.eventListeners[eventIdentifier] !== undefined) {
+			yield this.eventListeners[eventIdentifier].runCallbacks(data);
+		}
 	},
 
 	on: function(eventIdentifier, callback, options) {
-		return this.addListener.apply(this, arguments);
+		return this.addListener(eventIdentifier, callback, options);
 	},
 
 	once: function(eventIdentifier, callback, options) {
@@ -31,9 +30,14 @@ var EventEmitter = Class.extend({
 	},
 
 	addListener: function(eventIdentifier, callback, options) {
-		//if(this.events[eventIdentifier]) {
-		//	this.events[eventIdentifier].listeners = 
-		//}
+		//Console.log('EventEmitter.addListener', 'eventIdentifier', eventIdentifier, 'callback', callback, 'options', options);
+
+		// List the event identifier in the list of events
+		if(this.eventListeners[eventIdentifier] === undefined) {
+			this.eventListeners[eventIdentifier] = new EventListener(this, eventIdentifier);
+		}
+
+		this.eventListeners[eventIdentifier].addCallback(callback, options);
 	},
 
 	removeListener: function() {

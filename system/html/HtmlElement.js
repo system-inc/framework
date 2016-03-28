@@ -31,6 +31,30 @@ var HtmlElement = HtmlNode.extend({
 	childrenToString: XmlElement.prototype.childrenToString,
 	toString: XmlElement.prototype.toString,
 
+	// EventEmitter
+	eventIdentifiers: [
+		'interact',
+		'trackpad.tap',
+		'trackpad.tap.double',
+		'trackpad.tap.triple',
+		'mouse.click',
+		'mouse.click.first',
+		'mouse.click.first.single',
+		'mouse.click.first.double',
+		'mouse.click.first.triple',
+		'mouse.first.drag',
+		'mouse.click.second',
+		'mouse.click.second.single',
+		'mouse.click.second.double',
+		'mouse.click.second.triple',
+		'mouse.second.drag',
+		'mouse.cursor.over',
+		'mouse.cursor.out',
+		'keyboard.key.down',
+		'keyboard.key.up',
+		'keyboard.key.press',
+	],
+
 	// Uses XmlElement
 	construct: function() {
 		// Use XmlElement's constructor

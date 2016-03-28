@@ -37,5 +37,13 @@ Function.delay = function(milliseconds, callback) {
 	});
 };
 
+Function.recur = function(milliseconds, callback) {
+	return setInterval(callback, milliseconds);
+};
+
+Function.stop = function(recurrence) {
+	return clearInterval(recurrence);
+};
+
 // Export
 module.exports = Function;
