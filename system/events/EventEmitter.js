@@ -5,7 +5,14 @@ var EventListener = Framework.require('system/events/EventListener.js');
 // Class
 var EventEmitter = Class.extend({
 
-	eventListeners: {}, // eventIdentifer: EventListener
+	/*
+		{
+			eventIdentifer1: EventListener,
+			eventIdentifer2: EventListener,
+			...
+		},
+	*/
+	eventListeners: {},
 
 	maximumListeners: null,
 
@@ -52,6 +59,16 @@ var EventEmitter = Class.extend({
 		this.maximumListeners = maximumListeners;
 
 		return this.maximumListeners;
+	},
+
+	getEventIdentifiers: function() {
+		var eventIdentifiers = [];
+
+		this.eventListeners.each(function(eventIdentifier, eventListener) {
+			eventIdentifiers.append(eventIdentifier);
+		});
+
+		return eventIdentifiers;
 	},
 
 });

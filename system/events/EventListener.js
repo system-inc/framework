@@ -7,11 +7,13 @@ var EventListener = Class.extend({
 
 	eventEmitter: null,
 	eventIdentifier: null,
+	maximumListeners: 10,
 	callbacks: [],
 
-	construct: function(eventEmitter, eventIdentifier) {
+	construct: function(eventEmitter, eventIdentifier, maximumListeners) {
 		this.eventEmitter = eventEmitter;
 		this.eventIdentifier = eventIdentifier;
+		this.maximumListeners = maximumListeners;
 	},
 
 	addCallback: function(callback, options) {
