@@ -129,6 +129,11 @@ Json.decycle = function(objectToDecycle) {
 			
 			return decycledValue;
 		}
+        // Show regular expressions as strings
+        // TODO: This probably breaks retrocycling any JSON object that contains a regular expression
+        else if(value instanceof RegExp) {
+            return value.toString()+' (RegularExpression)';
+        }
 
 		return value;
 	}(objectToDecycle, '$'));

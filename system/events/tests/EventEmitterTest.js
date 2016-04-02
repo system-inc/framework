@@ -17,7 +17,7 @@ var EventEmitterTest = Test.extend({
 	//	}
 	//},
 
-	testStandardEventEmitter: function*() {
+	testCoreEventEmitterFunctionality: function*() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -147,7 +147,145 @@ var EventEmitterTest = Test.extend({
 		//Console.highlight(eventEmitter);
 	},
 
-	testEventEmitterWithWildcardEventPattern: function*() {
+	testAddingMultipleEventListeners: function*() {
+		// Create the EventEmitter
+		var eventEmitter = new EventEmitter();
+
+		// Variable used to store the event when it is emitted
+		var capturedEvent = null;
+
+		// Add events using an array
+		eventEmitter.on(['event1', 'event2', 'event3'], function(event) {
+			capturedEvent = event;
+		});
+
+		// List bound event listeners
+		var eventListeners = eventEmitter.getEventListeners();
+		//Console.info('eventListeners', eventListeners);
+		Assert.strictEqual(eventListeners.length, 3, 'The correct number of event listeners are bound');
+
+		// Emit event 1
+		yield eventEmitter.emit('event1');
+		Assert.strictEqual(capturedEvent.identifier, 'event1', 'identifier is set correctly');
+
+		// Emit event 2
+		yield eventEmitter.emit('event2');
+		Assert.strictEqual(capturedEvent.identifier, 'event2', 'identifier is set correctly');
+
+		// Emit event 3
+		yield eventEmitter.emit('event3');
+		Assert.strictEqual(capturedEvent.identifier, 'event3', 'identifier is set correctly');
+
+		// Add events using a string
+		eventEmitter.on('event4, event5,event6 event7', function(event) {
+			capturedEvent = event;
+		});
+
+		// List bound event listeners
+		var eventListeners = eventEmitter.getEventListeners();
+		//Console.info('eventListeners', eventListeners);
+		Assert.strictEqual(eventListeners.length, 7, 'The correct number of event listeners are bound');
+
+		// Emit event 4
+		yield eventEmitter.emit('event4');
+		Assert.strictEqual(capturedEvent.identifier, 'event4', 'identifier is set correctly');
+
+		// Emit event 5
+		yield eventEmitter.emit('event5');
+		Assert.strictEqual(capturedEvent.identifier, 'event5', 'identifier is set correctly');
+
+		// Emit event 6
+		yield eventEmitter.emit('event6');
+		Assert.strictEqual(capturedEvent.identifier, 'event6', 'identifier is set correctly');
+
+		// Emit event 7
+		yield eventEmitter.emit('event7');
+		Assert.strictEqual(capturedEvent.identifier, 'event7', 'identifier is set correctly');
+
+		// Add events using an array with strings with multiple events and regular expressions
+		eventEmitter.on(['event8 event9', 'event10, event11', /event12/gi], function(event) {
+			capturedEvent = event;
+		});
+
+		// List bound event listeners
+		var eventListeners = eventEmitter.getEventListeners();
+		//Console.info('eventListeners', eventListeners);
+		Assert.strictEqual(eventListeners.length, 12, 'The correct number of event listeners are bound');
+
+		// Emit event 8
+		yield eventEmitter.emit('event8');
+		Assert.strictEqual(capturedEvent.identifier, 'event8', 'identifier is set correctly');
+
+		// Emit event 9
+		yield eventEmitter.emit('event9');
+		Assert.strictEqual(capturedEvent.identifier, 'event9', 'identifier is set correctly');
+
+		// Emit event 10
+		yield eventEmitter.emit('event10');
+		Assert.strictEqual(capturedEvent.identifier, 'event10', 'identifier is set correctly');
+
+		// Emit event 11
+		yield eventEmitter.emit('event11');
+		Assert.strictEqual(capturedEvent.identifier, 'event11', 'identifier is set correctly');
+
+		// Emit event 12
+		yield eventEmitter.emit('event12');
+		Assert.strictEqual(capturedEvent.identifier, 'event12', 'identifier is set correctly');
+
+		//Console.highlight(eventEmitter);
+	},
+
+	testEmittingMultipleEvents: function*() {
+		// Create the EventEmitter
+		var eventEmitter = new EventEmitter();
+
+		// Variables used to store the events when emitted
+		var capturedEvent1 = null;
+		var capturedEvent2 = null;
+		var capturedEvent3 = null;
+		var capturedEvent4 = null;
+		var capturedEvent5 = null;
+		var capturedEvent6 = null;
+		var capturedEvent7 = null;
+
+		// Capture events
+		eventEmitter.on('event1', function(event) {
+			capturedEvent1 = event;
+		});
+		eventEmitter.on('event2', function(event) {
+			capturedEvent2 = event;
+		});
+		eventEmitter.on('event3', function(event) {
+			capturedEvent3 = event;
+		});
+		eventEmitter.on('event4', function(event) {
+			capturedEvent4 = event;
+		});
+		eventEmitter.on('event5', function(event) {
+			capturedEvent5 = event;
+		});
+		eventEmitter.on('event6', function(event) {
+			capturedEvent6 = event;
+		});
+		eventEmitter.on('event7', function(event) {
+			capturedEvent7 = event;
+		});
+
+		// Emit the events using an array
+		yield eventEmitter.emit(['event1', 'event2', 'event3']);
+		Assert.strictEqual(capturedEvent1.identifier, 'event1', 'identifier is set correctly');
+		Assert.strictEqual(capturedEvent2.identifier, 'event2', 'identifier is set correctly');
+		Assert.strictEqual(capturedEvent3.identifier, 'event3', 'identifier is set correctly');
+
+		// Emit the events using a string
+		yield eventEmitter.emit('event4,event5, event6 event7');
+		Assert.strictEqual(capturedEvent4.identifier, 'event4', 'identifier is set correctly');
+		Assert.strictEqual(capturedEvent5.identifier, 'event5', 'identifier is set correctly');
+		Assert.strictEqual(capturedEvent6.identifier, 'event6', 'identifier is set correctly');
+		Assert.strictEqual(capturedEvent7.identifier, 'event7', 'identifier is set correctly');
+	},
+
+	testWildcardEventPattern: function*() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -163,22 +301,20 @@ var EventEmitterTest = Test.extend({
 		eventEmitter.on('event1.*', functionToBind);
 
 		// List bound event listeners
-		eventListeners = eventEmitter.getEventListeners();
+		var eventListeners = eventEmitter.getEventListeners();
 		//Console.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 1, 'One event listener is bound');
 
 		// Emit a non-matching event
 		yield eventEmitter.emit('event');
-		Assert.strictEqual(capturedEvent, null, 'Non-matching event does not trigger event listener');
+		Assert.strictEqual(capturedEvent, null, 'Non-matching event pattern does not trigger event listener');
 
 		// Emit a matching event
-		yield eventEmitter.emit('event1', 'event1Data');
-		Assert.true(Event.is(capturedEvent), 'Emitted an instance of Event');
-		Assert.strictEqual(capturedEvent.identifier, 'event1', 'identifier is set correctly');
-		Assert.strictEqual(capturedEvent.data, 'event1Data', 'data is set correctly');
+		yield eventEmitter.emit('event1');
+		Assert.strictEqual(capturedEvent.identifier, 'event1', 'Matching event pattern triggers event listener');
 	},
 
-	testEventEmitterWithRegularExpressionEventPattern: function*() {
+	testRegularExpressionEventPattern: function*() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -194,19 +330,18 @@ var EventEmitterTest = Test.extend({
 		eventEmitter.on(/(event1|event2)/, functionToBind);
 
 		// List bound event listeners
-		eventListeners = eventEmitter.getEventListeners();
+		var eventListeners = eventEmitter.getEventListeners();
 		//Console.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 1, 'One event listener is bound');
 
 		// Emit a non-matching event
 		yield eventEmitter.emit('event');
-		Assert.strictEqual(capturedEvent, null, 'Non-matching event does not trigger event listener');
+		Assert.strictEqual(capturedEvent, null, 'Non-matching event pattern does not trigger event listener');
 
 		// Emit a matching event
-		yield eventEmitter.emit('event1', 'event1Data');
-		Assert.true(Event.is(capturedEvent), 'Emitted an instance of Event');
-		Assert.strictEqual(capturedEvent.identifier, 'event1', 'identifier is set correctly');
-		Assert.strictEqual(capturedEvent.data, 'event1Data', 'data is set correctly');
+		yield eventEmitter.emit('event2');
+		Console.info(capturedEvent);
+		Assert.strictEqual(capturedEvent.identifier, 'event2', 'Matching event pattern triggers event listener');
 	},
 
 	// If an EventEmitter does not have at least one listener registered for the 'error' event, and an 'error' event is emitted, the error is thrown, a stack trace is printed, and the Node.js process exits

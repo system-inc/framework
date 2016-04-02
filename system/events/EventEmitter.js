@@ -42,6 +42,27 @@ var EventEmitter = Class.extend({
 			data = null;
 		}
 
+		// Allow multiple events to be emitted by passing in an array
+		if(Array.is(eventIdentifier)) {
+			yield eventIdentifier.each(function*(currentEventIdentifierIndex, currentEventIdentifier) {
+				yield this.emit(currentEventIdentifier, data);
+			}.bind(this));
+
+			return this;
+		}
+		// Allow multiple events to be emitted separated by spaces or ", "
+		else if(String.is(eventIdentifier) && (eventIdentifier.contains(' ') || eventIdentifier.contains(','))) {
+			eventIdentifier = eventIdentifier.replace(', ', ' ');
+			eventIdentifier = eventIdentifier.replace(',', ' ');
+			var eventIdentifierArray = eventIdentifier.split(' ');
+
+			yield eventIdentifierArray.each(function*(currentEventIdentifierIndex, currentEventIdentifier) {
+				yield this.emit(currentEventIdentifier, data);
+			}.bind(this));
+
+			return this;
+		}
+
 		//Console.log('EventEmitter.emit', 'eventIdentifier', eventIdentifier, 'data', data);
 
 		var matchingEventListeners = this.getEventListeners(eventIdentifier);
@@ -76,6 +97,27 @@ var EventEmitter = Class.extend({
 
 	addEventListener: function*(eventPattern, functionToBind, timesToRun) {
 		//Console.log('EventEmitter.bind', 'eventPattern', eventPattern, 'functionToBind', functionToBind, 'timesToRun', timesToRun);
+
+		// Allow multiple events to be registered by passing in an array
+		if(Array.is(eventPattern)) {
+			eventPattern.each(function(currentEventPatternIndex, currentEventPattern) {
+				this.addEventListener(currentEventPattern, functionToBind, timesToRun);
+			}.bind(this));
+
+			return this;
+		}
+		// Allow multiple events to be registered separated by spaces or ", "
+		else if(String.is(eventPattern) && (eventPattern.contains(' ') || eventPattern.contains(','))) {
+			eventPattern = eventPattern.replace(', ', ' ');
+			eventPattern = eventPattern.replace(',', ' ');
+			var eventPatternArray = eventPattern.split(' ');
+
+			eventPatternArray.each(function(currentEventPatternIndex, currentEventPattern) {
+				this.addEventListener(currentEventPattern, functionToBind, timesToRun);
+			}.bind(this));
+
+			return this;
+		}
 
 		// Default timesToRun to null
 		if(timesToRun === undefined) {
@@ -161,19 +203,29 @@ var EventEmitter = Class.extend({
 			this.eventListeners.each(function(eventListenersIndex, eventListener) {
 				// If the event pattern is a string with a *
 				if(String.is(eventListener.eventPattern) && eventListener.eventPattern.contains('*')) {
-					Console.info('eventListener eventPattern contains *', eventListener);
+					//Console.info('eventListener eventPattern contains *', eventListener);
 					if(RegularExpression.stringMatchesWildcardPattern(eventPattern, eventListener.eventPattern)) {
 						matchingEventListeners.append(eventListener);
 					}
 				}
 				// If the event pattern is a regular expression
 				else if(RegularExpression.is(eventListener.eventPattern)) {
-					Console.info('eventListener eventPattern is regular expression', eventListener);
-					Console.info(eventListener.eventPattern, '.match', eventPattern);
-					Console.info(eventListener.eventPattern.match(eventPattern));
-					if(eventListener.eventPattern.match(eventPattern)) {
-						matchingEventListeners.append(eventListener);
+
+					// If the event pattern is also a regular expression
+					if(RegularExpression.is(eventPattern)) {
+						// If the regular expressions are the same
+						if(RegularExpression.equal(eventListener.eventPattern, eventPattern)) {
+							Console.info('eventListener.eventPattern and eventPattern are both regular expressions and are the same');
+							matchingEventListeners.append(eventListener);
+						}
 					}
+					// If the event pattern is a string
+					else {
+						Console.info('eventListener.eventPattern is a regular expression and eventPattern is a string');
+						if(eventListener.eventPattern.test(eventPattern)) {
+							matchingEventListeners.append(eventListener);
+						}
+					}					
 				}
 				// The event pattern is just a regular string and is meant to be taken literally
 				else if(eventListener.eventPattern == eventPattern) {
