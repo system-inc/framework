@@ -13,7 +13,7 @@ var HtmlElementTest = Test.extend({
 	testHtmlElement: function*() {
 		//Console.info(HtmlElement);
 
-		Assert.true(Class.doesImplement(HtmlElement, EventEmitter), 'HtmlElement implements EventEmitter');
+		Assert.true(Class.doesImplement(HtmlElement, EventEmitter), 'HtmlElement class implements EventEmitter');
 
 		var actual = new HtmlElement('p');
 

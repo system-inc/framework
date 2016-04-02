@@ -23,7 +23,7 @@ Class.doesImplement = function(classToCheck, classExpectedToBeImplemented) {
 	// Check static properties and methods
 	for(var key in classExpectedToBeImplemented) {
 		if(classToCheck[key] === undefined) {
-			//console.log('Class does not have property', key);
+			//Console.info('Class does not have property', key);
 			doesImplement = false;
 			break;
 		}
@@ -33,7 +33,7 @@ Class.doesImplement = function(classToCheck, classExpectedToBeImplemented) {
 	if(doesImplement) {
 		for(var key in classExpectedToBeImplemented.prototype) {
 			if(classToCheck.prototype[key] === undefined) {
-				//console.log('Class does not have prototype property', key);
+				//Console.info('Class does not have prototype property', key);
 				doesImplement = false;
 				break;
 			}

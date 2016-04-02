@@ -376,5 +376,7 @@ HtmlElement.is = function(value) {
 	return Class.isInstance(value, HtmlElement);
 };
 
+HtmlElement.attributeValueToString = XmlElement.attributeValueToString;
+
 // Export
 module.exports = HtmlElement;

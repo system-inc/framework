@@ -9,7 +9,7 @@ var EventEmitter = Framework.require('system/events/EventEmitter.js');
 var HtmlNodeTest = Test.extend({
 
 	testHtmlNode: function*() {
-		Assert.true(Class.doesImplement(HtmlNode, EventEmitter), 'HtmlNode implements EventEmitter');
+		Assert.true(Class.doesImplement(HtmlNode, EventEmitter), 'HtmlNode class implements EventEmitter');
 	},
 
 });

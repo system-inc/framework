@@ -8,7 +8,7 @@ var EventEmitter = Framework.require('system/events/EventEmitter.js');
 var HtmlDocumentTest = Test.extend({
 
 	testHtmlDocument: function*() {
-		Assert.true(Class.doesImplement(HtmlDocument, EventEmitter), 'HtmlDocument implements EventEmitter');
+		Assert.true(Class.doesImplement(HtmlDocument, EventEmitter), 'HtmlDocument class implements EventEmitter');
 
 		// Blank HTML document
 		var actual = new HtmlDocument();
