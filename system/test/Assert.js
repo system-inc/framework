@@ -449,16 +449,16 @@ Assert.doesThrow = function(shouldThrow, block, expected, message) {
 		Assert.fail(actual, expected, 'Missing expected exception' + message);
 	}
 
-	if(!shouldThrow && Assert.expectedException(actual, expected)) {
+	if(!shouldThrow && Assert.expectedError(actual, expected)) {
 		Assert.fail(actual, expected, 'Got unwanted exception' + message);
 	}
 
-	if((shouldThrow && actual && expected && !Assert.expectedException(actual, expected)) || (!shouldThrow && actual)) {
+	if((shouldThrow && actual && expected && !Assert.expectedError(actual, expected)) || (!shouldThrow && actual)) {
 		throw actual;
 	}
 };
 
-Assert.expectedException =  function(actual, expected) {
+Assert.expectedError =  function(actual, expected) {
 	if(!actual || !expected) {
 		return false;
 	}
@@ -498,6 +498,104 @@ Assert.throws = function(block, error, message) {
 
 		throw error;
 	}
+};
+
+Assert.throwsAsynchronously = function(block, error, message) {
+	return Assert.doesThrowAsynchronously(true, block, error, message, arguments);
+};
+
+Assert.doesNotThrowAsynchronously = function(block, error, message) {
+	return Assert.doesThrowAsynchronously(false, block, error, message, arguments);
+};
+
+Assert.doesThrowAsynchronously = function(shouldThrow, block, expectedError, message, passedArguments) {
+	// Allow the user to not pass an expected Exception type
+	if(String.is(expectedError)) {
+		message = expectedError;
+		expectedError = null;
+	}
+
+	if(!passedArguments) {
+		passedArguments = arguments;
+	}
+
+	var assertion = shouldThrow ? 'throwsAsynchronously' : 'doesNotThrowAsynchronously';
+
+	return new Promise(function(resolve, reject) {
+		function finish(error) {
+			try {
+				//Console.info(error);
+
+				// Failure case - if we should not throw but there is an error
+				if(!shouldThrow && error) {
+					Assert.fail('Thrown error', 'should not throw', message, 'when');
+				}
+				// Failure case - if we should throw but there was no error
+				else if(shouldThrow && !error) {
+					Assert.fail('No thrown error', 'should throw', message, 'when');
+				}
+				// Failure case - if we should throw and got an error but the expected exception does not match
+				else if(shouldThrow && error &&  expectedError && !Assert.expectedError(error, expectedError)) {
+					Assert.fail('Thrown error', 'thrown error', message, 'does not match the expected');
+				}
+				// Success case
+				else {
+					Framework.emit('Assert.finished', {
+						status: 'passed',
+						assertion: assertion,
+						message: message,
+					});
+
+					resolve(true);
+				}
+			}
+			catch(error) {
+				//Error.captureStackTrace(error, passedArguments.callee);
+
+				Framework.emit('Assert.finished', {
+					status: 'failed',
+					assertion: assertion,
+					message: message,
+					error: error,
+				});
+
+				Console.error('Rejected errors here aren\'t bubbling up to the Proctor correctly, need to fix this');
+
+				reject(error); // This isn't being caught by the proctor
+				//throw error; // This isn't caught by the proctor (shouldn't do this I think)
+			}
+		}
+
+		// Create a domain for the test
+		var domain = Node.Domain.create();
+
+		// Add the block to the domain
+		domain.add(block);
+
+		// Add an event listener to listen for errors on the domain
+		domain.on('error', function(error) {
+			finish(error);
+
+			// Exit the domain
+			domain.exit();
+		}.bind(this));
+
+		// Enter the domain
+		domain.enter();
+
+		// Run the block - this will trigger a domain error if there is an issue
+		(function*() {
+			try {
+				yield block.run();
+				finish();
+				domain.exit();
+			}
+			catch(error) {
+				finish(error);
+				domain.exit();
+			}
+		}).run();
+	});
 };
 
 Assert.doesNotThrow = function(block, message) {

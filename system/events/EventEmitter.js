@@ -215,13 +215,13 @@ var EventEmitter = Class.extend({
 					if(RegularExpression.is(eventPattern)) {
 						// If the regular expressions are the same
 						if(RegularExpression.equal(eventListener.eventPattern, eventPattern)) {
-							Console.info('eventListener.eventPattern and eventPattern are both regular expressions and are the same');
+							//Console.info('eventListener.eventPattern and eventPattern are both regular expressions and are the same');
 							matchingEventListeners.append(eventListener);
 						}
 					}
 					// If the event pattern is a string
 					else {
-						Console.info('eventListener.eventPattern is a regular expression and eventPattern is a string');
+						//Console.info('eventListener.eventPattern is a regular expression and eventPattern is a string');
 						if(eventListener.eventPattern.test(eventPattern)) {
 							matchingEventListeners.append(eventListener);
 						}

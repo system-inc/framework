@@ -340,17 +340,15 @@ var EventEmitterTest = Test.extend({
 
 		// Emit a matching event
 		yield eventEmitter.emit('event2');
-		Console.info(capturedEvent);
+		//Console.info(capturedEvent);
 		Assert.strictEqual(capturedEvent.identifier, 'event2', 'Matching event pattern triggers event listener');
 	},
 
 	// If an EventEmitter does not have at least one listener registered for the 'error' event, and an 'error' event is emitted, the error is thrown, a stack trace is printed, and the Node.js process exits
-	testEventEmitterThrowsErrorWithoutRegisteredListeners: function*() {
+	testThrowsErrorWithoutRegisteredListeners: function*() {
 		var eventEmitter = new EventEmitter();
 
-		Console.log('need to imlpement Assert.throws for generators');
-
-		yield Assert.throws(function*() {
+		yield Assert.throwsAsynchronously(function*() {
 			yield eventEmitter.emit('event1', new Error());
 		}, 'Throw an error when an event is emitted with data being an instance of Error and there are no event listeners');
 	},
