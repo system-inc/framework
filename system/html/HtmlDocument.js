@@ -1,6 +1,7 @@
 // Dependencies
-var Html = Framework.require('system/html/Html.js');
 var XmlDocument = Framework.require('system/xml/XmlDocument.js');
+var EventEmitter = Framework.require('system/events/EventEmitter.js');
+var Html = Framework.require('system/html/Html.js');
 var ShortcutManager = Framework.require('system/web-interface/shortcuts/ShortcutManager.js');
 
 // Class
@@ -265,6 +266,9 @@ var HtmlDocument = XmlDocument.extend({
 HtmlDocument.on = HtmlDocument.prototype.on;
 
 HtmlDocument.ready = HtmlDocument.prototype.ready;
+
+// Class implementations
+HtmlDocument.implement(EventEmitter);
 
 // Export
 module.exports = HtmlDocument;

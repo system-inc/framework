@@ -1,5 +1,6 @@
 // Dependencies
 var XmlNode = Framework.require('system/xml/XmlNode.js');
+var EventEmitter = Framework.require('system/events/EventEmitter.js');
 
 // Class
 var HtmlNode = XmlNode.extend({
@@ -194,6 +195,9 @@ HtmlNode.emptyDomNode = HtmlNode.prototype.emptyDomNode;
 HtmlNode.is = function(value) {
 	return Class.isInstance(value, HtmlNode);
 };
+
+// Class implementations
+HtmlNode.implement(EventEmitter);
 
 // Export
 module.exports = HtmlNode;

@@ -170,16 +170,9 @@ Class.extend = function(childClassProperties) {
 		return Class;
 	};
 
-	// Copy over any static methods from the parent class prototype to the child class that don't already exist
-	for(var parentClassProperty in parentClassPrototype) {
-		if(Class[parentClassProperty] === undefined && typeof(parentClassPrototype[parentClassProperty]) == 'function' && parentClassProperty != 'construct' && parentClassProperty != 'constructor') {
-			Class[parentClassProperty] = parentClassPrototype[parentClassProperty];
-		}
-	}
-
-	// Copy over any static methods from the parent class to the child class that don't already exist
+	// Copy over any static propoerties from the parent class to the child class that don't already exist
 	for(var parentClassProperty in parentClass) {
-		if(Class[parentClassProperty] === undefined && typeof(parentClass[parentClassProperty]) == 'function' && parentClassProperty != 'construct' && parentClassProperty != 'constructor') {
+		if(Class[parentClassProperty] === undefined) {
 			Class[parentClassProperty] = parentClass[parentClassProperty];
 		}
 	}
