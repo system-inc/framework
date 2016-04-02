@@ -103,13 +103,7 @@ Generator.run = function(generator, resolve, reject) {
 		if(next.value instanceof Promise) {
 			//Console.log('We have a promise we need to wait for!');
 
-			// Catch errors from the promises
-			//next.value.catch(function(error) {
-				// And emit them to the current domain
-				//Node.Process.domain.emit('error', error); // this does not work and causes race conditions because it is using the global domain whereas we need to use a reference to the correct domain
-			//});
-
-			// Tell the promise to pump the generator what it is done, done is a bluebird specific method
+			// Tell the promise to pump the generator next (.done is a special Bluebird method, I need to use it instead of .then (not sure why))
 			next.value.done(function(value) {
 				// Set next.value to the value from the finished promise
 				next.value = value;
@@ -121,9 +115,6 @@ Generator.run = function(generator, resolve, reject) {
 			// Return the value if it is a promise
 			return next.value;
 		}
-		//else if(next.value instanceof Error) {
-		//	Console.log('we got an error!', next.value);
-		//}
 		// If we don't have a promise, keep moving the generator forward
 		else {
 			return pump(generator, next);

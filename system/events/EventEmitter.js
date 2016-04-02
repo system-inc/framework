@@ -19,11 +19,6 @@ var EventEmitter = Class.extend({
 
 	recommendedMaximumEventListenersPerEventIdentifier: null,
 
-	construct: function() {
-		// Set the default recommended maximum bound functions per event pattern 
-		this.recommendedMaximumEventListenersPerEventIdentifier = EventEmitter.defaultRecommendedMaximumEventListenersPerEventIdentifier;
-	},
-
 	on: function*(eventPattern, functionToBind, timesToRun) {
 		var on = yield this.addEventListener(eventPattern, functionToBind, timesToRun);
 
@@ -140,6 +135,12 @@ var EventEmitter = Class.extend({
 
 		// Check to see if the matching bound function objects is greater than the recommended
 		var eventListeners = this.getEventListeners(eventPattern);
+
+		// Make sure this.recommendedMaximumEventListenersPerEventIdentifier is initialized
+		if(this.recommendedMaximumEventListenersPerEventIdentifier === null) {
+			this.setRecommendedMaximumListenersPerEventIdentifier(EventEmitter.defaultRecommendedMaximumEventListenersPerEventIdentifier);
+		}
+
 		if(eventListeners.length > this.recommendedMaximumEventListenersPerEventIdentifier) {
 			Console.warn('Possible memory leak detected. There are '+eventListeners.length+' event listeners bound to the event pattern "'+eventPattern+'". The recommended maximum event listeners for this event pattern is '+this.recommendedMaximumEventListenersPerEventIdentifier+'.', "\n"+(new Error().stack.stackTraceToString()));
 		}

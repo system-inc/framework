@@ -1,5 +1,13 @@
+// Dependencies
+var EventEmitter = Framework.require('system/events/EventEmitter.js');
+
 // Class
 var Assert = Node.Assert;
+
+// Static properties
+
+// Assert has its own EventEmitter to communicate the results of assertions to any listeners
+Assert.eventEmitter = new EventEmitter();
 
 // Static methods
 
@@ -9,7 +17,7 @@ Assert.true = function(value, message) {
 			Assert.fail(value, 'truthy', message, '==');
 		}
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'true',
 			message: message,
@@ -18,7 +26,7 @@ Assert.true = function(value, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'true',
 			message: message,
@@ -35,7 +43,7 @@ Assert.false = function(value, message) {
 			Assert.fail(value, 'falsey', message, '==');
 		}
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'false',
 			message: message,
@@ -44,7 +52,7 @@ Assert.false = function(value, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'false',
 			message: message,
@@ -61,7 +69,7 @@ Assert.equal = function(actual, expected, message) {
 			Assert.fail(actual, expected, message, '==');
 		}
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'equal',
 			message: message,
@@ -70,7 +78,7 @@ Assert.equal = function(actual, expected, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'equal',
 			message: message,
@@ -87,7 +95,7 @@ Assert.notEqual = function(actual, expected, message) {
 			Assert.fail(actual, expected, message, '!=');
 		}
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'notEqual',
 			message: message,
@@ -96,7 +104,7 @@ Assert.notEqual = function(actual, expected, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'notEqual',
 			message: message,
@@ -226,7 +234,7 @@ Assert.deepEqual = function(actual, expected, message) {
 			Assert.fail(actual, expected, message, 'deepEqual');
 		}
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'deepEqual',
 			message: message,
@@ -235,7 +243,7 @@ Assert.deepEqual = function(actual, expected, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'deepEqual',
 			message: message,
@@ -252,7 +260,7 @@ Assert.notDeepEqual = function(actual, expected, message) {
 			Assert.fail(actual, expected, message, 'notDeepEqual');
 		}
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'notDeepEqual',
 			message: message,
@@ -261,7 +269,7 @@ Assert.notDeepEqual = function(actual, expected, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'notDeepEqual',
 			message: message,
@@ -278,7 +286,7 @@ Assert.strictEqual = function(actual, expected, message) {
 			Assert.fail(actual, expected, message, '===');
 		}
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'strictEqual',
 			message: message,
@@ -287,7 +295,7 @@ Assert.strictEqual = function(actual, expected, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'strictEqual',
 			message: message,
@@ -304,7 +312,7 @@ Assert.notStrictEqual = function(actual, expected, message) {
 			Assert.fail(actual, expected, message, '!==');
 		}
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'notStrictEqual',
 			message: message,
@@ -313,7 +321,7 @@ Assert.notStrictEqual = function(actual, expected, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'notStrictEqual',
 			message: message,
@@ -330,7 +338,7 @@ Assert.greaterThan = function(actual, minimum, message) {
 			Assert.fail(actual, minimum, message, '>');
 		}
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'greaterThan',
 			message: message,
@@ -339,7 +347,7 @@ Assert.greaterThan = function(actual, minimum, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'greaterThan',
 			message: message,
@@ -356,7 +364,7 @@ Assert.greaterThanOrEqualTo = function(actual, minimum, message) {
 			Assert.fail(actual, minimum, message, '>=');
 		}
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'greaterThanOrEqualTo',
 			message: message,
@@ -365,7 +373,7 @@ Assert.greaterThanOrEqualTo = function(actual, minimum, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'greaterThanOrEqualTo',
 			message: message,
@@ -382,7 +390,7 @@ Assert.lessThan = function(actual, maximum, message) {
 			Assert.fail(actual, maximum, message, '<');
 		}
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'lessThan',
 			message: message,
@@ -391,7 +399,7 @@ Assert.lessThan = function(actual, maximum, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'lessThan',
 			message: message,
@@ -408,7 +416,7 @@ Assert.lessThanOrEqualTo = function(actual, maximum, message) {
 			Assert.fail(actual, maximum, message, '<=');
 		}
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'lessThanOrEqualTo',
 			message: message,
@@ -417,7 +425,7 @@ Assert.lessThanOrEqualTo = function(actual, maximum, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'lessThanOrEqualTo',
 			message: message,
@@ -480,7 +488,7 @@ Assert.throws = function(block, error, message) {
 	try {
 		Assert.doesThrow.apply(this, [true].concat(Array.prototype.slice.call(arguments)));
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'throws',
 			message: message,
@@ -489,7 +497,7 @@ Assert.throws = function(block, error, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'throws',
 			message: message,
@@ -500,23 +508,25 @@ Assert.throws = function(block, error, message) {
 	}
 };
 
-Assert.throwsAsynchronously = function(block, error, message) {
-	return Assert.doesThrowAsynchronously(true, block, error, message, arguments);
+Assert.throwsAsynchronously = function(block, expectedError, message) {
+	return Assert.doesThrowAsynchronously(true, block, expectedError, message, arguments.callee);
 };
 
-Assert.doesNotThrowAsynchronously = function(block, error, message) {
-	return Assert.doesThrowAsynchronously(false, block, error, message, arguments);
+Assert.doesNotThrowAsynchronously = function(block, expectedError, message) {
+	return Assert.doesThrowAsynchronously(false, block, expectedError, message, arguments.callee);
 };
 
-Assert.doesThrowAsynchronously = function(shouldThrow, block, expectedError, message, passedArguments) {
+Assert.doesThrowAsynchronously = function(shouldThrow, block, expectedError, message, callee) {
+	//Console.info('callee', callee);
+
 	// Allow the user to not pass an expected Exception type
 	if(String.is(expectedError)) {
 		message = expectedError;
 		expectedError = null;
 	}
 
-	if(!passedArguments) {
-		passedArguments = arguments;
+	if(!callee) {
+		callee = arguments.callee;
 	}
 
 	var assertion = shouldThrow ? 'throwsAsynchronously' : 'doesNotThrowAsynchronously';
@@ -540,7 +550,7 @@ Assert.doesThrowAsynchronously = function(shouldThrow, block, expectedError, mes
 				}
 				// Success case
 				else {
-					Framework.emit('Assert.finished', {
+					Assert.eventEmitter.emit('Assert.finished', {
 						status: 'passed',
 						assertion: assertion,
 						message: message,
@@ -550,41 +560,40 @@ Assert.doesThrowAsynchronously = function(shouldThrow, block, expectedError, mes
 				}
 			}
 			catch(error) {
-				//Error.captureStackTrace(error, passedArguments.callee);
+				// TODO: This isn't working
+				Console.warn('Stack traces aren\'t being captured correctly');
+				//Error.captureStackTrace(error, callee);
 
-				Framework.emit('Assert.finished', {
+				Assert.eventEmitter.emit('Assert.finished', {
 					status: 'failed',
 					assertion: assertion,
 					message: message,
 					error: error,
 				});
 
+				// TODO:
 				Console.error('Rejected errors here aren\'t bubbling up to the Proctor correctly, need to fix this');
 
 				reject(error); // This isn't being caught by the proctor
-				//throw error; // This isn't caught by the proctor (shouldn't do this I think)
 			}
 		}
 
-		// Create a domain for the test
-		var domain = Node.Domain.create();
-
-		// Add the block to the domain
-		domain.add(block);
-
-		// Add an event listener to listen for errors on the domain
-		domain.on('error', function(error) {
-			finish(error);
-
-			// Exit the domain
-			domain.exit();
-		}.bind(this));
-
-		// Enter the domain
-		domain.enter();
-
 		// Run the block - this will trigger a domain error if there is an issue
 		(function*() {
+			// Create a domain for the test
+			var domain = Node.Domain.create();
+
+			// Add an event listener to listen for errors on the domain
+			domain.on('error', function(error) {
+				finish(error);
+
+				// Exit the domain
+				domain.exit();
+			}.bind(this));
+
+			// Enter the domain
+			domain.enter();
+
 			try {
 				yield block.run();
 				finish();
@@ -602,7 +611,7 @@ Assert.doesNotThrow = function(block, message) {
 	try {
 		Assert.doesThrow.apply(this, [false].concat(Array.prototype.slice.call(arguments)));
 		
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'passed',
 			assertion: 'doesNotThrow',
 			message: message,
@@ -611,7 +620,7 @@ Assert.doesNotThrow = function(block, message) {
 	catch(error) {
 		Error.captureStackTrace(error, arguments.callee);
 
-		Framework.emit('Assert.finished', {
+		Assert.eventEmitter.emit('Assert.finished', {
 			status: 'failed',
 			assertion: 'doesNotThrow',
 			message: message,

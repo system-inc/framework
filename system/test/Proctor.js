@@ -1,4 +1,5 @@
 // Dependencies
+var EventEmitter = Framework.require('system/events/EventEmitter.js');
 var Test = Framework.require('system/test/Test.js');
 var Stopwatch = Framework.require('system/time/Stopwatch.js');
 var Terminal = Framework.require('system/console/Terminal.js');
@@ -44,22 +45,22 @@ var Proctor = Class.extend({
 	construct: function(testReporterIdentifier, breakOnError) {
 		// Instantiate a test reporter
 		if(testReporterIdentifier === undefined) {
-			this.testReporter = new StandardTestReporter();
+			this.testReporter = new StandardTestReporter(this);
 		}
 		else if(testReporterIdentifier.lowercase() == 'standard') {
-			this.testReporter = new StandardTestReporter();
+			this.testReporter = new StandardTestReporter(this);
 		}
 		else if(testReporterIdentifier.lowercase() == 'dot') {
-			this.testReporter = new DotTestReporter();
+			this.testReporter = new DotTestReporter(this);
 		}
 		else if(testReporterIdentifier.lowercase() == 'concise') {
-			this.testReporter = new ConciseTestReporter();
+			this.testReporter = new ConciseTestReporter(this);
 		}
 		else if(testReporterIdentifier.lowercase() == 'electron') {
-			this.testReporter = new ElectronTestReporter();
+			this.testReporter = new ElectronTestReporter(this);
 		}
 		else {
-			this.testReporter = new StandardTestReporter();
+			this.testReporter = new StandardTestReporter(this);
 		}
 
 		// Break on error
@@ -113,10 +114,6 @@ var Proctor = Class.extend({
 
 		// Tell the user how many objects we are watching
 		Console.log('Watching', watchedFileSystemObjects.length, 'file system objects for updates...');
-	},
-
-	emit: function(eventName, data) {
-		Framework.emit(eventName, data);
 	},
 
 	resolvePath: function(path) {
@@ -307,7 +304,7 @@ var Proctor = Class.extend({
 		//Console.log(this.testMethodQueue);
 
 		// Started running tests
-		this.emit('TestReporter.startedRunningTests', {
+		this.emit('Proctor.startedRunningTests', {
 			testCount: testCount,
 			testMethodCount: testMethodCount,
 		});
@@ -346,7 +343,7 @@ var Proctor = Class.extend({
 
 		this.skippedTestMethods.append(this.currentTestMethod);
 
-		this.emit('TestReporter.finishedRunningTestMethod', {
+		this.emit('Proctor.finishedRunningTestMethod', {
 			status: this.currentTestMethodStatus,
 			name: this.currentTestMethod.method,
 			stopwatch: null,
@@ -376,7 +373,7 @@ var Proctor = Class.extend({
 			return this.skipCurrentTest();
 		}
 
-		this.emit('TestReporter.startedRunningTestMethod', {
+		this.emit('Proctor.startedRunningTestMethod', {
 			name: this.currentTestMethod.method,
 		});
 
@@ -388,7 +385,7 @@ var Proctor = Class.extend({
 
 		// Add an event listener to listen for errors on the domain
 		domain.on('error', function(error) {
-			//Console.warn('Caught domain error', error); Node.exit();
+			Console.warn('Caught domain error', error); Node.exit();
 
 			this.failCurrentTestMethod(error, domain);
 		}.bind(this));
@@ -401,8 +398,9 @@ var Proctor = Class.extend({
 
 		// Put a try catch block around the test
 		try {
-			// Run the test
+			//Console.info('Proctor.runNextTest running test', this.currentTestMethod.method);
 			yield this.currentTestClassInstance[this.currentTestMethod.method]();
+			//Console.info('Proctor.runNextTest running test completed', this.currentTestMethod.method);
 
 			this.passCurrentTestMethod(domain);
 		}
@@ -450,7 +448,7 @@ var Proctor = Class.extend({
 		// Run .afterEach on the test class
 		yield this.currentTestClassInstance.afterEach();
 
-		this.emit('TestReporter.finishedRunningTestMethod', {
+		this.emit('Proctor.finishedRunningTestMethod', {
 			status: this.currentTestMethodStatus,
 			name: this.currentTestMethod.method,
 			stopwatch: this.currentTestMethodStopwatch,
@@ -477,7 +475,7 @@ var Proctor = Class.extend({
 			// Run .after on the test class
 			yield this.currentTestClassInstance.after();
 
-			this.emit('TestReporter.finishedRunningTest', {
+			this.emit('Proctor.finishedRunningTest', {
 				name: this.previousTestMethod.name.replaceLast('Test', ''),
 			});
 
@@ -492,7 +490,7 @@ var Proctor = Class.extend({
 		this.currentTestClassStatus = 'passed';
 
 		// Start up the new test
-		this.emit('TestReporter.startedRunningTest', this.testMethods[this.currentTestMethod.name]);
+		this.emit('Proctor.startedRunningTest', this.testMethods[this.currentTestMethod.name]);
 
 		// Get the instantiated test class
 		this.currentTestClassInstance = this.testClassInstances[this.currentTestMethod.name];
@@ -541,7 +539,7 @@ var Proctor = Class.extend({
 		var leakedGlobals = this.getLeakedGlobals();
 
 		// Finished running tests
-		this.emit('TestReporter.finishedRunningTests', {
+		this.emit('Proctor.finishedRunningTests', {
 			stopwatch: this.stopwatch,
 			passedTestMethods: this.passedTestMethods,
 			passedTestClasses: this.passedTestClasses,
@@ -815,6 +813,9 @@ Proctor.globals = {
 	],
 	leaked: [],
 };
+
+// Class implementations
+Proctor.implement(EventEmitter);
 
 // Export
 module.exports = Proctor;

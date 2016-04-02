@@ -251,14 +251,5 @@ Framework.coreModules = [
 
 Framework.require = Framework.prototype.require;
 
-// Attach an event emitter
-Framework.eventEmitter = new Node.EventEmitter();
-Framework.emit = function(eventName, data) {
-	Framework.eventEmitter.emit(eventName, data);
-}
-Framework.on = function(eventName, callback) {
-	Framework.eventEmitter.on(eventName, callback);
-};
-
 // Export
 module.exports = Framework;

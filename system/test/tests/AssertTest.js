@@ -8,6 +8,16 @@ var InternalServerError = Framework.require('system/web-server/errors/InternalSe
 var AssertTest = Test.extend({
 
 	testThrowsAsynchronously: function*() {
+		// Should fail
+		//yield Assert.throwsAsynchronously(function*() {
+		//	//throw new Error();
+		//}, 'throwsAsynchronously works');
+
+		// Should fail
+		//yield Assert.doesNotThrowAsynchronously(function*() {
+		//	throw new Error();
+		//}, 'throwsAsynchronously works');
+
 		yield Assert.throwsAsynchronously(function*() {
 			throw new Error();
 		}, 'throwsAsynchronously works');

@@ -8,11 +8,11 @@ var Event = Framework.require('system/events/Event.js');
 var EventEmitterTest = Test.extend({
 
 	// This should trigger a console warning
-	//testRecommendedMaximumBoundFunctionsPerEventIdentifier: function() {
+	//testRecommendedMaximumBoundFunctionsPerEventIdentifier: function*() {
 	//	var eventEmitter = new EventEmitter();
 	//	var functionsToBind = 11;
 	//	for(var i = 0; i < functionsToBind; i++) {
-	//		eventEmitter.on('event1', function() {
+	//		yield eventEmitter.on('event1', function() {
 	//		});
 	//	}
 	//},

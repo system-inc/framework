@@ -1,10 +1,12 @@
 // Dependencies
 var Terminal = Framework.require('system/console/Terminal.js');
+var Assert = Framework.require('system/test/Assert.js');
 var AssertionError = Node.Assert.AssertionError;
 
 // Class
 var TestReporter = Class.extend({
 
+	proctor: null,
 	currentTestClassName: null,
 	currentTestMethod: null,
 	totalTestMethodCount: 0,
@@ -14,58 +16,56 @@ var TestReporter = Class.extend({
 	passedAssertionCount: 0,
 	failedAssertionCount: 0,
 
-	construct: function() {
-		this.on('TestReporter.startedRunningTests', function(data) {
-			this.startedRunningTests(data);
+	construct: function(proctor) {
+		this.proctor = proctor;
+
+		this.proctor.on('Proctor.startedRunningTests', function(event) {
+			this.startedRunningTests(event.data);
 		}.bind(this));
 
-		this.on('TestReporter.startedRunningTest', function(data) {
-			this.currentTestClassName = data.name;
+		this.proctor.on('Proctor.startedRunningTest', function(event) {
+			this.currentTestClassName = event.data.name;
 
-			this.startedRunningTest(data);
+			this.startedRunningTest(event.data);
 		}.bind(this));
 
-		this.on('TestReporter.startedRunningTestMethod', function(data) {
-			this.startedRunningTestMethod(data);
+		this.proctor.on('Proctor.startedRunningTestMethod', function(event) {
+			this.startedRunningTestMethod(event.data);
 		}.bind(this));
 
-		this.on('TestReporter.finishedRunningTestMethod', function(data) {
+		this.proctor.on('Proctor.finishedRunningTestMethod', function(event) {
 			this.totalTestMethodCount++;
 			this.currentTestMethodCount++;
 
-			this.finishedRunningTestMethod(data);
+			this.finishedRunningTestMethod(event.data);
 
 			this.currentTestMethodAssertionCount = 0;
 			this.currentAssertions = [];
 		}.bind(this));
 
-		this.on('TestReporter.finishedRunningTest', function(data) {
-			this.finishedRunningTest(data);
+		this.proctor.on('Proctor.finishedRunningTest', function(event) {
+			this.finishedRunningTest(event.data);
 
 			this.currentTestMethodCount = 0;
 		}.bind(this));
 
-		this.on('TestReporter.finishedRunningTests', function(data) {
-			this.finishedRunningTests(data);
+		this.proctor.on('Proctor.finishedRunningTests', function(event) {
+			this.finishedRunningTests(event.data);
 		}.bind(this));
 
-		this.on('Assert.finished', function(data) {
-			this.currentAssertions.append(data);
+		Assert.eventEmitter.on('Assert.finished', function(event) {
+			this.currentAssertions.append(event.data);
 			this.currentTestMethodAssertionCount++;
 			
-			if(data.status == 'passed') {
+			if(event.data.status == 'passed') {
 				this.passedAssertionCount++;
 			}
-			else if(data.status == 'failed') {
+			else if(event.data.status == 'failed') {
 				this.failedAssertionCount++;
 			}
 
-			this.finishedAssert(data);
+			this.finishedAssert(event.data);
 		}.bind(this));
-	},
-
-	on: function(eventName, callback) {
-		Framework.on(eventName, callback);
 	},
 
 	startedRunningTests: function(data) {
