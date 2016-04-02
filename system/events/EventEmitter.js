@@ -25,27 +25,15 @@ var EventEmitter = Class.extend({
 	},
 
 	emit: function*(eventIdentifier, data) {
+		// Default data to null
+		if(data === undefined) {
+			data = null;
+		}
+
 		//Console.log('EventEmitter.emit', 'eventIdentifier', eventIdentifier, 'data', data);
 
 		var matchingEventListeners = this.getEventListeners(eventIdentifier);
-
-		// Need to check counts
-		//// Loop through all callbacks synchronously backwards (so we can edit the array in place)
-		//for(var currentListenersIndex = this.eventListeners.length; currentListenersIndex > -1; currentListenersIndex--) {
-		//	var currentEventListenerObject = this.eventListeners[currentListenersIndex];
-
-		//	// Run the function
-		//	var result = yield boundFunctionObject.boundFunction(event);
-		//	//Console.log('boundFunctionObject result', result);
-
-		//	// Count the run
-		//	boundFunctionObject.timesRan++;
-
-		//	// Unbind the function if the function has been run too many times
-		//	if(boundFunction.timesRan == boundFunctionObject.timesToRun) {
-		//		this.unbindFunctionByListenersIndex(currentListenersIndex);
-		//	}
-		//}
+		//Console.info('matchingEventListeners', matchingEventListeners);
 
 		// Create the event to emit
 		var event = new Event(eventIdentifier, data);
@@ -54,12 +42,22 @@ var EventEmitter = Class.extend({
 		if(matchingEventListeners.length == 0 && Error.is(data)) {
 			throw data;
 		}
-		// Run the matching bound functions in sequence
+		// Run the matching bound functions
 		else {
-			yield matchingEventListeners.each(function*(matchingEventListenerIndex, matchingEventListenerObject) {
-				yield matchingEventListenerObject.boundFunction(event);
-			});	
-		}		
+			// Run the bound functions in sequence
+			yield matchingEventListeners.each(function*(matchingEventListenerIndex, matchingEventListener) {
+				yield matchingEventListener.boundFunction(event);
+
+				// Count the run
+				matchingEventListener.timesRan++;
+
+				// Unbind the function if the function has been run too many times
+				if(matchingEventListener.timesRan == matchingEventListener.timesToRun) {
+					//Console.info('Remove event listener after it has been run too many times', matchingEventListener, this.eventListeners.indexOf(matchingEventListener));
+					this.eventListeners.delete(this.eventListeners.indexOf(matchingEventListener));
+				}
+			}.bind(this));	
+		}
 
 		return this;
 	},
@@ -74,15 +72,15 @@ var EventEmitter = Class.extend({
 		}
 		else {
 			// Gather all of the matching bound function objects
-			this.eventListeners.each(function(boundFunctionIndex, boundFunctionObject) {
+			this.eventListeners.each(function(eventListenersIndex, eventListener) {
 				// If the event pattern is a string with a * or if the event pattern is a regular expression
-				if((String.is(boundFunctionObject.eventPattern) && boundFunctionObject.eventPattern.contains('*')) || RegularExpression.is(boundFunctionObject.eventPattern)) {
+				if((String.is(eventListener.eventPattern) && eventListener.eventPattern.contains('*')) || RegularExpression.is(eventListener.eventPattern)) {
 					// TODO:
-					//matchingEventListeners.append(boundFunctionObject);
+					//matchingEventListeners.append(eventListener);
 				}
 				// The event pattern is just a regular string and is meant to be taken literally
-				else if(boundFunctionObject.eventPattern == eventPattern) {
-					matchingEventListeners.append(boundFunctionObject);
+				else if(eventListener.eventPattern == eventPattern) {
+					matchingEventListeners.append(eventListener);
 				}
 			});
 		}
@@ -90,8 +88,12 @@ var EventEmitter = Class.extend({
 		return matchingEventListeners;
 	},
 
-	bind: function(eventPattern, functionToBind, timesToRun) {
+	addEventListener: function(eventPattern, functionToBind, timesToRun) {
 		//Console.log('EventEmitter.bind', 'eventPattern', eventPattern, 'functionToBind', functionToBind, 'timesToRun', timesToRun);
+
+		if(timesToRun === undefined) {
+			timesToRun = null;
+		}
 
 		this.eventListeners.append({
 			eventPattern: eventPattern,
@@ -111,14 +113,14 @@ var EventEmitter = Class.extend({
 	},
 
 	on: function(eventPattern, functionToBind, timesToRun) {
-		return this.bind(eventPattern, functionToBind, timesToRun);
+		return this.addEventListener(eventPattern, functionToBind, timesToRun);
 	},
 
 	once: function(eventPattern, functionToBind) {
-		return this.bind(eventPattern, functionToBind, 1);
+		return this.addEventListener(eventPattern, functionToBind, 1);
 	},
 
-	unbind: function(eventPattern, functionToUnbind) {
+	removeEventListener: function(eventPattern, functionToUnbind) {
 		// If we are unbinding a specific function for an event pattern
 		if(functionToUnbind) {
 			// Walk backwards through the array so we can edit the array in place
@@ -149,7 +151,7 @@ var EventEmitter = Class.extend({
 		return this;
 	},
 
-	unbindAll: function() {
+	removeAllEventListeners: function() {
 		this.eventListeners = [];
 
 		return this;
