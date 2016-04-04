@@ -1,5 +1,8 @@
+// Dependencies
+var EventEmitter = Framework.require('system/events/EventEmitter.js');
+
 // Class
-var ViewController = Class.extend({
+var ViewController = EventEmitter.extend({
 
 	root: null,
 	parent: null,
