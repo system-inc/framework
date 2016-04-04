@@ -9,7 +9,12 @@ var ViewController = Class.extend({
 
 	view: null,
 
-	construct: function() {
+	// Settings for the ViewController
+	settings: null,
+
+	construct: function(settings) {
+		this.settings = new Settings(settings, {
+		});
 	},
 
 	prepend: function(webController) {
