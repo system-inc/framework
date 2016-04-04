@@ -2,6 +2,7 @@
 var Test = Framework.require('system/test/Test.js');
 var Assert = Framework.require('system/test/Assert.js');
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
+var HtmlElement = Framework.require('system/html/HtmlElement.js');
 var EventEmitter = Framework.require('system/events/EventEmitter.js');
 
 // Class

@@ -10,16 +10,9 @@ var TextInputView = InputView.extend({
         type: 'text',
     },
 
-    getValue: function() {
-        // Make null an empty string
-        if(this.value == null) {
-            this.setValue('');
-        }
+    construct: function() {
+        this.super.apply(this, arguments);
 
-        return this.super();
-    },
-
-    listen: function() {
         this.on('change', function() {
             this.valueChangedOnDomElement();
         }.bind(this));
@@ -27,6 +20,15 @@ var TextInputView = InputView.extend({
         this.on('keyup', function() {
             this.valueChangedOnDomElement();
         }.bind(this));
+    },
+
+    getValue: function() {
+        // Make null an empty string
+        if(this.value == null) {
+            this.setValue('');
+        }
+
+        return this.super();
     },
 
     clear: function() {

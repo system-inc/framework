@@ -1,6 +1,7 @@
 // Dependencies
 var XmlNode = Framework.require('system/xml/XmlNode.js');
 var EventEmitter = Framework.require('system/events/EventEmitter.js');
+var HtmlEventsMap = Framework.require('system/html/HtmlEventsMap.js');
 
 // Class
 var HtmlNode = XmlNode.extend({
@@ -10,8 +11,6 @@ var HtmlNode = XmlNode.extend({
 	domNode: null,
 	isMountedToDom: false,
 	shouldExecuteDomUpdate: false, // Keep track of whether or not the HtmlElement is different from the DOM
-	afterNextExecutedDomUpdateFunctions: [],
-	afterMountedToDomFunctions: [],
 
 	identifier: null, // Used to uniquely identify HtmlNodes for tree comparisons againt the DOM
 	identifierCounter: 0, // Used to ensure unique identifiers
@@ -44,9 +43,9 @@ var HtmlNode = XmlNode.extend({
 		}
 	},
 
-	// Called whenever the HtmlElement changes
+	// Called whenever the HtmlNode changes
 	updateDom: function() {
-		//Console.log('HtmlElement.updateDom()');
+		//Console.log('HtmlNode.updateDom()');
 
 		// Mark the object as dirty
 		this.shouldExecuteDomUpdate = true;
@@ -85,21 +84,7 @@ var HtmlNode = XmlNode.extend({
 		// Mark the object as clean
 		this.shouldExecuteDomUpdate = false;
 
-		this.executePendingFunctions(this.afterNextExecutedDomUpdateFunctions);
-	},
-
-	executePendingFunctions: function(functionArray) {
-		// Run callbacks
-		functionArray.each(function(currentFunctionIndex, currentFunction) {
-			currentFunction();
-		}.bind(this));
-
-		// Clear the function array
-		functionArray = [];
-	},
-
-	afterNextExecutedDomUpdate: function(afterNextExecutedDomUpdateFunction) {
-		this.afterNextExecutedDomUpdateFunctions.append(afterNextExecutedDomUpdateFunction);
+		this.emit('domUpdateExecuted');
 	},
 
 	applyDomUpdates: function() {
@@ -158,18 +143,7 @@ var HtmlNode = XmlNode.extend({
 		// Execute DOM updates if necessary
 		this.executeDomUpdate();
 
-		this.executePendingFunctions(this.afterMountedToDomFunctions);
-
-		// Run the callback
-		this.onMountedToDom();
-	},
-
-	afterMountedToDom: function(afterMountedToDomFunction) {
-		this.afterMountedToDomFunctions.append(afterMountedToDomFunction);
-	},
-
-	onMountedToDom: function() {
-		// This method can be implemented and will execute when an HtmlNode is mounted to the DOM
+		this.emit('mountedToDom');
 	},
 
 	emptyDomNode: function(domNode) {
@@ -182,6 +156,31 @@ var HtmlNode = XmlNode.extend({
 		}
 
 		return domNode;
+	},
+
+	addEventListener: function(eventPattern, functionToBind, timesToRun) {
+		//Console.log('HtmlNode.addEventListener', eventPattern);
+
+		// If the event is for the domNode, add another event listener to the domNode to proxy the emit when the domNode emits
+		if(HtmlEventsMap[eventPattern]) {
+			// If the domNode already exists
+			if(this.domNode) {
+				this.domNode.addEventListener(HtmlEventsMap[eventPattern], function(event) {
+					this.emit(eventPattern, event);
+				}.bind(this));
+			}
+			// If we need to wait for the domNode to be mounted
+			else {
+				this.on('mountedToDom', function() {
+					this.domNode.addEventListener(HtmlEventsMap[eventPattern], function(event) {
+						this.emit(eventPattern, event);
+					}.bind(this));
+				}.bind(this));
+			}
+		}
+
+		// Add the event listener as normal
+		return EventEmitter.prototype.addEventListener.apply(this, arguments);
 	},
 
 });

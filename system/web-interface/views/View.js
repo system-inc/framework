@@ -19,16 +19,6 @@ var View = HtmlElement.extend({
 		this.super();
 	},
 
-	onMountedToDom: function() {
-		// Register event listeners
-		this.listen();
-	},
-
-	// Abstract method
-	listen: function() {
-		// By default we listen to nothing
-	},
-
 });
 
 // Export

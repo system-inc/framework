@@ -3,8 +3,22 @@ var LocalStorage = {};
 
 LocalStorage.get = function(keyName) {
 	var value = localStorage.getItem(keyName);
-
-	if(Json.is(value)) {
+	
+	// Handle Primitive strings
+	if(value == 'true') {
+		value = true;
+	}
+	else if(value == 'false') {
+		value = false;
+	}
+	else if(value == 'null') {
+		value = null;
+	}
+	else if(value == 'undefined') {
+		value = undefined;
+	}
+	// Handle JSON objects
+	else if(Json.is(value)) {
 		value = Json.decode(value);
 	}
 
@@ -12,6 +26,7 @@ LocalStorage.get = function(keyName) {
 }
 
 LocalStorage.set = function(keyName, value) {
+	// Encode non-primitives
 	if(!Primitive.is(value)) {
 		value = Json.encode(value);
 	}

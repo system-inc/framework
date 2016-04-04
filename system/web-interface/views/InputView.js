@@ -31,7 +31,7 @@ var InputView = View.extend({
 	valueChangedOnDomElement: function() {
 		//Console.log('Value changed on DOM, updating InputView');
 		
-		this.value = this.domNode.value;	
+		this.value = this.domNode.value;
 
 		return this.value;
 	},

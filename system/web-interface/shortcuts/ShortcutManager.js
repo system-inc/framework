@@ -116,6 +116,8 @@ var ShortcutManager = Class.extend({
 	},
 
 	handleEvent: function(event) {
+		event = event.data;
+
 		//Console.log('handleEvent', event);
 
 		shortcutEvent = this.eventToShortcutEvent(event);

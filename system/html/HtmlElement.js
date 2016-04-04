@@ -8,6 +8,7 @@ var HtmlElement = HtmlNode.extend({
 	// HtmlElement cannot be a subclass of both XmlElement and HtmlNode
 	// So, we will extend from HtmlNode and reference the properties and methods we want from XmlElement
 	// As a consequence, instanceof XmlElement will not return true for objects of type HtmlElement
+	// However, Class.doesImplement(HtmlElement, XmlElement) will return true
 
 	// XmlNode properties
 	type: XmlElement.prototype.type,
@@ -20,6 +21,7 @@ var HtmlElement = HtmlNode.extend({
 
 	// XmlElement methods
 	getAttribute: XmlElement.prototype.getAttribute,
+	// We implement these differently in HtmlElement below
 	//setAttribute: XmlElement.prototype.setAttribute,
 	//removeAttribute: XmlElement.prototype.removeAttribute,
 	//empty: XmlElement.prototype.empty,
@@ -30,30 +32,6 @@ var HtmlElement = HtmlNode.extend({
 	tagToString: XmlElement.prototype.tagToString,
 	childrenToString: XmlElement.prototype.childrenToString,
 	toString: XmlElement.prototype.toString,
-
-	// EventEmitter
-	eventIdentifiers: [
-		'interact',
-		'trackpad.tap',
-		'trackpad.tap.double',
-		'trackpad.tap.triple',
-		'mouse.click',
-		'mouse.click.first',
-		'mouse.click.first.single',
-		'mouse.click.first.double',
-		'mouse.click.first.triple',
-		'mouse.first.drag',
-		'mouse.click.second',
-		'mouse.click.second.single',
-		'mouse.click.second.double',
-		'mouse.click.second.triple',
-		'mouse.second.drag',
-		'mouse.cursor.over',
-		'mouse.cursor.out',
-		'keyboard.key.down',
-		'keyboard.key.up',
-		'keyboard.key.press',
-	],
 
 	// Uses XmlElement
 	construct: function() {
@@ -158,7 +136,7 @@ var HtmlElement = HtmlNode.extend({
 
 			// If the DOM element attribute still exists on the HtmlElement we need to check if they still match
 			if(this.attributes[domNodeAttribute.name] !== undefined) {
-				var attributeValue = XmlElement.attributeValueToString(this.attributes[domNodeAttribute.name]);
+				var attributeValue = HtmlElement.attributeValueToString(this.attributes[domNodeAttribute.name]);
 
 				// If they do not match, mark the attribute to be updated
 				if(attributeValue != domNodeAttribute.value) {
@@ -181,7 +159,7 @@ var HtmlElement = HtmlNode.extend({
 			// If the attribute does not exist in domNodeAttributesToUpdate, then we must set it
 			if(domNodeAttributeNames[attributeName] === undefined) {
 				domNodeAttributesToUpdate[attributeName] = {
-					value: XmlElement.attributeValueToString(attributeValue),
+					value: HtmlElement.attributeValueToString(attributeValue),
 					action: 'set',
 				};
 			}
@@ -253,20 +231,6 @@ var HtmlElement = HtmlNode.extend({
 		//var domFragment = document.createRange().createContextualFragment(htmlElement);
 
 		return domFragment;
-	},
-
-	on: function(eventName, callback) {
-		if(this.domNode) {
-			this.domNode.addEventListener(eventName, callback);
-		}
-		else {
-			this.afterMountedToDom(function() {
-				//Console.log('this.afterMountedToDom addEventListener');
-				this.domNode.addEventListener(eventName, callback);
-			}.bind(this));
-		}
-
-		return this;
 	},
 
 	addClass: function(className) {
@@ -342,10 +306,20 @@ var HtmlElement = HtmlNode.extend({
 		return this;
 	},
 
-    focus: function() {        
-        // Remember, this.domNode must be visible on the screen to be focused, so if the virtual DOM is scheduled to show this.domNode but it hasn't updated yet, this call will not work
+    focus: function() {
+    	//Console.log('HtmlElement.focus', this.tag, this.attributes);
+
+        // If we have a domNode
         if(this.domNode) {
-            this.domNode.focus();
+        	// Focus on the next update - this is important because you cannot .focus() on a DOM node unless it is visible
+        	// Pending DOM updates may be making the DOM node visible, so we wait until they finish before calling .focus
+        	this.on('domUpdateExecuted', function() {
+				this.domNode.focus();
+        	}.bind(this));
+
+        	// Trigger an update
+        	this.shouldExecuteDomUpdate = true;
+        	this.updateDom();
         }
 
         return this;

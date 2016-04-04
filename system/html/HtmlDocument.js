@@ -3,6 +3,7 @@ var XmlDocument = Framework.require('system/xml/XmlDocument.js');
 var EventEmitter = Framework.require('system/events/EventEmitter.js');
 var Html = Framework.require('system/html/Html.js');
 var ShortcutManager = Framework.require('system/web-interface/shortcuts/ShortcutManager.js');
+var HtmlEventsMap = Framework.require('system/html/HtmlEventsMap.js');
 
 // Class
 var HtmlDocument = XmlDocument.extend({
@@ -11,20 +12,18 @@ var HtmlDocument = XmlDocument.extend({
 
 	domDocument: null,
 	isMountedToDom: false,
-	afterMountedToDom: null,
+	//shouldScheduleDomUpdates: false, // Testing
+	shouldScheduleDomUpdates: true,
+	domUpdatesScheduled: false,
+	domUpdates: {},
 
+	// Views
 	view: null,
 	head: null,
 	body: null,
-
 	titleHtmlElement: null,
 
 	shortcutManager: null,
-
-	shouldScheduleDomUpdates: true,
-	//shouldScheduleDomUpdates: false,
-	domUpdatesScheduled: false,
-	domUpdates: {},
 
 	construct: function(declaration) {
 		// Set the declaration
@@ -74,55 +73,6 @@ var HtmlDocument = XmlDocument.extend({
 		this.shortcutManager = new ShortcutManager(this);
 	},
 
-	on: function(eventName, callback) {
-		// Allow the method to be called statically
-		if(this.domDocument) {
-			domDocument = this.domDocument;
-		}
-		else {
-			domDocument = document;
-		}
-		//Console.log('on', eventName, domDocument);
-
-		if(domDocument) {
-			// Alias ready to DOMContentLoaded
-			if(eventName == 'ready') {
-				eventName = 'DOMContentLoaded';
-			}
-
-			// If they want to use the custom afterMountedToDom event
-			if(eventName == 'afterMountedToDom') {
-				if(!this.afterMountedToDom) {
-					this.afterMountedToDom = callback;
-				}
-				else if(Function.is(this.afterMountedToDom)) {
-					// Wrap the current function in an array
-					this.afterMountedToDom = [this.afterMountedToDom];
-
-					// Add the new callback to the array
-					this.afterMountedToDom.append(callback);
-				}
-				else if(Array.is(this.afterMountedToDom)) {
-					this.afterMountedToDom.append(callback);
-				}
-			}
-			// If the document is already ready, just run the function
-			else if(eventName == 'DOMContentLoaded' && domDocument.readyState == 'complete') {
-				//Console.log('DOM already ready (readyState is complete)', callback);
-				callback();
-			}
-			// If the document isn't ready, add an event listener
-			else {
-				//Console.log('addEventListener', eventName, callback);
-				domDocument.addEventListener(eventName, callback);
-			}			
-		}
-	},
-
-	ready: function(callback) {
-		HtmlDocument.on('ready', callback);
-	},
-
 	mountToDom: function() {
 		// Clear the head and body in preparation for writing the HTML document to the DOM
 		// Even though we are removing script references from <head>, any previously included scripts will still have code available (we want this to be the case)
@@ -144,14 +94,7 @@ var HtmlDocument = XmlDocument.extend({
 		// The HtmlDocument is now added to the DOM
 		this.isMountedToDom = true;
 
-		if(Function.is(this.afterMountedToDom)) {
-			this.afterMountedToDom();
-		}
-		else if(Array.is(this.afterMountedToDom)) {
-			this.afterMountedToDom.each(function(index, callback) {
-				callback();
-			});
-		}
+		this.emit('mountedToDom');
 
 		//this.printDomUpdates();
 
@@ -209,7 +152,7 @@ var HtmlDocument = XmlDocument.extend({
 			window.requestAnimationFrame(function() {
 				//console.info('window.requestAnimationFrame');
 				this.executeDomUpdates();
-			}.bind(this));	
+			}.bind(this));
 		}
 		else {
 			//Console.log('executeDomUpdates already scheduled')
@@ -232,6 +175,8 @@ var HtmlDocument = XmlDocument.extend({
 
 		// Mark all updates as completed
 		this.domUpdatesScheduled = false;
+
+		this.emit('domUpdatesExecuted');
 	},
 
 	setTitle: function(title) {
@@ -259,13 +204,42 @@ var HtmlDocument = XmlDocument.extend({
 		}));
 	},
 
+	addEventListener: function(eventPattern, functionToBind, timesToRun) {
+		//Console.log('HtmlDocument.addEventListener', eventPattern);
+
+		// Special case for .ready
+		if(eventPattern == 'ready') {
+			// If the document is already ready, just run the function
+			if(this.domDocument && this.domDocument.readyState == 'complete') {
+				Console.log('DOM already ready (readyState is complete)', callback);
+				functionToBind();
+			}
+		}
+		else {
+			// If the event is for the domDocument, add another event listener to the domDocument to proxy the emit when the domDocument emits
+			if(HtmlEventsMap[eventPattern]) {
+				// If the domDocument already exists
+				if(this.domDocument) {
+					this.domDocument.addEventListener(HtmlEventsMap[eventPattern], function(event) {
+						this.emit(eventPattern, event);
+					}.bind(this));
+				}
+				// If we need to wait for the domDocument to be mounted
+				else {
+					this.on('mountedToDom', function() {
+						this.domDocument.addEventListener(HtmlEventsMap[eventPattern], function(event) {
+							this.emit(eventPattern, event);
+						}.bind(this));
+					}.bind(this));
+				}
+			}
+
+			// Add the event listener as normal
+			return EventEmitter.prototype.addEventListener.apply(this, arguments);
+		}
+	},
+
 });
-
-// Static methods
-
-HtmlDocument.on = HtmlDocument.prototype.on;
-
-HtmlDocument.ready = HtmlDocument.prototype.ready;
 
 // Class implementations
 HtmlDocument.implement(EventEmitter);
