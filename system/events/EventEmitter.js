@@ -1,20 +1,10 @@
 // Dependencies
 var Event = Framework.require('system/events/Event.js');
+var EventListener = Framework.require('system/events/EventListener.js');
 
 // Class
 var EventEmitter = Class.extend({
 
-	/*
-		[
-			{
-				eventPattern: ,
-				boundFunction: ,
-				timesToRun: ,
-				timesRan: ,
-			},
-			...
-		]
-	*/
 	eventListeners: [],
 
 	recommendedMaximumEventListenersPerEventIdentifier: null,
@@ -120,12 +110,7 @@ var EventEmitter = Class.extend({
 		}
 
 		// Create the event listener
-		var eventListener = {
-			eventPattern: eventPattern,
-			boundFunction: functionToBind,
-			timesToRun: timesToRun,
-			timesRan: 0,
-		};
+		var eventListener = new EventListener(eventPattern, functionToBind, timesToRun);
 
 		// Add the event listener
 		this.eventListeners.append(eventListener);
@@ -202,8 +187,12 @@ var EventEmitter = Class.extend({
 		else {
 			// Gather all of the matching bound function objects
 			this.eventListeners.each(function(eventListenersIndex, eventListener) {
+				// The event pattern is just a regular string and is meant to be taken literally
+				if(eventListener.eventPattern === eventPattern) {
+					matchingEventListeners.append(eventListener);
+				}
 				// If the event pattern is a string with a *
-				if(String.is(eventListener.eventPattern) && eventListener.eventPattern.contains('*')) {
+				else if(String.is(eventListener.eventPattern) && eventListener.eventPattern.contains('*')) {
 					//Console.info('eventListener eventPattern contains *', eventListener);
 					if(RegularExpression.stringMatchesWildcardPattern(eventPattern, eventListener.eventPattern)) {
 						matchingEventListeners.append(eventListener);
@@ -227,10 +216,6 @@ var EventEmitter = Class.extend({
 							matchingEventListeners.append(eventListener);
 						}
 					}					
-				}
-				// The event pattern is just a regular string and is meant to be taken literally
-				else if(eventListener.eventPattern == eventPattern) {
-					matchingEventListeners.append(eventListener);
 				}
 			});
 		}
