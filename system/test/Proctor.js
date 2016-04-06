@@ -603,6 +603,7 @@ Proctor.globals = {
 		'RegularExpression',
 		'Stream',
 		'Time',
+		'Try',
 		'clearImmediate',
 		'clearInterval',
 		'clearTimeout',

@@ -1,16 +1,3 @@
-ViewController implements EventEmitter
-
-FormView
- .addField
- .removeField
- .getData
- .validate
- .on('submit'); // the view bubbles events up to the formviewcontroller
-
-TableView
- .view = instance of TableView
-
-
 Event Emitters:
 
 ViewEventEmitter extends 

@@ -13,6 +13,36 @@ var FormView = View.extend({
 		},
 	},
 
+	construct: function(settings) {
+		this.super.apply(this, arguments);
+		this.settings.setDefaults({
+			cancelButton: {
+
+			},
+
+		});
+	},
+
+	addField: function() {
+
+	},
+
+	removeField: function() {
+
+	},
+
+	getData: function() {
+
+	},
+
+	validate: function() {
+
+	},
+
+	submit: function() {
+		this.emit('submit', this.getData());
+	},
+
 });
 
 // Export

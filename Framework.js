@@ -17,6 +17,7 @@ Generator = require('./globals/custom/Generator.js');
 Json = require('./globals/custom/Json.js');
 Primitive = require('./globals/custom/Primitive.js');
 Time = require('./globals/custom/Time.js');
+Try = require('./globals/custom/Try.js');
 
 // Globals - Standard - depend on Class
 Error = require('./globals/standard/errors/Error.js');
