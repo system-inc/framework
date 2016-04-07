@@ -141,7 +141,7 @@ var HtmlDocument = XmlDocument.extend({
 		// Add the HtmlElement to the list of updates to do
 		if(htmlNode) {
 			// Use an object instead of an array so we get the speed of the hash table for deduping updates
-			this.domUpdates[htmlNode.identifier] = htmlNode;
+			this.domUpdates[htmlNode.nodeIdentifier] = htmlNode;
 		}
 
 		// If an update isn't scheduled already, use the next animation frame to run all updates

@@ -97,10 +97,10 @@ var HtmlElement = HtmlNode.extend({
 		this.super.apply(this, arguments);
 
 		// Add a DOM attribute for testing
-		//this.setAttribute('data-identifier', this.identifier);
+		//this.setAttribute('data-nodeIdentifier', this.nodeIdentifier);
 
 		// Reset the identifierCounter
-		this.identifierCounter = 0;
+		this.nodeIdentifierCounter = 0;
 
 		// Recurse through all children to make sure they descend
 		this.children.each(function(childIndex, child) {

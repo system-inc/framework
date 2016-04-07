@@ -1,6 +1,6 @@
 // Dependencies
 var XmlNode = Framework.require('system/xml/XmlNode.js');
-var EventEmitter = Framework.require('system/events/EventEmitter.js');
+var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventEmitter.js');
 var HtmlEventsMap = Framework.require('system/html/HtmlEventsMap.js');
 
 // Class
@@ -12,8 +12,8 @@ var HtmlNode = XmlNode.extend({
 	isMountedToDom: false,
 	shouldExecuteDomUpdate: false, // Keep track of whether or not the HtmlElement is different from the DOM
 
-	identifier: null, // Used to uniquely identify HtmlNodes for tree comparisons againt the DOM
-	identifierCounter: 0, // Used to ensure unique identifiers
+	nodeIdentifier: null, // Used to uniquely identify HtmlNodes for tree comparisons againt the DOM
+	nodeIdentifierCounter: 0, // Used to ensure unique identifiers
 
 	construct: function(content, parent, type) {
 		this.super.apply(this, arguments);
@@ -33,13 +33,13 @@ var HtmlNode = XmlNode.extend({
 			this.htmlDocument = this.parent.htmlDocument;
 
 			// If the parent does not have an identifier, give it the root identifier of '0'
-			if(this.parent.identifier === null) {
-				this.parent.identifier = '0';
+			if(this.parent.nodeIdentifier === null) {
+				this.parent.nodeIdentifier = '0';
 			}
 
 			// Set the identifier
-			this.identifier = this.parent.identifier+'.'+this.parent.identifierCounter;
-			this.parent.identifierCounter++;
+			this.nodeIdentifier = this.parent.nodeIdentifier+'.'+this.parent.nodeIdentifierCounter;
+			this.parent.nodeIdentifierCounter++;
 		}
 	},
 
@@ -196,7 +196,7 @@ HtmlNode.is = function(value) {
 };
 
 // Class implementations
-HtmlNode.implement(EventEmitter);
+HtmlNode.implement(PropagatingEventEmitter);
 
 // Export
 module.exports = HtmlNode;

@@ -1,5 +1,10 @@
+// Dependencies
+var Event = Framework.require('system/events/Event.js');
+
 // Class
-var PropagatingEvent = Class.extend({
+var PropagatingEvent = Event.extend({
+
+
 
 });
 

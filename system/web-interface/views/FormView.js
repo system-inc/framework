@@ -1,5 +1,8 @@
 // Dependencies
 var View = Framework.require('system/web-interface/views/View.js');
+var Html = Framework.require('system/html/Html.js');
+var FormFieldView = Framework.require('system/web-interface/views/forms/FormFieldView.js');
+var TextInputFormFieldView = Framework.require('system/web-interface/views/forms/TextInputFormFieldView.js');
 
 // Class
 var FormView = View.extend({
@@ -8,39 +11,98 @@ var FormView = View.extend({
 
 	attributes: {
 		class: 'form',
-		style: {
-			display: 'none',
-		},
 	},
+
+	submitButton: null,
 
 	construct: function(settings) {
+		// Call View's constructor
 		this.super.apply(this, arguments);
+
+		// Set default settings
 		this.settings.setDefaults({
-			cancelButton: {
-
-			},
-
 		});
+
+		// Add the submit button
+		this.addSubmitButton();
 	},
 
-	addField: function() {
-
+	addSubmitButton: function() {
+		this.submitButton = Html.a('Submit');
+        this.submitButton.on('click', function(event) {
+            this.submit();
+        }.bind(this));
+        this.append(this.submitButton);
 	},
 
-	removeField: function() {
+	addFormField: function(formFieldView) {
+		// Append the form field to the view
+		this.prepend(formFieldView);
 
+		return formFieldView;
+	},
+
+	addTextInputFormField: function(identifier, settings) {
+		var textInputFormField = new TextInputFormFieldView(identifier, settings);
+
+		return this.addFormField(textInputFormField);
+	},
+
+	removeFormField: function(identifier) {
 	},
 
 	getData: function() {
+		var data = {};
 
+		this.children.each(function(childIndex, child) {
+			if(Class.isInstance(child, FormFieldView)) {
+				data[child.identifier] = child.getData();
+			}
+		}.bind(this));
+		
+		return data;
 	},
 
-	validate: function() {
+	clear: function() {
+		this.children.each(function(childIndex, child) {
+			if(Class.isInstance(child, FormFieldView)) {
+				child.clear();
+			}
+		}.bind(this));
+	},
 
+	getValidationErrors: function() {
+		var validationErrors = [];
+
+		this.children.each(function(childIndex, child) {
+			if(Class.isInstance(child, FormFieldView)) {
+				var childValidationErrors = child.getValidationErrors();
+				if(childValidationErrors.length) {
+					validationErrors.append(childValidationErrors);
+				}
+			}
+		}.bind(this));
+
+		return validationErrors;
 	},
 
 	submit: function() {
-		this.emit('submit', this.getData());
+		var validationErrors = this.getValidationErrors();
+
+		if(!validationErrors.length) {
+			this.emit('submit', this.getData());
+		}
+		else {
+			Console.error('failed validation', validationErrors);
+		}
+	},
+
+	focusOnFirstFormField: function() {
+		var firstChild = this.children.first();
+		
+		if(firstChild) {
+			firstChild.focus();
+		}
 	},
 
 });
