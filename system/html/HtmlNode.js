@@ -84,7 +84,9 @@ var HtmlNode = XmlNode.extend({
 		// Mark the object as clean
 		this.shouldExecuteDomUpdate = false;
 
-		this.emit('domUpdateExecuted', this, false); // Do not propagate this event
+		this.emit('domUpdateExecuted', this, {
+			propagationStopped: true, // Do not propagate this event
+		});
 	},
 
 	applyDomUpdates: function() {
@@ -141,7 +143,9 @@ var HtmlNode = XmlNode.extend({
 		// Execute DOM updates if necessary
 		this.executeDomUpdate();
 
-		this.emit('mountedToDom', this, false); // Do not propagate this event
+		this.emit('mountedToDom', this, {
+			propagationStopped: true, // Do not propagate this event
+		});
 	},
 
 	emptyDomNode: function(domNode) {

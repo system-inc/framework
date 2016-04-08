@@ -244,7 +244,7 @@ var HtmlDocument = XmlDocument.extend({
 });
 
 // Class implementations
-HtmlDocument.implement(EventEmitter);
+HtmlDocument.implement(EventEmitter); // No need to be a PropagatingEventEmitter
 
 // Export
 module.exports = HtmlDocument;

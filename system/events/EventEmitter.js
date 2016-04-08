@@ -21,7 +21,7 @@ var EventEmitter = Class.extend({
 		return once;
 	},
 
-	emit: function*(eventIdentifier, data) {
+	emit: function*(eventIdentifier, data, eventOptions) {
 		//Console.log('emit', eventIdentifier);
 
 		// Default data to null
@@ -63,8 +63,11 @@ var EventEmitter = Class.extend({
 		}
 		// If data is not an event, create a new instance of Event
 		else {
-			event = this.createEvent(eventIdentifier, data);
+			event = this.createEvent(this, eventIdentifier, data, eventOptions);
 		}
+
+		// Set the currentEmitter
+		event.currentEmitter = this;
 
 		// If there are no event listeners for an Error, throw the Error
 		if(matchingEventListeners.length == 0 && Error.is(data)) {
@@ -74,7 +77,12 @@ var EventEmitter = Class.extend({
 		else {
 			// Run the bound functions in sequence
 			yield matchingEventListeners.each(function*(matchingEventListenerIndex, matchingEventListener) {
-				yield matchingEventListener.boundFunction(event);
+				event.previousReturnValue = yield matchingEventListener.boundFunction(event);
+
+				// Check to see if event.stop() was called
+				if(event.stopped) {
+					return false; // break
+				}
 
 				// Count the run
 				matchingEventListener.timesRan++;
@@ -90,8 +98,8 @@ var EventEmitter = Class.extend({
 		return event;
 	},
 
-	createEvent: function(eventIdentifier, data) {
-		var event = new Event(eventIdentifier, data);
+	createEvent: function(emitter, eventIdentifier, data, eventOptions) {
+		var event = new Event(emitter, eventIdentifier, data, eventOptions);
 
 		return event;
 	},
