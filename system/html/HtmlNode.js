@@ -180,7 +180,7 @@ var HtmlNode = XmlNode.extend({
 		}
 
 		// Add the event listener as normal
-		return EventEmitter.prototype.addEventListener.apply(this, arguments);
+		return PropagatingEventEmitter.prototype.addEventListener.apply(this, arguments);
 	},
 
 });

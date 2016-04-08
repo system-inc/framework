@@ -18,7 +18,19 @@ var TextInputFormFieldView = FormFieldView.extend({
 		this.append(this.textInputView);
 
 		if(this.settings.get('enterSubmits')) {
-			console.log('need to make enter submit');
+			// TODO: Do this
+			//this.textInputView.on('keyboard.key.enter.down', function(event) {
+			//	event.preventDefault();
+			//	this.parent.submit(); // this assumes this.parent is a FormView; alternatively, we could emit a special event (e.g., 'form.submit') and have FormView listen for that event and submit the form when the event propagates up to it
+			//}.bind(this));
+
+			// Not this
+			this.textInputView.on('keydown', function(event) {
+				if(event.data.which == 13) {
+					event.data.preventDefault();
+					this.parent.submit()
+				}
+			}.bind(this));
 		}
 	},
 
