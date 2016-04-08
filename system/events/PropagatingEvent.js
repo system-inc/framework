@@ -4,7 +4,7 @@ var Event = Framework.require('system/events/Event.js');
 // Class
 var PropagatingEvent = Event.extend({
 
-
+	
 
 });
 

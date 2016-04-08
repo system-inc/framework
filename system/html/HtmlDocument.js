@@ -94,7 +94,7 @@ var HtmlDocument = XmlDocument.extend({
 		// The HtmlDocument is now added to the DOM
 		this.isMountedToDom = true;
 
-		this.emit('mountedToDom');
+		this.emit('mountedToDom', this);
 
 		//this.printDomUpdates();
 
@@ -176,7 +176,7 @@ var HtmlDocument = XmlDocument.extend({
 		// Mark all updates as completed
 		this.domUpdatesScheduled = false;
 
-		this.emit('domUpdatesExecuted');
+		this.emit('domUpdatesExecuted', this);
 	},
 
 	setTitle: function(title) {
@@ -221,6 +221,7 @@ var HtmlDocument = XmlDocument.extend({
 				// If the domDocument already exists
 				if(this.domDocument) {
 					this.domDocument.addEventListener(HtmlEventsMap[eventPattern], function(event) {
+						//Console.log('HtmlDocument with domDocument addEventListener', eventPattern);
 						this.emit(eventPattern, event);
 					}.bind(this));
 				}
@@ -228,6 +229,7 @@ var HtmlDocument = XmlDocument.extend({
 				else {
 					this.on('mountedToDom', function() {
 						this.domDocument.addEventListener(HtmlEventsMap[eventPattern], function(event) {
+							//Console.log('HtmlDocument waiting for mountedToDom addEventListener', eventPattern);
 							this.emit(eventPattern, event);
 						}.bind(this));
 					}.bind(this));

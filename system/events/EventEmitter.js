@@ -22,6 +22,8 @@ var EventEmitter = Class.extend({
 	},
 
 	emit: function*(eventIdentifier, data) {
+		//Console.log('emit', eventIdentifier);
+
 		// Default data to null
 		if(data === undefined) {
 			data = null;
@@ -54,7 +56,15 @@ var EventEmitter = Class.extend({
 		//Console.info('matchingEventListeners', matchingEventListeners);
 
 		// Create the event to emit
-		var event = new Event(eventIdentifier, data);
+		var event = null
+		// If data is an Event, use it as the event
+		if(Event.is(data)) {
+			event = data;
+		}
+		// If data is not an event, create a new instance of Event
+		else {
+			event = this.createEvent(eventIdentifier, data);
+		}
 
 		// If there are no event listeners for an Error, throw the Error
 		if(matchingEventListeners.length == 0 && Error.is(data)) {
@@ -77,7 +87,13 @@ var EventEmitter = Class.extend({
 			}.bind(this));	
 		}
 
-		return this;
+		return event;
+	},
+
+	createEvent: function(eventIdentifier, data) {
+		var event = new Event(eventIdentifier, data);
+
+		return event;
 	},
 
 	addEventListener: function*(eventPattern, functionToBind, timesToRun) {

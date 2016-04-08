@@ -57,7 +57,7 @@ var FormFieldView = View.extend({
 			if(!data || data.trim() == '') {
 				validationErrors.append({
 					identifier: 'required',
-					message: 'This field is required',
+					message: 'Required.',
 				});
 			}
 		}

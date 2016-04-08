@@ -30,7 +30,7 @@ var FormView = View.extend({
 	addSubmitButton: function() {
 		this.submitButton = Html.a('Submit');
         this.submitButton.on('click', function(event) {
-            this.submit();
+        	this.submit();
         }.bind(this));
         this.append(this.submitButton);
 	},

@@ -11,7 +11,7 @@ var Electron = Class.extend({
 
 	mainBrowserWindow: null,
 	mainBrowserWindowState: null,
-	mainBrowserWindowController: null,
+	mainBrowserWindowViewController: null,
 
 	initialize: function*() {
 		// Do nothing if Electron is not active (e.g., we are running a Framework app that uses Electron but from the console so there is no Electron window)
@@ -46,7 +46,7 @@ var Electron = Class.extend({
 
 		// Require and construct the main controller
 		var ControllerClass = Project.require('controllers/'+Project.modules.electronModule.settings.get('mainBrowserWindow.viewControllerName')+'.js');
-		this.mainBrowserWindowController = new ControllerClass(this);
+		mainBrowserWindowViewController = this.mainBrowserWindowViewController = new ControllerClass(this);
 
 		// Add default shortcuts
 		this.addDefaultShortcuts();
@@ -78,19 +78,19 @@ var Electron = Class.extend({
 		var shortcutSettings = Project.modules.electronModule.settings.get('shortcuts');
 		
 		if(shortcutSettings.closeFocusedWindow) {
-			this.mainBrowserWindowController.htmlDocument.shortcutManager.add(['Ctrl+W'], this.closeFocusedWindow.bind(this));
+			this.mainBrowserWindowViewController.htmlDocument.shortcutManager.add(['Ctrl+W'], this.closeFocusedWindow.bind(this));
 		}
 		if(shortcutSettings.reloadFocusedWindow) {
-			this.mainBrowserWindowController.htmlDocument.shortcutManager.add(['Ctrl+R', 'Command+R'], this.reloadFocusedWindow.bind(this));
+			this.mainBrowserWindowViewController.htmlDocument.shortcutManager.add(['Ctrl+R', 'Command+R'], this.reloadFocusedWindow.bind(this));
 		}
 		if(shortcutSettings.toggleFullScreenOnFocusedWindow) {
-			this.mainBrowserWindowController.htmlDocument.shortcutManager.add(['F11', 'Ctrl+Command+F'], this.toggleFullScreenOnFocusedWindow.bind(this));
+			this.mainBrowserWindowViewController.htmlDocument.shortcutManager.add(['F11', 'Ctrl+Command+F'], this.toggleFullScreenOnFocusedWindow.bind(this));
 		}
 		if(shortcutSettings.toggleDeveloperToolsOnFocusedWindow) {
-			this.mainBrowserWindowController.htmlDocument.shortcutManager.add(['Ctrl+Alt+I', 'Ctrl+Command+I', 'Alt+Command+I'], this.toggleDeveloperToolsOnFocusedWindow.bind(this));
+			this.mainBrowserWindowViewController.htmlDocument.shortcutManager.add(['Ctrl+Alt+I', 'Ctrl+Command+I', 'Alt+Command+I'], this.toggleDeveloperToolsOnFocusedWindow.bind(this));
 		}
 		if(shortcutSettings.applyDefaultWindowStateOnFocusedWindow) {
-			this.mainBrowserWindowController.htmlDocument.shortcutManager.add(['Ctrl+Alt+W', 'Ctrl+Command+W', 'Alt+Command+W'], this.applyDefaultWindowStateOnFocusedWindow.bind(this));
+			this.mainBrowserWindowViewController.htmlDocument.shortcutManager.add(['Ctrl+Alt+W', 'Ctrl+Command+W', 'Alt+Command+W'], this.applyDefaultWindowStateOnFocusedWindow.bind(this));
 		}
 	},
 

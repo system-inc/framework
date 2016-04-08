@@ -84,7 +84,7 @@ var HtmlNode = XmlNode.extend({
 		// Mark the object as clean
 		this.shouldExecuteDomUpdate = false;
 
-		this.emit('domUpdateExecuted');
+		this.emit('domUpdateExecuted', this, false); // Do not propagate this event
 	},
 
 	applyDomUpdates: function() {
@@ -136,14 +136,12 @@ var HtmlNode = XmlNode.extend({
 	},
 
 	mountedToDom: function() {
-		//Console.log('mountedToDom', this);
-
 		this.isMountedToDom = true;
 
 		// Execute DOM updates if necessary
 		this.executeDomUpdate();
 
-		this.emit('mountedToDom');
+		this.emit('mountedToDom', this, false); // Do not propagate this event
 	},
 
 	emptyDomNode: function(domNode) {
@@ -159,8 +157,6 @@ var HtmlNode = XmlNode.extend({
 	},
 
 	addEventListener: function(eventPattern, functionToBind, timesToRun) {
-		//Console.log('HtmlNode.addEventListener', eventPattern);
-
 		// If the event is for the domNode, add another event listener to the domNode to proxy the emit when the domNode emits
 		if(HtmlEventsMap[eventPattern]) {
 			// If the domNode already exists
