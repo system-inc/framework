@@ -311,6 +311,133 @@ var PropagatingEventEmitterTest = Test.extend({
 		Assert.strictEqual(propagatingEventEmitter1StoredEvent.data, 'propagatingEventEmitter3', 'Unregistering for the event phase "atEmitter" still allows event phase "bubbling"');
 	},
 
+	testCapturingPhase: function*() {
+		// Create the hierarchy
+		var propagatingEventEmitter3 = new PropagatingEventEmitter();
+		propagatingEventEmitter3.name = 'propagatingEventEmitter3';
+		var propagatingEventEmitter2 = new PropagatingEventEmitter();
+		propagatingEventEmitter2.name = 'propagatingEventEmitter2';
+		propagatingEventEmitter3.parent = propagatingEventEmitter2;
+		var propagatingEventEmitter1 = new PropagatingEventEmitter();
+		propagatingEventEmitter1.name = 'propagatingEventEmitter1';
+		propagatingEventEmitter2.parent = propagatingEventEmitter1;
+
+		// A variable to store events
+		var propagatingEventEmitter1StoredEvent = null;
+		var propagatingEventEmitter1StoredEventCurrentPhase = null;
+		var propagatingEventEmitter1StoredEventCounter = 0;
+		var propagatingEventEmitter2StoredEvent = null;
+		var propagatingEventEmitter2StoredEventCurrentPhase = null;
+		var propagatingEventEmitter2StoredEventCounter = 0;
+		var propagatingEventEmitter3StoredEvent = null;
+		var propagatingEventEmitter3StoredEventCurrentPhase = null;
+		var propagatingEventEmitter3StoredEventCounter = 0;
+
+		// Level 3 (atEmitter)
+		propagatingEventEmitter3.on('event', function(event) {
+			//Console.log('Level 3!', event.currentPhase);
+			propagatingEventEmitter3StoredEventCounter++;
+			propagatingEventEmitter3StoredEvent = event;
+			propagatingEventEmitter3StoredEventCurrentPhase = event.currentPhase;
+		});
+
+		// Level 2 (capturing)
+		propagatingEventEmitter2.on('event', function(event) {
+			//Console.log('Level 2!', event.currentPhase);
+			propagatingEventEmitter2StoredEventCounter++;
+			propagatingEventEmitter2StoredEvent = event;
+			propagatingEventEmitter2StoredEventCurrentPhase = event.currentPhase;
+		});
+
+		// Level 1 (capturing)
+		propagatingEventEmitter1.on('event', function(event) {
+			//Console.log('Level 1!', event.currentPhase);
+			propagatingEventEmitter1StoredEventCounter++;
+			propagatingEventEmitter1StoredEvent = event;
+			propagatingEventEmitter1StoredEventCurrentPhase = event.currentPhase;
+		});
+
+		// Emit event at level 3
+		yield propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
+			registeredPhases: {
+				capturing: true,
+				bubbling: false,
+			},
+		});
+
+		//Console.info(propagatingEventEmitter1StoredEvent);
+		//Console.info(propagatingEventEmitter2StoredEvent);
+		//Console.info(propagatingEventEmitter3StoredEvent);
+
+		Assert.strictEqual(propagatingEventEmitter3StoredEventCurrentPhase, 'atEmitter', 'currentPhase is set correctly');
+		Assert.strictEqual(propagatingEventEmitter2StoredEventCurrentPhase, 'capturing', 'currentPhase is set correctly');
+		Assert.strictEqual(propagatingEventEmitter1StoredEventCurrentPhase, 'capturing', 'currentPhase is set correctly');
+	},
+
+	testSkipCapturingPhase: function*() {
+		// Create the hierarchy
+		var propagatingEventEmitter3 = new PropagatingEventEmitter();
+		propagatingEventEmitter3.name = 'propagatingEventEmitter3';
+		var propagatingEventEmitter2 = new PropagatingEventEmitter();
+		propagatingEventEmitter2.name = 'propagatingEventEmitter2';
+		propagatingEventEmitter3.parent = propagatingEventEmitter2;
+		var propagatingEventEmitter1 = new PropagatingEventEmitter();
+		propagatingEventEmitter1.name = 'propagatingEventEmitter1';
+		propagatingEventEmitter2.parent = propagatingEventEmitter1;
+
+		// A variable to store events
+		var propagatingEventEmitter1StoredEvent = null;
+		var propagatingEventEmitter1StoredEventCurrentPhase = null;
+		var propagatingEventEmitter1StoredEventCounter = 0;
+		var propagatingEventEmitter2StoredEvent = null;
+		var propagatingEventEmitter2StoredEventCurrentPhase = null;
+		var propagatingEventEmitter2StoredEventCounter = 0;
+		var propagatingEventEmitter3StoredEvent = null;
+		var propagatingEventEmitter3StoredEventCurrentPhase = null;
+		var propagatingEventEmitter3StoredEventCounter = 0;
+
+		// Level 3
+		propagatingEventEmitter3.on('event', function(event) {
+			//Console.log('Level 3!', event.currentPhase);
+			propagatingEventEmitter3StoredEventCounter++;
+			propagatingEventEmitter3StoredEvent = event;
+			propagatingEventEmitter3StoredEventCurrentPhase = event.currentPhase;
+		});
+
+		// Level 2
+		propagatingEventEmitter2.on('event', function(event) {
+			//Console.log('Level 2!', event.currentPhase);
+			propagatingEventEmitter2StoredEventCounter++;
+			propagatingEventEmitter2StoredEvent = event;
+			propagatingEventEmitter2StoredEventCurrentPhase = event.currentPhase;
+		});
+
+		// Level 1
+		propagatingEventEmitter1.on('event', function(event) {
+			//Console.log('Level 1!', event.currentPhase);
+			propagatingEventEmitter1StoredEventCounter++;
+			propagatingEventEmitter1StoredEvent = event;
+			propagatingEventEmitter1StoredEventCurrentPhase = event.currentPhase;
+		});
+
+		// Emit event at level 3
+		yield propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
+			registeredPhases: {
+				capturing: false,
+				atEmitter: true,
+				bubbling: false,
+			},
+		});
+
+		//Console.info(propagatingEventEmitter1StoredEvent);
+		//Console.info(propagatingEventEmitter2StoredEvent);
+		//Console.info(propagatingEventEmitter3StoredEvent);
+
+		Assert.strictEqual(propagatingEventEmitter3StoredEventCurrentPhase, 'atEmitter', '"atEmitter" phase not skipped');
+		Assert.strictEqual(propagatingEventEmitter2StoredEventCurrentPhase, null, '"capturing" phase skipped');
+		Assert.strictEqual(propagatingEventEmitter1StoredEventCurrentPhase, null, '"capturing" phase skipped');
+	},
+
 });
 
 // Export

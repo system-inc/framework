@@ -10,9 +10,48 @@ var PropagatingEventEmitter = EventEmitter.extend({
 	emit: function*(eventIdentifier, data, eventOptions) {
 		var propagatingEvent = null;
 
+		var shouldEmitAncestorEventEmittersInCapturePath = false;
+		// We are at the target emitter (because eventOptions is set) and the "capturing" phase is registered
+		if(eventOptions && eventOptions.registeredPhases && eventOptions.registeredPhases.capturing) {
+			shouldEmitAncestorEventEmittersInCapturePath = true;
+		}
+
+		if(shouldEmitAncestorEventEmittersInCapturePath) {
+			//Console.log('shouldEmitAncestorEventEmittersInCapturePath', shouldEmitAncestorEventEmittersInCapturePath);
+
+			// Create the event, we must be the target emitter, so we pass "this" into createEvent
+			propagatingEvent = this.createEvent(this, eventIdentifier, data, eventOptions);
+
+			// Build the capturing path
+			var ancestorEventEmittersInCapturePath = [];
+			var context = this;
+			while(context.parent) {
+				ancestorEventEmittersInCapturePath.prepend(context.parent);
+				context = context.parent;
+			}
+			//Console.warn('ancestorEventEmittersInCapturePath', ancestorEventEmittersInCapturePath);
+
+			// Emit the event along the capturing path
+			yield ancestorEventEmittersInCapturePath.each(function*(ancestorEventEmitterIndex, ancestorEventEmitter) {
+				//Console.log('should emit on', ancestorEventEmitter.name);
+				// Emit the event all the way down until
+				propagatingEvent = yield ancestorEventEmitter.emit(eventIdentifier, propagatingEvent);
+			});
+
+			// Set data to be the propagating event, so when we shouldEmit below we emit the event instead of the initial data
+			data = propagatingEvent;
+		}
+
 		// If we are emitting an existing event (propagating)
 		if(PropagatingEvent.is(data)) {
+			// Set the propagatingEvent to the data
+			//Console.info('setting propagatingEvent to data');
 			propagatingEvent = data;
+		}
+
+		// If we have a propagatingEvent
+		if(propagatingEvent) {
+			//Console.error('we have a propagating event');
 
 			// Update the currentPhase of the event
 			// We are at the emitter
@@ -21,7 +60,7 @@ var PropagatingEventEmitter = EventEmitter.extend({
 			}
 			// We are capturing and have not hit the emitter yet
 			else if(propagatingEvent.currentPhase == PropagatingEvent.phases.capturing) {
-				propagatingEvent.currentPhase = PropagatingEvent.phases.capturing;
+				// Do nothing
 			}
 			// We are not at the emitter and we are not capturing, so we must be bubbling
 			else {
@@ -55,10 +94,14 @@ var PropagatingEventEmitter = EventEmitter.extend({
 			shouldEmit = false;
 		}
 
+		//Console.warn('propagatingEvent.currentPhase', propagatingEvent.currentPhase);
+
 		// Conditionally emit the event at the current level
 		if(shouldEmit) {
 			propagatingEvent = yield this.super(eventIdentifier, data, eventOptions); // this will make propagatingEvent.currentEmitter = this
 		}
+
+		//Console.warn('propagatingEvent.currentPhase', propagatingEvent.currentPhase);
 
 		// Determine if we should bubble
 		var shouldBubble = true;
@@ -78,6 +121,11 @@ var PropagatingEventEmitter = EventEmitter.extend({
 			}
 			// Don't bubble if the event is not registered for the "bubbling" phase
 			else if(propagatingEvent.registeredPhases[PropagatingEvent.phases.bubbling] == false) {
+				shouldBubble = false;
+			}
+			// Don't bubble if the event is in the "capturing" phase
+			else if(propagatingEvent.currentPhase == PropagatingEvent.phases.capturing) {
+				//Console.info('not bubbling because we are capturing')
 				shouldBubble = false;
 			}
 		}
