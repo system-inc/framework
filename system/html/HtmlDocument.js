@@ -218,10 +218,12 @@ var HtmlDocument = XmlDocument.extend({
 		else {
 			// If the event is for the domDocument, add another event listener to the domDocument to proxy the emit when the domDocument emits
 			if(HtmlEventsMap[eventPattern]) {
+
 				// If the domDocument already exists
 				if(this.domDocument) {
 					this.domDocument.addEventListener(HtmlEventsMap[eventPattern], function(event) {
 						//Console.log('HtmlDocument with domDocument addEventListener', eventPattern);
+						event.domEvent = event;
 						this.emit(eventPattern, event);
 					}.bind(this));
 				}
