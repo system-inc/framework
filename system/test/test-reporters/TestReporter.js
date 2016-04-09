@@ -77,7 +77,7 @@ var TestReporter = Class.extend({
 	},
 
 	startedRunningTest: function(data) {
-		Console.writeLine("\n"+'  '+data.name.replaceLast('Test', '')+' '+Terminal.style('('+Node.Path.join(data.directory, data.fileName)+')', 'gray')+"\n");
+		Console.writeLine("\n"+'  '+data.name+' '+Terminal.style('('+Node.Path.join(data.directory, data.fileName)+')', 'gray')+"\n");
 	},
 
 	startedRunningTestMethod: function(data) {
@@ -92,13 +92,13 @@ var TestReporter = Class.extend({
 		//Console.writeLine('    finishedRunningTestMethod', data);	
 
 		if(data.status == 'passed') {
-			Console.writeLine(Terminal.style('    ✓', 'green')+' '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' ('+this.currentTestMethodAssertionCount+' '+(this.currentTestMethodAssertionCount == 1 ? 'assertion' : 'assertions')+') '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30));
+			Console.writeLine(Terminal.style('    ✓', 'green')+' '+data.name+' ('+this.currentTestMethodAssertionCount+' '+(this.currentTestMethodAssertionCount == 1 ? 'assertion' : 'assertions')+') '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30));
 		}
 		else if(data.status == 'failed') {
-			Console.writeLine(Terminal.style('    ✗ ('+data.failedTestMethods.length+') '+data.name.replaceFirst('test', '').lowercaseFirstCharacter()+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30), 'red'));
+			Console.writeLine(Terminal.style('    ✗ ('+data.failedTestMethods.length+') '+data.name+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30), 'red'));
 		}
 		else if(data.status == 'skipped') {
-			Console.writeLine(Terminal.style('    ↓ (skipped) ', 'gray')+data.name.replaceFirst('test', '').lowercaseFirstCharacter());
+			Console.writeLine(Terminal.style('    ↓ (skipped) ', 'gray')+data.name);
 		}
 	},
 

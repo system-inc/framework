@@ -7,13 +7,58 @@ var PropagatingEvent = Event.extend({
 	propagationStopped: null, // Whether or not event.stopPropagation() has been called
 		
 	currentPhase: null, // PropagatingEvent.phases.capturing, PropagatingEvent.phases.atEmitter, or PropagatingEvent.phases.bubbling
-	
-	// The phases the event is registered for
-	registeredPhases: [
-		// By default we do not register for the capture phase, just atEmitter and bubbling
-		'atEmitter',
-		'bubbling',
-	],
+	registeredPhases: {}, // The phases the event is registered for
+
+	construct: function(emitter, identifier, data, options) {
+		this.super.apply(this, arguments);
+
+		options = {
+			propagationStopped: false,
+			currentPhase: PropagatingEvent.phases.atEmitter,
+			registeredPhases: { // By default we do not register for the capture phase, just atEmitter and bubbling
+				atEmitter: true,
+				bubbling: true,
+			},
+		}.merge(options);
+
+		// Set propagationStopped option
+		if(options.propagationStopped) {
+			this.propagationStopped = true;
+		}
+
+		// Set current phase with sanity check
+		if(PropagatingEvent.phases[options.currentPhase]) {
+			this.currentPhase = options.currentPhase;
+		}
+		// If we fail the sanity check (user set bad option), set the phase to atEmitter
+		else {
+			this.currentPhase = PropagatingEvent.phases.atEmitter;
+		}		
+
+		// Capturing phase
+		if(options.registeredPhases[PropagatingEvent.phases.capturing]) {
+			this.registeredPhases[PropagatingEvent.phases.capturing] = true;
+		}
+		else {
+			this.registeredPhases[PropagatingEvent.phases.capturing] = false;
+		}
+
+		// At emitter phase
+		if(options.registeredPhases[PropagatingEvent.phases.atEmitter]) {
+			this.registeredPhases[PropagatingEvent.phases.atEmitter] = true;
+		}
+		else {
+			this.registeredPhases[PropagatingEvent.phases.atEmitter] = false;
+		}
+
+		// Bubbling phase
+		if(options.registeredPhases[PropagatingEvent.phases.bubbling]) {
+			this.registeredPhases[PropagatingEvent.phases.bubbling] = true;
+		}
+		else {
+			this.registeredPhases[PropagatingEvent.phases.bubbling] = false;
+		}
+	},
 
 	// Prevents further propagation of the current event in the capturing and bubbling phases
 	stopPropagation: function() {

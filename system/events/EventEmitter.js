@@ -55,19 +55,8 @@ var EventEmitter = Class.extend({
 		var matchingEventListeners = this.getEventListeners(eventIdentifier);
 		//Console.info('matchingEventListeners', matchingEventListeners);
 
-		// Create the event to emit
+		// Create reference to the event to emit
 		var event = null
-		// If data is an Event, use it as the event
-		if(Event.is(data)) {
-			event = data;
-		}
-		// If data is not an event, create a new instance of Event
-		else {
-			event = this.createEvent(this, eventIdentifier, data, eventOptions);
-		}
-
-		// Set the currentEmitter
-		event.currentEmitter = this;
 
 		// If there are no event listeners for an Error, throw the Error
 		if(matchingEventListeners.length == 0 && Error.is(data)) {
@@ -75,6 +64,18 @@ var EventEmitter = Class.extend({
 		}
 		// Run the matching bound functions
 		else {
+			// If data is an Event, use it as the event
+			if(Event.is(data)) {
+				event = data;
+			}
+			// If data is not an event, create a new instance of Event
+			else {
+				event = this.createEvent(this, eventIdentifier, data, eventOptions);
+			}
+
+			// Set the currentEmitter
+			event.currentEmitter = this;
+			
 			// Run the bound functions in sequence
 			yield matchingEventListeners.each(function*(matchingEventListenerIndex, matchingEventListener) {
 				event.previousReturnValue = yield matchingEventListener.boundFunction(event);
