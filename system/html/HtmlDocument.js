@@ -1,9 +1,9 @@
 // Dependencies
 var XmlDocument = Framework.require('system/xml/XmlDocument.js');
-var EventEmitter = Framework.require('system/events/EventEmitter.js');
 var Html = Framework.require('system/html/Html.js');
+var HtmlDocumentEventEmitter = Framework.require('system/html/events/HtmlDocumentEventEmitter.js');
+var HtmlEventsMap = Framework.require('system/html/events/HtmlEventsMap.js');
 var ShortcutManager = Framework.require('system/web-interface/shortcuts/ShortcutManager.js');
-var HtmlEventsMap = Framework.require('system/html/HtmlEventsMap.js');
 
 // Class
 var HtmlDocument = XmlDocument.extend({
@@ -237,14 +237,14 @@ var HtmlDocument = XmlDocument.extend({
 			}
 
 			// Add the event listener as normal
-			return EventEmitter.prototype.addEventListener.apply(this, arguments);
+			return HtmlDocumentEventEmitter.prototype.addEventListener.apply(this, arguments);
 		}
 	},
 
 });
 
 // Class implementations
-HtmlDocument.implement(EventEmitter); // No need to be a PropagatingEventEmitter
+HtmlDocument.implement(HtmlDocumentEventEmitter);
 
 // Export
 module.exports = HtmlDocument;

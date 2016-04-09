@@ -1,7 +1,7 @@
 // Dependencies
 var XmlNode = Framework.require('system/xml/XmlNode.js');
-var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventEmitter.js');
-var HtmlEventsMap = Framework.require('system/html/HtmlEventsMap.js');
+var HtmlNodeEventEmitter = Framework.require('system/html/events/HtmlNodeEventEmitter.js');
+var HtmlEventsMap = Framework.require('system/html/events/HtmlEventsMap.js');
 
 // Class
 var HtmlNode = XmlNode.extend({
@@ -180,7 +180,7 @@ var HtmlNode = XmlNode.extend({
 		}
 
 		// Add the event listener as normal
-		return PropagatingEventEmitter.prototype.addEventListener.apply(this, arguments);
+		return HtmlNodeEventEmitter.prototype.addEventListener.apply(this, arguments);
 	},
 
 });
@@ -196,7 +196,7 @@ HtmlNode.is = function(value) {
 };
 
 // Class implementations
-HtmlNode.implement(PropagatingEventEmitter);
+HtmlNode.implement(HtmlNodeEventEmitter);
 
 // Export
 module.exports = HtmlNode;
