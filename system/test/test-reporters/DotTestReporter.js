@@ -15,7 +15,7 @@ var DotTestReporter = TestReporter.extend({
 
 	finishedRunningTestMethod: function(data) {
 		// Line break at every 80 characters
-		if(this.totalTestMethodCount && this.totalTestMethodCount % 80 === 1)  {
+		if(this.totalTestMethodCount > 1 && this.totalTestMethodCount % 80 === 1)  {
 			Console.write("\n");
 		}
 
