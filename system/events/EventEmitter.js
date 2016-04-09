@@ -22,7 +22,7 @@ var EventEmitter = Class.extend({
 	},
 
 	emit: function*(eventIdentifier, data, eventOptions) {
-		//Console.log('emit', eventIdentifier);
+		//Console.warn('EventEmitter.emit', eventIdentifier, eventOptions);
 
 		// Default data to null
 		if(data === undefined) {
@@ -31,6 +31,7 @@ var EventEmitter = Class.extend({
 
 		// Allow multiple events to be emitted by passing in an array
 		if(Array.is(eventIdentifier)) {
+			//Console.error('eventIdentifier is an array will multiple eventPatterns to emit');
 			yield eventIdentifier.each(function*(currentEventIdentifierIndex, currentEventIdentifier) {
 				yield this.emit(currentEventIdentifier, data);
 			}.bind(this));
@@ -39,6 +40,8 @@ var EventEmitter = Class.extend({
 		}
 		// Allow multiple events to be emitted separated by spaces or ", "
 		else if(String.is(eventIdentifier) && (eventIdentifier.contains(' ') || eventIdentifier.contains(','))) {
+			//Console.error('eventIdentifier is a string will multiple eventPatterns to emit');
+
 			eventIdentifier = eventIdentifier.replace(', ', ' ');
 			eventIdentifier = eventIdentifier.replace(',', ' ');
 			var eventIdentifierArray = eventIdentifier.split(' ');
@@ -74,7 +77,9 @@ var EventEmitter = Class.extend({
 			}
 
 			// Set the currentEmitter
-			event.currentEmitter = this;
+			if(event.currentEmitter !== this) {
+				event.currentEmitter = this;
+			}
 			
 			// Run the bound functions in sequence
 			yield matchingEventListeners.each(function*(matchingEventListenerIndex, matchingEventListener) {
@@ -141,7 +146,7 @@ var EventEmitter = Class.extend({
 		this.eventListeners.append(eventListener);
 
 		// All EventEmitters emit 'eventEmitter.addedEventListener' when an event listener is added
-		yield this.emit('eventEmitter.addedEventListener', eventListener);
+		yield this.emit('eventEmitter.addedEventListener', eventListener); // This bubbles
 
 		// Check to see if the matching bound function objects is greater than the recommended
 		var eventListeners = this.getEventListeners(eventPattern);
@@ -171,7 +176,7 @@ var EventEmitter = Class.extend({
 					this.eventListeners.delete(currentEventListenerIndex);
 					
 					// All EventEmitters emit 'eventEmitter.removedEventListener' when an event listener is removed
-					yield this.emit('eventEmitter.removedEventListener', currentEventListener);
+					yield this.emit('eventEmitter.removedEventListener', currentEventListener); // This bubbles
 				}
 			}
 		}
@@ -187,7 +192,7 @@ var EventEmitter = Class.extend({
 					this.eventListeners.delete(currentEventListenerIndex);
 
 					// All EventEmitters emit 'eventEmitter.removedEventListener' when an event listener is removed
-					yield this.emit('eventEmitter.removedEventListener', currentEventListener);
+					yield this.emit('eventEmitter.removedEventListener', currentEventListener); // This bubbles
 				}
 			}
 		}

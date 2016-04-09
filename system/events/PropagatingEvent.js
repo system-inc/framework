@@ -14,25 +14,28 @@ var PropagatingEvent = Event.extend({
 
 		options = {
 			propagationStopped: false,
-			currentPhase: PropagatingEvent.phases.atEmitter,
 			registeredPhases: { // By default we do not register for the capture phase, just atEmitter and bubbling
 				atEmitter: true,
 				bubbling: true,
 			},
 		}.merge(options);
 
+		//Console.info('options', options);
+
 		// Set propagationStopped option
 		if(options.propagationStopped) {
 			this.propagationStopped = true;
 		}
 
-		// Set current phase with sanity check
-		if(PropagatingEvent.phases[options.currentPhase]) {
-			this.currentPhase = options.currentPhase;
+		// Set initial currentPhase
+		if(options.registeredPhases[PropagatingEvent.phases.capturing]) {
+			this.currentPhase = PropagatingEvent.phases.capturing;
 		}
-		// If we fail the sanity check (user set bad option), set the phase to atEmitter
-		else {
+		else if(options.registeredPhases[PropagatingEvent.phases.atEmitter]) {
 			this.currentPhase = PropagatingEvent.phases.atEmitter;
+		}
+		else if(options.registeredPhases[PropagatingEvent.phases.bubbling]) {
+			this.currentPhase = PropagatingEvent.phases.bubbling;
 		}		
 
 		// Capturing phase
