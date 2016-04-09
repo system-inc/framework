@@ -68,7 +68,7 @@ var PropagatingEventEmitter = EventEmitter.extend({
 			if(propagatingEvent.stopped) {
 				shouldBubble = false;
 			}
-			// Don't bubble if the event propagation is stoped
+			// Don't bubble if the event propagation is stopped
 			else if(propagatingEvent.propagationStopped) {
 				shouldBubble = false;
 			}
@@ -86,6 +86,7 @@ var PropagatingEventEmitter = EventEmitter.extend({
 		if(shouldBubble && this.parent) {
 			// If we don't have an event to propagate we need to make one
 			if(!propagatingEvent) {
+				// We must be the target emitter, so we pass "this" into createEvent
 				propagatingEvent = this.createEvent(this, eventIdentifier, data, eventOptions);
 			}
 
