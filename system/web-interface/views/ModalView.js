@@ -32,13 +32,13 @@ var ModalView = View.extend({
 	},
 
 	enableHideOnOutsideClick: function() {
-		this.modal.on('click', function(event) {
+		this.modal.on('mouse.button.one.click', function(event) {
 			//Console.log('modal click');
 			event.data.stopPropagation();
 		}.bind(this));
 
 		// Close on clicking outside of modal
-		this.on('click', function(event) {
+		this.on('mouse.button.one.click', function(event) {
 			//Console.log('modal container click');
 			this.hide();
 		}.bind(this));

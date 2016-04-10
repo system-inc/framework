@@ -1,20 +1,193 @@
 // Dependencies
-var HtmlDocumentEvent = Framework.require('system/html/events/HtmlDocumentEvent.js');
-var HtmlNodeEvent = Framework.require('system/html/events/HtmlNodeEvent.js');
+var HtmlEventEmitter = Framework.require('system/html/events/HtmlEventEmitter.js');
 
 // Class
-var HtmlEventProxy = Class.extend({
+var HtmlEventProxy = {};
 
-});
+// Static properties
 
 // Static methods
 
-HtmlEventProxy.is = function(value) {
-	return Class.isInstance(value, HtmlEventProxy);
+// Takes HtmlEvent patterns (e.g., 'mouse.button.one.click') and returns the correlating DOM event identifier (e.g., 'click')
+HtmlEventProxy.htmlEventPatternToDomEventIdentifier = function(htmlEventPattern) {
+	var domEventIdentifier = null;
+
+	if(htmlEventPattern == 'htmlDocument.ready') {
+		domEventIdentifier = 'DOMContentLoaded';
+	}
+	else if(RegularExpression.stringMatchesWildcardPattern('mouse.*.click.*', htmlEventPattern) || htmlEventPattern == 'interact') {
+		domEventIdentifier = 'click';
+	}
+	else if(htmlEventPattern == 'form.field.change') {
+		domEventIdentifier = 'change';
+	}
+	else if(htmlEventPattern == 'form.submit') {
+		domEventIdentifier = 'submit';
+	}
+	else if(RegularExpression.stringMatchesWildcardPattern('keyboard.key.*.up.*', htmlEventPattern)) {
+		domEventIdentifier = 'keyup';
+	}
+	else if(RegularExpression.stringMatchesWildcardPattern('keyboard.key.*.down.*', htmlEventPattern)) {
+		domEventIdentifier = 'keydown';
+	}
+	else if(RegularExpression.stringMatchesWildcardPattern('keyboard.key.*.press.*', htmlEventPattern)) {
+		domEventIdentifier = 'keypress';
+	}
+
+	return domEventIdentifier;
 };
 
-HtmlEventProxy.proxyEvent = function(emitter, htmlNode) {
+HtmlEventProxy.domEventIdentifierToHtmlEventIdentifier = function(domEventIdentifier) {
+	var htmlEventIdentifier = null;
 
+	if(domEventIdentifier == 'DOMContentLoaded') {
+		htmlEventIdentifier = 'htmlDocument.ready';
+	}
+	else if(domEventIdentifier == 'click') {
+		htmlEventIdentifier = 'interact';
+	}
+	else if(domEventIdentifier == 'change') {
+		htmlEventIdentifier = 'form.field.change';
+	}
+	else if(domEventIdentifier == 'submit') {
+		htmlEventIdentifier = 'form.submit';
+	}
+	else if(domEventIdentifier == 'keyup') {
+		htmlEventIdentifier = 'keyboard.key.*.up';
+	}
+	else if(domEventIdentifier == 'keydown') {
+		htmlEventIdentifier = 'keyboard.key.*.up';
+	}
+	else if(domEventIdentifier == 'keypress') {
+		htmlEventIdentifier = 'keyboard.key.*.press';
+	}
+
+	return htmlEventIdentifier;
+};
+
+HtmlEventProxy.getDomObjectFromHtmlEventEmitter = function(htmlEventEmitter) {
+	var domObject = null;
+
+	var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
+	var HtmlNode = Framework.require('system/html/HtmlNode.js');
+
+	// Set the domObject
+	if(HtmlDocument.is(htmlEventEmitter)) {
+		domObject = htmlEventEmitter.domDocument;
+	}
+	else if(HtmlNode.is(htmlEventEmitter)) {
+		domObject = htmlEventEmitter.domNode;
+	}
+
+	return domObject;
+};
+
+HtmlEventProxy.warnAboutCommonEventPatternMistakes = function(eventPattern) {
+	var map = {
+		// Mouse
+		activate: 'interact',
+		click: 'interact or mouse.button.one.click',
+
+		// Keyboard
+		keydown: 'keyboard.key.*.down',
+		keyup: 'keyboard.key.*.up',
+		keypress: 'keyboard.key.*.press',
+
+		// Form
+		submit: 'form.submit',
+		change: 'form.field.change',
+	};
+
+	if(map[eventPattern]) {
+		Console.warn('Use', map[eventPattern], 'instead of', eventPattern);
+	}
+};
+
+HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesToRun, htmlEventEmitter) {
+	// Allow multiple events to be registered by passing in an array
+	if(Array.is(eventPattern)) {
+		eventPattern.each(function(currentEventPatternIndex, currentEventPattern) {
+			HtmlEventProxy.addEventListener(currentEventPattern, functionToBind, timesToRun, htmlEventEmitter);
+		});
+
+		return;
+	}
+	// Allow multiple events to be registered separated by spaces or ", "
+	else if(String.is(eventPattern) && (eventPattern.contains(' ') || eventPattern.contains(','))) {
+		eventPattern = eventPattern.replace(', ', ' ');
+		eventPattern = eventPattern.replace(',', ' ');
+		var eventPatternArray = eventPattern.split(' ');
+
+		eventPatternArray.each(function(currentEventPatternIndex, currentEventPattern) {
+			HtmlEventProxy.addEventListener(currentEventPattern, functionToBind, timesToRun, htmlEventEmitter);
+		});
+
+		return;
+	}
+
+	// Warn about common event pattern mistakes
+	HtmlEventProxy.warnAboutCommonEventPatternMistakes(eventPattern);
+
+	// Get the domObject from the htmlEventEmitter
+	var domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
+
+	// Get the DOM event identifier for the provided eventPattern
+	var domEventIdentifier = HtmlEventProxy.htmlEventPatternToDomEventIdentifier(eventPattern);
+
+	// When the DOM object emits a domEvent
+	var domEventListenerFunctionToBind = function(domEvent) {
+		// Take the domEvent identifier and turn it into an HtmlEventIdentifier
+		var htmlEventIdentifier = HtmlEventProxy.domEventIdentifierToHtmlEventIdentifier(domEvent.type);
+		Console.log('domEvent.type', domEvent.type, 'htmlEventIdentifier', htmlEventIdentifier);
+
+		// Create the proper event (MouseEvent for 'click', KeyboardEvent for 'keydown', etc.)
+		Console.info('We need to fix next line');
+		var event = htmlEventEmitter.createEvent(htmlEventEmitter, htmlEventIdentifier);
+
+		// Set the common HtmlEvent properties
+		event.domEvent = domEvent;
+		event.trusted = domEvent.isTrusted;
+
+		Console.standardLog(event);
+
+		// Emit the event
+		htmlEventEmitter.emit(htmlEventIdentifier, event);
+	}.bind(htmlEventEmitter);
+
+	// If we have a valid domEventIdentifier
+	if(domEventIdentifier) {
+		// If we have a domObject because we are already mounted to the DOM
+		if(domObject) {
+			// Add the event listener to the domObject
+			domObject.addEventListener(domEventIdentifier, domEventListenerFunctionToBind);
+		}
+		// If we don't have a domObject, wait to be mountedToDom
+		else {
+			htmlEventEmitter.on(['htmlDocument.mountedToDom', 'htmlNode.mountedToDom'], function() {
+				// Get the domObject from the htmlEventEmitter
+				domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
+
+				// Add the event listener to the domObject
+				domObject.addEventListener(domEventIdentifier, domEventListenerFunctionToBind);
+			}.bind(htmlEventEmitter));
+		}
+	}
+	// If we don't have a domEventIdentifier it means the event listener is not for the DOM
+	else {
+		var common = [
+			'htmlDocument.mountedToDom',
+			'htmlNode.mountedToDom',
+			'htmlNode.domUpdateExecuted',
+		];
+		if(!common.contains(eventPattern)) {
+			Console.log('No domEventIdentifier found for', eventPattern);
+		}		
+
+		// Add the event listener to the htmlEventEmitter, use HtmlEventEmitter prototype (as opposed to htmlEventEmitter) as to not cause an infinite loop
+		HtmlEventEmitter.prototype.addEventListener.apply(htmlEventEmitter, arguments);
+	}
+
+	return htmlEventEmitter;
 };
 
 // Export

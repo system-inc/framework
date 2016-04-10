@@ -1,7 +1,6 @@
 // Dependencies
 var XmlNode = Framework.require('system/xml/XmlNode.js');
 var HtmlNodeEventEmitter = Framework.require('system/html/events/HtmlNodeEventEmitter.js');
-var HtmlEventsMap = Framework.require('system/html/events/HtmlEventsMap.js');
 
 // Class
 var HtmlNode = XmlNode.extend({
@@ -84,7 +83,7 @@ var HtmlNode = XmlNode.extend({
 		// Mark the object as clean
 		this.shouldExecuteDomUpdate = false;
 
-		this.emit('domUpdateExecuted', this, {
+		this.emit('htmlNode.domUpdateExecuted', this, {
 			propagationStopped: true, // Do not propagate this event
 		});
 	},
@@ -143,7 +142,7 @@ var HtmlNode = XmlNode.extend({
 		// Execute DOM updates if necessary
 		this.executeDomUpdate();
 
-		this.emit('mountedToDom', this, {
+		this.emit('htmlNode.mountedToDom', this, {
 			propagationStopped: true, // Do not propagate this event
 		});
 	},
@@ -160,40 +159,17 @@ var HtmlNode = XmlNode.extend({
 		return domNode;
 	},
 
-	addEventListener: function(eventPattern, functionToBind, timesToRun) {
-		// If the event is for the domNode, add another event listener to the domNode to proxy the emit when the domNode emits
-		if(HtmlEventsMap[eventPattern]) {
-			// If the domNode already exists
-			if(this.domNode) {
-				this.domNode.addEventListener(HtmlEventsMap[eventPattern], function(event) {
-					this.emit(eventPattern, event);
-				}.bind(this));
-			}
-			// If we need to wait for the domNode to be mounted
-			else {
-				this.on('mountedToDom', function() {
-					this.domNode.addEventListener(HtmlEventsMap[eventPattern], function(event) {
-						this.emit(eventPattern, event);
-					}.bind(this));
-				}.bind(this));
-			}
-		}
-
-		// Add the event listener as normal
-		return HtmlNodeEventEmitter.prototype.addEventListener.apply(this, arguments);
-	},
-
 });
 
 // Static methods
 
-HtmlNode.createDomFragment = HtmlNode.prototype.createDomFragment;
-
-HtmlNode.emptyDomNode = HtmlNode.prototype.emptyDomNode;
-
 HtmlNode.is = function(value) {
 	return Class.isInstance(value, HtmlNode);
 };
+
+HtmlNode.createDomFragment = HtmlNode.prototype.createDomFragment;
+
+HtmlNode.emptyDomNode = HtmlNode.prototype.emptyDomNode;
 
 // Class implementations
 HtmlNode.implement(HtmlNodeEventEmitter);

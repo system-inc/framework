@@ -29,7 +29,7 @@ var FormView = View.extend({
 
 	addSubmitButton: function() {
 		this.submitButton = Html.a('Submit');
-        this.submitButton.on('click', function(event) {
+        this.submitButton.on('interact', function(event) {
         	this.submit();
         }.bind(this));
         this.append(this.submitButton);
@@ -90,7 +90,7 @@ var FormView = View.extend({
 		var validationErrors = this.getValidationErrors();
 
 		if(!validationErrors.length) {
-			this.emit('submit', this.getData());
+			this.emit('form.submit', this.getData());
 		}
 		else {
 			Console.error('failed validation', validationErrors);

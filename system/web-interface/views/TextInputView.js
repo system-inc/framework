@@ -13,11 +13,11 @@ var TextInputView = InputView.extend({
     construct: function() {
         this.super.apply(this, arguments);
 
-        this.on('change', function() {
+        this.on('form.field.change', function() {
             this.valueChangedOnDomElement();
         }.bind(this));
 
-        this.on('keyup', function() {
+        this.on('keyboard.key.*.up', function() {
             this.valueChangedOnDomElement();
         }.bind(this));
     },

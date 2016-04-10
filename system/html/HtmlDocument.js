@@ -2,7 +2,6 @@
 var XmlDocument = Framework.require('system/xml/XmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
 var HtmlDocumentEventEmitter = Framework.require('system/html/events/HtmlDocumentEventEmitter.js');
-var HtmlEventsMap = Framework.require('system/html/events/HtmlEventsMap.js');
 var ShortcutManager = Framework.require('system/web-interface/shortcuts/ShortcutManager.js');
 
 // Class
@@ -94,7 +93,7 @@ var HtmlDocument = XmlDocument.extend({
 		// The HtmlDocument is now added to the DOM
 		this.isMountedToDom = true;
 
-		this.emit('mountedToDom', this);
+		this.emit('htmlDocument.mountedToDom', this);
 
 		//this.printDomUpdates();
 
@@ -176,7 +175,7 @@ var HtmlDocument = XmlDocument.extend({
 		// Mark all updates as completed
 		this.domUpdatesScheduled = false;
 
-		this.emit('domUpdatesExecuted', this);
+		this.emit('htmlDocument.domUpdatesExecuted', this);
 	},
 
 	setTitle: function(title) {
@@ -204,46 +203,13 @@ var HtmlDocument = XmlDocument.extend({
 		}));
 	},
 
-	addEventListener: function(eventPattern, functionToBind, timesToRun) {
-		//Console.log('HtmlDocument.addEventListener', eventPattern);
-
-		// Special case for .ready
-		if(eventPattern == 'ready') {
-			// If the document is already ready, just run the function
-			if(this.domDocument && this.domDocument.readyState == 'complete') {
-				Console.log('DOM already ready (readyState is complete)', callback);
-				functionToBind();
-			}
-		}
-		else {
-			// If the event is for the domDocument, add another event listener to the domDocument to proxy the emit when the domDocument emits
-			if(HtmlEventsMap[eventPattern]) {
-
-				// If the domDocument already exists
-				if(this.domDocument) {
-					this.domDocument.addEventListener(HtmlEventsMap[eventPattern], function(event) {
-						//Console.log('HtmlDocument with domDocument addEventListener', eventPattern);
-						event.domEvent = event;
-						this.emit(eventPattern, event);
-					}.bind(this));
-				}
-				// If we need to wait for the domDocument to be mounted
-				else {
-					this.on('mountedToDom', function() {
-						this.domDocument.addEventListener(HtmlEventsMap[eventPattern], function(event) {
-							//Console.log('HtmlDocument waiting for mountedToDom addEventListener', eventPattern);
-							this.emit(eventPattern, event);
-						}.bind(this));
-					}.bind(this));
-				}
-			}
-
-			// Add the event listener as normal
-			return HtmlDocumentEventEmitter.prototype.addEventListener.apply(this, arguments);
-		}
-	},
-
 });
+
+// Static methods
+
+HtmlDocument.is = function(value) {
+	return Class.isInstance(value, HtmlDocument);
+};
 
 // Class implementations
 HtmlDocument.implement(HtmlDocumentEventEmitter);
