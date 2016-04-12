@@ -1,4 +1,6 @@
 tests/projects/web-server/logs/*
 tests/logs/*
+system/electron/libraries/electron/*
+
 .DS_Store
 npm-debug.log
