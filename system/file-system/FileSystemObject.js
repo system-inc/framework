@@ -212,7 +212,12 @@ FileSystemObject.list = function(path, recursive) {
                     });
                 }
 
-                list.push(fileSystemObject);
+                if(fileSystemObject) {
+                    list.push(fileSystemObject);
+                }
+                else {
+                    //Console.log('No fileSystemObject for', path+fileName);
+                }                
             });
 
             return list;

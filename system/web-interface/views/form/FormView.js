@@ -21,6 +21,9 @@ var FormView = View.extend({
 
 		// Set default settings
 		this.settings.setDefaults({
+			submitButton: {
+				content: 'Submit',
+			},
 		});
 
 		// Add the submit button
@@ -28,7 +31,7 @@ var FormView = View.extend({
 	},
 
 	addSubmitButton: function() {
-		this.submitButton = Html.a('Submit');
+		this.submitButton = Html.button(this.settings.get('submitButton.content'));
         this.submitButton.on('interact', function(event) {
         	this.submit();
         }.bind(this));

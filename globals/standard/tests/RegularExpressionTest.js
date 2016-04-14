@@ -18,6 +18,7 @@ var RegularExpressionTest = Test.extend({
 		Assert.true(RegularExpression.stringMatchesWildcardPattern('event123', 'event*'), '"event123" matches wildcard pattern, "event*"');
 		Assert.true(RegularExpression.stringMatchesWildcardPattern('event123event', 'event*event'), '"event123event" matches wildcard pattern, "event*event"');
 		Assert.true(RegularExpression.stringMatchesWildcardPattern('123event123event123', '*event*event*'), '"123event123event123" matches wildcard pattern, "*event*event*"');
+		Assert.true(RegularExpression.stringMatchesWildcardPattern('keyboard.key.*.up', 'keyboard.key.*.up.*'), '"keyboard.key.*.up" matches wildcard pattern, "keyboard.key.*.up.*"');
 		Assert.false(RegularExpression.stringMatchesWildcardPattern('event', 'event1.*'), '"event" does not match wildcard pattern "event1.*"');
 		Assert.false(RegularExpression.stringMatchesWildcardPattern('event', 'event1.*.*'), '"event" does not match wildcard pattern "event1.*.*"');
 		Assert.false(RegularExpression.stringMatchesWildcardPattern('123event', 'event'), '"123event" does not match wildcard pattern, "event"');

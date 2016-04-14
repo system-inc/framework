@@ -7,8 +7,17 @@ var SevenZip = {};
 // Static methods
 
 SevenZip.execute = function*(argumentsArray) {
-	// Use the module settings to know where the 7zip binary is
-	var sevenZipExecutable = ArchiveModule.settings.get('sevenZip.executable');
+	// Locate the 7-Zip executable
+	var sevenZipExecutable = null;
+
+	// If the ArchiveModule exists
+	if(ArchiveModule) {
+		sevenZipExecutable = ArchiveModule.settings.get('sevenZip.executable');
+	}
+
+	if(!sevenZipExecutable) {
+		throw new Error('7-Zip executable not found. Configure your settings.json to use the "archive" module.');
+	}
 
 	// Create the arguments to invoke 7-Zip with
 	var sevenZipArguments = [

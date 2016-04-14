@@ -2,7 +2,7 @@
 var InputView = Framework.require('system/web-interface/views/InputView.js');
 
 // Class
-var TextInputView = InputView.extend({
+var TextView = InputView.extend({
 
     tag: 'input',
 
@@ -104,4 +104,4 @@ var TextInputView = InputView.extend({
 });
 
 // Export
-module.exports = TextInputView;
+module.exports = TextView;

@@ -22,6 +22,8 @@ RegularExpression.escape = function(string) {
 };
 
 RegularExpression.stringMatchesWildcardPattern = function(string, wildcardPattern) {
+	var matches = null;
+
 	// Make string "event1" match wildcard pattern "event1.*"
 	if(wildcardPattern.endsWith('.*')) {
 		wildcardPattern = wildcardPattern.replaceLast('.*', '*');
@@ -34,8 +36,12 @@ RegularExpression.stringMatchesWildcardPattern = function(string, wildcardPatter
 	// Create the expression
 	var regularExpression = new RegularExpression(regularExpressionPattern);
 
-	// Return true or false
-	return regularExpression.test(string);
+	// Evaluate the expression
+	matches = regularExpression.test(string);
+
+	//Console.log(string, 'matches', wildcardPattern, matches);
+
+	return matches;
 };
 
 // Export

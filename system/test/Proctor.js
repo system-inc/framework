@@ -12,7 +12,7 @@ var FileSystemObjectFactory = Framework.require('system/file-system/FileSystemOb
 var AsciiArt = Framework.require('system/ascii-art/AsciiArt.js');
 
 // Class
-var Proctor = Class.extend({
+var Proctor = EventEmitter.extend({
 
 	testReporter: null,
 
@@ -157,7 +157,7 @@ var Proctor = Class.extend({
 	getTests: function*(path, filePattern, methodPattern) {
 		// Resolve the path
 		path = this.resolvePath(path);
-		//Console.log(path);
+		Console.log(path);
 		//Node.exit(path);
 
 		// Lowercase strings
@@ -165,7 +165,7 @@ var Proctor = Class.extend({
 			filePattern = filePattern.lowercase();
 		}
 
-		// Create a file or directory from the path
+		// Create a file or directory object from the path
 		var fileSystemObjectFromPath = yield FileSystemObjectFactory.create(path);
 		//Node.exit(fileSystemObject);
 
@@ -811,12 +811,11 @@ Proctor.globals = {
 		'addEventListener',
 		'removeEventListener',
 		'dispatchEvent',
+		'onunhandledrejection',
+		'onrejectionhandled',
 	],
 	leaked: [],
 };
-
-// Class implementations
-Proctor.implement(EventEmitter);
 
 // Export
 module.exports = Proctor;

@@ -39,9 +39,9 @@ var ShortcutManager = Class.extend({
 	listenToEvents: function() {
 		//Console.log('listenToEvents');
 
-		this.htmlDocument.on('keyup', this.handleEvent.bind(this));
-		this.htmlDocument.on('keydown', this.handleEvent.bind(this));
-		this.htmlDocument.on('keypress', this.handleEvent.bind(this));
+		this.htmlDocument.on('keyboard.key.*.up', this.handleEvent.bind(this));
+		this.htmlDocument.on('keyboard.key.*.down', this.handleEvent.bind(this));
+		this.htmlDocument.on('keyboard.key.*.press', this.handleEvent.bind(this));
 
 		this.listeningToEvents = true;
 	},

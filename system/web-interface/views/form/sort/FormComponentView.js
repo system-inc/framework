@@ -23,8 +23,12 @@ var InputView = View.extend({
 		return this.value;
 	},
 
+	clear: function() {
+		return this.setValue(null);
+	},
+
 	reset: function() {
-		this.setValue(this.originalValue);
+		return this.setValue(this.originalValue);
 	},
 
 	// Two-way data binding: if the user changes the value on the DOM, the InputView is updated to reflect the new value

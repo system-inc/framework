@@ -15,7 +15,7 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifier = function(htmlEventPattern)
 	if(htmlEventPattern == 'htmlDocument.ready') {
 		domEventIdentifier = 'DOMContentLoaded';
 	}
-	else if(RegularExpression.stringMatchesWildcardPattern('mouse.*.click.*', htmlEventPattern) || htmlEventPattern == 'interact') {
+	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'mouse.*.click.*') || htmlEventPattern == 'interact') {
 		domEventIdentifier = 'click';
 	}
 	else if(htmlEventPattern == 'form.field.change') {
@@ -24,13 +24,13 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifier = function(htmlEventPattern)
 	else if(htmlEventPattern == 'form.submit') {
 		domEventIdentifier = 'submit';
 	}
-	else if(RegularExpression.stringMatchesWildcardPattern('keyboard.key.*.up.*', htmlEventPattern)) {
+	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.up.*')) {
 		domEventIdentifier = 'keyup';
 	}
-	else if(RegularExpression.stringMatchesWildcardPattern('keyboard.key.*.down.*', htmlEventPattern)) {
+	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.down.*')) {
 		domEventIdentifier = 'keydown';
 	}
-	else if(RegularExpression.stringMatchesWildcardPattern('keyboard.key.*.press.*', htmlEventPattern)) {
+	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.press.*')) {
 		domEventIdentifier = 'keypress';
 	}
 
@@ -56,7 +56,7 @@ HtmlEventProxy.domEventIdentifierToHtmlEventIdentifier = function(domEventIdenti
 		htmlEventIdentifier = 'keyboard.key.*.up';
 	}
 	else if(domEventIdentifier == 'keydown') {
-		htmlEventIdentifier = 'keyboard.key.*.up';
+		htmlEventIdentifier = 'keyboard.key.*.down';
 	}
 	else if(domEventIdentifier == 'keypress') {
 		htmlEventIdentifier = 'keyboard.key.*.press';

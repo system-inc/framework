@@ -181,7 +181,8 @@ var Framework = Class.extend({
 	},
 
 	requireAndInitializeProjectModules: function*() {
-		//Console.log('Loading modules for project...');
+		//Console.log(this.settings);
+		//Console.log('Loading modules for project...', this.settings.get('modules'));
 
 		var Module = Framework.require('system/module/Module.js');
 
