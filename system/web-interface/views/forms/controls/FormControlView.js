@@ -2,7 +2,7 @@
 var View = Framework.require('system/web-interface/views/View.js');
 
 // Class
-var InputView = View.extend({
+var FormControlView = View.extend({
 
 	value: null,
 	originalValue: null,
@@ -31,9 +31,9 @@ var InputView = View.extend({
 		return this.setValue(this.originalValue);
 	},
 
-	// Two-way data binding: if the user changes the value on the DOM, the InputView is updated to reflect the new value
+	// Two-way data binding: if the user changes the value on the DOM, the FormControlView is updated to reflect the new value
 	valueChangedOnDomElement: function() {
-		//Console.log('Value changed on DOM, updating InputView');
+		//Console.log('Value changed on DOM, updating FormControlView');
 		
 		this.value = this.domNode.value;
 
@@ -43,4 +43,4 @@ var InputView = View.extend({
 });
 
 // Export
-module.exports = InputView;
+module.exports = FormControlView;

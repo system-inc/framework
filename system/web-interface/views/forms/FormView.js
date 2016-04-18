@@ -1,7 +1,7 @@
 // Dependencies
 var View = Framework.require('system/web-interface/views/View.js');
 var Html = Framework.require('system/html/Html.js');
-var FormFieldView = Framework.require('system/web-interface/views/forms/FormFieldView.js');
+var FormFieldView = Framework.require('system/web-interface/views/forms/files/FormFieldView.js');
 var TextInputFormFieldView = Framework.require('system/web-interface/views/forms/TextInputFormFieldView.js');
 
 // Class
