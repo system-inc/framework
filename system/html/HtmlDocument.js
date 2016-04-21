@@ -203,6 +203,29 @@ var HtmlDocument = XmlDocument.extend({
 		}));
 	},
 
+	insertText: function(text) {
+		var textInserted = false;
+
+		if(this.domDocument) {
+			textInserted = this.domDocument.execCommand('insertText', false, text);
+		}
+
+		return textInserted;
+	},
+
+	getSelectedText: function() {
+		var text = '';
+
+        if(window.getSelection) {
+            text = window.getSelection().toString();
+        }
+        else if(document.selection && document.selection.type != 'Control') {
+            text = document.selection.createRange().text;
+        }
+
+        return text;
+	},
+
 });
 
 // Static methods

@@ -66,11 +66,42 @@ var FormFieldView = View.extend({
 	},
 
 	getData: function() {
-		throw new Error('Classes extending FormFieldView must implement the getData() method.');
+		var data = {};
+
+		var getDataRecursively = function(view) {
+			// If the view is a FormControlView
+			if(FormControlView.is(view)) {
+				data[view.identifier] = view.getData();
+			}
+			// Check the children to see if there are any FormControlViews
+			else if(view.children.length) {
+				view.children.each(function(childIndex, child) {
+					getDataRecursively(child);
+				});
+			}
+		};
+
+		getDataRecursively(this);
+
+		return data;
 	},
 
 	clear: function() {
-		throw new Error('Classes extending FormFieldView must implement the clear() method.');
+		var clearRecursively = function(view) {
+			// If the view is a FormControlView, clear it
+			if(FormControlView.is(view)) {
+				view.clear();
+			}
+
+			// Recurse through all children
+			view.children.each(function(childIndex, child) {
+				clearRecursively(child);
+			});
+		};
+
+		clearRecursively(this);
+
+		return this;
 	},
 
 });

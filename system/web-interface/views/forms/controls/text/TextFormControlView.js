@@ -1,25 +1,29 @@
 // Dependencies
-var FormControlView = Framework.require('system/web-interface/views/form/FormControlView.js');
+var FormControlView = Framework.require('system/web-interface/views/form/controls/FormControlView.js');
 
 // Class
-var TextView = FormControlView.extend({
-
-    tag: 'input',
+var TextFormControlView = FormControlView.extend({
 
     attributes: {
-        type: 'text',
+        class: 'control text',
     },
 
     construct: function() {
         this.super.apply(this, arguments);
 
-        this.on('form.field.change', function() {
-            this.valueChangedOnDomElement();
+        // Keyboard up events trigger form.control.change
+        this.on('keyboard.key.*.up', function(event) {
+            this.emit('form.control.change', event);
         }.bind(this));
+    },
 
-        this.on('keyboard.key.*.up', function() {
-            this.valueChangedOnDomElement();
-        }.bind(this));
+    setValue: function(value) {
+        // Make null an empty string
+        if(value == null) {
+            value = '';
+        }
+
+        return this.super(value);
     },
 
     getValue: function() {
@@ -31,14 +35,10 @@ var TextView = FormControlView.extend({
         return this.super();
     },
 
-    clear: function() {
-        this.setValue('');
-    },
-
     insertText: function(text) {
-        document.execCommand('insertText', false, text);
+        this.htmlDocument.insertText(text);
 
-        this.valueChangedOnDomElement();
+        this.valueChangedOnDom();
     },
 
 	getCursorPosition: function() {
@@ -88,20 +88,7 @@ var TextView = FormControlView.extend({
         }
     },
 
-	getSelectionText: function() {
-        var text = '';
-
-        if(window.getSelection) {
-            text = window.getSelection().toString();
-        }
-        else if(document.selection && document.selection.type != 'Control') {
-            text = document.selection.createRange().text;
-        }
-
-        return text;
-    },
-
 });
 
 // Export
-module.exports = TextView;
+module.exports = TextFormControlView;

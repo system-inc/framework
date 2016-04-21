@@ -1,12 +1,25 @@
 // Dependencies
-var TextInputView = Framework.require('system/web-interface/views/TextInputView.js');
+var TextFormFieldView = Framework.require('system/web-interface/views/forms/fields/text/TextFormFieldView.js');
+var MultipleLineTextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/multiple-line/MultipleLineTextFormControlView.js');
 
 // Class
-var TextAreaView = TextInputView.extend({
+var MultipleLineTextFormFieldView = TextFormFieldView.extend({
 
-	tag: 'textarea',
+	attributes: {
+		class: 'field text multipleLine',
+	},
+
+	construct: function(identifier, settings) {
+		// Create the form control
+		this.textFormControlView = new MultipleLineTextFormControlView();
+
+		// Append the form control
+		this.append(this.textFormControlView);
+
+		this.super.apply(this, arguments);
+	},
 
 });
 
 // Export
-module.exports = TextAreaView;
+module.exports = MultipleLineTextFormFieldView;

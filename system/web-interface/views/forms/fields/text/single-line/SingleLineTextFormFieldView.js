@@ -1,43 +1,25 @@
 // Dependencies
-var FormFieldView = Framework.require('system/web-interface/views/forms/FormFieldView.js');
-var TextInputView = Framework.require('system/web-interface/views/input/TextInputView.js');
+var TextFormFieldView = Framework.require('system/web-interface/views/forms/fields/text/TextFormFieldView.js');
+var SingleLineTextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
 
 // Class
-var TextFormFieldView = FormFieldView.extend({
+var SingleLineTextFormFieldView = TextFormFieldView.extend({
 
 	attributes: {
-		class: 'field textInput',
+		class: 'field text singleLine',
 	},
-
-	textInputView: null,
 
 	construct: function(identifier, settings) {
+		// Create the form control
+		this.textFormControlView = new SingleLineTextFormControlView();
+
+		// Append the form control
+		this.append(this.textFormControlView);
+
 		this.super.apply(this, arguments);
-
-		this.textInputView = new TextInputView();
-		this.append(this.textInputView);
-
-		if(this.settings.get('enterSubmits')) {
-			this.textInputView.on('keyboard.key.enter.down', function(event) {
-				event.preventDefault();
-				this.parent.submit(); // this assumes this.parent is a FormView; alternatively, we could emit a special event (e.g., 'form.submit') and have FormView listen for that event and submit the form when the event propagates up to it
-			}.bind(this));
-		}
-	},
-
-	getData: function() {
-		return this.textInputView.getValue();
-	},
-
-	focus: function() {
-		return this.textInputView.focus();
-	},
-
-	clear: function() {
-		return this.textInputView.clear();
 	},
 
 });
 
 // Export
-module.exports = TextFormFieldView;
+module.exports = SingleLineTextFormFieldView;

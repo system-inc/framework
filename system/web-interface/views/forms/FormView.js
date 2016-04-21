@@ -45,15 +45,6 @@ var FormView = View.extend({
 		return formFieldView;
 	},
 
-	addTextInputFormField: function(identifier, settings) {
-		var textInputFormField = new TextInputFormFieldView(identifier, settings);
-
-		return this.addFormField(textInputFormField);
-	},
-
-	removeFormField: function(identifier) {
-	},
-
 	getData: function() {
 		var data = {};
 
