@@ -77,6 +77,10 @@ var HtmlElement = HtmlNode.extend({
 
 	// Method exists on XmlElement as well
 	append: function(stringOrHtmlNode) {
+		if(!this.children) {
+			console.warn('no children - this should not happen');
+		}
+
 		this.children.append(HtmlElement.makeHtmlNode(stringOrHtmlNode, this));
 
 		this.updateDom();

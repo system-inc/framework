@@ -1,8 +1,7 @@
 // Dependencies
 var View = Framework.require('system/web-interface/views/View.js');
 var Html = Framework.require('system/html/Html.js');
-var FormFieldView = Framework.require('system/web-interface/views/forms/files/FormFieldView.js');
-var TextInputFormFieldView = Framework.require('system/web-interface/views/forms/TextInputFormFieldView.js');
+var FormFieldView = Framework.require('system/web-interface/views/forms/fields/FormFieldView.js');
 
 // Class
 var FormView = View.extend({
@@ -38,7 +37,7 @@ var FormView = View.extend({
         this.append(this.submitButton);
 	},
 
-	addFormField: function(formFieldView) {
+	addFormFieldView: function(formFieldView) {
 		// Append the form field to the view
 		this.prepend(formFieldView);
 
