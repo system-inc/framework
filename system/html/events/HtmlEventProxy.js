@@ -18,7 +18,7 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifier = function(htmlEventPattern)
 	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'mouse.*.click.*') || htmlEventPattern == 'interact') {
 		domEventIdentifier = 'click';
 	}
-	else if(htmlEventPattern == 'form.field.change') {
+	else if(htmlEventPattern == 'form.control.change') {
 		domEventIdentifier = 'change';
 	}
 	else if(htmlEventPattern == 'form.submit') {
@@ -47,7 +47,7 @@ HtmlEventProxy.domEventIdentifierToHtmlEventIdentifier = function(domEventIdenti
 		htmlEventIdentifier = 'interact';
 	}
 	else if(domEventIdentifier == 'change') {
-		htmlEventIdentifier = 'form.field.change';
+		htmlEventIdentifier = 'form.control.change';
 	}
 	else if(domEventIdentifier == 'submit') {
 		htmlEventIdentifier = 'form.submit';
@@ -139,6 +139,8 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		// Take the domEvent identifier and turn it into an HtmlEventIdentifier
 		var htmlEventIdentifier = HtmlEventProxy.domEventIdentifierToHtmlEventIdentifier(domEvent.type);
 		Console.log('domEvent.type', domEvent.type, 'htmlEventIdentifier', htmlEventIdentifier);
+
+		domEvent.preventDefault();
 
 		// Create the proper event (MouseEvent for 'click', KeyboardEvent for 'keydown', etc.)
 		Console.info('We need to fix next line');

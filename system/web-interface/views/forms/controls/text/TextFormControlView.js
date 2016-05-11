@@ -27,12 +27,14 @@ var TextFormControlView = FormControlView.extend({
     },
 
     getValue: function() {
+        var value = this.value;
+
         // Make null an empty string
-        if(this.value == null) {
-            this.setValue('');
+        if(value == null) {
+            value = this.setValue('');
         }
 
-        return this.super();
+        return value;
     },
 
     insertText: function(text) {

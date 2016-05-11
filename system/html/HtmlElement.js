@@ -78,7 +78,7 @@ var HtmlElement = HtmlNode.extend({
 	// Method exists on XmlElement as well
 	append: function(stringOrHtmlNode) {
 		if(!this.children) {
-			console.warn('no children - this should not happen');
+			throw new Error('HtmlElement instance does not have .children set, this should never happen, it should always be an array.');
 		}
 
 		this.children.append(HtmlElement.makeHtmlNode(stringOrHtmlNode, this));

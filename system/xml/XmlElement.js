@@ -11,11 +11,11 @@ var XmlElement = XmlNode.extend({
 	tag: null,
 	unary: false, // Tags are not unary (self-closing) by default
 	attributes: {},
-	children: null, // Array containing strings or elements
+	children: [], // Array containing strings or elements
 
 	construct: function(tag, options, unary) {
-		// this.content is an array and this.children is an alias to it
-		this.children = this.content = [];
+		// this.children is an array and this.content is an alias to it
+		this.content = this.children;
 
 		if(tag !== undefined) {
 			this.tag = tag;
