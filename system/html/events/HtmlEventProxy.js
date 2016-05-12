@@ -140,7 +140,8 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		var htmlEventIdentifier = HtmlEventProxy.domEventIdentifierToHtmlEventIdentifier(domEvent.type);
 		Console.log('domEvent.type', domEvent.type, 'htmlEventIdentifier', htmlEventIdentifier);
 
-		domEvent.preventDefault();
+		//domEvent.preventDefault();
+		//domEvent.stopImmediatePropagation();
 
 		// Create the proper event (MouseEvent for 'click', KeyboardEvent for 'keydown', etc.)
 		Console.info('We need to fix next line');

@@ -1,13 +1,13 @@
 // Dependencies
 var Module = Framework.require('system/module/Module.js');
 var Version = Framework.require('system/version/Version.js');
-var Electron = Framework.require('system/electron/Electron.js');
+var ElectronManager = Framework.require('system/electron/ElectronManager.js');
 
 // Class
 var ElectronModule = Module.extend({
 
 	version: new Version('0.1.0'),
-	electron: null,
+	electronManager: null,
 
 	defaultSettings: {
 		mainBrowserWindow: {
@@ -55,8 +55,8 @@ var ElectronModule = Module.extend({
 	initialize: function*() {
 		yield this.super.apply(this, arguments);
 
-		this.electron = new Electron();
-		this.electron.initialize();
+		this.electronManager = new ElectronManager();
+		this.electronManager.initialize();
 	},
 	
 });

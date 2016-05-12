@@ -1,13 +1,9 @@
 // Dependencies
-var ElectronRemote = Node.require('remote');
-var ElectronApplication = ElectronRemote.require('app');
-var ElectronBrowserWindow = ElectronRemote.require('browser-window');
-var ElectronScreen = ElectronRemote.require('screen');
-var ElectronMenu = ElectronRemote.require('menu');
+var Electron = Node.require('electron');
 var BrowserWindowState = Framework.require('system/electron/BrowserWindowState.js');
 
 // Class
-var Electron = Class.extend({
+var ElectronManager = Class.extend({
 
 	mainBrowserWindow: null,
 	mainBrowserWindowState: null,
@@ -21,13 +17,13 @@ var Electron = Class.extend({
 		}
 
 		// Set the application menu
-		ElectronMenu.setApplicationMenu(this.getDefaultMenu());
+		Electron.remote.Menu.setApplicationMenu(this.getDefaultMenu());
 
 		// Remove all screen event listeners to prevent duplicate listeners from being attached on browser window refresh
-		ElectronScreen.removeAllListeners();
+		Electron.remote.screen.removeAllListeners();
 
 		// Set the main browser window
-		this.mainBrowserWindow = ElectronRemote.getCurrentWindow();
+		this.mainBrowserWindow = Electron.remote.getCurrentWindow();
 
 		// Set the Project title
 		this.mainBrowserWindow.setTitle(Project.title);
@@ -102,7 +98,7 @@ var Electron = Class.extend({
 	},
 
 	closeFocusedWindow: function() {
-		var focusedWindow = ElectronBrowserWindow.getFocusedWindow();
+		var focusedWindow = Electron.BrowserWindow.getFocusedWindow();
 		if(focusedWindow) {
 			focusedWindow.close();
 		}
@@ -132,25 +128,25 @@ var Electron = Class.extend({
 	},
 
 	exit: function() {
-		ElectronApplication.quit();
+		Electron.app.quit();
 	},
 
 	reloadFocusedWindow: function() {
-		var focusedWindow = ElectronBrowserWindow.getFocusedWindow();
+		var focusedWindow = Electron.BrowserWindow.getFocusedWindow();
 		if(focusedWindow) {
 			focusedWindow.reload();
 		}
 	},
 
 	toggleFullScreenOnFocusedWindow: function() {
-		var focusedWindow = ElectronBrowserWindow.getFocusedWindow();
+		var focusedWindow = Electron.BrowserWindow.getFocusedWindow();
 		if(focusedWindow) {
 			focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
 		}
 	},
 
 	toggleDeveloperToolsOnFocusedWindow: function() {
-		var focusedWindow = ElectronBrowserWindow.getFocusedWindow();
+		var focusedWindow = Electron.BrowserWindow.getFocusedWindow();
 		if(focusedWindow) {
 			focusedWindow.toggleDevTools();
 		}
@@ -161,7 +157,7 @@ var Electron = Class.extend({
 		var defaultMenu = this.getDefaultMenuTemplate();
 
 		if(defaultMenu) {
-			menu = ElectronMenu.buildFromTemplate(this.getDefaultMenuTemplate());	
+			menu = Electron.remote.Menu.buildFromTemplate(this.getDefaultMenuTemplate());	
 		}
 
 		return menu;
@@ -283,4 +279,4 @@ var Electron = Class.extend({
 });
 
 // Export
-module.exports = Electron;
+module.exports = ElectronManager;

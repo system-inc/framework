@@ -1,6 +1,5 @@
 // Dependencies
-var ElectronRemote = Node.require('remote');
-var ElectronScreen = ElectronRemote.require('screen');
+var Electron = Node.require('electron');
 
 // Class
 var BrowserWindowState = Class.extend({
@@ -113,7 +112,7 @@ var BrowserWindowState = Class.extend({
 	},
 
 	applyDefault: function() {
-		var displays = ElectronScreen.getAllDisplays();
+		var displays = Electron.screen.getAllDisplays();
 		var defaultSettingsForDisplayCount = null;
 
 		// Get the default settings for the display count
@@ -241,7 +240,7 @@ var BrowserWindowState = Class.extend({
 	listenToScreenEvents: function() {
 		// Display added
 		if(this.settings.defaultWindowState.applyOn.displayAdded) {
-			ElectronScreen.on('display-added', function(event, newDisplay) {
+			Electron.screen.on('display-added', function(event, newDisplay) {
 				//Console.log('display-added', event)
 				this.applyDefault();
 			}.bind(this));	
@@ -249,7 +248,7 @@ var BrowserWindowState = Class.extend({
 
 		// Display removed
 		if(this.settings.defaultWindowState.applyOn.displayRemoved) {
-			ElectronScreen.on('display-removed', function(event, oldDisplay) {
+			Electron.screen.on('display-removed', function(event, oldDisplay) {
 				//Console.log('display-removed', event)
 				this.applyDefault();
 			}.bind(this));
@@ -257,7 +256,7 @@ var BrowserWindowState = Class.extend({
 
 		// Display metrics changed
 		if(this.settings.defaultWindowState.applyOn.displayMetricsChanged) {
-			ElectronScreen.on('display-metrics-changed', function(event, display, changedMetrics) {
+			Electron.screen.on('display-metrics-changed', function(event, display, changedMetrics) {
 				//Console.log('display-metrics-changed', event)
 				this.applyDefault();
 			}.bind(this));
