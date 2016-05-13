@@ -3,7 +3,11 @@ var ViewController = Framework.require('system/web-interface/controllers/ViewCon
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
 var HtmlElement = Framework.require('system/html/HtmlElement.js');
-var FormView = Framework.require('system/web-interface/views/FormView.js');
+var FormView = Framework.require('system/web-interface/views/forms/FormView.js');
+var OptionFormFieldView = Framework.require('system/web-interface/views/forms/fields/options/OptionFormFieldView.js');
+var SingleLineTextFormFieldView = Framework.require('system/web-interface/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js');
+var Proctor = Framework.require('system/test/Proctor.js');
+var TableView = Framework.require('system/web-interface/views/tables/TableView.js');
 
 // Class
 var MainViewController = ViewController.extend({
@@ -16,7 +20,7 @@ var MainViewController = ViewController.extend({
         this.layoutViews();
 	},
 
-    layoutViews: function() {
+    layoutViews: function*() {
         // Create an HtmlDocument
         this.htmlDocument = this.createHtmlDocument();
 
@@ -24,9 +28,16 @@ var MainViewController = ViewController.extend({
         this.view = this.htmlDocument.body;
 
         // Run tests form
-        this.view.append(this.createRunTestsFormView());
+        //var runTestsFormView = yield this.createRunTestsFormView();
+        //this.view.append(runTestsFormView);
 
-        // Test table
+        // This breaks things
+        var table = Html.table();
+        var tr = Html.tr();
+        var td = Html.td('Hi');
+        tr.append(td);
+        table.append(tr);
+        this.view.append(table);
 
         // Mount the HtmlDocument to the DOM
         this.htmlDocument.mountToDom();
@@ -42,7 +53,7 @@ var MainViewController = ViewController.extend({
         return htmlDocument;
     },
 
-    createRunTestsFormView: function() {
+    createRunTestsFormView: function*() {
         // Create a FormView
         var runTestsFormView = new FormView({
             submitButton: {
@@ -54,14 +65,40 @@ var MainViewController = ViewController.extend({
             Console.log('Form submit!', event);
         }.bind(this));
 
-        // Add a text input
-        runTestsFormView.addCheckboxFormField('userIdentifier', {
-            label: 'Tests:',
-            enterSubmits: true,
-            validation: {
-                required: true,
-            },
+        // Checkbox
+        var optionFormFieldView = new OptionFormFieldView('runTestsInOrder', {
+            label: 'Run Tests in Order',
         });
+        runTestsFormView.addFormFieldView(optionFormFieldView);
+        
+        // Table for the tests
+        var tableView = new TableView();
+        //tableView.setColumns(['Test Class', 'Test Method', 'Test Status', '']);
+        
+        // Get all possible tests
+        var tests = yield Proctor.getTests();
+        //Console.standardLog(tests);
+
+        tests.each(function(testName, test) {
+            test.methods.each(function(testMethodIndex, testMethod) {
+                //tableView.addRow(test.name, testMethod, 'Pending', Html.button('Run'));
+                //tableView.append(Html.tr(testName));
+            });
+        });
+
+        
+
+        //tableView.append('<tr><td>Test</td><td>Test</td></tr>');
+
+        runTestsFormView.append(tableView);
+
+        //runTestsFormView.addCheckboxFormField('userIdentifier', {
+        //    label: 'Tests:',
+        //    enterSubmits: true,
+        //    validation: {
+        //        required: true,
+        //    },
+        //});
 
         return runTestsFormView;
     },

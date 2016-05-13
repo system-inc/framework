@@ -11,13 +11,13 @@ var SingleLineTextFormFieldView = TextFormFieldView.extend({
 
 	construct: function(identifier, settings) {
 		// Create the form control, SingleLineTextFormControlView
-		this.textFormControlView = new SingleLineTextFormControlView();
+		this.formControlView = new SingleLineTextFormControlView();
 
-		// Call super after setting this.textFormControlView
+		// Call super after setting this.formControlView
 		this.super.apply(this, arguments);
 
 		// Append the form control
-		this.append(this.textFormControlView);
+		this.append(this.formControlView);
 	},
 
 });

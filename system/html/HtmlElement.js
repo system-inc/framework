@@ -131,6 +131,12 @@ var HtmlElement = HtmlNode.extend({
 		var domNodeAttributesToUpdate = {};
 		var domNodeAttributeNames = {};
 
+		if(!this.domNode || !this.domNode.attributes) {
+			Console.standardError('No attributes set, this should not happen.', this);
+			Console.log('this.domNode', this.domNode);
+			Console.log('this.domNode.attributes', this.domNode.attributes);
+		}
+
 		// Loop through all of the DOM element's attributes
 		this.domNode.attributes.each(function(domNodeAttributeIndex, domNodeAttribute) {
 			//Console.log(domNodeAttributeIndex, domNodeAttribute, domNodeAttribute.name, domNodeAttribute.value);
@@ -340,6 +346,10 @@ HtmlElement.makeHtmlNode = function(value, parent, type) {
 
 	// If the value is currently not of type HtmlNode (it must be a string), turn it into an HtmlNode
 	if(!alreadyIsHtmlNode) {
+		if(value.contains('<')) {
+			Console.warn('HTML strings are not supported (I should implement), use View or HtmlElement or HtmlNode.', value);
+		}
+
 		value = new HtmlNode(value, parent, type);
 	}
 	// If the value is already an HtmlNode, make sure it inherits traits from the parent 

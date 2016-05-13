@@ -26,8 +26,8 @@ var XmlElement = XmlNode.extend({
 			this.unary = unary;
 		}
 
-		// Allow options to be strings (or any primitive) which will be used as the default content
-		if(options && Primitive.is(options)) {
+		// Allow options to be strings (or any primitive) or XmlNodes which will be used as the default content
+		if(options && (Primitive.is(options) || XmlNode.is(options))) {
 			this.append(options);
 		}
 		// Allow options to be an object

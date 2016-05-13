@@ -72,7 +72,7 @@ var HtmlNode = XmlNode.extend({
 			this.applyDomUpdates();
 
 			// Mark the update as complete
-			this.domUpdateExecuted();	
+			this.domUpdateExecuted();
 		}
 		else {
 			//console.info('No need to run updates on this element', this);

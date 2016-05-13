@@ -14,7 +14,7 @@ var FormControlView = View.extend({
 	construct: function() {
 		this.super.apply(this, arguments);
 
-		this.on('form.control.change', function() {
+		this.on('form.control.change', function(event) {
             this.valueChangedOnDom();
         }.bind(this));
 

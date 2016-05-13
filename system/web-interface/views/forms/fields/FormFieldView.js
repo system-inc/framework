@@ -10,7 +10,9 @@ var FormFieldView = View.extend({
 	},
 
 	identifier: null,
+
 	labelView: null,
+	formControlView: null,
 
 	construct: function(identifier, settings) {
 		// Call the View constructor
@@ -26,6 +28,11 @@ var FormFieldView = View.extend({
 
 		// Set the identifier, this will tie data for the form to the identifier as a key
 		this.identifier = identifier;
+
+		// Each form control has a unique identifier
+		if(this.formControlView) {
+			this.formControlView.setAttribute('id', 'formControl-'+this.identifier+'-'+String.uniqueIdentifier());	
+		}		
 		
 		// Conditionally add a label
 		if(this.settings.get('label')) {
@@ -35,10 +42,16 @@ var FormFieldView = View.extend({
 
 	addLabel: function() {
 		// Create the label
-		this.labelView = Html.div({
-			class: 'label',
+		this.labelView = Html.label({
 			content: this.settings.get('label'),
 		});
+
+		if(this.formControlView) {
+			var formControlViewId = this.formControlView.getAttribute('id');
+			if(formControlViewId) {
+				this.labelView.setAttribute('for', formControlViewId);
+			}
+		}
 
 		// Append the label
 		this.append(this.labelView);
@@ -102,6 +115,10 @@ var FormFieldView = View.extend({
 		clearRecursively(this);
 
 		return this;
+	},
+
+	focus: function() {
+		return this.formControlView.focus();
 	},
 
 });

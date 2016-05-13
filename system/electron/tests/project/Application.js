@@ -1,8 +1,8 @@
 // Dependencies
-var BrowserWindow = require('browser-window');
+var Electron = require('electron');
 
 // Class
-var Application = require('app');
+var Application = Electron.app;
 
 // Static properties
 
@@ -17,7 +17,7 @@ Application.run = function() {
 	// This method will be called when Electron has done all initialization and is ready to create browser windows
 	Application.on('ready', function() {
 		// Create the browser window
-		Application.mainBrowserWindow = new BrowserWindow({
+		Application.mainBrowserWindow = new Electron.BrowserWindow({
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
 			show: true, // Do not show the main browser window as we want to wait until it is resized before showing it
 		});
@@ -50,7 +50,7 @@ Application.run = function() {
 Application.runTests = function(path, filePattern, methodPattern) {
 	if(!Application.testBrowserWindow) {
 		// Create the browser window
-		Application.testBrowserWindow = new BrowserWindow({
+		Application.testBrowserWindow = new Electron.BrowserWindow({
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
 			//show: false, // Do not show the main browser window as we want to wait until it is resized before showing it
 		});
