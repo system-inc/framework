@@ -1,0 +1,58 @@
+* {
+    all: unset;
+}
+
+html {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    line-height: 1;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, div {
+    display: block;
+}
+
+table {
+    display: table;
+}
+    thead {
+        display: table-header-group;
+        text-align: left;
+    }
+    tr {
+        display: table-row;
+    }
+        th, td {
+            display: table-cell;
+        }
+
+input[type="checkbox"] {
+    -webkit-appearance: checkbox;
+}
+input[type="text"] {
+    border: 1px solid #CCC;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    /*font-size: inherit;*/
+}
+
+b, strong {
+    font-weight: bold;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+}
+
+a, button, label, input[type="checkbox"] {
+    cursor: pointer;
+}

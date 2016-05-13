@@ -73,6 +73,8 @@ var HtmlDocument = XmlDocument.extend({
 	},
 
 	mountToDom: function() {
+		//Console.log('HtmlDocument mountToDom');
+
 		// Clear the head and body in preparation for writing the HTML document to the DOM
 		// Even though we are removing script references from <head>, any previously included scripts will still have code available (we want this to be the case)
 		this.head.emptyDomNode();
@@ -88,7 +90,7 @@ var HtmlDocument = XmlDocument.extend({
 	},
 
 	mountedToDom: function() {
-		//Console.log('HtmlDocument.mountedToDom', this);
+		//Console.log('HtmlDocument mountedToDom');
 
 		// The HtmlDocument is now added to the DOM
 		this.isMountedToDom = true;

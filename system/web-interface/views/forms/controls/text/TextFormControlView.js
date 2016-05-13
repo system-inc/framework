@@ -8,7 +8,7 @@ var TextFormControlView = FormControlView.extend({
         class: 'control text',
     },
 
-    construct: function() {
+    construct: function(settings) {
         this.super.apply(this, arguments);
 
         // Keyboard up events trigger form.control.change

@@ -6,6 +6,7 @@ var HtmlElement = Framework.require('system/html/HtmlElement.js');
 var FormView = Framework.require('system/web-interface/views/forms/FormView.js');
 var OptionFormFieldView = Framework.require('system/web-interface/views/forms/fields/options/OptionFormFieldView.js');
 var SingleLineTextFormFieldView = Framework.require('system/web-interface/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js');
+var SingleLineTextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
 var Proctor = Framework.require('system/test/Proctor.js');
 var TableView = Framework.require('system/web-interface/views/tables/TableView.js');
 
@@ -27,17 +28,11 @@ var MainViewController = ViewController.extend({
         // Set this ViewController's view to be the body of the HtmlDocument
         this.view = this.htmlDocument.body;
 
-        // Run tests form
-        //var runTestsFormView = yield this.createRunTestsFormView();
-        //this.view.append(runTestsFormView);
+        this.view.append(Html.h1('Framework Test Proctor'));
 
-        // This breaks things
-        var table = Html.table();
-        var tr = Html.tr();
-        var td = Html.td('Hi');
-        tr.append(td);
-        table.append(tr);
-        this.view.append(table);
+        // Run tests form
+        var runTestsFormView = yield this.createRunTestsFormView();
+        this.view.append(runTestsFormView);
 
         // Mount the HtmlDocument to the DOM
         this.htmlDocument.mountToDom();
@@ -48,7 +43,9 @@ var MainViewController = ViewController.extend({
         var htmlDocument = new HtmlDocument();
         
         // Default style sheet
-        htmlDocument.addStyleSheet('views/style-sheets/style.css');
+        htmlDocument.addStyleSheet('../../../web-interface/themes/reset/style-sheets/reset.css');
+        htmlDocument.addStyleSheet('../../../web-interface/themes/framework/style-sheets/framework.css');
+        htmlDocument.addStyleSheet('views/style-sheets/style-sheet.css');
 
         return htmlDocument;
     },
@@ -61,44 +58,43 @@ var MainViewController = ViewController.extend({
             },
         });
 
-        runTestsFormView.on('form.submit', function(event) {
-            Console.log('Form submit!', event);
-        }.bind(this));
-
         // Checkbox
         var optionFormFieldView = new OptionFormFieldView('runTestsInOrder', {
             label: 'Run Tests in Order',
         });
         runTestsFormView.addFormFieldView(optionFormFieldView);
+
+        runTestsFormView.on('form.submit', function(event) {
+            Console.log('Form submit!', event);
+        }.bind(this));
         
         // Table for the tests
         var tableView = new TableView();
-        //tableView.setColumns(['Test Class', 'Test Method', 'Test Status', '']);
+        tableView.setColumns(['Class', 'Method', 'Status', '']);
         
         // Get all possible tests
         var tests = yield Proctor.getTests();
-        //Console.standardLog(tests);
+        Console.standardLog(tests);
 
-        tests.each(function(testName, test) {
-            test.methods.each(function(testMethodIndex, testMethod) {
-                //tableView.addRow(test.name, testMethod, 'Pending', Html.button('Run'));
-                //tableView.append(Html.tr(testName));
-            });
-        });
-
-        
-
-        //tableView.append('<tr><td>Test</td><td>Test</td></tr>');
+        //var testCount = 0;
+        //var testMethodCount = 0;
+        //tests.each(function(testName, test) {
+        //    testCount++;
+        //    test.methods.each(function(testMethodIndex, testMethod) {
+        //        testMethodCount++;
+        //        tableView.addRow(test.name, testMethod, 'Not Started', Html.button({
+        //            content: 'Run',
+        //            class: 'small',
+        //        }));
+        //    });
+        //});
 
         runTestsFormView.append(tableView);
 
-        //runTestsFormView.addCheckboxFormField('userIdentifier', {
-        //    label: 'Tests:',
-        //    enterSubmits: true,
-        //    validation: {
-        //        required: true,
-        //    },
-        //});
+        //Console.log(tableView.getData());
+
+        //var summary = Html.p(testMethodCount+' test methods in '+testCount+' tests');
+        //runTestsFormView.append(summary);
 
         return runTestsFormView;
     },

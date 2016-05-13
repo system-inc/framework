@@ -64,7 +64,7 @@ var HtmlNode = XmlNode.extend({
 	},
 
 	executeDomUpdate: function() {
-		//Console.log('HtmlNode.executeDomUpdate', this);
+		//Console.log('HtmlNode executeDomUpdate', this.tag);
 
 		// If we should execute an update
 		if(this.shouldExecuteDomUpdate) {
@@ -101,34 +101,43 @@ var HtmlNode = XmlNode.extend({
 		}
 	},
 
-	createDomFragment: function(htmlNode) {
+	createDomNode: function(htmlNode) {
 		// Allow this method to be called statically
 		if(!htmlNode) {
 			htmlNode = this;
 		}
 
 		var domFragment = document.createRange().createContextualFragment(htmlNode.toString());
+		//Console.log('HtmlNode domFragment for', htmlNode.tag, domFragment);
 
 		return domFragment;
 	},
 
 	appendDomNode: function() {
-		//Console.log('HtmlNode.appendDomNode');
+		//Console.log('HtmlNode.appendDomNode', this.tag);
+
+		var domFragment = this.createDomNode();
+
+		//Console.standardLog('this.parent.domNode', this.parent.domNode);
 
 		// Append the child DOM node to this node's DOM node
-		this.parent.domNode.appendChild(this.createDomFragment());
+		var appendedNode = this.parent.domNode.appendChild(domFragment);
 
 		// Have the child reference the newly created DOM node
 		this.domNode = this.parent.domNode.lastChild;
+
+		//Console.standardLog('this.domNode', this.domNode);
 
 		this.mountedToDom();
 	},
 
 	replaceDomNode: function(indexOfChildDomNodeToReplace) {
-		//Console.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace);
+		//Console.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace, this.tag);
+
+		var domFragment = this.createDomNode();
 
 		// Replace the DOM node with the replacement fragment
-		this.parent.domNode.replaceChild(this.createDomFragment(), this.parent.domNode.childNodes[indexOfChildDomNodeToReplace]);
+		this.parent.domNode.replaceChild(domFragment, this.parent.domNode.childNodes[indexOfChildDomNodeToReplace]);
 
 		// Have the child reference the replaced DOM node
 		this.domNode = this.parent.domNode.childNodes[indexOfChildDomNodeToReplace];
@@ -137,6 +146,8 @@ var HtmlNode = XmlNode.extend({
 	},
 
 	mountedToDom: function() {
+		//Console.log('HtmlNode mountedToDom', this.tag)
+
 		this.isMountedToDom = true;
 
 		// Execute DOM updates if necessary
@@ -167,7 +178,7 @@ HtmlNode.is = function(value) {
 	return Class.isInstance(value, HtmlNode);
 };
 
-HtmlNode.createDomFragment = HtmlNode.prototype.createDomFragment;
+HtmlNode.createDomNode = HtmlNode.prototype.createDomNode;
 
 HtmlNode.emptyDomNode = HtmlNode.prototype.emptyDomNode;
 

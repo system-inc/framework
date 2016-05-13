@@ -9,7 +9,6 @@ var FormView = View.extend({
 	tag: 'form',
 
 	attributes: {
-		class: 'form',
 	},
 
 	submitButton: null,
@@ -34,7 +33,7 @@ var FormView = View.extend({
         this.submitButton.on('interact', function(event) {
         	this.submit();
         }.bind(this));
-        this.append(this.submitButton);
+        this.append(Html.p(this.submitButton));
 	},
 
 	addFormFieldView: function(formFieldView) {

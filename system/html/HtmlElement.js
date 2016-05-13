@@ -34,9 +34,26 @@ var HtmlElement = HtmlNode.extend({
 	toString: XmlElement.prototype.toString,
 
 	// Uses XmlElement
-	construct: function() {
+	construct: function(tag, options, unary) {
+		// Automatically detect if tags are supposed to be unary
+		if(unary === undefined) {
+			if(tag === undefined) {
+				tag = this.tag;
+			}
+		 	
+		 	if(HtmlElement.unaryTags.contains(tag)) {
+		 		unary = true;
+		 	}
+		}
+
+		// Update the DOM if attributes are already set
+		if(Object.keys(this.attributes).length) {
+			//Console.log('Attributes already set on tag', this.tag);
+			this.updateDom();
+		}
+
 		// Use XmlElement's constructor
-		XmlElement.prototype.construct.apply(this, arguments);
+		XmlElement.prototype.construct.call(this, tag, options, unary);
 	},
 
 	// Method exists on XmlElement as well
@@ -113,6 +130,12 @@ var HtmlElement = HtmlNode.extend({
 	},
 
 	applyDomUpdates: function() {
+		//Console.log('HtmlElement applyDomUpdates', this.tag);
+
+		if(!this.domNode) {
+			throw new Error('No .domNode present for tag '+this.tag+', this should never happen.');
+		}
+
 		// Update the DOM element's attributes
 		this.updateDomNodeAttributes();
 
@@ -130,12 +153,6 @@ var HtmlElement = HtmlNode.extend({
 
 		var domNodeAttributesToUpdate = {};
 		var domNodeAttributeNames = {};
-
-		if(!this.domNode || !this.domNode.attributes) {
-			Console.standardError('No attributes set, this should not happen.', this);
-			Console.log('this.domNode', this.domNode);
-			Console.log('this.domNode.attributes', this.domNode.attributes);
-		}
 
 		// Loop through all of the DOM element's attributes
 		this.domNode.attributes.each(function(domNodeAttributeIndex, domNodeAttribute) {
@@ -175,7 +192,7 @@ var HtmlElement = HtmlNode.extend({
 			}
 		}.bind(this));
 
-		//Console.log('domNodeAttributesToUpdate', domNodeAttributesToUpdate);
+		//Console.log('domNodeAttributesToUpdate', this.tag, domNodeAttributesToUpdate);
 
 		// Update the DOM element's attributes
 		domNodeAttributesToUpdate.each(function(domNodeAttributeToUpdateName, domNodeAttributeToUpdate) {
@@ -184,7 +201,7 @@ var HtmlElement = HtmlNode.extend({
 				this.domNode.removeAttribute(domNodeAttributeToUpdateName);
 			}
 			else if(domNodeAttributeToUpdate.action == 'set') {
-				//Console.log('setAttribute', domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
+				//Console.log('setAttribute', this.tag, domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
 				this.domNode.setAttribute(domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
 			}
 		}.bind(this));
@@ -230,15 +247,16 @@ var HtmlElement = HtmlNode.extend({
 		}
 	},
 
-	createDomFragment: function(htmlElement) {
+	createDomNode: function(htmlElement) {
 		// Allow this method to be called statically
 		if(!htmlElement) {
 			htmlElement = this;
 		}
 
 		// The DOM fragment is just for the tag, not for the children
-		var domFragment = document.createRange().createContextualFragment(htmlElement.tagToString());
-		//var domFragment = document.createRange().createContextualFragment(htmlElement);
+		var domFragment = document.createElement(htmlElement.tag);
+		//var domFragment = document.createRange().createContextualFragment(htmlElement.tagToString()); // This does not work consistently
+		//Console.log('HtmlElement domFragment for', htmlElement.tagToString(), domFragment);
 
 		return domFragment;
 	},
@@ -337,9 +355,30 @@ var HtmlElement = HtmlNode.extend({
 
 });
 
+// Static properties
+
+HtmlElement.unaryTags = [
+	'meta',
+	'link',
+	'base',
+	'hr',
+	'br',
+	'wbr',
+	'col',
+	'img',
+	'area',
+	'source',
+	'track',
+	'param',
+	'embed',
+	'input',
+	'keygen',
+	'command',
+];
+
 // Static methods
 
-HtmlElement.createDomFragment = HtmlElement.prototype.createDomFragment;
+HtmlElement.createDomNode = HtmlElement.prototype.createDomNode;
 
 HtmlElement.makeHtmlNode = function(value, parent, type) {
 	var alreadyIsHtmlNode = HtmlNode.is(value);

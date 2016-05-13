@@ -117,7 +117,18 @@ var Proctor = EventEmitter.extend({
 	},
 
 	getAndRunTests: function*(path, filePattern, methodPattern) {
-		yield this.getTests(path, filePattern, methodPattern);
+		var tests = yield Proctor.getTests(path, filePattern, methodPattern);
+
+		tests.classes.each(function(classIndex, classObject) {
+			this.addTest(classObject.className, classObject.classFile.name, classObject.classFile.directory);
+			this.testClassInstances[classObject.className] = classObject.classInstance;
+		}.bind(this));
+
+		tests.methods.each(function(methodIndex, methodObject) {
+			//Console.log(methodObject.methodName);
+			this.testMethods[methodObject.class.className].methods.append(methodObject.methodName);
+		}.bind(this));
+
 		yield this.runTests();
 	},
 
@@ -728,10 +739,13 @@ Proctor.resolvePath = function(path) {
 };
 
 Proctor.getTests = function*(path, filePattern, methodPattern) {
-	var tests = {};
+	var tests = {
+		classes: [],
+		methods: [],
+	};
 
 	// Resolve the path
-	path = this.resolvePath(path);
+	path = Proctor.resolvePath(path);
 	//Console.log(path);
 	//Node.exit(path);
 
@@ -789,14 +803,13 @@ Proctor.getTests = function*(path, filePattern, methodPattern) {
 							//Console.log('Adding test:', testClassName);
 
 							// Add the test class to tests
-							tests[testClassName] = {
-								name: testClassName,
-								file: fileSystemObject,
-								instance: instantiatedTestClass,
-								methods: [],
+							var testClassObject = {
+								className: testClassName,
+								classInstance: instantiatedTestClass,
+								class: testClass,
+								classFile: fileSystemObject,
 							};
-							//this.addTest(testClassName, fileSystemObject.name, fileSystemObject.directory);
-							//this.testClassInstances[testClassName] = instantiatedTestClass;
+							tests.classes.append(testClassObject);
 
 							// Loop through all of the class properties
 							for(var key in instantiatedTestClass) {
@@ -805,8 +818,11 @@ Proctor.getTests = function*(path, filePattern, methodPattern) {
 									// Filter test methods
 									if(methodPattern == null || key.lowercase().match(methodPattern)) {
 										//Console.log(key.lowercase(), 'matched against', methodPattern);
-										//this.testMethods[testClassName].methods.append(key);
-										tests[testClassName].methods.append(key);
+										tests.methods.append({
+											methodName: key,
+											method: instantiatedTestClass[key],
+											class: testClassObject,
+										});
 									}
 									else {
 										//Console.log(key.lowercase(), 'did not match against', methodPattern);

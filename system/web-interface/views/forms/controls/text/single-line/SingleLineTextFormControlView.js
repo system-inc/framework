@@ -11,7 +11,7 @@ var SingleLineTextFormControlView = TextFormControlView.extend({
         class: 'control text singleLine',
     },
 
-    construct: function() {
+    construct: function(settings) {
         this.super.apply(this, arguments);
     },
 

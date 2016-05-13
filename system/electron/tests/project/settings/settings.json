@@ -38,7 +38,7 @@
 							display: 2,
 							mode: 'normal',
 							width: .5, // Production
-							//width: 1, // Development
+							width: 1, // Development
 							height: .5, // Production
 							height: .75, // Development
 							x: 'left',
