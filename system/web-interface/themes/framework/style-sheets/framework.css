@@ -11,16 +11,41 @@ h1 {
 	font-size: 2em;
 }
 
-thead {
-	font-weight: bold;
+table {
+	border: 1px solid rgba(34, 36, 38, 0.15);
+	border-radius: .25em;
+	border-collapse: separate;
 }
-td {
-	padding-right: 1em;
-}
+	thead {
+		font-weight: bold;
+		background: #EFEFEF;
+	}
+		th {
+			padding: .9em .75em;
+		}
+	tr {
+		
+	}
+		td, th {
+			border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+			border-left: 1px solid rgba(34, 36, 38, 0.15);
+		}
+		td {
+			padding: .75em;
+		}
+		table tr td:first-child, table tr th:first-child {
+		    border-left: none;
+		}
+		table tr:last-child td {
+		    border-bottom: none;
+		}	
 
-a.button, button {
+a.button {
 	display: inline-block;
 	border-radius: .25em;
 	background: #EFEFEF;
 	padding: .75em 1.5em;
 }
+	a.button:hover {
+		background: #DDD;
+	}

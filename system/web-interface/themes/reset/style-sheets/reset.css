@@ -34,6 +34,7 @@ table {
 
 input[type="checkbox"] {
     -webkit-appearance: checkbox;
+    margin-right: .5em;
 }
 input[type="text"] {
     border: 1px solid #CCC;

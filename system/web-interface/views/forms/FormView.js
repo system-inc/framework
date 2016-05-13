@@ -2,6 +2,7 @@
 var View = Framework.require('system/web-interface/views/View.js');
 var Html = Framework.require('system/html/Html.js');
 var FormFieldView = Framework.require('system/web-interface/views/forms/fields/FormFieldView.js');
+var ButtonView = Framework.require('system/web-interface/views/buttons/ButtonView.js');
 
 // Class
 var FormView = View.extend({
@@ -29,8 +30,9 @@ var FormView = View.extend({
 	},
 
 	addSubmitButton: function() {
-		this.submitButton = Html.button(this.settings.get('submitButton.content'));
+		this.submitButton = new ButtonView(this.settings.get('submitButton.content'));
         this.submitButton.on('interact', function(event) {
+        	Console.log('Submit button interact');
         	this.submit();
         }.bind(this));
         this.append(Html.p(this.submitButton));

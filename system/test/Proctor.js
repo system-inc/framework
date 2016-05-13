@@ -120,13 +120,13 @@ var Proctor = EventEmitter.extend({
 		var tests = yield Proctor.getTests(path, filePattern, methodPattern);
 
 		tests.classes.each(function(classIndex, classObject) {
-			this.addTest(classObject.className, classObject.classFile.name, classObject.classFile.directory);
-			this.testClassInstances[classObject.className] = classObject.classInstance;
+			this.addTest(classObject.name, classObject.file.name, classObject.file.directory);
+			this.testClassInstances[classObject.name] = classObject.instance;
 		}.bind(this));
 
 		tests.methods.each(function(methodIndex, methodObject) {
-			//Console.log(methodObject.methodName);
-			this.testMethods[methodObject.class.className].methods.append(methodObject.methodName);
+			//Console.log(methodObject.name);
+			this.testMethods[methodObject.class.name].methods.append(methodObject.name);
 		}.bind(this));
 
 		yield this.runTests();
@@ -804,10 +804,10 @@ Proctor.getTests = function*(path, filePattern, methodPattern) {
 
 							// Add the test class to tests
 							var testClassObject = {
-								className: testClassName,
-								classInstance: instantiatedTestClass,
+								name: testClassName,
+								instance: instantiatedTestClass,
 								class: testClass,
-								classFile: fileSystemObject,
+								file: fileSystemObject,
 							};
 							tests.classes.append(testClassObject);
 
@@ -819,7 +819,7 @@ Proctor.getTests = function*(path, filePattern, methodPattern) {
 									if(methodPattern == null || key.lowercase().match(methodPattern)) {
 										//Console.log(key.lowercase(), 'matched against', methodPattern);
 										tests.methods.append({
-											methodName: key,
+											name: key,
 											method: instantiatedTestClass[key],
 											class: testClassObject,
 										});

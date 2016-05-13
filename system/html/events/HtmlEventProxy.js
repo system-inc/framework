@@ -140,9 +140,6 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		var htmlEventIdentifier = HtmlEventProxy.domEventIdentifierToHtmlEventIdentifier(domEvent.type);
 		Console.log('domEvent.type', domEvent.type, 'htmlEventIdentifier', htmlEventIdentifier);
 
-		//domEvent.preventDefault();
-		//domEvent.stopImmediatePropagation();
-
 		// Create the proper event (MouseEvent for 'click', KeyboardEvent for 'keydown', etc.)
 		Console.info('We need to fix next line');
 		var event = htmlEventEmitter.createEvent(htmlEventEmitter, htmlEventIdentifier);
@@ -151,7 +148,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		event.domEvent = domEvent;
 		event.trusted = domEvent.isTrusted;
 
-		Console.standardLog(event);
+		Console.standardLog('event', event);
 
 		// Emit the event
 		htmlEventEmitter.emit(htmlEventIdentifier, event);
@@ -167,6 +164,8 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		// If we don't have a domObject, wait to be mountedToDom
 		else {
 			htmlEventEmitter.on(['htmlDocument.mountedToDom', 'htmlNode.mountedToDom'], function() {
+				Console.log('Mounted to DOM, calling addEventListener now for', htmlEventEmitter.tag);
+
 				// Get the domObject from the htmlEventEmitter
 				domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
 

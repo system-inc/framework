@@ -9,6 +9,7 @@ var SingleLineTextFormFieldView = Framework.require('system/web-interface/views/
 var SingleLineTextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
 var Proctor = Framework.require('system/test/Proctor.js');
 var TableView = Framework.require('system/web-interface/views/tables/TableView.js');
+var ButtonView = Framework.require('system/web-interface/views/buttons/ButtonView.js');
 
 // Class
 var MainViewController = ViewController.extend({
@@ -73,28 +74,28 @@ var MainViewController = ViewController.extend({
         tableView.setColumns(['Class', 'Method', 'Status', '']);
         
         // Get all possible tests
-        var tests = yield Proctor.getTests();
-        Console.standardLog(tests);
+        //var tests = yield Proctor.getTests();
+        var tests = yield Proctor.getTests(null, 'electron');
+        //Console.standardLog(tests);
 
-        //var testCount = 0;
-        //var testMethodCount = 0;
-        //tests.each(function(testName, test) {
-        //    testCount++;
-        //    test.methods.each(function(testMethodIndex, testMethod) {
-        //        testMethodCount++;
-        //        tableView.addRow(test.name, testMethod, 'Not Started', Html.button({
-        //            content: 'Run',
-        //            class: 'small',
-        //        }));
-        //    });
-        //});
+        tests.methods.each(function(testMethodIndex, testMethod) {
+            var runTestMethodButton = new ButtonView('Run');
+            Console.error('This .on call doesnt seem tobe adding the event listener');
+            runTestMethodButton.on('interact', function(event) {
+                Console.log('button pressed!');
+                Console.standardLog(event);
+            });
+            Console.standardLog(runTestMethodButton);
+
+            tableView.addRow(testMethod.class.name, testMethod.name, 'Not Started', runTestMethodButton);
+        });
 
         runTestsFormView.append(tableView);
 
         //Console.log(tableView.getData());
 
-        //var summary = Html.p(testMethodCount+' test methods in '+testCount+' tests');
-        //runTestsFormView.append(summary);
+        var summary = Html.p(tests.methods.length+' test methods in '+tests.classes.length+' tests');
+        runTestsFormView.append(summary);
 
         return runTestsFormView;
     },

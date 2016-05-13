@@ -8,6 +8,8 @@ var PropagatingEventEmitter = EventEmitter.extend({
 	parent: null,
 
 	emit: function*(eventIdentifier, data, eventOptions) {
+		//Console.log('PropagatingEventEmitter emit', this.tag, eventIdentifier);
+
 		var propagatingEvent = null;
 
 		var shouldEmitAncestorEventEmittersInCapturePath = false;
