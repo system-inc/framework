@@ -10,6 +10,8 @@ var EventEmitter = Class.extend({
 	recommendedMaximumEventListenersPerEventIdentifier: null,
 
 	on: function*(eventPattern, functionToBind, timesToRun) {
+		//Console.log('EventEmitter on', eventPattern, this.tag, Json.encode(this.attributes));
+
 		var on = yield this.addEventListener(eventPattern, functionToBind, timesToRun);
 
 		return on;

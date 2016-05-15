@@ -32,7 +32,6 @@ var FormView = View.extend({
 	addSubmitButton: function() {
 		this.submitButton = new ButtonView(this.settings.get('submitButton.content'));
         this.submitButton.on('interact', function(event) {
-        	Console.log('Submit button interact');
         	this.submit();
         }.bind(this));
         this.append(Html.p(this.submitButton));

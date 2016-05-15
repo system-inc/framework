@@ -10,15 +10,33 @@ var SingleLineTextFormControlView = Framework.require('system/web-interface/view
 var Proctor = Framework.require('system/test/Proctor.js');
 var TableView = Framework.require('system/web-interface/views/tables/TableView.js');
 var ButtonView = Framework.require('system/web-interface/views/buttons/ButtonView.js');
+var Electron = Node.require('electron');
 
 // Class
 var MainViewController = ViewController.extend({
 
-    // Electron
-    electron: null,
+    electronManager: null,
 
-	construct: function(electron) {
-        this.electron = electron;
+    tests: null,
+    testBrowserWindows: {},
+
+    previousTestMethodIndex: null,
+    currentTestMethodIndex: null,
+    nextTestMethodIndex: null,
+
+	construct: function(electronManager) {
+        this.electronManager = electronManager;
+
+        // Listen to reports from Application
+        Electron.ipcRenderer.on('Application.report', function() {
+            this.handleApplicationReport.apply(this, arguments);
+        }.bind(this));
+
+        // Listen for reports from testBrowserWindows
+        Electron.ipcRenderer.on('testBrowserWindow.report', function() {
+            this.handleTestBrowserWindowReport.apply(this, arguments);
+        }.bind(this));
+
         this.layoutViews();
 	},
 
@@ -29,11 +47,16 @@ var MainViewController = ViewController.extend({
         // Set this ViewController's view to be the body of the HtmlDocument
         this.view = this.htmlDocument.body;
 
-        this.view.append(Html.h1('Framework Test Proctor'));
+        // Header
+        this.view.append(Html.h1('Proctor'));
+
+        // Get all possible tests
+        this.tests = yield Proctor.getTests();
+        //this.tests = yield Proctor.getTests(null, 'electron');
+        //Console.standardLog(tests);
 
         // Run tests form
-        var runTestsFormView = yield this.createRunTestsFormView();
-        this.view.append(runTestsFormView);
+        this.view.append(this.createRunTestsFormView());
 
         // Mount the HtmlDocument to the DOM
         this.htmlDocument.mountToDom();
@@ -51,7 +74,7 @@ var MainViewController = ViewController.extend({
         return htmlDocument;
     },
 
-    createRunTestsFormView: function*() {
+    createRunTestsFormView: function() {
         // Create a FormView
         var runTestsFormView = new FormView({
             submitButton: {
@@ -59,49 +82,138 @@ var MainViewController = ViewController.extend({
             },
         });
 
+        runTestsFormView.on('form.submit', function(event) {
+            this.runTestMethods();
+        }.bind(this));
+
         // Checkbox
         var optionFormFieldView = new OptionFormFieldView('runTestsInOrder', {
             label: 'Run Tests in Order',
         });
         runTestsFormView.addFormFieldView(optionFormFieldView);
-
-        runTestsFormView.on('form.submit', function(event) {
-            Console.log('Form submit!', event);
-        }.bind(this));
         
         // Table for the tests
         var tableView = new TableView();
         tableView.setColumns(['Class', 'Method', 'Status', '']);
         
-        // Get all possible tests
-        //var tests = yield Proctor.getTests();
-        var tests = yield Proctor.getTests(null, 'electron');
-        //Console.standardLog(tests);
+        this.tests.methods.each(function(testMethodIndex, testMethod) {
+            testMethod.runButton = new ButtonView('Run');
+            testMethod.runButton.on('interact', function(event) {
+                this.createTestBrowserWindow(testMethod);
+            }.bind(this));
 
-        tests.methods.each(function(testMethodIndex, testMethod) {
-            var runTestMethodButton = new ButtonView('Run');
-            Console.error('This .on call doesnt seem tobe adding the event listener');
-            runTestMethodButton.on('interact', function(event) {
-                Console.log('button pressed!');
-                Console.standardLog(event);
-            });
-            Console.standardLog(runTestMethodButton);
+            testMethod.statusSpan = Html.span('Not Started');
 
-            tableView.addRow(testMethod.class.name, testMethod.name, 'Not Started', runTestMethodButton);
-        });
+            tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusSpan, testMethod.runButton);
+        }.bind(this));
 
         runTestsFormView.append(tableView);
 
         //Console.log(tableView.getData());
 
-        var summary = Html.p(tests.methods.length+' test methods in '+tests.classes.length+' tests');
+        var summary = Html.p(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
         runTestsFormView.append(summary);
 
         return runTestsFormView;
     },
 
-    runTests: function() {
-        console.log('running tests');
+    runTestMethods: function() {
+        this.runNextTestMethod();
+    },
+
+    runNextTestMethod: function() {
+        // Start case
+        if(this.currentTestMethodIndex === null) {
+            this.currentTestMethodIndex = -1;
+            this.currentTestMethodIndex = 0;
+            this.nextTestMethodIndex = 1;
+        }
+        else {
+            this.previousTestMethodIndex++;
+            this.currentTestMethodIndex++;
+            this.nextTestMethodIndex++;
+        }
+
+        var currentTestMethod = this.tests.methods[this.currentTestMethodIndex];
+
+        this.createTestBrowserWindow(currentTestMethod);
+
+        currentTestMethod.callback = function() {
+            this.runNextTestMethod();
+        }.bind(this);
+    },
+
+    createTestBrowserWindow: function(testMethod) {
+        var testBrowserWindowUniqueIdentifier = String.uniqueIdentifier();
+
+        this.testBrowserWindows[testBrowserWindowUniqueIdentifier] = {
+            status: 'waitingForApplicationToCreateTestBrowserWindow',
+            uniqueIdentifier: testBrowserWindowUniqueIdentifier,
+            testMethod: testMethod,
+        };
+        //Console.standardLog('this.testBrowserWindows', this.testBrowserWindows);
+
+        // Send a message to the main process to create a testBrowserWindow
+        Electron.ipcRenderer.send('mainBrowserWindow.createTestBrowserWindow', testBrowserWindowUniqueIdentifier);
+    },
+
+    handleApplicationReport: function(event, data) {
+        //console.log('handleApplicationReport', data);
+
+        var status = data.status;
+
+        // A test browser window has been closed
+        if(status == 'testBrowserWindowClosed') {
+            var testBrowserWindowUniqueIdentifier = data.testBrowserWindowUniqueIdentifier;
+            this.testBrowserWindows[testBrowserWindowUniqueIdentifier].status = 'closed';
+        }
+    },
+
+    handleTestBrowserWindowReport: function(event, data) {
+        Console.standardLog('handleTestBrowserWindowReport', data);
+
+        var status = data.status;
+        var testBrowserWindowUniqueIdentifier = data.testBrowserWindowUniqueIdentifier;
+        var testBrowserWindow = this.testBrowserWindows[testBrowserWindowUniqueIdentifier];
+
+        // The testBrowserWindow is created and ready for commands
+        if(status == 'webContentsDidFinishLoadingReadyForCommand') {
+            testBrowserWindow.status = status;
+
+            testBrowserWindow.testMethod.statusSpan.setContent('Test Window Ready')
+
+            // Command the testBrowserWindow to run the test method
+            Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'runTestMethod', {
+                testClassFilePath: testBrowserWindow.testMethod.class.file.path,
+                testClassName: testBrowserWindow.testMethod.class.name,
+                testMethodName: testBrowserWindow.testMethod.name,
+            });
+        }
+        //else if(status == 'Proctor.startedRunningTests') {
+        //    testBrowserWindow.testMethod.statusSpan.setContent('startedRunningTests');
+        //}
+        //else if(status == 'Proctor.startedRunningTest') {
+        //    testBrowserWindow.testMethod.statusSpan.setContent('startedRunningTest');
+        //}
+        else if(status == 'Proctor.startedRunningTestMethod') {
+            testBrowserWindow.testMethod.statusSpan.setContent('Running...');
+        }
+        else if(status == 'Proctor.finishedRunningTestMethod') {
+            testBrowserWindow.testMethod.statusSpan.setContent(data.data.status.toTitle());
+        }
+        //else if(status == 'Proctor.finishedRunningTest') {
+        //    testBrowserWindow.testMethod.statusSpan.setContent('finishedRunningTest');
+        //}
+        else if(status == 'Proctor.finishedRunningTests') {
+            //testBrowserWindow.testMethod.statusSpan.setContent('finishedRunningTests');
+
+            if(testBrowserWindow.testMethod.callback) {
+                testBrowserWindow.testMethod.callback.apply(this);
+            }
+
+            // Command the testBrowserWindow to close
+            Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'close', {});
+        }
     },
 
 });

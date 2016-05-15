@@ -2,20 +2,19 @@
 var Electron = require('electron');
 
 // Class
-var Application = Electron.app;
+var Application = {};
 
 // Static properties
 
 // Keep a global reference of the window object, if you don't, the window will be closed automatically when the object is garbage collected
 Application.mainBrowserWindow = null;
-Application.testBrowserWindow = null;
-Application.eventEmitter = new (require('events'))();
+Application.testBrowserWindows = {};
 
 // Static methods
 
 Application.run = function() {
 	// This method will be called when Electron has done all initialization and is ready to create browser windows
-	Application.on('ready', function() {
+	Electron.app.on('ready', function() {
 		// Create the browser window
 		Application.mainBrowserWindow = new Electron.BrowserWindow({
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
@@ -34,42 +33,81 @@ Application.run = function() {
 			// Dereference the window object, usually you would store windows in an array if your app supports multi windows, this is the time when you should delete the corresponding element
 			Application.mainBrowserWindow = null;
 
-			if(Application.testBrowserWindow) {
-				Application.testBrowserWindow.close();	
-			}
-			Application.testBrowserWindow = null;			
+			// Quit when the mainBrowserWindow is closed
+			Electron.app.quit();
 		});
 	});
 
 	// Quit when all windows are closed
-	Application.on('window-all-closed', function() {
-		Application.quit();
+	Electron.app.on('window-all-closed', function() {
+		Electron.app.quit();
+	});
+
+	// mainBrowserWindow can tell Application to create testBrowserWindows
+	Electron.ipcMain.on('mainBrowserWindow.createTestBrowserWindow', function(event, testBrowserWindowUniqueIdentifier, testClassName, testMethodName) {
+		Application.createTestBrowserWindow(testBrowserWindowUniqueIdentifier, testClassName, testMethodName);
+	});
+
+	// mainBrowserWindow can tell Application to destory testBrowserWindows
+	Electron.ipcMain.on('mainBrowserWindow.destroyTestBrowserWindow', function(event, testBrowserWindowUniqueIdentifier) {
+		Application.destroyTestBrowserWindow(testBrowserWindowUniqueIdentifier);
+	});
+
+	// mainBrowserWindow can tell Application to command testBrowserWindows
+	Electron.ipcMain.on('mainBrowserWindow.commandTestBrowserWindow', function(event, testBrowserWindowUniqueIdentifier, command, data) {
+		Application.commandTestBrowserWindow(testBrowserWindowUniqueIdentifier, command, data);
+	});
+
+	// testBrowserWindows can tell Application to report to the mainBrowserWindow
+	Electron.ipcMain.on('testBrowserWindow.report', function(event, testBrowserWindowUniqueIdentifier, data) {
+		Application.mainBrowserWindow.send('testBrowserWindow.report', testBrowserWindowUniqueIdentifier, data);
 	});
 };
 
-Application.runTests = function(path, filePattern, methodPattern) {
-	if(!Application.testBrowserWindow) {
-		// Create the browser window
-		Application.testBrowserWindow = new Electron.BrowserWindow({
-			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
-			//show: false, // Do not show the main browser window as we want to wait until it is resized before showing it
-		});
+Application.createTestBrowserWindow = function(testBrowserWindowUniqueIdentifier) {
+    var testBrowserWindow = Application.testBrowserWindows[testBrowserWindowUniqueIdentifier] = new Electron.BrowserWindow({
+        title: testBrowserWindowUniqueIdentifier,
+        //show: false,
+    });
 
-		// Debugging - comment out the lines below when ready for release
-		Application.testBrowserWindow.openDevTools(); // Comment out for production
-		//Application.testBrowserWindow.show(); // Comment out for production
+    // Show developer tools on failure
+    // TODO: Don't show dev tools always
+    testBrowserWindow.openDevTools();
 
-		Application.testBrowserWindow.webContents.on('did-finish-load', function() {
-			Application.eventEmitter.emit('proctor.getAndRunTests', {
-				path: path,
-				filePattern: filePattern,
-				methodPattern: methodPattern,
-			});
-		});
+    // Load the test method container page, passing in the testBrowserWindowUniqueIdentifier as the hash
+	var testMethodContainerUrl = require('url').format({
+		protocol: 'file',
+		pathname: __dirname+'/TestMethodContainer.html',
+		slashes: true,
+		hash: testBrowserWindowUniqueIdentifier,
+	});
+    testBrowserWindow.loadURL(testMethodContainerUrl);
+
+    // Clean up when the testBrowserWindow closes
+    testBrowserWindow.on('closed', function(event) {
+    	Application.testBrowserWindowClosed(testBrowserWindowUniqueIdentifier);
+    });
+};
+
+Application.destroyTestBrowserWindow = function(testBrowserWindowUniqueIdentifier) {
+	Application.testBrowserWindows[testBrowserWindowUniqueIdentifier].destroy();
+};
+
+Application.testBrowserWindowClosed = function(testBrowserWindowUniqueIdentifier) {
+	// Remove the reference from Application.testBrowserWindows
+	delete Application.testBrowserWindows[testBrowserWindowUniqueIdentifier];
+
+	// Notify the mainBrowserWindow if it is still active
+	if(Application.mainBrowserWindow) {
+		Application.mainBrowserWindow.send('Application.report', {
+			status: 'testBrowserWindowClosed',
+			testBrowserWindowUniqueIdentifier: testBrowserWindowUniqueIdentifier,
+		});	
 	}
+};
 
-	// Load the main browser window content
-	Application.testBrowserWindow.loadURL('file://'+__dirname+'/Test.html');
+Application.commandTestBrowserWindow = function(testBrowserWindowUniqueIdentifier, command, data) {
+	Application.testBrowserWindows[testBrowserWindowUniqueIdentifier].send('mainBrowserWindow.commandTestBrowserWindow', command, data);
 };
 
 // Run the application

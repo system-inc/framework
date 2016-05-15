@@ -1,6 +1,7 @@
 // Dependencies
 var View = Framework.require('system/web-interface/views/View.js');
 var Html = Framework.require('system/html/Html.js');
+var FormControlView = Framework.require('system/web-interface/views/forms/controls/FormControlView.js');
 
 // Class
 var FormFieldView = View.extend({
@@ -82,9 +83,14 @@ var FormFieldView = View.extend({
 		var data = {};
 
 		var getDataRecursively = function(view) {
+			// Make sure we are working with a view and not an HtmlNode
+			if(!View.is(view)) {
+				return;
+			}
+
 			// If the view is a FormControlView
 			if(FormControlView.is(view)) {
-				data[view.identifier] = view.getData();
+				data[view.identifier] = view.getValue();
 			}
 			// Check the children to see if there are any FormControlViews
 			else if(view.children.length) {

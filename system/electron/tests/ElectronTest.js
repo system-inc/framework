@@ -17,6 +17,8 @@ var ElectronTest = Test.extend({
 	},
 
 	testElectron: function*() {
+		//Console.log('ElectronTest testElectron');
+		//throw new Error('meh');
 		Assert.true(Object.hasKey(Node.Process.versions, 'electron'), 'Electron version is set');
 	},
 

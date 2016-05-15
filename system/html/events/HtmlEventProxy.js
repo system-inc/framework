@@ -138,7 +138,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 	var domEventListenerFunctionToBind = function(domEvent) {
 		// Take the domEvent identifier and turn it into an HtmlEventIdentifier
 		var htmlEventIdentifier = HtmlEventProxy.domEventIdentifierToHtmlEventIdentifier(domEvent.type);
-		Console.log('domEvent.type', domEvent.type, 'htmlEventIdentifier', htmlEventIdentifier);
+		//Console.log('domEvent.type', domEvent.type, 'htmlEventIdentifier', htmlEventIdentifier);
 
 		// Create the proper event (MouseEvent for 'click', KeyboardEvent for 'keydown', etc.)
 		Console.info('We need to fix next line');
@@ -148,7 +148,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		event.domEvent = domEvent;
 		event.trusted = domEvent.isTrusted;
 
-		Console.standardLog('event', event);
+		//Console.standardLog('event', event);
 
 		// Emit the event
 		htmlEventEmitter.emit(htmlEventIdentifier, event);
@@ -164,7 +164,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		// If we don't have a domObject, wait to be mountedToDom
 		else {
 			htmlEventEmitter.on(['htmlDocument.mountedToDom', 'htmlNode.mountedToDom'], function() {
-				Console.log('Mounted to DOM, calling addEventListener now for', htmlEventEmitter.tag);
+				//Console.log('Mounted to DOM, calling domNode.addEventListener now for', htmlEventEmitter.tag, Json.encode(htmlEventEmitter.attributes));
 
 				// Get the domObject from the htmlEventEmitter
 				domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
@@ -183,11 +183,11 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		];
 		if(!common.contains(eventPattern)) {
 			Console.log('No domEventIdentifier found for', eventPattern);
-		}		
-
-		// Add the event listener to the htmlEventEmitter, use HtmlEventEmitter prototype (as opposed to htmlEventEmitter) as to not cause an infinite loop
-		HtmlEventEmitter.prototype.addEventListener.apply(htmlEventEmitter, arguments);
+		}
 	}
+
+	// Add the event listener to the htmlEventEmitter, use HtmlEventEmitter prototype (as opposed to htmlEventEmitter) as to not cause an infinite loop
+	HtmlEventEmitter.prototype.addEventListener.apply(htmlEventEmitter, arguments);
 
 	return htmlEventEmitter;
 };

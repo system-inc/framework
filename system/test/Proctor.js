@@ -118,6 +118,7 @@ var Proctor = EventEmitter.extend({
 
 	getAndRunTests: function*(path, filePattern, methodPattern) {
 		var tests = yield Proctor.getTests(path, filePattern, methodPattern);
+		//Console.standardLog('getAndRunTests', path, filePattern, methodPattern, tests);
 
 		tests.classes.each(function(classIndex, classObject) {
 			this.addTest(classObject.name, classObject.file.name, classObject.file.directory);
@@ -719,6 +720,8 @@ Proctor.globals = {
 		'dispatchEvent',
 		'onunhandledrejection',
 		'onrejectionhandled',
+		'ondeviceorientationabsolute',
+		'createImageBitmap',
 	],
 	leaked: [],
 };
@@ -746,12 +749,15 @@ Proctor.getTests = function*(path, filePattern, methodPattern) {
 
 	// Resolve the path
 	path = Proctor.resolvePath(path);
-	//Console.log(path);
+	Console.log(path);
 	//Node.exit(path);
 
-	// Lowercase strings
-	if(String.is(filePattern)) {
+	// If patterns are set and are strings, lowercase them for later matching
+	if(filePattern && String.is(filePattern)) {
 		filePattern = filePattern.lowercase();
+	}
+	if(methodPattern && String.is(methodPattern)) {
+		methodPattern = methodPattern.lowercase();	
 	}
 
 	// Create a file or directory object from the path
@@ -812,9 +818,11 @@ Proctor.getTests = function*(path, filePattern, methodPattern) {
 							tests.classes.append(testClassObject);
 
 							// Loop through all of the class properties
-							for(var key in instantiatedTestClass) {
+							for(var key in instantiatedTestClass) {						
 								// All tests must start with "test" and be a function
 								if(key.startsWith('test') && Function.is(instantiatedTestClass[key])) {
+									//Console.log('Test method name:', key);
+
 									// Filter test methods
 									if(methodPattern == null || key.lowercase().match(methodPattern)) {
 										//Console.log(key.lowercase(), 'matched against', methodPattern);
