@@ -91,6 +91,9 @@ var MainViewController = ViewController.extend({
             label: 'Run Tests in Order',
         });
         runTestsFormView.addFormFieldView(optionFormFieldView);
+
+        var summary = Html.p(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
+        runTestsFormView.append(summary);
         
         // Table for the tests
         var tableView = new TableView();
@@ -110,9 +113,6 @@ var MainViewController = ViewController.extend({
         runTestsFormView.append(tableView);
 
         //Console.log(tableView.getData());
-
-        var summary = Html.p(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
-        runTestsFormView.append(summary);
 
         return runTestsFormView;
     },

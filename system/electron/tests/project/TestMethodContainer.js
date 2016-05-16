@@ -53,7 +53,9 @@ Electron.ipcRenderer.on('mainBrowserWindow.commandTestBrowserWindow', function(e
 			});
 		});
 
-		proctor.getAndRunTests(testClassFilePath, testClassName, testMethodName);
+		Console.log('Testing below');
+		//proctor.getAndRunTests(testClassFilePath, testClassName, testMethodName);
+		proctor.getAndRunTests();
 	}
 	// close
 	else if(command == 'close') {
