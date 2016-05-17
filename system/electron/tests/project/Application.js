@@ -67,7 +67,7 @@ Application.run = function() {
 Application.createTestBrowserWindow = function(testBrowserWindowUniqueIdentifier) {
     var testBrowserWindow = Application.testBrowserWindows[testBrowserWindowUniqueIdentifier] = new Electron.BrowserWindow({
         title: testBrowserWindowUniqueIdentifier,
-        //show: false,
+        show: false,
     });
 
     // Show developer tools on failure
