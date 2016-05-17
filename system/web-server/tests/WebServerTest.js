@@ -1,6 +1,7 @@
 // Dependencies
 var Test = Framework.require('system/test/Test.js');
 var Assert = Framework.require('system/test/Assert.js');
+var File = Framework.require('system/file-system/File.js');
 var WebServer = Framework.require('system/web-server/WebServer.js');
 var WebRequest = Framework.require('system/web/WebRequest.js');
 var Url = Framework.require('system/web/Url.js');
@@ -10,174 +11,25 @@ var WebServerTest = Test.extend({
 
 	protocol: 'http',
 	host: 'localhost',
-	port: 8181,
+	port: null,
 	baseUrl: null,
 	webServer: null,
 
 	before: function*() {
-		this.baseUrl = new Url(this.protocol+'://'+this.host+':'+this.port);
+		var webServerSettings = File.synchronous.read.json(Framework.directory+'/system/web-server/tests/settings/settings.json');
 
-		this.webServer = new WebServer('test', {
-			verbose: false,
-			directory: __dirname,
-			protocols: {
-				http: {
-					ports: [
-						this.port,
-					],
-				}
-			},
-			router: {
-				routes: [
-					{
-						expression: '/',
-						type: 'controller,',
-						controllerName: 'TestWebServerController',
-						controllerMethodName: 'root',
-						data: {
-							root: 'Root data.',
-						},
-						children: [
-							{
-								expression: 'cookies',
-								controllerMethodName: 'cookies',
-							},
-							{
-								expression: 'throw-internal-server-error-in-function',
-								controllerMethodName: 'throwInternalServerErrorInFunction',
-							},
-							{
-								expression: 'throw-internal-server-error-in-generator',
-								controllerMethodName: 'throwInternalServerErrorInGenerator',
-							},
-							{
-								expression: 'throw-bad-request-error',
-								controllerMethodName: 'throwBadRequestError',
-							},
-							{
-								expression: 'throw-forbidden-error',
-								controllerMethodName: 'throwForbiddenError',
-							},
-							{
-								expression: 'throw-requested-range-not-satisfiable-error',
-								controllerMethodName: 'throwRequestedRangeNotSatisfiableError',
-							},
-							{
-								expression: 'throw-request-entity-too-large-error',
-								controllerMethodName: 'throwRequestEntityTooLargeError',
-							},
-							{
-								expression: 'throw-unauthorized-error',
-								controllerMethodName: 'throwUnauthorizedError',
-							},
-							{
-								type: 'redirect',
-								redirectStatusCode: 301,
-								redirectHost: 'www.system.inc',
-								expression: 'redirect',
-							},
-							{
-								type: 'proxy',
-								proxyUrl: 'http://www.google.com/',
-								expression: 'proxy',
-							},
-							{
-								expression: 'items/(\\w+?)/?',
-								controllerMethodName: 'item',
-								data: {
-									view: 'item',
-									1: 'itemIdentifier',
-								},
-								children: [
-									{
-										expression: 'related-items/(\\w+?)/?',
-										data: {
-											view: 'relatedItem',
-											1: 'relatedItemIdentifier',
-										},
-									},
-								],
-							},
-							{
-								expression: 'put-only',
-								controllerMethodName: 'putOnly',
-								methods: 'PUT',
-							},
-							{
-								expression: 'level-one/?',
-								controllerMethodName: 'levelOne',
-								data: {
-									levelOne: 'levelOne',
-									view: 'levelOne',
-								},
-								children: [
-									{
-										expression: 'level-two/?',
-										controllerMethodName: 'levelOneLevelTwo',
-										data: {
-											levelOneLevelTwo: 'levelOneLevelTwo',
-											view: 'levelOneLevelTwo',
-										},
-										children: [
-											{
-												expression: 'level-three/?',
-												controllerMethodName: 'levelOneLevelTwoLevelThree',
-												data: {
-													levelOneLevelTwoLevelThree: 'levelOneLevelTwoLevelThree',
-													view: 'levelOneLevelTwoLevelThree',
-												},
-											},
-										],
-									},
-								],
-							},
-							{
-								expression: 'content/',
-								children: [
-									{
-										expression: 'archived-file',
-										controllerMethodName: 'contentArchivedFile',
-									},
-									{
-										expression: 'file',
-										controllerMethodName: 'contentFile',
-									},
-									{
-										expression: 'html-document',
-										controllerMethodName: 'contentHtmlDocument',
-									},
-									{
-										expression: 'object',
-										controllerMethodName: 'contentObject',
-									},
-									{
-										expression: 'string',
-										controllerMethodName: 'contentString',
-									},
-									{
-										expression: 'buffer',
-										controllerMethodName: 'contentBuffer',
-									},
-									{
-										expression: 'stream',
-										controllerMethodName: 'contentStream',
-									},
-								],
-							},
-							{
-								expression: 'api/data/numbers',
-								controllerMethodName: 'apiDataNumbers',
-							},
-							{
-								expression: '(.*?)(images|scripts|style-sheets|files)/(.*)',
-								type: 'file',
-								filePath: '*',
-							},
-						],
-					},
-				],
-			},
-		});
+		this.port = webServerSettings.modules.webServer.webServers[0].protocols.http.ports[0];
+
+		this.baseUrl = new Url(this.protocol+'://'+this.host+':'+this.port);
+		//Node.exit(this.baseUrl);
+
+		// Turn off verbose
+		webServerSettings.modules.webServer.webServers[0].verbose = false;
+
+		// Set the web server directory
+		webServerSettings.modules.webServer.webServers[0].directory = Node.Path.normalize(Framework.directory+'/system/web-server/tests/');
+
+		this.webServer = new WebServer('test', webServerSettings.modules.webServer.webServers[0]);
 
 		//Console.highlight(this.webServer);
 

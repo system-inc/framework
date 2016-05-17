@@ -205,17 +205,28 @@ File.synchronous.exists = Node.FileSystem.existsSync;
 File.synchronous.read = Node.FileSystem.readFileSync;
 
 File.synchronous.read.json = function(file) {
+    var file = Node.Path.normalize(file);
 	var result = {};
 
 	if(File.synchronous.exists(file)) {
+        //Console.info('File '+file+' exists.');
+
 		// Read the file
 		var json = File.synchronous.read(file).toString();
+
+        //Console.info('json', json);
 
 		// Make sure we have JSON
 		if(Json.is(json)) {
 			result = Json.decode(json);
 		}
+        else {
+            //Console.warn('File '+file+' is not JSON.');
+        }
 	}
+    else {
+        //Console.warn('File '+file+' does not exist.');
+    }
 
 	return result;
 };

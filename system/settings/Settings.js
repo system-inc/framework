@@ -63,7 +63,11 @@ var Settings = Class.extend({
 // Static methods
 
 Settings.constructFromFile = function(filePath, defaults) {
+	//Console.log('filePath', filePath);
+
 	var object = File.synchronous.read.json(filePath);
+
+	//Console.log('object', object);
 
 	var object = new Settings(object, defaults);
 

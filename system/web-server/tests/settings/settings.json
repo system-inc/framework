@@ -1,0 +1,171 @@
+{
+	title: 'Test Web Server',
+	version: '0.1.0',
+	description: 'An example web server used for testing.',
+	modules: {
+		webServer: {
+			webServers: [
+				{
+					verbose: true,
+					protocols: {
+						http: {
+							ports: [
+								8181,
+							],
+						}
+					},
+					router: {
+						routes: [
+							{
+								expression: '/',
+								type: 'controller,',
+								controllerName: 'TestWebServerController',
+								controllerMethodName: 'root',
+								data: {
+									root: 'Root data.',
+								},
+								children: [
+									{
+										expression: 'cookies',
+										controllerMethodName: 'cookies',
+									},
+									{
+										expression: 'throw-internal-server-error-in-function',
+										controllerMethodName: 'throwInternalServerErrorInFunction',
+									},
+									{
+										expression: 'throw-internal-server-error-in-generator',
+										controllerMethodName: 'throwInternalServerErrorInGenerator',
+									},
+									{
+										expression: 'throw-bad-request-error',
+										controllerMethodName: 'throwBadRequestError',
+									},
+									{
+										expression: 'throw-forbidden-error',
+										controllerMethodName: 'throwForbiddenError',
+									},
+									{
+										expression: 'throw-requested-range-not-satisfiable-error',
+										controllerMethodName: 'throwRequestedRangeNotSatisfiableError',
+									},
+									{
+										expression: 'throw-request-entity-too-large-error',
+										controllerMethodName: 'throwRequestEntityTooLargeError',
+									},
+									{
+										expression: 'throw-unauthorized-error',
+										controllerMethodName: 'throwUnauthorizedError',
+									},
+									{
+										type: 'redirect',
+										redirectStatusCode: 301,
+										redirectHost: 'www.system.inc',
+										expression: 'redirect',
+									},
+									{
+										type: 'proxy',
+										proxyUrl: 'http://www.google.com/',
+										expression: 'proxy',
+									},
+									{
+										expression: 'items/(\\w+?)/?',
+										controllerMethodName: 'item',
+										data: {
+											view: 'item',
+											'1': 'itemIdentifier',
+										},
+										children: [
+											{
+												expression: 'related-items/(\\w+?)/?',
+												data: {
+													view: 'relatedItem',
+													'1': 'relatedItemIdentifier',
+												},
+											},
+										],
+									},
+									{
+										expression: 'put-only',
+										controllerMethodName: 'putOnly',
+										methods: 'PUT',
+									},
+									{
+										expression: 'level-one/?',
+										controllerMethodName: 'levelOne',
+										data: {
+											levelOne: 'levelOne',
+											view: 'levelOne',
+										},
+										children: [
+											{
+												expression: 'level-two/?',
+												controllerMethodName: 'levelOneLevelTwo',
+												data: {
+													levelOneLevelTwo: 'levelOneLevelTwo',
+													view: 'levelOneLevelTwo',
+												},
+												children: [
+													{
+														expression: 'level-three/?',
+														controllerMethodName: 'levelOneLevelTwoLevelThree',
+														data: {
+															levelOneLevelTwoLevelThree: 'levelOneLevelTwoLevelThree',
+															view: 'levelOneLevelTwoLevelThree',
+														},
+													},
+												],
+											},
+										],
+									},
+									{
+										expression: 'content/',
+										children: [
+											{
+												expression: 'archived-file',
+												controllerMethodName: 'contentArchivedFile',
+											},
+											{
+												expression: 'file',
+												controllerMethodName: 'contentFile',
+											},
+											{
+												expression: 'html-document',
+												controllerMethodName: 'contentHtmlDocument',
+											},
+											{
+												expression: 'object',
+												controllerMethodName: 'contentObject',
+											},
+											{
+												expression: 'string',
+												controllerMethodName: 'contentString',
+											},
+											{
+												expression: 'buffer',
+												controllerMethodName: 'contentBuffer',
+											},
+											{
+												expression: 'stream',
+												controllerMethodName: 'contentStream',
+											},
+										],
+									},
+									{
+										expression: 'api/data/numbers',
+										controllerMethodName: 'apiDataNumbers',
+									},
+									{
+										expression: '(.*?)(images|scripts|style-sheets|files)/(.*)',
+										type: 'file',
+										filePath: '*',
+									},
+								],
+							},
+						],
+					},
+				},
+			],
+		},
+	},
+}

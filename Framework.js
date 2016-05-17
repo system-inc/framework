@@ -32,7 +32,7 @@ Console = require('./system/console/Console.js');
 // Class
 var Framework = Class.extend({
 
-	title: null,
+	title: 'Project',
 	identifier: null,
 	description: null,
 
@@ -104,12 +104,14 @@ var Framework = Class.extend({
 
 		var Settings = Framework.require('system/settings/Settings.js');
 		this.settings = Settings.constructFromFile(Node.Path.join(this.directory, 'settings', 'settings.json'));
+		//Console.log('loadProjectSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
 
 		// Set the default settings
 		this.settings.setDefaults({
 			environment: 'development',
+			modules: {},
 		});
-		//Console.log(this.settings);
+		//Console.log('this.settings', this.settings);
 
 		// Merge the environment settings
 		//Console.log('Integrating environment settings...')

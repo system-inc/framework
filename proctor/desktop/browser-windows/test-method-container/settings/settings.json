@@ -1,0 +1,59 @@
+{
+	title: 'Test Browser Window \u2022 Proctor \u2022 Framework',
+	modules: {
+		database: {
+			databases: {
+				frameworkTest: {
+					host: 'localhost',
+					username: 'framework_test',
+					password: 'framework_test',
+					databaseName: 'framework_test',
+				}
+			}
+		},
+		electron: {
+			mainBrowserWindow: {
+				windowState: {
+					remember: false,
+					defaultWindowState: {
+						applyOn: {
+							displayAdded: true,
+							displayRemoved: true,
+							displayMetricsChanged: true,
+						},
+						oneDisplay: {
+							display: 1,
+							mode: 'normal',
+							width: .5, // Production
+							//width: .5, // Development
+							height: .5, // Production
+							//height: .5, // Development
+							x: 'right',
+							y: 'top',
+						},
+						twoDisplays: {
+							display: 2,
+							mode: 'normal',
+							width: .5, // Production
+							//width: .5, // Development
+							height: .5, // Production
+							//height: .5, // Development
+							x: 'left',
+							y: 'top',
+						},
+					},
+				},
+				developerTools: {
+					show: true, // Development
+				},
+			},
+			shortcuts: {
+				closeFocusedWindow: false,
+				reloadFocusedWindow: false,
+				toggleFullScreenOnFocusedWindow: false,
+				toggleDeveloperToolsOnFocusedWindow: false,
+				applyDefaultWindowStateOnFocusedWindow: false,
+			},
+		},
+	},
+}

@@ -486,34 +486,22 @@ var Proctor = EventEmitter.extend({
 
 Proctor.globals = {
 	expected: [
+		// Framework
 		'Console',
-		'GLOBAL',
 		'Generator',
 		'Json',
 		'Node',
 		'Primitive',
 		'Project',
-		'console',
-		'global',
-		'length',
-		'process',
-		'root',
 		'Buffer',
 		'Class',
-		'DTRACE_HTTP_CLIENT_REQUEST',
-		'DTRACE_HTTP_CLIENT_RESPONSE',
-		'DTRACE_HTTP_SERVER_REQUEST',
-		'DTRACE_HTTP_SERVER_RESPONSE',
-		'DTRACE_NET_SERVER_CONNECTION',
-		'DTRACE_NET_STREAM_END',
 		'Framework',
 		'RegularExpression',
 		'Stream',
 		'Time',
 		'Try',
-		'clearImmediate',
-		'clearInterval',
-		'clearTimeout',
+
+		// Framework - Object
 		'clone',
 		'each',
 		'getValueByPath',
@@ -522,13 +510,33 @@ Proctor.globals = {
 		'integrate',
 		'isEmpty',
 		'merge',
-		'setImmediate',
-		'setInterval',
-		'setTimeout',
 		'setValueByPath',
 		'sort',
 		'toArray',
 		'toJson',
+
+		// Framework - Electron
+		'mainBrowserWindowViewController',
+
+		// Node
+		'GLOBAL',
+		'console',
+		'global',
+		'length',
+		'process',
+		'root',
+		'clearImmediate',
+		'clearInterval',
+		'clearTimeout',
+		'setImmediate',
+		'setInterval',
+		'setTimeout',
+		'DTRACE_HTTP_CLIENT_REQUEST',
+		'DTRACE_HTTP_CLIENT_RESPONSE',
+		'DTRACE_HTTP_SERVER_REQUEST',
+		'DTRACE_HTTP_SERVER_RESPONSE',
+		'DTRACE_NET_SERVER_CONNECTION',
+		'DTRACE_NET_STREAM_END',
 
 		// Windows
 		'COUNTER_NET_SERVER_CONNECTION',
@@ -749,7 +757,7 @@ Proctor.getTests = function*(path, filePattern, methodPattern) {
 
 	// Resolve the path
 	path = Proctor.resolvePath(path);
-	Console.log(path);
+	//Console.log(path);
 	//Node.exit(path);
 
 	// If patterns are set and are strings, lowercase them for later matching
