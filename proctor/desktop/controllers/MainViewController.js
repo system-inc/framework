@@ -180,7 +180,7 @@ var MainViewController = ViewController.extend({
         if(status == 'readyForCommand') {
             testBrowserWindow.status = status;
 
-            testBrowserWindow.testMethod.statusSpan.setContent('Test Window Ready')
+            testBrowserWindow.testMethod.statusSpan.setContent('Test Window Ready');
 
             // Command the testBrowserWindow to run the test method
             Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'runTestMethod', {
