@@ -1,10 +1,12 @@
+# Libaries
+libraries/electron/windows/*
+libraries/electron/os-x/*
+libraries/electron/linux/*
+
 # Proctor
 proctor/command/logs/*
 proctor/desktop/logs/*
 proctor/desktop/libraries/electron/*
-proctor/libraries/electron/windows/*
-proctor/libraries/electron/os-x/*
-proctor/libraries/electron/linux/*
 proctor/desktop/browser-windows/test-method-container/logs/*
 
 # Test Web Server

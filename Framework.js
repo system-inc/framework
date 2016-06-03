@@ -249,6 +249,7 @@ Framework.directory = __dirname;
 
 Framework.coreModules = [
 	'ConsoleModule',
+	'ArchiveModule',
 ];
 
 // Static methods
