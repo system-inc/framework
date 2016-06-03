@@ -180,7 +180,7 @@ var MainViewController = ViewController.extend({
         // The testBrowserWindow is created and ready for commands
         if(status == 'readyForCommand') {
             testBrowserWindow.status = status;
-            testBrowserWindow.free();
+            testBrowserWindow.release();
             //console.standardLog(testBrowserWindow);
         }
         //else if(status == 'Proctor.startedRunningTests') {

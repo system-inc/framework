@@ -17,15 +17,15 @@ var Reusable = Class.extend({
 	},
 
 	initialize: function() {
-		this.pool.freeReusable(this);
+		this.pool.releaseReusable(this);
 	},
 
 	reset: function() {
-		this.pool.freeReusable(this);
+		this.pool.releaseReusable(this);
 	},
 
-	free: function() {
-		this.pool.freeReusable(this);
+	release: function() {
+		this.pool.releaseReusable(this);
 	},	
 
 	retire: function() {

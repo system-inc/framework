@@ -7,6 +7,7 @@ var TestBrowserWindowPool = Pool.extend({
 
 	reusableClass: TestBrowserWindow,
 	maximumSize: 8,
+	//maximumSize: 3,
 	createReusablesAsNecessary: true,
 
 });

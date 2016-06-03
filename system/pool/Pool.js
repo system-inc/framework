@@ -69,8 +69,8 @@ var Pool = EventEmitter.extend({
 				}
 
 				// Register to get the next available reusable
-				this.once('freeReusable', function(event) {
-					Console.standardLog('freeReusable event', event);
+				this.once('availableReusable', function(event) {
+					Console.standardLog('availableReusable event', event);
 
 					// We must stop the event otherwise others waiting for available reusables will receive the event
 					event.stop();
@@ -115,7 +115,7 @@ var Pool = EventEmitter.extend({
 		return reusable;
 	},
 
-	freeReusable: function(reusable) {
+	releaseReusable: function(reusable) {
 		// Remove the reusable from the busy list
 		delete this.busyReusables[reusable.uniqueIdentifier];
 
@@ -126,7 +126,7 @@ var Pool = EventEmitter.extend({
 		this.availableReusables[reusable.uniqueIdentifier] = reusable;
 
 		// Emit an event letting any listeners know we have a free reusable
-		this.emit('freeReusable', reusable);
+		this.emit('availableReusable', reusable);
 
 		return reusable;
 	},

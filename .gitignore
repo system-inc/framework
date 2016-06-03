@@ -7,6 +7,7 @@ libraries/electron/linux/*
 proctor/command/logs/*
 proctor/desktop/logs/*
 proctor/desktop/libraries/electron/*
+proctor/desktop/browser-windows/test-browser-window/logs/
 proctor/desktop/browser-windows/test-browser-window/logs/*
 
 # Test Web Server
