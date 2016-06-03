@@ -10,6 +10,7 @@ var SingleLineTextFormControlView = Framework.require('system/web-interface/view
 var Proctor = Framework.require('system/test/Proctor.js');
 var TableView = Framework.require('system/web-interface/views/tables/TableView.js');
 var ButtonView = Framework.require('system/web-interface/views/buttons/ButtonView.js');
+var TestBrowserWindowPool = Project.require('browser-windows/TestBrowserWindowPool.js');
 var Electron = Node.require('electron');
 
 // Class
@@ -20,12 +21,16 @@ var MainViewController = ViewController.extend({
     tests: null,
     testBrowserWindows: {},
 
+    testBrowserWindowPool: null,
+
     previousTestMethodIndex: null,
     currentTestMethodIndex: null,
     nextTestMethodIndex: null,
 
 	construct: function(electronManager) {
         this.electronManager = electronManager;
+
+        this.testBrowserWindowPool = new TestBrowserWindowPool();
 
         // Listen to reports from Application
         Electron.ipcRenderer.on('Application.report', function() {
@@ -87,8 +92,8 @@ var MainViewController = ViewController.extend({
         }.bind(this));
 
         // Checkbox
-        var optionFormFieldView = new OptionFormFieldView('runTestsInOrder', {
-            label: 'Run Tests in Order',
+        var optionFormFieldView = new OptionFormFieldView('runTestsSynchronously', {
+            label: 'Run Tests Synchronously',
         });
         runTestsFormView.addFormFieldView(optionFormFieldView);
 
@@ -121,7 +126,7 @@ var MainViewController = ViewController.extend({
         this.runNextTestMethod();
     },
 
-    runNextTestMethod: function() {
+    runNextTestMethod: function*() {
         // Start case
         if(this.currentTestMethodIndex === null) {
             this.currentTestMethodIndex = -1;
@@ -136,25 +141,19 @@ var MainViewController = ViewController.extend({
 
         var currentTestMethod = this.tests.methods[this.currentTestMethodIndex];
 
-        this.createTestBrowserWindow(currentTestMethod);
+        if(currentTestMethod) {
+            currentTestMethod.callback = function() {
+                this.runNextTestMethod();
+            }.bind(this);
 
-        currentTestMethod.callback = function() {
-            this.runNextTestMethod();
-        }.bind(this);
-    },
+            // Get a test browser window from the pool
+            var testBrowserWindow = yield this.testBrowserWindowPool.getReusable();
 
-    createTestBrowserWindow: function(testMethod) {
-        var testBrowserWindowUniqueIdentifier = String.uniqueIdentifier();
+            Console.standardLog('MainViewController.runNextTestMethod testBrowserWindow', testBrowserWindow.uniqueIdentifier, testBrowserWindow);
 
-        this.testBrowserWindows[testBrowserWindowUniqueIdentifier] = {
-            status: 'waitingForApplicationToCreateTestBrowserWindow',
-            uniqueIdentifier: testBrowserWindowUniqueIdentifier,
-            testMethod: testMethod,
-        };
-        //Console.standardLog('this.testBrowserWindows', this.testBrowserWindows);
-
-        // Send a message to the main process to create a testBrowserWindow
-        Electron.ipcRenderer.send('mainBrowserWindow.createTestBrowserWindow', testBrowserWindowUniqueIdentifier);
+            // Run the test method in the test browser window
+            testBrowserWindow.runTestMethod(currentTestMethod);
+        }
     },
 
     handleApplicationReport: function(event, data) {
@@ -165,7 +164,9 @@ var MainViewController = ViewController.extend({
         // A test browser window has been closed
         if(status == 'testBrowserWindowClosed') {
             var testBrowserWindowUniqueIdentifier = data.testBrowserWindowUniqueIdentifier;
-            this.testBrowserWindows[testBrowserWindowUniqueIdentifier].status = 'closed';
+            var testBrowserWindow = this.testBrowserWindowPool.getReusableByUniqueIdentifier(testBrowserWindowUniqueIdentifier);
+            testBrowserWindow.status = 'closed';
+            testBrowserWindow.retire();
         }
     },
 
@@ -174,20 +175,13 @@ var MainViewController = ViewController.extend({
 
         var status = data.status;
         var testBrowserWindowUniqueIdentifier = data.testBrowserWindowUniqueIdentifier;
-        var testBrowserWindow = this.testBrowserWindows[testBrowserWindowUniqueIdentifier];
+        var testBrowserWindow = this.testBrowserWindowPool.getReusableByUniqueIdentifier(testBrowserWindowUniqueIdentifier);
 
         // The testBrowserWindow is created and ready for commands
         if(status == 'readyForCommand') {
             testBrowserWindow.status = status;
-
-            testBrowserWindow.testMethod.statusSpan.setContent('Test Window Ready');
-
-            // Command the testBrowserWindow to run the test method
-            Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'runTestMethod', {
-                testClassFilePath: testBrowserWindow.testMethod.class.file.path,
-                testClassName: testBrowserWindow.testMethod.class.name,
-                testMethodName: testBrowserWindow.testMethod.name,
-            });
+            testBrowserWindow.free();
+            //console.standardLog(testBrowserWindow);
         }
         //else if(status == 'Proctor.startedRunningTests') {
         //    testBrowserWindow.testMethod.statusSpan.setContent('startedRunningTests');
@@ -212,7 +206,10 @@ var MainViewController = ViewController.extend({
             }
 
             // Command the testBrowserWindow to close
-            Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'close', {});
+            //Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'close', {});
+
+            // Command the testBrowserWindow to reset
+            Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'reset', {});
         }
     },
 

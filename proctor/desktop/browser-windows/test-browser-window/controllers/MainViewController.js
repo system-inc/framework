@@ -57,6 +57,10 @@ var MainViewController = ViewController.extend({
             else if(command == 'close') {
                 Electron.remote.getCurrentWindow().close();
             }
+            // reset
+            else if(command == 'reset') {
+                document.location.reload(true);
+            }
         });
 
         // Report we are ready

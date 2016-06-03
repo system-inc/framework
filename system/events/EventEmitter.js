@@ -87,11 +87,6 @@ var EventEmitter = Class.extend({
 			yield matchingEventListeners.each(function*(matchingEventListenerIndex, matchingEventListener) {
 				event.previousReturnValue = yield matchingEventListener.boundFunction(event);
 
-				// Check to see if event.stop() was called
-				if(event.stopped) {
-					return false; // break
-				}
-
 				// Count the run
 				matchingEventListener.timesRan++;
 
@@ -99,6 +94,11 @@ var EventEmitter = Class.extend({
 				if(matchingEventListener.timesRan == matchingEventListener.timesToRun) {
 					//Console.info('Remove event listener after it has been run too many times', matchingEventListener, this.eventListeners.indexOf(matchingEventListener));
 					this.eventListeners.delete(this.eventListeners.indexOf(matchingEventListener));
+				}
+
+				// Check to see if event.stop() was called
+				if(event.stopped) {
+					return false; // break
 				}
 			}.bind(this));	
 		}

@@ -13,6 +13,7 @@ var ElectronModule = Module.extend({
 		mainBrowserWindow: {
 			viewControllerName: 'MainViewController',
 			windowState: {
+				show: true, // Show the browser window
 				remember: true, // Open the main browser window in same position when it was closed, can be either true or false
 				defaultWindowState: {
 					applyOn: {

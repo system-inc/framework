@@ -68,21 +68,21 @@ Application.run = function() {
 Application.createTestBrowserWindow = function(testBrowserWindowUniqueIdentifier) {
     var testBrowserWindow = Application.testBrowserWindows[testBrowserWindowUniqueIdentifier] = new Electron.BrowserWindow({
         title: testBrowserWindowUniqueIdentifier,
-        //show: false,
+        show: false,
     });
 
     // Show developer tools on failure
     // TODO: Don't show dev tools always
-    testBrowserWindow.openDevTools();
+    //testBrowserWindow.openDevTools();
 
     // Load the test method container page, passing in the testBrowserWindowUniqueIdentifier as the hash
-	var testMethodContainerUrl = require('url').format({
+	var testBrowserWindowUrl = require('url').format({
 		protocol: 'file',
-		pathname: __dirname+'/browser-windows/test-method-container/TestMethodContainer.html',
+		pathname: __dirname+'/browser-windows/test-browser-window/TestBrowserWindow.html',
 		slashes: true,
 		hash: testBrowserWindowUniqueIdentifier,
 	});
-    testBrowserWindow.loadURL(testMethodContainerUrl);
+    testBrowserWindow.loadURL(testBrowserWindowUrl);
 
     // Clean up when the testBrowserWindow closes
     testBrowserWindow.on('closed', function(event) {

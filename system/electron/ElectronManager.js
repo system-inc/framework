@@ -47,8 +47,11 @@ var ElectronManager = Class.extend({
 		// Add default shortcuts
 		this.addDefaultShortcuts();
 
-		// Show the main browser window
-		this.mainBrowserWindow.show();
+		// Conditionally show the main browser window
+		var windowStateSettings = Project.modules.electronModule.settings.get('mainBrowserWindow.windowState');
+		if(windowStateSettings.show) {
+			this.mainBrowserWindow.show();
+		}
 	},
 
 	initializeDeveloperTools: function() {
