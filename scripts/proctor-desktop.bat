@@ -1,1 +1,1 @@
-libraries\electron\windows\electron.exe proctor\desktop\
+electron proctor\desktop\
