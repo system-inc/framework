@@ -33,6 +33,13 @@ var TestBrowserWindow = Reusable.extend({
             testMethodName: this.testMethod.name,
         });
 	},
+
+	retire: function() {
+		Console.standardWarn('TestBrowserWindow retire');
+		Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', this.uniqueIdentifier, 'close', {});
+
+		this.super();
+	},
 	
 });
 

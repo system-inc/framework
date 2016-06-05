@@ -120,6 +120,21 @@ var Proctor = EventEmitter.extend({
 		var tests = yield Proctor.getTests(path, filePattern, methodPattern);
 		//Console.standardLog('getAndRunTests', path, filePattern, methodPattern, tests);
 
+		this.addTests(tests);
+
+		yield this.runTests();
+	},
+
+	getAndRunTestMethod: function*(testClassFilePath, testClassName, testMethodName) {
+		var tests = yield Proctor.getTestMethod(testClassFilePath, testClassName, testMethodName);
+		Console.standardLog('getAndRunTestMethod', testClassFilePath, testClassName, testMethodName);
+
+		this.addTests(tests);
+
+		yield this.runTests();
+	},
+
+	addTests: function(tests) {
 		tests.classes.each(function(classIndex, classObject) {
 			this.addTest(classObject.name, classObject.file.name, classObject.file.directory);
 			this.testClassInstances[classObject.name] = classObject.instance;
@@ -129,8 +144,6 @@ var Proctor = EventEmitter.extend({
 			//Console.log(methodObject.name);
 			this.testMethods[methodObject.class.name].methods.append(methodObject.name);
 		}.bind(this));
-
-		yield this.runTests();
 	},
 
 	getTestCount: function() {
@@ -749,7 +762,13 @@ Proctor.resolvePath = function(path) {
 	return path;
 };
 
-Proctor.getTests = function*(path, filePattern, methodPattern) {
+Proctor.getTestMethod = function*(testClassFilePath, testClassName, testMethodName) {
+	var tests = yield Proctor.getTests(testClassFilePath, testClassName, testMethodName, true);
+
+	return tests;
+}.toPromise();
+
+Proctor.getTests = function*(path, filePattern, methodPattern, matchStringMethodPatternExactly) {
 	var tests = {
 		classes: [],
 		methods: [],
@@ -831,17 +850,28 @@ Proctor.getTests = function*(path, filePattern, methodPattern) {
 								if(key.startsWith('test') && Function.is(instantiatedTestClass[key])) {
 									//Console.log('Test method name:', key);
 
+									var appendTestMethod = false;
+
 									// Filter test methods
-									if(methodPattern == null || key.lowercase().match(methodPattern)) {
+									if(matchStringMethodPatternExactly) {
+										if(key.lowercase() == methodPattern) {
+											appendTestMethod = true;
+										}
+									}
+									else if(methodPattern == null || key.lowercase().match(methodPattern)) {
 										//Console.log(key.lowercase(), 'matched against', methodPattern);
+										appendTestMethod = true;
+									}
+									else {
+										//Console.log(key.lowercase(), 'did not match against', methodPattern);
+									}
+
+									if(appendTestMethod) {
 										tests.methods.append({
 											name: key,
 											method: instantiatedTestClass[key],
 											class: testClassObject,
 										});
-									}
-									else {
-										//Console.log(key.lowercase(), 'did not match against', methodPattern);
 									}
 								}
 							}

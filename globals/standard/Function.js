@@ -37,6 +37,14 @@ Function.delay = function(milliseconds, callback) {
 	});
 };
 
+Function.schedule = function(milliseconds, callback) {
+	return setTimeout(callback, milliseconds);
+};
+
+Function.cancel = function(scheduledFunction) {
+	return clearTimeout(scheduledFunction);
+};
+
 Function.recur = function(milliseconds, callback) {
 	return setInterval(callback, milliseconds);
 };

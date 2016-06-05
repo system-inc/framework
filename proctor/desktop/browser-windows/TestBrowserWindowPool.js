@@ -6,9 +6,12 @@ var TestBrowserWindow = Framework.require('proctor/desktop/browser-windows/TestB
 var TestBrowserWindowPool = Pool.extend({
 
 	reusableClass: TestBrowserWindow,
-	maximumSize: 8,
-	//maximumSize: 3,
+	minimumSize: 1,
+	//maximumSize: 8,
+	maximumSize: 3,
+	//maximumSize: 1,
 	createReusablesAsNecessary: true,
+	timeInMillisecondsToWaitToRetireAvailableReusables: 1 * 1000,
 
 });
 

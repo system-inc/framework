@@ -13,8 +13,10 @@ var Pool = EventEmitter.extend({
 	maximumSize: 10,
 
 	waitingForAvailableReusableCount: 0,
-	
+
 	createReusablesAsNecessary: true,
+
+	timeInMillisecondsToWaitToRetireAvailableReusables: null,
 
 	construct: function(reusableClass) {
 		if(!this.reusableClass && !reusableClass) {
@@ -101,14 +103,11 @@ var Pool = EventEmitter.extend({
 		// Remove the reusable from the available list
 		delete this.availableReusables[reusable.uniqueIdentifier];
 
-		// Mark the usuable as unavailable
-		reusable.available = false;
+		// Mark the reusable as taken
+		reusable.taken();
 
 		// Add the reusable to the busy list
 		this.busyReusables[reusable.uniqueIdentifier] = reusable;
-
-		// The reusable to return
-		var reusable = this.busyReusables[reusable.uniqueIdentifier];
 
 		this.waitingForAvailableReusableCount--;
 		
@@ -120,7 +119,7 @@ var Pool = EventEmitter.extend({
 		delete this.busyReusables[reusable.uniqueIdentifier];
 
 		// Mark the usuable as available
-		reusable.available = true;
+		reusable.released();
 
 		// Add the reusable to the available list
 		this.availableReusables[reusable.uniqueIdentifier] = reusable;
@@ -140,7 +139,8 @@ var Pool = EventEmitter.extend({
 			delete this.busyReusables[reusable.uniqueIdentifier];
 		}
 
-		reusable = null;
+		// Don't do this, leave the reusable around in case the implementer wants to do something with it after it is retired
+		//reusable = null;
 
 		this.size--;
 

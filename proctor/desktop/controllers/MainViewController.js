@@ -56,7 +56,8 @@ var MainViewController = ViewController.extend({
         this.view.append(Html.h1('Proctor'));
 
         // Get all possible tests
-        this.tests = yield Proctor.getTests();
+        //this.tests = yield Proctor.getTests();
+        this.tests = yield Proctor.getTests(null, 'Class');
         //this.tests = yield Proctor.getTests(null, 'electron');
         //Console.standardLog(tests);
 
@@ -107,7 +108,7 @@ var MainViewController = ViewController.extend({
         this.tests.methods.each(function(testMethodIndex, testMethod) {
             testMethod.runButton = new ButtonView('Run');
             testMethod.runButton.on('interact', function(event) {
-                this.createTestBrowserWindow(testMethod);
+                this.runTestMethod(testMethod);
             }.bind(this));
 
             testMethod.statusSpan = Html.span('Not Started');
@@ -122,11 +123,21 @@ var MainViewController = ViewController.extend({
         return runTestsFormView;
     },
 
+    runTestMethod: function*(testMethod) {
+        // Get a test browser window from the pool
+        var testBrowserWindow = yield this.testBrowserWindowPool.getReusable();
+
+        Console.standardLog('MainViewController.runTestMethod testBrowserWindow', testBrowserWindow.uniqueIdentifier, testBrowserWindow);
+
+        // Run the test method in the test browser window
+        testBrowserWindow.runTestMethod(testMethod);
+    },
+
     runTestMethods: function() {
         this.runNextTestMethod();
     },
 
-    runNextTestMethod: function*() {
+    runNextTestMethod: function() {
         // Start case
         if(this.currentTestMethodIndex === null) {
             this.currentTestMethodIndex = -1;
@@ -144,16 +155,10 @@ var MainViewController = ViewController.extend({
         if(currentTestMethod) {
             currentTestMethod.callback = function() {
                 this.runNextTestMethod();
-            }.bind(this);
-
-            // Get a test browser window from the pool
-            var testBrowserWindow = yield this.testBrowserWindowPool.getReusable();
-
-            Console.standardLog('MainViewController.runNextTestMethod testBrowserWindow', testBrowserWindow.uniqueIdentifier, testBrowserWindow);
-
-            // Run the test method in the test browser window
-            testBrowserWindow.runTestMethod(currentTestMethod);
+            }.bind(this);   
         }
+
+        return this.runTestMethod(currentTestMethod);
     },
 
     handleApplicationReport: function(event, data) {
@@ -165,8 +170,10 @@ var MainViewController = ViewController.extend({
         if(status == 'testBrowserWindowClosed') {
             var testBrowserWindowUniqueIdentifier = data.testBrowserWindowUniqueIdentifier;
             var testBrowserWindow = this.testBrowserWindowPool.getReusableByUniqueIdentifier(testBrowserWindowUniqueIdentifier);
-            testBrowserWindow.status = 'closed';
-            testBrowserWindow.retire();
+            if(testBrowserWindow) {
+                testBrowserWindow.status = 'closed';
+                testBrowserWindow.retire();    
+            }
         }
     },
 

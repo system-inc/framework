@@ -50,8 +50,7 @@ var MainViewController = ViewController.extend({
                 });
 
                 Console.log('Testing below');
-                proctor.getAndRunTests(testClassFilePath, testClassName, testMethodName);
-                //proctor.getAndRunTests();
+                proctor.getAndRunTestMethod(testClassFilePath, testClassName, testMethodName);
             }
             // close
             else if(command == 'close') {
