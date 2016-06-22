@@ -95,6 +95,8 @@ Application.destroyTestBrowserWindow = function(testBrowserWindowUniqueIdentifie
 };
 
 Application.testBrowserWindowClosed = function(testBrowserWindowUniqueIdentifier) {
+	//console.log('Deleting reference to testBrowserWindow', testBrowserWindowUniqueIdentifier);
+
 	// Remove the reference from Application.testBrowserWindows
 	delete Application.testBrowserWindows[testBrowserWindowUniqueIdentifier];
 
@@ -108,7 +110,10 @@ Application.testBrowserWindowClosed = function(testBrowserWindowUniqueIdentifier
 };
 
 Application.commandTestBrowserWindow = function(testBrowserWindowUniqueIdentifier, command, data) {
-	Application.testBrowserWindows[testBrowserWindowUniqueIdentifier].send('mainBrowserWindow.commandTestBrowserWindow', command, data);
+	// If the test browser window exists
+	if(Application.testBrowserWindows[testBrowserWindowUniqueIdentifier]) {
+		Application.testBrowserWindows[testBrowserWindowUniqueIdentifier].send('mainBrowserWindow.commandTestBrowserWindow', command, data);	
+	}
 };
 
 // Run the application

@@ -16,6 +16,7 @@ var TestBrowserWindow = Reusable.extend({
         Electron.ipcRenderer.send('mainBrowserWindow.createTestBrowserWindow', this.uniqueIdentifier);
 
         // Do not call this.super() as we are not available until the application creates a test browser window
+        // MainBrowserWindow.handleTestBrowserWindowReport will call release() on this when it is ready
 	},
 
 	runTestMethod: function(testMethod) {

@@ -131,10 +131,11 @@ var Pool = EventEmitter.extend({
 	},
 
 	retireReusable: function(reusable) {
-		// Remove the reusable from the 
+		// Remove the reusable from the the available reusables
 		if(reusable.available) {
 			delete this.availableReusables[reusable.uniqueIdentifier];
 		}
+		// Or remove the reusable from the busy reusables
 		else {
 			delete this.busyReusables[reusable.uniqueIdentifier];
 		}
@@ -148,6 +149,17 @@ var Pool = EventEmitter.extend({
 		if((this.size < this.minimumSize) || (this.waitingForAvailableReusableCount > 0)) {
 			this.createReusable();
 		}
+	},
+
+	shouldRetireReusable: function() {
+		var shouldRetireReusable = true;
+
+		// If retiring the reusable would make the pool less than the minimum size
+		if((this.size - 1) < this.minimumSize) {
+			shouldRetireReusable = false;
+		}
+
+		return shouldRetireReusable;
 	},
 
 	retireReusableByUniqueIdentifier: function(uniqueIdentifier) {

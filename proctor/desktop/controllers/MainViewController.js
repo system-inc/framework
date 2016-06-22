@@ -134,6 +134,9 @@ var MainViewController = ViewController.extend({
     },
 
     runTestMethods: function() {
+        // Reset the current test method index
+        this.currentTestMethodIndex = null;
+
         this.runNextTestMethod();
     },
 
@@ -152,13 +155,17 @@ var MainViewController = ViewController.extend({
 
         var currentTestMethod = this.tests.methods[this.currentTestMethodIndex];
 
+        var runNextTestMethodResult = false;
+
         if(currentTestMethod) {
             currentTestMethod.callback = function() {
                 this.runNextTestMethod();
             }.bind(this);   
+
+            runNextTestMethodResult = this.runTestMethod(currentTestMethod);
         }
 
-        return this.runTestMethod(currentTestMethod);
+        return runNextTestMethodResult;
     },
 
     handleApplicationReport: function(event, data) {
@@ -172,7 +179,7 @@ var MainViewController = ViewController.extend({
             var testBrowserWindow = this.testBrowserWindowPool.getReusableByUniqueIdentifier(testBrowserWindowUniqueIdentifier);
             if(testBrowserWindow) {
                 testBrowserWindow.status = 'closed';
-                testBrowserWindow.retire();    
+                testBrowserWindow.retire();
             }
         }
     },

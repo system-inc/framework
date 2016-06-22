@@ -11,6 +11,7 @@ var TestBrowserWindowPool = Pool.extend({
 	maximumSize: 3,
 	//maximumSize: 1,
 	createReusablesAsNecessary: true,
+	//createReusablesAsNecessary: false,
 	timeInMillisecondsToWaitToRetireAvailableReusables: 1 * 1000,
 
 });

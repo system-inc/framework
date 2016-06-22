@@ -66,8 +66,15 @@ var Reusable = Class.extend({
 			this.cancelScheduledRetirement();
 
 			this.scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable = Function.schedule(this.timeInMillisecondsToWaitToRetireWhenAvailable, function() {
-				Console.log(this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds have passed, should retire');
-				this.retire();
+				Console.log(this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds have passed, may possibly retire...');
+
+				if(this.pool.shouldRetireReusable()) {
+					Console.log('this.pool.shouldRetireReusable() returned true');
+					this.retire();	
+				}
+				else {
+					Console.log('this.pool.shouldRetireReusable() returned false');
+				}
 			}.bind(this));	
 		}
 	},
