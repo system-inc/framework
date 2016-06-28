@@ -10,7 +10,7 @@ var SingleLineTextFormControlView = Framework.require('system/web-interface/view
 var Proctor = Framework.require('system/test/Proctor.js');
 var TableView = Framework.require('system/web-interface/views/tables/TableView.js');
 var ButtonView = Framework.require('system/web-interface/views/buttons/ButtonView.js');
-var TestBrowserWindowPool = Project.require('browser-windows/TestBrowserWindowPool.js');
+var TestBrowserWindowPool = Project.require('proctor/browser-windows/TestBrowserWindowPool.js');
 var Electron = Node.require('electron');
 
 // Class

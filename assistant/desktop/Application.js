@@ -78,7 +78,7 @@ Application.createTestBrowserWindow = function(testBrowserWindowUniqueIdentifier
     // Load the test method container page, passing in the testBrowserWindowUniqueIdentifier as the hash
 	var testBrowserWindowUrl = require('url').format({
 		protocol: 'file',
-		pathname: __dirname+'/browser-windows/test-browser-window/TestBrowserWindow.html',
+		pathname: __dirname+'/proctor/browser-windows/test-browser-window/TestBrowserWindow.html',
 		slashes: true,
 		hash: testBrowserWindowUniqueIdentifier,
 	});

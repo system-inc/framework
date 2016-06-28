@@ -21,7 +21,7 @@ scriptDirectory=$workingDirectory/`echo $scriptInvocationPath | sed -e s/$script
 #echo "scriptDirectory $scriptDirectory"
 
 # The path to the test project from the scripts directory
-testProjectFile="$scriptDirectory../proctor/command/Project.js"
+testProjectFile="$scriptDirectory../assistant/command/Project.js"
 #echo "testProjectFile $testProjectFile"
 
 # Run the script

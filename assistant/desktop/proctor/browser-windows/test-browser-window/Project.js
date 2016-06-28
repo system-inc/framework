@@ -1,5 +1,5 @@
 // Dependencies (global)
-Framework = require('../../../../Framework.js');
+Framework = require('../../../../../Framework.js');
 
 // Class (global)
 Project = new Framework(__dirname);
