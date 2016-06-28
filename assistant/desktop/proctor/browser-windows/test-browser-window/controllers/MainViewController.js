@@ -60,6 +60,14 @@ var MainViewController = ViewController.extend({
             else if(command == 'reset') {
                 document.location.reload(true);
             }
+            // openDeveloperTools
+            else if(command == 'openDeveloperTools') {
+                Electron.remote.getCurrentWindow().openDevTools();
+            }
+            // show
+            else if(command == 'show') {
+                Electron.remote.getCurrentWindow().show();
+            }
         });
 
         // Report we are ready

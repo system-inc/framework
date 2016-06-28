@@ -14,7 +14,7 @@
 		electron: {
 			mainBrowserWindow: {
 				windowState: {
-					//show: false,
+					show: false,
 					remember: false,
 					defaultWindowState: {
 						applyOn: {
@@ -45,7 +45,7 @@
 					},
 				},
 				developerTools: {
-					show: true,
+					show: false,
 				},
 			},
 			shortcuts: {

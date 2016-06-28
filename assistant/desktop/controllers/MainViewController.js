@@ -219,11 +219,21 @@ var MainViewController = ViewController.extend({
                 testBrowserWindow.testMethod.callback.apply(this);
             }
 
-            // Command the testBrowserWindow to close
-            //Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'close', {});
+            // If a test failed
+            if(data.data.failedTestMethods.length) {
+                console.log('failed a test!');
+                // Show the window and the dev tools
+                testBrowserWindow.openDeveloperTools();
+                testBrowserWindow.show();
+            }
+            // If no tests failed
+            else {
+                // Command the testBrowserWindow to close
+                //Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'close', {});
 
-            // Command the testBrowserWindow to reset
-            Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'reset', {});
+                // Command the testBrowserWindow to reset
+                Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'reset', {});
+            }
         }
     },
 
