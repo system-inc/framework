@@ -18,10 +18,40 @@ var HtmlEventProxyTest = ElectronTest.extend({
 		// Append the HtmlElement to the HtmlDocument body
 		htmlDocument.body.append(htmlElement);
 
+		// Set a variable to capture the event
 		var capturedEvent = null;
 
-		// Add an event listener to the div and capture the event
+		// Add an event listener to the div to capture the event when triggered
 		htmlElement.on('click', function(event) {
+			//Console.standardInfo(event.identifier, event);
+			capturedEvent = event;
+		});
+
+		// Mount the HtmlDocument to the DOM
+        htmlDocument.mountToDom();
+
+        // Simulate a click
+        //yield ElectronManager.clickHtmlElement(htmlElement);
+        htmlElement.click(); // Appears to be synchronous
+
+        Assert.strictEqual(capturedEvent, null, '"click" events do not get bound');
+	},
+
+	testHtmlEventProxyEventInteract: function*() {
+		// Create an HtmlDocument
+        var htmlDocument = new HtmlDocument();
+
+		// Create a div HtmlElement
+		var htmlElement = Html.div('div');
+
+		// Append the HtmlElement to the HtmlDocument body
+		htmlDocument.body.append(htmlElement);
+
+		// Set a variable to capture the event
+		var capturedEvent = null;
+
+		// Add an event listener to the div to capture the event when triggered
+		htmlElement.on('interact', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
 		});
@@ -31,11 +61,9 @@ var HtmlEventProxyTest = ElectronTest.extend({
 
         // Simulate a click
         //yield ElectronManager.clickHtmlElement(htmlElement);
-        htmlElement.click();
+        htmlElement.click(); // Appears to be synchronous
 
-        Assert.strictEqual(capturedEvent, null, '"click" events do not get bound');
-
-        //throw 123;
+        Assert.strictEqual(capturedEvent.identifier, 'interact', '"interact" events are triggered by clicks');
 	},
 
 	//keyboard.key.rightArrow.up
