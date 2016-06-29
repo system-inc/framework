@@ -17,7 +17,7 @@ var MainViewController = ViewController.extend({
 
         // Handle commands from the mainBrowserWindow
         Electron.ipcRenderer.on('mainBrowserWindow.commandTestBrowserWindow', function(eventFromIpcMain, command, data) {
-            Console.standardLog(command, data);
+            //Console.standardLog(command, data);
 
             // runTestMethod
             if(command == 'runTestMethod') {
@@ -26,7 +26,7 @@ var MainViewController = ViewController.extend({
                 var testMethodName = data.testMethodName;
 
                 // Set the page title
-                document.title = testClassName+'.'+testMethodName+' \u2022 Proctor \u2022 Framework';
+                document.title = testClassName+'.'+testMethodName+' \u2022 Proctor \u2022 Assistant \u2022 Framework';
 
                 var proctor = new Proctor('electron', true);
 
@@ -49,7 +49,7 @@ var MainViewController = ViewController.extend({
                     });
                 });
 
-                Console.log('Testing below');
+                //Console.log('Testing below');
                 proctor.getAndRunTestMethod(testClassFilePath, testClassName, testMethodName);
             }
             // close

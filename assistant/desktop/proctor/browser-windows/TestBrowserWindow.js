@@ -20,7 +20,7 @@ var TestBrowserWindow = Reusable.extend({
 	},
 
 	runTestMethod: function(testMethod) {
-		Console.standardLog('runTestMethod', testMethod);
+		//Console.standardLog('runTestMethod', testMethod);
 
 		this.testMethod = testMethod;
 
@@ -36,17 +36,17 @@ var TestBrowserWindow = Reusable.extend({
 	},
 
 	openDeveloperTools: function() {
-		Console.standardWarn('openDeveloperTools');
+		//Console.standardWarn('openDeveloperTools');
 		Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', this.uniqueIdentifier, 'openDeveloperTools', {});
 	},
 
 	show: function() {
-		Console.standardWarn('TestBrowserWindow show');
+		//Console.standardWarn('TestBrowserWindow show');
 		Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', this.uniqueIdentifier, 'show', {});
 	},
 
 	retire: function() {
-		Console.standardWarn('TestBrowserWindow retire');
+		//Console.standardWarn('TestBrowserWindow retire');
 		Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', this.uniqueIdentifier, 'close', {});
 
 		this.super();

@@ -127,7 +127,7 @@ var Proctor = EventEmitter.extend({
 
 	getAndRunTestMethod: function*(testClassFilePath, testClassName, testMethodName) {
 		var tests = yield Proctor.getTestMethod(testClassFilePath, testClassName, testMethodName);
-		Console.standardLog('getAndRunTestMethod', testClassFilePath, testClassName, testMethodName);
+		//Console.standardLog('getAndRunTestMethod', testClassFilePath, testClassName, testMethodName);
 
 		this.addTests(tests);
 

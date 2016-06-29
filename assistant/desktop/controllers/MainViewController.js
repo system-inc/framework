@@ -57,8 +57,9 @@ var MainViewController = ViewController.extend({
 
         // Get all possible tests
         //this.tests = yield Proctor.getTests();
-        this.tests = yield Proctor.getTests(null, 'Class');
+        //this.tests = yield Proctor.getTests(null, 'Class');
         //this.tests = yield Proctor.getTests(null, 'electron');
+        this.tests = yield Proctor.getTests(null, 'Event');
         //Console.standardLog(tests);
 
         // Run tests form
@@ -93,10 +94,10 @@ var MainViewController = ViewController.extend({
         }.bind(this));
 
         // Checkbox
-        var optionFormFieldView = new OptionFormFieldView('runTestsSynchronously', {
-            label: 'Run Tests Synchronously',
-        });
-        runTestsFormView.addFormFieldView(optionFormFieldView);
+        //var optionFormFieldView = new OptionFormFieldView('runTestsSynchronously', {
+        //    label: 'Run Tests Synchronously',
+        //});
+        //runTestsFormView.addFormFieldView(optionFormFieldView);
 
         var summary = Html.p(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
         runTestsFormView.append(summary);
@@ -127,7 +128,7 @@ var MainViewController = ViewController.extend({
         // Get a test browser window from the pool
         var testBrowserWindow = yield this.testBrowserWindowPool.getReusable();
 
-        Console.standardLog('MainViewController.runTestMethod testBrowserWindow', testBrowserWindow.uniqueIdentifier, testBrowserWindow);
+        //Console.standardLog('MainViewController.runTestMethod testBrowserWindow', testBrowserWindow.uniqueIdentifier, testBrowserWindow);
 
         // Run the test method in the test browser window
         testBrowserWindow.runTestMethod(testMethod);
@@ -185,7 +186,7 @@ var MainViewController = ViewController.extend({
     },
 
     handleTestBrowserWindowReport: function(event, data) {
-        Console.standardLog('handleTestBrowserWindowReport', data);
+        //Console.standardLog('handleTestBrowserWindowReport', data);
 
         var status = data.status;
         var testBrowserWindowUniqueIdentifier = data.testBrowserWindowUniqueIdentifier;
@@ -221,7 +222,7 @@ var MainViewController = ViewController.extend({
 
             // If a test failed
             if(data.data.failedTestMethods.length) {
-                console.log('failed a test!');
+                //Console.log('failed a test!');
                 // Show the window and the dev tools
                 testBrowserWindow.openDeveloperTools();
                 testBrowserWindow.show();

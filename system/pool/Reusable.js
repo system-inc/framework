@@ -29,7 +29,7 @@ var Reusable = Class.extend({
 	},
 
 	taken: function() {
-		Console.standardInfo('Reusable taken');
+		//Console.standardInfo('Reusable taken');
 
 		// Cancel any currently scheduled retirement
 		this.cancelScheduledRetirement();
@@ -54,41 +54,41 @@ var Reusable = Class.extend({
 		// Cancel any currently scheduled retirement
 		this.cancelScheduledRetirement();
 
-		Console.log('Retiring!');
+		//Console.log('Retiring!');
 		this.pool.retireReusable(this);
 	},
 
 	scheduleRetirement: function() {
 		if(this.timeInMillisecondsToWaitToRetireWhenAvailable) {
-			Console.log('Scheduling retirement after', this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds');
+			//Console.log('Scheduling retirement after', this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds');
 
 			// Cancel the currently scheduled retirement
 			this.cancelScheduledRetirement();
 
 			this.scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable = Function.schedule(this.timeInMillisecondsToWaitToRetireWhenAvailable, function() {
-				Console.log(this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds have passed, may possibly retire...');
+				//Console.log(this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds have passed, may possibly retire...');
 
 				if(this.pool.shouldRetireReusable()) {
-					Console.log('this.pool.shouldRetireReusable() returned true');
+					//Console.log('this.pool.shouldRetireReusable() returned true');
 					this.retire();	
 				}
 				else {
-					Console.log('this.pool.shouldRetireReusable() returned false');
+					//Console.log('this.pool.shouldRetireReusable() returned false');
 				}
 			}.bind(this));	
 		}
 	},
 
 	cancelScheduledRetirement: function() {
-		Console.log('Reusable cancelScheduledRetirement');
+		//Console.log('Reusable cancelScheduledRetirement');
 
 		if(this.scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable) {
 			Function.cancel(this.scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable);
 			this.scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable = null;
-			Console.log('Canceled scheduled retirement function');
+			//Console.log('Canceled scheduled retirement function');
 		}
 		else {
-			Console.log('No scheduled retirement function to cancel');
+			//Console.log('No scheduled retirement function to cancel');
 		}
 	},
 

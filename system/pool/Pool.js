@@ -60,11 +60,11 @@ var Pool = EventEmitter.extend({
 			}
 			// If we don't have any free reusables
 			else {
-				Console.log('Waiting for reusable...');
+				//Console.log('Waiting for reusable...');
 
 				// If we can start the process of creating a new reusable
 				if(this.size < this.maximumSize) {
-					Console.log(this.size, 'is less than', this.maximumSize, 'creating new reusable...');
+					//Console.log(this.size, 'is less than', this.maximumSize, 'creating new reusable...');
 
 					// Create a new reusable
 					this.createReusable();
@@ -72,7 +72,7 @@ var Pool = EventEmitter.extend({
 
 				// Register to get the next available reusable
 				this.once('availableReusable', function(event) {
-					Console.standardLog('availableReusable event', event);
+					//Console.standardLog('availableReusable event', event);
 
 					// We must stop the event otherwise others waiting for available reusables will receive the event
 					event.stop();
