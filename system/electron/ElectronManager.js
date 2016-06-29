@@ -281,5 +281,48 @@ var ElectronManager = Class.extend({
 
 });
 
+// Static methods
+
+ElectronManager.clickHtmlElement = function(htmlElement, webContents) {
+	// Default to the current browser window web contents
+	if(!webContents) {
+		webContents = Electron.remote.getCurrentWindow().webContents;
+	}
+
+	return new Promise(function(resolve, reject) {
+		// Get the x and y of the htmlElement
+		var htmlElementPosition = htmlElement.getPosition();
+		//Console.standardInfo(htmlElementPosition);
+
+		// TODO: When mouse up is sent, resolve the promise
+		//webContents.addListener('ipc-message', function(event, data) {
+		//	Console.standardInfo('ipc-message', arguments);
+		//});
+
+		// A trusted click will be fired after mouse down and mouse up
+
+		// Send mouse down
+		webContents.sendInputEvent({
+			type: 'mouseDown',
+			x: htmlElementPosition.centerX,
+			y: htmlElementPosition.centerY,
+			button:'left',
+			clickCount: 1,
+		});
+
+		// Send mouse up
+		webContents.sendInputEvent({
+			type: 'mouseUp',
+			x: htmlElementPosition.centerX,
+			y: htmlElementPosition.centerY,
+			button:'left',
+			clickCount: 1,
+		});
+
+		// TODO: Resolving here but sendInputEvent is async so we need to resolve in a different way
+		resolve(true);
+	});
+};
+
 // Export
 module.exports = ElectronManager;

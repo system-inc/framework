@@ -85,21 +85,22 @@ HtmlEventProxy.getDomObjectFromHtmlEventEmitter = function(htmlEventEmitter) {
 HtmlEventProxy.warnAboutCommonEventPatternMistakes = function(eventPattern) {
 	var map = {
 		// Mouse
-		activate: 'interact',
-		click: 'interact or mouse.button.one.click',
+		activate: '"interact"',
+		click: '"interact" or "mouse.button.one.click"',
 
 		// Keyboard
-		keydown: 'keyboard.key.*.down',
-		keyup: 'keyboard.key.*.up',
-		keypress: 'keyboard.key.*.press',
+		keydown: '"keyboard.key.*.down"',
+		keyup: '"keyboard.key.*.up"',
+		keypress: '"keyboard.key.*.press"',
 
 		// Form
-		submit: 'form.submit',
-		change: 'form.field.change',
+		submit: '"form.submit"',
+		change: '"form.field.change"',
 	};
 
 	if(map[eventPattern]) {
-		Console.warn('Use', map[eventPattern], 'instead of', eventPattern);
+		throw new Error('Event listener not bound for "'+eventPattern+'". You must use '+map[eventPattern]+' instead of "'+eventPattern+'".');
+		//Console.error('Event listener not bound for "'+eventPattern+'". You must use', map[eventPattern], 'instead of "'+eventPattern+'".');
 	}
 };
 
