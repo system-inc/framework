@@ -27,9 +27,9 @@ var Pool = EventEmitter.extend({
 		}
 
 		if(!this.createReusablesAsNecessary) {
-			Console.log('Creating '+this.maximumSize+' reusables...');
+			//Console.log('Creating '+this.minimumSize+' reusables...');
 
-			for(var i = 0; i < this.maximumSize; i++) {
+			for(var i = 0; i < this.minimumSize; i++) {
 				this.createReusable();
 			}
 		}
