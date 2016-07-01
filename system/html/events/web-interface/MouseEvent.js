@@ -146,7 +146,7 @@ MouseEvent.createFromDomEvent = function(domMouseEvent, emitter, identifier, dat
 	mouseEvent.position.relativeToGlobal.y = domMouseEvent.screenY;
 	mouseEvent.position.relativeToPreviousGlobalRelativePosition.x = domMouseEvent.movementX;
 	mouseEvent.position.relativeToPreviousGlobalRelativePosition.y = domMouseEvent.movementY;
-	console.log(mouseEvent.position);
+	//console.log(mouseEvent.position);
 
 	if(domMouseEvent.relatedTarget && domMouseEvent.relatedTarget.htmlNode) {
 		mouseEvent.relatedEmitter = domMouseEvent.relatedTarget.htmlNode; // .htmlNode is set in HtmlNode.mountedToDom()	

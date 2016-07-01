@@ -296,7 +296,7 @@ ElectronManager.clickHtmlElement = function(htmlElement, webContents) {
 
 		// TODO: When mouse up is sent, resolve the promise
 		//webContents.addListener('ipc-message', function(event, data) {
-		//	Console.standardInfo('ipc-message', arguments);
+		//	Console.standardInfo(webContents, 'ipc-message', arguments);
 		//});
 
 		// A trusted click will be fired after mouse down and mouse up
@@ -324,6 +324,25 @@ ElectronManager.clickHtmlElement = function(htmlElement, webContents) {
 			resolve(true);
 		});
 	});
+};
+
+ElectronManager.keyboardKeyPress = function() {
+//if (code !== '\u000d') {
+//webview.sendInputEvent({
+//type: 'keyDown',
+//keyCode: code
+//});
+//webview.sendInputEvent({
+//type: 'keyUp',
+//keyCode: code
+//});
+//}
+//webview.sendInputEvent({
+//type: 'char',
+//keyCode: code
+//});
+
+//webview.sendInputEvent({type:'mouseUp', x:250, y: 300, button:'left', clickCount: 1, modifiers: ['leftButtonDown']});
 };
 
 // Export

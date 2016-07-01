@@ -45,6 +45,7 @@ var MouseEventTest = ElectronTest.extend({
 
         // Simulate a click
         yield ElectronManager.clickHtmlElement(htmlElement);
+        //yield ElectronManager.clickHtmlElement(htmlElement);
 
         Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of MouseEvent');
 
@@ -85,7 +86,7 @@ var MouseEventTest = ElectronTest.extend({
 
 		Assert.strictEqual(capturedEvent.device.capabilities.touch, false, 'device.capabilities.touch property is correctly set');
 	
-        //throw error;
+        throw error;
 	},
 
 	testMouseEventMouseButtonOneClick: function*() {
