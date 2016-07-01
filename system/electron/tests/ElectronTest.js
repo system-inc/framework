@@ -11,7 +11,7 @@ var ElectronTest = Test.extend({
 		// If electron isn't in the versions object, we are not in the Electron environment
 		if(!Node.Process.versions.electron) {
 			shouldRun = false;
-		}		
+		}
 
 		return shouldRun;
 	},

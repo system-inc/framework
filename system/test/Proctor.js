@@ -820,65 +820,70 @@ Proctor.getTests = function*(path, filePattern, methodPattern, matchStringMethod
 					var testClassName = fileSystemObject.nameWithoutExtension;
 
 					// Require the test class file
-					var testClass = Node.require(fileSystemObject.file);
+					try {
+						var testClass = Node.require(fileSystemObject.file);
 
-					// Check to see if the testClass is a function
-					if(!testClass || !Function.is(testClass)) {
-						throw new Error(fileSystemObject.file+' did not export a Test class.');
-					}
-					// If testClass is a function that can be instantiated
-					else {
-						// Instantiate the test class
-						var instantiatedTestClass = new testClass();
+						// Check to see if the testClass is a function
+						if(!testClass || !Function.is(testClass)) {
+							throw new Error(fileSystemObject.file+' did not export a Test class.');
+						}
+						// If testClass is a function that can be instantiated
+						else {
+							// Instantiate the test class
+							var instantiatedTestClass = new testClass();
 
-						// Make sure the instantiated class is an instance of Test
-						if(Class.isInstance(instantiatedTestClass, Test)) {
-							//Console.log('Adding test:', testClassName);
+							// Make sure the instantiated class is an instance of Test
+							if(Class.isInstance(instantiatedTestClass, Test)) {
+								//Console.log('Adding test:', testClassName);
 
-							// Add the test class to tests
-							var testClassObject = {
-								name: testClassName,
-								instance: instantiatedTestClass,
-								class: testClass,
-								file: fileSystemObject,
-							};
-							tests.classes.append(testClassObject);
+								// Add the test class to tests
+								var testClassObject = {
+									name: testClassName,
+									instance: instantiatedTestClass,
+									class: testClass,
+									file: fileSystemObject,
+								};
+								tests.classes.append(testClassObject);
 
-							// Loop through all of the class properties
-							for(var key in instantiatedTestClass) {						
-								// All tests must start with "test" and be a function
-								if(key.startsWith('test') && Function.is(instantiatedTestClass[key])) {
-									//Console.log('Test method name:', key);
+								// Loop through all of the class properties
+								for(var key in instantiatedTestClass) {						
+									// All tests must start with "test" and be a function
+									if(key.startsWith('test') && Function.is(instantiatedTestClass[key])) {
+										//Console.log('Test method name:', key);
 
-									var appendTestMethod = false;
+										var appendTestMethod = false;
 
-									// Filter test methods
-									if(matchStringMethodPatternExactly) {
-										if(key.lowercase() == methodPattern) {
+										// Filter test methods
+										if(matchStringMethodPatternExactly) {
+											if(key.lowercase() == methodPattern) {
+												appendTestMethod = true;
+											}
+										}
+										else if(methodPattern == null || key.lowercase().match(methodPattern)) {
+											//Console.log(key.lowercase(), 'matched against', methodPattern);
 											appendTestMethod = true;
 										}
-									}
-									else if(methodPattern == null || key.lowercase().match(methodPattern)) {
-										//Console.log(key.lowercase(), 'matched against', methodPattern);
-										appendTestMethod = true;
-									}
-									else {
-										//Console.log(key.lowercase(), 'did not match against', methodPattern);
-									}
+										else {
+											//Console.log(key.lowercase(), 'did not match against', methodPattern);
+										}
 
-									if(appendTestMethod) {
-										tests.methods.append({
-											name: key,
-											method: instantiatedTestClass[key],
-											class: testClassObject,
-										});
+										if(appendTestMethod) {
+											tests.methods.append({
+												name: key,
+												method: instantiatedTestClass[key],
+												class: testClassObject,
+											});
+										}
 									}
 								}
 							}
+							else {
+								throw new Error(fileSystemObject.file+' did not export a Test class.');
+							}
 						}
-						else {
-							throw new Error(fileSystemObject.file+' did not export a Test class.');
-						}
+					}
+					catch(error) {
+						Console.log('Caught an error while loading test.', error);
 					}
 				}
 				else {

@@ -3,11 +3,16 @@ var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
 var Assert = Framework.require('system/test/Assert.js');
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
-var ElectronManager = Framework.require('system/electron/ElectronManager.js');
+var ElectronManager = null;
 var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
 
 // Class
 var HtmlEventProxyTest = ElectronTest.extend({
+
+	before: function*() {
+		// Initialize the ElectronManager
+		ElectronManager = Framework.require('system/electron/ElectronManager.js');
+	},
 
 	testHtmlEventProxyEventClick: function*() {
 		// Create an HtmlDocument
