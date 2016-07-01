@@ -16,7 +16,7 @@ var HtmlEventEmitter = PropagatingEventEmitter.extend({
 	createEventFromDomEvent: function(domEvent, emitter, eventIdentifier, data, eventOptions) {
 		var event = null;
 
-		//Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
+		Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
 
 		// MouseEvent
 		if(window && window.MouseEvent && Class.isInstance(domEvent, window.MouseEvent)) {
@@ -24,7 +24,7 @@ var HtmlEventEmitter = PropagatingEventEmitter.extend({
 		}
 		else {
 			event = new HtmlEvent(emitter, eventIdentifier, data, eventOptions);	
-		}		
+		}
 
 		return event;
 	},

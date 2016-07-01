@@ -156,6 +156,8 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 
 	// If we have a valid domEventIdentifier
 	if(domEventIdentifier) {
+		Console.log('Binding domEventIdentifier', domEventIdentifier, 'for eventPattern', eventPattern);
+
 		// If we have a domObject because we are already mounted to the DOM
 		if(domObject) {
 			// Add the event listener to the domObject

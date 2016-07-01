@@ -286,23 +286,50 @@ var ElectronManager = Class.extend({
 ElectronManager.clickHtmlElement = function(htmlElement, webContents) {
 	// Default to the current browser window web contents
 	if(!webContents) {
-		webContents = Electron.remote.getCurrentWindow().webContents;
+		webContents = Electron.remote.getCurrentWebContents();
 	}
 
 	return new Promise(function(resolve, reject) {
 		// Get the x and y of the htmlElement
 		var sizeAndPosition = htmlElement.getSizeAndPosition();
-		Console.standardInfo(sizeAndPosition);
+		//Console.log('sizeAndPosition', sizeAndPosition);
 
-		// TODO: When mouse up is sent, resolve the promise
-		//webContents.addListener('ipc-message', function(event, data) {
-		//	Console.standardInfo(webContents, 'ipc-message', arguments);
-		//});
+		var callback = function(event, data) {
+			//Console.standardInfo('ipc-message-sync', arguments);
+
+			if(
+				data &&
+				data[0] == 'ELECTRON_BROWSER_MEMBER_CALL' &&
+				data[2] == 'sendInputEvent' &&
+				data[3] &&
+				data[3][0] &&
+				data[3][0].members &&
+				data[3][0].members[0].name == 'type' &&
+				data[3][0].members[0].value.value == 'mouseUp' &&
+				data[3][0].members[1].name == 'x' &&
+				data[3][0].members[1].value.value == sizeAndPosition.position.relativeToViewport.left &&
+				data[3][0].members[2].name == 'y' &&
+				data[3][0].members[2].value.value == sizeAndPosition.position.relativeToViewport.top &&
+				data[3][0].members[3].name == 'button' &&
+				data[3][0].members[3].value.value == 'left' &&
+				data[3][0].members[4].name == 'clickCount' &&
+				data[3][0].members[4].value.value == 1
+			) {
+				// Remove the listener
+				webContents.removeListener('ipc-message-sync', callback);
+				Console.log('--resolve');
+				resolve(true);
+			}
+		};
+
+		// When mouse up is sent, resolve the promise
+		webContents.on('ipc-message-sync', callback);
 
 		// A trusted click will be fired after mouse down and mouse up
 
 		// Send mouse down
 		webContents.sendInputEvent({
+			// The order of these matter
 			type: 'mouseDown',
 			x: sizeAndPosition.position.relativeToViewport.left,
 			y: sizeAndPosition.position.relativeToViewport.top,
@@ -312,16 +339,12 @@ ElectronManager.clickHtmlElement = function(htmlElement, webContents) {
 
 		// Send mouse up
 		webContents.sendInputEvent({
+			// The order of these matter
 			type: 'mouseUp',
 			x: sizeAndPosition.position.relativeToViewport.left,
 			y: sizeAndPosition.position.relativeToViewport.top,
 			button: 'left',
 			clickCount: 1,
-		});
-
-		// TODO: Resolving here but sendInputEvent is async so we need to resolve in a different way
-		Function.delay(25, function() {
-			resolve(true);
 		});
 	});
 };

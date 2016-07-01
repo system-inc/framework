@@ -36,7 +36,7 @@ var MouseEventTest = ElectronTest.extend({
 		// Add an event listener to the div to capture the event when triggered
 		htmlElement.on('interact', function(event) {
 			Console.standardInfo(event.identifier, event);
-			//Console.log(event.domEvent.detail);
+			Console.log(event.domEvent.detail);
 			capturedEvent = event;
 		});
 
@@ -45,7 +45,6 @@ var MouseEventTest = ElectronTest.extend({
 
         // Simulate a click
         yield ElectronManager.clickHtmlElement(htmlElement);
-        //yield ElectronManager.clickHtmlElement(htmlElement);
 
         Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of MouseEvent');
 
@@ -86,7 +85,7 @@ var MouseEventTest = ElectronTest.extend({
 
 		Assert.strictEqual(capturedEvent.device.capabilities.touch, false, 'device.capabilities.touch property is correctly set');
 	
-        throw error;
+        //throw error;
 	},
 
 	testMouseEventMouseButtonOneClick: function*() {
@@ -120,35 +119,7 @@ var MouseEventTest = ElectronTest.extend({
         // Simulate a click
         yield ElectronManager.clickHtmlElement(htmlElement);
 
-        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of MouseEvent');
-
-        Assert.strictEqual(capturedEvent.type, 'click', 'type property is correctly set');
-
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.alt, false, 'keyboardKeysDown.alt property is correctly set');
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.ctrl, false, 'keyboardKeysDown.alt property is correctly set');
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.meta, false, 'keyboardKeysDown.alt property is correctly set');
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.shift, false, 'keyboardKeysDown.alt property is correctly set');
-       
-        Assert.strictEqual(capturedEvent.mouseButtonsDown[1], false, 'mouseButtonsDown[1] property is correctly set');
-        Assert.strictEqual(capturedEvent.mouseButtonsDown[2], false, 'mouseButtonsDown[2] property is correctly set');
-        Assert.strictEqual(capturedEvent.mouseButtonsDown[3], false, 'mouseButtonsDown[3] property is correctly set');
-        Assert.strictEqual(capturedEvent.mouseButtonsDown[4], false, 'mouseButtonsDown[4] property is correctly set');
-        Assert.strictEqual(capturedEvent.mouseButtonsDown[5], false, 'mouseButtonsDown[5] property is correctly set');
-
-		Assert.strictEqual(capturedEvent.button, 1, 'button property is correctly set');
-
-		// Cannot test these as the browser window is hidden
-		//Assert.strictEqual(capturedEvent.position.relativeToGlobal.x, 0, 'position.relativeToGlobal.x property is correctly set');
-		//Assert.strictEqual(capturedEvent.position.relativeToGlobal.y, 0, 'position.relativeToGlobal.y property is correctly set');
-		//Assert.strictEqual(capturedEvent.position.relativeToPreviousGlobalRelativePosition.x, 0, 'position.relativeToPreviousGlobalRelativePosition.x property is correctly set');
-		//Assert.strictEqual(capturedEvent.position.relativeToPreviousGlobalRelativePosition.y, 0, 'position.relativeToPreviousGlobalRelativePosition.y property is correctly set');
-
-		Assert.strictEqual(capturedEvent.relatedEmitter, null, 'relatedEmitter property is correctly set');
-		Assert.strictEqual(capturedEvent.relatedEmitterDomNode, null, 'relatedEmitterDomNode property is correctly set');
-
-		Assert.strictEqual(capturedEvent.clickCount, 1, 'clickCount property is correctly set');
-
-		Assert.strictEqual(capturedEvent.device.capabilities.touch, false, 'device.capabilities.touch property is correctly set');
+        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.one.click" events triggered by clicks are instances of MouseEvent');
 	
         //throw error;
 	},
