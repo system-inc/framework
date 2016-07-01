@@ -1,5 +1,5 @@
 // Dependencies
-var HtmlEventEmitter = Framework.require('system/html/events/HtmlEventEmitter.js');
+var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventEmitter.js');
 
 // Class
 var HtmlEventProxy = {};
@@ -142,8 +142,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		//Console.log('domEvent.type', domEvent.type, 'htmlEventIdentifier', htmlEventIdentifier);
 
 		// Create the proper event (MouseEvent for 'click', KeyboardEvent for 'keydown', etc.)
-		Console.info('We need to fix next line');
-		var event = htmlEventEmitter.createEvent(htmlEventEmitter, htmlEventIdentifier);
+		var event = htmlEventEmitter.createEventFromDomEvent(domEvent, htmlEventEmitter, htmlEventIdentifier);
 
 		// Set the common HtmlEvent properties
 		event.domEvent = domEvent;
@@ -187,8 +186,8 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		}
 	}
 
-	// Add the event listener to the htmlEventEmitter, use HtmlEventEmitter prototype (as opposed to htmlEventEmitter) as to not cause an infinite loop
-	HtmlEventEmitter.prototype.addEventListener.apply(htmlEventEmitter, arguments);
+	// Add the event listener to the htmlEventEmitter, use HtmlEventEmitter's super class, PropagatingEventEmitter, as opposed to htmlEventEmitter or HtmlEventEmitter, as to not cause an infinite loop
+	PropagatingEventEmitter.prototype.addEventListener.apply(htmlEventEmitter, arguments);
 
 	return htmlEventEmitter;
 };

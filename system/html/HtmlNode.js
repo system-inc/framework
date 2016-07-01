@@ -1,6 +1,6 @@
 // Dependencies
 var XmlNode = Framework.require('system/xml/XmlNode.js');
-var HtmlNodeEventEmitter = Framework.require('system/html/events/HtmlNodeEventEmitter.js');
+var HtmlNodeEventEmitter = Framework.require('system/html/events/html-node/HtmlNodeEventEmitter.js');
 
 // Class
 var HtmlNode = XmlNode.extend({
@@ -147,6 +147,9 @@ var HtmlNode = XmlNode.extend({
 
 	mountedToDom: function() {
 		//Console.log('HtmlNode mountedToDom', this.tag)
+		
+		// The domNode has a reference to the HtmlNode
+		this.domNode.htmlNode = this;
 
 		this.isMountedToDom = true;
 

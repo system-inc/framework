@@ -4,6 +4,7 @@ var Assert = Framework.require('system/test/Assert.js');
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
 var ElectronManager = Framework.require('system/electron/ElectronManager.js');
+var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
 
 // Class
 var HtmlEventProxyTest = ElectronTest.extend({
@@ -32,7 +33,7 @@ var HtmlEventProxyTest = ElectronTest.extend({
 
         // Simulate a click
         //yield ElectronManager.clickHtmlElement(htmlElement);
-        htmlElement.click(); // Appears to be synchronous
+        htmlElement.click();
 
         Assert.strictEqual(capturedEvent, null, '"click" events do not get bound');
 	},
@@ -60,10 +61,10 @@ var HtmlEventProxyTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Simulate a click
-        //yield ElectronManager.clickHtmlElement(htmlElement);
-        htmlElement.click(); // Appears to be synchronous
+        htmlElement.click();
 
         Assert.strictEqual(capturedEvent.identifier, 'interact', '"interact" events are triggered by clicks');
+        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of MouseEvent');
 	},
 
 	//keyboard.key.rightArrow.up

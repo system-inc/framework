@@ -1,7 +1,7 @@
 // Dependencies
 var XmlDocument = Framework.require('system/xml/XmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
-var HtmlDocumentEventEmitter = Framework.require('system/html/events/HtmlDocumentEventEmitter.js');
+var HtmlDocumentEventEmitter = Framework.require('system/html/events/html-document/HtmlDocumentEventEmitter.js');
 var ShortcutManager = Framework.require('system/web-interface/shortcuts/ShortcutManager.js');
 
 // Class
