@@ -31,33 +31,33 @@ var MouseEvent = HtmlEvent.extend({
 	// 5: Fifth button, typically the Browser Forward button
 	button: null,
 
-	offsets: {
-		emitter: {
+	position: {
+		relativeToEmitter: {
 			x: null, // The X coordinate of the mouse pointer relative to the position of the padding edge of the target node
 			y: null, // The Y coordinate of the mouse pointer relative to the position of the padding edge of the target node
 		},
 
-		relativeAncestor: {
+		relativeToRelativeAncestor: {
 			x: null, // The X coordinate of the mouse pointer relative to the closest positioned ancestor element
 			y: null, // The Y coordinate of the mouse pointer relative to the closest positioned ancestor element
 		},
 
-		viewport: {
+		relativeToViewport: {
 			x: null, // The X coordinate of the mouse pointer in local (DOM content) coordinates
 			y: null, // The Y coordinate of the mouse pointer in local (DOM content) coordinates
 		},
 
-		document: {
+		relativeToDocument: {
 			x: null, // The X coordinate of the mouse pointer relative to the whole document
 			y: null, // The Y coordinate of the mouse pointer relative to the whole document
 		},
 		
-		global: {
+		relativeToGlobal: {
 			x: null, // The X coordinate of the mouse pointer in global (screen) coordinates
 			y: null, // The Y coordinate of the mouse pointer in global (screen) coordinates
 		},
 	
-		previousGlobalOffset: {
+		relativeToPreviousGlobalRelativePosition: {
 			// currentEvent.movementX = currentEvent.screenX - previousEvent.screenX.
 			x: null, // The X coordinate of the mouse pointer relative to the position of the last mousemove event
 			y: null, // The Y coordinate of the mouse pointer relative to the position of the last mousemove event
@@ -134,19 +134,19 @@ MouseEvent.createFromDomEvent = function(domMouseEvent, emitter, identifier, dat
 		mouseEvent.button = 5;
 	}
 
-	mouseEvent.offsets.emitter.x = domMouseEvent.offsetX;
-	mouseEvent.offsets.emitter.y = domMouseEvent.offsetY;
-	mouseEvent.offsets.relativeAncestor.x = domMouseEvent.layerX;
-	mouseEvent.offsets.relativeAncestor.y = domMouseEvent.layerY;
-	mouseEvent.offsets.viewport.x = domMouseEvent.x;
-	mouseEvent.offsets.viewport.y = domMouseEvent.y;
-	mouseEvent.offsets.document.x = domMouseEvent.pageX;
-	mouseEvent.offsets.document.y = domMouseEvent.pageY;
-	mouseEvent.offsets.global.x = domMouseEvent.screenX;
-	mouseEvent.offsets.global.y = domMouseEvent.screenY;
-	mouseEvent.offsets.previousGlobalOffset.x = domMouseEvent.movementX;
-	mouseEvent.offsets.previousGlobalOffset.y = domMouseEvent.movementY;
-	//console.log(mouseEvent.offsets);
+	mouseEvent.position.relativeToEmitter.x = domMouseEvent.offsetX;
+	mouseEvent.position.relativeToEmitter.y = domMouseEvent.offsetY;
+	mouseEvent.position.relativeToRelativeAncestor.x = domMouseEvent.layerX;
+	mouseEvent.position.relativeToRelativeAncestor.y = domMouseEvent.layerY;
+	mouseEvent.position.relativeToViewport.x = domMouseEvent.x;
+	mouseEvent.position.relativeToViewport.y = domMouseEvent.y;
+	mouseEvent.position.relativeToDocument.x = domMouseEvent.pageX;
+	mouseEvent.position.relativeToDocument.y = domMouseEvent.pageY;
+	mouseEvent.position.relativeToGlobal.x = domMouseEvent.screenX;
+	mouseEvent.position.relativeToGlobal.y = domMouseEvent.screenY;
+	mouseEvent.position.relativeToPreviousGlobalRelativePosition.x = domMouseEvent.movementX;
+	mouseEvent.position.relativeToPreviousGlobalRelativePosition.y = domMouseEvent.movementY;
+	console.log(mouseEvent.position);
 
 	if(domMouseEvent.relatedTarget && domMouseEvent.relatedTarget.htmlNode) {
 		mouseEvent.relatedEmitter = domMouseEvent.relatedTarget.htmlNode; // .htmlNode is set in HtmlNode.mountedToDom()	

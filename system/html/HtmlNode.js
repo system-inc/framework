@@ -173,27 +173,41 @@ var HtmlNode = XmlNode.extend({
 		return domNode;
 	},
 
-	getPosition: function(relativeToElement) {
-		var position = null;
+	getSize: function() {
+		return this.getSizeAndPosition().size;
+	},
 
-		// TODO: Implement relativeToElement, dy default the position is relative to the document
+	getPosition: function() {
+		return this.getSizeAndPosition().position;
+	},
+
+	getSizeAndPosition: function() {
+		var sizeAndPosition = null;
 
 		if(this.domNode) {
 			var boundingClientRect = this.domNode.getBoundingClientRect();
 
-			position = {
-				top: boundingClientRect.top,
-				right: boundingClientRect.right,
-				bottom: boundingClientRect.bottom,
-				left: boundingClientRect.left,
-				width: boundingClientRect.width,
-				height: boundingClientRect.height,
-				centerX: boundingClientRect.width / 2,
-				centerY: boundingClientRect.height / 2,
+			sizeAndPosition = {
+				size: {
+					width: boundingClientRect.width,
+					height: boundingClientRect.height,
+				},
+				position:{
+					relativeToViewport: {
+						top: boundingClientRect.top,
+						right: boundingClientRect.right,
+						bottom: boundingClientRect.bottom,
+						left: boundingClientRect.left,
+						center: {
+							x: boundingClientRect.width / 2,
+							y: boundingClientRect.height / 2,
+						},
+					},
+				},
 			};
 		}
 
-		return position;
+		return sizeAndPosition;
 	},
 
 	click: function() {
