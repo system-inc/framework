@@ -108,7 +108,7 @@ var MouseEventTest = ElectronTest.extend({
 		var capturedEvent = null;
 
 		// Add an event listener to the div to capture the event when triggered
-		htmlElement.on('mouse.button.one.click', function(event) {
+		htmlElement.on('mouse.button.*', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
 		});
@@ -121,7 +121,7 @@ var MouseEventTest = ElectronTest.extend({
 
         Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.one.click" events triggered by clicks are instances of MouseEvent');
 	
-        //throw error;
+        throw error;
 	},
 
 });

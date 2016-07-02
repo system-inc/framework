@@ -24,6 +24,7 @@ var RegularExpressionTest = Test.extend({
 		Assert.false(RegularExpression.stringMatchesWildcardPattern('123event', 'event'), '"123event" does not match wildcard pattern, "event"');
 		Assert.false(RegularExpression.stringMatchesWildcardPattern('123event123', 'event*'), '"123event123" does not match wildcard pattern, "event*"');
 		Assert.false(RegularExpression.stringMatchesWildcardPattern('123event123event123', 'event*event*'), '"123event123event123" does not match wildcard pattern, "event*event*"');
+		Assert.true(RegularExpression.stringMatchesWildcardPattern('mouse.button.*', 'mouse.*.click.*'), '"mouse.button.*" match wildcard pattern, "mouse.*.click.*"');
 	},
 
 });

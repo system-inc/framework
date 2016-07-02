@@ -13,20 +13,29 @@ var HtmlEventEmitter = PropagatingEventEmitter.extend({
 		return event;
 	},
 
-	createEventFromDomEvent: function(domEvent, emitter, eventIdentifier, data, eventOptions) {
-		var event = null;
-
+	createEventsFromDomEvent: function(domEvent, emitter, data, eventOptions) {
 		Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
+
+		var events = [];
 
 		// MouseEvent
 		if(window && window.MouseEvent && Class.isInstance(domEvent, window.MouseEvent)) {
-			event = MouseEvent.createFromDomEvent(domEvent, emitter, eventIdentifier, data, eventOptions);
+			events = MouseEvent.createEventsFromDomEvent(domEvent, emitter, data, eventOptions);
 		}
+		// All other events
 		else {
-			event = new HtmlEvent(emitter, eventIdentifier, data, eventOptions);	
+			events.append(new HtmlEvent(emitter, domEvent.type, data, eventOptions));
 		}
 
-		return event;
+		// Set the common HtmlEvent properties
+		events.each(function(eventIndex, event) {
+			event.domEvent = domEvent;
+			event.trusted = domEvent.isTrusted;
+		});
+
+		Console.standardWarn('HtmlEventEmitter createEventFromDomEvent events', events);
+
+		return events;
 	},
 
 	addEventListener: function(eventPattern, functionToBind, timesToRun) {

@@ -294,9 +294,9 @@ ElectronManager.clickHtmlElement = function(htmlElement, webContents) {
 		var sizeAndPosition = htmlElement.getSizeAndPosition();
 		//Console.log('sizeAndPosition', sizeAndPosition);
 
+		// When mouse up is sent, resolve the promise
 		var callback = function(event, data) {
 			//Console.standardInfo('ipc-message-sync', arguments);
-
 			if(
 				data &&
 				data[0] == 'ELECTRON_BROWSER_MEMBER_CALL' &&
@@ -317,12 +317,10 @@ ElectronManager.clickHtmlElement = function(htmlElement, webContents) {
 			) {
 				// Remove the listener
 				webContents.removeListener('ipc-message-sync', callback);
-				Console.log('--resolve');
+				//Console.log('ElectronManager.clickHtmlElement resolved');
 				resolve(true);
 			}
 		};
-
-		// When mouse up is sent, resolve the promise
 		webContents.on('ipc-message-sync', callback);
 
 		// A trusted click will be fired after mouse down and mouse up

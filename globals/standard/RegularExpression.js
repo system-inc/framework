@@ -33,6 +33,8 @@ RegularExpression.stringMatchesWildcardPattern = function(string, wildcardPatter
 	var regularExpressionPattern = wildcardPattern.split('*').join('.*');
 	regularExpressionPattern = "^" + regularExpressionPattern + "$"
 
+	//console.log(regularExpressionPattern);
+
 	// Create the expression
 	var regularExpression = new RegularExpression(regularExpressionPattern);
 

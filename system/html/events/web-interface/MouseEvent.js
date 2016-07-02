@@ -83,6 +83,30 @@ MouseEvent.is = function(value) {
 	return Class.isInstance(value, MouseEvent);
 };
 
+MouseEvent.createEventsFromDomEvent = function(domMouseEvent, emitter, data, options) {
+	Console.standardLog('MouseEvent.createEventsFromDomEvent', arguments);
+
+	var events = [];
+
+	// Use this for identifying which events to create
+	var mouseEventWithoutIdentifier = MouseEvent.createFromDomEvent(domMouseEvent, emitter, null, data, options);
+
+	// Figure out which events to create
+	if(domMouseEvent.type == 'click') {
+		// interact
+		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'interact', data, options));
+
+		// mouse.button.one.click
+		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.one.click', data, options));
+	}
+	else if(mouseEventWithoutIdentifier.clickCount == 2) {
+		// mouse.button.one.click.double
+		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.one.click.double', data, options));
+	}
+
+	return events;
+};
+
 MouseEvent.createFromDomEvent = function(domMouseEvent, emitter, identifier, data, options) {
 	var mouseEvent = new MouseEvent(emitter, identifier, data, options);
 

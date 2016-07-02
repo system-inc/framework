@@ -8,61 +8,33 @@ var HtmlEventProxy = {};
 
 // Static methods
 
-// Takes HtmlEvent patterns (e.g., 'mouse.button.one.click') and returns the correlating DOM event identifier (e.g., 'click')
-HtmlEventProxy.htmlEventPatternToDomEventIdentifier = function(htmlEventPattern) {
-	var domEventIdentifier = null;
+// Takes HtmlEvent patterns (e.g., 'mouse.button.one.click') and returns the correlating DOM event identifiers (e.g., 'click')
+HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern) {
+	var domEventIdentifiers = [];
 
 	if(htmlEventPattern == 'htmlDocument.ready') {
-		domEventIdentifier = 'DOMContentLoaded';
+		domEventIdentifiers.append('DOMContentLoaded');
 	}
 	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'mouse.*.click.*') || htmlEventPattern == 'interact') {
-		domEventIdentifier = 'click';
+		domEventIdentifiers.append('click');
 	}
 	else if(htmlEventPattern == 'form.control.change') {
-		domEventIdentifier = 'change';
+		domEventIdentifiers.append('change');
 	}
 	else if(htmlEventPattern == 'form.submit') {
-		domEventIdentifier = 'submit';
+		domEventIdentifiers.append('submit');
 	}
 	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.up.*')) {
-		domEventIdentifier = 'keyup';
+		domEventIdentifiers.append('keyup');
 	}
 	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.down.*')) {
-		domEventIdentifier = 'keydown';
+		domEventIdentifiers.append('keydown');
 	}
 	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.press.*')) {
-		domEventIdentifier = 'keypress';
+		domEventIdentifiers.append('keypress');
 	}
 
-	return domEventIdentifier;
-};
-
-HtmlEventProxy.domEventIdentifierToHtmlEventIdentifier = function(domEventIdentifier) {
-	var htmlEventIdentifier = null;
-
-	if(domEventIdentifier == 'DOMContentLoaded') {
-		htmlEventIdentifier = 'htmlDocument.ready';
-	}
-	else if(domEventIdentifier == 'click') {
-		htmlEventIdentifier = 'interact';
-	}
-	else if(domEventIdentifier == 'change') {
-		htmlEventIdentifier = 'form.control.change';
-	}
-	else if(domEventIdentifier == 'submit') {
-		htmlEventIdentifier = 'form.submit';
-	}
-	else if(domEventIdentifier == 'keyup') {
-		htmlEventIdentifier = 'keyboard.key.*.up';
-	}
-	else if(domEventIdentifier == 'keydown') {
-		htmlEventIdentifier = 'keyboard.key.*.down';
-	}
-	else if(domEventIdentifier == 'keypress') {
-		htmlEventIdentifier = 'keyboard.key.*.press';
-	}
-
-	return htmlEventIdentifier;
+	return domEventIdentifiers;
 };
 
 HtmlEventProxy.getDomObjectFromHtmlEventEmitter = function(htmlEventEmitter) {
@@ -132,49 +104,45 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 	// Get the domObject from the htmlEventEmitter
 	var domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
 
-	// Get the DOM event identifier for the provided eventPattern
-	var domEventIdentifier = HtmlEventProxy.htmlEventPatternToDomEventIdentifier(eventPattern);
+	// Get the DOM event identifiers for the provided eventPattern
+	var domEventIdentifiers = HtmlEventProxy.htmlEventPatternToDomEventIdentifiers(eventPattern);
 
 	// When the DOM object emits a domEvent
-	var domEventListenerFunctionToBind = function(domEvent) {
-		// Take the domEvent identifier and turn it into an HtmlEventIdentifier
-		var htmlEventIdentifier = HtmlEventProxy.domEventIdentifierToHtmlEventIdentifier(domEvent.type);
-		//Console.log('domEvent.type', domEvent.type, 'htmlEventIdentifier', htmlEventIdentifier);
-
-		// Create the proper event (MouseEvent for 'click', KeyboardEvent for 'keydown', etc.)
-		var event = htmlEventEmitter.createEventFromDomEvent(domEvent, htmlEventEmitter, htmlEventIdentifier);
-
-		// Set the common HtmlEvent properties
-		event.domEvent = domEvent;
-		event.trusted = domEvent.isTrusted;
-
-		//Console.standardLog('event', event);
+	var domEventListenerFunctionToBind = function*(domEvent) {
+		// Get the events to emit from the domEvent
+		var events = htmlEventEmitter.createEventsFromDomEvent(domEvent, htmlEventEmitter);
+		//Console.standardLog('events', events);
 
 		// Emit the event
-		htmlEventEmitter.emit(htmlEventIdentifier, event);
-	}.bind(htmlEventEmitter);
+		yield events.each(function*(eventIndex, event) {
+			Console.standardLog('htmlEventEmitter.emit event', event);
+			yield htmlEventEmitter.emit(event.identifier, event);
+		});
+	}.bind(htmlEventEmitter).toPromise();
 
 	// If we have a valid domEventIdentifier
-	if(domEventIdentifier) {
-		Console.log('Binding domEventIdentifier', domEventIdentifier, 'for eventPattern', eventPattern);
+	if(domEventIdentifiers.length) {
+		domEventIdentifiers.each(function(domEventIdentifierIndex, domEventIdentifier) {
+			Console.log('Binding domEventIdentifier', domEventIdentifier, 'for eventPattern', eventPattern);
 
-		// If we have a domObject because we are already mounted to the DOM
-		if(domObject) {
-			// Add the event listener to the domObject
-			domObject.addEventListener(domEventIdentifier, domEventListenerFunctionToBind);
-		}
-		// If we don't have a domObject, wait to be mountedToDom
-		else {
-			htmlEventEmitter.on(['htmlDocument.mountedToDom', 'htmlNode.mountedToDom'], function() {
-				//Console.log('Mounted to DOM, calling domNode.addEventListener now for', htmlEventEmitter.tag, Json.encode(htmlEventEmitter.attributes));
-
-				// Get the domObject from the htmlEventEmitter
-				domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
-
+			// If we have a domObject because we are already mounted to the DOM
+			if(domObject) {
 				// Add the event listener to the domObject
 				domObject.addEventListener(domEventIdentifier, domEventListenerFunctionToBind);
-			}.bind(htmlEventEmitter));
-		}
+			}
+			// If we don't have a domObject, wait to be mountedToDom
+			else {
+				htmlEventEmitter.on(['htmlDocument.mountedToDom', 'htmlNode.mountedToDom'], function() {
+					//Console.log('Mounted to DOM, calling domNode.addEventListener now for', htmlEventEmitter.tag, Json.encode(htmlEventEmitter.attributes));
+
+					// Get the domObject from the htmlEventEmitter
+					domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
+
+					// Add the event listener to the domObject
+					domObject.addEventListener(domEventIdentifier, domEventListenerFunctionToBind);
+				}.bind(htmlEventEmitter));
+			}
+		});
 	}
 	// If we don't have a domEventIdentifier it means the event listener is not for the DOM
 	else {
