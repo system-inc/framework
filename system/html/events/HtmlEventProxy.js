@@ -12,25 +12,35 @@ var HtmlEventProxy = {};
 HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern) {
 	var domEventIdentifiers = [];
 
+	// Mouse
+	if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'mouse.*.click.*')) {
+		domEventIdentifiers.append('click');
+	}
+	if(htmlEventPattern == 'interact') {
+		domEventIdentifiers.append('click');
+	}
+
+	// HtmlDocument
 	if(htmlEventPattern == 'htmlDocument.ready') {
 		domEventIdentifiers.append('DOMContentLoaded');
 	}
-	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'mouse.*.click.*') || htmlEventPattern == 'interact') {
-		domEventIdentifiers.append('click');
-	}
-	else if(htmlEventPattern == 'form.control.change') {
+
+	// Form
+	if(htmlEventPattern == 'form.control.change') {
 		domEventIdentifiers.append('change');
 	}
-	else if(htmlEventPattern == 'form.submit') {
+	if(htmlEventPattern == 'form.submit') {
 		domEventIdentifiers.append('submit');
 	}
-	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.up.*')) {
+
+	// Keyboard
+	if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.up.*')) {
 		domEventIdentifiers.append('keyup');
 	}
-	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.down.*')) {
+	if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.down.*')) {
 		domEventIdentifiers.append('keydown');
 	}
-	else if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.press.*')) {
+	if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.press.*')) {
 		domEventIdentifiers.append('keypress');
 	}
 
