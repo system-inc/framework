@@ -173,22 +173,22 @@ var HtmlNode = XmlNode.extend({
 		return domNode;
 	},
 
-	getSize: function() {
-		return this.getSizeAndPosition().size;
+	getDimensions: function() {
+		return this.getDimensionsAndPosition().dimensions;
 	},
 
 	getPosition: function() {
-		return this.getSizeAndPosition().position;
+		return this.getDimensionsAndPosition().position;
 	},
 
-	getSizeAndPosition: function() {
-		var sizeAndPosition = null;
+	getDimensionsAndPosition: function() {
+		var dimensionsAndPosition = null;
 
 		if(this.domNode) {
 			var boundingClientRect = this.domNode.getBoundingClientRect();
 
-			sizeAndPosition = {
-				size: {
+			dimensionsAndPosition = {
+				dimensions: {
 					width: boundingClientRect.width,
 					height: boundingClientRect.height,
 				},
@@ -207,7 +207,7 @@ var HtmlNode = XmlNode.extend({
 			};
 		}
 
-		return sizeAndPosition;
+		return dimensionsAndPosition;
 	},
 
 	click: function() {

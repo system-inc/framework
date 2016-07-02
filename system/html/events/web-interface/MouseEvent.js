@@ -4,8 +4,6 @@ var HtmlEvent = Framework.require('system/html/events/HtmlEvent.js');
 // Class
 var MouseEvent = HtmlEvent.extend({
 
-	type: null,
-
 	// Keyboard keys down when the mouse event was emitted
 	keyboardKeysDown: {
 		alt: null, // true if the alt key was down when the mouse event was emitted
@@ -84,7 +82,7 @@ MouseEvent.is = function(value) {
 };
 
 MouseEvent.createEventsFromDomEvent = function(domMouseEvent, emitter, data, options) {
-	Console.standardLog('MouseEvent.createEventsFromDomEvent', arguments);
+	Console.standardLog('MouseEvent.createEventsFromDomEvent', domMouseEvent.type, arguments);
 
 	var events = [];
 
@@ -93,24 +91,36 @@ MouseEvent.createEventsFromDomEvent = function(domMouseEvent, emitter, data, opt
 
 	// Figure out which events to create
 	if(domMouseEvent.type == 'click') {
-		// interact
-		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'interact', data, options));
+		if(mouseEventWithoutIdentifier.button == 1) {
+			// interact
+			events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'interact', data, options));
 
-		// mouse.button.one.click
-		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.one.click', data, options));
+			// mouse.button.1.click
+			events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.1.click', data, options));	
+		}
+		else if(mouseEventWithoutIdentifier.button == 3) {
+			// mouse.button.3.click
+			events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.3.click', data, options));
+		}
+	}
+	else if(domMouseEvent.type == 'mouseup') {
+		if(mouseEventWithoutIdentifier.button == 2) {
+			// mouse.button.2.click
+			events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.2.click', data, options));
+		}
 	}
 	else if(mouseEventWithoutIdentifier.clickCount == 2) {
-		// mouse.button.one.click.double
-		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.one.click.double', data, options));
+		// mouse.button.1.click.double
+		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.1.click.double', data, options));
 	}
+
+	Console.standardLog('events', events);
 
 	return events;
 };
 
 MouseEvent.createFromDomEvent = function(domMouseEvent, emitter, identifier, data, options) {
 	var mouseEvent = new MouseEvent(emitter, identifier, data, options);
-
-	mouseEvent.type = domMouseEvent.type;
 
 	mouseEvent.keyboardKeysDown.alt = domMouseEvent.altKey;
 	mouseEvent.keyboardKeysDown.ctrl = domMouseEvent.ctrlKey;

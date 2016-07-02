@@ -108,9 +108,13 @@ var MouseEventTest = ElectronTest.extend({
 		var capturedEvent = null;
 
 		// Add an event listener to the div to capture the event when triggered
-		htmlElement.on('mouse.button.*', function(event) {
+		htmlElement.on('mouse.button.1.click', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
+		});
+
+		htmlElement.on('mouse.button.2.click', function(event) {
+			Console.standardWarn(event.identifier, event);
 		});
 
 		// Mount the HtmlDocument to the DOM
@@ -119,7 +123,7 @@ var MouseEventTest = ElectronTest.extend({
         // Simulate a click
         yield ElectronManager.clickHtmlElement(htmlElement);
 
-        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.one.click" events triggered by clicks are instances of MouseEvent');
+        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.1.click" events triggered by clicks are instances of MouseEvent');
 	
         throw error;
 	},

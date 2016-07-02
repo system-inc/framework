@@ -16,20 +16,23 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern
 	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'mouse.*.click.*')) {
 		domEventIdentifiers.append('click');
 	}
-	if(htmlEventPattern == 'interact') {
+	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'mouse.button.2.*')) {
+		domEventIdentifiers.append('mouseup');
+	}
+	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'interact')) {
 		domEventIdentifiers.append('click');
 	}
 
 	// HtmlDocument
-	if(htmlEventPattern == 'htmlDocument.ready') {
+	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'htmlDocument.ready')) {
 		domEventIdentifiers.append('DOMContentLoaded');
 	}
 
 	// Form
-	if(htmlEventPattern == 'form.control.change') {
+	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'form.control.change')) {
 		domEventIdentifiers.append('change');
 	}
-	if(htmlEventPattern == 'form.submit') {
+	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'form.submit')) {
 		domEventIdentifiers.append('submit');
 	}
 
@@ -43,6 +46,9 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern
 	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'keyboard.key.*.press.*')) {
 		domEventIdentifiers.append('keypress');
 	}
+
+	// Get rid of duplicates
+	domEventIdentifiers = domEventIdentifiers.unique();
 
 	return domEventIdentifiers;
 };

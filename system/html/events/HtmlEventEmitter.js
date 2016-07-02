@@ -14,7 +14,7 @@ var HtmlEventEmitter = PropagatingEventEmitter.extend({
 	},
 
 	createEventsFromDomEvent: function(domEvent, emitter, data, eventOptions) {
-		Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
+		//Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
 
 		var events = [];
 
@@ -33,7 +33,7 @@ var HtmlEventEmitter = PropagatingEventEmitter.extend({
 			event.trusted = domEvent.isTrusted;
 		});
 
-		Console.standardWarn('HtmlEventEmitter createEventFromDomEvent events', events);
+		//Console.standardWarn('HtmlEventEmitter createEventFromDomEvent events', events);
 
 		return events;
 	},
