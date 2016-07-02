@@ -13,7 +13,7 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern
 	var domEventIdentifiers = [];
 
 	// Mouse
-	if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'mouse.*.click.*')) {
+	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'mouse.*.click.*')) {
 		domEventIdentifiers.append('click');
 	}
 	if(htmlEventPattern == 'interact') {
@@ -34,13 +34,13 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern
 	}
 
 	// Keyboard
-	if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.up.*')) {
+	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'keyboard.key.*.up.*')) {
 		domEventIdentifiers.append('keyup');
 	}
-	if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.down.*')) {
+	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'keyboard.key.*.down.*')) {
 		domEventIdentifiers.append('keydown');
 	}
-	if(RegularExpression.stringMatchesWildcardPattern(htmlEventPattern, 'keyboard.key.*.press.*')) {
+	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'keyboard.key.*.press.*')) {
 		domEventIdentifiers.append('keypress');
 	}
 

@@ -226,7 +226,7 @@ var EventEmitter = Class.extend({
 				// If the event pattern is a string with a *
 				else if(String.is(eventListener.eventPattern) && eventListener.eventPattern.contains('*')) {
 					//Console.info('eventListener eventPattern contains *', eventListener);
-					if(RegularExpression.stringMatchesWildcardPattern(eventPattern, eventListener.eventPattern)) {
+					if(RegularExpression.wildcardPatternsMatch(eventPattern, eventListener.eventPattern)) {
 						matchingEventListeners.append(eventListener);
 					}
 				}
