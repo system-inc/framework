@@ -22,7 +22,6 @@ RegularExpression.escape = function(string) {
 };
 
 RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPatternB) {
-
 	// http://stackoverflow.com/questions/18695727/algorithm-to-find-out-whether-the-matches-for-two-glob-patterns-or-regular-expr/18816736#18816736
 
 	// Class WildcardPatternToken
@@ -326,6 +325,127 @@ RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPat
 
 	return wildcardPatternsMatch;
 };
+
+/*
+// This is an alternate algorithm for doing wildcard matching
+RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPatternB) {
+	// http://stackoverflow.com/questions/18695727/algorithm-to-find-out-whether-the-matches-for-two-glob-patterns-or-regular-expr/18813883#18813883
+
+	// Enumeration for specifying the type of pattern
+	var PatternTypes = {
+	    prefix: 0,
+	    suffix: 1,
+	    all: 2
+	};
+
+	// Find out whether the supplied suffixes or prefixes intersect
+	function tokensIntersect(tokenA, tokenB, patternType) {
+	    var regularExpressionString = '';
+	    var characterInCharacterClass = false;
+	    var characterClass = '';
+	    
+	    // Build up a regular expression for tokenA
+	    for(var characterPosition = 0; characterPosition < tokenA.length; characterPosition++) {
+	        var character = tokenA.charAt(characterPosition);
+	        
+	        // Build expression differently depending on whether the current character is within a character class
+	        if(characterInCharacterClass) {
+	            if(character == ']') {
+	                characterClass = RegularExpression.escape(characterClass);
+	                regularExpressionString += "([" + characterClass + "?]|\\[[^\\]]*[" + characterClass + "].*?\\])";
+	                characterClass = '';
+	                characterInCharacterClass = false;
+	            }
+	            else {
+	                characterClass += character;
+	            }
+	        }
+	        else {
+	            if(character == '[') {
+	                characterInCharacterClass = true;
+	            }
+	            else if(character == '?') {
+	                regularExpressionString += "(\\[.*?\\]|[^\\]])";
+	            }
+	            else if(character == '*') {
+	                regularExpressionString += "(\\[.*?\\]|[^\\]])*";
+	            }
+	            else {
+	                regularExpressionString += "([" + RegularExpression.escape(character) + "?]|\\[[^\\]]*[" + RegularExpression.escape(character) + "].*?\\])";
+	            }
+	        }
+	    }
+	    
+	    if(characterInCharacterClass) {
+	    	throw new Error('Unterminated character class in pattern: '+tokenA);
+	    }
+	    
+	    switch(patternType) {
+	        case PatternTypes.prefix:
+	            // Prefix must be at the start - the ^ regularExpression character denotes this
+	            regularExpressionString = "^"+regularExpressionString;
+	            break;
+	        case PatternTypes.suffix:
+	            // Suffix must be at the end - the $ regularExpression character denotes this
+	            regularExpressionString += "$";
+	            break;
+	        default:
+	            // Otherwise assume it is the whole string - use both regularExpression characters
+	            regularExpressionString = "^"+regularExpressionString + "$";
+	    }
+	    
+	    // Test tokenB against the regular expression created for tokenA
+	    var regularExpression = new RegExp(regularExpressionString, "i");
+	    var intersect = regularExpression.test(tokenB);
+
+	    return intersect;
+	}
+
+	// Find out whether the supplied patterns intersect
+	function wildcardPatternsIntersect(wildcardPatternA, wildcardPatternB) {
+	    var intersect = null;
+	    
+	    // If either pattern is null, use empty string instead
+	    wildcardPatternA = wildcardPatternA || '';
+	    wildcardPatternB = wildcardPatternB || '';
+	    
+	    // Get prefixes and suffixes for both patterns
+	    var wildcardPatternAFirstStarPosition = wildcardPatternA.indexOf('*');
+	    var wildcardPatternAPrefix = wildcardPatternAFirstStarPosition < 0 ? wildcardPatternA : wildcardPatternA.substr(0, wildcardPatternA.indexOf('*'));
+	    var wildcardPatternASuffix = wildcardPatternA.substr(wildcardPatternA.lastIndexOf('*') + 1);
+	    var wildcardPatternBFirstStarPosition = wildcardPatternB.indexOf('*');
+	    if((wildcardPatternAFirstStarPosition >= 0) && (wildcardPatternBFirstStarPosition >= 0)) {
+	        var wildcardPatternBPrefix = wildcardPatternBFirstStarPosition < 0 ? wildcardPatternB : wildcardPatternB.substr(0, wildcardPatternB.indexOf('*'));
+	        var wildcardPatternBSuffix = wildcardPatternB.substr(wildcardPatternB.lastIndexOf('*') + 1);
+	        var prefixesIntersect = tokensIntersect(wildcardPatternAPrefix, wildcardPatternBPrefix, PatternTypes.prefix) || tokensIntersect(wildcardPatternBPrefix, wildcardPatternAPrefix, PatternTypes.prefix);
+	        var suffixesIntersect = tokensIntersect(wildcardPatternASuffix, wildcardPatternBSuffix, PatternTypes.suffix) || tokensIntersect(wildcardPatternBSuffix, wildcardPatternASuffix, PatternTypes.suffix);
+	        intersect = prefixesIntersect && suffixesIntersect;
+	    }
+	    else if(wildcardPatternAFirstStarPosition >= 0) {
+	        intersect = tokensIntersect(wildcardPatternA, wildcardPatternB, PatternTypes.all);
+	    }
+	    else {
+	        intersect = tokensIntersect(wildcardPatternB, wildcardPatternA, PatternTypes.all);
+	    }
+
+	    return intersect;
+	}
+
+	var wildcardPatternsMatch = false;
+
+	// Make "event1" match "event1.*"
+	if(wildcardPatternA.endsWith('.*')) {
+		wildcardPatternA = wildcardPatternA.replaceLast('.*', '*');
+	}
+	if(wildcardPatternB.endsWith('.*')) {
+		wildcardPatternB = wildcardPatternB.replaceLast('.*', '*');
+	}
+
+	wildcardPatternsMatch = wildcardPatternsIntersect(wildcardPatternA, wildcardPatternB);
+
+	return wildcardPatternsMatch;
+};
+*/
 
 // Export
 module.exports = RegularExpression;
