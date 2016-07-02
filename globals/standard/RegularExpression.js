@@ -154,103 +154,103 @@ RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPat
 	    }
 	}
 
-	function anyCompare(tAny, tOther) {
-	    if(!tOther) return new WildcardPatternComparison(tAny.next, null);
+	function anyCompare(anyToken, otherToken) {
+	    if(!otherToken) return new WildcardPatternComparison(anyToken.next, null);
 
 	    var result = WildcardPatternComparison.falseComparison;
 
-	    while(tOther && !result.wildcardPatternsMatch) {
-	        while(tOther && !result.wildcardPatternsMatch) {
-	            switch(tOther.type) {
-	                case WildcardPatternTokenTypes.character: result = characterCompare(tOther, tAny.next).swapWildcardPatternTokens(); break;
-	                case WildcardPatternTokenTypes.single: result = singleCompare(tOther, tAny.next).swapWildcardPatternTokens(); break;
-	                case WildcardPatternTokenTypes.set: result = setCompare(tOther, tAny.next).swapWildcardPatternTokens(); break;
+	    while(otherToken && !result.wildcardPatternsMatch) {
+	        while(otherToken && !result.wildcardPatternsMatch) {
+	            switch(otherToken.type) {
+	                case WildcardPatternTokenTypes.character: result = characterCompare(otherToken, anyToken.next).swapWildcardPatternTokens(); break;
+	                case WildcardPatternTokenTypes.single: result = singleCompare(otherToken, anyToken.next).swapWildcardPatternTokens(); break;
+	                case WildcardPatternTokenTypes.set: result = setCompare(otherToken, anyToken.next).swapWildcardPatternTokens(); break;
 	                case WildcardPatternTokenTypes.anyString:
 	                    // the anyCompare from the getWildcardPatternComparison will take over the processing.
-	                    result = getWildcardPatternComparison(tAny, tOther.next);
+	                    result = getWildcardPatternComparison(anyToken, otherToken.next);
 	                    if(result.wildcardPatternsMatch) return result;
-	                    result = getWildcardPatternComparison(tOther, tAny.next).swapWildcardPatternTokens();
+	                    result = getWildcardPatternComparison(otherToken, anyToken.next).swapWildcardPatternTokens();
 	                    if(result.wildcardPatternsMatch) return result;
 	                    return WildcardPatternComparison.falseComparison;
 	            }
 	                  
-	            if(!result.wildcardPatternsMatch) tOther = tOther.next;
+	            if(!result.wildcardPatternsMatch) otherToken = otherToken.next;
 	        }
 
 	        if(result.wildcardPatternsMatch) {
 	            // we've found a starting point, but now we want to make sure this will always work.
 	            result = getWildcardPatternComparison(result.wildcardPatternANext, result.wildcardPatternBNext);
-	            if(!result.wildcardPatternsMatch) tOther = tOther.next;
+	            if(!result.wildcardPatternsMatch) otherToken = otherToken.next;
 	        }
 	    }
 
 	    // If we never got a good result that means we've eaten everything.
-	    if(!result.wildcardPatternsMatch) result = new WildcardPatternComparison(tAny.next, null, true);
+	    if(!result.wildcardPatternsMatch) result = new WildcardPatternComparison(anyToken.next, null, true);
 	    
 	    return result;
 	}
 
-	function characterCompare(tChar, tOther) {
-	    if(!tOther) return WildcardPatternComparison.falseComparison;
+	function characterCompare(tokenCharacter, otherToken) {
+	    if(!otherToken) return WildcardPatternComparison.falseComparison;
 
-	    switch(tOther.type) {
-	        case WildcardPatternTokenTypes.character: return characterCharacterCompare(tChar, tOther); 
-	        case WildcardPatternTokenTypes.single: return new WildcardPatternComparison(tChar.next, tOther.next);
-	        case WildcardPatternTokenTypes.set: return setCharCompare(tOther, tChar).swapWildcardPatternTokens(); 
-	        case WildcardPatternTokenTypes.anyString: return anyCompare(tOther, tChar).swapWildcardPatternTokens();
+	    switch(otherToken.type) {
+	        case WildcardPatternTokenTypes.character: return characterCharacterCompare(tokenCharacter, otherToken); 
+	        case WildcardPatternTokenTypes.single: return new WildcardPatternComparison(tokenCharacter.next, otherToken.next);
+	        case WildcardPatternTokenTypes.set: return setTokenCharacterCompare(otherToken, tokenCharacter).swapWildcardPatternTokens(); 
+	        case WildcardPatternTokenTypes.anyString: return anyCompare(otherToken, tokenCharacter).swapWildcardPatternTokens();
 	    }
 	}
 
-	function singleCompare(tSingle, tOther) {
-	    if(!tOther) return WildcardPatternComparison.falseComparison;
+	function singleCompare(singleToken, otherToken) {
+	    if(!otherToken) return WildcardPatternComparison.falseComparison;
 
-	    switch(tOther.type) {
-	        case WildcardPatternTokenTypes.character: return new WildcardPatternComparison(tSingle.next, tOther.next);
-	        case WildcardPatternTokenTypes.single: return new WildcardPatternComparison(tSingle.next, tOther.next);
-	        case WildcardPatternTokenTypes.set: return new WildcardPatternComparison(tSingle.next, tOther.next);
-	        case WildcardPatternTokenTypes.anyString: return anyCompare(tOther, tSingle).swapWildcardPatternTokens();
+	    switch(otherToken.type) {
+	        case WildcardPatternTokenTypes.character: return new WildcardPatternComparison(singleToken.next, otherToken.next);
+	        case WildcardPatternTokenTypes.single: return new WildcardPatternComparison(singleToken.next, otherToken.next);
+	        case WildcardPatternTokenTypes.set: return new WildcardPatternComparison(singleToken.next, otherToken.next);
+	        case WildcardPatternTokenTypes.anyString: return anyCompare(otherToken, singleToken).swapWildcardPatternTokens();
 	    }
 	}
-	function setCompare(tSet, tOther) {
-	    if(!tOther) return WildcardPatternComparison.falseComparison;
+	function setCompare(setToken, otherToken) {
+	    if(!otherToken) return WildcardPatternComparison.falseComparison;
 
-	    switch(tOther.type) {
-	        case WildcardPatternTokenTypes.character: return setCharCompare(tSet, tOther);
-	        case WildcardPatternTokenTypes.single: return new WildcardPatternComparison(tSet.next, tOther.next);
-	        case WildcardPatternTokenTypes.set: return setSetCompare(tSet, tOther);
-	        case WildcardPatternTokenTypes.anyString: return anyCompare(tOther, tSet).swapWildcardPatternTokens();
+	    switch(otherToken.type) {
+	        case WildcardPatternTokenTypes.character: return setTokenCharacterCompare(setToken, otherToken);
+	        case WildcardPatternTokenTypes.single: return new WildcardPatternComparison(setToken.next, otherToken.next);
+	        case WildcardPatternTokenTypes.set: return sesetTokenCompare(setToken, otherToken);
+	        case WildcardPatternTokenTypes.anyString: return anyCompare(otherToken, setToken).swapWildcardPatternTokens();
 	    }
 	}
 
-	function anySingleCompare(tAny, tSingle) {
-	    var nextResult = (tAny.next) ? singleCompare(tSingle, tAny.next).swapWildcardPatternTokens() :
-	        new WildcardPatternComparison(tAny, tSingle.next);
-	    return (nextResult.wildcardPatternsMatch) ? nextResult: new WildcardPatternComparison(tAny, tSingle.next);
+	function anySingleCompare(anyToken, singleToken) {
+	    var nextResult = (anyToken.next) ? singleCompare(singleToken, anyToken.next).swapWildcardPatternTokens() :
+	        new WildcardPatternComparison(anyToken, singleToken.next);
+	    return (nextResult.wildcardPatternsMatch) ? nextResult: new WildcardPatternComparison(anyToken, singleToken.next);
 	}
 
-	function anyCharCompare(tAny, tChar) {
-	    var nextResult = (tAny.next) ? characterCompare(tChar, tAny.next).swapWildcardPatternTokens() :
-	        new WildcardPatternComparison(tAny, tChar.next);
+	function anyCharacterCompare(anyToken, tokenCharacter) {
+	    var nextResult = (anyToken.next) ? characterCompare(tokenCharacter, anyToken.next).swapWildcardPatternTokens() :
+	        new WildcardPatternComparison(anyToken, tokenCharacter.next);
 
-	    return (nextResult.wildcardPatternsMatch) ? nextResult : new WildcardPatternComparison(tAny, tChar.next);
+	    return (nextResult.wildcardPatternsMatch) ? nextResult : new WildcardPatternComparison(anyToken, tokenCharacter.next);
 	}
 
-	function characterCharacterCompare(litA, litB) {
-	    return (litA.value === litB.value) ?
-	        new WildcardPatternComparison(litA.next, litB.next) : WildcardPatternComparison.falseComparison;
+	function characterCharacterCompare(literalA, literalB) {
+	    return (literalA.value === literalB.value) ?
+	        new WildcardPatternComparison(literalA.next, literalB.next) : WildcardPatternComparison.falseComparison;
 	}
 
-	function setCharCompare(tSet, tChar) {
-	    return (tSet.value.indexOf(tChar.value) > -1) ?
-	        new WildcardPatternComparison(tSet.next, tChar.next) : WildcardPatternComparison.falseComparison;
+	function setTokenCharacterCompare(setToken, tokenCharacter) {
+	    return (setToken.value.indexOf(tokenCharacter.value) > -1) ?
+	        new WildcardPatternComparison(setToken.next, tokenCharacter.next) : WildcardPatternComparison.falseComparison;
 	}
 
-	function setSetCompare(tSetA, tSetB) {
-	    var setA = tSetA.value,
-	        setB = tSetB.value;
+	function sesetTokenCompare(setTokenA, setTokenB) {
+	    var setA = setTokenA.value,
+	        setB = setTokenB.value;
 
 	    for (var i = 0, il = setA.length; i < il; i++) {
-	        if(setB.indexOf(setA.charAt(i)) > -1) return new WildcardPatternComparison(tSetA.next, tSetB.next);
+	        if(setB.indexOf(setA.charAt(i)) > -1) return new WildcardPatternComparison(setTokenA.next, setTokenB.next);
 	    }
 
 	    return WildcardPatternComparison.falseComparison;
@@ -289,7 +289,9 @@ RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPat
 	                            currentWildcardPatternToken = new WildcardPatternToken(value, WildcardPatternTokenTypes.anyString, currentWildcardPatternToken);
 	                        } 
 	                        break;
-	                    case 4: currentWildcardPatternToken = new WildcardPatternToken(value, WildcardPatternTokenTypes.single, currentWildcardPatternToken); break;
+	                    case 4:
+	                    	currentWildcardPatternToken = new WildcardPatternToken(value, WildcardPatternTokenTypes.single, currentWildcardPatternToken);
+	                    	break;
 	                    case 5:
 	                        currentWildcardPatternToken = new WildcardPatternToken(value.substring(1, value.length - 1).replace('\\]', ']'), WildcardPatternTokenTypes.set, currentWildcardPatternToken);
 	                        break;

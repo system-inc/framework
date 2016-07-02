@@ -3,6 +3,7 @@ var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventE
 var HtmlEvent = Framework.require('system/html/events/HtmlEvent.js');
 var HtmlEventProxy = Framework.require('system/html/events/HtmlEventProxy.js');
 var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
+var KeyboardEvent = Framework.require('system/html/events/web-interface/KeyboardEvent.js');
 
 // Class
 var HtmlEventEmitter = PropagatingEventEmitter.extend({
@@ -21,6 +22,10 @@ var HtmlEventEmitter = PropagatingEventEmitter.extend({
 		// MouseEvent
 		if(window && window.MouseEvent && Class.isInstance(domEvent, window.MouseEvent)) {
 			events = MouseEvent.createEventsFromDomEvent(domEvent, emitter, data, eventOptions);
+		}
+		// KeyboardEvent
+		else if(window && window.KeyboardEvent && Class.isInstance(domEvent, window.KeyboardEvent)) {
+			events = KeyboardEvent.createEventsFromDomEvent(domEvent, emitter, data, eventOptions);
 		}
 		// All other events
 		else {

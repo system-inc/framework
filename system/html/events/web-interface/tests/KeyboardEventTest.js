@@ -4,10 +4,10 @@ var Assert = Framework.require('system/test/Assert.js');
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
 var ElectronManager = null;
-var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
+var KeyboardEvent = Framework.require('system/html/events/web-interface/KeyboardEvent.js');
 
 // Class
-var MouseEventTest = ElectronTest.extend({
+var KeyboardEventTest = ElectronTest.extend({
 
 	before: function*() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
@@ -21,11 +21,8 @@ var MouseEventTest = ElectronTest.extend({
         htmlDocument.body.setStyle('margin', 0);
         htmlDocument.body.setStyle('padding', '30px');
 
-		// Create a div HtmlElement
-		var htmlElement = Html.div({
-			content: 'div',
-			style: 'border: 1px solid #00AAFF; background: #EFEFEF; padding: 30px;',
-		});
+		// Create a textarea HtmlElement
+		var htmlElement = Html.textarea();
 
 		// Append the HtmlElement to the HtmlDocument body
 		htmlDocument.body.append(htmlElement);
@@ -33,8 +30,8 @@ var MouseEventTest = ElectronTest.extend({
 		// Set a variable to capture the event
 		var capturedEvent = null;
 
-		// Add an event listener to the div to capture the event when triggered
-		htmlElement.on('interact', function(event) {
+		// Add an event listener to the textarea to capture the event when triggered
+		htmlElement.on('keyboard.key.*.up', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
 		});
@@ -44,7 +41,7 @@ var MouseEventTest = ElectronTest.extend({
 
 		//yield ElectronManager.clickHtmlElement(htmlElement);
 
-		//Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of MouseEvent');
+		//Assert.true(Class.isInstance(capturedEvent, KeyboardEvent), '"interact" events triggered by clicks are instances of KeyboardEvent');
 
 		//Assert.strictEqual(capturedEvent.type, 'click', 'type property is correctly set');
 
@@ -81,16 +78,12 @@ var MouseEventTest = ElectronTest.extend({
 
 		//Assert.strictEqual(capturedEvent.device.capabilities.touch, false, 'device.capabilities.touch property is correctly set');
 
-		//throw error;
+		throw error;
 	},
-
-	//div.on('mouse.button.one.click', function() {
-	//	console.log('mouse.button.one.click');
-	//});
 
 });
 
 // Export
-module.exports = MouseEventTest;
+module.exports = KeyboardEventTest;
 
 //keyboard.key.rightArrow.up

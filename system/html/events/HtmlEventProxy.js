@@ -6,46 +6,60 @@ var HtmlEventProxy = {};
 
 // Static properties
 
+HtmlEventProxy.domEventIdentifierMap = {
+	// Mouse
+	'click': {
+		'mouse.button.[1345].click': true, // Mouse button 2 does not trigger 'click' events
+		'interact': true,
+	},
+	'mouseup': {
+		'mouse.button.2.click': true, // Mouse button 2 can only be detected 'mouseup' events
+		'mouse.button.*.up': true,
+	},
+	'mousedown': {
+		'mouse.button.*.down': true,
+	},
+
+	// Keyboard
+	'keydown': {
+		'keyboard.key.*.down': true,
+	},
+	'keyup': {
+		'keyboard.key.*.up': true,
+	},
+	'keypress': {
+		'keyboard.key.*.press': true,
+	},
+
+	// Document
+	'DOMContentLoaded': {
+		'htmlDocument.ready': true,
+	},
+
+	// Forms
+	'change': {
+		'form.control.change': true,
+	},
+	'submit': {
+		'form.submit': true,
+	},
+};
+
 // Static methods
 
 // Takes HtmlEvent patterns (e.g., 'mouse.button.one.click') and returns the correlating DOM event identifiers (e.g., 'click')
 HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern) {
 	var domEventIdentifiers = [];
 
-	// Mouse
-	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'mouse.*.click.*')) {
-		domEventIdentifiers.append('click');
-	}
-	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'mouse.button.2.*')) {
-		domEventIdentifiers.append('mouseup');
-	}
-	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'interact')) {
-		domEventIdentifiers.append('click');
-	}
+	//Console.log('HtmlEventProxy.htmlEventPatternToDomEventIdentifiers', htmlEventPattern);
 
-	// HtmlDocument
-	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'htmlDocument.ready')) {
-		domEventIdentifiers.append('DOMContentLoaded');
-	}
-
-	// Form
-	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'form.control.change')) {
-		domEventIdentifiers.append('change');
-	}
-	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'form.submit')) {
-		domEventIdentifiers.append('submit');
-	}
-
-	// Keyboard
-	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'keyboard.key.*.up.*')) {
-		domEventIdentifiers.append('keyup');
-	}
-	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'keyboard.key.*.down.*')) {
-		domEventIdentifiers.append('keydown');
-	}
-	if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, 'keyboard.key.*.press.*')) {
-		domEventIdentifiers.append('keypress');
-	}
+	HtmlEventProxy.domEventIdentifierMap.each(function(domEventIdentifier, eventIdentifiers) {
+		eventIdentifiers.each(function(eventIdentifier) {
+			if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, eventIdentifier)) {
+				domEventIdentifiers.append(domEventIdentifier);
+			}
+		});
+	});
 
 	// Get rid of duplicates
 	domEventIdentifiers = domEventIdentifiers.unique();

@@ -7,7 +7,7 @@ var MouseEvent = HtmlEvent.extend({
 	// Keyboard keys down when the mouse event was emitted
 	keyboardKeysDown: {
 		alt: null, // true if the alt key was down when the mouse event was emitted
-		ctrl: null, // true if the control key was down when the mouse event was emitted
+		control: null, // true if the control key was down when the mouse event was emitted
 		meta: null, // true if the meta key was down when the mouse event was emitted
 		shift: null, // true if the shift key was down when the mouse event was emitted
 	},
@@ -67,12 +67,6 @@ var MouseEvent = HtmlEvent.extend({
 
 	clickCount: null, // The number of clicks that happened in a short amount of time in the same area
 
-	device: {
-		capabilities: {
-			touch: null,
-		},
-	},
-
 });
 
 // Static methods
@@ -123,7 +117,7 @@ MouseEvent.createFromDomEvent = function(domMouseEvent, emitter, identifier, dat
 	var mouseEvent = new MouseEvent(emitter, identifier, data, options);
 
 	mouseEvent.keyboardKeysDown.alt = domMouseEvent.altKey;
-	mouseEvent.keyboardKeysDown.ctrl = domMouseEvent.ctrlKey;
+	mouseEvent.keyboardKeysDown.control = domMouseEvent.ctrlKey;
 	mouseEvent.keyboardKeysDown.meta = domMouseEvent.metaKey;
 	mouseEvent.keyboardKeysDown.shift = domMouseEvent.shiftKey;
 
@@ -188,14 +182,6 @@ MouseEvent.createFromDomEvent = function(domMouseEvent, emitter, identifier, dat
 	mouseEvent.relatedEmitterDomNode = domMouseEvent.relatedTarget;
 
 	mouseEvent.clickCount = domMouseEvent.detail;
-
-	var touch = false;
-	if(domMouseEvent.sourceCapabilities) {
-		if(domMouseEvent.sourceCapabilities.firesTouchEvents) {
-			touch = true;
-		}
-	}
-	mouseEvent.device.capabilities.touch = touch;
 
 	return mouseEvent;
 };

@@ -36,7 +36,6 @@ var MouseEventTest = ElectronTest.extend({
 		// Add an event listener to the div to capture the event when triggered
 		htmlElement.on('interact', function(event) {
 			Console.standardInfo(event.identifier, event);
-			Console.log(event.domEvent.detail);
 			capturedEvent = event;
 		});
 
@@ -82,8 +81,6 @@ var MouseEventTest = ElectronTest.extend({
 		Assert.strictEqual(capturedEvent.relatedEmitterDomNode, null, 'relatedEmitterDomNode property is correctly set');
 
 		Assert.strictEqual(capturedEvent.clickCount, 1, 'clickCount property is correctly set');
-
-		Assert.strictEqual(capturedEvent.device.capabilities.touch, false, 'device.capabilities.touch property is correctly set');
 	
         //throw error;
 	},
@@ -109,12 +106,8 @@ var MouseEventTest = ElectronTest.extend({
 
 		// Add an event listener to the div to capture the event when triggered
 		htmlElement.on('mouse.button.1.click', function(event) {
-			Console.standardInfo(event.identifier, event);
-			capturedEvent = event;
-		});
-
-		htmlElement.on('mouse.button.2.click', function(event) {
 			Console.standardWarn(event.identifier, event);
+			capturedEvent = event;
 		});
 
 		// Mount the HtmlDocument to the DOM
@@ -124,8 +117,6 @@ var MouseEventTest = ElectronTest.extend({
         yield ElectronManager.clickHtmlElement(htmlElement);
 
         Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.1.click" events triggered by clicks are instances of MouseEvent');
-	
-        throw error;
 	},
 
 });
