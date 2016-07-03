@@ -174,7 +174,7 @@ var Framework = Class.extend({
 		return Node.Process.platform == 'win32';
 	},
 
-	onOsX: function() {
+	onMacOs: function() {
 		return Node.Process.platform == 'darwin';
 	},
 

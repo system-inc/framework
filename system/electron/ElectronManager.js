@@ -452,10 +452,9 @@ ElectronManager.copyUsingKeyboard = function*() {
 		yield ElectronManager.keyDown('c', ['control']);
 	}
 	else {
-		yield ElectronManager.pressKey('c', ['meta']);
-		//yield ElectronManager.keyDown('c', ['meta']);
-		//yield ElectronManager.keyUp('c', ['meta']);
-		//yield ElectronManager.keyPress('c', ['meta']);
+		// TODO: Does not work on macOS
+		Console.warn('ElectronManager.copyUsingKeyboard does not work on macOS.');
+		yield ElectronManager.keyDown('c', ['meta']);
 	}
 }.toPromise();
 
@@ -464,6 +463,8 @@ ElectronManager.cutUsingKeyboard = function*() {
 		yield ElectronManager.keyDown('x', ['control']);
 	}
 	else {
+		// TODO: Does not work on macOS
+		Console.warn('ElectronManager.cutUsingKeyboard does not work on macOS.');
 		yield ElectronManager.keyDown('x', ['meta']);
 	}
 }.toPromise();
@@ -473,6 +474,8 @@ ElectronManager.pasteUsingKeyboard = function*() {
 		yield ElectronManager.keyDown('v', ['control']);
 	}
 	else {
+		// TODO: Does not work on macOS
+		Console.warn('ElectronManager.pasteUsingKeyboard does not work on macOS.');
 		yield ElectronManager.keyDown('v', ['meta']);
 	}
 }.toPromise();

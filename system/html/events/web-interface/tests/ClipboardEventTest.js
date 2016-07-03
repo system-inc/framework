@@ -54,18 +54,15 @@ var ClipboardEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Double click into the text area twice to select some text
-		yield ElectronManager.doubleClickHtmlElement(textAreaElement);
+        yield ElectronManager.doubleClickHtmlElement(textAreaElement);
 
-		// Copy
-		yield ElectronManager.copyUsingKeyboard();
+        // This only works on Windows right now
+		//yield ElectronManager.copyUsingKeyboard();
+		//yield ElectronManager.cutUsingKeyboard();
+		//yield ElectronManager.pasteUsingKeyboard();
+
 		document.execCommand('copy', false, null);
-
-		// Cut
-		yield ElectronManager.cutUsingKeyboard();
 		document.execCommand('cut', false, null);
-
-		// Paste
-		yield ElectronManager.pasteUsingKeyboard();
 		document.execCommand('paste', false, null);
 
 		Assert.true(Class.isInstance(capturedClipboardCopyEvent, ClipboardEvent), '"clipboard.copy" events are instances of ClipboardEvent');

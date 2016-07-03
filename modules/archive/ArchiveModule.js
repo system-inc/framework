@@ -11,7 +11,7 @@ var ArchiveModule = Module.extend({
 		sevenZip: {
 			executable:
 				Project.onWindows() ? Node.Path.join(Project.framework.directory, 'system', 'archive', 'libraries', '7-zip', 'windows', '7z.exe') :
-				Project.onOsX() ? Node.Path.join(Project.framework.directory, 'system', 'archive', 'libraries', '7-zip', 'os-x', '7z') :
+				Project.onMacOs() ? Node.Path.join(Project.framework.directory, 'system', 'archive', 'libraries', '7-zip', 'os-x', '7z') :
 				Project.onLinux() ? Node.Path.join(Project.framework.directory, 'system', 'archive', 'libraries', '7-zip', 'linux', '7z') : null,
 		},
 	},
