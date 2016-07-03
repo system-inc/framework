@@ -3,6 +3,8 @@ var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
 var Assert = Framework.require('system/test/Assert.js');
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
+var HtmlEvent = Framework.require('system/html/events/HtmlEvent.js');
+var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
 
 // Class
 var HtmlEventProxyTest = ElectronTest.extend({
@@ -61,6 +63,11 @@ var HtmlEventProxyTest = ElectronTest.extend({
         htmlElement.click();
 
         Assert.strictEqual(capturedEvent.identifier, 'interact', '"interact" events are triggered by clicks');
+
+		Assert.true(Class.isInstance(capturedEvent, HtmlEvent), 'event is an instance of HtmlEvent');
+        Assert.true(Class.isInstance(capturedEvent, MouseEvent), 'event is an instance of MouseEvent');
+
+        //throw new Error('Throwing error to display browser window.');
 	},
 
 });

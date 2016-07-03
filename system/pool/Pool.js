@@ -71,8 +71,8 @@ var Pool = EventEmitter.extend({
 				}
 
 				// Register to get the next available reusable
-				this.once('availableReusable', function(event) {
-					//Console.standardLog('availableReusable event', event);
+				this.once('pool.availableReusable', function(event) {
+					//Console.standardLog('pool.availableReusable event', event);
 
 					// We must stop the event otherwise others waiting for available reusables will receive the event
 					event.stop();
@@ -125,7 +125,7 @@ var Pool = EventEmitter.extend({
 		this.availableReusables[reusable.uniqueIdentifier] = reusable;
 
 		// Emit an event letting any listeners know we have a free reusable
-		this.emit('availableReusable', reusable);
+		this.emit('pool.availableReusable', reusable);
 
 		return reusable;
 	},
