@@ -362,6 +362,11 @@ ElectronManager.click = function(relativeToViewportX, relativeToViewportY, butto
 ElectronManager.pressKey = function*(key, modifiers) {
 	//Console.standardWarn('ElectronManager.pressKey', key);
 
+	// Default modifiers to an empty array
+	if(!modifiers) {
+		modifiers = []; // shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
+	}
+
 	yield ElectronManager.keyDown(key, modifiers);
 	yield ElectronManager.keyUp(key, modifiers);
 	yield ElectronManager.keyPress(key, modifiers);
@@ -371,8 +376,13 @@ ElectronManager.keyDown = function(key, modifiers) {
 	// Get the current web contents
 	var webContents = Electron.remote.getCurrentWebContents();
 
+	// Default modifiers to an empty array
+	if(!modifiers) {
+		modifiers = []; // shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
+	}
+
 	return new Promise(function(resolve, reject) {
-		//Console.standardWarn('ElectronManager.keyPress', key);
+		//Console.standardWarn('ElectronManager.keyDown', key, modifiers);
 
 		// Need to send all three events
 		webContents.sendInputEvent({
@@ -393,8 +403,13 @@ ElectronManager.keyUp = function(key, modifiers) {
 	// Get the current web contents
 	var webContents = Electron.remote.getCurrentWebContents();
 
+	// Default modifiers to an empty array
+	if(!modifiers) {
+		modifiers = []; // shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
+	}
+
 	return new Promise(function(resolve, reject) {
-		//Console.standardWarn('ElectronManager.keyUp', key);
+		//Console.standardWarn('ElectronManager.keyUp', key, modifiers);
 
 		webContents.sendInputEvent({
 			type: 'keyUp',
@@ -412,8 +427,13 @@ ElectronManager.keyPress = function(key, modifiers) {
 	// Get the current web contents
 	var webContents = Electron.remote.getCurrentWebContents();
 
+	// Default modifiers to an empty array
+	if(!modifiers) {
+		modifiers = []; // shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
+	}
+
 	return new Promise(function(resolve, reject) {
-		//Console.standardWarn('ElectronManager.keyPress', key);
+		//Console.standardWarn('ElectronManager.keyPress', key, modifiers);
 
 		webContents.sendInputEvent({
 			type: 'char',
@@ -428,15 +448,33 @@ ElectronManager.keyPress = function(key, modifiers) {
 };
 
 ElectronManager.copyUsingKeyboard = function*() {
-	yield ElectronManager.keyDown('c', ['control']);
+	if(Project.onWindows()) {
+		yield ElectronManager.keyDown('c', ['control']);
+	}
+	else {
+		yield ElectronManager.pressKey('c', ['meta']);
+		//yield ElectronManager.keyDown('c', ['meta']);
+		//yield ElectronManager.keyUp('c', ['meta']);
+		//yield ElectronManager.keyPress('c', ['meta']);
+	}
 }.toPromise();
 
 ElectronManager.cutUsingKeyboard = function*() {
-	yield ElectronManager.keyDown('x', ['control']);
+	if(Project.onWindows()) {
+		yield ElectronManager.keyDown('x', ['control']);
+	}
+	else {
+		yield ElectronManager.keyDown('x', ['meta']);
+	}
 }.toPromise();
 
 ElectronManager.pasteUsingKeyboard = function*() {
-	yield ElectronManager.keyDown('v', ['control']);
+	if(Project.onWindows()) {
+		yield ElectronManager.keyDown('v', ['control']);
+	}
+	else {
+		yield ElectronManager.keyDown('v', ['meta']);
+	}
 }.toPromise();
 
 // Export

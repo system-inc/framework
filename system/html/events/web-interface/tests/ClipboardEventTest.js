@@ -19,7 +19,7 @@ var ClipboardEventTest = ElectronTest.extend({
         var htmlDocument = new HtmlDocument();
 
 		// Create a text area with some text        
-        var textAreaElement = Html.textarea('FrameworkClipboardEventTest<-cut, and paste this text');
+        var textAreaElement = Html.textarea('FrameworkClipboardEventTest');
         textAreaElement.setStyle('width', '320px;')
         textAreaElement.setStyle('height', '240px;')
 
@@ -32,6 +32,10 @@ var ClipboardEventTest = ElectronTest.extend({
 		var capturedClipboardPasteEvent = null;
 
 		// Add an event listener to the textarea to capture the event when triggered
+		textAreaElement.on('keyboard.key.*', function(event) {
+			Console.standardInfo(event.identifier, event);
+		});
+
 		textAreaElement.on('clipboard.*', function(event) {
 			Console.standardInfo(event.identifier, event);
 
@@ -54,12 +58,15 @@ var ClipboardEventTest = ElectronTest.extend({
 
 		// Copy
 		yield ElectronManager.copyUsingKeyboard();
+		document.execCommand('copy', false, null);
 
 		// Cut
 		yield ElectronManager.cutUsingKeyboard();
+		document.execCommand('cut', false, null);
 
 		// Paste
 		yield ElectronManager.pasteUsingKeyboard();
+		document.execCommand('paste', false, null);
 
 		Assert.true(Class.isInstance(capturedClipboardCopyEvent, ClipboardEvent), '"clipboard.copy" events are instances of ClipboardEvent');
 		Assert.true(Class.isInstance(capturedClipboardCutEvent, ClipboardEvent), '"clipboard.cut" events are instances of ClipboardEvent');
