@@ -43,7 +43,7 @@ var HtmlEventEmitter = PropagatingEventEmitter.extend({
 		}
 		// All other events
 		else {
-			events.append(new HtmlEvent(sourceEmitter, domEvent.type, data, eventOptions));
+			event.append(this.createEvent(sourceEmitter, domEvent.type, data, eventOptions));
 		}
 
 		// Set the common HtmlEvent properties
