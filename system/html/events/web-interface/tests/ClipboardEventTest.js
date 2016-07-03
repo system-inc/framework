@@ -31,11 +31,12 @@ var ClipboardEventTest = ElectronTest.extend({
 		var capturedClipboardCutEvent = null;
 		var capturedClipboardPasteEvent = null;
 
-		// Add an event listener to the textarea to capture the event when triggered
+		// Testing
 		textAreaElement.on('keyboard.key.*', function(event) {
 			Console.standardInfo(event.identifier, event);
 		});
 
+		// Add an event listener to the textarea to capture the event when triggered
 		textAreaElement.on('clipboard.*', function(event) {
 			Console.standardInfo(event.identifier, event);
 
