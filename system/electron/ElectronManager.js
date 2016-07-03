@@ -340,26 +340,38 @@ ElectronManager.click = function(relativeToViewportX, relativeToViewportY, butto
 	});
 };
 
+// How to send mouse wheel:
+//element.sendInputEvent({
+//    type: 'mouseWheel',
+//    x: 0,
+//    y: 0,
+//    deltaX: 0,
+//    deltaY: 0,
+//    canScroll: true
+//});
+//x, y is the mouse position inside element where the scroll should occur.
+//deltaX, deltaY is the relative scroll amount.
+
 ElectronManager.pressKey = function(key) {
 	// Get the current web contents
 	var webContents = Electron.remote.getCurrentWebContents();
 
 	return new Promise(function(resolve, reject) {
-		Console.standardWarn('ElectronManager.pressKey', key);
+		//Console.standardWarn('ElectronManager.pressKey', key);
 
+		// Need to send all three events
+		webContents.sendInputEvent({
+			type: 'keyDown',
+			keyCode: key,
+		});
+		webContents.sendInputEvent({
+			type: 'keyUp',
+			keyCode: key,
+		});
 		webContents.sendInputEvent({
 			type: 'char',
 			keyCode: key,
 		});
-
-		//webContents.sendInputEvent({
-		//	type: 'keyDown',
-		//	keyCode: 112,
-		//});
-		//webContents.sendInputEvent({
-		//	type: 'keyUp',
-		//	keyCode: 112,
-		//});
 
 		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
 		// This seems to not resolve the promise until the input event has completed

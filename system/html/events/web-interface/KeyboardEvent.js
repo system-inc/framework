@@ -5,7 +5,7 @@ var HtmlEvent = Framework.require('system/html/events/HtmlEvent.js');
 var KeyboardEvent = HtmlEvent.extend({
 
 	// Keyboard keys down when the mouse event was emitted
-	keyboardKeysDown: {
+	modifierKeysDown: {
 		alt: null, // true if the alt key was down when the mouse event was emitted
 		control: null, // true if the control key was down when the mouse event was emitted
 		// meta is the Command key on macOS keyboards or Windows key on Windows keyboards
@@ -82,10 +82,10 @@ KeyboardEvent.createEventsFromDomEvent = function(domKeyboardEvent, emitter, dat
 KeyboardEvent.createFromDomEvent = function(domKeyboardEvent, emitter, identifier, data, options) {
 	var keyboardEvent = new KeyboardEvent(emitter, identifier, data, options);
 
-	keyboardEvent.keyboardKeysDown.alt = domKeyboardEvent.altKey;
-	keyboardEvent.keyboardKeysDown.control = domKeyboardEvent.ctrlKey;
-	keyboardEvent.keyboardKeysDown.meta = domKeyboardEvent.metaKey;
-	keyboardEvent.keyboardKeysDown.shift = domKeyboardEvent.shiftKey;
+	keyboardEvent.modifierKeysDown.alt = domKeyboardEvent.altKey;
+	keyboardEvent.modifierKeysDown.control = domKeyboardEvent.ctrlKey;
+	keyboardEvent.modifierKeysDown.meta = domKeyboardEvent.metaKey;
+	keyboardEvent.modifierKeysDown.shift = domKeyboardEvent.shiftKey;
 
 	// Get the key
 	var key = domKeyboardEvent.key; // "a"
@@ -97,6 +97,11 @@ KeyboardEvent.createFromDomEvent = function(domKeyboardEvent, emitter, identifie
 		if(key == 'ctrl') {
 			key = 'control';
 		}
+	}
+
+	// Sometimes domKeyboardEvent.key isn't populated, so we can get it from domKeyboardEvent.keyCode
+	if(!key && domKeyboardEvent.keyCode) {
+		key = String.fromCharacterCode(domKeyboardEvent.keyCode);
 	}
 
 	// Sometimes domKeyboardEvent.key isn't populated, so we can get it from domKeyboardEvent.charCode

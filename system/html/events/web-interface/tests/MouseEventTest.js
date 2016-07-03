@@ -47,10 +47,10 @@ var MouseEventTest = ElectronTest.extend({
 
         Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of MouseEvent');
 
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.alt, false, 'keyboardKeysDown.alt property is correctly set');
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.control, false, 'keyboardKeysDown.control property is correctly set');
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.meta, false, 'keyboardKeysDown.meta property is correctly set');
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.shift, false, 'keyboardKeysDown.shift property is correctly set');
+        Assert.strictEqual(capturedEvent.modifierKeysDown.alt, false, 'modifierKeysDown.alt property is correctly set');
+        Assert.strictEqual(capturedEvent.modifierKeysDown.control, false, 'modifierKeysDown.control property is correctly set');
+        Assert.strictEqual(capturedEvent.modifierKeysDown.meta, false, 'modifierKeysDown.meta property is correctly set');
+        Assert.strictEqual(capturedEvent.modifierKeysDown.shift, false, 'modifierKeysDown.shift property is correctly set');
        
         Assert.strictEqual(capturedEvent.mouseButtonsDown[1], false, 'mouseButtonsDown[1] property is correctly set');
         Assert.strictEqual(capturedEvent.mouseButtonsDown[2], false, 'mouseButtonsDown[2] property is correctly set');
@@ -119,6 +119,85 @@ var MouseEventTest = ElectronTest.extend({
         Console.standardInfo('capturedEvent', capturedEvent);
 
         Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.1.click" events triggered by clicks are instances of MouseEvent');
+
+        //throw new Error('Throwing error to display browser window.');
+	},
+
+	testMouseEventPropagation: function*() {
+		// Create an HtmlDocument
+        var htmlDocument = new HtmlDocument();
+
+        htmlDocument.body.setStyle('margin', 0);
+        htmlDocument.body.setStyle('padding', '30px');
+
+		var grandparentElement = Html.div({
+			content: 'Grandparent',
+			style: 'background: #00AAFF; padding: 30px;',
+		});
+
+		var parentElement = Html.div({
+			content: 'Parent',
+			style: 'background: #00AAAA; padding: 30px;',
+		});
+
+		var childElement = Html.div({
+			content: 'Child',
+			style: 'background: #00AA66; padding: 30px;',
+		});
+
+		var grandchildElement = Html.div({
+			content: 'Grandchild',
+			style: 'background: #00AA00; padding: 30px;',
+		});
+
+		htmlDocument.body.append(grandparentElement.append(parentElement.append(childElement.append(grandchildElement))));
+
+		// Set a variable to capture the event
+		var grandparentCapturedEvent = null;
+		var parentCapturedEvent = null;
+		var childCapturedEvent = null;
+
+		var grandparentCapturedEventCount = 0;
+		var parentCapturedEventCount = 0;
+		var childCapturedEventCount = 0;
+
+		grandparentElement.on('interact', function(event) {
+			Console.standardInfo('grandparentElement', event.identifier, event);
+			grandparentCapturedEventCount++;
+			grandparentCapturedEvent = event;
+		});
+
+		parentElement.on('interact', function(event) {
+			Console.standardInfo('parentElement', event.identifier, event);
+			parentCapturedEventCount++;
+			parentCapturedEvent = event;
+
+			// Stop the event here
+			event.stop();
+		});
+
+		childElement.on('interact', function(event) {
+			Console.standardInfo('childElement', event.identifier, event);
+			childCapturedEventCount++;
+			childCapturedEvent = event;
+		});
+
+		// Mount the HtmlDocument to the DOM
+        htmlDocument.mountToDom();
+
+        // Click on the grandchild element
+        yield ElectronManager.clickHtmlElement(grandchildElement);
+
+        Assert.strictEqual(grandparentCapturedEvent, null, '"interact" events propagate correctly');
+        Assert.true(Class.isInstance(parentCapturedEvent, MouseEvent), '"interact" events propagate correctly');
+        Assert.true(Class.isInstance(childCapturedEvent, MouseEvent), '"interact" events propagate correctly');
+
+        Assert.strictEqual(parentCapturedEvent.emitter, grandchildElement, 'emitter property on is correct');
+        Assert.strictEqual(childCapturedEvent.emitter, grandchildElement, 'emitter property on is correct');
+
+        Assert.strictEqual(grandparentCapturedEventCount, 0, 'propagated events trigger the correct number of times');
+        Assert.strictEqual(parentCapturedEventCount, 1, 'propagated events trigger the correct number of times');
+        Assert.strictEqual(childCapturedEventCount, 1, 'propagated events trigger the correct number of times');
 
         //throw new Error('Throwing error to display browser window.');
 	},

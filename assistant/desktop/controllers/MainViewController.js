@@ -56,10 +56,10 @@ var MainViewController = ViewController.extend({
         this.view.append(Html.h1('Proctor'));
 
         // Get all possible tests
-        //this.tests = yield Proctor.getTests();
+        this.tests = yield Proctor.getTests();
         //this.tests = yield Proctor.getTests(null, 'Class');
         //this.tests = yield Proctor.getTests(null, 'electron');
-        this.tests = yield Proctor.getTests(null, 'Event');
+        //this.tests = yield Proctor.getTests(null, 'html', 'event');
         //Console.standardLog(tests);
 
         // Run tests form

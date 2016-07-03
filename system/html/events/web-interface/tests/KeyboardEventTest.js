@@ -14,6 +14,15 @@ var KeyboardEventTest = ElectronTest.extend({
 		ElectronManager = Framework.require('system/electron/ElectronManager.js');
 	},
 
+	// This generates untrusted events which do nothing, they aren't even of type KeyboardEvent
+	//this.domNodeEmitKeyPressEvent(htmlElement.domNode, 'A');
+	//domNodeEmitKeyPressEvent: function(domNode, key) {
+	//	var event = document.createEvent('Events');
+	//	event.initEvent('keypress', true, true);
+	//	event.keyCode = event.which = key.charCodeAt(0);
+	//	domNode.dispatchEvent(event);
+	//},
+
 	testKeyboardEvent: function*() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
@@ -31,8 +40,8 @@ var KeyboardEventTest = ElectronTest.extend({
 		var capturedEvent = null;
 
 		// Add an event listener to the textarea to capture the event when triggered
-		htmlDocument.on('keyboard.key.A.press', function(event) {
-			Console.standardInfo(event.identifier, event);
+		htmlElement.on('keyboard.key.A.press', function(event) {
+			//Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
 		});
 
@@ -47,10 +56,10 @@ var KeyboardEventTest = ElectronTest.extend({
 
 		Assert.true(Class.isInstance(capturedEvent, KeyboardEvent), '"keyboard.key.A.press" events triggered by key presses are instances of KeyboardEvent');
 
-		Assert.strictEqual(capturedEvent.keyboardKeysDown.alt, false, 'keyboardKeysDown.alt property is correctly set');
-		Assert.strictEqual(capturedEvent.keyboardKeysDown.control, false, 'keyboardKeysDown.control property is correctly set');
-		Assert.strictEqual(capturedEvent.keyboardKeysDown.meta, false, 'keyboardKeysDown.meta property is correctly set');
-		Assert.strictEqual(capturedEvent.keyboardKeysDown.shift, false, 'keyboardKeysDown.shift property is correctly set');
+		Assert.strictEqual(capturedEvent.modifierKeysDown.alt, false, 'modifierKeysDown.alt property is correctly set');
+		Assert.strictEqual(capturedEvent.modifierKeysDown.control, false, 'modifierKeysDown.control property is correctly set');
+		Assert.strictEqual(capturedEvent.modifierKeysDown.meta, false, 'modifierKeysDown.meta property is correctly set');
+		Assert.strictEqual(capturedEvent.modifierKeysDown.shift, false, 'modifierKeysDown.shift property is correctly set');
 
 		Assert.strictEqual(capturedEvent.key, 'A', 'key property is correctly set');
 

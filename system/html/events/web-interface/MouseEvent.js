@@ -5,7 +5,7 @@ var HtmlEvent = Framework.require('system/html/events/HtmlEvent.js');
 var MouseEvent = HtmlEvent.extend({
 
 	// Keyboard keys down when the mouse event was emitted
-	keyboardKeysDown: {
+	modifierKeysDown: {
 		alt: null, // true if the alt key was down when the mouse event was emitted
 		control: null, // true if the control key was down when the mouse event was emitted
 		// meta is the Command key on macOS keyboards or Windows key on Windows keyboards
@@ -117,10 +117,10 @@ MouseEvent.createEventsFromDomEvent = function(domMouseEvent, emitter, data, opt
 MouseEvent.createFromDomEvent = function(domMouseEvent, emitter, identifier, data, options) {
 	var mouseEvent = new MouseEvent(emitter, identifier, data, options);
 
-	mouseEvent.keyboardKeysDown.alt = domMouseEvent.altKey;
-	mouseEvent.keyboardKeysDown.control = domMouseEvent.ctrlKey;
-	mouseEvent.keyboardKeysDown.meta = domMouseEvent.metaKey;
-	mouseEvent.keyboardKeysDown.shift = domMouseEvent.shiftKey;
+	mouseEvent.modifierKeysDown.alt = domMouseEvent.altKey;
+	mouseEvent.modifierKeysDown.control = domMouseEvent.ctrlKey;
+	mouseEvent.modifierKeysDown.meta = domMouseEvent.metaKey;
+	mouseEvent.modifierKeysDown.shift = domMouseEvent.shiftKey;
 
 	mouseEvent.mouseButtonsDown = {
 		1: false,
