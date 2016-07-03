@@ -26,6 +26,11 @@ HtmlEventProxy.domEventIdentifierMap = {
 	},
 	'keyup': {
 		'keyboard.key.*.up': true,
+		// TODO: 'keyboard.key.(alt|control|meta|shift).press': true,
+		'keyboard.key.alt.press': true,
+		'keyboard.key.control.press': true,
+		'keyboard.key.meta.press': true,
+		'keyboard.key.shift.press': true,
 	},
 	'keypress': {
 		'keyboard.key.*.press': true,
@@ -145,7 +150,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 
 		// Emit the event
 		yield events.each(function*(eventIndex, event) {
-			Console.standardLog('htmlEventEmitter.emit event', event);
+			//Console.standardLog('htmlEventEmitter.emit event', event);
 			yield htmlEventEmitter.emit(event.identifier, event);
 		});
 	}.bind(htmlEventEmitter).toPromise();
@@ -153,7 +158,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 	// If we have a valid domEventIdentifier
 	if(domEventIdentifiers.length) {
 		domEventIdentifiers.each(function(domEventIdentifierIndex, domEventIdentifier) {
-			Console.log('Binding domEventIdentifier', domEventIdentifier, 'for eventPattern', eventPattern);
+			//Console.log('Binding domEventIdentifier', domEventIdentifier, 'for eventPattern', eventPattern);
 
 			// If we have a domObject because we are already mounted to the DOM
 			if(domObject) {

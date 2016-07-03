@@ -8,6 +8,7 @@ var MouseEvent = HtmlEvent.extend({
 	keyboardKeysDown: {
 		alt: null, // true if the alt key was down when the mouse event was emitted
 		control: null, // true if the control key was down when the mouse event was emitted
+		// meta is the Command key on macOS keyboards or Windows key on Windows keyboards
 		meta: null, // true if the meta key was down when the mouse event was emitted
 		shift: null, // true if the shift key was down when the mouse event was emitted
 	},

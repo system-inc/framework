@@ -39,9 +39,8 @@ var ShortcutManager = Class.extend({
 	listenToEvents: function() {
 		//Console.log('listenToEvents');
 
-		this.htmlDocument.on('keyboard.key.*.up', this.handleEvent.bind(this));
-		this.htmlDocument.on('keyboard.key.*.down', this.handleEvent.bind(this));
-		this.htmlDocument.on('keyboard.key.*.press', this.handleEvent.bind(this));
+		// TODO: Completely redo this class
+		//this.htmlDocument.on('keyboard.key.*', this.handleEvent.bind(this));
 
 		this.listeningToEvents = true;
 	},
@@ -50,13 +49,13 @@ var ShortcutManager = Class.extend({
 		var shortcutEvent = {};
 
 		// Set the type
-		if(event.type == 'keyup') {
+		if(event.domEvent.type == 'keyup') {
 			shortcutEvent.type = 'keyUp';	
 		}
-		else if(event.type == 'keydown') {
+		else if(event.domEvent.type == 'keydown') {
 			shortcutEvent.type = 'keyDown';	
 		}
-		else if(event.type == 'keypress') {
+		else if(event.domEvent.type == 'keypress') {
 			shortcutEvent.type = 'keyPress';	
 		}
 		
@@ -73,7 +72,7 @@ var ShortcutManager = Class.extend({
 		var key = String.fromCharCode(event.which);
 
 		// For keypress events we should return the character as is
-		if(event.type == 'keypress') {
+		if(event.domEvent.type == 'keypress') {
 		    key = String.fromCharCode(event.which);
 
 		    // If the shift key is not pressed then it is safe to assume that we want the character to be lowercase

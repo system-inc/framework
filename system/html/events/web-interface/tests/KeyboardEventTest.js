@@ -31,7 +31,7 @@ var KeyboardEventTest = ElectronTest.extend({
 		var capturedEvent = null;
 
 		// Add an event listener to the textarea to capture the event when triggered
-		htmlElement.on('keyboard.key.*.up', function(event) {
+		htmlDocument.on('keyboard.key.*', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
 		});
@@ -39,7 +39,13 @@ var KeyboardEventTest = ElectronTest.extend({
 		// Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
-		//yield ElectronManager.clickHtmlElement(htmlElement);
+        // Click into the text area
+		yield ElectronManager.clickHtmlElement(htmlElement);
+
+		// Type a key
+		yield ElectronManager.pressKey('a');
+		yield ElectronManager.pressKey('b');
+		yield ElectronManager.pressKey('c');
 
 		//Assert.true(Class.isInstance(capturedEvent, KeyboardEvent), '"interact" events triggered by clicks are instances of KeyboardEvent');
 

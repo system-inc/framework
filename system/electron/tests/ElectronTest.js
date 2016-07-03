@@ -16,11 +16,7 @@ var ElectronTest = Test.extend({
 		return shouldRun;
 	},
 
-	testElectron: function*() {
-		//Console.log('ElectronTest testElectron');
-		//throw new Error('meh');
-		Assert.true(Object.hasKey(Node.Process.versions, 'electron'), 'Electron version is set');
-	},
+	// This is an abstract class, do not add any tests here
 
 });
 

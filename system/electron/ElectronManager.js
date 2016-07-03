@@ -283,37 +283,53 @@ var ElectronManager = Class.extend({
 
 // Static methods
 
-ElectronManager.clickHtmlElement = function(htmlElement, webContents) {
-	// Default to the current browser window web contents
-	if(!webContents) {
-		webContents = Electron.remote.getCurrentWebContents();
+ElectronManager.clickHtmlElement = function(htmlElement, clickCount) {
+	var htmlElementPosition = htmlElement.getPosition();
+	//Console.standardWarn('htmlElementPosition', htmlElementPosition);
+
+	return ElectronManager.click(htmlElementPosition.relativeToViewport.x, htmlElementPosition.relativeToViewport.y);
+};
+
+ElectronManager.click = function(relativeToViewportX, relativeToViewportY, button, clickCount, modifiers) {
+	// Default the button to left
+	if(!button) {
+		button = 'left';
 	}
 
-	return new Promise(function(resolve, reject) {
-		// Get the x and y of the htmlElement
-		var dimensionsAndPosition = htmlElement.getDimensionsAndPosition();
-		//Console.log('dimensionsAndPosition', dimensionsAndPosition);
+	// Default clickCount to 1
+	if(!clickCount) {
+		clickCount = 1;
+	}
 
+	// Default modifiers to an empty array
+	if(!modifiers) {
+		modifiers = []; // e.g., ['leftButtonDown']
+	}
+
+	// Get the current web contents
+	var webContents = Electron.remote.getCurrentWebContents();
+
+	return new Promise(function(resolve, reject) {
 		// A trusted click will be fired after mouse down and mouse up
 
 		// Send mouse down
 		webContents.sendInputEvent({
-			// The order of these matter
 			type: 'mouseDown',
-			x: dimensionsAndPosition.position.relativeToViewport.left,
-			y: dimensionsAndPosition.position.relativeToViewport.top,
-			button: 'left',
-			clickCount: 1,
+			x: relativeToViewportX,
+			y: relativeToViewportY,
+			button: button,
+			clickCount: clickCount,
+			modifiers: modifiers,
 		});
 
 		// Send mouse up
 		webContents.sendInputEvent({
-			// The order of these matter
 			type: 'mouseUp',
-			x: dimensionsAndPosition.position.relativeToViewport.left,
-			y: dimensionsAndPosition.position.relativeToViewport.top,
-			button: 'left',
-			clickCount: 1,
+			x: relativeToViewportX,
+			y: relativeToViewportY,
+			button: button,
+			clickCount: clickCount,
+			modifiers: modifiers,
 		});
 
 		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
@@ -324,23 +340,33 @@ ElectronManager.clickHtmlElement = function(htmlElement, webContents) {
 	});
 };
 
-ElectronManager.keyboardKeyPress = function() {
-//if (code !== '\u000d') {
-//webview.sendInputEvent({
-//type: 'keyDown',
-//keyCode: code
-//});
-//webview.sendInputEvent({
-//type: 'keyUp',
-//keyCode: code
-//});
-//}
-//webview.sendInputEvent({
-//type: 'char',
-//keyCode: code
-//});
+ElectronManager.pressKey = function(key) {
+	// Get the current web contents
+	var webContents = Electron.remote.getCurrentWebContents();
 
-//webview.sendInputEvent({type:'mouseUp', x:250, y: 300, button:'left', clickCount: 1, modifiers: ['leftButtonDown']});
+	return new Promise(function(resolve, reject) {
+		Console.standardWarn('ElectronManager.pressKey', key);
+
+		webContents.sendInputEvent({
+			type: 'char',
+			keyCode: key,
+		});
+
+		//webContents.sendInputEvent({
+		//	type: 'keyDown',
+		//	keyCode: 112,
+		//});
+		//webContents.sendInputEvent({
+		//	type: 'keyUp',
+		//	keyCode: 112,
+		//});
+
+		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
+		// This seems to not resolve the promise until the input event has completed
+		Function.delay(0, function() {
+			resolve(true);
+		});
+	});
 };
 
 // Export

@@ -47,12 +47,10 @@ var MouseEventTest = ElectronTest.extend({
 
         Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of MouseEvent');
 
-        Assert.strictEqual(capturedEvent.type, 'click', 'type property is correctly set');
-
         Assert.strictEqual(capturedEvent.keyboardKeysDown.alt, false, 'keyboardKeysDown.alt property is correctly set');
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.ctrl, false, 'keyboardKeysDown.alt property is correctly set');
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.meta, false, 'keyboardKeysDown.alt property is correctly set');
-        Assert.strictEqual(capturedEvent.keyboardKeysDown.shift, false, 'keyboardKeysDown.alt property is correctly set');
+        Assert.strictEqual(capturedEvent.keyboardKeysDown.control, false, 'keyboardKeysDown.control property is correctly set');
+        Assert.strictEqual(capturedEvent.keyboardKeysDown.meta, false, 'keyboardKeysDown.meta property is correctly set');
+        Assert.strictEqual(capturedEvent.keyboardKeysDown.shift, false, 'keyboardKeysDown.shift property is correctly set');
        
         Assert.strictEqual(capturedEvent.mouseButtonsDown[1], false, 'mouseButtonsDown[1] property is correctly set');
         Assert.strictEqual(capturedEvent.mouseButtonsDown[2], false, 'mouseButtonsDown[2] property is correctly set');

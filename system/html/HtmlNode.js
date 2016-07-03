@@ -194,14 +194,58 @@ var HtmlNode = XmlNode.extend({
 				},
 				position:{
 					relativeToViewport: {
-						top: boundingClientRect.top,
-						right: boundingClientRect.right,
-						bottom: boundingClientRect.bottom,
-						left: boundingClientRect.left,
-						center: {
-							x: boundingClientRect.width / 2,
-							y: boundingClientRect.height / 2,
+						x: boundingClientRect.left,
+						y: boundingClientRect.top,
+
+						coordinates: {
+							topLeft: {
+								x: boundingClientRect.left,
+								y: boundingClientRect.top,
+							},
+							topCenter: {
+								x: boundingClientRect.width / 2,
+								y: boundingClientRect.top,
+							},
+							topRight: {
+								x: boundingClientRect.right,
+								y: boundingClientRect.top,
+							},
+
+							leftCenter: {
+								x: boundingClientRect.left,
+								y: boundingClientRect.height / 2,
+							},
+
+							rightCenter: {
+								x: boundingClientRect.right,
+								y: boundingClientRect.height / 2,
+							},
+
+							bottomLeft: {
+								x: boundingClientRect.left,
+								y: boundingClientRect.bottom,
+							},
+							bottomCenter: {
+								x: boundingClientRect.width / 2,
+								y: boundingClientRect.bottom,
+							},
+							bottomRight: {
+								x: boundingClientRect.right,
+								y: boundingClientRect.bottom,
+							},
+
+							center: {
+								x: boundingClientRect.width / 2,
+								y: boundingClientRect.height / 2,
+							},
 						},
+
+						edges: {
+							top: boundingClientRect.top,
+							right: boundingClientRect.right,
+							bottom: boundingClientRect.bottom,
+							left: boundingClientRect.left,
+						},						
 					},
 				},
 			};
