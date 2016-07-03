@@ -79,11 +79,13 @@ var MouseEventTest = ElectronTest.extend({
 		Assert.strictEqual(capturedEvent.relatedEmitterDomNode, null, 'relatedEmitterDomNode property is correctly set');
 
 		Assert.strictEqual(capturedEvent.clickCount, 1, 'clickCount property is correctly set');
+
+		Assert.strictEqual(capturedEvent.trusted, true, 'trusted property is correctly set');
 	
-        //throw error;
+        //throw new Error('Throwing error to display browser window.');
 	},
 
-	testMouseEventMouseButtonOneClick: function*() {
+	testMouseEventMouseButton1Click: function*() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -114,7 +116,11 @@ var MouseEventTest = ElectronTest.extend({
         // Simulate a click
         yield ElectronManager.clickHtmlElement(htmlElement);
 
+        Console.standardInfo('capturedEvent', capturedEvent);
+
         Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.1.click" events triggered by clicks are instances of MouseEvent');
+
+        //throw new Error('Throwing error to display browser window.');
 	},
 
 });

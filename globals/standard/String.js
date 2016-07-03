@@ -381,6 +381,8 @@ String.is = function(value) {
 	return typeof(value) == 'string' || value instanceof String;
 };
 
+String.fromCharacterCode = String.fromCharCode;
+
 String.newline = Node.OperatingSystem.EOL;
 
 String.uniqueIdentifier = function(length) {

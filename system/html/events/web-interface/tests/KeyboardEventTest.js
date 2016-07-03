@@ -31,7 +31,7 @@ var KeyboardEventTest = ElectronTest.extend({
 		var capturedEvent = null;
 
 		// Add an event listener to the textarea to capture the event when triggered
-		htmlDocument.on('keyboard.key.*', function(event) {
+		htmlDocument.on('keyboard.key.A.press', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
 		});
@@ -43,48 +43,24 @@ var KeyboardEventTest = ElectronTest.extend({
 		yield ElectronManager.clickHtmlElement(htmlElement);
 
 		// Type a key
-		yield ElectronManager.pressKey('a');
-		yield ElectronManager.pressKey('b');
-		yield ElectronManager.pressKey('c');
+		yield ElectronManager.pressKey('A');
 
-		//Assert.true(Class.isInstance(capturedEvent, KeyboardEvent), '"interact" events triggered by clicks are instances of KeyboardEvent');
+		Assert.true(Class.isInstance(capturedEvent, KeyboardEvent), '"keyboard.key.A.press" events triggered by key presses are instances of KeyboardEvent');
 
-		//Assert.strictEqual(capturedEvent.type, 'click', 'type property is correctly set');
+		Assert.strictEqual(capturedEvent.keyboardKeysDown.alt, false, 'keyboardKeysDown.alt property is correctly set');
+		Assert.strictEqual(capturedEvent.keyboardKeysDown.control, false, 'keyboardKeysDown.control property is correctly set');
+		Assert.strictEqual(capturedEvent.keyboardKeysDown.meta, false, 'keyboardKeysDown.meta property is correctly set');
+		Assert.strictEqual(capturedEvent.keyboardKeysDown.shift, false, 'keyboardKeysDown.shift property is correctly set');
 
-		//Assert.strictEqual(capturedEvent.keyboardKeysDown.alt, false, 'keyboardKeysDown.alt property is correctly set');
-		//Assert.strictEqual(capturedEvent.keyboardKeysDown.ctrl, false, 'keyboardKeysDown.alt property is correctly set');
-		//Assert.strictEqual(capturedEvent.keyboardKeysDown.meta, false, 'keyboardKeysDown.alt property is correctly set');
-		//Assert.strictEqual(capturedEvent.keyboardKeysDown.shift, false, 'keyboardKeysDown.alt property is correctly set');
+		Assert.strictEqual(capturedEvent.key, 'A', 'key property is correctly set');
 
-		//Assert.strictEqual(capturedEvent.mouseButtonsDown[1], false, 'mouseButtonsDown[1] property is correctly set');
-		//Assert.strictEqual(capturedEvent.mouseButtonsDown[2], false, 'mouseButtonsDown[2] property is correctly set');
-		//Assert.strictEqual(capturedEvent.mouseButtonsDown[3], false, 'mouseButtonsDown[3] property is correctly set');
-		//Assert.strictEqual(capturedEvent.mouseButtonsDown[4], false, 'mouseButtonsDown[4] property is correctly set');
-		//Assert.strictEqual(capturedEvent.mouseButtonsDown[5], false, 'mouseButtonsDown[5] property is correctly set');
+		Assert.strictEqual(capturedEvent.keyLocation, 'standard', 'keyLocation property is correctly set');
 
-		//Assert.strictEqual(capturedEvent.button, 1, 'button property is correctly set');
+		Assert.strictEqual(capturedEvent.keyHeldDown, false, 'keyHeldDown property is correctly set');
 
-		//Assert.strictEqual(capturedEvent.offsets.emitter.x, 0, 'offsets.emitter.x property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.emitter.y, 0, 'offsets.emitter.y property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.relativeAncestor.x, 0, 'offsets.relativeAncestor.x property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.relativeAncestor.y, 0, 'offsets.relativeAncestor.y property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.viewport.x, 0, 'offsets.viewport.x property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.viewport.y, 0, 'offsets.viewport.y property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.document.x, 0, 'offsets.document.x property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.document.y, 0, 'offsets.document.y property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.global.x, 0, 'offsets.global.x property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.global.y, 0, 'offsets.global.y property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.previousGlobalOffset.x, 0, 'offsets.previousGlobalOffset.x property is correctly set');
-		//Assert.strictEqual(capturedEvent.offsets.previousGlobalOffset.y, 0, 'offsets.previousGlobalOffset.y property is correctly set');
+		Assert.strictEqual(capturedEvent.trusted, true, 'trusted property is correctly set');
 
-		//Assert.strictEqual(capturedEvent.relatedEmitter, null, 'relatedEmitter property is correctly set');
-		//Assert.strictEqual(capturedEvent.relatedEmitterDomNode, null, 'relatedEmitterDomNode property is correctly set');
-
-		//Assert.strictEqual(capturedEvent.clickCount, 0, 'clickCount property is correctly set');
-
-		//Assert.strictEqual(capturedEvent.device.capabilities.touch, false, 'device.capabilities.touch property is correctly set');
-
-		throw error;
+		//throw new Error('Throwing error to display browser window.');
 	},
 
 });

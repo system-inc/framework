@@ -87,15 +87,24 @@ KeyboardEvent.createFromDomEvent = function(domKeyboardEvent, emitter, identifie
 	keyboardEvent.keyboardKeysDown.meta = domKeyboardEvent.metaKey;
 	keyboardEvent.keyboardKeysDown.shift = domKeyboardEvent.shiftKey;
 
+	// Get the key
 	var key = domKeyboardEvent.key; // "a"
+	
 	// "Shift" to "shift", "Control" to "control", etc.
-	if(key.length > 1) {
+	if(key && String.is(key) && key.length > 1) {
 		key = key.lowercase();
 
 		if(key == 'ctrl') {
 			key = 'control';
 		}
 	}
+
+	// Sometimes domKeyboardEvent.key isn't populated, so we can get it from domKeyboardEvent.charCode
+	if(!key && domKeyboardEvent.charCode) {
+		key = String.fromCharacterCode(domKeyboardEvent.charCode);
+	}
+
+	// Set the key property
 	keyboardEvent.key = key;
 
 	keyboardEvent.keyLocation = null;

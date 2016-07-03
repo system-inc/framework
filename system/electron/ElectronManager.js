@@ -334,7 +334,7 @@ ElectronManager.click = function(relativeToViewportX, relativeToViewportY, butto
 
 		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
 		// This seems to not resolve the promise until the input event has completed
-		Function.delay(0, function() {
+		Function.delay(50, function() {
 			resolve(true);
 		});
 	});
@@ -363,7 +363,7 @@ ElectronManager.pressKey = function(key) {
 
 		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
 		// This seems to not resolve the promise until the input event has completed
-		Function.delay(0, function() {
+		Function.delay(50, function() {
 			resolve(true);
 		});
 	});
