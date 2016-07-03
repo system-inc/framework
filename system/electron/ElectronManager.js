@@ -290,6 +290,13 @@ ElectronManager.clickHtmlElement = function(htmlElement, clickCount) {
 	return ElectronManager.click(htmlElementPosition.relativeToViewport.x, htmlElementPosition.relativeToViewport.y);
 };
 
+ElectronManager.doubleClickHtmlElement = function(htmlElement, clickCount) {
+	var htmlElementPosition = htmlElement.getPosition();
+	//Console.standardWarn('htmlElementPosition', htmlElementPosition);
+
+	return ElectronManager.click(htmlElementPosition.relativeToViewport.x, htmlElementPosition.relativeToViewport.y, 'left', 2);
+};
+
 ElectronManager.click = function(relativeToViewportX, relativeToViewportY, button, clickCount, modifiers) {
 	// Default the button to left
 	if(!button) {
@@ -303,7 +310,7 @@ ElectronManager.click = function(relativeToViewportX, relativeToViewportY, butto
 
 	// Default modifiers to an empty array
 	if(!modifiers) {
-		modifiers = []; // e.g., ['leftButtonDown']
+		modifiers = []; // shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
 	}
 
 	// Get the current web contents
@@ -352,25 +359,26 @@ ElectronManager.click = function(relativeToViewportX, relativeToViewportY, butto
 //x, y is the mouse position inside element where the scroll should occur.
 //deltaX, deltaY is the relative scroll amount.
 
-ElectronManager.pressKey = function(key) {
+ElectronManager.pressKey = function*(key, modifiers) {
+	//Console.standardWarn('ElectronManager.pressKey', key);
+
+	yield ElectronManager.keyDown(key, modifiers);
+	yield ElectronManager.keyUp(key, modifiers);
+	yield ElectronManager.keyPress(key, modifiers);
+}.toPromise();
+
+ElectronManager.keyDown = function(key, modifiers) {
 	// Get the current web contents
 	var webContents = Electron.remote.getCurrentWebContents();
 
 	return new Promise(function(resolve, reject) {
-		//Console.standardWarn('ElectronManager.pressKey', key);
+		//Console.standardWarn('ElectronManager.keyPress', key);
 
 		// Need to send all three events
 		webContents.sendInputEvent({
 			type: 'keyDown',
 			keyCode: key,
-		});
-		webContents.sendInputEvent({
-			type: 'keyUp',
-			keyCode: key,
-		});
-		webContents.sendInputEvent({
-			type: 'char',
-			keyCode: key,
+			modifiers: modifiers,
 		});
 
 		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
@@ -380,6 +388,56 @@ ElectronManager.pressKey = function(key) {
 		});
 	});
 };
+
+ElectronManager.keyUp = function(key, modifiers) {
+	// Get the current web contents
+	var webContents = Electron.remote.getCurrentWebContents();
+
+	return new Promise(function(resolve, reject) {
+		//Console.standardWarn('ElectronManager.keyUp', key);
+
+		webContents.sendInputEvent({
+			type: 'keyUp',
+			keyCode: key,
+			modifiers: modifiers,
+		});
+
+		Function.delay(50, function() {
+			resolve(true);
+		});
+	});
+};
+
+ElectronManager.keyPress = function(key, modifiers) {
+	// Get the current web contents
+	var webContents = Electron.remote.getCurrentWebContents();
+
+	return new Promise(function(resolve, reject) {
+		//Console.standardWarn('ElectronManager.keyPress', key);
+
+		webContents.sendInputEvent({
+			type: 'char',
+			keyCode: key,
+			modifiers: modifiers,
+		});
+
+		Function.delay(50, function() {
+			resolve(true);
+		});
+	});
+};
+
+ElectronManager.copyUsingKeyboard = function*() {
+	yield ElectronManager.keyDown('c', ['control']);
+}.toPromise();
+
+ElectronManager.cutUsingKeyboard = function*() {
+	yield ElectronManager.keyDown('x', ['control']);
+}.toPromise();
+
+ElectronManager.pasteUsingKeyboard = function*() {
+	yield ElectronManager.keyDown('v', ['control']);
+}.toPromise();
 
 // Export
 module.exports = ElectronManager;

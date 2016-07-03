@@ -5,6 +5,7 @@ var HtmlEventProxy = Framework.require('system/html/events/HtmlEventProxy.js');
 var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
 var KeyboardEvent = Framework.require('system/html/events/web-interface/KeyboardEvent.js');
 var FormEvent = Framework.require('system/html/events/web-interface/FormEvent.js');
+var ClipboardEvent = Framework.require('system/html/events/web-interface/ClipboardEvent.js');
 
 // Class
 var HtmlEventEmitter = PropagatingEventEmitter.extend({
@@ -41,9 +42,13 @@ var HtmlEventEmitter = PropagatingEventEmitter.extend({
 		else if(domEvent.type == 'change' || domEvent.type == 'submit') {
 			events = FormEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
 		}
+		// ClipboardEvent
+		else if(domEvent.type == 'copy' || domEvent.type == 'cut' || domEvent.type == 'paste') {
+			events = ClipboardEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+		}
 		// All other events
 		else {
-			event.append(this.createEvent(sourceEmitter, domEvent.type, data, eventOptions));
+			events.append(this.createEvent(sourceEmitter, domEvent.type, data, eventOptions));
 		}
 
 		// Set the common HtmlEvent properties

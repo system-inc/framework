@@ -7,6 +7,11 @@ var HtmlEventProxy = {};
 // Static properties
 
 HtmlEventProxy.domEventIdentifierMap = {
+	// Document
+	'DOMContentLoaded': {
+		'htmlDocument.ready': true,
+	},
+
 	// Mouse
 	'click': {
 		'mouse.button.[1345].click': true, // Mouse button 2 does not trigger 'click' events
@@ -36,11 +41,6 @@ HtmlEventProxy.domEventIdentifierMap = {
 		'keyboard.key.*.press': true,
 	},
 
-	// Document
-	'DOMContentLoaded': {
-		'htmlDocument.ready': true,
-	},
-
 	// Forms
 	'change': {
 		'form.control.change': true,
@@ -48,6 +48,18 @@ HtmlEventProxy.domEventIdentifierMap = {
 	'submit': {
 		'form.submit': true,
 	},
+
+	// Clipboard
+	'copy': {
+		'clipboard.copy': true,
+	},
+	'cut': {
+		'clipboard.cut': true,
+	},
+	'paste': {
+		'clipboard.paste': true,
+	},
+	
 };
 
 // Static methods
