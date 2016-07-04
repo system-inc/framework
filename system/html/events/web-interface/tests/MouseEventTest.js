@@ -14,6 +14,34 @@ var MouseEventTest = ElectronTest.extend({
 		ElectronManager = Framework.require('system/electron/ElectronManager.js');
 	},
 
+	testClick: function*() {
+		// Create an HtmlDocument
+        var htmlDocument = new HtmlDocument();
+
+		// Create a div HtmlElement
+		var htmlElement = Html.div('div');
+
+		// Append the HtmlElement to the HtmlDocument body
+		htmlDocument.body.append(htmlElement);
+
+		// Set a variable to capture the event
+		var capturedEvent = null;
+
+		// Add an event listener to the div to capture the event when triggered
+		htmlElement.on('click', function(event) {
+			//Console.standardInfo(event.identifier, event);
+			capturedEvent = event;
+		});
+
+		// Mount the HtmlDocument to the DOM
+        htmlDocument.mountToDom();
+
+        // Simulate a click
+        yield ElectronManager.clickHtmlElement(htmlElement);
+
+        Assert.strictEqual(capturedEvent, null, '"click" events do not get bound');
+	},
+
 	testMouseEventInteract: function*() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
@@ -45,6 +73,7 @@ var MouseEventTest = ElectronTest.extend({
         // Simulate a click
         yield ElectronManager.clickHtmlElement(htmlElement);
 
+        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of HtmlEvent');
         Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of MouseEvent');
 
         Assert.strictEqual(capturedEvent.modifierKeysDown.alt, false, 'modifierKeysDown.alt property is correctly set');
@@ -105,8 +134,8 @@ var MouseEventTest = ElectronTest.extend({
 		var capturedEvent = null;
 
 		// Add an event listener to the div to capture the event when triggered
-		htmlElement.on('mouse.*', function(event) {
-		//htmlElement.on('mouse.button.1.click', function(event) {
+		//htmlElement.on('mouse.*', function(event) {
+		htmlElement.on('mouse.button.1.click', function(event) {
 			Console.standardWarn(event.identifier, event);
 			capturedEvent = event;
 		});

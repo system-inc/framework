@@ -1,5 +1,6 @@
 // Dependencies
 var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventEmitter.js');
+var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
 var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
 var KeyboardEvent = Framework.require('system/html/events/web-interface/KeyboardEvent.js');
 var FormEvent = Framework.require('system/html/events/web-interface/FormEvent.js');
@@ -91,7 +92,17 @@ HtmlEventProxy.domEventIdentifierMap = {
 	'paste': {
 		'clipboard.paste': true,
 	},
-	
+
+	// HtmlElement
+	'focusin': {
+		'htmlElement.focus': true,
+	},
+	'focusout': {
+		'htmlElement.blur': true,
+	},
+	'scroll': {
+		'htmlElement.scroll': true,
+	},
 };
 
 // Static methods
@@ -133,6 +144,10 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, data, even
 	// SelectionEvent
 	else if(domEvent.type == 'select' || domEvent.type == 'selectstart' || domEvent.type == 'selectionchange') {
 		events = SelectionEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+	}
+	// HtmlElementEvent
+	else if(domEvent.type == 'focusin' || domEvent.type == 'focusout' || domEvent.type == 'scroll') {
+		events = HtmlElementEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
 	}
 	// All other events
 	else {

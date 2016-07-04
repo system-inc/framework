@@ -298,12 +298,21 @@ var HtmlElement = HtmlNode.extend({
 		return this;
 	},
 
-	setStyle: function(property, value) {
+	setStyle: function(propertyOrObject, value) {
 		if(!this.attributes.style) {
 			this.attributes.style = {};
 		}
 
-		this.attributes.style[property] = value;
+		// Allow strings and objects (for .setStyle({this:that, this:that}))
+		if(String.is(propertyOrObject)) {
+			this.attributes.style[propertyOrObject] = value;
+		}
+		else {
+			propertyOrObject.each(function(property, value) {
+				this.attributes.style[property] = value;
+			}.bind(this));
+		}
+		
 		this.updateDom();
 
 		return this;
