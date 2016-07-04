@@ -41,10 +41,36 @@ HtmlEventProxy.domEventIdentifierMap = {
 		'keyboard.key.*.press': true,
 	},
 
+	// Composition
+	'compositionstart': {
+		'composition.start': true,
+	},
+	'compositionupdate': {
+		'composition.update': true,
+	},
+	'compositionend': {
+		'composition.end': true,
+	},
+
+	// Selection
+	'selectionstart': {
+		'selection.start': true,
+	},
+	'selectionchange': {
+		'selection.change': true,
+	},
+	'select': {
+		'selection.end': true,
+	},
+
 	// Forms
-	'change': {
+	'input': {
 		'form.control.change': true,
 	},
+	// I don't think I need this
+	//'change': {
+	//	'form.control.change': true,
+	//},
 	'submit': {
 		'form.submit': true,
 	},

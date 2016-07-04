@@ -40,8 +40,9 @@ var KeyboardEventTest = ElectronTest.extend({
 		var capturedEvent = null;
 
 		// Add an event listener to the textarea to capture the event when triggered
+		//htmlElement.on('keyboard.*', function(event) {
 		htmlElement.on('keyboard.key.A.press', function(event) {
-			//Console.standardInfo(event.identifier, event);
+			Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
 		});
 
@@ -76,5 +77,3 @@ var KeyboardEventTest = ElectronTest.extend({
 
 // Export
 module.exports = KeyboardEventTest;
-
-//keyboard.key.rightArrow.up

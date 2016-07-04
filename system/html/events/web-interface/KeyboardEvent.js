@@ -52,12 +52,18 @@ KeyboardEvent.createEventsFromDomEvent = function(domKeyboardEvent, emitter, dat
 
 	// For key up events
 	if(eventType == 'up') {
-		// alt, control, meta, and shift also fire "press" events
 		if(
+			// alt, control, meta, and shift also fire "press" events
 			keyboardEventWithoutIdentifier.key == 'alt' ||
 			keyboardEventWithoutIdentifier.key == 'control' ||
 			keyboardEventWithoutIdentifier.key == 'meta' ||
-			keyboardEventWithoutIdentifier.key == 'shift'
+			keyboardEventWithoutIdentifier.key == 'shift' ||
+
+			// up, down, left, and right also fire "press" events
+			keyboardEventWithoutIdentifier.key == 'up' ||
+			keyboardEventWithoutIdentifier.key == 'down' ||
+			keyboardEventWithoutIdentifier.key == 'left' ||
+			keyboardEventWithoutIdentifier.key == 'right'
 		) {
 			eventIdentifier = eventIdentifier.replaceLast('.up', '.press');
 			events.append(KeyboardEvent.createFromDomEvent(domKeyboardEvent, emitter, eventIdentifier, data, options));
@@ -90,13 +96,18 @@ KeyboardEvent.createFromDomEvent = function(domKeyboardEvent, emitter, identifie
 	// Get the key
 	var key = domKeyboardEvent.key; // "a"
 	
-	// "Shift" to "shift", "Control" to "control", etc.
+	// Rename the key if neccesary
 	if(key && String.is(key) && key.length > 1) {
+		// "Shift" to "shift", "Ctrl" to "ctrl", etc.
 		key = key.lowercase();
 
+		// 
 		if(key == 'ctrl') {
 			key = 'control';
 		}
+
+		// "arrowup" to "up", etc.
+		key = key.replace('arrow', '');
 	}
 
 	// Sometimes domKeyboardEvent.key isn't populated, so we can get it from domKeyboardEvent.keyCode

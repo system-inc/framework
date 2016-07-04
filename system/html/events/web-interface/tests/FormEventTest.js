@@ -37,6 +37,7 @@ var FormEventTest = ElectronTest.extend({
 
 		// Set a variable to capture the event
 		var capturedFormControlChangeEvent = null;
+		var capturedFormControlChangeEventCount = 0;
 		var capturedFormSubmitEvent = null;
 
 		// Add an event listener to the textarea to capture the event when triggered
@@ -44,6 +45,7 @@ var FormEventTest = ElectronTest.extend({
 			Console.standardInfo(event.identifier, event);
 
 			if(event.identifier == 'form.control.change') {
+				capturedFormControlChangeEventCount++;
 				capturedFormControlChangeEvent = event;
 			}
 			else if(event.identifier == 'form.submit') {
@@ -68,6 +70,9 @@ var FormEventTest = ElectronTest.extend({
 
 		// form.control.change should have fired
 		Assert.true(Class.isInstance(capturedFormControlChangeEvent, FormEvent), '"form.control.change" events are instances of FormEvent');
+
+		// form.control.change should have fired once
+		Assert.strictEqual(capturedFormControlChangeEventCount, 1, '"form.control.change" events fire the correct amount of time');
 		
 		// the emitter for form.control.change should be the inputElement
 		Assert.strictEqual(capturedFormControlChangeEvent.emitter, inputElement, 'emitter property on "form.control.change" event is correct');
@@ -85,5 +90,3 @@ var FormEventTest = ElectronTest.extend({
 
 // Export
 module.exports = FormEventTest;
-
-//keyboard.key.rightArrow.up

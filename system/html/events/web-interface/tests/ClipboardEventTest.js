@@ -77,5 +77,3 @@ var ClipboardEventTest = ElectronTest.extend({
 
 // Export
 module.exports = ClipboardEventTest;
-
-//keyboard.key.rightArrow.up

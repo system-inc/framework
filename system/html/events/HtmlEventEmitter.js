@@ -6,6 +6,8 @@ var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.
 var KeyboardEvent = Framework.require('system/html/events/web-interface/KeyboardEvent.js');
 var FormEvent = Framework.require('system/html/events/web-interface/FormEvent.js');
 var ClipboardEvent = Framework.require('system/html/events/web-interface/ClipboardEvent.js');
+var CompositionEvent = Framework.require('system/html/events/web-interface/CompositionEvent.js');
+var SelectionEvent = Framework.require('system/html/events/web-interface/SelectionEvent.js');
 
 // Class
 var HtmlEventEmitter = PropagatingEventEmitter.extend({
@@ -39,12 +41,20 @@ var HtmlEventEmitter = PropagatingEventEmitter.extend({
 			events = KeyboardEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
 		}
 		// FormEvent
-		else if(domEvent.type == 'change' || domEvent.type == 'submit') {
+		else if(domEvent.type == 'change' || domEvent.type == 'input' || domEvent.type == 'submit') {
 			events = FormEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
 		}
 		// ClipboardEvent
 		else if(domEvent.type == 'copy' || domEvent.type == 'cut' || domEvent.type == 'paste') {
 			events = ClipboardEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+		}
+		// CompositionEvent
+		else if(domEvent.type == 'compositionstart' || domEvent.type == 'compositionupdate' || domEvent.type == 'compositionend') {
+			events = CompositionEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+		}
+		// SelectionEvent
+		else if(domEvent.type == 'select' || domEvent.type == 'selectstart' || domEvent.type == 'selectionchange') {
+			events = SelectionEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
 		}
 		// All other events
 		else {

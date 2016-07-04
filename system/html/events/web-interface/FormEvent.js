@@ -25,7 +25,7 @@ FormEvent.createEventsFromDomEvent = function(domEvent, emitter, data, options) 
 	// The identifier for the event
 	var eventIdentifier = null;
 
-	if(domEvent.type == 'change') {
+	if(domEvent.type == 'change' || domEvent.type == 'input') {
 		eventIdentifier = 'form.control.change';
 	}
 	else if(domEvent.type == 'submit') {
