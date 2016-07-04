@@ -121,7 +121,7 @@ var MouseEventTest = ElectronTest.extend({
 
         Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.1.click" events triggered by clicks are instances of MouseEvent');
 
-        throw new Error('Throwing error to display browser window.');
+        //throw new Error('Throwing error to display browser window.');
 	},
 
 	testMouseEventPropagation: function*() {
@@ -188,6 +188,8 @@ var MouseEventTest = ElectronTest.extend({
 
         // Click on the grandchild element
         yield ElectronManager.clickHtmlElement(grandchildElement);
+
+        Console.standardWarn('grandparentCapturedEvent', grandparentCapturedEvent);
 
         Assert.strictEqual(grandparentCapturedEvent, null, '"interact" events propagate correctly');
         Assert.true(Class.isInstance(parentCapturedEvent, MouseEvent), '"interact" events propagate correctly');

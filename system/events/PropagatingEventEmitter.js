@@ -5,6 +5,8 @@ var PropagatingEvent = Framework.require('system/events/PropagatingEvent.js');
 // Class
 var PropagatingEventEmitter = EventEmitter.extend({
 
+	eventClass: PropagatingEvent,
+
 	parent: null,
 
 	emit: function*(eventIdentifier, data, eventOptions) {
@@ -144,12 +146,6 @@ var PropagatingEventEmitter = EventEmitter.extend({
 		}
 
 		return propagatingEvent;
-	},
-
-	createEvent: function(emitter, eventIdentifier, data, eventOptions) {
-		var event = new PropagatingEvent(emitter, eventIdentifier, data, eventOptions);
-
-		return event;
 	},
 
 });

@@ -5,6 +5,8 @@ var EventListener = Framework.require('system/events/EventListener.js');
 // Class
 var EventEmitter = Class.extend({
 
+	eventClass: Event,
+
 	eventListeners: [],
 
 	recommendedMaximumEventListenersPerEventIdentifier: null,
@@ -107,7 +109,7 @@ var EventEmitter = Class.extend({
 	},
 
 	createEvent: function(emitter, eventIdentifier, data, eventOptions) {
-		var event = new Event(emitter, eventIdentifier, data, eventOptions);
+		var event = new this.eventClass(emitter, eventIdentifier, data, eventOptions);
 
 		return event;
 	},

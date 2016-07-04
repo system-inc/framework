@@ -5,11 +5,7 @@ var HtmlNodeEvent = Framework.require('system/html/events/html-node/HtmlNodeEven
 // Class
 var HtmlNodeEventEmitter = HtmlEventEmitter.extend({
 
-	createEvent: function(emitter, eventIdentifier, data, eventOptions) {
-		var event = new HtmlNodeEvent(emitter, eventIdentifier, data, eventOptions);
-
-		return event;
-	},
+	eventClass: HtmlNodeEvent,
 
 });
 

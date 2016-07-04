@@ -1,5 +1,11 @@
 // Dependencies
 var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventEmitter.js');
+var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
+var KeyboardEvent = Framework.require('system/html/events/web-interface/KeyboardEvent.js');
+var FormEvent = Framework.require('system/html/events/web-interface/FormEvent.js');
+var ClipboardEvent = Framework.require('system/html/events/web-interface/ClipboardEvent.js');
+var CompositionEvent = Framework.require('system/html/events/web-interface/CompositionEvent.js');
+var SelectionEvent = Framework.require('system/html/events/web-interface/SelectionEvent.js');
 
 // Class
 var HtmlEventProxy = {};
@@ -89,6 +95,63 @@ HtmlEventProxy.domEventIdentifierMap = {
 };
 
 // Static methods
+
+HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, data, eventOptions) {
+	//Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
+
+	var events = [];
+
+	// Set the proper source emitter
+	// For example, if you listen to "form.control.change" events on a form element and you catch the DOM event "change" event passed from
+	// an input element, the emitter here would be the form when it actually needs to be the input element
+	var sourceEmitter = domEvent.target.htmlNode;
+	// Don't even do this check for now, wait and see until the line above breaks
+	//if(domEvent.target && domEvent.target.htmlNode) {
+	//	sourceEmitter = domEvent.target.htmlNode;
+	//}
+
+	// MouseEvent
+	if(window && window.MouseEvent && Class.isInstance(domEvent, window.MouseEvent)) {
+		events = MouseEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+	}
+	// KeyboardEvent
+	else if(window && (window.KeyboardEvent && Class.isInstance(domEvent, window.KeyboardEvent) || domEvent.keyCode != undefined)) {
+		events = KeyboardEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+	}
+	// FormEvent
+	else if(domEvent.type == 'change' || domEvent.type == 'input' || domEvent.type == 'submit') {
+		events = FormEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+	}
+	// ClipboardEvent
+	else if(domEvent.type == 'copy' || domEvent.type == 'cut' || domEvent.type == 'paste') {
+		events = ClipboardEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+	}
+	// CompositionEvent
+	else if(domEvent.type == 'compositionstart' || domEvent.type == 'compositionupdate' || domEvent.type == 'compositionend') {
+		events = CompositionEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+	}
+	// SelectionEvent
+	else if(domEvent.type == 'select' || domEvent.type == 'selectstart' || domEvent.type == 'selectionchange') {
+		events = SelectionEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+	}
+	// All other events
+	else {
+		events.append(emitter.createEvent(sourceEmitter, domEvent.type, data, eventOptions));
+	}
+
+	// Set the common HtmlEvent properties
+	events.each(function(eventIndex, event) {
+		// Do not allow the custom event to bubble, rather, the domEvent will bubble and custom events will be created as it bubbles
+		event.stopPropagation();
+
+		event.domEvent = domEvent;
+		event.trusted = domEvent.isTrusted;
+	});
+
+	Console.standardWarn('HtmlEventProxy.createEventFromDomEvent events', events);
+
+	return events;
+};
 
 // Takes HtmlEvent patterns (e.g., 'mouse.button.one.click') and returns the correlating DOM event identifiers (e.g., 'click')
 HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern) {
@@ -183,7 +246,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 	// When the DOM object emits a domEvent
 	var domEventListenerFunctionToBind = function*(domEvent) {
 		// Get the events to emit from the domEvent
-		var events = htmlEventEmitter.createEventsFromDomEvent(domEvent, htmlEventEmitter);
+		var events = HtmlEventProxy.createEventsFromDomEvent(domEvent, htmlEventEmitter);
 		//Console.standardLog('events', events);
 
 		// Emit the event

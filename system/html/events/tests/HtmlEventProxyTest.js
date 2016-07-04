@@ -3,11 +3,17 @@ var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
 var Assert = Framework.require('system/test/Assert.js');
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
+var ElectronManager = null;
 var HtmlEvent = Framework.require('system/html/events/HtmlEvent.js');
 var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
 
 // Class
 var HtmlEventProxyTest = ElectronTest.extend({
+
+	before: function*() {
+		// Initialize the ElectronManager here as to not throw an exception when electron is not present
+		ElectronManager = Framework.require('system/electron/ElectronManager.js');
+	},
 
 	testHtmlEventProxyEventClick: function*() {
 		// Create an HtmlDocument
@@ -32,7 +38,7 @@ var HtmlEventProxyTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Simulate a click
-        htmlElement.click();
+        yield ElectronManager.clickHtmlElement(htmlElement);
 
         Assert.strictEqual(capturedEvent, null, '"click" events do not get bound');
 	},
@@ -52,7 +58,7 @@ var HtmlEventProxyTest = ElectronTest.extend({
 
 		// Add an event listener to the div to capture the event when triggered
 		htmlElement.on('interact', function(event) {
-			Console.standardInfo(event.identifier, event);
+			Console.standardInfo('event.identifier', event.identifier, 'event', event);
 			capturedEvent = event;
 		});
 
@@ -60,7 +66,10 @@ var HtmlEventProxyTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Simulate a click
-        htmlElement.click();
+        //htmlElement.click(); // This is asynchronous
+        yield ElectronManager.clickHtmlElement(htmlElement);
+
+        Console.standardError('capturedEvent', capturedEvent);
 
         Assert.strictEqual(capturedEvent.identifier, 'interact', '"interact" events are triggered by clicks');
 

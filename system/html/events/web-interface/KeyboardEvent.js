@@ -1,8 +1,8 @@
 // Dependencies
-var HtmlEvent = Framework.require('system/html/events/HtmlEvent.js');
+var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
 
 // Class
-var KeyboardEvent = HtmlEvent.extend({
+var KeyboardEvent = HtmlElementEvent.extend({
 
 	// Keyboard keys down when the mouse event was emitted
 	modifierKeysDown: {

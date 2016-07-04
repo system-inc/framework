@@ -1,8 +1,8 @@
 // Dependencies
-var HtmlEvent = Framework.require('system/html/events/HtmlEvent.js');
+var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
 
 // Class
-var SelectionEvent = HtmlEvent.extend({
+var SelectionEvent = HtmlElementEvent.extend({
 
 	selection: null,
 	text: null,
