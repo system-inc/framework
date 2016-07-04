@@ -1,6 +1,7 @@
 // Dependencies
 var HtmlNode = Framework.require('system/html/HtmlNode.js');
 var XmlElement = Framework.require('system/xml/XmlElement.js');
+var HtmlElementEventEmitter = Framework.require('system/html/events/html-element/HtmlElementEventEmitter.js');
 
 // Class
 var HtmlElement = HtmlNode.extend({
@@ -378,7 +379,9 @@ HtmlElement.unaryTags = [
 
 // Static methods
 
-HtmlElement.createDomNode = HtmlElement.prototype.createDomNode;
+HtmlElement.is = function(value) {
+	return Class.isInstance(value, HtmlElement);
+};
 
 HtmlElement.makeHtmlNode = function(value, parent, type) {
 	var alreadyIsHtmlNode = HtmlNode.is(value);
@@ -399,11 +402,12 @@ HtmlElement.makeHtmlNode = function(value, parent, type) {
 	return value;
 };
 
-HtmlElement.is = function(value) {
-	return Class.isInstance(value, HtmlElement);
-};
+HtmlElement.createDomNode = HtmlElement.prototype.createDomNode;
 
 HtmlElement.attributeValueToString = XmlElement.attributeValueToString;
+
+// Class implementations
+HtmlNode.implement(HtmlElementEventEmitter);
 
 // Export
 module.exports = HtmlElement;

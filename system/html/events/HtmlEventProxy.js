@@ -73,7 +73,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 	'input': {
 		'form.control.change': true,
 	},
-	// I don't think I need this
+	// I don't think I need this anymore because I can use the "input" event above
 	//'change': {
 	//	'form.control.change': true,
 	//},
@@ -114,7 +114,7 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, data, even
 	if(window && window.MouseEvent && Class.isInstance(domEvent, window.MouseEvent)) {
 		events = MouseEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
 	}
-	// KeyboardEvent
+	// KeyboardEvent or events with the "keyCode" property
 	else if(window && (window.KeyboardEvent && Class.isInstance(domEvent, window.KeyboardEvent) || domEvent.keyCode != undefined)) {
 		events = KeyboardEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
 	}
@@ -244,17 +244,24 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 	var domEventIdentifiers = HtmlEventProxy.htmlEventPatternToDomEventIdentifiers(eventPattern);
 
 	// When the DOM object emits a domEvent
-	var domEventListenerFunctionToBind = function*(domEvent) {
+	// This function can't be a generator in order to make sure the DOM events are propagated correctly
+	// Native DOM events will not wait for the generator function to return
+	// As a consequence, this means that any bound generator functions will be emitted immediately
+	// TODO: Maybe I can fix this at some point by making the events yield on .emit and somehow
+	// controlling when the native DOM event bubbles
+	// Note: Event though event.emit is a generator function this seems to be working synchronously
+	// such that when I can event.stop() it works
+	var domEventListenerFunctionToBind = function(domEvent) {
 		// Get the events to emit from the domEvent
 		var events = HtmlEventProxy.createEventsFromDomEvent(domEvent, htmlEventEmitter);
 		//Console.standardLog('events', events);
 
 		// Emit the event
-		yield events.each(function*(eventIndex, event) {
+		events.each(function(eventIndex, event) {
 			//Console.standardLog('htmlEventEmitter.emit event', event);
-			yield htmlEventEmitter.emit(event.identifier, event);
+			htmlEventEmitter.emit(event.identifier, event);
 		});
-	}.bind(htmlEventEmitter).toPromise();
+	}.bind(htmlEventEmitter);
 
 	// If we have a valid domEventIdentifier
 	if(domEventIdentifiers.length) {

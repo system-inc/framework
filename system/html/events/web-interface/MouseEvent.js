@@ -77,7 +77,7 @@ MouseEvent.is = function(value) {
 };
 
 MouseEvent.createEventsFromDomEvent = function(domMouseEvent, emitter, data, options) {
-	Console.standardLog('MouseEvent.createEventsFromDomEvent', domMouseEvent.type, arguments);
+	Console.standardLog('MouseEvent.createEventsFromDomEvent arguments', domMouseEvent.type, arguments);
 
 	var events = [];
 
@@ -117,7 +117,7 @@ MouseEvent.createEventsFromDomEvent = function(domMouseEvent, emitter, data, opt
 		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, eventIdentifier, data, options));
 	}
 
-	Console.standardLog('events', events);
+	Console.standardLog('MouseEvent.createEventsFromDomEvent events', events);
 
 	return events;
 };

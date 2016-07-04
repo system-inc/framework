@@ -189,9 +189,7 @@ var MouseEventTest = ElectronTest.extend({
         // Click on the grandchild element
         yield ElectronManager.clickHtmlElement(grandchildElement);
 
-        Console.standardWarn('grandparentCapturedEvent', grandparentCapturedEvent);
-
-        Assert.strictEqual(grandparentCapturedEvent, null, '"interact" events propagate correctly');
+        Assert.strictEqual(grandparentCapturedEvent, null, 'stopped "interact" events do not propagate');
         Assert.true(Class.isInstance(parentCapturedEvent, MouseEvent), '"interact" events propagate correctly');
         Assert.true(Class.isInstance(childCapturedEvent, MouseEvent), '"interact" events propagate correctly');
 
