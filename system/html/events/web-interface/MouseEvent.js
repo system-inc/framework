@@ -41,7 +41,7 @@ var MouseEvent = HtmlElementEvent.extend({
 			y: null, // The Y coordinate of the mouse pointer relative to the closest positioned ancestor element
 		},
 
-		relativeToViewport: {
+		relativeToDocumentViewport: {
 			x: null, // The X coordinate of the mouse pointer in local (DOM content) coordinates
 			y: null, // The Y coordinate of the mouse pointer in local (DOM content) coordinates
 		},
@@ -175,8 +175,8 @@ MouseEvent.createFromDomEvent = function(domMouseEvent, emitter, identifier, dat
 	mouseEvent.position.relativeToEmitter.y = domMouseEvent.offsetY;
 	mouseEvent.position.relativeToRelativeAncestor.x = domMouseEvent.layerX;
 	mouseEvent.position.relativeToRelativeAncestor.y = domMouseEvent.layerY;
-	mouseEvent.position.relativeToViewport.x = domMouseEvent.x;
-	mouseEvent.position.relativeToViewport.y = domMouseEvent.y;
+	mouseEvent.position.relativeToDocumentViewport.x = domMouseEvent.x;
+	mouseEvent.position.relativeToDocumentViewport.y = domMouseEvent.y;
 	mouseEvent.position.relativeToDocument.x = domMouseEvent.pageX;
 	mouseEvent.position.relativeToDocument.y = domMouseEvent.pageY;
 	mouseEvent.position.relativeToGlobal.x = domMouseEvent.screenX;

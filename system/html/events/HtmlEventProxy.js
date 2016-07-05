@@ -1,5 +1,6 @@
 // Dependencies
 var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventEmitter.js');
+var HtmlDocumentEvent = Framework.require('system/html/events/html-document/HtmlDocumentEvent.js');
 var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
 var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
 var KeyboardEvent = Framework.require('system/html/events/web-interface/KeyboardEvent.js');
@@ -15,93 +16,174 @@ var HtmlEventProxy = {};
 
 HtmlEventProxy.domEventIdentifierMap = {
 	// Document
-	'DOMContentLoaded': {
-		'htmlDocument.ready': true,
+	DOMContentLoaded: {
+		eventClass: HtmlDocumentEvent,
+		eventWildcardPatterns: {
+			'htmlDocument.ready': true,
+		},
 	},
 
 	// Mouse
-	'click': {
-		'mouse.button.[1345].click': true, // Mouse button 2 does not trigger 'click' events
-		'interact': true,
+	click: {
+		eventClass: MouseEvent,
+		eventWildcardPatterns: {
+			'mouse.button.[1345].click': true, // Mouse button 2 does not trigger 'click' events
+			'interact': true,
+		},
 	},
-	'mouseup': {
-		'mouse.button.2.click': true, // Mouse button 2 can only be detected 'mouseup' events
-		'mouse.button.*.up': true,
+	mouseup: {
+		eventClass: MouseEvent,
+		eventWildcardPatterns: {
+			'mouse.button.2.click': true, // Mouse button 2 can only be detected 'mouseup' events
+			'mouse.button.*.up': true,
+		},
 	},
-	'mousedown': {
-		'mouse.button.*.down': true,
+	mousedown: {
+		eventClass: MouseEvent,
+		eventWildcardPatterns: {
+			'mouse.button.*.down': true,
+		},
 	},
 
 	// Keyboard
-	'keydown': {
-		'keyboard.key.*.down': true,
+	keydown: {
+		eventClass: KeyboardEvent,
+		eventWildcardPatterns: {
+			'keyboard.key.*.down': true,
+		},
 	},
-	'keyup': {
-		'keyboard.key.*.up': true,
-		// TODO: 'keyboard.key.(alt|control|meta|shift).press': true,
-		'keyboard.key.alt.press': true,
-		'keyboard.key.control.press': true,
-		'keyboard.key.meta.press': true,
-		'keyboard.key.shift.press': true,
+	keyup: {
+		eventClass: KeyboardEvent,
+		eventWildcardPatterns: {
+			'keyboard.key.*.up': true,
+			// TODO: 'keyboard.key.(alt|control|meta|shift).press': true,
+			'keyboard.key.alt.press': true,
+			'keyboard.key.control.press': true,
+			'keyboard.key.meta.press': true,
+			'keyboard.key.shift.press': true,
+		},
 	},
-	'keypress': {
-		'keyboard.key.*.press': true,
+	keypress: {
+		eventClass: KeyboardEvent,
+		eventWildcardPatterns: {
+			'keyboard.key.*.press': true,
+		},
 	},
 
 	// Composition
-	'compositionstart': {
-		'composition.start': true,
+	compositionstart: {
+		eventClass: CompositionEvent,
+		eventWildcardPatterns: {
+			'composition.start': true,
+		},
 	},
-	'compositionupdate': {
-		'composition.update': true,
+	compositionupdate: {
+		eventClass: CompositionEvent,
+		eventWildcardPatterns: {
+			'composition.update': true,
+		},
 	},
-	'compositionend': {
-		'composition.end': true,
+	compositionend: {
+		eventClass: CompositionEvent,
+		eventWildcardPatterns: {
+			'composition.end': true,
+		},
 	},
 
 	// Selection
-	'selectionstart': {
-		'selection.start': true,
+	selectionstart: {
+		eventClass: SelectionEvent,
+		eventWildcardPatterns: {
+			'selection.start': true,
+		},
 	},
-	'selectionchange': {
-		'selection.change': true,
+	selectionchange: {
+		eventClass: SelectionEvent,
+		eventWildcardPatterns: {
+			'selection.change': true,
+		},
 	},
-	'select': {
-		'selection.end': true,
+	select: {
+		eventClass: SelectionEvent,
+		eventWildcardPatterns: {
+			'selection.end': true,
+		},
 	},
 
 	// Forms
-	'input': {
-		'form.control.change': true,
+	input: {
+		eventClass: FormEvent,
+		eventWildcardPatterns: {
+			'form.control.change': true,
+		},
 	},
 	// I don't think I need this anymore because I can use the "input" event above
-	//'change': {
+	//change: {
 	//	'form.control.change': true,
 	//},
-	'submit': {
-		'form.submit': true,
+	submit: {
+		eventClass: FormEvent,
+		eventWildcardPatterns: {
+			'form.submit': true,
+		},
 	},
 
 	// Clipboard
-	'copy': {
-		'clipboard.copy': true,
+	copy: {
+		eventClass: ClipboardEvent,
+		eventWildcardPatterns: {
+			'clipboard.copy': true,
+		},
 	},
-	'cut': {
-		'clipboard.cut': true,
+	cut: {
+		eventClass: ClipboardEvent,
+		eventWildcardPatterns: {
+			'clipboard.cut': true,
+		},
 	},
-	'paste': {
-		'clipboard.paste': true,
+	paste: {
+		eventClass: ClipboardEvent,
+		eventWildcardPatterns: {
+			'clipboard.paste': true,
+		},
 	},
 
 	// HtmlElement
-	'focusin': {
-		'htmlElement.focus': true,
+	focusin: {
+		eventClass: HtmlElementEvent,
+		eventWildcardPatterns: {
+			'htmlElement.focus': true,
+		},
 	},
-	'focusout': {
-		'htmlElement.blur': true,
+	focusout: {
+		eventClass: HtmlElementEvent,
+		eventWildcardPatterns: {
+			'htmlElement.blur': true,
+		},
 	},
-	'scroll': {
-		'htmlElement.scroll': true,
+	scroll: {
+		eventClass: HtmlElementEvent,
+		eventWildcardPatterns: {
+			'htmlElement.scroll': true,
+		},
+	},
+	load: {
+		eventClass: HtmlElementEvent,
+		eventWildcardPatterns: {
+			'htmlElement.load': true,
+		},
+	},
+	abort: {
+		eventClass: HtmlElementEvent,
+		eventWildcardPatterns: {
+			'htmlElement.abort': true,
+		},
+	},
+	error: {
+		eventClass: HtmlElementEvent,
+		eventWildcardPatterns: {
+			'htmlElement.error': true,
+		},
 	},
 };
 
@@ -121,35 +203,23 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, data, even
 	//	sourceEmitter = domEvent.target.htmlNode;
 	//}
 
-	// MouseEvent
-	if(window && window.MouseEvent && Class.isInstance(domEvent, window.MouseEvent)) {
-		events = MouseEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+	var classToUseToCreateEventsFromDomEvent = null;
+
+	// Get the class to use to create the events from the DOM event
+	if(HtmlEventProxy.domEventIdentifierMap[domEvent.type]) {
+		classToUseToCreateEventsFromDomEvent = HtmlEventProxy.domEventIdentifierMap[domEvent.type].eventClass;
 	}
-	// KeyboardEvent or events with the "keyCode" property
-	else if(window && (window.KeyboardEvent && Class.isInstance(domEvent, window.KeyboardEvent) || domEvent.keyCode != undefined)) {
-		events = KeyboardEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+
+	// If keyCode is set, use the keyboard event - I don't think I need this anymore
+	//if(domEvent.keyCode != undefined) {
+	//	classToUseToCreateEventsFromDomEvent = KeyboardEvent;
+	//}
+
+	// Use a specific class for certain DOM events
+	if(classToUseToCreateEventsFromDomEvent) {
+		events = classToUseToCreateEventsFromDomEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
 	}
-	// FormEvent
-	else if(domEvent.type == 'change' || domEvent.type == 'input' || domEvent.type == 'submit') {
-		events = FormEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
-	}
-	// ClipboardEvent
-	else if(domEvent.type == 'copy' || domEvent.type == 'cut' || domEvent.type == 'paste') {
-		events = ClipboardEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
-	}
-	// CompositionEvent
-	else if(domEvent.type == 'compositionstart' || domEvent.type == 'compositionupdate' || domEvent.type == 'compositionend') {
-		events = CompositionEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
-	}
-	// SelectionEvent
-	else if(domEvent.type == 'select' || domEvent.type == 'selectstart' || domEvent.type == 'selectionchange') {
-		events = SelectionEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
-	}
-	// HtmlElementEvent
-	else if(domEvent.type == 'focusin' || domEvent.type == 'focusout' || domEvent.type == 'scroll') {
-		events = HtmlElementEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
-	}
-	// All other events
+	// If no specific class is specified, use the emitter to create the event
 	else {
 		events.append(emitter.createEvent(sourceEmitter, domEvent.type, data, eventOptions));
 	}
@@ -174,9 +244,9 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern
 
 	//Console.log('HtmlEventProxy.htmlEventPatternToDomEventIdentifiers', htmlEventPattern);
 
-	HtmlEventProxy.domEventIdentifierMap.each(function(domEventIdentifier, eventIdentifiers) {
-		eventIdentifiers.each(function(eventIdentifier) {
-			if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, eventIdentifier)) {
+	HtmlEventProxy.domEventIdentifierMap.each(function(domEventIdentifier, domEventIdentifierObject) {
+		domEventIdentifierObject.eventWildcardPatterns.each(function(eventWildcardPattern) {
+			if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, eventWildcardPattern)) {
 				domEventIdentifiers.append(domEventIdentifier);
 			}
 		});

@@ -14,6 +14,77 @@ var HtmlNode = XmlNode.extend({
 	nodeIdentifier: null, // Used to uniquely identify HtmlNodes for tree comparisons againt the DOM
 	nodeIdentifierCounter: 0, // Used to ensure unique identifiers
 
+	dimensions: {
+		width: null,
+		height: null,
+	},
+
+	position: {
+		relativeToRelativeAncestor: {
+			x: null, // scrollLeft
+			y: null, // scrollTop
+		},
+
+		relativeToDocumentViewport: {
+			x: null,
+			y: null,
+
+			coordinates: {
+				topLeft: {
+					x: null,
+					y: null,
+				},
+				topCenter: {
+					x: null,
+					y: null,
+				},
+				topRight: {
+					x: null,
+					y: null,
+				},
+
+				leftCenter: {
+					x: null,
+					y: null,
+				},
+
+				rightCenter: {
+					x: null,
+					y: null,
+				},
+
+				bottomLeft: {
+					x: null,
+					y: null,
+				},
+				bottomCenter: {
+					x: null,
+					y: null,
+				},
+				bottomRight: {
+					x: null,
+					y: null,
+				},
+
+				center: {
+					x: null,
+					y: null,
+				},
+			},
+
+			edges: {
+				top: null,
+				right: null,
+				bottom: null,
+				left: null,
+			},						
+		},
+
+		//relativeToDocument
+		//relativeToGlobal
+		//relativeToPreviousGlobalRelativePosition
+	},
+
 	construct: function(content, parent, type) {
 		this.super.apply(this, arguments);
 
@@ -174,84 +245,70 @@ var HtmlNode = XmlNode.extend({
 	},
 
 	getDimensions: function() {
-		return this.getDimensionsAndPosition().dimensions;
+		this.getDimensionAndPositionFromDomNode();
+
+		return this.dimensions;
 	},
 
 	getPosition: function() {
-		return this.getDimensionsAndPosition().position;
+		this.getDimensionAndPositionFromDomNode();
+
+		return this.position;
 	},
 
-	getDimensionsAndPosition: function() {
-		var dimensionsAndPosition = null;
-
+	getDimensionAndPositionFromDomNode: function() {
 		if(this.domNode) {
 			var boundingClientRect = this.domNode.getBoundingClientRect();
 
-			dimensionsAndPosition = {
-				dimensions: {
-					width: boundingClientRect.width,
-					height: boundingClientRect.height,
-				},
-				position:{
-					relativeToViewport: {
-						x: boundingClientRect.left,
-						y: boundingClientRect.top,
+			// Dimensions
+			this.dimensions.width = boundingClientRect.width;
+			this.dimensions.height = boundingClientRect.height;
 
-						coordinates: {
-							topLeft: {
-								x: boundingClientRect.left,
-								y: boundingClientRect.top,
-							},
-							topCenter: {
-								x: boundingClientRect.width / 2,
-								y: boundingClientRect.top,
-							},
-							topRight: {
-								x: boundingClientRect.right,
-								y: boundingClientRect.top,
-							},
+			// Position - relativeToRelativeAncestor
+			this.position.relativeToRelativeAncestor.x = this.domNode.scrollTop;
+			this.position.relativeToRelativeAncestor.y = this.domNode.scrollLeft;
 
-							leftCenter: {
-								x: boundingClientRect.left,
-								y: boundingClientRect.height / 2,
-							},
+			// Position - relativeToDocumentViewport
+			this.position.relativeToDocumentViewport.x = boundingClientRect.left;
+			this.position.relativeToDocumentViewport.y = boundingClientRect.top;
 
-							rightCenter: {
-								x: boundingClientRect.right,
-								y: boundingClientRect.height / 2,
-							},
+			this.position.relativeToDocumentViewport.coordinates.topLeft.x = boundingClientRect.left;
+			this.position.relativeToDocumentViewport.coordinates.topLeft.y = boundingClientRect.top;
+						
+			this.position.relativeToDocumentViewport.coordinates.topCenter.x = boundingClientRect.width / 2;
+			this.position.relativeToDocumentViewport.coordinates.topCenter.y = boundingClientRect.top;
+						
+			this.position.relativeToDocumentViewport.coordinates.topRight.x = boundingClientRect.right;
+			this.position.relativeToDocumentViewport.coordinates.topRight.y = boundingClientRect.top;
 
-							bottomLeft: {
-								x: boundingClientRect.left,
-								y: boundingClientRect.bottom,
-							},
-							bottomCenter: {
-								x: boundingClientRect.width / 2,
-								y: boundingClientRect.bottom,
-							},
-							bottomRight: {
-								x: boundingClientRect.right,
-								y: boundingClientRect.bottom,
-							},
+			this.position.relativeToDocumentViewport.coordinates.leftCenter.x = boundingClientRect.left;
+			this.position.relativeToDocumentViewport.coordinates.leftCenter.y = boundingClientRect.height / 2;
 
-							center: {
-								x: boundingClientRect.width / 2,
-								y: boundingClientRect.height / 2,
-							},
-						},
+			this.position.relativeToDocumentViewport.coordinates.rightCenter.x = boundingClientRect.right;
+			this.position.relativeToDocumentViewport.coordinates.rightCenter.y = boundingClientRect.height / 2;
 
-						edges: {
-							top: boundingClientRect.top,
-							right: boundingClientRect.right,
-							bottom: boundingClientRect.bottom,
-							left: boundingClientRect.left,
-						},						
-					},
-				},
-			};
+			this.position.relativeToDocumentViewport.coordinates.bottomLeft.x = boundingClientRect.left;
+			this.position.relativeToDocumentViewport.coordinates.bottomLeft.y = boundingClientRect.bottom;
+						
+			this.position.relativeToDocumentViewport.coordinates.bottomCenter.x = boundingClientRect.width / 2;
+			this.position.relativeToDocumentViewport.coordinates.bottomCenter.y = boundingClientRect.bottom;
+						
+			this.position.relativeToDocumentViewport.coordinates.bottomRight.x = boundingClientRect.right;
+			this.position.relativeToDocumentViewport.coordinates.bottomRight.y = boundingClientRect.bottom;
+
+			this.position.relativeToDocumentViewport.coordinates.center.x = boundingClientRect.width / 2;
+			this.position.relativeToDocumentViewport.coordinates.center.y = boundingClientRect.height / 2;
+
+			this.position.relativeToDocumentViewport.edges = boundingClientRect.top;
+			this.position.relativeToDocumentViewport.edges = boundingClientRect.right;
+			this.position.relativeToDocumentViewport.edges = boundingClientRect.bottom;
+			this.position.relativeToDocumentViewport.edges = boundingClientRect.left;
 		}
 
-		return dimensionsAndPosition;
+		return {
+			dimensions: this.dimensions,
+			position: this.position,
+		};
 	},
 
 	click: function() {

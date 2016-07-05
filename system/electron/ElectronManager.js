@@ -287,17 +287,17 @@ ElectronManager.clickHtmlElement = function(htmlElement, clickCount) {
 	var htmlElementPosition = htmlElement.getPosition();
 	//Console.standardWarn('htmlElementPosition', htmlElementPosition);
 
-	return ElectronManager.click(htmlElementPosition.relativeToViewport.x, htmlElementPosition.relativeToViewport.y);
+	return ElectronManager.click(htmlElementPosition.relativeToDocumentViewport.x, htmlElementPosition.relativeToDocumentViewport.y);
 };
 
 ElectronManager.doubleClickHtmlElement = function(htmlElement, clickCount) {
 	var htmlElementPosition = htmlElement.getPosition();
 	//Console.standardWarn('htmlElementPosition', htmlElementPosition);
 
-	return ElectronManager.click(htmlElementPosition.relativeToViewport.x, htmlElementPosition.relativeToViewport.y, 'left', 2);
+	return ElectronManager.click(htmlElementPosition.relativeToDocumentViewport.x, htmlElementPosition.relativeToDocumentViewport.y, 'left', 2);
 };
 
-ElectronManager.click = function(relativeToViewportX, relativeToViewportY, button, clickCount, modifiers) {
+ElectronManager.click = function(relativeToDocumentViewportX, relativeToDocumentViewportY, button, clickCount, modifiers) {
 	// Default the button to left
 	if(!button) {
 		button = 'left';
@@ -322,8 +322,8 @@ ElectronManager.click = function(relativeToViewportX, relativeToViewportY, butto
 		// Send mouse down
 		webContents.sendInputEvent({
 			type: 'mouseDown',
-			x: relativeToViewportX,
-			y: relativeToViewportY,
+			x: relativeToDocumentViewportX,
+			y: relativeToDocumentViewportY,
 			button: button,
 			clickCount: clickCount,
 			modifiers: modifiers,
@@ -332,8 +332,8 @@ ElectronManager.click = function(relativeToViewportX, relativeToViewportY, butto
 		// Send mouse up
 		webContents.sendInputEvent({
 			type: 'mouseUp',
-			x: relativeToViewportX,
-			y: relativeToViewportY,
+			x: relativeToDocumentViewportX,
+			y: relativeToDocumentViewportY,
 			button: button,
 			clickCount: clickCount,
 			modifiers: modifiers,

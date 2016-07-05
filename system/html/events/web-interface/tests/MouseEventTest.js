@@ -93,8 +93,8 @@ var MouseEventTest = ElectronTest.extend({
 		Assert.strictEqual(capturedEvent.position.relativeToEmitter.y, 0, 'position.relativeToEmitter.y property is correctly set');
 		Assert.strictEqual(capturedEvent.position.relativeToRelativeAncestor.x, 30, 'position.relativeToRelativeAncestor.x property is correctly set');
 		Assert.strictEqual(capturedEvent.position.relativeToRelativeAncestor.y, 30, 'position.relativeToRelativeAncestor.y property is correctly set');
-		Assert.strictEqual(capturedEvent.position.relativeToViewport.x, 30, 'position.relativeToViewport.x property is correctly set');
-		Assert.strictEqual(capturedEvent.position.relativeToViewport.y, 30, 'position.relativeToViewport.y property is correctly set');
+		Assert.strictEqual(capturedEvent.position.relativeToDocumentViewport.x, 30, 'position.relativeToDocumentViewport.x property is correctly set');
+		Assert.strictEqual(capturedEvent.position.relativeToDocumentViewport.y, 30, 'position.relativeToDocumentViewport.y property is correctly set');
 		Assert.strictEqual(capturedEvent.position.relativeToDocument.x, 30, 'position.relativeToDocument.x property is correctly set');
 		Assert.strictEqual(capturedEvent.position.relativeToDocument.y, 30, 'position.relativeToDocument.y property is correctly set');
 

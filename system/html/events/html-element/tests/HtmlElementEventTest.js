@@ -19,7 +19,7 @@ var HtmlElementEventTest = ElectronTest.extend({
         var htmlDocument = new HtmlDocument();
 
         htmlDocument.body.setStyle('margin', 0);
-        htmlDocument.body.setStyle('padding', '30px');
+        htmlDocument.body.setStyle('padding', '32px');
 
         // A textArea element
         var textAreaElement = Html.textarea();
@@ -62,21 +62,23 @@ var HtmlElementEventTest = ElectronTest.extend({
 
         htmlDocument.body.setStyle({
         	margin: 0,
-        	padding: '30px',
+        	padding: '32px',
     	});
 
         // A scrollable div
         var scrollableDivElement = Html.div('Scrollable');
         scrollableDivElement.setStyle({
-        	height: '100px',
+        	height: '256px',
+        	width: '256px',
         	background: '#00AAFF',
-        	padding: '30px',
+        	padding: '32px',
         	overflow: 'scroll',
         });
 
         var tallDivElement = Html.div('Tall');
         tallDivElement.setStyle({
-        	height: '500px',
+        	height: '4096px',
+        	width: '4096px',
         	background: '#00AA66',
         });
 
@@ -88,9 +90,11 @@ var HtmlElementEventTest = ElectronTest.extend({
 		var capturedHtmlElementScrollEvent = null;
 		var capturedHtmlElementScrollUpEvent = null;
 		var capturedHtmlElementScrollDownEvent = null;
+		var capturedHtmlElementScrollLeftEvent = null;
+		var capturedHtmlElementScrollRightEvent = null;
 
 		// Add an event listener to the textarea to capture the event when triggered
-		scrollableDivElement.on('htmlElement.*', function(event) {
+		scrollableDivElement.on('htmlElement.scroll.*', function(event) {
 			Console.standardInfo(event.identifier, event);
 
 			if(event.identifier == 'htmlElement.scroll') {
@@ -102,23 +106,148 @@ var HtmlElementEventTest = ElectronTest.extend({
 			else if(event.identifier == 'htmlElement.scroll.down') {
 				capturedHtmlElementScrollDownEvent = event;
 			}
+			else if(event.identifier == 'htmlElement.scroll.left') {
+				capturedHtmlElementScrollLeftEvent = event;
+			}
+			else if(event.identifier == 'htmlElement.scroll.right') {
+				capturedHtmlElementScrollRightEvent = event;
+			}
 		});
 
 		// Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
-        // Click into the textArea
-		yield ElectronManager.clickHtmlElement(scrollableDivElement);
+        // Scroll down
+        scrollableDivElement.domNode.scrollTop = 100;
+        yield Function.delay(50); // Give some time for the scroll event to emit
 
-		// Click out of the textArea
-		yield ElectronManager.clickHtmlElement(htmlDocument.body);
+        Assert.true(Class.isInstance(capturedHtmlElementScrollDownEvent, HtmlElementEvent), '"htmlElement.scroll.down" events are instances of HtmlElementEvent');
 
-		Assert.true(Class.isInstance(capturedHtmlElementScrollEvent, HtmlElementEvent), '"htmlElement.scroll" events are instances of HtmlElementEvent');
-		Assert.true(Class.isInstance(capturedHtmlElementScrollUpEvent, HtmlElementEvent), '"htmlElement.scroll.up" events are instances of HtmlElementEvent');
-		Assert.true(Class.isInstance(capturedHtmlElementScrollDownEvent, HtmlElementEvent), '"htmlElement.scroll.down" events are instances of HtmlElementEvent');
+        // Check the htmlElement.scroll event as well
+        Assert.true(Class.isInstance(capturedHtmlElementScrollEvent, HtmlElementEvent), '"htmlElement.scroll" events are instances of HtmlElementEvent');
 
-		throw new Error('Throwing error to display browser window.');
+        // Make sure none of the other events have been emitted
+        Assert.strictEqual(capturedHtmlElementScrollUpEvent, null, 'scroll events emit correctly');
+        Assert.strictEqual(capturedHtmlElementScrollLeftEvent, null, 'scroll events emit correctly');
+        Assert.strictEqual(capturedHtmlElementScrollRightEvent, null, 'scroll events emit correctly');
+
+        // Reset
+        capturedHtmlElementScrollUpEvent = null;
+		capturedHtmlElementScrollDownEvent = null;
+		capturedHtmlElementScrollLeftEvent = null;
+		capturedHtmlElementScrollRightEvent = null;
+
+		// Scroll up
+		scrollableDivElement.domNode.scrollTop = 0;
+        yield Function.delay(50); // Give some time for the scroll event to emit
+
+        Assert.true(Class.isInstance(capturedHtmlElementScrollUpEvent, HtmlElementEvent), '"htmlElement.scroll.up" events are instances of HtmlElementEvent');
+
+        // Make sure none of the other events have been emitted
+        Assert.strictEqual(capturedHtmlElementScrollDownEvent, null, 'scroll events emit correctly');
+        Assert.strictEqual(capturedHtmlElementScrollLeftEvent, null, 'scroll events emit correctly');
+        Assert.strictEqual(capturedHtmlElementScrollRightEvent, null, 'scroll events emit correctly');
+
+        // Reset
+        capturedHtmlElementScrollUpEvent = null;
+		capturedHtmlElementScrollDownEvent = null;
+		capturedHtmlElementScrollLeftEvent = null;
+		capturedHtmlElementScrollRightEvent = null;
+
+        // Scroll right
+        scrollableDivElement.domNode.scrollLeft = 100;
+        yield Function.delay(50); // Give some time for the scroll event to emit
+
+        Assert.true(Class.isInstance(capturedHtmlElementScrollRightEvent, HtmlElementEvent), '"htmlElement.scroll.right" events are instances of HtmlElementEvent');
+
+        // Make sure none of the other events have been emitted
+        Assert.strictEqual(capturedHtmlElementScrollUpEvent, null, 'scroll events emit correctly');
+        Assert.strictEqual(capturedHtmlElementScrollDownEvent, null, 'scroll events emit correctly');
+        Assert.strictEqual(capturedHtmlElementScrollLeftEvent, null, 'scroll events emit correctly');
+
+        // Reset
+        capturedHtmlElementScrollUpEvent = null;
+		capturedHtmlElementScrollDownEvent = null;
+		capturedHtmlElementScrollLeftEvent = null;
+		capturedHtmlElementScrollRightEvent = null;
+
+        // Scroll left
+        scrollableDivElement.domNode.scrollLeft = 0;
+        yield Function.delay(50); // Give some time for the scroll event to emit
+
+        Assert.true(Class.isInstance(capturedHtmlElementScrollLeftEvent, HtmlElementEvent), '"htmlElement.scroll.left" events are instances of HtmlElementEvent');
+
+        // Make sure none of the other events have been emitted
+        Assert.strictEqual(capturedHtmlElementScrollUpEvent, null, 'scroll events emit correctly');
+        Assert.strictEqual(capturedHtmlElementScrollDownEvent, null, 'scroll events emit correctly');
+        Assert.strictEqual(capturedHtmlElementScrollRightEvent, null, 'scroll events emit correctly');
+
+		//throw new Error('Throwing error to display browser window.');
 	},
+
+    testHtmlElementEventLoad: function*() {
+        // Create an HtmlDocument
+        var htmlDocument = new HtmlDocument();
+
+        // An image element
+        var imgElement = Html.img({
+            src: 'file://'+Node.Path.join(Framework.directory, 'tests', 'assets', 'media', 'images', 'poring.png'),
+        });
+        htmlDocument.body.append(imgElement);
+
+        // Set a variable to capture the event
+        var capturedHtmlElementLoadEvent = null;
+
+        // Add an event listener to the textarea to capture the event when triggered
+        imgElement.on('htmlElement.load', function(event) {
+            Console.standardInfo(event.identifier, event);
+
+            if(event.identifier == 'htmlElement.load') {
+                capturedHtmlElementLoadEvent = event;
+            }
+        });
+
+        // Mount the HtmlDocument to the DOM
+        htmlDocument.mountToDom();
+
+        yield Function.delay(50); // Give some time for the image to load
+
+        Assert.true(Class.isInstance(capturedHtmlElementLoadEvent, HtmlElementEvent), '"htmlElement.load" events are instances of HtmlElementEvent');
+
+        //throw new Error('Throwing error to display browser window.');
+    },
+
+    testHtmlElementEventError: function*() {
+        // Create an HtmlDocument
+        var htmlDocument = new HtmlDocument();
+
+        // An image element
+        var imgElement = Html.img({
+            src: 'file://'+Node.Path.join(Framework.directory, 'tests', 'assets', 'media', 'images', 'does-not-exist-will-cause-error.png'),
+        });
+        htmlDocument.body.append(imgElement);
+
+        // Set a variable to capture the event
+        var capturedHtmlElementErrorEvent = null;
+
+        // Add an event listener to the textarea to capture the event when triggered
+        imgElement.on('htmlElement.error', function(event) {
+            Console.standardInfo(event.identifier, event);
+
+            if(event.identifier == 'htmlElement.error') {
+                capturedHtmlElementErrorEvent = event;
+            }
+        });
+
+        // Mount the HtmlDocument to the DOM
+        htmlDocument.mountToDom();
+
+        yield Function.delay(50); // Give some time for the image to error
+
+        Assert.true(Class.isInstance(capturedHtmlElementErrorEvent, HtmlElementEvent), '"htmlElement.error" events are instances of HtmlElementEvent');
+
+        //throw new Error('Throwing error to display browser window.');
+    },
 
 });
 

@@ -34,6 +34,15 @@ HtmlElementEvent.createEventsFromDomEvent = function(domEvent, emitter, data, op
 	else if(domEvent.type == 'scroll') {
 		eventIdentifier = 'htmlElement.scroll';
 	}
+	else if(domEvent.type == 'load') {
+		eventIdentifier = 'htmlElement.load';
+	}
+	else if(domEvent.type == 'abort') {
+		eventIdentifier = 'htmlElement.abort';
+	}
+	else if(domEvent.type == 'error') {
+		eventIdentifier = 'htmlElement.error';
+	}
 
 	// Set the identifier
 	htmlElementEventWithoutIdentifier.identifier = eventIdentifier;
@@ -43,8 +52,33 @@ HtmlElementEvent.createEventsFromDomEvent = function(domEvent, emitter, data, op
 
 	// If scrolling
 	if(eventIdentifier == 'htmlElement.scroll') {
-		// Check if the scroll is up or down and fire additional events	
-		HtmlElementEvent.createFromDomEvent(domEvent, emitter, null, data, options);
+		//Console.standardInfo('emitter.position', emitter.position);
+
+		// Check if the scroll is up or down and fire additional events
+
+		// Scrolling up
+		if(emitter.position.relativeToRelativeAncestor.y > emitter.domNode.scrollTop) {
+			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.up', data, options));
+		}
+		// Scrolling down
+		else if(emitter.position.relativeToRelativeAncestor.y < emitter.domNode.scrollTop) {
+			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.down', data, options));
+		}
+		
+		// Scrolling horizontally can happen at the same time as vertically, so we use another if statement instead of an else if
+
+		// Scrolling left
+		if(emitter.position.relativeToRelativeAncestor.x > emitter.domNode.scrollLeft) {
+			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.left', data, options));
+		}
+		// Scrolling right
+		else if(emitter.position.relativeToRelativeAncestor.x < emitter.domNode.scrollLeft) {
+			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.right', data, options));
+		}
+		
+		// Update the position relative to the relative ancestor
+		emitter.position.relativeToRelativeAncestor.x = emitter.domNode.scrollLeft;
+		emitter.position.relativeToRelativeAncestor.y = emitter.domNode.scrollTop;
 	}
 
 	//Console.standardLog('events', events);
