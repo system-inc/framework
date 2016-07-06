@@ -283,18 +283,18 @@ var ElectronManager = Class.extend({
 
 // Static methods
 
-ElectronManager.clickHtmlElement = function(htmlElement, clickCount) {
+ElectronManager.clickHtmlElement = function(htmlElement, button, clickCount, modifiers) {
 	var htmlElementPosition = htmlElement.getPosition();
 	//Console.standardWarn('htmlElementPosition', htmlElementPosition);
 
-	return ElectronManager.click(htmlElementPosition.relativeToDocumentViewport.x, htmlElementPosition.relativeToDocumentViewport.y);
+	return ElectronManager.click(htmlElementPosition.relativeToDocumentViewport.x, htmlElementPosition.relativeToDocumentViewport.y, button, clickCount, modifiers);
 };
 
-ElectronManager.doubleClickHtmlElement = function(htmlElement, clickCount) {
+ElectronManager.doubleClickHtmlElement = function(htmlElement, button, clickCount, modifiers) {
 	var htmlElementPosition = htmlElement.getPosition();
 	//Console.standardWarn('htmlElementPosition', htmlElementPosition);
 
-	return ElectronManager.click(htmlElementPosition.relativeToDocumentViewport.x, htmlElementPosition.relativeToDocumentViewport.y, 'left', 2);
+	return ElectronManager.click(htmlElementPosition.relativeToDocumentViewport.x, htmlElementPosition.relativeToDocumentViewport.y, button, 2, modifiers);
 };
 
 ElectronManager.click = function(relativeToDocumentViewportX, relativeToDocumentViewportY, button, clickCount, modifiers) {
@@ -346,6 +346,51 @@ ElectronManager.click = function(relativeToDocumentViewportX, relativeToDocument
 		});
 	});
 };
+
+ElectronManager.wheelRotateHtmlElement = function(htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers) {
+	var htmlElementPosition = htmlElement.getPosition();
+	return ElectronManager.wheelRotate(htmlElementPosition.relativeToDocumentViewport.x, htmlElementPosition.relativeToDocumentViewport.y,  deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
+};
+
+ElectronManager.wheelRotate = function(relativeToDocumentViewportX, relativeToDocumentViewportY, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers) {
+	// Default modifiers to an empty array
+	if(!modifiers) {
+		modifiers = []; // shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
+	}
+
+	// Get the current web contents
+	var webContents = Electron.remote.getCurrentWebContents();
+
+	return new Promise(function(resolve, reject) {
+		// A trusted click will be fired after mouse down and mouse up
+
+		// Send mouse down
+		webContents.sendInputEvent({
+			type: 'mouseWheel',
+			x: relativeToDocumentViewportX,
+			y: relativeToDocumentViewportY,
+			button: 'middle',
+			clickCount: 0,
+			deltaX: null,
+			deltaY: null,
+			wheelTicksX: null,
+			wheelTicksY: null,
+			accelerationRatioX: null,
+			accelerationRatioY: null,
+			hasPreciseScrollingDeltas: null,
+			canScroll: null,
+			modifiers: modifiers,
+		});
+
+		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
+		// This seems to not resolve the promise until the input event has completed
+		Function.delay(50, function() {
+			resolve(true);
+		});
+	});
+};
+
+
 
 // How to send mouse wheel:
 //element.sendInputEvent({

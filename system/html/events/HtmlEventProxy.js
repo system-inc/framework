@@ -3,6 +3,7 @@ var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventE
 var HtmlDocumentEvent = Framework.require('system/html/events/html-document/HtmlDocumentEvent.js');
 var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
 var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
+var MouseWheelEvent = Framework.require('system/html/events/web-interface/MouseWheelEvent.js');
 var KeyboardEvent = Framework.require('system/html/events/web-interface/KeyboardEvent.js');
 var FormEvent = Framework.require('system/html/events/web-interface/FormEvent.js');
 var ClipboardEvent = Framework.require('system/html/events/web-interface/ClipboardEvent.js');
@@ -29,6 +30,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 		eventPatterns: {
 			'mouse.button.[1345].click.*': true, // Mouse button 2 does not trigger 'click' events
 			'interact': true,
+			'mouse.wheel.click': true,
 		},
 	},
 	mouseup: {
@@ -36,12 +38,20 @@ HtmlEventProxy.domEventIdentifierMap = {
 		eventPatterns: {
 			'mouse.button.2.click.*': true, // Mouse button 2 can only be detected 'mouseup' events
 			'mouse.button.*.up': true,
+			'mouse.wheel.up': true,
 		},
 	},
 	mousedown: {
 		eventClass: MouseEvent,
 		eventPatterns: {
 			'mouse.button.*.down': true,
+			'mouse.wheel.down': true,
+		},
+	},
+	wheel: {
+		eventClass: MouseWheelEvent,
+		eventPatterns: {
+			'mouse.wheel.*': true,
 		},
 	},
 
