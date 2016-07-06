@@ -59,6 +59,8 @@ KeyboardEvent.createEventsFromDomEvent = function(domKeyboardEvent, emitter, dat
 			keyboardEventWithoutIdentifier.key == 'meta' ||
 			keyboardEventWithoutIdentifier.key == 'shift' ||
 
+			keyboardEventWithoutIdentifier.key == 'backspace' ||
+
 			// up, down, left, and right also fire "press" events
 			keyboardEventWithoutIdentifier.key == 'up' ||
 			keyboardEventWithoutIdentifier.key == 'down' ||

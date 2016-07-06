@@ -50,6 +50,10 @@ HtmlEventProxy.domEventIdentifierMap = {
 		eventClass: KeyboardEvent,
 		eventWildcardPatterns: {
 			'keyboard.key.*.down': true,
+			'keyboard.key.up.press': true,
+			'keyboard.key.down.press': true,
+			'keyboard.key.left.press': true,
+			'keyboard.key.right.press': true,
 		},
 	},
 	keyup: {

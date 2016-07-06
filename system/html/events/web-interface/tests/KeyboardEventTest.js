@@ -40,8 +40,10 @@ var KeyboardEventTest = ElectronTest.extend({
 		var capturedEvent = null;
 
 		// Add an event listener to the textarea to capture the event when triggered
+
 		//htmlElement.on('keyboard.*', function(event) {
-		htmlElement.on('keyboard.key.A.press', function(event) {
+		htmlElement.on('keyboard.key.right.press', function(event) {
+		//htmlElement.on('keyboard.key.A.press', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
 		});
@@ -70,7 +72,7 @@ var KeyboardEventTest = ElectronTest.extend({
 
 		Assert.strictEqual(capturedEvent.trusted, true, 'trusted property is correctly set');
 
-		//throw new Error('Throwing error to display browser window.');
+		throw new Error('Throwing error to display browser window.');
 	},
 
 });
