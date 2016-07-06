@@ -14,13 +14,13 @@ FormEvent.is = function(value) {
 	return Class.isInstance(value, FormEvent);
 };
 
-FormEvent.createEventsFromDomEvent = function(domEvent, emitter, data, options) {
+FormEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	//Console.standardLog('FormEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 	var events = [];
 
 	// Use this for identifying which events to create
-	var formEventWithoutIdentifier = FormEvent.createFromDomEvent(domEvent, emitter, null, data, options);
+	var formEventWithoutIdentifier = FormEvent.createFromDomEvent(domEvent, emitter, null);
 
 	// The identifier for the event
 	var eventIdentifier = null;
@@ -43,8 +43,8 @@ FormEvent.createEventsFromDomEvent = function(domEvent, emitter, data, options) 
 	return events;
 };
 
-FormEvent.createFromDomEvent = function(domEvent, emitter, identifier, data, options) {
-	var formEvent = new FormEvent(emitter, identifier, data, options);
+FormEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
+	var formEvent = new FormEvent(emitter, identifier);
 
 	return formEvent;
 };

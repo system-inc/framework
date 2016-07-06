@@ -87,8 +87,8 @@ KeyboardEvent.createEventsFromDomEvent = function(domKeyboardEvent, emitter, eve
 	return events;
 };
 
-KeyboardEvent.createFromDomEvent = function(domKeyboardEvent, emitter, identifier, data, options) {
-	var keyboardEvent = new KeyboardEvent(emitter, identifier, data, options);
+KeyboardEvent.createFromDomEvent = function(domKeyboardEvent, emitter, identifier) {
+	var keyboardEvent = new KeyboardEvent(emitter, identifier);
 
 	keyboardEvent.modifierKeysDown.alt = domKeyboardEvent.altKey;
 	keyboardEvent.modifierKeysDown.control = domKeyboardEvent.ctrlKey;

@@ -14,13 +14,13 @@ HtmlElementEvent.is = function(value) {
 	return Class.isInstance(value, HtmlElementEvent);
 };
 
-HtmlElementEvent.createEventsFromDomEvent = function(domEvent, emitter, data, options) {
+HtmlElementEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	Console.standardLog('HtmlElementEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 	var events = [];
 
 	// Use this for identifying which events to create
-	var htmlElementEventWithoutIdentifier = HtmlElementEvent.createFromDomEvent(domEvent, emitter, null, data, options);
+	var htmlElementEventWithoutIdentifier = HtmlElementEvent.createFromDomEvent(domEvent, emitter, null);
 
 	// The identifier for the event
 	var eventIdentifier = null;
@@ -58,22 +58,22 @@ HtmlElementEvent.createEventsFromDomEvent = function(domEvent, emitter, data, op
 
 		// Scrolling up
 		if(emitter.position.relativeToRelativeAncestor.y > emitter.domNode.scrollTop) {
-			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.up', data, options));
+			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.up'));
 		}
 		// Scrolling down
 		else if(emitter.position.relativeToRelativeAncestor.y < emitter.domNode.scrollTop) {
-			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.down', data, options));
+			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.down'));
 		}
 		
 		// Scrolling horizontally can happen at the same time as vertically, so we use another if statement instead of an else if
 
 		// Scrolling left
 		if(emitter.position.relativeToRelativeAncestor.x > emitter.domNode.scrollLeft) {
-			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.left', data, options));
+			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.left'));
 		}
 		// Scrolling right
 		else if(emitter.position.relativeToRelativeAncestor.x < emitter.domNode.scrollLeft) {
-			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.right', data, options));
+			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.right'));
 		}
 		
 		// Update the position relative to the relative ancestor
@@ -86,8 +86,8 @@ HtmlElementEvent.createEventsFromDomEvent = function(domEvent, emitter, data, op
 	return events;
 };
 
-HtmlElementEvent.createFromDomEvent = function(domEvent, emitter, identifier, data, options) {
-	var htmlElementEvent = new HtmlElementEvent(emitter, identifier, data, options);
+HtmlElementEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
+	var htmlElementEvent = new HtmlElementEvent(emitter, identifier);
 
 	return htmlElementEvent;
 };

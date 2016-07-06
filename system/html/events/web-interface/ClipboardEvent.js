@@ -14,13 +14,13 @@ ClipboardEvent.is = function(value) {
 	return Class.isInstance(value, ClipboardEvent);
 };
 
-ClipboardEvent.createEventsFromDomEvent = function(domEvent, emitter, data, options) {
+ClipboardEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	Console.standardLog('ClipboardEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 	var events = [];
 
 	// Use this for identifying which events to create
-	var clipboardEventWithoutIdentifier = ClipboardEvent.createFromDomEvent(domEvent, emitter, null, data, options);
+	var clipboardEventWithoutIdentifier = ClipboardEvent.createFromDomEvent(domEvent, emitter, null);
 
 	// The identifier for the event
 	var eventIdentifier = null;
@@ -46,8 +46,8 @@ ClipboardEvent.createEventsFromDomEvent = function(domEvent, emitter, data, opti
 	return events;
 };
 
-ClipboardEvent.createFromDomEvent = function(domEvent, emitter, identifier, data, options) {
-	var clipboardEvent = new ClipboardEvent(emitter, identifier, data, options);
+ClipboardEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
+	var clipboardEvent = new ClipboardEvent(emitter, identifier);
 
 	clipboardEvent.dataTransfer = domEvent.clipboardData;
 

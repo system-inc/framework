@@ -76,13 +76,13 @@ MouseEvent.is = function(value) {
 	return Class.isInstance(value, MouseEvent);
 };
 
-MouseEvent.createEventsFromDomEvent = function(domMouseEvent, emitter, data, options) {
+MouseEvent.createEventsFromDomEvent = function(domMouseEvent, emitter) {
 	Console.standardLog('MouseEvent.createEventsFromDomEvent arguments', domMouseEvent.type, arguments);
 
 	var events = [];
 
 	// Use this for identifying which events to create
-	var mouseEventWithoutIdentifier = MouseEvent.createFromDomEvent(domMouseEvent, emitter, null, data, options);
+	var mouseEventWithoutIdentifier = MouseEvent.createFromDomEvent(domMouseEvent, emitter, null);
 
 	var clickCountMap = {
 		1: 'single',
@@ -93,28 +93,28 @@ MouseEvent.createEventsFromDomEvent = function(domMouseEvent, emitter, data, opt
 
 	var eventIdentifier = 'mouse.button.'+mouseEventWithoutIdentifier.button+'.'+domMouseEvent.type.replace('mouse', '');
 
-	events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, eventIdentifier, data, options));
+	events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, eventIdentifier));
 
 	// Figure out other events to create
 
 	// interact events are fired on mouse.button.1.click
 	if(mouseEventWithoutIdentifier.button == 1) {
-		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'interact', data, options));
+		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'interact'));
 	}
 	// mouse.button.2.click events are fired on mouseup
 	else if(mouseEventWithoutIdentifier.button == 2 && domMouseEvent.type == 'mouseup') {
-		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.2.click', data, options));
+		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.2.click'));
 
 		// Fire clickCount events for mouse 2
 		if(clickCountMap[mouseEventWithoutIdentifier.clickCount]) {
-			events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.2.click.'+clickCountMap[mouseEventWithoutIdentifier.clickCount], data, options));
+			events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, 'mouse.button.2.click.'+clickCountMap[mouseEventWithoutIdentifier.clickCount]));
 		}
 	}
 
 	// Conditionally fire another event for clickCount (this covers everything but mouse button 2)
 	if(domMouseEvent.type == 'click' && clickCountMap[mouseEventWithoutIdentifier.clickCount]) {
 		eventIdentifier = eventIdentifier+'.'+clickCountMap[mouseEventWithoutIdentifier.clickCount];
-		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, eventIdentifier, data, options));
+		events.append(MouseEvent.createFromDomEvent(domMouseEvent, emitter, eventIdentifier));
 	}
 
 	Console.standardLog('MouseEvent.createEventsFromDomEvent events', events);
@@ -122,8 +122,8 @@ MouseEvent.createEventsFromDomEvent = function(domMouseEvent, emitter, data, opt
 	return events;
 };
 
-MouseEvent.createFromDomEvent = function(domMouseEvent, emitter, identifier, data, options) {
-	var mouseEvent = new MouseEvent(emitter, identifier, data, options);
+MouseEvent.createFromDomEvent = function(domMouseEvent, emitter, identifier) {
+	var mouseEvent = new MouseEvent(emitter, identifier);
 
 	mouseEvent.modifierKeysDown.alt = domMouseEvent.altKey;
 	mouseEvent.modifierKeysDown.control = domMouseEvent.ctrlKey;

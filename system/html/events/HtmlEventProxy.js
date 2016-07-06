@@ -215,7 +215,7 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern
 	return domEventIdentifiers;
 };
 
-HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, eventPattern) {
+HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter) {
 	//Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
 
 	var events = [];
@@ -234,7 +234,7 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, eventPatte
 
 	// Use a specific class for certain DOM events
 	if(classToUseToCreateEventsFromDomEvent) {
-		events = classToUseToCreateEventsFromDomEvent.createEventsFromDomEvent(domEvent, sourceEmitter, eventPattern);
+		events = classToUseToCreateEventsFromDomEvent.createEventsFromDomEvent(domEvent, sourceEmitter);
 	}
 	// If no specific class is specified, use the emitter to create the event
 	else {

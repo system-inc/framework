@@ -15,13 +15,13 @@ SelectionEvent.is = function(value) {
 	return Class.isInstance(value, SelectionEvent);
 };
 
-SelectionEvent.createEventsFromDomEvent = function(domEvent, emitter, data, options) {
+SelectionEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	Console.standardLog('SelectionEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 	var events = [];
 
 	// Use this for identifying which events to create
-	var selectionEventWithoutIdentifier = SelectionEvent.createFromDomEvent(domEvent, emitter, null, data, options);
+	var selectionEventWithoutIdentifier = SelectionEvent.createFromDomEvent(domEvent, emitter, null);
 
 	// The identifier for the event
 	var eventIdentifier = null;
@@ -47,8 +47,8 @@ SelectionEvent.createEventsFromDomEvent = function(domEvent, emitter, data, opti
 	return events;
 };
 
-SelectionEvent.createFromDomEvent = function(domEvent, emitter, identifier, data, options) {
-	var selectionEvent = new SelectionEvent(emitter, identifier, data, options);
+SelectionEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
+	var selectionEvent = new SelectionEvent(emitter, identifier);
 
 	selectionEvent.selection = window.getSelection();
 	selectionEvent.text = selectionEvent.selection.toString();

@@ -12,13 +12,13 @@ CompositionEvent.is = function(value) {
 	return Class.isInstance(value, CompositionEvent);
 };
 
-CompositionEvent.createEventsFromDomEvent = function(domEvent, emitter, data, options) {
+CompositionEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	Console.standardLog('CompositionEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 	var events = [];
 
 	// Use this for identifying which events to create
-	var compositionEventWithoutIdentifier = CompositionEvent.createFromDomEvent(domEvent, emitter, null, data, options);
+	var compositionEventWithoutIdentifier = CompositionEvent.createFromDomEvent(domEvent, emitter, null);
 
 	// The identifier for the event
 	var eventIdentifier = null;
@@ -44,8 +44,8 @@ CompositionEvent.createEventsFromDomEvent = function(domEvent, emitter, data, op
 	return events;
 };
 
-CompositionEvent.createFromDomEvent = function(domEvent, emitter, identifier, data, options) {
-	var compositionEvent = new CompositionEvent(emitter, identifier, data, options);
+CompositionEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
+	var compositionEvent = new CompositionEvent(emitter, identifier);
 
 	return compositionEvent;
 };
