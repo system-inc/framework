@@ -221,20 +221,18 @@ var EventEmitter = Class.extend({
 		else {
 			// Gather all of the matching bound function objects
 			this.eventListeners.each(function(eventListenersIndex, eventListener) {
-				// The event pattern is just a regular string and is meant to be taken literally
+				// The event pattern strictly matches
 				if(eventListener.eventPattern === eventPattern) {
 					matchingEventListeners.append(eventListener);
 				}
-				// If the event pattern is a string with a *
-				else if(String.is(eventListener.eventPattern) && eventListener.eventPattern.contains('*')) {
-					//Console.info('eventListener eventPattern contains *', eventListener);
+				// If the event patterns are strings
+				else if(String.is(eventListener.eventPattern) && String.is(eventPattern)) {
 					if(RegularExpression.wildcardPatternsMatch(eventPattern, eventListener.eventPattern)) {
 						matchingEventListeners.append(eventListener);
 					}
 				}
 				// If the event pattern is a regular expression
 				else if(RegularExpression.is(eventListener.eventPattern)) {
-
 					// If the event pattern is also a regular expression
 					if(RegularExpression.is(eventPattern)) {
 						// If the regular expressions are the same

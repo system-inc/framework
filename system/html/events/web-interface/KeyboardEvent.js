@@ -30,13 +30,13 @@ KeyboardEvent.is = function(value) {
 	return Class.isInstance(value, KeyboardEvent);
 };
 
-KeyboardEvent.createEventsFromDomEvent = function(domKeyboardEvent, emitter, data, options) {
-	//Console.standardLog('KeyboardEvent.createEventsFromDomEvent', domKeyboardEvent.type, arguments);
+KeyboardEvent.createEventsFromDomEvent = function(domKeyboardEvent, emitter, eventPattern) {
+	Console.standardLog('KeyboardEvent.createEventsFromDomEvent arguments', domKeyboardEvent.type, arguments);
 
 	var events = [];
 
 	// Use this for identifying which events to create
-	var keyboardEventWithoutIdentifier = KeyboardEvent.createFromDomEvent(domKeyboardEvent, emitter, null, data, options);
+	var keyboardEventWithoutIdentifier = KeyboardEvent.createFromDomEvent(domKeyboardEvent, emitter, null);
 
 	// "keyup" to "up", "keydown" to "down", "keypress" to "press"
 	var eventType = domKeyboardEvent.type.replace('key', '');
@@ -47,30 +47,30 @@ KeyboardEvent.createEventsFromDomEvent = function(domKeyboardEvent, emitter, dat
 	// Set the identifier
 	keyboardEventWithoutIdentifier.identifier = eventIdentifier;
 
-	// Add the event
-	events.append(keyboardEventWithoutIdentifier);
-
 	// For key up events
 	if(eventType == 'up') {
+		// Keys that do not normally emit press events for which we need to manually emit one
 		if(
-			// alt, control, meta, and shift also fire "press" events
 			keyboardEventWithoutIdentifier.key == 'alt' ||
 			keyboardEventWithoutIdentifier.key == 'control' ||
 			keyboardEventWithoutIdentifier.key == 'meta' ||
 			keyboardEventWithoutIdentifier.key == 'shift' ||
-
+			keyboardEventWithoutIdentifier.key == 'contextMenu' ||
 			keyboardEventWithoutIdentifier.key == 'backspace' ||
-
-			// up, down, left, and right also fire "press" events
 			keyboardEventWithoutIdentifier.key == 'up' ||
 			keyboardEventWithoutIdentifier.key == 'down' ||
 			keyboardEventWithoutIdentifier.key == 'left' ||
-			keyboardEventWithoutIdentifier.key == 'right'
+			keyboardEventWithoutIdentifier.key == 'right' ||
+			keyboardEventWithoutIdentifier.key == 'delete' ||
+			keyboardEventWithoutIdentifier.key == 'insert'
 		) {
 			eventIdentifier = eventIdentifier.replaceLast('.up', '.press');
-			events.append(KeyboardEvent.createFromDomEvent(domKeyboardEvent, emitter, eventIdentifier, data, options));
+			events.append(KeyboardEvent.createFromDomEvent(domKeyboardEvent, emitter, eventIdentifier));
 		}
 	}
+
+	// Add the event
+	events.append(keyboardEventWithoutIdentifier);
 
 	// Create additional events including the location of the key, e.g., "keyboard.key.left.shift.up"
 	if(
@@ -79,10 +79,10 @@ KeyboardEvent.createEventsFromDomEvent = function(domKeyboardEvent, emitter, dat
 		keyboardEventWithoutIdentifier.keyLocation == 'numericKeypad'
 	) {
 		eventIdentifier = 'keyboard.key.'+keyboardEventWithoutIdentifier.keyLocation+'.'+keyboardEventWithoutIdentifier.key+'.'+eventType;
-		events.append(KeyboardEvent.createFromDomEvent(domKeyboardEvent, emitter, eventIdentifier, data, options));
+		events.append(KeyboardEvent.createFromDomEvent(domKeyboardEvent, emitter, eventIdentifier));
 	}
 
-	//Console.standardLog('events', events);
+	//Console.standardLog('KeyboardEvent.createEventsFromDomEvent events', events);
 
 	return events;
 };
@@ -97,29 +97,60 @@ KeyboardEvent.createFromDomEvent = function(domKeyboardEvent, emitter, identifie
 
 	// Get the key
 	var key = domKeyboardEvent.key; // "a"
-	
-	// Rename the key if neccesary
-	if(key && String.is(key) && key.length > 1) {
-		// "Shift" to "shift", "Ctrl" to "ctrl", etc.
-		key = key.lowercase();
 
-		// 
-		if(key == 'ctrl') {
-			key = 'control';
-		}
-
-		// "arrowup" to "up", etc.
-		key = key.replace('arrow', '');
+	// If there is no key but there is a keyIdentifier which is not a unicode character
+	if(!key && domKeyboardEvent.keyIdentifier && !domKeyboardEvent.keyIdentifier.startsWith('U+')) {
+		key = domKeyboardEvent.keyIdentifier;
 	}
-
 	// Sometimes domKeyboardEvent.key isn't populated, so we can get it from domKeyboardEvent.keyCode
 	if(!key && domKeyboardEvent.keyCode) {
 		key = String.fromCharacterCode(domKeyboardEvent.keyCode);
 	}
-
 	// Sometimes domKeyboardEvent.key isn't populated, so we can get it from domKeyboardEvent.charCode
-	if(!key && domKeyboardEvent.charCode) {
+	else if(!key && domKeyboardEvent.charCode) {
 		key = String.fromCharacterCode(domKeyboardEvent.charCode);
+	}
+	else if(!key && domKeyboardEvent.keyIdentifier) {
+		key = domKeyboardEvent.keyIdentifier;
+	}
+
+	Console.standardWarn('key is', key, 'for', domKeyboardEvent.keyCode);
+
+	// Special cases
+	if(domKeyboardEvent.keyCode == 8) {
+		key = 'backspace';
+	}
+	else if(domKeyboardEvent.keyIdentifier == 'U+0020') {
+		key = 'space';
+	}
+	else if(domKeyboardEvent.keyIdentifier == 'U+007F') {
+		key = 'delete';
+	}
+
+	Console.standardWarn('key is now', key, 'from', domKeyboardEvent.keyCode);
+
+	// Rename space
+	if(key == ' ') {
+		key = 'space';
+	}
+	// Rename the key if neccesary
+	else if(key && String.is(key) && key.length > 1) {
+		// "Shift" to "shift", "Ctrl" to "ctrl", etc.
+		key = key.lowercase();
+
+		// Rename keys
+		if(key == 'ctrl') {
+			key = 'control';
+		}
+		else if(key == 'contextmenu') {
+			key = 'contextMenu';
+		}
+		else if(key == 'win') {
+			key = 'meta';
+		}
+
+		// "arrowup" to "up", etc.
+		key = key.replace('arrow', '');
 	}
 
 	// Set the key property

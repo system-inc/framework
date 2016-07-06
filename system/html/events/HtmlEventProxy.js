@@ -18,7 +18,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 	// Document
 	DOMContentLoaded: {
 		eventClass: HtmlDocumentEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'htmlDocument.ready': true,
 		},
 	},
@@ -26,21 +26,21 @@ HtmlEventProxy.domEventIdentifierMap = {
 	// Mouse
 	click: {
 		eventClass: MouseEvent,
-		eventWildcardPatterns: {
-			'mouse.button.[1345].click': true, // Mouse button 2 does not trigger 'click' events
+		eventPatterns: {
+			'mouse.button.[1345].click.*': true, // Mouse button 2 does not trigger 'click' events
 			'interact': true,
 		},
 	},
 	mouseup: {
 		eventClass: MouseEvent,
-		eventWildcardPatterns: {
-			'mouse.button.2.click': true, // Mouse button 2 can only be detected 'mouseup' events
+		eventPatterns: {
+			'mouse.button.2.click.*': true, // Mouse button 2 can only be detected 'mouseup' events
 			'mouse.button.*.up': true,
 		},
 	},
 	mousedown: {
 		eventClass: MouseEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'mouse.button.*.down': true,
 		},
 	},
@@ -48,28 +48,30 @@ HtmlEventProxy.domEventIdentifierMap = {
 	// Keyboard
 	keydown: {
 		eventClass: KeyboardEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'keyboard.key.*.down': true,
+		},
+	},
+	keyup: {
+		eventClass: KeyboardEvent,
+		eventPatterns: {
+			'keyboard.key.*.up': true,
+
+			// TODO: 'keyboard.key.(alt|control|meta|shift|up|down|left|right).press': true,
+			'keyboard.key.alt.press': true,
+			'keyboard.key.control.press': true,
+			'keyboard.key.meta.press': true,
+			'keyboard.key.shift.press': true,
+
 			'keyboard.key.up.press': true,
 			'keyboard.key.down.press': true,
 			'keyboard.key.left.press': true,
 			'keyboard.key.right.press': true,
 		},
 	},
-	keyup: {
-		eventClass: KeyboardEvent,
-		eventWildcardPatterns: {
-			'keyboard.key.*.up': true,
-			// TODO: 'keyboard.key.(alt|control|meta|shift).press': true,
-			'keyboard.key.alt.press': true,
-			'keyboard.key.control.press': true,
-			'keyboard.key.meta.press': true,
-			'keyboard.key.shift.press': true,
-		},
-	},
 	keypress: {
 		eventClass: KeyboardEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'keyboard.key.*.press': true,
 		},
 	},
@@ -77,19 +79,19 @@ HtmlEventProxy.domEventIdentifierMap = {
 	// Composition
 	compositionstart: {
 		eventClass: CompositionEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'composition.start': true,
 		},
 	},
 	compositionupdate: {
 		eventClass: CompositionEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'composition.update': true,
 		},
 	},
 	compositionend: {
 		eventClass: CompositionEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'composition.end': true,
 		},
 	},
@@ -97,19 +99,19 @@ HtmlEventProxy.domEventIdentifierMap = {
 	// Selection
 	selectionstart: {
 		eventClass: SelectionEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'selection.start': true,
 		},
 	},
 	selectionchange: {
 		eventClass: SelectionEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'selection.change': true,
 		},
 	},
 	select: {
 		eventClass: SelectionEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'selection.end': true,
 		},
 	},
@@ -117,7 +119,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 	// Forms
 	input: {
 		eventClass: FormEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'form.control.change': true,
 		},
 	},
@@ -127,7 +129,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 	//},
 	submit: {
 		eventClass: FormEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'form.submit': true,
 		},
 	},
@@ -135,19 +137,19 @@ HtmlEventProxy.domEventIdentifierMap = {
 	// Clipboard
 	copy: {
 		eventClass: ClipboardEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'clipboard.copy': true,
 		},
 	},
 	cut: {
 		eventClass: ClipboardEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'clipboard.cut': true,
 		},
 	},
 	paste: {
 		eventClass: ClipboardEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'clipboard.paste': true,
 		},
 	},
@@ -155,37 +157,37 @@ HtmlEventProxy.domEventIdentifierMap = {
 	// HtmlElement
 	focusin: {
 		eventClass: HtmlElementEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'htmlElement.focus': true,
 		},
 	},
 	focusout: {
 		eventClass: HtmlElementEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'htmlElement.blur': true,
 		},
 	},
 	scroll: {
 		eventClass: HtmlElementEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'htmlElement.scroll': true,
 		},
 	},
 	load: {
 		eventClass: HtmlElementEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'htmlElement.load': true,
 		},
 	},
 	abort: {
 		eventClass: HtmlElementEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'htmlElement.abort': true,
 		},
 	},
 	error: {
 		eventClass: HtmlElementEvent,
-		eventWildcardPatterns: {
+		eventPatterns: {
 			'htmlElement.error': true,
 		},
 	},
@@ -193,7 +195,27 @@ HtmlEventProxy.domEventIdentifierMap = {
 
 // Static methods
 
-HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, data, eventOptions) {
+// Takes HtmlEvent patterns (e.g., 'mouse.button.one.click') and returns the correlating DOM event identifiers (e.g., 'click')
+HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern) {
+	var domEventIdentifiers = [];
+
+	//Console.log('HtmlEventProxy.htmlEventPatternToDomEventIdentifiers', htmlEventPattern);
+
+	HtmlEventProxy.domEventIdentifierMap.each(function(domEventIdentifier, domEventIdentifierObject) {
+		domEventIdentifierObject.eventPatterns.each(function(eventPattern) {
+			if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, eventPattern)) {
+				domEventIdentifiers.append(domEventIdentifier);	
+			}
+		});
+	});
+
+	// Get rid of duplicates
+	domEventIdentifiers = domEventIdentifiers.unique();
+
+	return domEventIdentifiers;
+};
+
+HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, eventPattern) {
 	//Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
 
 	var events = [];
@@ -202,10 +224,6 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, data, even
 	// For example, if you listen to "form.control.change" events on a form element and you catch the DOM event "change" event passed from
 	// an input element, the emitter here would be the form when it actually needs to be the input element
 	var sourceEmitter = domEvent.target.htmlNode;
-	// Don't even do this check for now, wait and see until the line above breaks
-	//if(domEvent.target && domEvent.target.htmlNode) {
-	//	sourceEmitter = domEvent.target.htmlNode;
-	//}
 
 	var classToUseToCreateEventsFromDomEvent = null;
 
@@ -214,18 +232,13 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, data, even
 		classToUseToCreateEventsFromDomEvent = HtmlEventProxy.domEventIdentifierMap[domEvent.type].eventClass;
 	}
 
-	// If keyCode is set, use the keyboard event - I don't think I need this anymore
-	//if(domEvent.keyCode != undefined) {
-	//	classToUseToCreateEventsFromDomEvent = KeyboardEvent;
-	//}
-
 	// Use a specific class for certain DOM events
 	if(classToUseToCreateEventsFromDomEvent) {
-		events = classToUseToCreateEventsFromDomEvent.createEventsFromDomEvent(domEvent, sourceEmitter, data, eventOptions);
+		events = classToUseToCreateEventsFromDomEvent.createEventsFromDomEvent(domEvent, sourceEmitter, eventPattern);
 	}
 	// If no specific class is specified, use the emitter to create the event
 	else {
-		events.append(emitter.createEvent(sourceEmitter, domEvent.type, data, eventOptions));
+		events.append(emitter.createEvent(sourceEmitter, domEvent.type));
 	}
 
 	// Set the common HtmlEvent properties
@@ -237,29 +250,9 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter, data, even
 		event.trusted = domEvent.isTrusted;
 	});
 
-	Console.standardWarn('HtmlEventProxy.createEventFromDomEvent events', events);
+	Console.standardWarn('HtmlEventProxy.createEventFromDomEvent events created', events);
 
 	return events;
-};
-
-// Takes HtmlEvent patterns (e.g., 'mouse.button.one.click') and returns the correlating DOM event identifiers (e.g., 'click')
-HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern) {
-	var domEventIdentifiers = [];
-
-	//Console.log('HtmlEventProxy.htmlEventPatternToDomEventIdentifiers', htmlEventPattern);
-
-	HtmlEventProxy.domEventIdentifierMap.each(function(domEventIdentifier, domEventIdentifierObject) {
-		domEventIdentifierObject.eventWildcardPatterns.each(function(eventWildcardPattern) {
-			if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, eventWildcardPattern)) {
-				domEventIdentifiers.append(domEventIdentifier);
-			}
-		});
-	});
-
-	// Get rid of duplicates
-	domEventIdentifiers = domEventIdentifiers.unique();
-
-	return domEventIdentifiers;
 };
 
 HtmlEventProxy.getDomObjectFromHtmlEventEmitter = function(htmlEventEmitter) {
@@ -348,43 +341,53 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		// Emit the event
 		events.each(function(eventIndex, event) {
 			//Console.standardLog('htmlEventEmitter.emit event', event);
-			htmlEventEmitter.emit(event.identifier, event);
+			htmlEventEmitter.emit(event.identifier, event);		
 		});
 	}.bind(htmlEventEmitter);
 
 	// If we have a valid domEventIdentifier
 	if(domEventIdentifiers.length) {
 		domEventIdentifiers.each(function(domEventIdentifierIndex, domEventIdentifier) {
-			Console.log('Binding domEventIdentifier', domEventIdentifier, 'for eventPattern', eventPattern);
+			// Don't add duplicate DOM object event listeners, we can just use one
+			if(!htmlEventEmitter.eventListenersOnDomObject.contains(domEventIdentifier)) {
+				Console.log('Binding domEventIdentifier "'+domEventIdentifier+'" to DOM object, will use for eventPattern "'+eventPattern+'"');
 
-			// If we have a domObject because we are already mounted to the DOM
-			if(domObject) {
-				// Add the event listener to the domObject
-				domObject.addEventListener(domEventIdentifier, domEventListenerFunctionToBind);
-			}
-			// If we don't have a domObject, wait to be mountedToDom
-			else {
-				htmlEventEmitter.on(['htmlDocument.mountedToDom', 'htmlNode.mountedToDom'], function() {
-					//Console.log('Mounted to DOM, calling domNode.addEventListener now for', htmlEventEmitter.tag, Json.encode(htmlEventEmitter.attributes));
+				// Keep track of which DOM object event listeners we have added
+				htmlEventEmitter.eventListenersOnDomObject.append(domEventIdentifier);
 
-					// Get the domObject from the htmlEventEmitter
-					domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
-
+				// If we have a domObject because we are already mounted to the DOM
+				if(domObject) {
 					// Add the event listener to the domObject
 					domObject.addEventListener(domEventIdentifier, domEventListenerFunctionToBind);
-				}.bind(htmlEventEmitter));
+				}
+				// If we don't have a domObject, wait to be mountedToDom
+				else {
+					htmlEventEmitter.on('html*.mountedToDom', function() {
+						//Console.log('Mounted to DOM, calling domNode.addEventListener now for', htmlEventEmitter.tag, Json.encode(htmlEventEmitter.attributes));
+
+						// Get the domObject from the htmlEventEmitter
+						domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
+
+						// Add the event listener to the domObject
+						domObject.addEventListener(domEventIdentifier, domEventListenerFunctionToBind);
+					}.bind(htmlEventEmitter));
+				}
+			}
+			else {
+				Console.log('Already bound domEventIdentifier "'+domEventIdentifier+'" to DOM object, will use the existing one for eventPattern "'+eventPattern+'"');
 			}
 		});
 	}
 	// If we don't have a domEventIdentifier it means the event listener is not for the DOM
 	else {
 		var common = [
+			'html*.mountedToDom',
 			'htmlDocument.mountedToDom',
 			'htmlNode.mountedToDom',
 			'htmlNode.domUpdateExecuted',
 		];
 		if(!common.contains(eventPattern)) {
-			Console.log('No domEventIdentifier found for', eventPattern);
+			Console.log('No domEventIdentifier found for "'+eventPattern+'", the eventPattern must not be for a standard event.');
 		}
 	}
 

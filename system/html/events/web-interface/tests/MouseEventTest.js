@@ -73,8 +73,8 @@ var MouseEventTest = ElectronTest.extend({
         // Simulate a click
         yield ElectronManager.clickHtmlElement(htmlElement);
 
-        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of HtmlEvent');
-        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events triggered by clicks are instances of MouseEvent');
+        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events are instances of HtmlEvent');
+        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"interact" events are instances of MouseEvent');
 
         Assert.strictEqual(capturedEvent.modifierKeysDown.alt, false, 'modifierKeysDown.alt property is correctly set');
         Assert.strictEqual(capturedEvent.modifierKeysDown.control, false, 'modifierKeysDown.control property is correctly set');
@@ -135,7 +135,7 @@ var MouseEventTest = ElectronTest.extend({
 
 		// Add an event listener to the div to capture the event when triggered
 		//htmlElement.on('*', function(event) {
-		htmlElement.on('mouse.button.1.click.double', function(event) {
+		htmlElement.on('mouse.button.1.click', function(event) {
 			Console.standardWarn(event.identifier, event);
 			capturedEvent = event;
 		});
@@ -146,11 +146,46 @@ var MouseEventTest = ElectronTest.extend({
         // Simulate a click
         yield ElectronManager.clickHtmlElement(htmlElement);
 
-        Console.standardInfo('capturedEvent', capturedEvent);
+        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.1.click" events are instances of MouseEvent');
 
-        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.1.click" events triggered by clicks are instances of MouseEvent');
+        //throw new Error('Throwing error to display browser window.');
+	},
 
-        throw new Error('Throwing error to display browser window.');
+	testMouseEventMouseButton1ClickDouble: function*() {
+		// Create an HtmlDocument
+        var htmlDocument = new HtmlDocument();
+
+        htmlDocument.body.setStyle('margin', 0);
+        htmlDocument.body.setStyle('padding', '30px');
+
+		// Create a div HtmlElement
+		var htmlElement = Html.div({
+			content: 'div',
+			style: 'background: #EFEFEF; padding: 30px;',
+		});
+
+		// Append the HtmlElement to the HtmlDocument body
+		htmlDocument.body.append(htmlElement);
+
+		// Set a variable to capture the event
+		var capturedEvent = null;
+
+		// Add an event listener to the div to capture the event when triggered
+		//htmlElement.on('*', function(event) {
+		htmlElement.on('mouse.button.1.click.double', function(event) {
+			Console.standardWarn(event.identifier, event);
+			capturedEvent = event;
+		});
+
+		// Mount the HtmlDocument to the DOM
+        htmlDocument.mountToDom();
+
+        // Simulate a click
+        yield ElectronManager.doubleClickHtmlElement(htmlElement);
+
+        Assert.true(Class.isInstance(capturedEvent, MouseEvent), '"mouse.button.2.click" events are instances of MouseEvent');
+
+        //throw new Error('Throwing error to display browser window.');
 	},
 
 	testMouseEventPropagation: function*() {

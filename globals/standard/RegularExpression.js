@@ -22,6 +22,17 @@ RegularExpression.escape = function(string) {
 };
 
 RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPatternB) {
+	//Console.log('wildcardPatternsMatch', wildcardPatternA, wildcardPatternB);
+
+	// Performance
+	if(wildcardPatternA === wildcardPatternB) {
+		return true;
+	}
+	// If neither pattern has any characters that indicate it is a wildcard pattern we know the pattern does not match
+	if(!wildcardPatternA.contains(/[\*\[\]\?]/) && !wildcardPatternB.contains(/[\*\[\]\?]/)) {
+		return false;
+	}
+
 	// http://stackoverflow.com/questions/18695727/algorithm-to-find-out-whether-the-matches-for-two-glob-patterns-or-regular-expr/18816736#18816736
 
 	// Class WildcardPatternToken
