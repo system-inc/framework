@@ -283,6 +283,29 @@ var ElectronManager = Class.extend({
 
 // Static methods
 
+ElectronManager.sendInputEventMouse = function(type, x, y, button, globalX, globalY, movementX, movementY, clickCount) {
+	// Get the current web contents
+	var webContents = Electron.remote.getCurrentWebContents();
+
+	return new Promise(function(resolve, reject) {
+		webContents.sendInputEvent({
+			type: type, // mouseDown, mouseUp, mouseEnter, mouseLeave, contextMenu, mouseWheel, mouseMove, keyDown, keyUp, char
+			x: x, // Integer (required)
+			y: y, // Integer (required)
+			button: button, // String - The button pressed, can be left, middle, right
+			globalX: globalX, // Integer
+			globalY: globalY, // Integer
+			movementX: movementX, // Integer
+			movementY: movementY, // Integer
+			clickCount: clickCount, // Integer
+		});
+
+		Function.delay(50, function() {
+			resolve(true);
+		});
+	});
+};
+
 ElectronManager.clickHtmlElement = function(htmlElement, button, clickCount, modifiers) {
 	var htmlElementPosition = htmlElement.getPosition();
 	//Console.standardWarn('htmlElementPosition', htmlElementPosition);

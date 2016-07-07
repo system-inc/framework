@@ -65,16 +65,22 @@ var InputHoverEventTest = ElectronTest.extend({
 		// Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
-        // Simulate moving the mouse over
-		//yield ElectronManager.wheelRotateHtmlElement(htmlElement, -0, 100, 0, 1, 1, 1, false, true);
+        var htmlElementPosition = htmlElement.getPosition();
+        Console.standardInfo('htmlElementPosition', htmlElementPosition);
 
-		//Assert.true(capturedEventInputHover, '"input.hover" events are emitted');
-		//Assert.true(capturedEventInputHoverIn, '"input.hover.in" events are emitted');
-		//Assert.true(capturedEventInputHoverOut, '"input.hover.out" events are emitted');
-		//Assert.true(capturedEventInputHoverInExact, '"input.hover.in.exact" events are emitted');
-		//Assert.true(capturedEventInputHoverOutExact, '"input.hover.out.exact" events are emitted');
+        // Simulate moving the mouse over
+        yield ElectronManager.sendInputEventMouse('mouseMove', htmlElementPosition.relativeToDocumentViewport.coordinates.center.x, htmlElementPosition.relativeToDocumentViewport.coordinates.center.y);
+
+        // Simulate moving the mouse out
+        yield ElectronManager.sendInputEventMouse('mouseMove', 0, 0);
+        
+		Assert.true(capturedEventInputHover, '"input.hover" events are emitted');
+		Assert.true(capturedEventInputHoverIn, '"input.hover.in" events are emitted');
+		Assert.true(capturedEventInputHoverOut, '"input.hover.out" events are emitted');
+		Assert.true(capturedEventInputHoverInExact, '"input.hover.in.exact" events are emitted');
+		Assert.true(capturedEventInputHoverOutExact, '"input.hover.out.exact" events are emitted');
 	
-        throw new Error('Throwing error to display browser window.');
+        //throw new Error('Throwing error to display browser window.');
 	},
 
 });
