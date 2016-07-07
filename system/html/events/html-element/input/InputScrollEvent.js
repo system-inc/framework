@@ -86,10 +86,10 @@ InputScrollEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 		inputScrollEvent.direction = 'up';
 	}
 	else if(inputScrollEvent.wheelDelta.x !== 0 && inputScrollEvent.wheelDelta.x > 0) {
-		inputScrollEvent.direction = 'right';
+		inputScrollEvent.direction = 'left';
 	}
 	else if(inputScrollEvent.wheelDelta.x !== 0 && inputScrollEvent.wheelDelta.x < 0) {
-		inputScrollEvent.direction = 'left';
+		inputScrollEvent.direction = 'right';
 	}
 
 	return inputScrollEvent;
