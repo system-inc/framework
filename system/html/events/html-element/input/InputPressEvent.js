@@ -102,10 +102,13 @@ InputPressEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 
 	if(eventTypeSuffix == '.click') {
 		eventTypeSuffix = '';
-		eventIdentifier = 'input.press';
-		events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 	}
 
+	if(inputPressEventWithoutIdentifier.button == 1) {
+		eventIdentifier = 'input.press'+eventTypeSuffix;
+		events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+	}
+	
 	if(buttonMap[inputPressEventWithoutIdentifier.button]) {
 		eventIdentifier = 'input.press.'+buttonMap[inputPressEventWithoutIdentifier.button]+eventTypeSuffix;
 		events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));	

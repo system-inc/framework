@@ -69,6 +69,7 @@ var InputPressEventTest = ElectronTest.extend({
 		var capturedEvent = null;
 
 		// Add an event listener to the div to capture the event when triggered
+		//htmlElement.on('input.press.*', function(event) {
 		htmlElement.on('input.press', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
@@ -146,6 +147,7 @@ var InputPressEventTest = ElectronTest.extend({
 
 		// Add an event listener to the div to capture the event when triggered
 		//htmlElement.on('input.press.*', function(event) {
+		// Should never trigger since it should just be input.press
 		htmlElement.on('input.press.primary', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedPrimaryEvent = event;
@@ -173,7 +175,6 @@ var InputPressEventTest = ElectronTest.extend({
 
 		// Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
-
         
 		// Simulate a primary press
         yield ElectronManager.clickHtmlElement(htmlElement);
