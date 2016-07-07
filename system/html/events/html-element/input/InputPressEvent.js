@@ -2,7 +2,7 @@
 var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
 
 // Class
-var MouseEvent = HtmlElementEvent.extend({
+var InputPressEvent = HtmlElementEvent.extend({
 
 	// Keyboard keys down when the mouse event was emitted
 	modifierKeysDown: {
@@ -13,7 +13,7 @@ var MouseEvent = HtmlElementEvent.extend({
 		shift: null, // true if the shift key was down when the mouse event was emitted
 	},
 
-	// Mouse buttons down when the mouse event was emitted
+	// InputPress buttons down when the mouse event was emitted
 	mouseButtonsDown: {
 		1: null,
 		2: null,
@@ -72,17 +72,17 @@ var MouseEvent = HtmlElementEvent.extend({
 
 // Static methods
 
-MouseEvent.is = function(value) {
-	return Class.isInstance(value, MouseEvent);
+InputPressEvent.is = function(value) {
+	return Class.isInstance(value, InputPressEvent);
 };
 
-MouseEvent.createEventsFromDomEvent = function(domEvent, emitter) {
-	Console.standardLog('MouseEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
+InputPressEvent.createEventsFromDomEvent = function(domEvent, emitter) {
+	Console.standardLog('InputPressEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
 
 	var events = [];
 
 	// Use this for identifying which events to create
-	var mouseEventWithoutIdentifier = MouseEvent.createFromDomEvent(domEvent, emitter, null);
+	var inputPressEventWithoutIdentifier = InputPressEvent.createFromDomEvent(domEvent, emitter, null);
 
 	var clickCountMap = {
 		1: 'single',
@@ -91,64 +91,64 @@ MouseEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 		4: 'quadruple',
 	};
 
-	var eventIdentifier = 'mouse.button.'+mouseEventWithoutIdentifier.button+'.'+domEvent.type.replace('mouse', '');
+	var eventIdentifier = 'mouse.button.'+inputPressEventWithoutIdentifier.button+'.'+domEvent.type.replace('mouse', '');
 
-	events.append(MouseEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+	events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 	// Figure out other events to create
 
 	// interact events are fired on mouse.button.1.click
-	if(mouseEventWithoutIdentifier.button == 1) {
-		events.append(MouseEvent.createFromDomEvent(domEvent, emitter, 'interact'));
+	if(inputPressEventWithoutIdentifier.button == 1) {
+		events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, 'interact'));
 	}
 	// mouse.button.2.click events are fired on mouseup
-	else if(mouseEventWithoutIdentifier.button == 2 && domEvent.type == 'mouseup') {
-		events.append(MouseEvent.createFromDomEvent(domEvent, emitter, 'mouse.button.2.click'));
+	else if(inputPressEventWithoutIdentifier.button == 2 && domEvent.type == 'mouseup') {
+		events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, 'mouse.button.2.click'));
 
 		// Fire clickCount events for mouse 2
-		if(clickCountMap[mouseEventWithoutIdentifier.clickCount]) {
-			events.append(MouseEvent.createFromDomEvent(domEvent, emitter, 'mouse.button.2.click.'+clickCountMap[mouseEventWithoutIdentifier.clickCount]));
+		if(clickCountMap[inputPressEventWithoutIdentifier.clickCount]) {
+			events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, 'mouse.button.2.click.'+clickCountMap[inputPressEventWithoutIdentifier.clickCount]));
 		}
 	}
 
 	// Emit additional mouse.wheel. events in addition to mouse.button.3.
-	if(mouseEventWithoutIdentifier.button == 3) {
+	if(inputPressEventWithoutIdentifier.button == 3) {
 		var wheelClickEventIdentifier = eventIdentifier.replace('button.3', 'wheel');
-		events.append(MouseEvent.createFromDomEvent(domEvent, emitter, wheelClickEventIdentifier));
+		events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, wheelClickEventIdentifier));
 	}
 
 	// Conditionally fire another event for clickCount (this covers everything but mouse button 2)
-	if(domEvent.type == 'click' && clickCountMap[mouseEventWithoutIdentifier.clickCount]) {
-		eventIdentifier = eventIdentifier+'.'+clickCountMap[mouseEventWithoutIdentifier.clickCount];
-		events.append(MouseEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+	if(domEvent.type == 'click' && clickCountMap[inputPressEventWithoutIdentifier.clickCount]) {
+		eventIdentifier = eventIdentifier+'.'+clickCountMap[inputPressEventWithoutIdentifier.clickCount];
+		events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 		// Emit additional mouse.wheel. events in addition to mouse.button.3.
-		if(mouseEventWithoutIdentifier.button == 3) {
+		if(inputPressEventWithoutIdentifier.button == 3) {
 			eventIdentifier = eventIdentifier.replace('button.3', 'wheel');
-			events.append(MouseEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+			events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 	}
 
-	Console.standardLog('MouseEvent.createEventsFromDomEvent events', events);
+	Console.standardLog('InputPressEvent.createEventsFromDomEvent events', events);
 
 	return events;
 };
 
-MouseEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
-	var mouseEvent = new MouseEvent(emitter, identifier);
+InputPressEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
+	var inputPressEvent = new InputPressEvent(emitter, identifier);
 
-	MouseEvent.initializeFromDomEvent(mouseEvent, domEvent);
+	InputPressEvent.initializeFromDomEvent(inputPressEvent, domEvent);
 
-	return mouseEvent;
+	return inputPressEvent;
 };
 
-MouseEvent.initializeFromDomEvent = function(mouseEvent, domEvent) {
-	mouseEvent.modifierKeysDown.alt = domEvent.altKey;
-	mouseEvent.modifierKeysDown.control = domEvent.ctrlKey;
-	mouseEvent.modifierKeysDown.meta = domEvent.metaKey;
-	mouseEvent.modifierKeysDown.shift = domEvent.shiftKey;
+InputPressEvent.initializeFromDomEvent = function(inputPressEvent, domEvent) {
+	inputPressEvent.modifierKeysDown.alt = domEvent.altKey;
+	inputPressEvent.modifierKeysDown.control = domEvent.ctrlKey;
+	inputPressEvent.modifierKeysDown.meta = domEvent.metaKey;
+	inputPressEvent.modifierKeysDown.shift = domEvent.shiftKey;
 
-	mouseEvent.mouseButtonsDown = {
+	inputPressEvent.mouseButtonsDown = {
 		1: false,
 		2: false,
 		3: false,
@@ -166,52 +166,52 @@ MouseEvent.initializeFromDomEvent = function(mouseEvent, domEvent) {
 		mouseButtonsDownMap.each(function(key, value) {
 			// If the "bit and" operation is not 0, then the button is pressed
 			if(key & domEvent.buttons) {
-				mouseEvent.mouseButtonsDown[value] = true;
+				inputPressEvent.mouseButtonsDown[value] = true;
 			}
 		});
 	}
-	//Console.standardWarn(domEvent.buttons, mouseEvent.mouseButtonsDown);
+	//Console.standardWarn(domEvent.buttons, inputPressEvent.mouseButtonsDown);
 
 	// Remap buttons to make sense
 	if(domEvent.button == 0) { // domEvent.button 0: Main button pressed, usually the left button or the un-initialized state	
-		mouseEvent.button = 1;
+		inputPressEvent.button = 1;
 	}
 	else if(domEvent.button == 1) { // domEvent.button 1: Auxiliary button pressed, usually the wheel button or the middle button (if present)
-		mouseEvent.button = 3;
+		inputPressEvent.button = 3;
 	}
 	else if(domEvent.button == 2) { // domEvent.button 2: Secondary button pressed, usually the right button
-		mouseEvent.button = 2;
+		inputPressEvent.button = 2;
 	}
 	else if(domEvent.button == 3) { // domEvent.button 3: Fourth button, typically the Browser Back button
-		mouseEvent.button = 4;
+		inputPressEvent.button = 4;
 	}
 	else if(domEvent.button == 4) { // domEvent.button 4: Fifth button, typically the Browser Forward button
-		mouseEvent.button = 5;
+		inputPressEvent.button = 5;
 	}
 
-	mouseEvent.position.relativeToEmitter.x = domEvent.offsetX;
-	mouseEvent.position.relativeToEmitter.y = domEvent.offsetY;
-	mouseEvent.position.relativeToRelativeAncestor.x = domEvent.layerX;
-	mouseEvent.position.relativeToRelativeAncestor.y = domEvent.layerY;
-	mouseEvent.position.relativeToDocumentViewport.x = domEvent.x;
-	mouseEvent.position.relativeToDocumentViewport.y = domEvent.y;
-	mouseEvent.position.relativeToDocument.x = domEvent.pageX;
-	mouseEvent.position.relativeToDocument.y = domEvent.pageY;
-	mouseEvent.position.relativeToGlobal.x = domEvent.screenX;
-	mouseEvent.position.relativeToGlobal.y = domEvent.screenY;
-	mouseEvent.position.relativeToPreviousGlobalRelativePosition.x = domEvent.movementX;
-	mouseEvent.position.relativeToPreviousGlobalRelativePosition.y = domEvent.movementY;
-	//console.log(mouseEvent.position);
+	inputPressEvent.position.relativeToEmitter.x = domEvent.offsetX;
+	inputPressEvent.position.relativeToEmitter.y = domEvent.offsetY;
+	inputPressEvent.position.relativeToRelativeAncestor.x = domEvent.layerX;
+	inputPressEvent.position.relativeToRelativeAncestor.y = domEvent.layerY;
+	inputPressEvent.position.relativeToDocumentViewport.x = domEvent.x;
+	inputPressEvent.position.relativeToDocumentViewport.y = domEvent.y;
+	inputPressEvent.position.relativeToDocument.x = domEvent.pageX;
+	inputPressEvent.position.relativeToDocument.y = domEvent.pageY;
+	inputPressEvent.position.relativeToGlobal.x = domEvent.screenX;
+	inputPressEvent.position.relativeToGlobal.y = domEvent.screenY;
+	inputPressEvent.position.relativeToPreviousGlobalRelativePosition.x = domEvent.movementX;
+	inputPressEvent.position.relativeToPreviousGlobalRelativePosition.y = domEvent.movementY;
+	//console.log(inputPressEvent.position);
 
 	if(domEvent.relatedTarget && domEvent.relatedTarget.htmlNode) {
-		mouseEvent.relatedEmitter = domEvent.relatedTarget.htmlNode; // .htmlNode is set in HtmlNode.mountedToDom()	
+		inputPressEvent.relatedEmitter = domEvent.relatedTarget.htmlNode; // .htmlNode is set in HtmlNode.mountedToDom()	
 	}
-	mouseEvent.relatedEmitterDomNode = domEvent.relatedTarget;
+	inputPressEvent.relatedEmitterDomNode = domEvent.relatedTarget;
 
-	mouseEvent.clickCount = domEvent.detail;
+	inputPressEvent.clickCount = domEvent.detail;
 
-	return mouseEvent;
+	return inputPressEvent;
 };
 
 // Export
-module.exports = MouseEvent;
+module.exports = InputPressEvent;
