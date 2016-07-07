@@ -1,5 +1,5 @@
 // Dependencies
-var InputPressEvent = Framework.require('system/html/events/web-interface/InputPressEvent.js');
+var InputPressEvent = Framework.require('system/html/events/html-element/input/InputPressEvent.js');
 
 // Class
 var InputScrollEvent = InputPressEvent.extend({

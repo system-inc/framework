@@ -38,33 +38,40 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 	// Use this for identifying which events to create
 	var inputKeyEventWithoutIdentifier = InputKeyEvent.createFromDomEvent(domEvent, emitter, null);
 
-	// "keyup" to "up", "keydown" to "down", "keypress" to "press"
-	var eventType = domEvent.type.replace('key', '');
+	// "keyup" to "up", "keydown" to "down"
+	var eventTypeSuffix = '.'+domEvent.type.replace('key', '');
+
+	// Get rid of .press, no need for it, input.key.A is better than input.key.A.press
+	if(eventTypeSuffix == '.press') {
+		eventTypeSuffix = '';
+	}
 
 	// The identifier for the event
-	var eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+eventType;
+	var eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+eventTypeSuffix;
 
 	// Set the identifier
 	inputKeyEventWithoutIdentifier.identifier = eventIdentifier;
 
 	// For key up events
-	if(eventType == 'up') {
+	if(eventTypeSuffix == '.up') {
 		// Keys that do not normally emit press events for which we need to manually emit one
 		if(
 			inputKeyEventWithoutIdentifier.key == 'alt' ||
 			inputKeyEventWithoutIdentifier.key == 'control' ||
 			inputKeyEventWithoutIdentifier.key == 'meta' ||
 			inputKeyEventWithoutIdentifier.key == 'shift' ||
-			inputKeyEventWithoutIdentifier.key == 'contextMenu' ||
-			inputKeyEventWithoutIdentifier.key == 'backspace' ||
 			inputKeyEventWithoutIdentifier.key == 'up' ||
 			inputKeyEventWithoutIdentifier.key == 'down' ||
 			inputKeyEventWithoutIdentifier.key == 'left' ||
 			inputKeyEventWithoutIdentifier.key == 'right' ||
+			inputKeyEventWithoutIdentifier.key == 'backspace' ||
 			inputKeyEventWithoutIdentifier.key == 'delete' ||
-			inputKeyEventWithoutIdentifier.key == 'insert'
+			inputKeyEventWithoutIdentifier.key == 'insert' ||
+			inputKeyEventWithoutIdentifier.key == 'contextMenu' ||
+			inputKeyEventWithoutIdentifier.key == 'escape'
 		) {
-			eventIdentifier = eventIdentifier.replaceLast('.up', '.press');
+			//Console.standardError(eventIdentifier);
+			eventIdentifier = eventIdentifier.replaceLast('.up', '');
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 	}
@@ -78,7 +85,7 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		inputKeyEventWithoutIdentifier.keyLocation == 'right' ||
 		inputKeyEventWithoutIdentifier.keyLocation == 'numericKeypad'
 	) {
-		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.keyLocation+'.'+inputKeyEventWithoutIdentifier.key+'.'+eventType;
+		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+eventTypeSuffix;
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 	}
 
@@ -114,7 +121,7 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 		key = domEvent.keyIdentifier;
 	}
 
-	Console.standardWarn('key is', key, 'for', domEvent.keyCode);
+	//Console.standardWarn('key is', key, 'for', domEvent.keyCode);
 
 	// Special cases
 	if(domEvent.keyCode == 8) {
@@ -127,7 +134,7 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 		key = 'delete';
 	}
 
-	Console.standardWarn('key is now', key, 'from', domEvent.keyCode);
+	//Console.standardWarn('key is now', key, 'from', domEvent.keyCode);
 
 	// Rename space
 	if(key == ' ') {

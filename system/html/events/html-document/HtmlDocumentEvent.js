@@ -1,5 +1,5 @@
 // Dependencies
-var HtmlEvent = Framework.require('system/html/events/HtmlEvent.js');
+var HtmlEvent = Framework.require('system/html/events/html-event/HtmlEvent.js');
 
 // Class
 var HtmlDocumentEvent = HtmlEvent.extend({

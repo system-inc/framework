@@ -108,7 +108,7 @@ var MainViewController = ViewController.extend({
         
         this.tests.methods.each(function(testMethodIndex, testMethod) {
             testMethod.runButton = new ButtonView('Run');
-            testMethod.runButton.on('interact', function(event) {
+            testMethod.runButton.on('input.press', function(event) {
                 this.runTestMethod(testMethod);
             }.bind(this));
 

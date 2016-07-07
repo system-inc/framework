@@ -2,13 +2,13 @@
 var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventEmitter.js');
 var HtmlDocumentEvent = Framework.require('system/html/events/html-document/HtmlDocumentEvent.js');
 var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
-var MouseEvent = Framework.require('system/html/events/web-interface/MouseEvent.js');
-var MouseWheelEvent = Framework.require('system/html/events/web-interface/MouseWheelEvent.js');
-var KeyboardEvent = Framework.require('system/html/events/web-interface/KeyboardEvent.js');
-var FormEvent = Framework.require('system/html/events/web-interface/FormEvent.js');
-var ClipboardEvent = Framework.require('system/html/events/web-interface/ClipboardEvent.js');
-var CompositionEvent = Framework.require('system/html/events/web-interface/CompositionEvent.js');
-var SelectionEvent = Framework.require('system/html/events/web-interface/SelectionEvent.js');
+var ClipboardEvent = Framework.require('system/html/events/html-event/ClipboardEvent.js');
+var InputComposeEvent = Framework.require('system/html/events/html-element/input/InputComposeEvent.js');
+var InputKeyEvent = Framework.require('system/html/events/html-element/input/InputKeyEvent.js');
+var InputPressEvent = Framework.require('system/html/events/html-element/input/InputPressEvent.js');
+var InputScrollEvent = Framework.require('system/html/events/html-element/input/InputScrollEvent.js');
+var InputSelectEvent = Framework.require('system/html/events/html-element/input/InputSelectEvent.js');
+var FormEvent = Framework.require('system/html/events/html-element/FormEvent.js');
 
 // Class
 var HtmlEventProxy = {};
@@ -16,7 +16,7 @@ var HtmlEventProxy = {};
 // Static properties
 
 HtmlEventProxy.domEventIdentifierMap = {
-	// Document
+	// htmlDocument.*
 	DOMContentLoaded: {
 		eventClass: HtmlDocumentEvent,
 		eventPatterns: {
@@ -24,147 +24,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 		},
 	},
 
-	// Mouse
-	click: {
-		eventClass: MouseEvent,
-		eventPatterns: {
-			'mouse.button.[1345].click.*': true, // Mouse button 2 does not trigger 'click' events
-			'interact': true,
-			'mouse.wheel.click': true,
-		},
-	},
-	mouseup: {
-		eventClass: MouseEvent,
-		eventPatterns: {
-			'mouse.button.2.click.*': true, // Mouse button 2 can only be detected 'mouseup' events
-			'mouse.button.*.up': true,
-			'mouse.wheel.up': true,
-		},
-	},
-	mousedown: {
-		eventClass: MouseEvent,
-		eventPatterns: {
-			'mouse.button.*.down': true,
-			'mouse.wheel.down': true,
-		},
-	},
-	wheel: {
-		eventClass: MouseWheelEvent,
-		eventPatterns: {
-			'mouse.wheel.*': true,
-		},
-	},
-
-	// Keyboard
-	keydown: {
-		eventClass: KeyboardEvent,
-		eventPatterns: {
-			'keyboard.key.*.down': true,
-		},
-	},
-	keyup: {
-		eventClass: KeyboardEvent,
-		eventPatterns: {
-			'keyboard.key.*.up': true,
-
-			// TODO: 'keyboard.key.(alt|control|meta|shift|up|down|left|right).press': true,
-			'keyboard.key.alt.press': true,
-			'keyboard.key.control.press': true,
-			'keyboard.key.meta.press': true,
-			'keyboard.key.shift.press': true,
-
-			'keyboard.key.up.press': true,
-			'keyboard.key.down.press': true,
-			'keyboard.key.left.press': true,
-			'keyboard.key.right.press': true,
-		},
-	},
-	keypress: {
-		eventClass: KeyboardEvent,
-		eventPatterns: {
-			'keyboard.key.*.press': true,
-		},
-	},
-
-	// Composition
-	compositionstart: {
-		eventClass: CompositionEvent,
-		eventPatterns: {
-			'composition.start': true,
-		},
-	},
-	compositionupdate: {
-		eventClass: CompositionEvent,
-		eventPatterns: {
-			'composition.update': true,
-		},
-	},
-	compositionend: {
-		eventClass: CompositionEvent,
-		eventPatterns: {
-			'composition.end': true,
-		},
-	},
-
-	// Selection
-	selectionstart: {
-		eventClass: SelectionEvent,
-		eventPatterns: {
-			'selection.start': true,
-		},
-	},
-	selectionchange: {
-		eventClass: SelectionEvent,
-		eventPatterns: {
-			'selection.change': true,
-		},
-	},
-	select: {
-		eventClass: SelectionEvent,
-		eventPatterns: {
-			'selection.end': true,
-		},
-	},
-
-	// Forms
-	input: {
-		eventClass: FormEvent,
-		eventPatterns: {
-			'form.control.change': true,
-		},
-	},
-	// I don't think I need this anymore because I can use the "input" event above
-	//change: {
-	//	'form.control.change': true,
-	//},
-	submit: {
-		eventClass: FormEvent,
-		eventPatterns: {
-			'form.submit': true,
-		},
-	},
-
-	// Clipboard
-	copy: {
-		eventClass: ClipboardEvent,
-		eventPatterns: {
-			'clipboard.copy': true,
-		},
-	},
-	cut: {
-		eventClass: ClipboardEvent,
-		eventPatterns: {
-			'clipboard.cut': true,
-		},
-	},
-	paste: {
-		eventClass: ClipboardEvent,
-		eventPatterns: {
-			'clipboard.paste': true,
-		},
-	},
-
-	// HtmlElement
+	// htmlElement.*
 	focusin: {
 		eventClass: HtmlElementEvent,
 		eventPatterns: {
@@ -201,6 +61,146 @@ HtmlEventProxy.domEventIdentifierMap = {
 			'htmlElement.error': true,
 		},
 	},
+
+	// clipboard.*
+	copy: {
+		eventClass: ClipboardEvent,
+		eventPatterns: {
+			'clipboard.copy': true,
+		},
+	},
+	cut: {
+		eventClass: ClipboardEvent,
+		eventPatterns: {
+			'clipboard.cut': true,
+		},
+	},
+	paste: {
+		eventClass: ClipboardEvent,
+		eventPatterns: {
+			'clipboard.paste': true,
+		},
+	},
+
+	// input.compose.*
+	compositionstart: {
+		eventClass: InputComposeEvent,
+		eventPatterns: {
+			'input.compose.start': true,
+		},
+	},
+	compositionupdate: {
+		eventClass: InputComposeEvent,
+		eventPatterns: {
+			'input.compose.update': true,
+		},
+	},
+	compositionend: {
+		eventClass: InputComposeEvent,
+		eventPatterns: {
+			'input.compose': true,
+		},
+	},
+
+	// input.key.*
+	keydown: {
+		eventClass: InputKeyEvent,
+		eventPatterns: {
+			'input.key.*.down': true,
+		},
+	},
+	keyup: {
+		eventClass: InputKeyEvent,
+		eventPatterns: {
+			'input.key.*.up': true,
+
+			// TODO: 'input.key.(alt|control|etc...)': true,
+
+			'input.key.alt': true,
+			'input.key.control': true,
+			'input.key.meta': true,
+			'input.key.shift': true,
+			'input.key.up': true,
+			'input.key.down': true,
+			'input.key.left': true,
+			'input.key.right': true,
+			'input.key.backspace': true,
+			'input.key.delete': true,
+			'input.key.insert': true,
+			'input.key.contextMenu': true,
+			'input.key.escape': true,
+		},
+	},
+	keypress: {
+		eventClass: InputKeyEvent,
+		eventPatterns: {
+			'input.key.*': true,
+		},
+	},
+
+	// input.press.*
+	click: {
+		eventClass: InputPressEvent,
+		eventPatterns: {
+			'input.press.*': true,
+		},
+	},
+	mouseup: {
+		eventClass: InputPressEvent,
+		eventPatterns: {
+			'input.press.*.up': true,
+			'input.press.secondary.*': true, // Mouse button 2 can only be detected 'mouseup' events
+		},
+	},
+	mousedown: {
+		eventClass: InputPressEvent,
+		eventPatterns: {
+			'input.press.*.down': true,
+		},
+	},
+
+	// input.scroll.*
+	wheel: {
+		eventClass: InputScrollEvent,
+		eventPatterns: {
+			'input.scroll.*': true,
+		},
+	},
+
+	// input.select.*
+	selectionstart: {
+		eventClass: InputSelectEvent,
+		eventPatterns: {
+			'input.select.start': true,
+		},
+	},
+	selectionchange: {
+		eventClass: InputSelectEvent,
+		eventPatterns: {
+			'input.select.change': true,
+		},
+	},
+	select: {
+		eventClass: InputSelectEvent,
+		eventPatterns: {
+			'input.select': true,
+		},
+	},
+
+	// form.*
+	input: {
+		eventClass: FormEvent,
+		eventPatterns: {
+			'form.control.change': true,
+		},
+	},
+	submit: {
+		eventClass: FormEvent,
+		eventPatterns: {
+			'form.submit': true,
+		},
+	},
+	
 };
 
 // Static methods
@@ -260,7 +260,7 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter) {
 		event.trusted = domEvent.isTrusted;
 	});
 
-	Console.standardWarn('HtmlEventProxy.createEventFromDomEvent events created', events);
+	//Console.standardWarn('HtmlEventProxy.createEventFromDomEvent events created', events);
 
 	return events;
 };
@@ -284,16 +284,12 @@ HtmlEventProxy.getDomObjectFromHtmlEventEmitter = function(htmlEventEmitter) {
 
 HtmlEventProxy.warnAboutCommonEventPatternMistakes = function(eventPattern) {
 	var map = {
-		// Mouse
-		activate: '"interact"',
-		click: '"interact" or "mouse.button.one.click"',
-
-		// Keyboard
-		keydown: '"keyboard.key.*.down"',
-		keyup: '"keyboard.key.*.up"',
-		keypress: '"keyboard.key.*.press"',
-
-		// Form
+		activate: '"input.press"',
+		interact: '"input.press"',
+		click: '"input.press"',
+		keydown: '"input.key.*.down"',
+		keyup: '"input.key.*.up"',
+		keypress: '"input.key.*.press"',
 		submit: '"form.submit"',
 		change: '"form.field.change"',
 	};

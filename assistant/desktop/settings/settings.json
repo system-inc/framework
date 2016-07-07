@@ -1,6 +1,11 @@
 {
 	title: 'Assistant \u2022 Framework',
 	modules: {
+		console: {
+			log: {
+				enabled: false,
+			},
+		},
 		electron: {
 			mainBrowserWindow: {
 				windowState: {

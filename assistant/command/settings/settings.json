@@ -66,7 +66,11 @@
 	// List all modules to test
 	modules: {
 		archive: {},
-		console: {},
+		console: {
+			log: {
+				enabled: false,
+			},
+		},
 		database: {
 			databases: {
 				frameworkTest: {

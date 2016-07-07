@@ -4,7 +4,7 @@ var Assert = Framework.require('system/test/Assert.js');
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
 var ElectronManager = null;
-var FormEvent = Framework.require('system/html/events/web-interface/FormEvent.js');
+var FormEvent = Framework.require('system/html/events/html-element/FormEvent.js');
 
 // Class
 var FormEventTest = ElectronTest.extend({

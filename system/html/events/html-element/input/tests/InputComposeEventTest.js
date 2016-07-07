@@ -4,10 +4,10 @@ var Assert = Framework.require('system/test/Assert.js');
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
 var ElectronManager = null;
-var CompositionEvent = Framework.require('system/html/events/web-interface/CompositionEvent.js');
+var CompositionEvent = Framework.require('system/html/events/html-element/input/InputComposeEvent.js');
 
 // Class
-var CompositionEventTest = ElectronTest.extend({
+var InputComposeEventTest = ElectronTest.extend({
 
 	before: function*() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
@@ -32,21 +32,21 @@ var CompositionEventTest = ElectronTest.extend({
 		var capturedCompositionEndEvent = null;
 
 		// Testing
-		textAreaElement.on('keyboard.key.*', function(event) {
+		textAreaElement.on('input.key.*', function(event) {
 			Console.standardInfo(event.identifier, event);
 		});
 
 		// Add an event listener to the textarea to capture the event when triggered
-		textAreaElement.on('composition.*', function(event) {
+		textAreaElement.on('input.compose.*', function(event) {
 			Console.standardInfo(event.identifier, event);
 
-			if(event.identifier == 'composition.start') {
+			if(event.identifier == 'input.compose.start') {
 				capturedCompositionStartEvent = event;
 			}
-			else if(event.identifier == 'composition.update') {
+			else if(event.identifier == 'input.compose.update') {
 				capturedCompositionUpdateEvent = event;
 			}
-			else if(event.identifier == 'composition.end') {
+			else if(event.identifier == 'input.compose') {
 				capturedCompositionEndEvent = event;
 			}
 		});
@@ -58,12 +58,12 @@ var CompositionEventTest = ElectronTest.extend({
         yield ElectronManager.doubleClickHtmlElement(textAreaElement);
 
         // Start composing
-		// How to trigger a composition event? This doesn't do it
+		// How to trigger a input.compose event? This doesn't do it
         yield ElectronManager.pressKey('a');
 
-		//Assert.true(Class.isInstance(capturedCompositionStartEvent, CompositionEvent), '"composition.start" events are instances of CompositionEvent');
-		//Assert.true(Class.isInstance(capturedCompositionUpdateEvent, CompositionEvent), '"composition.update" events are instances of CompositionEvent');
-		//Assert.true(Class.isInstance(capturedCompositionEndEvent, CompositionEvent), '"composition.end" events are instances of CompositionEvent');
+		//Assert.true(Class.isInstance(capturedCompositionStartEvent, CompositionEvent), '"input.compose.start" events are instances of CompositionEvent');
+		//Assert.true(Class.isInstance(capturedCompositionUpdateEvent, CompositionEvent), '"input.compose.update" events are instances of CompositionEvent');
+		//Assert.true(Class.isInstance(capturedCompositionEndEvent, CompositionEvent), '"input.compose.end" events are instances of CompositionEvent');
 
 		//throw new Error('Throwing error to display browser window.');
 	},
@@ -71,4 +71,4 @@ var CompositionEventTest = ElectronTest.extend({
 });
 
 // Export
-module.exports = CompositionEventTest;
+module.exports = InputComposeEventTest;

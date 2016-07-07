@@ -1,5 +1,5 @@
 // Dependencies
-var HtmlEventEmitter = Framework.require('system/html/events/HtmlEventEmitter.js');
+var HtmlEventEmitter = Framework.require('system/html/events/html-event/HtmlEventEmitter.js');
 var HtmlNodeEvent = Framework.require('system/html/events/html-node/HtmlNodeEvent.js');
 
 // Class
