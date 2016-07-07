@@ -4,6 +4,7 @@ var HtmlDocumentEvent = Framework.require('system/html/events/html-document/Html
 var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
 var ClipboardEvent = Framework.require('system/html/events/html-event/ClipboardEvent.js');
 var InputComposeEvent = Framework.require('system/html/events/html-element/input/InputComposeEvent.js');
+var InputHoverEvent = Framework.require('system/html/events/html-element/input/InputHoverEvent.js');
 var InputKeyEvent = Framework.require('system/html/events/html-element/input/InputKeyEvent.js');
 var InputPressEvent = Framework.require('system/html/events/html-element/input/InputPressEvent.js');
 var InputScrollEvent = Framework.require('system/html/events/html-element/input/InputScrollEvent.js');
@@ -99,6 +100,38 @@ HtmlEventProxy.domEventIdentifierMap = {
 		eventClass: InputComposeEvent,
 		eventPatterns: {
 			'input.compose': true,
+		},
+	},
+
+	// input.hover.*
+	mousemove: {
+		eventClass: InputHoverEvent,
+		eventPatterns: {
+			'input.hover': true,
+		},
+	},
+	mouseenter: {
+		eventClass: InputHoverEvent,
+		eventPatterns: {
+			'input.hover.in': true,
+		},
+	},
+	mouseleave: {
+		eventClass: InputHoverEvent,
+		eventPatterns: {
+			'input.hover.out': true,
+		},
+	},
+	mouseover: {
+		eventClass: InputHoverEvent,
+		eventPatterns: {
+			'input.hover.in.exact': true,
+		},
+	},
+	mouseout: {
+		eventClass: InputHoverEvent,
+		eventPatterns: {
+			'input.hover.out.exact': true,
 		},
 	},
 

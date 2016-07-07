@@ -367,19 +367,21 @@ ElectronManager.wheelRotate = function(relativeToDocumentViewportX, relativeToDo
 		// Send mouse down
 		webContents.sendInputEvent({
 			type: 'mouseWheel',
+			// x, y is the mouse position inside element where the scroll should occur.
 			x: relativeToDocumentViewportX,
 			y: relativeToDocumentViewportY,
-			button: 'middle',
-			clickCount: 0,
-			deltaX: null,
-			deltaY: null,
-			wheelTicksX: null,
-			wheelTicksY: null,
-			accelerationRatioX: null,
-			accelerationRatioY: null,
-			hasPreciseScrollingDeltas: null,
-			canScroll: null,
-			modifiers: modifiers,
+			//button: 'middle',
+			//clickCount: 0,
+			// deltaX, deltaY is the relative scroll amount
+			deltaX: deltaX,
+			deltaY: deltaY,
+			wheelTicksX: wheelTicksX,
+			wheelTicksY: wheelTicksY,
+			accelerationRatioX: accelerationRatioX,
+			accelerationRatioY: accelerationRatioY,
+			//hasPreciseScrollingDeltas: null,
+			canScroll: true,
+			//modifiers: modifiers,
 		});
 
 		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
@@ -389,20 +391,6 @@ ElectronManager.wheelRotate = function(relativeToDocumentViewportX, relativeToDo
 		});
 	});
 };
-
-
-
-// How to send mouse wheel:
-//element.sendInputEvent({
-//    type: 'mouseWheel',
-//    x: 0,
-//    y: 0,
-//    deltaX: 0,
-//    deltaY: 0,
-//    canScroll: true
-//});
-//x, y is the mouse position inside element where the scroll should occur.
-//deltaX, deltaY is the relative scroll amount.
 
 ElectronManager.pressKey = function*(key, modifiers) {
 	//Console.standardWarn('ElectronManager.pressKey', key);

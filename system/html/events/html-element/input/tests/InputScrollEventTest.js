@@ -66,15 +66,26 @@ var InputScrollEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Simulate a wheel scroll up
-		// TODO: This isn't working
 		// htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers
-		//yield ElectronManager.wheelRotateHtmlElement(htmlElement, -0, 100, 0, 1, 1, 1, false, true);
+		yield ElectronManager.wheelRotateHtmlElement(htmlElement, 0, 1, 0, 1, 1, 1, true, true);
 
-		//Assert.true(capturedEventInputScroll, '"input.scroll" events are emitted');
-		//Assert.true(capturedEventInputScrollUp, '"input.scroll.up" events are emitted');
-		//Assert.true(capturedEventInputScrollDown, '"input.scroll.down" events are emitted');
-		//Assert.true(capturedEventInputScrollLeft, '"input.scroll.left" events are emitted');
-		//Assert.true(capturedEventInputScrollRight, '"input.scroll.right" events are emitted');
+		Assert.true(capturedEventInputScroll, '"input.scroll" events are emitted');
+		Assert.true(capturedEventInputScrollUp, '"input.scroll.up" events are emitted');
+
+		// Simulate a wheel scroll down
+		// htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers
+		yield ElectronManager.wheelRotateHtmlElement(htmlElement, 0, -1, 0, -1, 1, 1, true, true);
+		Assert.true(capturedEventInputScrollDown, '"input.scroll.down" events are emitted');
+
+		// Simulate a wheel scroll left
+		// htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers
+		yield ElectronManager.wheelRotateHtmlElement(htmlElement, 1, 0, 1, 0, 1, 1, true, true);
+		Assert.true(capturedEventInputScrollLeft, '"input.scroll.left" events are emitted');
+
+		// Simulate a wheel scroll right
+		// htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers
+		yield ElectronManager.wheelRotateHtmlElement(htmlElement, -1, 0, -1, 0, 1, 1, true, true);
+		Assert.true(capturedEventInputScrollRight, '"input.scroll.right" events are emitted');
 	
         //throw new Error('Throwing error to display browser window.');
 	},
