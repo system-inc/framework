@@ -536,5 +536,20 @@ ElectronManager.pasteUsingKeyboard = function*() {
 	}
 }.toPromise();
 
+ElectronManager.getBrowserWindowBounds = function() {
+	var bounds = Electron.remote.getCurrentWindow().getBounds();
+
+	return bounds;
+};
+
+ElectronManager.setBrowserWindowBounds = function(width, height, x, y) {
+	Electron.remote.getCurrentWindow().setBounds({
+		width: width,
+		height: height,
+		x: x,
+		y: y,
+	});
+};
+
 // Export
 module.exports = ElectronManager;

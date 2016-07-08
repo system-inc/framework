@@ -22,6 +22,79 @@ var HtmlDocument = XmlDocument.extend({
 	body: null,
 	titleHtmlElement: null,
 
+	dimensions: {
+		width: null,
+		height: null,
+		visibleWidth: null,
+		visibleHeight: null,
+	},
+
+	position: {
+		relativeToRelativeAncestor: {
+			x: null, // scrollLeft
+			y: null, // scrollTop
+		},
+
+		relativeToDocumentViewport: {
+			x: null,
+			y: null,
+
+			coordinates: {
+				topLeft: {
+					x: null,
+					y: null,
+				},
+				topCenter: {
+					x: null,
+					y: null,
+				},
+				topRight: {
+					x: null,
+					y: null,
+				},
+
+				leftCenter: {
+					x: null,
+					y: null,
+				},
+
+				rightCenter: {
+					x: null,
+					y: null,
+				},
+
+				bottomLeft: {
+					x: null,
+					y: null,
+				},
+				bottomCenter: {
+					x: null,
+					y: null,
+				},
+				bottomRight: {
+					x: null,
+					y: null,
+				},
+
+				center: {
+					x: null,
+					y: null,
+				},
+			},
+
+			edges: {
+				top: null,
+				right: null,
+				bottom: null,
+				left: null,
+			},						
+		},
+
+		//relativeToDocument
+		//relativeToGlobal
+		//relativeToPreviousGlobalRelativePosition
+	},
+
 	shortcutManager: null,
 
 	construct: function(declaration) {
@@ -226,6 +299,73 @@ var HtmlDocument = XmlDocument.extend({
         }
 
         return text;
+	},
+
+	getDimensions: function() {
+		this.getDimensionAndPositionFromDomDocument();
+
+		return this.dimensions;
+	},
+
+	getPosition: function() {
+		this.getDimensionAndPositionFromDomDocument();
+
+		return this.position;
+	},
+
+	getDimensionAndPositionFromDomDocument: function() {
+		if(this.domDocument) {
+			// Dimensions
+			this.dimensions.width = document.documentElement.scrollWidth;
+			this.dimensions.height = document.documentElement.scrollHeight;
+			this.dimensions.visibleWidth = document.documentElement.clientWidth;
+			this.dimensions.visibleHeight = document.documentElement.clientHeight;
+
+			// Position - relativeToRelativeAncestor
+			this.position.relativeToRelativeAncestor.x = document.scrollingElement.scrollTop;
+			this.position.relativeToRelativeAncestor.y = document.scrollingElement.scrollLeft;
+
+			// Position - relativeToDocumentViewport
+			this.position.relativeToDocumentViewport.x = 0;
+			this.position.relativeToDocumentViewport.y = 0;
+
+			this.position.relativeToDocumentViewport.coordinates.topLeft.x = 0;
+			this.position.relativeToDocumentViewport.coordinates.topLeft.y = 0;
+						
+			this.position.relativeToDocumentViewport.coordinates.topCenter.x = window.innerWidth / 2;
+			this.position.relativeToDocumentViewport.coordinates.topCenter.y = 0;
+						
+			this.position.relativeToDocumentViewport.coordinates.topRight.x = window.innerWidth;
+			this.position.relativeToDocumentViewport.coordinates.topRight.y = 0;
+
+			this.position.relativeToDocumentViewport.coordinates.leftCenter.x = 0;
+			this.position.relativeToDocumentViewport.coordinates.leftCenter.y = window.innerHeight / 2;
+
+			this.position.relativeToDocumentViewport.coordinates.rightCenter.x = window.innerWidth;
+			this.position.relativeToDocumentViewport.coordinates.rightCenter.y = window.innerHeight / 2;
+
+			this.position.relativeToDocumentViewport.coordinates.bottomLeft.x = 0;
+			this.position.relativeToDocumentViewport.coordinates.bottomLeft.y = window.innerHeight;
+						
+			this.position.relativeToDocumentViewport.coordinates.bottomCenter.x = window.innerWidth / 2;
+			this.position.relativeToDocumentViewport.coordinates.bottomCenter.y = window.innerHeight;
+						
+			this.position.relativeToDocumentViewport.coordinates.bottomRight.x = window.innerWidth;
+			this.position.relativeToDocumentViewport.coordinates.bottomRight.y = window.innerHeight;
+
+			this.position.relativeToDocumentViewport.coordinates.center.x = window.innerWidth / 2;
+			this.position.relativeToDocumentViewport.coordinates.center.y = window.innerHeight / 2;
+
+			this.position.relativeToDocumentViewport.edges = 0;
+			this.position.relativeToDocumentViewport.edges = window.innerWidth;
+			this.position.relativeToDocumentViewport.edges = window.innerHeight;
+			this.position.relativeToDocumentViewport.edges = 0;
+		}
+
+		return {
+			dimensions: this.dimensions,
+			position: this.position,
+		};
 	},
 
 });

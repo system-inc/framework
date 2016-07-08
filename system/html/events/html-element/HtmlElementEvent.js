@@ -31,9 +31,6 @@ HtmlElementEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	else if(domEvent.type == 'focusout') {
 		eventIdentifier = 'htmlElement.blur';
 	}
-	else if(domEvent.type == 'scroll') {
-		eventIdentifier = 'htmlElement.scroll';
-	}
 	else if(domEvent.type == 'load') {
 		eventIdentifier = 'htmlElement.load';
 	}
@@ -43,6 +40,14 @@ HtmlElementEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	else if(domEvent.type == 'error') {
 		eventIdentifier = 'htmlElement.error';
 	}
+	else if(domEvent.type == 'scroll') {
+		if(domEvent.target == document) {
+			eventIdentifier = 'htmlDocument.scroll';
+		}
+		else {
+			eventIdentifier = 'htmlElement.scroll';
+		}
+	}
 
 	// Set the identifier
 	htmlElementEventWithoutIdentifier.identifier = eventIdentifier;
@@ -51,34 +56,43 @@ HtmlElementEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	events.append(htmlElementEventWithoutIdentifier);
 
 	// If scrolling
-	if(eventIdentifier == 'htmlElement.scroll') {
+	if(eventIdentifier == 'htmlElement.scroll' || eventIdentifier == 'htmlDocument.scroll') {
 		//Console.standardInfo('emitter.position', emitter.position);
+
+		// Identify the scrolling element
+		var scrollingElement = null;
+		if(eventIdentifier == 'htmlElement.scroll') {
+			scrollingElement = emitter.domNode;
+		}
+		else if(eventIdentifier == 'htmlDocument.scroll') {
+			scrollingElement = emitter.domDocument.scrollingElement;
+		}
 
 		// Check if the scroll is up or down and fire additional events
 
 		// Scrolling up
-		if(emitter.position.relativeToRelativeAncestor.y > emitter.domNode.scrollTop) {
+		if(emitter.position.relativeToRelativeAncestor.y > scrollingElement.scrollTop) {
 			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.up'));
 		}
 		// Scrolling down
-		else if(emitter.position.relativeToRelativeAncestor.y < emitter.domNode.scrollTop) {
+		else if(emitter.position.relativeToRelativeAncestor.y < scrollingElement.scrollTop) {
 			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.down'));
 		}
 		
 		// Scrolling horizontally can happen at the same time as vertically, so we use another if statement instead of an else if
 
 		// Scrolling left
-		if(emitter.position.relativeToRelativeAncestor.x > emitter.domNode.scrollLeft) {
+		if(emitter.position.relativeToRelativeAncestor.x > scrollingElement.scrollLeft) {
 			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.left'));
 		}
 		// Scrolling right
-		else if(emitter.position.relativeToRelativeAncestor.x < emitter.domNode.scrollLeft) {
+		else if(emitter.position.relativeToRelativeAncestor.x < scrollingElement.scrollLeft) {
 			events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.right'));
 		}
 		
 		// Update the position relative to the relative ancestor
-		emitter.position.relativeToRelativeAncestor.x = emitter.domNode.scrollLeft;
-		emitter.position.relativeToRelativeAncestor.y = emitter.domNode.scrollTop;
+		emitter.position.relativeToRelativeAncestor.x = scrollingElement.scrollLeft;
+		emitter.position.relativeToRelativeAncestor.y = scrollingElement.scrollTop;
 	}
 
 	//Console.standardLog('events', events);

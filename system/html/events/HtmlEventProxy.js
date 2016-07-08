@@ -24,6 +24,21 @@ HtmlEventProxy.domEventIdentifierMap = {
 			'htmlDocument.ready': true,
 		},
 	},
+	resize: {
+		eventClass: HtmlDocumentEvent,
+		eventPatterns: {
+			'htmlDocument.resize': true,
+		},
+	},
+
+	// htmlDocument.* and htmlElement.*
+	scroll: {
+		eventClass: HtmlElementEvent,
+		eventPatterns: {
+			'htmlDocument.scroll.*': true,
+			'htmlElement.scroll.*': true,
+		},
+	},
 
 	// htmlElement.*
 	focusin: {
@@ -36,12 +51,6 @@ HtmlEventProxy.domEventIdentifierMap = {
 		eventClass: HtmlElementEvent,
 		eventPatterns: {
 			'htmlElement.blur': true,
-		},
-	},
-	scroll: {
-		eventClass: HtmlElementEvent,
-		eventPatterns: {
-			'htmlElement.scroll': true,
 		},
 	},
 	load: {
@@ -263,10 +272,18 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter) {
 
 	var events = [];
 
+	
+	var sourceEmitter = null;
+
 	// Set the proper source emitter
 	// For example, if you listen to "form.control.change" events on a form element and you catch the DOM event "change" event passed from
 	// an input element, the emitter here would be the form when it actually needs to be the input element
-	var sourceEmitter = domEvent.target.htmlNode;
+	if(domEvent.target && domEvent.target.htmlNode) {
+		sourceEmitter = domEvent.target.htmlNode
+	}
+	else {
+		sourceEmitter = emitter;
+	}
 
 	var classToUseToCreateEventsFromDomEvent = null;
 
@@ -281,6 +298,7 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter) {
 	}
 	// If no specific class is specified, use the emitter to create the event
 	else {
+		Console.standardError('No class specified', sourceEmitter, domEvent);
 		events.append(emitter.createEvent(sourceEmitter, domEvent.type));
 	}
 
@@ -298,7 +316,7 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter) {
 	return events;
 };
 
-HtmlEventProxy.getDomObjectFromHtmlEventEmitter = function(htmlEventEmitter) {
+HtmlEventProxy.getDomObjectFromHtmlEventEmitter = function(htmlEventEmitter, domEventIdentifier) {
 	var domObject = null;
 
 	var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
@@ -306,7 +324,12 @@ HtmlEventProxy.getDomObjectFromHtmlEventEmitter = function(htmlEventEmitter) {
 
 	// Set the domObject
 	if(HtmlDocument.is(htmlEventEmitter)) {
-		domObject = htmlEventEmitter.domDocument;
+		if(domEventIdentifier == 'resize') {
+			domObject = htmlEventEmitter.domDocument.defaultView; // window
+		}
+		else {
+			domObject = htmlEventEmitter.domDocument;
+		}
 	}
 	else if(HtmlNode.is(htmlEventEmitter)) {
 		domObject = htmlEventEmitter.domNode;
@@ -355,11 +378,12 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		return;
 	}
 
+	if(!htmlEventEmitter) {
+		Console.standardError('No event emitter', eventPattern);
+	}
+
 	// Warn about common event pattern mistakes
 	HtmlEventProxy.warnAboutCommonEventPatternMistakes(eventPattern);
-
-	// Get the domObject from the htmlEventEmitter
-	var domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
 
 	// Get the DOM event identifiers for the provided eventPattern
 	var domEventIdentifiers = HtmlEventProxy.htmlEventPatternToDomEventIdentifiers(eventPattern);
@@ -389,7 +413,10 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		domEventIdentifiers.each(function(domEventIdentifierIndex, domEventIdentifier) {
 			// Don't add duplicate DOM object event listeners, we can just use one
 			if(!htmlEventEmitter.eventListenersOnDomObject.contains(domEventIdentifier)) {
-				Console.log('Binding domEventIdentifier "'+domEventIdentifier+'" to DOM object, will use for eventPattern "'+eventPattern+'"');
+				// Get the domObject from the htmlEventEmitter
+				var domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter, domEventIdentifier);
+
+				Console.standardLog('Binding domEventIdentifier "'+domEventIdentifier+'" to DOM object', domObject, ' will use for eventPattern "'+eventPattern+'"');
 
 				// Keep track of which DOM object event listeners we have added
 				htmlEventEmitter.eventListenersOnDomObject.append(domEventIdentifier);
