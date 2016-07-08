@@ -28,6 +28,28 @@ HtmlDocumentEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	if(domEvent.type == 'resize') {
 		eventIdentifier = 'htmlDocument.resize';
 	}
+	else if(domEvent.type == 'readystatechange') {
+		if(emitter.domDocument.readyState == 'loading') {
+			eventIdentifier = 'htmlDocument.loading';
+		}
+		else if(emitter.domDocument.readyState == 'interactive') {
+			eventIdentifier = 'htmlDocument.ready';
+		}
+		else if(emitter.domDocument.readyState == 'complete') {
+			eventIdentifier = 'htmlDocument.load';
+		}
+	}
+	else if(domEvent.type == 'webkitfullscreenchange') {
+		if(emitter.domDocument.webkitIsFullScreen) {
+			eventIdentifier = 'htmlDocument.fullScreen';
+		}
+		else {
+			eventIdentifier = 'htmlDocument.fullScreen.exit';
+		}
+	}
+	else if(domEvent.type == 'webkitfullscreenerror') {
+		eventIdentifier = 'htmlDocument.fullScreen.error';
+	}
 
 	// Set the identifier
 	htmlDocumentEventWithoutIdentifier.identifier = eventIdentifier;

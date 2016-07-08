@@ -18,16 +18,31 @@ var HtmlEventProxy = {};
 
 HtmlEventProxy.domEventIdentifierMap = {
 	// htmlDocument.*
-	DOMContentLoaded: {
+	readystatechange: {
 		eventClass: HtmlDocumentEvent,
 		eventPatterns: {
+			'htmlDocument.loading': true,
 			'htmlDocument.ready': true,
+			'htmlDocument.load': true,
 		},
 	},
 	resize: {
 		eventClass: HtmlDocumentEvent,
 		eventPatterns: {
 			'htmlDocument.resize': true,
+		},
+	},
+	webkitfullscreenchange: {
+		eventClass: HtmlDocumentEvent,
+		eventPatterns: {
+			'htmlDocument.fullScreen.exit': true,
+			'htmlDocument.fullScreen': true,
+		},
+	},
+	webkitfullscreenerror: {
+		eventClass: HtmlDocumentEvent,
+		eventPatterns: {
+			'htmlDocument.fullScreen.error': true,
 		},
 	},
 
@@ -268,10 +283,9 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern
 };
 
 HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter) {
-	//Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
+	Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
 
 	var events = [];
-
 	
 	var sourceEmitter = null;
 
@@ -311,7 +325,7 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter) {
 		event.trusted = domEvent.isTrusted;
 	});
 
-	//Console.standardWarn('HtmlEventProxy.createEventFromDomEvent events created', events);
+	Console.standardWarn('HtmlEventProxy.createEventFromDomEvent events created', events);
 
 	return events;
 };
@@ -424,7 +438,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 				var domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter, domEventIdentifier);
 
 				Console.standardLog('Binding domEventIdentifier "'+domEventIdentifier+'" to DOM object will use for eventPattern "'+eventPattern+'"');
-				//Console.standardLog('domObject', domObject);
+				Console.standardLog('domObject', domObject);
 
 				// Keep track of which DOM object event listeners we have added
 				htmlEventEmitter.eventListenersOnDomObject.append(domEventIdentifier);
@@ -458,6 +472,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 			'htmlDocument.mountedToDom',
 			'htmlNode.mountedToDom',
 			'htmlNode.domUpdateExecuted',
+			'htmlDocument.domUpdatesExecuted',
 		];
 		if(!common.contains(eventPattern)) {
 			Console.log('No domEventIdentifier found for "'+eventPattern+'", the eventPattern must not be for a standard event.');

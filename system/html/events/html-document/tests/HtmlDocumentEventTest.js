@@ -23,14 +23,15 @@ var FormEventTest = ElectronTest.extend({
     	var capturedMountedToDomEvent = null;
     	var capturedDomUpdatesExecutedEvent = null;
 
-        htmlDocument.on('htmlDocument.mountedToDom', function(event) {
-        	Console.standardWarn(event.identifier, event);
-        	capturedMountedToDomEvent = event;
-        });
+        htmlDocument.on('htmlDocument.*', function(event) {
+            Console.standardWarn(event.identifier, event);
 
-        htmlDocument.on('htmlDocument.domUpdatesExecuted', function(event) {
-        	Console.standardWarn(event.identifier, event);
-        	capturedDomUpdatesExecutedEvent = event;
+            if(event.identifier == 'htmlDocument.mountedToDom') {
+                capturedMountedToDomEvent = event;
+            }
+            else if(event.identifier == 'htmlDocument.domUpdatesExecuted') {
+                capturedDomUpdatesExecutedEvent = event;
+            }
         });
 
     	// Mount the HtmlDocument to the DOM
