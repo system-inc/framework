@@ -17,6 +17,10 @@ var HtmlNode = XmlNode.extend({
 	dimensions: {
 		width: null,
 		height: null,
+		visible: {
+			width: null,
+			height: null,
+		},
 	},
 
 	position: {

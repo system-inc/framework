@@ -25,8 +25,10 @@ var HtmlDocument = XmlDocument.extend({
 	dimensions: {
 		width: null,
 		height: null,
-		visibleWidth: null,
-		visibleHeight: null,
+		visible: {
+			width: null,
+			height: null,
+		},
 	},
 
 	position: {

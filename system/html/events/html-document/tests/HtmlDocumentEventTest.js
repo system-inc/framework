@@ -94,7 +94,7 @@ var FormEventTest = ElectronTest.extend({
         });
 
         // A scrollable div
-        var scrollableDivElement = Html.div('Scrollable');
+        var scrollableDivElement = Html.div();
         scrollableDivElement.setStyle({
             height: '8192px',
             width: '8192px',
@@ -111,7 +111,7 @@ var FormEventTest = ElectronTest.extend({
         var capturedHtmlDocumentScrollRightEvent = null;
 
         // Add an event listener to the textarea to capture the event when triggered
-        scrollableDivElement.on('htmlDocument.scroll.*', function(event) {
+        htmlDocument.on('htmlDocument.scroll.*', function(event) {
             Console.standardInfo(event.identifier, event);
 
             if(event.identifier == 'htmlDocument.scroll') {

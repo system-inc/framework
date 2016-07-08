@@ -89,6 +89,8 @@ var RegularExpressionTest = Test.extend({
 
 		Assert.false(RegularExpression.wildcardPatternsMatch('keyboard.key.*.up', 'keyboard.key.*.down'), 'From HtmlEventProxy');
 		Assert.false(RegularExpression.wildcardPatternsMatch('mouse.button.2.click', 'mouse.button.[1345].click'), 'From HtmlEventProxy');
+
+		Assert.true(RegularExpression.wildcardPatternsMatch('html*.mountedToDom', 'htmlDocument.scroll.*'), 'From HtmlEventProxy');
 	},
 
 });

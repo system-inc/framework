@@ -388,6 +388,13 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 	// Get the DOM event identifiers for the provided eventPattern
 	var domEventIdentifiers = HtmlEventProxy.htmlEventPatternToDomEventIdentifiers(eventPattern);
 
+	// Determine which event to use for mountedOnDom
+	var HtmlDocumentEventEmitter = Framework.require('system/html/events/html-document/HtmlDocumentEventEmitter.js');
+	var mountedToDomEventIdentifier = 'htmlNode.mountedToDom';
+	if(Class.isInstance(htmlEventEmitter, HtmlDocumentEventEmitter)) {
+		mountedToDomEventIdentifier = 'htmlDocument.mountedToDom';
+	}
+
 	// When the DOM object emits a domEvent
 	// This function can't be a generator in order to make sure the DOM events are propagated correctly
 	// Native DOM events will not wait for the generator function to return
@@ -416,7 +423,8 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 				// Get the domObject from the htmlEventEmitter
 				var domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter, domEventIdentifier);
 
-				Console.standardLog('Binding domEventIdentifier "'+domEventIdentifier+'" to DOM object', domObject, ' will use for eventPattern "'+eventPattern+'"');
+				Console.standardLog('Binding domEventIdentifier "'+domEventIdentifier+'" to DOM object will use for eventPattern "'+eventPattern+'"');
+				//Console.standardLog('domObject', domObject);
 
 				// Keep track of which DOM object event listeners we have added
 				htmlEventEmitter.eventListenersOnDomObject.append(domEventIdentifier);
@@ -428,8 +436,8 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 				}
 				// If we don't have a domObject, wait to be mountedToDom
 				else {
-					htmlEventEmitter.on('html*.mountedToDom', function() {
-						//Console.log('Mounted to DOM, calling domNode.addEventListener now for', htmlEventEmitter.tag, Json.encode(htmlEventEmitter.attributes));
+					htmlEventEmitter.on(mountedToDomEventIdentifier, function(event) {
+						//Console.standardInfo(event.identifier, event, 'Mounted to DOM, calling domOjbect.addEventListener now for', htmlEventEmitter.tag, Json.encode(htmlEventEmitter.attributes));
 
 						// Get the domObject from the htmlEventEmitter
 						domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
@@ -447,7 +455,6 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 	// If we don't have a domEventIdentifier it means the event listener is not for the DOM
 	else {
 		var common = [
-			'html*.mountedToDom',
 			'htmlDocument.mountedToDom',
 			'htmlNode.mountedToDom',
 			'htmlNode.domUpdateExecuted',
