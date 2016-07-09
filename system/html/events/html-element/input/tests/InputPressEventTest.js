@@ -32,7 +32,7 @@ var InputPressEventTest = ElectronTest.extend({
 			htmlElement.on('click', function(event) {
 				//Console.standardInfo(event.identifier, event);
 				capturedEvent = event;
-			});	
+			});
 		}
 		catch(error) {
 

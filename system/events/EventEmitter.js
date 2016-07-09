@@ -149,9 +149,6 @@ var EventEmitter = Class.extend({
 		// Add the event listener
 		this.eventListeners.append(eventListener);
 
-		// All EventEmitters emit 'eventEmitter.addedEventListener' when an event listener is added
-		yield this.emit('eventEmitter.addedEventListener', eventListener); // This bubbles
-
 		// Check to see if the matching bound function objects is greater than the recommended
 		var eventListeners = this.getEventListeners(eventPattern);
 
@@ -164,41 +161,53 @@ var EventEmitter = Class.extend({
 			Console.warn('Possible memory leak detected. There are '+eventListeners.length+' event listeners bound to the event pattern "'+eventPattern+'". The recommended maximum event listeners for this event pattern is '+this.recommendedMaximumEventListenersPerEventIdentifier+'.', "\n"+(new Error().stack.stackTraceToString()));
 		}
 
+		// Do this yield at the end of the function
+		// All EventEmitters emit 'eventEmitter.addedEventListener' when an event listener is added
+		yield this.emit('eventEmitter.addedEventListener', eventListener); // This bubbles
+
 		return this;
 	},
 
 	removeEventListener: function*(eventPattern, functionToUnbind) {
-		// If we are unbinding a specific function for an event pattern
-		if(functionToUnbind) {
-			// Walk backwards through the array so we can edit the array in place
-			for(var currentEventListenerIndex = this.eventListeners.length - 1; currentEventListenerIndex >= 0; currentEventListenerIndex--) {
-				var currentEventListener = this.eventListeners[currentEventListenerIndex];
-				//Console.info('currentEventListener', currentEventListener);
+		//Console.standardLog('removeEventListener', eventPattern, functionToUnbind);
 
-				// If the event pattern matches and the current bound function strictly matches
-				if(currentEventListener.eventPattern == eventPattern && functionToUnbind === currentEventListener.boundFunction) {
-					this.eventListeners.delete(currentEventListenerIndex);
-					
-					// All EventEmitters emit 'eventEmitter.removedEventListener' when an event listener is removed
-					yield this.emit('eventEmitter.removedEventListener', currentEventListener); // This bubbles
-				}
+		var removedEventListeners = [];
+
+		// Walk backwards through the array so we can edit the array in place
+		for(var currentEventListenerIndex = this.eventListeners.length - 1; currentEventListenerIndex >= 0; currentEventListenerIndex--) {
+			var currentEventListener = this.eventListeners[currentEventListenerIndex];
+			//Console.info('currentEventListener', currentEventListener);
+			var shouldRemoveCurrentEventListener = false;
+			  
+			if(
+				// If we are unbinding a specific function for an event pattern
+				functionToUnbind !== undefined &&
+				// and the event pattern matches
+				currentEventListener.eventPattern == eventPattern &&
+				// and the current bound function strictly matches
+				functionToUnbind === currentEventListener.boundFunction
+			) {
+				shouldRemoveCurrentEventListener = true;
+			}
+			// If we are removing all matching event patterns because no functionToUnbind was specified
+			else if(functionToUnbind === undefined && currentEventListener.eventPattern == eventPattern) {
+				shouldRemoveCurrentEventListener = true;
+			}
+
+			if(shouldRemoveCurrentEventListener) {
+				this.eventListeners.delete(currentEventListenerIndex);
+				removedEventListeners.append(currentEventListener);	
 			}
 		}
-		// If we are unbinding all functions for a given event pattern
-		else {
-			// Walk backwards through the array so we can edit the array in place
-			for(var currentEventListenerIndex = this.eventListeners.length - 1; currentEventListenerIndex >= 0; currentEventListenerIndex--) {
-				var currentEventListener = this.eventListeners[currentEventListenerIndex];
-				//Console.info('currentEventListener', currentEventListener);
 
-				// If the event pattern matches
-				if(currentEventListener.eventPattern == eventPattern) {
-					this.eventListeners.delete(currentEventListenerIndex);
+		//Console.standardLog('removedEventListeners', removedEventListeners);
 
-					// All EventEmitters emit 'eventEmitter.removedEventListener' when an event listener is removed
-					yield this.emit('eventEmitter.removedEventListener', currentEventListener); // This bubbles
-				}
-			}
+		// Do this yield at the end of the function
+		// All EventEmitters emit 'eventEmitter.removedEventListener' when an event listener is removed
+		// Walk backward through the removed event listeners to emit them in order
+		for(var currentEventListenerIndex = removedEventListeners.length - 1; currentEventListenerIndex >= 0; currentEventListenerIndex--) {
+			var currentEventListener = removedEventListeners[currentEventListenerIndex];
+			yield this.emit('eventEmitter.removedEventListener', currentEventListener); // This bubbles
 		}
 
 		return this;

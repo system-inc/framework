@@ -7,16 +7,16 @@ var HtmlEventProxy = Framework.require('system/html/events/HtmlEventProxy.js');
 var HtmlEventEmitter = PropagatingEventEmitter.extend({
 
 	eventClass: HtmlEvent,
-	eventListenersOnDomObject: [],
+	eventListenersOnDomObject: {},
 
 	addEventListener: function(eventPattern, functionToBind, timesToRun) {
 		// All events are routed through the HtmlEventProxy
 		return HtmlEventProxy.addEventListener(eventPattern, functionToBind, timesToRun, this);
 	},
 
-	removeEventListener: function*(eventPattern, functionToUnbind) {
+	removeEventListener: function(eventPattern, functionToUnbind) {
 		// Route this call through HtmlEventProxy
-		return HtmlEventProxy.removeEventListener(eventPattern, functionToBind);
+		return HtmlEventProxy.removeEventListener(eventPattern, functionToUnbind, this);
 	},
 
 	removeAllEventListeners: function() {

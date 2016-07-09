@@ -342,7 +342,7 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter) {
 	return events;
 };
 
-HtmlEventProxy.getDomObjectFromHtmlEventEmitter = function(htmlEventEmitter, domEventIdentifier) {
+HtmlEventProxy.getDomObjectForHtmlEventEmitterAndDomEventIdentifier = function(htmlEventEmitter, domEventIdentifier) {
 	var domObject = null;
 
 	var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
@@ -424,6 +424,9 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 	// Warn about common event pattern mistakes
 	HtmlEventProxy.warnAboutCommonEventPatternMistakes(eventPattern);
 
+	// Add the event listener to the htmlEventEmitter, use HtmlEventEmitter's super class, PropagatingEventEmitter, as opposed to htmlEventEmitter or HtmlEventEmitter, as to not cause an infinite loop
+	PropagatingEventEmitter.prototype.addEventListener.apply(htmlEventEmitter, arguments);
+
 	// Get the DOM event identifiers for the provided eventPattern
 	var domEventIdentifiers = HtmlEventProxy.htmlEventPatternToDomEventIdentifiers(eventPattern);
 
@@ -460,21 +463,25 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		}
 
 		return lastEventReturnPreviousReturnValue;
-	}.bind(htmlEventEmitter);
+	};
 
 	// If we have a valid domEventIdentifier
 	if(domEventIdentifiers.length) {
 		domEventIdentifiers.each(function(domEventIdentifierIndex, domEventIdentifier) {
 			// Don't add duplicate DOM object event listeners, we can just use one
-			if(!htmlEventEmitter.eventListenersOnDomObject.contains(domEventIdentifier)) {
+			if(!htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier]) {
 				// Get the domObject from the htmlEventEmitter
-				var domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter, domEventIdentifier);
+				var domObject = HtmlEventProxy.getDomObjectForHtmlEventEmitterAndDomEventIdentifier(htmlEventEmitter, domEventIdentifier);
 
 				Console.standardLog('Binding domEventIdentifier "'+domEventIdentifier+'" to DOM object will use for eventPattern "'+eventPattern+'"');
 				//Console.standardLog('domObject', domObject);
 
 				// Keep track of which DOM object event listeners we have added
-				htmlEventEmitter.eventListenersOnDomObject.append(domEventIdentifier);
+				htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier] = {
+					domObject: domObject,
+					boundFunction: domEventListenerFunctionToBind,
+					count: 1,
+				};
 
 				// If we have a domObject because we are already mounted to the DOM
 				if(domObject) {
@@ -487,7 +494,10 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 						//Console.standardInfo(event.identifier, event, 'Mounted to DOM, calling domOjbect.addEventListener now for', htmlEventEmitter.tag, Json.encode(htmlEventEmitter.attributes));
 
 						// Get the domObject from the htmlEventEmitter
-						domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter);
+						domObject = HtmlEventProxy.getDomObjectForHtmlEventEmitterAndDomEventIdentifier(htmlEventEmitter, domEventIdentifier);
+
+						// Update the domObject on the htmlEventEmitter.eventListenersOnDomObject
+						htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier].domObject = domObject;
 
 						// Add the event listener to the domObject
 						domObject.addEventListener(domEventIdentifier, domEventListenerFunctionToBind);
@@ -495,7 +505,9 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 				}
 			}
 			else {
+				htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier].count++;
 				Console.log('Already bound domEventIdentifier "'+domEventIdentifier+'" to DOM object, will use the existing one for eventPattern "'+eventPattern+'"');
+				Console.log(domEventIdentifier, htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier]);
 			}
 		});
 	}
@@ -512,21 +524,67 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		}
 	}
 
-	// Add the event listener to the htmlEventEmitter, use HtmlEventEmitter's super class, PropagatingEventEmitter, as opposed to htmlEventEmitter or HtmlEventEmitter, as to not cause an infinite loop
-	PropagatingEventEmitter.prototype.addEventListener.apply(htmlEventEmitter, arguments);
-
 	return htmlEventEmitter;
 };
 
-HtmlEventProxy.removeEventListener = function(eventPattern, functionToUnbind, htmlEventEmitter) {
-	// TODO: See how prop event emitter does the removal
+HtmlEventProxy.removeEventListener = function*(eventPattern, functionToUnbind, htmlEventEmitter) {
+	// Get the DOM event identifiers for the provided eventPattern
+	var domEventIdentifiers = HtmlEventProxy.htmlEventPatternToDomEventIdentifiers(eventPattern);
 
-	return PropagatingEventEmitter.prototype.removeEventListener.apply(htmlEventEmitter, arguments);
-};
+	//Console.standardLog('Need to remove domEventIdentifiers', domEventIdentifiers, 'for pattern', eventPattern);
+
+	// Determine how many events will be unbound
+	var eventPatternCount = null;
+
+	// If we are unbinding a specific function
+	if(functionToUnbind) {
+		eventPatternCount = 1;
+	}
+	// If we want to unbind all of the functions for a given event pattern
+	else {
+		var eventsToBeUnbound = htmlEventEmitter.getEventListeners(eventPattern);
+		eventPatternCount = eventsToBeUnbound.length;
+		Console.standardWarn('We will be unbinding', eventPatternCount, 'events for', eventPattern);
+		Console.log(eventsToBeUnbound);
+	}
+
+	// Loop through each DOM event identifier for the given event pattern
+	domEventIdentifiers.each(function(domEventIdentifierIndex, domEventIdentifier) {
+		var domEventListenerData = htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier];
+
+		// Make sure we have the DOM event listener data
+		if(domEventListenerData) {
+			// Decrement the listener count
+			domEventListenerData.count = domEventListenerData.count - eventPatternCount;
+
+			// If there are no more listeners, remove the DOM event listener
+			if(domEventListenerData.count == 0) {
+				// Remove the event listener
+				domEventListenerData.domObject.removeEventListener(domEventIdentifier, domEventListenerData.boundFunction);
+
+				// Remove the domEventListenerData
+				delete htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier];
+			}
+		}
+	});
+
+	var result = yield PropagatingEventEmitter.prototype.removeEventListener.call(htmlEventEmitter, eventPattern, functionToUnbind);
+
+	return result;
+}.toPromise();
 
 HtmlEventProxy.removeAllEventListeners = function(htmlEventEmitter) {
+	// Remove each of the event listeners from the DOM object
+	htmlEventEmitter.eventListenersOnDomObject.each(function(domEventIdentifier, domEventListenerData) {
+		//Console.standardInfo('HtmlEventProxy.removeAllEventListeners', domEventIdentifier, domEventListenerData);
+		// Remove the event listener
+		domEventListenerData.domObject.removeEventListener(domEventIdentifier, domEventListenerData.boundFunction);
+	});
 
-	return PropagatingEventEmitter.prototype.removeAllEventListeners.apply(htmlEventEmitter, arguments);
+	// Empty eventListenersOnDomObject
+	htmlEventEmitter.eventListenersOnDomObject = {};
+
+	return PropagatingEventEmitter.prototype.removeAllEventListeners.call(htmlEventEmitter);
 };
 
 // Export
