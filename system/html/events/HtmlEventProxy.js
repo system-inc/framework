@@ -274,7 +274,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 
 // Static methods
 
-// Takes HtmlEvent patterns (e.g., 'mouse.button.one.click') and returns the correlating DOM event identifiers (e.g., 'click')
+// Takes HtmlEvent patterns (e.g., 'input.press.secondary.down') and returns the correlating DOM event identifiers (e.g., 'keydown')
 HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern) {
 	var domEventIdentifiers = [];
 
@@ -459,10 +459,9 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		// Return the value of the last event
 		var lastEventReturnPreviousReturnValue = events.last().previousReturnValue;
 		if(lastEventReturnPreviousReturnValue !== undefined) {
-			domEvent.returnValue = lastEventReturnPreviousReturnValue;
+			//domEvent.returnValue = lastEventReturnPreviousReturnValue;
+			return lastEventReturnPreviousReturnValue;
 		}
-
-		return lastEventReturnPreviousReturnValue;
 	};
 
 	// If we have a valid domEventIdentifier
@@ -520,7 +519,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 			'htmlDocument.domUpdatesExecuted',
 		];
 		if(!common.contains(eventPattern)) {
-			Console.log('No domEventIdentifier found for "'+eventPattern+'", the eventPattern must not be for a standard event.');
+			Console.log('No domEventIdentifier found for "'+eventPattern+', the eventPattern must not be for a standard event.');
 		}
 	}
 

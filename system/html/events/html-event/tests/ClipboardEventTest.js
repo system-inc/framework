@@ -32,7 +32,7 @@ var ClipboardEventTest = ElectronTest.extend({
 		var capturedClipboardPasteEvent = null;
 
 		// Testing
-		textAreaElement.on('keyboard.key.*', function(event) {
+		textAreaElement.on('input.key.*', function(event) {
 			Console.standardInfo(event.identifier, event);
 		});
 

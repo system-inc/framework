@@ -59,6 +59,8 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 			inputKeyEventWithoutIdentifier.key == 'alt' ||
 			inputKeyEventWithoutIdentifier.key == 'control' ||
 			inputKeyEventWithoutIdentifier.key == 'meta' ||
+			inputKeyEventWithoutIdentifier.key == 'command' ||
+			inputKeyEventWithoutIdentifier.key == 'windows' ||
 			inputKeyEventWithoutIdentifier.key == 'shift' ||
 			inputKeyEventWithoutIdentifier.key == 'up' ||
 			inputKeyEventWithoutIdentifier.key == 'down' ||
@@ -89,6 +91,18 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 	}
 
+	// Create additional events with the modifier keys
+	var modifierKeysDown = [];
+	inputKeyEventWithoutIdentifier.modifierKeysDown.each(function(key, down) {
+		if(down) {
+			modifierKeysDown.append(key);
+		}
+	});
+	if(modifierKeysDown.length) {
+		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+eventTypeSuffix+'.'+modifierKeysDown.join('.');
+		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+	}
+
 	//Console.standardLog('InputKeyEvent.createEventsFromDomEvent events', events);
 
 	return events;
@@ -98,9 +112,11 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 	var inputKeyEvent = new InputKeyEvent(emitter, identifier);
 
 	inputKeyEvent.modifierKeysDown.alt = domEvent.altKey;
+	inputKeyEvent.modifierKeysDown.command = domEvent.metaKey;
 	inputKeyEvent.modifierKeysDown.control = domEvent.ctrlKey;
 	inputKeyEvent.modifierKeysDown.meta = domEvent.metaKey;
 	inputKeyEvent.modifierKeysDown.shift = domEvent.shiftKey;
+	inputKeyEvent.modifierKeysDown.windows = domEvent.metaKey;
 
 	// Get the key
 	var key = domEvent.key; // "a"

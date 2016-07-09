@@ -10,11 +10,6 @@ var TextFormControlView = FormControlView.extend({
 
     construct: function(settings) {
         this.super.apply(this, arguments);
-
-        // Keyboard up events trigger form.control.change
-        this.on('keyboard.key.*.up', function(event) {
-            this.emit('form.control.change', event);
-        }.bind(this));
     },
 
     setValue: function(value) {

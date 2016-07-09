@@ -50,6 +50,8 @@ HtmlDocumentEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	}
 	else if(domEvent.type == 'resize') {
 		eventIdentifier = 'htmlDocument.resize';
+
+		emitter.getDimensionAndPositionFromDomDocument();
 	}
 	else if(domEvent.type == 'webkitfullscreenchange') {
 		if(emitter.domDocument.webkitIsFullScreen) {

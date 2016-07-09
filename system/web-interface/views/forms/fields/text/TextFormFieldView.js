@@ -12,7 +12,7 @@ var TextFormFieldView = FormFieldView.extend({
 		this.super.apply(this, arguments);
 
 		if(this.settings.get('enterSubmits')) {
-			this.formControlView.on('keyboard.key.enter.down', function(event) {
+			this.formControlView.on('input.key.enter.down', function(event) {
 				event.preventDefault();
 				this.emit('form.submit');
 			}.bind(this));

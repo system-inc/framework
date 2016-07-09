@@ -340,8 +340,8 @@ var HtmlDocument = XmlDocument.extend({
 			// Dimensions
 			this.dimensions.width = this.domDocument.documentElement.scrollWidth;
 			this.dimensions.height = this.domDocument.documentElement.scrollHeight;
-			this.dimensions.visibleWidth = this.domDocument.documentElement.clientWidth;
-			this.dimensions.visibleHeight = this.domDocument.documentElement.clientHeight;
+			this.dimensions.visible.width = this.domDocument.documentElement.clientWidth;
+			this.dimensions.visible.height = this.domDocument.documentElement.clientHeight;
 
 			// Position - relativeToRelativeAncestor
 			this.position.relativeToRelativeAncestor.x = this.domDocument.scrollingElement.scrollTop;
