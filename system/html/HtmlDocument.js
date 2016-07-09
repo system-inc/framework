@@ -3,7 +3,6 @@ var XmlDocument = Framework.require('system/xml/XmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
 var HtmlDocumentEventEmitter = Framework.require('system/html/events/html-document/HtmlDocumentEventEmitter.js');
 var Url = Framework.require('system/web/Url.js');
-var ShortcutManager = Framework.require('system/web-interface/shortcuts/ShortcutManager.js');
 
 // Class
 var HtmlDocument = XmlDocument.extend({
@@ -101,8 +100,6 @@ var HtmlDocument = XmlDocument.extend({
 		//relativeToPreviousGlobalRelativePosition
 	},
 
-	shortcutManager: null,
-
 	construct: function(declaration) {
 		// Set the declaration
 		if(declaration) {
@@ -148,9 +145,6 @@ var HtmlDocument = XmlDocument.extend({
 		this.children = [
 			this.view,
 		];
-
-		// Keyboard shortcut manager
-		this.shortcutManager = new ShortcutManager(this);
 	},
 
 	mountToDom: function() {

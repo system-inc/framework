@@ -77,19 +77,19 @@ var ElectronManager = Class.extend({
 		var shortcutSettings = Project.modules.electronModule.settings.get('shortcuts');
 		
 		if(shortcutSettings.closeFocusedWindow) {
-			this.mainBrowserWindowViewController.htmlDocument.shortcutManager.add(['Ctrl+W'], this.closeFocusedWindow.bind(this));
+			this.mainBrowserWindowViewController.htmlDocument.on('input.key.w.control', this.closeFocusedWindow.bind(this));
 		}
 		if(shortcutSettings.reloadFocusedWindow) {
-			this.mainBrowserWindowViewController.htmlDocument.shortcutManager.add(['Ctrl+R', 'Command+R'], this.reloadFocusedWindow.bind(this));
+			this.mainBrowserWindowViewController.htmlDocument.on('input.key.r.(control|command)', this.reloadFocusedWindow.bind(this));
 		}
 		if(shortcutSettings.toggleFullScreenOnFocusedWindow) {
-			this.mainBrowserWindowViewController.htmlDocument.shortcutManager.add(['F11', 'Ctrl+Command+F'], this.toggleFullScreenOnFocusedWindow.bind(this));
+			this.mainBrowserWindowViewController.htmlDocument.on('input.key.(f11|f.(control|command))', this.toggleFullScreenOnFocusedWindow.bind(this));
 		}
 		if(shortcutSettings.toggleDeveloperToolsOnFocusedWindow) {
-			this.mainBrowserWindowViewController.htmlDocument.shortcutManager.add(['Ctrl+Alt+I', 'Ctrl+Command+I', 'Alt+Command+I'], this.toggleDeveloperToolsOnFocusedWindow.bind(this));
+			this.mainBrowserWindowViewController.htmlDocument.on('input.key.i.alt.(control|command)', this.toggleDeveloperToolsOnFocusedWindow.bind(this));
 		}
 		if(shortcutSettings.applyDefaultWindowStateOnFocusedWindow) {
-			this.mainBrowserWindowViewController.htmlDocument.shortcutManager.add(['Ctrl+Alt+W', 'Ctrl+Command+W', 'Alt+Command+W'], this.applyDefaultWindowStateOnFocusedWindow.bind(this));
+			this.mainBrowserWindowViewController.htmlDocument.on('input.key.w.(alt|control).(control|command)', this.applyDefaultWindowStateOnFocusedWindow.bind(this));
 		}
 	},
 
