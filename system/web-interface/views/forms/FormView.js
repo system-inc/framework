@@ -49,6 +49,7 @@ var FormView = View.extend({
 
 		this.children.each(function(childIndex, child) {
 			if(Class.isInstance(child, FormFieldView)) {
+				Console.standardInfo('child', child);
 				data[child.identifier] = child.getData();
 			}
 		}.bind(this));

@@ -1,6 +1,7 @@
 // Dependencies
 var View = Framework.require('system/web-interface/views/View.js');
 var Html = Framework.require('system/html/Html.js');
+var HtmlElement = Framework.require('system/html/HtmlElement.js');
 var FormControlView = Framework.require('system/web-interface/views/forms/controls/FormControlView.js');
 
 // Class
@@ -13,6 +14,7 @@ var FormFieldView = View.extend({
 	identifier: null,
 
 	labelView: null,
+
 	formControlView: null,
 
 	construct: function(identifier, settings) {
@@ -80,9 +82,9 @@ var FormFieldView = View.extend({
 	},
 
 	getData: function() {
-		var data = {};
-
 		var getDataRecursively = function(view) {
+			var data = null;
+
 			// Make sure we are working with a view and not an HtmlNode
 			if(!View.is(view)) {
 				return;
@@ -90,17 +92,23 @@ var FormFieldView = View.extend({
 
 			// If the view is a FormControlView
 			if(FormControlView.is(view)) {
-				data[view.identifier] = view.getValue();
+				data = view.getValue();
 			}
 			// Check the children to see if there are any FormControlViews
 			else if(view.children.length) {
 				view.children.each(function(childIndex, child) {
-					getDataRecursively(child);
+					data = getDataRecursively(child);
+
+					if(data) {
+						return false; // break
+					}
 				});
 			}
+
+			return data;
 		};
 
-		getDataRecursively(this);
+		var data = getDataRecursively(this);
 
 		return data;
 	},
@@ -111,11 +119,12 @@ var FormFieldView = View.extend({
 			if(FormControlView.is(view)) {
 				view.clear();
 			}
-
-			// Recurse through all children
-			view.children.each(function(childIndex, child) {
-				clearRecursively(child);
-			});
+			else if(HtmlElement.is(view)) {
+				// Recurse through all children
+				view.children.each(function(childIndex, child) {
+					clearRecursively(child);
+				});
+			}
 		};
 
 		clearRecursively(this);
