@@ -8,17 +8,6 @@ var TextFormFieldView = FormFieldView.extend({
 		class: 'field text',
 	},
 
-	construct: function(identifier, settings) {
-		this.super.apply(this, arguments);
-
-		if(this.settings.get('enterSubmits')) {
-			this.formControlView.on('input.key.enter.down', function(event) {
-				event.preventDefault();
-				this.emit('form.submit');
-			}.bind(this));
-		}
-	},
-
 });
 
 // Export

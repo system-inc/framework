@@ -16,6 +16,14 @@ var SingleLineTextFormFieldView = TextFormFieldView.extend({
 		// Call super after setting this.formControlView
 		this.super.apply(this, arguments);
 
+		// Handle enterSubmits
+		if(this.settings.get('enterSubmits')) {
+			this.formControlView.on('input.key.enter', function(event) {
+				event.preventDefault();
+				this.emit('form.submit');
+			}.bind(this));
+		}
+
 		// Append the form control
 		this.append(this.formControlView);
 	},
