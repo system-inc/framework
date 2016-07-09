@@ -28,300 +28,6 @@ RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPat
 	if(wildcardPatternA === wildcardPatternB) {
 		return true;
 	}
-	// If neither pattern has any characters that indicate it is a wildcard pattern we know the pattern does not match
-	if(!wildcardPatternA.contains(/[\*\[\]\?]/) && !wildcardPatternB.contains(/[\*\[\]\?]/)) {
-		return false;
-	}
-
-	// http://stackoverflow.com/questions/18695727/algorithm-to-find-out-whether-the-matches-for-two-glob-patterns-or-regular-expr/18816736#18816736
-
-	// Class WildcardPatternToken
-	function WildcardPatternToken(value, type, previousWildcardPatternToken) {
-	    this.value = value;
-	    this.type = type;
-	    this.index = -1;
-	    // Shared end points
-	    this.endPoints = {
-	    	head: this,
-	    	tail: this,
-    	};
-	    this.next = null;
-	    this.previous = null;
-
-	    if(previousWildcardPatternToken) {
-	        if(previousWildcardPatternToken.next) {
-	        	throw ('Previous WildcardPatternToken already connected.');
-	        }
-	        previousWildcardPatternToken.next = this;
-	        this.previous = previousWildcardPatternToken;
-	        this.index = previousWildcardPatternToken.index + 1;
-	        this.endPoints = previousWildcardPatternToken.endPoints;
-	        this.endPoints.tail = this;
-	    }
-	};
-	WildcardPatternToken.prototype.removePrevious = function () {
-	    this.previous = null;
-	    this.endPoints.head = this;
-
-	    return this;
-	};
-	WildcardPatternToken.prototype.removeNext = function () {
-	    this.next = null;
-	    this.endPoints.tail = this;
-
-	    return this;
-	};
-	WildcardPatternToken.prototype.toString = function () {
-	    var string = this.index + '. ';
-	    switch(this.type) {
-	        case WildcardPatternTokenTypes.single: string += '?'; break;
-	        case WildcardPatternTokenTypes.set: string += '[' + this.value.replace(']', '\\]') + ']'; break;
-	        case WildcardPatternTokenTypes.character: string += '\'' + this.value.replace('\'', '\\\'') + '\''; break;
-	        case WildcardPatternTokenTypes.anyString: string += '*'; break;
-	    }
-
-	    return string;
-	};
-
-	// Class WildcardPatternComparison
-	function WildcardPatternComparison(wildcardPatternANext, wildcardPatternBNext, wildcardPatternsMatch) {
-	    this.wildcardPatternANext = wildcardPatternANext;
-	    this.wildcardPatternBNext = wildcardPatternBNext;
-	    this.wildcardPatternsMatch = (wildcardPatternsMatch === false) ? false : true;
-	}
-	// Swaps wildcardPatternA and wildcardPatternB and returns this
-	WildcardPatternComparison.prototype.swapWildcardPatternTokens = function () {
-	    var temp = this.wildcardPatternANext;
-	    this.wildcardPatternANext = this.wildcardPatternBNext;
-	    this.wildcardPatternBNext = temp;
-	    return this;
-	};
-	// Static properties
-	WildcardPatternComparison.falseComparison = new WildcardPatternComparison(null, null, false);
-
-	// Class WildcardPatternTokenTypes
-	var WildcardPatternTokenTypes = {
-	    character: 'C',
-	    single: '?',
-	    set: 'S',
-	    anyString: '*',
-	    unknown: '!',
-	};
-
-	function getWildcardPatternComparison(wildcardPatternA, wildcardPatternB) {
-	    var leftToken = null;
-	    var rightToken = null;
-	    var result = new WildcardPatternComparison(null, null, true);
-
-	    leftToken = (!wildcardPatternA || wildcardPatternA instanceof WildcardPatternToken) ? wildcardPatternA : tokenize(wildcardPatternA);
-	    rightToken = (!wildcardPatternB || wildcardPatternB instanceof WildcardPatternToken) ? wildcardPatternB : tokenize(wildcardPatternB);
-
-	    var log = [];
-
-	    while((leftToken || rightToken) && result.wildcardPatternsMatch) {
-	        log.push({
-	            leftToken: (leftToken) ? leftToken.toString() : null,
-	            rightToken: (rightToken) ? rightToken.toString() : null,
-	            result: null,
-	            wildcardPatternANext: null,
-	            wildcardPatternBNext: null
-	        });
-
-	        result = compareTokens(leftToken, rightToken);
-
-	        if(result.log) log = log.concat(result.log);
-
-	        log[log.length - 1].result = result.wildcardPatternsMatch;
-	        if(result.wildcardPatternANext) log[log.length - 1].wildcardPatternANext = result.wildcardPatternANext.toString();
-	        if(result.wildcardPatternBNext) log[log.length - 1].wildcardPatternBNext = result.wildcardPatternBNext.toString();
-
-	        leftToken = result.wildcardPatternANext;
-	        rightToken = result.wildcardPatternBNext;
-	    }
-
-	    if(leftToken || rightToken) log.push({
-	        leftToken: (leftToken) ? leftToken.toString() : null,
-	        rightToken: (rightToken) ? rightToken.toString() : null,
-	        result: false,
-	        wildcardPatternANext: null,
-	        wildcardPatternBNext: null
-	    });
-	    
-	    // Want to return distinct result to add log too (bad result was sharing)
-	    result = new WildcardPatternComparison(result.wildcardPatternANext, result.wildcardPatternBNext, result.wildcardPatternsMatch);
-	    result.log = log;
-
-	    return result;
-	}
-
-	function compareTokens(leftToken, rightToken) {
-	    if(!leftToken && rightToken) return compareTokens(rightToken, leftToken).swapWildcardPatternTokens();
-	    
-	    switch(leftToken.type) {
-	        case WildcardPatternTokenTypes.character: return characterCompare(leftToken, rightToken);
-	        case WildcardPatternTokenTypes.single: return singleCompare(leftToken, rightToken);
-	        case WildcardPatternTokenTypes.set: return setCompare(leftToken, rightToken);
-	        case WildcardPatternTokenTypes.anyString: return anyCompare(leftToken, rightToken);
-	    }
-	}
-
-	function anyCompare(anyToken, otherToken) {
-	    if(!otherToken) return new WildcardPatternComparison(anyToken.next, null);
-
-	    var result = WildcardPatternComparison.falseComparison;
-
-	    while(otherToken && !result.wildcardPatternsMatch) {
-	        while(otherToken && !result.wildcardPatternsMatch) {
-	            switch(otherToken.type) {
-	                case WildcardPatternTokenTypes.character: result = characterCompare(otherToken, anyToken.next).swapWildcardPatternTokens(); break;
-	                case WildcardPatternTokenTypes.single: result = singleCompare(otherToken, anyToken.next).swapWildcardPatternTokens(); break;
-	                case WildcardPatternTokenTypes.set: result = setCompare(otherToken, anyToken.next).swapWildcardPatternTokens(); break;
-	                case WildcardPatternTokenTypes.anyString:
-	                    // the anyCompare from the getWildcardPatternComparison will take over the processing.
-	                    result = getWildcardPatternComparison(anyToken, otherToken.next);
-	                    if(result.wildcardPatternsMatch) return result;
-	                    result = getWildcardPatternComparison(otherToken, anyToken.next).swapWildcardPatternTokens();
-	                    if(result.wildcardPatternsMatch) return result;
-	                    return WildcardPatternComparison.falseComparison;
-	            }
-	                  
-	            if(!result.wildcardPatternsMatch) otherToken = otherToken.next;
-	        }
-
-	        if(result.wildcardPatternsMatch) {
-	            // we've found a starting point, but now we want to make sure this will always work.
-	            result = getWildcardPatternComparison(result.wildcardPatternANext, result.wildcardPatternBNext);
-	            if(!result.wildcardPatternsMatch) otherToken = otherToken.next;
-	        }
-	    }
-
-	    // If we never got a good result that means we've eaten everything.
-	    if(!result.wildcardPatternsMatch) result = new WildcardPatternComparison(anyToken.next, null, true);
-	    
-	    return result;
-	}
-
-	function characterCompare(tokenCharacter, otherToken) {
-	    if(!otherToken) return WildcardPatternComparison.falseComparison;
-
-	    switch(otherToken.type) {
-	        case WildcardPatternTokenTypes.character: return characterCharacterCompare(tokenCharacter, otherToken); 
-	        case WildcardPatternTokenTypes.single: return new WildcardPatternComparison(tokenCharacter.next, otherToken.next);
-	        case WildcardPatternTokenTypes.set: return setTokenCharacterCompare(otherToken, tokenCharacter).swapWildcardPatternTokens(); 
-	        case WildcardPatternTokenTypes.anyString: return anyCompare(otherToken, tokenCharacter).swapWildcardPatternTokens();
-	    }
-	}
-
-	function singleCompare(singleToken, otherToken) {
-	    if(!otherToken) return WildcardPatternComparison.falseComparison;
-
-	    switch(otherToken.type) {
-	        case WildcardPatternTokenTypes.character: return new WildcardPatternComparison(singleToken.next, otherToken.next);
-	        case WildcardPatternTokenTypes.single: return new WildcardPatternComparison(singleToken.next, otherToken.next);
-	        case WildcardPatternTokenTypes.set: return new WildcardPatternComparison(singleToken.next, otherToken.next);
-	        case WildcardPatternTokenTypes.anyString: return anyCompare(otherToken, singleToken).swapWildcardPatternTokens();
-	    }
-	}
-	function setCompare(setToken, otherToken) {
-	    if(!otherToken) return WildcardPatternComparison.falseComparison;
-
-	    switch(otherToken.type) {
-	        case WildcardPatternTokenTypes.character: return setTokenCharacterCompare(setToken, otherToken);
-	        case WildcardPatternTokenTypes.single: return new WildcardPatternComparison(setToken.next, otherToken.next);
-	        case WildcardPatternTokenTypes.set: return sesetTokenCompare(setToken, otherToken);
-	        case WildcardPatternTokenTypes.anyString: return anyCompare(otherToken, setToken).swapWildcardPatternTokens();
-	    }
-	}
-
-	function anySingleCompare(anyToken, singleToken) {
-	    var nextResult = (anyToken.next) ? singleCompare(singleToken, anyToken.next).swapWildcardPatternTokens() :
-	        new WildcardPatternComparison(anyToken, singleToken.next);
-	    return (nextResult.wildcardPatternsMatch) ? nextResult: new WildcardPatternComparison(anyToken, singleToken.next);
-	}
-
-	function anyCharacterCompare(anyToken, tokenCharacter) {
-	    var nextResult = (anyToken.next) ? characterCompare(tokenCharacter, anyToken.next).swapWildcardPatternTokens() :
-	        new WildcardPatternComparison(anyToken, tokenCharacter.next);
-
-	    return (nextResult.wildcardPatternsMatch) ? nextResult : new WildcardPatternComparison(anyToken, tokenCharacter.next);
-	}
-
-	function characterCharacterCompare(literalA, literalB) {
-	    return (literalA.value === literalB.value) ?
-	        new WildcardPatternComparison(literalA.next, literalB.next) : WildcardPatternComparison.falseComparison;
-	}
-
-	function setTokenCharacterCompare(setToken, tokenCharacter) {
-	    return (setToken.value.indexOf(tokenCharacter.value) > -1) ?
-	        new WildcardPatternComparison(setToken.next, tokenCharacter.next) : WildcardPatternComparison.falseComparison;
-	}
-
-	function sesetTokenCompare(setTokenA, setTokenB) {
-	    var setA = setTokenA.value,
-	        setB = setTokenB.value;
-
-	    for (var i = 0, il = setA.length; i < il; i++) {
-	        if(setB.indexOf(setA.charAt(i)) > -1) return new WildcardPatternComparison(setTokenA.next, setTokenB.next);
-	    }
-
-	    return WildcardPatternComparison.falseComparison;
-	}
-
-	// Returns starting token
-	function tokenize(pattern) {
-	    var tokenizer = /(\\.)|([^*?[\\])|(\*)|(\?)|(\[(?:\\\]|[^\]])*\])/gi;
-	    var match;
-	    var currentWildcardPatternToken = new WildcardPatternToken('', WildcardPatternTokenTypes.unknown, null);
-	    var value;
-
-	    while((match = tokenizer.exec(pattern))) {
-	        for (var i = 1, il = match.length; i < il; i++) {
-	            if(match[i]) {
-	                value = match[0];
-	  
-	                switch(i) {
-	                    case 1:
-	                        value = value.charAt(1);
-	                        switch(value) {
-	                            case 't': value = '\t'; break;
-	                            case 'r': value = '\r'; break;
-	                            case 'n': value = '\n'; break;
-	                            case 'b': value = '\b'; break;
-	                            case 'f': value = '\f'; break;
-	                            case 'v': value = '\v'; break;
-	                        }
-	                        currentWildcardPatternToken = new WildcardPatternToken(value, WildcardPatternTokenTypes.character, currentWildcardPatternToken);
-	                        break;
-	                    case 2:
-	                        currentWildcardPatternToken = new WildcardPatternToken(value, WildcardPatternTokenTypes.character, currentWildcardPatternToken);
-	                        break;
-	                    case 3:
-	                        if(currentWildcardPatternToken.type !== WildcardPatternTokenTypes.anyString) {
-	                            currentWildcardPatternToken = new WildcardPatternToken(value, WildcardPatternTokenTypes.anyString, currentWildcardPatternToken);
-	                        } 
-	                        break;
-	                    case 4:
-	                    	currentWildcardPatternToken = new WildcardPatternToken(value, WildcardPatternTokenTypes.single, currentWildcardPatternToken);
-	                    	break;
-	                    case 5:
-	                        currentWildcardPatternToken = new WildcardPatternToken(value.substring(1, value.length - 1).replace('\\]', ']'), WildcardPatternTokenTypes.set, currentWildcardPatternToken);
-	                        break;
-	                }
-	                break;
-	            }
-	        }
-	    }
-
-	    // Advance endpoints to true start
-	    if((currentWildcardPatternToken = currentWildcardPatternToken.endPoints.head.next)) {
-	        return currentWildcardPatternToken.removePrevious();
-	    }
-
-	    // Empty pattern
-	    return null;
-	}
-
-	var wildcardPatternsMatch = false;
 
 	// Make "event1" match "event1.*"
 	if(wildcardPatternA.endsWith('.*')) {
@@ -331,134 +37,306 @@ RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPat
 		wildcardPatternB = wildcardPatternB.replaceLast('.*', '*');
 	}
 
-	var wildcardPatternComparison = getWildcardPatternComparison(wildcardPatternA, wildcardPatternB);
-	//Console.log('wildcardPatternComparison', wildcardPatternComparison);
+	// Performance
+	if(wildcardPatternA === wildcardPatternB) {
+		return true;
+	}
+    
+    function nextToken(string) {
+        if(string.length == 0) {
+            return ['END', null, 1];
+        }
+        if(string[0] == '\\') {
+            if(string.length == 1) {
+                throw 'Cannot read next token after backslash, string too short';
+            }
+            return ['LITERAL', string[1], 2];
+        }
+        if(string[0] == '*') {
+            return ['WILD', null, 1];
+        }
+        if(string[0] == '?') {
+            return ['ONE_WILD', null, 1];
+        }
+        if(string[0] == '(') {
+            return ['START_GROUP', null, 1];
+        }
+        if(string[0] == '|') {
+            return ['GROUP_DELIMITER', null, 1];
+        }
+        if(string[0] == ')') {
+            return ['END_GROUP', null, 1];
+        }
+        if(string[0] == '[') {
+            return ['START_SET', null, 1];
+        }
+        if(string[0] == ']') {
+            return ['END_SET', null, 1];
+        }
+        if(string[0] == '-') {
+            return ['RANGE', null, 1];
+        }
 
-	wildcardPatternsMatch = wildcardPatternComparison.wildcardPatternsMatch;
+        return ['LITERAL', string[0], 1];
+    }
 
-	return wildcardPatternsMatch;
+    function readSet(string) {
+        var set = {
+            values: [],
+            read: 0
+        };
+
+        while(true) {
+            var token = nextToken(string);
+            string = string.substr(token[2]);
+            set.read += token[2];
+
+            if(token[0] == 'END_SET') {
+                set.remainder = string;
+                //console.log(set);
+                return set;
+            }
+            else if(token[0] == 'LITERAL') {
+                set.values.push(token[1]);
+            }
+            else {
+                console.error(wildcardPatternA, wildcardPatternB);
+                console.error('Invalid token in set: '+token[0]);
+            }
+        }
+    }
+
+    function readGroup(string) {
+        var group = {
+            options: []
+        };
+
+        var option = '';
+        while(true) {
+            var token = nextToken(string);
+            var character = string.substr(0, token[2]);
+            string = string.substr(token[2]);
+
+            if(token[0] == 'END_GROUP') {
+                group.options.push(option);
+                group.remainder = string;
+                return group;
+            }
+            else if(token[0] == 'GROUP_DELIMITER') {
+                group.options.push(option);
+                option = '';
+            }
+            else if(token[0] == 'END') {
+                throw "Unexpected end of string while parsing group options";
+            }
+            else {
+                option += character;
+            }
+        }
+    }
+    
+    while(true) {
+        var tokenA = nextToken(wildcardPatternA);
+        var tokenB = nextToken(wildcardPatternB);
+        //console.log(tokenA, tokenB);
+        //console.log(wildcardPatternA, wildcardPatternB);
+
+        if(tokenA[0] == 'LITERAL' && tokenB[0] == 'LITERAL') {
+            if(tokenA[1] != tokenB[1]) {
+                //console.log('LITERAL', tokenA[1], '!=', tokenB[1]);
+                return false;
+            }
+            wildcardPatternA = wildcardPatternA.substr(1);
+            wildcardPatternB = wildcardPatternB.substr(1);
+            continue;
+        }
+
+        if(tokenA[0] == 'WILD') {
+            wildcardPatternA = wildcardPatternA.substr(1);
+            var i = 0;
+            while(i <= wildcardPatternB.length) {
+                //console.log(wildcardPatternA, wildcardPatternB.substr(i));
+                var result = RegularExpression.wildcardPatternsMatch(wildcardPatternA, wildcardPatternB.substr(i));
+                if(result) {
+                    return true;
+                }
+                var token = nextToken(wildcardPatternB.substr(i));
+                if(token[0] == 'LITERAL' || token[0] == 'WILD' || token[0] == 'ONE_WILD') {
+                    i += token[2];
+                }
+                else if(token[0] == 'START_SET') {
+                    i++;
+                var set = readSet(wildcardPatternB.substr(i));
+                    i += set.read;
+                }
+                else {
+                    //console.log(wildcardPatternB, wildcardPatternA);
+                    //console.log("NEED TO SKIP NON-LITERAL (A)" + token[0]);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        if(tokenB[0] == 'WILD') {
+            wildcardPatternB = wildcardPatternB.substr(1);
+
+            var i = 0;
+            while(i <= wildcardPatternA.length) {
+                var result = RegularExpression.wildcardPatternsMatch(wildcardPatternB, wildcardPatternA.substr(i));
+                if(result) {
+                    return true;
+                }
+                var token = nextToken(wildcardPatternA.substr(i));
+                if(token[0] == 'LITERAL' || token[0] == 'WILD') {
+                    i += token[2];
+                }
+                else if(token[0] == 'START_SET') {
+                    i++;
+                    var set = readSet(wildcardPatternA.substr(i));
+                    i += set.read;
+                }
+                else {
+                    //console.log("NEED TO SKIP NON-LITERAL (B)");
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        if(tokenA[0] == 'ONE_WILD') {
+            if(tokenB[0] == 'LITERAL' || tokenB[0] == 'ONE_WILD') {
+                wildcardPatternA = wildcardPatternA.substr(1);
+                wildcardPatternB = wildcardPatternB.substr(tokenB[2]);
+                continue;
+            }
+            else if(tokenB[0] == 'START_SET') {
+                wildcardPatternA = wildcardPatternA.substr(1);
+                wildcardPatternB = wildcardPatternB.substr(1);
+                var set = readSet(wildcardPatternB);
+                wildcardPatternB = set.remainder;
+                continue;
+            }
+            else if(tokenB[0] == 'WILD') {
+                wildcardPatternA = wildcardPatternA.substr(1);
+                //console.log(wildcardPatternA, wildcardPatternB);
+                wildcardPatternB = wildcardPatternB.substr(1);
+                //console.log(wildcardPatternA, wildcardPatternB);
+                var i = 0;
+                while(i <= wildcardPatternA.length) {
+                    var result = RegularExpression.wildcardPatternsMatch(wildcardPatternB, wildcardPatternA.substr(i));
+                    if(result) {
+                        return true;
+                    }
+                    var token = nextToken(wildcardPatternA.substr(i));
+                    if(token[0] == 'LITERAL' || token[0] == 'WILD') {
+                        i += token[2];
+                    }
+                    else if(token[0] == 'START_SET') {
+                        i++;
+                        var set = readSet(wildcardPatternA.substr(i));
+                        i += set.read;
+                    }
+                    else {
+                        //console.log("NEED TO SKIP NON-LITERAL (B)");
+                        return false;
+                    }
+                }
+                return false;
+            }
+            //console.log(wildcardPatternA, wildcardPatternB);
+            //console.log('ONE_WILD (A) COMPARE TO NON-LITERAL', tokenB[0]);
+            return false;
+        }
+
+        if(tokenB[0] == 'ONE_WILD') {
+            //console.log(wildcardPatternA, wildcardPatternB);
+            wildcardPatternB = wildcardPatternB.substr(1);
+            if(tokenA[0] == 'LITERAL' || tokenA[0] == 'ONE_WILD') {
+                wildcardPatternA = wildcardPatternA.substr(1);
+                continue;
+            }
+            //console.log(wildcardPatternA, wildcardPatternB);
+            //console.log('ONE_WILD (B) COMPARE TO NON-LITERAL', tokenA[0]);
+            return false;
+        }
+
+        if(tokenA[0] == 'START_SET') {
+            wildcardPatternA = wildcardPatternA.substr(1);
+            var setA = readSet(wildcardPatternA);
+            wildcardPatternA = setA.remainder;
+            if(tokenB[0] == 'LITERAL') {
+                if(setA.values.indexOf(tokenB[1]) != -1) {
+                    wildcardPatternB = wildcardPatternB.substr(tokenB[2]);
+                    continue;
+                }
+                return false;
+            }
+            if(tokenB[0] == 'START_SET') {
+                wildcardPatternB = wildcardPatternB.substr(1);
+                var setB = readSet(wildcardPatternB);
+                wildcardPatternB = setA.remainder;
+                //console.log(setA, setB);
+                var found = false;
+                for(var i = 0; i < setA.values.length; i++) {
+                    for(var j = 0; j < setB.values.length; j++) {
+                        if(setA.values[i] == setB.values[j]) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if(found) {
+                    continue;
+                }
+                return false;
+            }
+            //console.log(wildcardPatternA, wildcardPatternB);
+            //console.log("COMPARE SET (A) TO " + tokenB[0]);
+            return false;
+        }
+
+        if(tokenB[0] == 'START_SET') {
+            wildcardPatternB = wildcardPatternB.substr(1);
+            var setB = readSet(wildcardPatternB);
+            wildcardPatternB = setB.remainder;
+
+            if(tokenA[0] == 'LITERAL') {
+                if(setB.values.indexOf(tokenA[1]) != -1) {
+                    wildcardPatternA = wildcardPatternA.substr(1);
+                    continue;
+                }
+                return false;
+            }
+            //console.log("COMPARE SET (B) TO " + tokenA[0]);
+            return false;
+        }
+
+        if(tokenA[0] == 'START_GROUP') {
+            wildcardPatternA = wildcardPatternA.substr(1);
+            var groupA = readGroup(wildcardPatternA);
+            wildcardPatternA = groupA.remainder;
+            //console.log(groupA);
+
+            for(var i = 0; i < groupA.options.length; i++) {
+                var result = RegularExpression.wildcardPatternsMatch(groupA.options[i] + wildcardPatternA, wildcardPatternB);
+                if(result) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if(tokenA[0] == 'END' || tokenB[0] == 'END') {
+            return tokenA[0] == 'END' && tokenB[0] == 'END';
+        }
+
+        //console.log(wildcardPatternA, wildcardPatternB);
+        //console.log("Unexpected token: " + tokenA + '-' + tokenB);
+        return false;
+    }
 };
-
-/*
-// This is an alternate algorithm for doing wildcard matching
-RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPatternB) {
-	// http://stackoverflow.com/questions/18695727/algorithm-to-find-out-whether-the-matches-for-two-glob-patterns-or-regular-expr/18813883#18813883
-
-	// Enumeration for specifying the type of pattern
-	var PatternTypes = {
-	    prefix: 0,
-	    suffix: 1,
-	    all: 2
-	};
-
-	// Find out whether the supplied suffixes or prefixes intersect
-	function tokensIntersect(tokenA, tokenB, patternType) {
-	    var regularExpressionString = '';
-	    var characterInCharacterClass = false;
-	    var characterClass = '';
-	    
-	    // Build up a regular expression for tokenA
-	    for(var characterPosition = 0; characterPosition < tokenA.length; characterPosition++) {
-	        var character = tokenA.charAt(characterPosition);
-	        
-	        // Build expression differently depending on whether the current character is within a character class
-	        if(characterInCharacterClass) {
-	            if(character == ']') {
-	                characterClass = RegularExpression.escape(characterClass);
-	                regularExpressionString += "([" + characterClass + "?]|\\[[^\\]]*[" + characterClass + "].*?\\])";
-	                characterClass = '';
-	                characterInCharacterClass = false;
-	            }
-	            else {
-	                characterClass += character;
-	            }
-	        }
-	        else {
-	            if(character == '[') {
-	                characterInCharacterClass = true;
-	            }
-	            else if(character == '?') {
-	                regularExpressionString += "(\\[.*?\\]|[^\\]])";
-	            }
-	            else if(character == '*') {
-	                regularExpressionString += "(\\[.*?\\]|[^\\]])*";
-	            }
-	            else {
-	                regularExpressionString += "([" + RegularExpression.escape(character) + "?]|\\[[^\\]]*[" + RegularExpression.escape(character) + "].*?\\])";
-	            }
-	        }
-	    }
-	    
-	    if(characterInCharacterClass) {
-	    	throw new Error('Unterminated character class in pattern: '+tokenA);
-	    }
-	    
-	    switch(patternType) {
-	        case PatternTypes.prefix:
-	            // Prefix must be at the start - the ^ regularExpression character denotes this
-	            regularExpressionString = "^"+regularExpressionString;
-	            break;
-	        case PatternTypes.suffix:
-	            // Suffix must be at the end - the $ regularExpression character denotes this
-	            regularExpressionString += "$";
-	            break;
-	        default:
-	            // Otherwise assume it is the whole string - use both regularExpression characters
-	            regularExpressionString = "^"+regularExpressionString + "$";
-	    }
-	    
-	    // Test tokenB against the regular expression created for tokenA
-	    var regularExpression = new RegExp(regularExpressionString, "i");
-	    var intersect = regularExpression.test(tokenB);
-
-	    return intersect;
-	}
-
-	// Find out whether the supplied patterns intersect
-	function wildcardPatternsIntersect(wildcardPatternA, wildcardPatternB) {
-	    var intersect = null;
-	    
-	    // If either pattern is null, use empty string instead
-	    wildcardPatternA = wildcardPatternA || '';
-	    wildcardPatternB = wildcardPatternB || '';
-	    
-	    // Get prefixes and suffixes for both patterns
-	    var wildcardPatternAFirstStarPosition = wildcardPatternA.indexOf('*');
-	    var wildcardPatternAPrefix = wildcardPatternAFirstStarPosition < 0 ? wildcardPatternA : wildcardPatternA.substr(0, wildcardPatternA.indexOf('*'));
-	    var wildcardPatternASuffix = wildcardPatternA.substr(wildcardPatternA.lastIndexOf('*') + 1);
-	    var wildcardPatternBFirstStarPosition = wildcardPatternB.indexOf('*');
-	    if((wildcardPatternAFirstStarPosition >= 0) && (wildcardPatternBFirstStarPosition >= 0)) {
-	        var wildcardPatternBPrefix = wildcardPatternBFirstStarPosition < 0 ? wildcardPatternB : wildcardPatternB.substr(0, wildcardPatternB.indexOf('*'));
-	        var wildcardPatternBSuffix = wildcardPatternB.substr(wildcardPatternB.lastIndexOf('*') + 1);
-	        var prefixesIntersect = tokensIntersect(wildcardPatternAPrefix, wildcardPatternBPrefix, PatternTypes.prefix) || tokensIntersect(wildcardPatternBPrefix, wildcardPatternAPrefix, PatternTypes.prefix);
-	        var suffixesIntersect = tokensIntersect(wildcardPatternASuffix, wildcardPatternBSuffix, PatternTypes.suffix) || tokensIntersect(wildcardPatternBSuffix, wildcardPatternASuffix, PatternTypes.suffix);
-	        intersect = prefixesIntersect && suffixesIntersect;
-	    }
-	    else if(wildcardPatternAFirstStarPosition >= 0) {
-	        intersect = tokensIntersect(wildcardPatternA, wildcardPatternB, PatternTypes.all);
-	    }
-	    else {
-	        intersect = tokensIntersect(wildcardPatternB, wildcardPatternA, PatternTypes.all);
-	    }
-
-	    return intersect;
-	}
-
-	var wildcardPatternsMatch = false;
-
-	// Make "event1" match "event1.*"
-	if(wildcardPatternA.endsWith('.*')) {
-		wildcardPatternA = wildcardPatternA.replaceLast('.*', '*');
-	}
-	if(wildcardPatternB.endsWith('.*')) {
-		wildcardPatternB = wildcardPatternB.replaceLast('.*', '*');
-	}
-
-	wildcardPatternsMatch = wildcardPatternsIntersect(wildcardPatternA, wildcardPatternB);
-
-	return wildcardPatternsMatch;
-};
-*/
 
 // Export
 module.exports = RegularExpression;
