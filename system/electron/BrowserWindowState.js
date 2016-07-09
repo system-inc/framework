@@ -231,7 +231,7 @@ var BrowserWindowState = Class.extend({
 
 	saveToLocalStorageOnClose: function() {
 		// Save window state to local storage
-		window.addEventListener('beforeunload', function(event) {
+		document.htmlDocument.on('htmlDocument.unload.before', function(event) {
 			this.load();
 			this.saveToLocalStorage();
 		}.bind(this));

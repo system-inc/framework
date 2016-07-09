@@ -1,5 +1,6 @@
 // Dependencies
 var HtmlEvent = Framework.require('system/html/events/html-event/HtmlEvent.js');
+var Url = Framework.require('system/web/Url.js');
 
 // Class
 var HtmlDocumentEvent = HtmlEvent.extend({
@@ -25,10 +26,7 @@ HtmlDocumentEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	// The identifier for the event
 	var eventIdentifier = null;
 
-	if(domEvent.type == 'resize') {
-		eventIdentifier = 'htmlDocument.resize';
-	}
-	else if(domEvent.type == 'readystatechange') {
+	if(domEvent.type == 'readystatechange') {
 		if(emitter.domDocument.readyState == 'loading') {
 			eventIdentifier = 'htmlDocument.loading';
 		}
@@ -38,6 +36,20 @@ HtmlDocumentEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 		else if(emitter.domDocument.readyState == 'complete') {
 			eventIdentifier = 'htmlDocument.load';
 		}
+	}
+	else if(domEvent.type == 'hashchange') {
+		eventIdentifier = 'htmlDocument.url.fragment.change';
+
+		// Update the URL on the document
+		emitter.url = new Url(domEvent.newURL);
+
+		htmlDocumentEventWithoutIdentifier.data = emitter.url;
+	}
+	else if(domEvent.type == 'beforeunload') {
+		eventIdentifier = 'htmlDocument.unload.before';
+	}
+	else if(domEvent.type == 'resize') {
+		eventIdentifier = 'htmlDocument.resize';
 	}
 	else if(domEvent.type == 'webkitfullscreenchange') {
 		if(emitter.domDocument.webkitIsFullScreen) {

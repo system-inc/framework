@@ -62,9 +62,9 @@ var ClipboardEventTest = ElectronTest.extend({
 		//yield ElectronManager.cutUsingKeyboard();
 		//yield ElectronManager.pasteUsingKeyboard();
 
-		document.execCommand('copy', false, null);
-		document.execCommand('cut', false, null);
-		document.execCommand('paste', false, null);
+		htmlDocument.executeCopy();
+		htmlDocument.executeCut();
+		htmlDocument.executePaste();
 
 		Assert.true(Class.isInstance(capturedClipboardCopyEvent, ClipboardEvent), '"clipboard.copy" events are instances of ClipboardEvent');
 		Assert.true(Class.isInstance(capturedClipboardCutEvent, ClipboardEvent), '"clipboard.cut" events are instances of ClipboardEvent');

@@ -50,7 +50,7 @@ InputSelectEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 InputSelectEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 	var inputSelectEvent = new InputSelectEvent(emitter, identifier);
 
-	inputSelectEvent.selection = window.getSelection();
+	inputSelectEvent.selection = emitter.htmlDocument.getSelection();
 	inputSelectEvent.text = inputSelectEvent.selection.toString();
 
 	return inputSelectEvent;

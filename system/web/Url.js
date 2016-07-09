@@ -8,7 +8,7 @@ var Url = Class.extend({
 	path: null,
 	query: null,
 	queryString: null,
-	hash: null,
+	fragment: null,
 	input: null,
 
 	construct: function(string) {
@@ -62,15 +62,17 @@ var Url = Class.extend({
 		// Set the query string
 		this.queryString = nodeUrl.search;
 
-		// Set the hash
-		this.hash = nodeUrl.hash;
+		// Set the fragment
+		if(nodeUrl.hash) {
+			this.fragment = nodeUrl.hash.replaceFirst('#', '');	
+		}
 
 		// Set the complete URL
 		this.url = this.getUrl();
 	},
 
 	getUrl: function() {
-		return this.protocol+'://'+this.host+(this.port != 80 && this.port != 443 ? ':'+this.port : '')+this.path+this.queryString+(this.hash ? '#'+this.hash : '');
+		return this.protocol+'://'+(this.host ? this.host : '')+(this.port && this.port != 80 && this.port != 443 ? ':'+this.port : '')+this.path+this.queryString+(this.fragment ? '#'+this.fragment : '');
 	},
 
 	rebuild: function() {

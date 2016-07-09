@@ -11,7 +11,7 @@ var MainViewController = ViewController.extend({
 	construct: function(electronManager) {
         this.electronManager = electronManager;
 
-        // Set the testBrowserWindowUniqueIdentifier
+        // Set the testBrowserWindowUniqueIdentifier - must use window. as we do not have an HtmlDocument object
         var testBrowserWindowUniqueIdentifier = window.location.hash.replace('#', '');
         //Console.log('testBrowserWindowUniqueIdentifier', testBrowserWindowUniqueIdentifier);
 
@@ -25,7 +25,7 @@ var MainViewController = ViewController.extend({
                 var testClassName = data.testClassName;
                 var testMethodName = data.testMethodName;
 
-                // Set the page title
+                // Set the page title - must use document. as we do not have an HtmlDocument object
                 document.title = testClassName+'.'+testMethodName+' \u2022 Proctor \u2022 Assistant \u2022 Framework';
 
                 var proctor = new Proctor('electron', true);

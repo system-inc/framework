@@ -14,6 +14,16 @@ var HtmlEventEmitter = PropagatingEventEmitter.extend({
 		return HtmlEventProxy.addEventListener(eventPattern, functionToBind, timesToRun, this);
 	},
 
+	removeEventListener: function*(eventPattern, functionToUnbind) {
+		// Route this call through HtmlEventProxy
+		return HtmlEventProxy.removeEventListener(eventPattern, functionToBind);
+	},
+
+	removeAllEventListeners: function() {
+		// Route this call through HtmlEventProxy
+		return HtmlEventProxy.removeAllEventListeners(this);
+	},
+
 });
 
 // Static methods

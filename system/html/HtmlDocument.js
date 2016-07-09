@@ -2,6 +2,7 @@
 var XmlDocument = Framework.require('system/xml/XmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
 var HtmlDocumentEventEmitter = Framework.require('system/html/events/html-document/HtmlDocumentEventEmitter.js');
+var Url = Framework.require('system/web/Url.js');
 var ShortcutManager = Framework.require('system/web-interface/shortcuts/ShortcutManager.js');
 
 // Class
@@ -10,6 +11,7 @@ var HtmlDocument = XmlDocument.extend({
 	type: 'html',
 
 	domDocument: null,
+	domWindow: null,
 	isMountedToDom: false,
 	//shouldScheduleDomUpdates: false, // Testing
 	shouldScheduleDomUpdates: true,
@@ -21,6 +23,8 @@ var HtmlDocument = XmlDocument.extend({
 	head: null,
 	body: null,
 	titleHtmlElement: null,
+
+	url: null,
 
 	dimensions: {
 		width: null,
@@ -122,10 +126,9 @@ var HtmlDocument = XmlDocument.extend({
 		if(global['document']) {
 			// Connect this.domDocument to the global document
 			this.domDocument = document;
+			this.domWindow = document.defaultView; // window
+			document.htmlDocument = this;
 			//Console.log('DOM present, HtmlDocument connected to DOM', this);
-
-			// Set window.HtmlDocument to this
-			//window.htmlDocument = this;
 
 			// Manually connect this <html> HtmlElement to document.documentElement
 			this.view.domNode = this.domDocument.documentElement;
@@ -133,6 +136,9 @@ var HtmlDocument = XmlDocument.extend({
 			// Manually connect the head and body domNode's to the domDocument's head and body properties
 			this.head.domNode = this.domDocument.head;
 			this.body.domNode = this.domDocument.body;
+
+			// Set the URL
+			this.url = new Url(this.domDocument.location.toString());
 		}
 
 		this.view.append(this.head);
@@ -225,8 +231,8 @@ var HtmlDocument = XmlDocument.extend({
 			//Console.log('scheduling executeDomUpdates');
 			this.domUpdatesScheduled = true;
 
-			window.requestAnimationFrame(function() {
-				//console.info('window.requestAnimationFrame');
+			this.domWindow.requestAnimationFrame(function() {
+				//console.info('this.domWindow.requestAnimationFrame');
 				this.executeDomUpdates();
 			}.bind(this));
 		}
@@ -290,14 +296,34 @@ var HtmlDocument = XmlDocument.extend({
 		return textInserted;
 	},
 
+	executeCut: function() {
+		return this.domDocument.execCommand('copy', false, null);
+	},
+
+	executeCopy: function() {
+		return this.domDocument.execCommand('cut', false, null);
+	},
+
+	executePaste: function() {
+		return this.domDocument.execCommand('paste', false, null);
+	},
+
+	print: function() {
+		this.domWindow.print();
+	},
+
+	getSelection: function() {
+		return this.domWindow.getSelection();
+	},
+
 	getSelectedText: function() {
 		var text = '';
 
-        if(window.getSelection) {
-            text = window.getSelection().toString();
+        if(this.domWindow.getSelection) {
+            text = this.domWindow.getSelection();
         }
-        else if(document.selection && document.selection.type != 'Control') {
-            text = document.selection.createRange().text;
+        else if(this.domDocument.selection && this.domDocument.selection.type != 'Control') {
+            text = this.domDocument.selection.createRange().text;
         }
 
         return text;
@@ -318,14 +344,14 @@ var HtmlDocument = XmlDocument.extend({
 	getDimensionAndPositionFromDomDocument: function() {
 		if(this.domDocument) {
 			// Dimensions
-			this.dimensions.width = document.documentElement.scrollWidth;
-			this.dimensions.height = document.documentElement.scrollHeight;
-			this.dimensions.visibleWidth = document.documentElement.clientWidth;
-			this.dimensions.visibleHeight = document.documentElement.clientHeight;
+			this.dimensions.width = this.domDocument.documentElement.scrollWidth;
+			this.dimensions.height = this.domDocument.documentElement.scrollHeight;
+			this.dimensions.visibleWidth = this.domDocument.documentElement.clientWidth;
+			this.dimensions.visibleHeight = this.domDocument.documentElement.clientHeight;
 
 			// Position - relativeToRelativeAncestor
-			this.position.relativeToRelativeAncestor.x = document.scrollingElement.scrollTop;
-			this.position.relativeToRelativeAncestor.y = document.scrollingElement.scrollLeft;
+			this.position.relativeToRelativeAncestor.x = this.domDocument.scrollingElement.scrollTop;
+			this.position.relativeToRelativeAncestor.y = this.domDocument.scrollingElement.scrollLeft;
 
 			// Position - relativeToDocumentViewport
 			this.position.relativeToDocumentViewport.x = 0;
@@ -334,33 +360,33 @@ var HtmlDocument = XmlDocument.extend({
 			this.position.relativeToDocumentViewport.coordinates.topLeft.x = 0;
 			this.position.relativeToDocumentViewport.coordinates.topLeft.y = 0;
 						
-			this.position.relativeToDocumentViewport.coordinates.topCenter.x = window.innerWidth / 2;
+			this.position.relativeToDocumentViewport.coordinates.topCenter.x = this.domWindow.innerWidth / 2;
 			this.position.relativeToDocumentViewport.coordinates.topCenter.y = 0;
 						
-			this.position.relativeToDocumentViewport.coordinates.topRight.x = window.innerWidth;
+			this.position.relativeToDocumentViewport.coordinates.topRight.x = this.domWindow.innerWidth;
 			this.position.relativeToDocumentViewport.coordinates.topRight.y = 0;
 
 			this.position.relativeToDocumentViewport.coordinates.leftCenter.x = 0;
-			this.position.relativeToDocumentViewport.coordinates.leftCenter.y = window.innerHeight / 2;
+			this.position.relativeToDocumentViewport.coordinates.leftCenter.y = this.domWindow.innerHeight / 2;
 
-			this.position.relativeToDocumentViewport.coordinates.rightCenter.x = window.innerWidth;
-			this.position.relativeToDocumentViewport.coordinates.rightCenter.y = window.innerHeight / 2;
+			this.position.relativeToDocumentViewport.coordinates.rightCenter.x = this.domWindow.innerWidth;
+			this.position.relativeToDocumentViewport.coordinates.rightCenter.y = this.domWindow.innerHeight / 2;
 
 			this.position.relativeToDocumentViewport.coordinates.bottomLeft.x = 0;
-			this.position.relativeToDocumentViewport.coordinates.bottomLeft.y = window.innerHeight;
+			this.position.relativeToDocumentViewport.coordinates.bottomLeft.y = this.domWindow.innerHeight;
 						
-			this.position.relativeToDocumentViewport.coordinates.bottomCenter.x = window.innerWidth / 2;
-			this.position.relativeToDocumentViewport.coordinates.bottomCenter.y = window.innerHeight;
+			this.position.relativeToDocumentViewport.coordinates.bottomCenter.x = this.domWindow.innerWidth / 2;
+			this.position.relativeToDocumentViewport.coordinates.bottomCenter.y = this.domWindow.innerHeight;
 						
-			this.position.relativeToDocumentViewport.coordinates.bottomRight.x = window.innerWidth;
-			this.position.relativeToDocumentViewport.coordinates.bottomRight.y = window.innerHeight;
+			this.position.relativeToDocumentViewport.coordinates.bottomRight.x = this.domWindow.innerWidth;
+			this.position.relativeToDocumentViewport.coordinates.bottomRight.y = this.domWindow.innerHeight;
 
-			this.position.relativeToDocumentViewport.coordinates.center.x = window.innerWidth / 2;
-			this.position.relativeToDocumentViewport.coordinates.center.y = window.innerHeight / 2;
+			this.position.relativeToDocumentViewport.coordinates.center.x = this.domWindow.innerWidth / 2;
+			this.position.relativeToDocumentViewport.coordinates.center.y = this.domWindow.innerHeight / 2;
 
 			this.position.relativeToDocumentViewport.edges = 0;
-			this.position.relativeToDocumentViewport.edges = window.innerWidth;
-			this.position.relativeToDocumentViewport.edges = window.innerHeight;
+			this.position.relativeToDocumentViewport.edges = this.domWindow.innerWidth;
+			this.position.relativeToDocumentViewport.edges = this.domWindow.innerHeight;
 			this.position.relativeToDocumentViewport.edges = 0;
 		}
 

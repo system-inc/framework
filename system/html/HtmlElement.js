@@ -254,8 +254,9 @@ var HtmlElement = HtmlNode.extend({
 			htmlElement = this;
 		}
 
-		// The DOM fragment is just for the tag, not for the children
+		// The DOM fragment is just for the tag, not for the children - must use document global here as this.domDocument may not be populated
 		var domFragment = document.createElement(htmlElement.tag);
+		//var domFragment = document.createElement(htmlElement.tag);
 		//var domFragment = document.createRange().createContextualFragment(htmlElement.tagToString()); // This does not work consistently
 		//Console.log('HtmlElement domFragment for', htmlElement.tagToString(), domFragment);
 

@@ -446,7 +446,7 @@ Html.noscript = function(options) {
 	return new HtmlElement('noscript', options);
 };
 
-// Embedded object. forHtml.object = function(options) {
+// Embedded object
 Html.object = function(options) {
 	return new HtmlElement('object', options);
 };
@@ -461,17 +461,17 @@ Html.embed = function(options) {
 	return new HtmlElement('embed', options, true);
 };
 
-// Embed a page; inner window. HTML Iframe Tutorial
+// Embed a page
 Html.iframe = function(options) {
 	return new HtmlElement('iframe', options);
 };
 
-// Interactive graphics, games. Canvas Example
+// Interactive graphics, games
 Html.canvas = function(options) {
 	return new HtmlElement('canvas', options);
 };
 
-// <abbr title="eXtensible Markup Language">XML</abbr>. abbr Example
+// <abbr title="eXtensible Markup Language">XML</abbr>
 Html.abbr = function(options) {
 	return new HtmlElement('abbr', options);
 };

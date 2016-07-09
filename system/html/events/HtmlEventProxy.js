@@ -26,6 +26,18 @@ HtmlEventProxy.domEventIdentifierMap = {
 			'htmlDocument.load': true,
 		},
 	},
+	hashchange: {
+		eventClass: HtmlDocumentEvent,
+		eventPatterns: {
+			'htmlDocument.url.fragment.change': true,
+		},
+	},
+	beforeunload: {
+		eventClass: HtmlDocumentEvent,
+		eventPatterns: {
+			'htmlDocument.unload.before': true,
+		},
+	},
 	resize: {
 		eventClass: HtmlDocumentEvent,
 		eventPatterns: {
@@ -337,10 +349,23 @@ HtmlEventProxy.getDomObjectFromHtmlEventEmitter = function(htmlEventEmitter, dom
 	var HtmlNode = Framework.require('system/html/HtmlNode.js');
 
 	// Set the domObject
+	// Deal with HtmlDocument events
 	if(HtmlDocument.is(htmlEventEmitter)) {
-		if(domEventIdentifier == 'resize') {
+		// window events
+		if(
+			domEventIdentifier == 'resize' ||
+			domEventIdentifier == 'beforeunload' ||
+			domEventIdentifier == 'hashchange'
+		) {
 			domObject = htmlEventEmitter.domDocument.defaultView; // window
 		}
+		// body events
+		//else if(
+			
+		//) {
+		//	domObject = htmlEventEmitter.domDocument.body;
+		//}
+		// document events
 		else {
 			domObject = htmlEventEmitter.domDocument;
 		}
@@ -425,8 +450,16 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 		// Emit the event
 		events.each(function(eventIndex, event) {
 			//Console.standardLog('htmlEventEmitter.emit event', event);
-			htmlEventEmitter.emit(event.identifier, event);		
+			htmlEventEmitter.emit(event.identifier, event);
 		});
+
+		// Return the value of the last event
+		var lastEventReturnPreviousReturnValue = events.last().previousReturnValue;
+		if(lastEventReturnPreviousReturnValue !== undefined) {
+			domEvent.returnValue = lastEventReturnPreviousReturnValue;
+		}
+
+		return lastEventReturnPreviousReturnValue;
 	}.bind(htmlEventEmitter);
 
 	// If we have a valid domEventIdentifier
@@ -438,7 +471,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 				var domObject = HtmlEventProxy.getDomObjectFromHtmlEventEmitter(htmlEventEmitter, domEventIdentifier);
 
 				Console.standardLog('Binding domEventIdentifier "'+domEventIdentifier+'" to DOM object will use for eventPattern "'+eventPattern+'"');
-				Console.standardLog('domObject', domObject);
+				//Console.standardLog('domObject', domObject);
 
 				// Keep track of which DOM object event listeners we have added
 				htmlEventEmitter.eventListenersOnDomObject.append(domEventIdentifier);
@@ -483,6 +516,17 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 	PropagatingEventEmitter.prototype.addEventListener.apply(htmlEventEmitter, arguments);
 
 	return htmlEventEmitter;
+};
+
+HtmlEventProxy.removeEventListener = function(eventPattern, functionToUnbind, htmlEventEmitter) {
+	// TODO: See how prop event emitter does the removal
+
+	return PropagatingEventEmitter.prototype.removeEventListener.apply(htmlEventEmitter, arguments);
+};
+
+HtmlEventProxy.removeAllEventListeners = function(htmlEventEmitter) {
+
+	return PropagatingEventEmitter.prototype.removeAllEventListeners.apply(htmlEventEmitter, arguments);
 };
 
 // Export

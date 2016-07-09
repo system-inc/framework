@@ -182,6 +182,7 @@ var HtmlNode = XmlNode.extend({
 			htmlNode = this;
 		}
 
+		// Must use document global here as this.domDocument may not be populated
 		var domFragment = document.createRange().createContextualFragment(htmlNode.toString());
 		//Console.log('HtmlNode domFragment for', htmlNode.tag, domFragment);
 

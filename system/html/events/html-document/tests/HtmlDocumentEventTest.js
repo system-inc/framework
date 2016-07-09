@@ -46,7 +46,84 @@ var FormEventTest = ElectronTest.extend({
     	//throw new Error('Throwing error to display browser window.');
 	},
 
-    testHtmlDocumentEvents: function*() {
+    testHtmlDocumentEventUrlFragmentChange: function*() {
+        // Create an HtmlDocument
+        var htmlDocument = new HtmlDocument();
+
+        // Create a link to change the fragment
+        var aElement = Html.a({
+            content: 'Go to #testDiv',
+            href: '#testDiv',
+        });
+        htmlDocument.body.append(aElement);
+
+        var aElementForStartingFragment = Html.a({
+            content: 'Go to #'+htmlDocument.url.fragment,
+            href: '#'+htmlDocument.url.fragment,
+        });
+        htmlDocument.body.append(aElementForStartingFragment);
+
+        // Create a div HtmlElement
+        var htmlElement = Html.div({
+            id: 'testDiv',
+            content: '#testDiv',
+            style: 'background: #EFEFEF; padding: 30px;',
+        });
+        htmlDocument.body.append(htmlElement);
+
+        // Set a variable to capture the events
+        var capturedEventHtmlDocumentUrlFragmentChange = null;
+
+        htmlDocument.on('htmlDocument.url.fragment.change', function(event) {
+            Console.standardWarn(event.identifier, event);
+            capturedEventHtmlDocumentUrlFragmentChange = event;
+        });
+
+        // Mount the HtmlDocument to the DOM
+        htmlDocument.mountToDom();
+
+        // Click the link to change the fragment
+        aElement.click();
+        yield Function.delay(50); // Give some time for the event to emit
+
+        Assert.strictEqual(capturedEventHtmlDocumentUrlFragmentChange.data, htmlDocument.url, 'htmlDocument.url.fragment.change events emit correctly');
+
+        // Need to go back to the original URL as Assistant app needs to use the fragment to identify the browser window
+        aElementForStartingFragment.click();
+        yield Function.delay(50); // Give some time for the event to emit
+
+        //throw new Error('Throwing error to display browser window.');
+    },
+
+    testHtmlDocumentEventUnloadBefore: function*() {
+        // Create an HtmlDocument
+        var htmlDocument = new HtmlDocument();
+
+        // Create a div HtmlElement
+        var htmlElement = Html.div({
+            content: 'div',
+            style: 'background: #EFEFEF; padding: 30px; height: 8192px;',
+        });
+
+        // Append the HtmlElement to the HtmlDocument body
+        htmlDocument.body.append(htmlElement);
+
+        // Set a variable to capture the events
+        var capturedEventHtmlDocumentUnloadBefore = null;
+
+        htmlDocument.on('htmlDocument.unload.before', function(event) {
+            Console.standardWarn(event.identifier, event);
+            capturedEventHtmlDocumentUnloadBefore = event;
+            return undefined;
+        });
+
+        // Mount the HtmlDocument to the DOM
+        htmlDocument.mountToDom();
+
+        //throw new Error('Throwing error to display browser window.');
+    },
+
+    testHtmlDocumentEventResize: function*() {
         // Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 

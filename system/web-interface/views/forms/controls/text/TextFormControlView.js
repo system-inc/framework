@@ -46,13 +46,14 @@ var TextFormControlView = FormControlView.extend({
 	getCursorPosition: function() {
         var position = 0;
 
-        if('selectionStart' in this.domNode) {
+        if(this.domNode.selectionStart != undefined) {
             position = this.domNode.selectionStart;
         }
-        else if('selection' in document) {
+        else {
             this.domNode.focus();
-            var selectionRange = document.selection.createRange();
-            var selectionLength = document.selection.createRange().text.length;
+            var selection = this.htmlDocument.getSelection();
+            var selectionRange = selection.createRange();
+            var selectionLength = selection.createRange().text.length;
             selectionRange.moveStart('character', -this.domNode.value.length);
             position = selectionRange.text.length - selectionLength;
         }
