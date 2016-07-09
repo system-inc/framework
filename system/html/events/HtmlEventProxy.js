@@ -506,8 +506,8 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 			}
 			else {
 				htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier].count++;
-				Console.log('Already bound domEventIdentifier "'+domEventIdentifier+'" to DOM object, will use the existing one for eventPattern "'+eventPattern+'"');
-				Console.log(domEventIdentifier, htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier]);
+				Console.standardLog('Already bound domEventIdentifier "'+domEventIdentifier+'" to DOM object, will use the existing one for eventPattern "'+eventPattern+'"');
+				//Console.standardLog(domEventIdentifier, htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier]);
 			}
 		});
 	}
