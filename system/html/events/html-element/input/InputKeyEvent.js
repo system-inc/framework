@@ -76,6 +76,20 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 			eventIdentifier = eventIdentifier.replaceLast('.up', '');
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
+
+		// Create additional events with the modifier keys
+		if(inputKeyEventWithoutIdentifier.key) {
+			var modifierKeysDown = [];
+			inputKeyEventWithoutIdentifier.modifierKeysDown.each(function(key, down) {
+				if(down) {
+					modifierKeysDown.append(key);
+				}
+			});
+			if(modifierKeysDown.length) {
+				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+modifierKeysDown.join('.');
+				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+			}
+		}
 	}
 
 	// Add the event
@@ -91,19 +105,7 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 	}
 
-	// Create additional events with the modifier keys
-	var modifierKeysDown = [];
-	inputKeyEventWithoutIdentifier.modifierKeysDown.each(function(key, down) {
-		if(down) {
-			modifierKeysDown.append(key);
-		}
-	});
-	if(modifierKeysDown.length) {
-		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+eventTypeSuffix+'.'+modifierKeysDown.join('.');
-		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
-	}
-
-	//Console.standardLog('InputKeyEvent.createEventsFromDomEvent events', events);
+	Console.standardLog('InputKeyEvent.createEventsFromDomEvent events', events);
 
 	return events;
 };

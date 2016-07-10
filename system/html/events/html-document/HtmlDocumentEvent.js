@@ -16,7 +16,7 @@ HtmlDocumentEvent.is = function(value) {
 };
 
 HtmlDocumentEvent.createEventsFromDomEvent = function(domEvent, emitter) {
-	Console.standardLog('HtmlDocumentEvent.createEventsFromDomEvent', domEvent.type, arguments);
+	//Console.standardLog('HtmlDocumentEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 	var events = [];
 
@@ -71,7 +71,7 @@ HtmlDocumentEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 	// Add the event
 	events.append(htmlDocumentEventWithoutIdentifier);
 
-	Console.standardWarn('HtmlDocumentEvent.createEventsFromDomEvent events', events);
+	//Console.standardWarn('HtmlDocumentEvent.createEventsFromDomEvent events', events);
 
 	return events;
 };

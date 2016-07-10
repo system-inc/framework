@@ -181,7 +181,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 		eventClass: InputKeyEvent,
 		eventPatterns: {
 			'input.key.*.up': true,
-			'input.key.(alt|control|meta|shift|up|down|left|right|backspace|delete|insert|contextMenu|escape)': true,
+			'input.key.(alt|control|meta|command|windows|shift|up|down|left|right|backspace|delete|insert|contextMenu|escape)': true,
 		},
 	},
 	keypress: {
@@ -279,7 +279,7 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern
 };
 
 HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter) {
-	Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
+	//Console.standardWarn('HtmlEventEmitter createEventFromDomEvent arguments', arguments);
 
 	var events = [];
 	
@@ -321,7 +321,7 @@ HtmlEventProxy.createEventsFromDomEvent = function(domEvent, emitter) {
 		event.trusted = domEvent.isTrusted;
 	});
 
-	Console.standardWarn('HtmlEventProxy.createEventFromDomEvent events created', events);
+	//Console.standardWarn('HtmlEventProxy.createEventFromDomEvent events created', events);
 
 	return events;
 };
