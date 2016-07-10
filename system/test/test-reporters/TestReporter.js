@@ -124,7 +124,7 @@ var TestReporter = Class.extend({
 
 		// Show the total skipped tests
 		if(data.skippedTestMethods.length) {
-			Console.writeLine(Terminal.style(data.skippedTestMethods.length+' method'+(data.skippedTestMethods.length == 1 ? '' : 's')+' skipped in '+data.skippedTestClasses.length+' test class'+(data.skippedTestClasses.length == 1 ? '' : 'es')+': '+data.skippedTestClasses.join(', '), 'gray'));
+			Console.writeLine(Terminal.style(data.skippedTestMethods.length+' method'+(data.skippedTestMethods.length == 1 ? '' : 's')+' skipped in '+data.skippedTestClasses.length+' test class'+(data.skippedTestClasses.length == 1 ? '' : 'es'), 'gray'));
 		}
 		
 		// Show the total leaked variables

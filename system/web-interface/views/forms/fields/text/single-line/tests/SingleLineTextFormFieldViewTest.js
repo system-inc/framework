@@ -32,6 +32,10 @@ var SingleLineTextFormFieldViewTest = ElectronTest.extend({
 
         var capturedEventFormSubmit = null;
 
+        singleLineTextFormFieldView.formControlView.on('input.press', function(event) {
+            Console.standardInfo(event.identifier, event);
+        });
+
         formView.on('form.submit', function(event) {
             Console.standardInfo(event.identifier, event);
             capturedEventFormSubmit = event;
@@ -41,10 +45,12 @@ var SingleLineTextFormFieldViewTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Click the input field
-        yield ElectronManager.clickHtmlElement(singleLineTextFormFieldView);
+        yield ElectronManager.clickHtmlElement(singleLineTextFormFieldView.formControlView);
 
-        // Press the enter key to emit the input.key.enter event
-        //singleLineTextFormFieldView.emit('input.key.enter');
+        // Type something into the field
+        yield ElectronManager.pressKey('A');
+
+        // Press enter
         yield ElectronManager.pressKey('Enter');
 
         // Make sure the form submitted event occured

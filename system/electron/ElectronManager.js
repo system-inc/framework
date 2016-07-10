@@ -310,14 +310,14 @@ ElectronManager.clickHtmlElement = function(htmlElement, button, clickCount, mod
 	var htmlElementPosition = htmlElement.getPosition();
 	//Console.standardWarn('htmlElementPosition', htmlElementPosition);
 
-	return ElectronManager.click(htmlElementPosition.relativeToDocumentViewport.x, htmlElementPosition.relativeToDocumentViewport.y, button, clickCount, modifiers);
+	return ElectronManager.click(Number.round(htmlElementPosition.relativeToDocumentViewport.x), Number.round(htmlElementPosition.relativeToDocumentViewport.y), button, clickCount, modifiers);
 };
 
 ElectronManager.doubleClickHtmlElement = function(htmlElement, button, clickCount, modifiers) {
 	var htmlElementPosition = htmlElement.getPosition();
 	//Console.standardWarn('htmlElementPosition', htmlElementPosition);
 
-	return ElectronManager.click(htmlElementPosition.relativeToDocumentViewport.x, htmlElementPosition.relativeToDocumentViewport.y, button, 2, modifiers);
+	return ElectronManager.click(Number.round(htmlElementPosition.relativeToDocumentViewport.x), Number.round(htmlElementPosition.relativeToDocumentViewport.y), button, 2, modifiers);
 };
 
 ElectronManager.click = function(relativeToDocumentViewportX, relativeToDocumentViewportY, button, clickCount, modifiers) {
@@ -372,7 +372,7 @@ ElectronManager.click = function(relativeToDocumentViewportX, relativeToDocument
 
 ElectronManager.wheelRotateHtmlElement = function(htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers) {
 	var htmlElementPosition = htmlElement.getPosition();
-	return ElectronManager.wheelRotate(htmlElementPosition.relativeToDocumentViewport.x, htmlElementPosition.relativeToDocumentViewport.y,  deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
+	return ElectronManager.wheelRotate(Number.round(htmlElementPosition.relativeToDocumentViewport.x), Number.round(htmlElementPosition.relativeToDocumentViewport.y),  deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
 };
 
 ElectronManager.wheelRotate = function(relativeToDocumentViewportX, relativeToDocumentViewportY, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers) {

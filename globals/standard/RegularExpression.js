@@ -24,20 +24,22 @@ RegularExpression.escape = function(string) {
 RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPatternB) {
 	//Console.log('wildcardPatternsMatch', wildcardPatternA, wildcardPatternB);
 
-	// Performance
+	// Handle exact matches
 	if(wildcardPatternA === wildcardPatternB) {
 		return true;
 	}
 
 	// Make "event1" match "event1.*"
 	if(wildcardPatternA.endsWith('.*')) {
-		wildcardPatternA = wildcardPatternA.replaceLast('.*', '*');
+        wildcardPatternA = wildcardPatternA.slice(0, -2)+'*';
+		//wildcardPatternA = wildcardPatternA.replaceLast('.*', '*');
 	}
 	if(wildcardPatternB.endsWith('.*')) {
-		wildcardPatternB = wildcardPatternB.replaceLast('.*', '*');
+        wildcardPatternB = wildcardPatternB.slice(0, -2)+'*';
+		//wildcardPatternB = wildcardPatternB.replaceLast('.*', '*');
 	}
 
-	// Performance
+	// Handle exact matches again
 	if(wildcardPatternA === wildcardPatternB) {
 		return true;
 	}

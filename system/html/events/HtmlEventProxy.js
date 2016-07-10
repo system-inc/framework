@@ -21,9 +21,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 	readystatechange: {
 		eventClass: HtmlDocumentEvent,
 		eventPatterns: {
-			'htmlDocument.loading': true,
-			'htmlDocument.ready': true,
-			'htmlDocument.load': true,
+			'htmlDocument.(loading|ready|load)': true,
 		},
 	},
 	hashchange: {
@@ -47,8 +45,8 @@ HtmlEventProxy.domEventIdentifierMap = {
 	webkitfullscreenchange: {
 		eventClass: HtmlDocumentEvent,
 		eventPatterns: {
-			'htmlDocument.fullScreen.exit': true,
 			'htmlDocument.fullScreen': true,
+			'htmlDocument.fullScreen.exit': true,
 		},
 	},
 	webkitfullscreenerror: {
@@ -182,22 +180,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 		eventClass: InputKeyEvent,
 		eventPatterns: {
 			'input.key.*.up': true,
-
-			// TODO: 'input.key.(alt|control|etc...)': true,
-
-			'input.key.alt': true,
-			'input.key.control': true,
-			'input.key.meta': true,
-			'input.key.shift': true,
-			'input.key.up': true,
-			'input.key.down': true,
-			'input.key.left': true,
-			'input.key.right': true,
-			'input.key.backspace': true,
-			'input.key.delete': true,
-			'input.key.insert': true,
-			'input.key.contextMenu': true,
-			'input.key.escape': true,
+			'input.key.(alt|control|meta|shift|up|down|left|right|backspace|delete|insert|contextMenu|escape)': true,
 		},
 	},
 	keypress: {
@@ -519,7 +502,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 			'htmlDocument.domUpdatesExecuted',
 		];
 		if(!common.contains(eventPattern)) {
-			Console.log('No domEventIdentifier found for "'+eventPattern+', the eventPattern must not be for a standard event.');
+			Console.log('No domEventIdentifier found for "'+eventPattern+'", the eventPattern must not be for a standard event.');
 		}
 	}
 

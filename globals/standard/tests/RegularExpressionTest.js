@@ -48,10 +48,10 @@ var RegularExpressionTest = Test.extend({
 		Assert.true(RegularExpression.wildcardPatternsMatch('event123', 'event*'), '"event123" matches wildcard pattern, "event*"');
 		Assert.true(RegularExpression.wildcardPatternsMatch('event123event', 'event*event'), '"event123event" matches wildcard pattern, "event*event"');
 		Assert.true(RegularExpression.wildcardPatternsMatch('123event123event123', '*event*event*'), '"123event123event123" matches wildcard pattern, "*event*event*"');
-		Assert.true(RegularExpression.wildcardPatternsMatch('keyboard.key.*.up', 'keyboard.key.*.up.*'), '"keyboard.key.*.up" matches wildcard pattern, "keyboard.key.*.up.*"');
-		Assert.true(RegularExpression.wildcardPatternsMatch('mouse.button.*', 'mouse.*.click.*'), '"mouse.button.*" match wildcard pattern, "mouse.*.click.*"');
+		Assert.true(RegularExpression.wildcardPatternsMatch('input.key.*.up', 'input.key.*.up.*'), '"input.key.*.up" matches wildcard pattern, "input.key.*.up.*"');
+		Assert.true(RegularExpression.wildcardPatternsMatch('input.press.*', 'input.*.press.*'), '"input.press.*" match wildcard pattern, "input.*.press.*"');
 		Assert.true(RegularExpression.wildcardPatternsMatch('one.two.*', 'one.*.three.*'), '"one.two.*" match wildcard pattern, "one.*.three.*"');
-		Assert.false(RegularExpression.wildcardPatternsMatch('keyboard.key.*.up', 'keyboard.key.*.down'), 'From HtmlEventProxy');
+		Assert.false(RegularExpression.wildcardPatternsMatch('input.key.*.up', 'input.key.*.down'), 'From HtmlEventProxy');
 		Assert.true(RegularExpression.wildcardPatternsMatch('html*.mountedToDom', 'htmlDocument.scroll.*'), 'From HtmlEventProxy');
 
 		// "[abc]" indicates a set of any single character, in this case it will match either "a", "b", or "c"
@@ -60,7 +60,7 @@ var RegularExpressionTest = Test.extend({
 		Assert.true(RegularExpression.wildcardPatternsMatch('a[bc]d', 'acd'));
 		Assert.true(RegularExpression.wildcardPatternsMatch('a[bc]d', 'a[ce]d'));
 		Assert.true(RegularExpression.wildcardPatternsMatch('[abc][cde][efg]', '[abc][cde][efg]'));
-		Assert.false(RegularExpression.wildcardPatternsMatch('mouse.button.2.click', 'mouse.button.[1345].click'), 'From HtmlEventProxy');
+		Assert.false(RegularExpression.wildcardPatternsMatch('input.press.2.press', 'input.press.[1345].press'), 'From HtmlEventProxy');
 
 		// Various mix of patterns
 		Assert.true(RegularExpression.wildcardPatternsMatch('a[bc]d*wyz', 'abd*w[xy]z'));
@@ -83,23 +83,47 @@ var RegularExpressionTest = Test.extend({
 		Assert.true(RegularExpression.wildcardPatternsMatch('abc[def]?fghi?*nop*[tuv]uv[wxy]?yz', 'a?[cde]defg*?ilmn[opq]*tu*[xyz]*'));
 		Assert.true(RegularExpression.wildcardPatternsMatch('a?[cde]defg*?ilmn[opq]*tu*[xyz]*', 'abc[def]?fghi?*nop*[tuv]uv[wxy]?yz'));
 		
-		// TODO: Fix this
 		//Assert.true(RegularExpression.wildcardPatternsMatch('abcd[efg\\]hi]\\tjklm\\\\no?pq[rs?]tu', 'abcd]\tjklm\\\\no\\tpq\\?tu'));
 
 		// (|) sets of groups of characters
 		Assert.true(RegularExpression.wildcardPatternsMatch('start.(one|two).end', 'start.one.end'));
+		Assert.true(RegularExpression.wildcardPatternsMatch('start.(one|two).end', 'start.two.end'));
+		Assert.false(RegularExpression.wildcardPatternsMatch('start.(one|two).end', 'start.three.end'));
+		Assert.false(RegularExpression.wildcardPatternsMatch('start.(one|two).end', 'start..end'));
+		Assert.false(RegularExpression.wildcardPatternsMatch('start.(one|two).end', 'start.().end'));
 		Assert.true(RegularExpression.wildcardPatternsMatch('start.([abc]|[cde]).end', 'start.a.end'));
-		
-		// TODO: Fix these
-		//Assert.true(RegularExpression.wildcardPatternsMatch('mouse.button.two.click', 'mouse.button.(one|two).click'), 'Alternatives in a capture groups');
-		//Assert.true(RegularExpression.wildcardPatternsMatch('mouse.button.2.click', 'mouse.button.(1|2).click'), 'Alternative numbers in a capture groups');
+		Assert.false(RegularExpression.wildcardPatternsMatch('start.([abc]|[cde]).end', 'start.f.end'));
+		Assert.false(RegularExpression.wildcardPatternsMatch('start.([abc]|[cde]).end', 'start..end'));
+
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.key.(f11|f.(control|command))', 'input.key.*'));
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.key.*', 'input.key.(f11|f.(control|command))'));
+
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.key.*', 'input.key.i.alt.(control|command)'));
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.key.i.alt.(control|command)', 'input.key.*'));
+
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.key.*', 'input.key.w.(alt|control).(control|command)'));
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.key.w.(alt|control).(control|command)', 'input.key.*'));
+
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.key.*', 'input.key.(alt|control|meta|shift|up|down|left|right|backspace|delete|insert|contextMenu|escape)'));
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.key.(alt|control|meta|shift|up|down|left|right|backspace|delete|insert|contextMenu|escape)', 'input.key.*'));
+						
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.press.(one|two).down', 'input.press.two.down'), 'Alternatives in a capture groups');
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.press.two.down', 'input.press.(one|two).down'), 'Alternatives in a capture groups');
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.press.(1|2).down', 'input.press.2.down'), 'Alternative numbers in a capture groups');
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.press.2.down', 'input.press.(1|2).down'), 'Alternative numbers in a capture groups');
+		//Assert.true(RegularExpression.wildcardPatternsMatch('input.press.2.down', 'input.press.(2|1).down'), 'Alternative numbers in a capture groups');
 
 		// Ranges
-		// TODO: Fix these
 		//Assert.true(RegularExpression.wildcardPatternsMatch('start.[a-z].end', 'start.b.end'));
 		//Assert.true(RegularExpression.wildcardPatternsMatch('start.[A-Z].end', 'start.B.end'));
 		//Assert.true(RegularExpression.wildcardPatternsMatch('start.[a-Z].end', 'start.A.end'));
 		//Assert.true(RegularExpression.wildcardPatternsMatch('start.[0-9].end', 'start.5.end'));
+		//Assert.true(RegularExpression.wildcardPatternsMatch('start.[0-9a-Z].end', 'start.5.end'));
+		//Assert.true(RegularExpression.wildcardPatternsMatch('start.[0-9a-Z].end', 'start.X.end'));
+		//Assert.true(RegularExpression.wildcardPatternsMatch('start.[0-9a-Z].end', 'start.c.end'));
+		//Assert.true(RegularExpression.wildcardPatternsMatch('start.([0-9a-Z]|middle).end', 'start.middle.end'));
+		//Assert.true(RegularExpression.wildcardPatternsMatch('start.([0-9a-Z]|middle).end', 'start.b.end'));
+		//Assert.false(RegularExpression.wildcardPatternsMatch('start.([0-9a-Z]|middle).end', 'start.center.end'));
 	},
 
 });
