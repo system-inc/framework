@@ -22,7 +22,7 @@ RegularExpression.escape = function(string) {
 };
 
 RegularExpression.wildcardPatternsMatch = function(wildcardPatternA, wildcardPatternB) {
-	//Console.log('wildcardPatternsMatch', wildcardPatternA, wildcardPatternB);
+	//console.log('wildcardPatternsMatch', wildcardPatternA, wildcardPatternB);
 
 	// Handle exact matches
 	if(wildcardPatternA === wildcardPatternB) {
