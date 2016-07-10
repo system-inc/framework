@@ -1,6 +1,7 @@
 // Dependencies
 var Event = Framework.require('system/events/Event.js');
 var EventListener = Framework.require('system/events/EventListener.js');
+var WildcardPatternMatcher = Framework.require('system/search/patterns/WildcardPatternMatcher.js');
 
 // Class
 var EventEmitter = Class.extend({
@@ -236,7 +237,7 @@ var EventEmitter = Class.extend({
 				}
 				// If the event patterns are strings
 				else if(String.is(eventListener.eventPattern) && String.is(eventPattern)) {
-					if(RegularExpression.wildcardPatternsMatch(eventPattern, eventListener.eventPattern)) {
+					if(WildcardPatternMatcher.match(eventPattern, eventListener.eventPattern)) {
 						matchingEventListeners.append(eventListener);
 					}
 				}

@@ -1,5 +1,6 @@
 // Dependencies
 var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventEmitter.js');
+var WildcardPatternMatcher = Framework.require('system/search/patterns/WildcardPatternMatcher.js');
 var HtmlDocumentEvent = Framework.require('system/html/events/html-document/HtmlDocumentEvent.js');
 var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
 var ClipboardEvent = Framework.require('system/html/events/html-event/ClipboardEvent.js');
@@ -265,7 +266,7 @@ HtmlEventProxy.htmlEventPatternToDomEventIdentifiers = function(htmlEventPattern
 
 	HtmlEventProxy.domEventIdentifierMap.each(function(domEventIdentifier, domEventIdentifierObject) {
 		domEventIdentifierObject.eventPatterns.each(function(eventPattern) {
-			if(RegularExpression.wildcardPatternsMatch(htmlEventPattern, eventPattern)) {
+			if(WildcardPatternMatcher.match(htmlEventPattern, eventPattern)) {
 				domEventIdentifiers.append(domEventIdentifier);	
 			}
 		});
