@@ -8,9 +8,11 @@ var InputKeyEvent = HtmlElementEvent.extend({
 	modifierKeysDown: {
 		alt: null, // true if the alt key was down when the mouse event was emitted
 		control: null, // true if the control key was down when the mouse event was emitted
+		command: null,
 		// meta is the Command key on macOS inputKeys or Windows key on Windows inputKeys
 		meta: null, // true if the meta key was down when the mouse event was emitted
 		shift: null, // true if the shift key was down when the mouse event was emitted
+		windows: null,
 	},
 
 	// The key
@@ -81,12 +83,16 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		if(inputKeyEventWithoutIdentifier.key) {
 			var modifierKeysDown = [];
 			inputKeyEventWithoutIdentifier.modifierKeysDown.each(function(key, down) {
+				console.standardLog('key', key, down);
 				if(down) {
 					modifierKeysDown.append(key);
 				}
 			});
 			if(modifierKeysDown.length) {
-				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+modifierKeysDown.join('.');
+				var key = inputKeyEventWithoutIdentifier.key;
+				var modifierKeysDownString = '.'+modifierKeysDown.join('.');
+
+				eventIdentifier = 'input.key.'+key+modifierKeysDownString;
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 			}
 		}
@@ -105,7 +111,12 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 	}
 
-	Console.standardLog('InputKeyEvent.createEventsFromDomEvent events', events);
+	// Logging
+	var eventIdentifiers = [];
+	events.each(function(index, event) {
+		eventIdentifiers.append(event.identifier);
+	});
+	Console.standardInfo(eventIdentifiers.join(' '), '-', 'InputKeyEvent.createEventsFromDomEvent events', events);
 
 	return events;
 };
