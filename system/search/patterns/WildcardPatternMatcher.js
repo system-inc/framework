@@ -75,7 +75,8 @@ WildcardPatternMatcher.readSet = function(string) {
                 var endCode = token[1].charCodeAt(0);
                 
                 if(startCode > endCode) {
-                    console.error('Invalid range');
+                    return false;
+                    throw new Error('Invalid range.');
                 }
                 
                 for(var i = startCode; i <= endCode; i++) {
@@ -84,13 +85,15 @@ WildcardPatternMatcher.readSet = function(string) {
                 //console.log(set);
             }
             else {
-                //console.error(patternA, patternB);
-                console.error('Invalid token in set: '+token[0]);
+                //throw new Error(patternA, patternB);
+                return false;
+                throw new Error('Invalid token in set: '+token[0]);
             }
         }
         else {
-            //console.error(patternA, patternB);
-            console.error('Invalid token in set: '+token[0]);
+            //throw new Error(patternA, patternB);
+            return false;
+            throw new Error('Invalid token in set: '+token[0]);
         }
     }
 };
@@ -131,7 +134,8 @@ WildcardPatternMatcher.readGroup = function(string) {
         }
 
         if(token[0] == 'END') {
-            throw 'Unexpected end of string while parsing group options.';
+            return null;
+            //throw 'Unexpected end of string while parsing group options.';
         }
 
         option += character;
@@ -184,6 +188,9 @@ WildcardPatternMatcher.match = function(patternA, patternB) {
 
                 patternA = patternA.substr(1);
                 var groupA = WildcardPatternMatcher.readGroup(patternA);
+                if(!groupA) {
+                    return false;
+                }
                 patternA = groupA.remainder;
                 //console.log(groupA);
 
@@ -201,6 +208,9 @@ WildcardPatternMatcher.match = function(patternA, patternB) {
             if(tokenB[0] == 'START_GROUP') {
                 patternB = patternB.substr(1);
                 var groupB = WildcardPatternMatcher.readGroup(patternB);
+                if(!groupB) {
+                    return false;
+                }
                 patternB = groupB.remainder;
 
                 for(var i = 0; i < groupB.options.length; i++) {
@@ -377,11 +387,13 @@ WildcardPatternMatcher.match = function(patternA, patternB) {
                     patternB = setA.remainder;
                     //console.log(setA, setB);
                     var found = false;
-                    for(var i = 0; i < setA.values.length; i++) {
-                        for(var j = 0; j < setB.values.length; j++) {
-                            if(setA.values[i] == setB.values[j]) {
-                                found = true;
-                                break;
+                    if(setA) {
+                        for(var i = 0; i < setA.values.length; i++) {
+                            for(var j = 0; j < setB.values.length; j++) {
+                                if(setA.values[i] == setB.values[j]) {
+                                    found = true;
+                                    break;
+                                }
                             }
                         }
                     }

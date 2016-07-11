@@ -131,6 +131,26 @@ var WildcardPatternMatcherTest = Test.extend({
 	    Assert.true(WildcardPatternMatcher.match('(start*|*end)', 'xyz.end'));
 	    Assert.true(WildcardPatternMatcher.match('start.xyz', '(start*|*end)'));
 	    Assert.true(WildcardPatternMatcher.match('(start*|*end)', 'xyz.end'));
+
+	    // Commas
+	    Assert.true(WildcardPatternMatcher.match('test.(.|,)', 'test.?'));
+	    Assert.true(WildcardPatternMatcher.match('test.,.hello', 'test.?.hello'));
+	    Assert.true(WildcardPatternMatcher.match('test*', 'test,'));
+
+	    // Invalid set
+	    Assert.false(WildcardPatternMatcher.match('test.hello[', 'test.hello'));
+	    Assert.false(WildcardPatternMatcher.match('test.hello.[', 'test.hello.]'));
+		Assert.true(WildcardPatternMatcher.match('test.hello.]', 'test.hello.]')); // valid because exact match
+		Assert.false(WildcardPatternMatcher.match('test.hello.[*', 'test.hello.['));
+		Assert.false(WildcardPatternMatcher.match('test.hello.]*', 'test.hello.]'));
+
+	    // Invalid group
+		Assert.false(WildcardPatternMatcher.match('test.hello.(', 'test.hello.)'));
+		Assert.false(WildcardPatternMatcher.match('test.hello.(*', 'test.hello.('));
+		Assert.false(WildcardPatternMatcher.match('test.hello.)*', 'test.hello.)'));
+
+		// Invalid range
+		Assert.false(WildcardPatternMatcher.match('test.hello.[a-$]', 'test.hello.*)'));	
 	},
 
 });
