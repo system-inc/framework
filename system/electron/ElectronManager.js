@@ -80,6 +80,7 @@ var ElectronManager = Class.extend({
 
 			console.log('This next line is for testing input.key events.');
 			this.mainBrowserWindowViewController.htmlDocument.on('input.*', function(event) {});
+			return;
 			
 			if(shortcutSettings.closeFocusedWindow) {
 				this.mainBrowserWindowViewController.htmlDocument.on('input.key.w.control', this.closeFocusedWindow.bind(this));
@@ -88,7 +89,7 @@ var ElectronManager = Class.extend({
 				this.mainBrowserWindowViewController.htmlDocument.on('input.key.r.(control|command)', this.reloadFocusedWindow.bind(this));
 			}
 			if(shortcutSettings.toggleFullScreenOnFocusedWindow) {
-				this.mainBrowserWindowViewController.htmlDocument.on('input.key.f11', this.toggleFullScreenOnFocusedWindow.bind(this));
+				this.mainBrowserWindowViewController.htmlDocument.on('input.key.f11.(control|command)', this.toggleFullScreenOnFocusedWindow.bind(this));
 			}
 			if(shortcutSettings.toggleDeveloperToolsOnFocusedWindow) {
 				this.mainBrowserWindowViewController.htmlDocument.on('input.key.i.alt.(control|command)', this.toggleDeveloperToolsOnFocusedWindow.bind(this));
@@ -137,7 +138,7 @@ var ElectronManager = Class.extend({
 	},
 
 	exit: function() {
-		Electron.app.quit();
+		Electron.remote.app.quit();
 	},
 
 	reloadFocusedWindow: function() {

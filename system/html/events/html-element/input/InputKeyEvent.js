@@ -26,43 +26,76 @@ var InputKeyEvent = HtmlElementEvent.extend({
 
 // Static properties
 
-InputKeyEvent.keysThatDoNotEmitPressEvents = {
-	'escape': true,
+InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown = {
+	a: true,
+	A: true,
+	b: true,
+	B: true,
+	d: true,
+	D: true,
+	e: true,
+	E: true,
+	f: true,
+	F: true,
+	h: true,
+	H: true,
+	k: true,
+	K: true,
+	n: true,
+	N: true,
+	o: true,
+	O: true,
+	p: true,
+	P: true,
+	t: true,
+	T: true,
+	y: true,
+	Y: true,
+	space: true,
+	home: true,
+	end: true,
+	pageUp: true,
+	pageDown: true,
+	numLock: true,
+};
 
-	'f1': true,
-	'f2': true,
-	'f3': true,
-	'f4': true,
-	'f5': true,
-	'f6': true,
-	'f7': true,
-	'f8': true,
-	'f9': true,
-	'f10': true,
-	'f11': true,
-	'f12': true,
+InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress = {
+	escape: true,
 
-	'tab': true,
+	f1: true,
+	f2: true,
+	f3: true,
+	f4: true,
+	f5: true,
+	f6: true,
+	f7: true,
+	f8: true,
+	f9: true,
+	f10: true,
+	f11: true,
+	f12: true,
 
-	//'capsLock': true,
+	tab: true,
 
-	'backspace': true,
-	'delete': true,
+	//capsLock: true,
 
-	'insert': true,
-	'contextMenu': true,
+	backspace: true,
+	delete: true,
 
-	'alt': true,
-	'control': true,
-	'meta': true,
-	'command': true,
-	'windows': true,
-	'shift': true,
+	insert: true,
+	contextMenu: true,
 
-	'up': true,
-	'down': true,
-	'left': true,
-	'right': true,
+	alt: true,
+	control: true,
+	meta: true,
+	command: true,
+	windows: true,
+	shift: true,
+
+	up: true,
+	down: true,
+	left: true,
+	right: true,
 };
 
 // Static methods
@@ -96,7 +129,7 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 	// For key up events
 	if(eventTypeSuffix == '.up') {
 		// Keys that do not normally emit press events for which we need to manually emit one
-		if(InputKeyEvent.keysThatDoNotEmitPressEvents[inputKeyEventWithoutIdentifier.key]) {
+		if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
 			//Console.standardError(eventIdentifier);
 			eventIdentifier = eventIdentifier.replaceLast('.up', '');
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
@@ -123,6 +156,7 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 			}
 		}
 	});
+	// If there are any modifier keys down
 	if(modifierKeysDown.length) {
 		var key = inputKeyEventWithoutIdentifier.key;
 		var modifierKeysDownString = '.'+modifierKeysDown.join('.');
@@ -136,12 +170,26 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 
 		if(eventTypeSuffix == '.up') {
 			// Keys that do not normally emit press events for which we need to manually emit one
-			if(InputKeyEvent.keysThatDoNotEmitPressEvents[inputKeyEventWithoutIdentifier.key]) {
+			if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier.replaceLast('.up', '')));
+			}
+
+			// If the control key is down
+			if(inputKeyEventWithoutIdentifier.modifierKeysDown.control) {
+				if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]) {
+					events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier.replaceLast('.up', '')));
+				}
 			}
 		}
 
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+
+		// If the command key is down we need to emit some additional events since Command+Key only emits keydown events
+		// So we want to fire "input.key.l.command" in addition to "input.key.l.command.down"
+		if(inputKeyEventWithoutIdentifier.modifierKeysDown.meta && eventTypeSuffix == '.down') { // "command" or "windows"
+			eventIdentifier = 'input.key.'+key+modifierKeysDownString;
+			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+		}
 	}
 
 	// Create additional events including the location of the key, e.g., "input.key.left.shift.up"
@@ -213,6 +261,24 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 	var possibleKeyTitle = Keyboard.keyTitleMap[key];
 	if(possibleKeyTitle) {
 		key = possibleKeyTitle;
+	}
+
+	// Handle special cases
+	if(key == 'unidentified' && domEvent.code == 'ContextMenu') {
+		key = 'contextMenu';
+	}
+	else if(key == 'help' && domEvent.code == 'Insert') {
+		key = 'insert';
+	}
+	else if(key == 'clear' && domEvent.code == 'NumLock') {
+		key = 'numLock';
+	}
+	else if(key == 'dead') {
+		key = String.fromCharCode(73);
+
+		if(!inputKeyEvent.modifierKeysDown.shift) {
+			key = key.lowercase();
+		}
 	}
 
 	// Set the key

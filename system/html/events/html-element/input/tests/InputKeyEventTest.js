@@ -5,6 +5,7 @@ var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 var Html = Framework.require('system/html/Html.js');
 var ElectronManager = null;
 var InputKeyEvent = Framework.require('system/html/events/html-element/input/InputKeyEvent.js');
+var WildcardPatternMatcher = Framework.require('system/search/patterns/WildcardPatternMatcher.js');
 
 // Class
 var InputKeyEventTest = ElectronTest.extend({
@@ -22,7 +23,9 @@ var InputKeyEventTest = ElectronTest.extend({
 		var htmlElement = Html.textarea();
 
 		htmlElement.on('input.key.*', function(event) {
-			//Console.standardInfo(event.identifier, event);
+			//if(WildcardPatternMatcher.match('input.key.*.control', event.identifier)) {
+			//	Console.standardWarn(event.identifier, event);	
+			//}
 		});
 
 		// Append the HtmlElement to the HtmlDocument body
