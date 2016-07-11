@@ -126,7 +126,7 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 	// Set the identifier
 	inputKeyEventWithoutIdentifier.identifier = eventIdentifier;
 
-	// For key up events
+	// For keyup events
 	if(eventTypeSuffix == '.up') {
 		// Keys that do not normally emit press events for which we need to manually emit one
 		if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
@@ -139,11 +139,13 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 	// Add the event
 	events.append(inputKeyEventWithoutIdentifier);
 
-	// Create additional events with the modifier keys
+	// Build a list of modifier keys that are down
 	var modifierKeysDown = [];
-	inputKeyEventWithoutIdentifier.modifierKeysDown.each(function(key, isDown) {
-		if(isDown && key != inputKeyEventWithoutIdentifier.key) {
-			if(key == 'meta') {
+	inputKeyEventWithoutIdentifier.modifierKeysDown.each(function(keyThatIsPossiblyDown, isDown) {
+		// If the key is down and it doesn't match the key being emitted (to avoid emitting "input.control.control")
+		if(isDown && keyThatIsPossiblyDown != inputKeyEventWithoutIdentifier.key) {
+			// Rename meta to it's OS specific name
+			if(keyThatIsPossiblyDown == 'meta') {
 				if(Project.onWindows() && inputKeyEventWithoutIdentifier.key != 'windows') {
 					modifierKeysDown.append('windows');
 				}
@@ -156,38 +158,41 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 			}
 		}
 	});
-	// If there are any modifier keys down
+
+	// If there are any modifier keys down, create additional events with the modifier keys, e.g., "input.key.a.control"
 	if(modifierKeysDown.length) {
-		var key = inputKeyEventWithoutIdentifier.key;
-		var modifierKeysDownString = '.'+modifierKeysDown.join('.');
+		var modifierKeysDownSuffix = '.'+modifierKeysDown.join('.');
 
-		// Always lowercase events with the shift modifier, so we emit input.key.a.shift instead of input.key.A.shift
-		//if(inputKeyEventWithoutIdentifier.modifierKeysDown.shift) {
-		//	key = key.lowercaseFirstCharacter();
-		//}
-
-		eventIdentifier = 'input.key.'+key+modifierKeysDownString+eventTypeSuffix;
-
+		// Handle keys that do not emit a keypress event but that do emit a keyup event
 		if(eventTypeSuffix == '.up') {
 			// Keys that do not normally emit press events for which we need to manually emit one
 			if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
-				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier.replaceLast('.up', '')));
+				// e.g., "input.key.f1" for F1 which does not emit a keypress
+				// TODO: Test this on Windows as Mac may not emit a keypress (because function + F1) but Windows may
+				// TODO: Is this causing dupes?
+				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
+				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 			}
 
 			// If the control key is down
 			if(inputKeyEventWithoutIdentifier.modifierKeysDown.control) {
 				if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]) {
-					events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier.replaceLast('.up', '')));
+					// e.g., "input.key.a"
+					// TODO: Test this on Windows as Mac may not emit a keypress but Windows may
+					eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
+					events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 				}
 			}
 		}
 
+		// e.g., "input.key.a.control.up", "input.key.a.control", "input.key.a.control.down"
+		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix+eventTypeSuffix;
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 		// If the command key is down we need to emit some additional events since Command+Key only emits keydown events
 		// So we want to fire "input.key.l.command" in addition to "input.key.l.command.down"
 		if(inputKeyEventWithoutIdentifier.modifierKeysDown.meta && eventTypeSuffix == '.down') { // "command" or "windows"
-			eventIdentifier = 'input.key.'+key+modifierKeysDownString;
+			eventIdentifier = 'input.key.'+key+modifierKeysDownSuffix;
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 	}
