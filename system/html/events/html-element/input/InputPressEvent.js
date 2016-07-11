@@ -145,9 +145,10 @@ InputPressEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 
 InputPressEvent.initializeFromDomEvent = function(inputPressEvent, domEvent) {
 	inputPressEvent.modifierKeysDown.alt = domEvent.altKey;
+	inputPressEvent.modifierKeysDown.command = domEvent.metaKey;
 	inputPressEvent.modifierKeysDown.control = domEvent.ctrlKey;
-	inputPressEvent.modifierKeysDown.meta = domEvent.metaKey;
 	inputPressEvent.modifierKeysDown.shift = domEvent.shiftKey;
+	inputPressEvent.modifierKeysDown.windows = domEvent.metaKey;
 
 	inputPressEvent.buttonsDown = {
 		1: false,

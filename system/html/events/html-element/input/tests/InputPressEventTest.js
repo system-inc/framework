@@ -85,9 +85,10 @@ var InputPressEventTest = ElectronTest.extend({
         Assert.true(Class.isInstance(capturedEvent, InputPressEvent), '"input.press" events are instances of InputPressEvent');
 
         Assert.strictEqual(capturedEvent.modifierKeysDown.alt, false, 'modifierKeysDown.alt property is correctly set');
+        Assert.strictEqual(capturedEvent.modifierKeysDown.command, false, 'modifierKeysDown.command property is correctly set');
         Assert.strictEqual(capturedEvent.modifierKeysDown.control, false, 'modifierKeysDown.control property is correctly set');
-        Assert.strictEqual(capturedEvent.modifierKeysDown.meta, false, 'modifierKeysDown.meta property is correctly set');
         Assert.strictEqual(capturedEvent.modifierKeysDown.shift, false, 'modifierKeysDown.shift property is correctly set');
+        Assert.strictEqual(capturedEvent.modifierKeysDown.windows, false, 'modifierKeysDown.windows property is correctly set');
        
         Assert.strictEqual(capturedEvent.buttonsDown[1], false, 'buttonsDown[1] property is correctly set');
         Assert.strictEqual(capturedEvent.buttonsDown[2], false, 'buttonsDown[2] property is correctly set');

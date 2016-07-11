@@ -49,9 +49,10 @@ var InputKeyEventTest = ElectronTest.extend({
 		Assert.true(Class.isInstance(capturedEvent, InputKeyEvent), '"input.key.A" events triggered by key presses are instances of InputKeyEvent');
 
 		Assert.strictEqual(capturedEvent.modifierKeysDown.alt, false, 'modifierKeysDown.alt property is correctly set');
+		Assert.strictEqual(capturedEvent.modifierKeysDown.command, false, 'modifierKeysDown.command property is correctly set');
 		Assert.strictEqual(capturedEvent.modifierKeysDown.control, false, 'modifierKeysDown.control property is correctly set');
-		Assert.strictEqual(capturedEvent.modifierKeysDown.meta, false, 'modifierKeysDown.meta property is correctly set');
 		Assert.strictEqual(capturedEvent.modifierKeysDown.shift, false, 'modifierKeysDown.shift property is correctly set');
+		Assert.strictEqual(capturedEvent.modifierKeysDown.windows, false, 'modifierKeysDown.windows property is correctly set');
 
 		Assert.strictEqual(capturedEvent.key, 'A', 'key property is correctly set');
 
@@ -152,7 +153,7 @@ var InputKeyEventTest = ElectronTest.extend({
 			capturedEventKeyboardKeyControl = event;
 			capturedEventKeyboardKeyControlCount++;
 		});
-		htmlElement.on('input.key.meta', function(event) {
+		htmlElement.on('input.key.(command|windows)', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedEventKeyboardKeyMeta = event;
 			capturedEventKeyboardKeyMetaCount++;

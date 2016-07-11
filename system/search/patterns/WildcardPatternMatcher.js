@@ -166,17 +166,22 @@ WildcardPatternMatcher.match = function(patternA, patternB) {
             //console.log(tokenA, tokenB);
             //console.log(patternA, patternB);
 
+            // Literals
             if(tokenA[0] == 'LITERAL' && tokenB[0] == 'LITERAL') {
                 if(tokenA[1] != tokenB[1]) {
                     //console.log('LITERAL', tokenA[1], '!=', tokenB[1]);
                     return false;
                 }
+
                 patternA = patternA.substr(1);
                 patternB = patternB.substr(1);
+
                 continue;
             }
             
+            // Start group on token A
             if(tokenA[0] == 'START_GROUP') {
+
                 patternA = patternA.substr(1);
                 var groupA = WildcardPatternMatcher.readGroup(patternA);
                 patternA = groupA.remainder;
@@ -192,6 +197,7 @@ WildcardPatternMatcher.match = function(patternA, patternB) {
                 return false;
             }
             
+            // Start group on token B
             if(tokenB[0] == 'START_GROUP') {
                 patternB = patternB.substr(1);
                 var groupB = WildcardPatternMatcher.readGroup(patternB);

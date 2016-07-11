@@ -16,7 +16,7 @@ InputSelectEvent.is = function(value) {
 };
 
 InputSelectEvent.createEventsFromDomEvent = function(domEvent, emitter) {
-	Console.standardLog('InputSelectEvent.createEventsFromDomEvent', domEvent.type, arguments);
+	//Console.standardLog('InputSelectEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 	var events = [];
 
@@ -50,7 +50,15 @@ InputSelectEvent.createEventsFromDomEvent = function(domEvent, emitter) {
 InputSelectEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 	var inputSelectEvent = new InputSelectEvent(emitter, identifier);
 
-	inputSelectEvent.selection = emitter.htmlDocument.getSelection();
+	// The emitter is an HtmlDocument
+	if(emitter.getSelection) {
+		inputSelectEvent.selection = emitter.getSelection();
+	}
+	// The emitter is an HtmlNode
+	else if(emitter.htmlDocument) {
+		inputSelectEvent.selection = emitter.htmlDocument.getSelection();
+	}	
+
 	inputSelectEvent.text = inputSelectEvent.selection.toString();
 
 	return inputSelectEvent;

@@ -181,7 +181,7 @@ HtmlEventProxy.domEventIdentifierMap = {
 		eventClass: InputKeyEvent,
 		eventPatterns: {
 			'input.key.*.up': true,
-			'input.key.(alt|control|meta|command|windows|shift|up|down|left|right|backspace|delete|insert|contextMenu|escape)': true,
+			'input.key.(alt|command|control|meta|shift|windows|up|down|left|right|backspace|delete|insert|contextMenu|escape)': true,
 		},
 	},
 	keypress: {
