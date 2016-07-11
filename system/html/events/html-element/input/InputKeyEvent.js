@@ -24,6 +24,47 @@ var InputKeyEvent = HtmlElementEvent.extend({
 
 });
 
+// Static properties
+
+InputKeyEvent.keysThatDoNotEmitPressEvents = {
+	'escape': true,
+
+	'f1': true,
+	'f2': true,
+	'f3': true,
+	'f4': true,
+	'f5': true,
+	'f6': true,
+	'f7': true,
+	'f8': true,
+	'f9': true,
+	'f10': true,
+	'f11': true,
+	'f12': true,
+
+	'tab': true,
+
+	//'capsLock': true,
+
+	'backspace': true,
+	'delete': true,
+
+	'insert': true,
+	'contextMenu': true,
+
+	'alt': true,
+	'control': true,
+	'meta': true,
+	'command': true,
+	'windows': true,
+	'shift': true,
+
+	'up': true,
+	'down': true,
+	'left': true,
+	'right': true,
+};
+
 // Static methods
 
 InputKeyEvent.is = function(value) {
@@ -55,41 +96,26 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 	// For key up events
 	if(eventTypeSuffix == '.up') {
 		// Keys that do not normally emit press events for which we need to manually emit one
-		if(
-			inputKeyEventWithoutIdentifier.key == 'alt' ||
-			inputKeyEventWithoutIdentifier.key == 'control' ||
-			inputKeyEventWithoutIdentifier.key == 'meta' ||
-			inputKeyEventWithoutIdentifier.key == 'command' ||
-			inputKeyEventWithoutIdentifier.key == 'windows' ||
-			inputKeyEventWithoutIdentifier.key == 'shift' ||
-			inputKeyEventWithoutIdentifier.key == 'up' ||
-			inputKeyEventWithoutIdentifier.key == 'down' ||
-			inputKeyEventWithoutIdentifier.key == 'left' ||
-			inputKeyEventWithoutIdentifier.key == 'right' ||
-			inputKeyEventWithoutIdentifier.key == 'backspace' ||
-			inputKeyEventWithoutIdentifier.key == 'delete' ||
-			inputKeyEventWithoutIdentifier.key == 'insert' ||
-			inputKeyEventWithoutIdentifier.key == 'contextMenu' ||
-			inputKeyEventWithoutIdentifier.key == 'escape'
-		) {
+		if(InputKeyEvent.keysThatDoNotEmitPressEvents[inputKeyEventWithoutIdentifier.key]) {
 			//Console.standardError(eventIdentifier);
 			eventIdentifier = eventIdentifier.replaceLast('.up', '');
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 	}
 
+	// Add the event
+	events.append(inputKeyEventWithoutIdentifier);
+
 	// Create additional events with the modifier keys
 	var modifierKeysDown = [];
 	inputKeyEventWithoutIdentifier.modifierKeysDown.each(function(key, isDown) {
 		if(isDown && key != inputKeyEventWithoutIdentifier.key) {
-			if(key == 'windows') {
-				if(Project.onWindows()) {
-					modifierKeysDown.append(key);
+			if(key == 'meta') {
+				if(Project.onWindows() && inputKeyEventWithoutIdentifier.key != 'windows') {
+					modifierKeysDown.append('windows');
 				}
-			}
-			else if(key == 'command') {
-				if(Project.onMacOs()) {
-					modifierKeysDown.append(key);
+				else if(Project.onMacOs() && inputKeyEventWithoutIdentifier.key != 'command') {
+					modifierKeysDown.append('command');
 				}
 			}
 			else {
@@ -102,16 +128,21 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		var modifierKeysDownString = '.'+modifierKeysDown.join('.');
 
 		// Always lowercase events with the shift modifier, so we emit input.key.a.shift instead of input.key.A.shift
-		if(inputKeyEventWithoutIdentifier.modifierKeysDown.shift) {
-			key = key.lowercase();
-		}
+		//if(inputKeyEventWithoutIdentifier.modifierKeysDown.shift) {
+		//	key = key.lowercaseFirstCharacter();
+		//}
 
 		eventIdentifier = 'input.key.'+key+modifierKeysDownString+eventTypeSuffix;
+
+		if(eventTypeSuffix == '.up') {
+			// Keys that do not normally emit press events for which we need to manually emit one
+			if(InputKeyEvent.keysThatDoNotEmitPressEvents[inputKeyEventWithoutIdentifier.key]) {
+				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier.replaceLast('.up', '')));
+			}
+		}
+
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 	}
-
-	// Add the event
-	events.append(inputKeyEventWithoutIdentifier);
 
 	// Create additional events including the location of the key, e.g., "input.key.left.shift.up"
 	if(
@@ -136,13 +167,13 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 	var inputKeyEvent = new InputKeyEvent(emitter, identifier);
 
-	// modifierKeysDown
+	// InputKeyEvent.modifierKeysDown
 	inputKeyEvent.modifierKeysDown.alt = domEvent.altKey;
 	inputKeyEvent.modifierKeysDown.control = domEvent.ctrlKey;
 	inputKeyEvent.modifierKeysDown.meta = domEvent.metaKey;
 	inputKeyEvent.modifierKeysDown.shift = domEvent.shiftKey;
 	
-	// keyLocation
+	// InputKeyEvent.keyLocation
 	inputKeyEvent.keyLocation = null;
 	if(domEvent.location != undefined) {
 		if(domEvent.location == 0) {
@@ -165,13 +196,27 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 		}
 	}
 
-	// keyHeldDown
+	// InputKeyEvent.keyHeldDown
 	if(domEvent.repeat != undefined) {
 		inputKeyEvent.keyHeldDown = domEvent.repeat;
 	}
 
-	// key
-	inputKeyEvent.key = Keyboard.getKeyFromCharacterCodeAndModifiers(domEvent.keyCode, inputKeyEvent.modifierKeysDown.alt, inputKeyEvent.modifierKeysDown.control, inputKeyEvent.modifierKeysDown.meta, inputKeyEvent.modifierKeysDown.shift);
+	// InputKeyEvent.key
+	var key = domEvent.key;
+
+	// Lowercase key titles (keys with more than one character)
+	if(key.length > 1) {
+		key = key.lowercaseFirstCharacter();
+	}
+
+	// Check the key title map for a match
+	var possibleKeyTitle = Keyboard.keyTitleMap[key];
+	if(possibleKeyTitle) {
+		key = possibleKeyTitle;
+	}
+
+	// Set the key
+	inputKeyEvent.key = key;
 
 	return inputKeyEvent;
 };

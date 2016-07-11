@@ -73,26 +73,29 @@ var ElectronManager = Class.extend({
 		this.mainBrowserWindowState = new BrowserWindowState('main', this.mainBrowserWindow, windowStateSettings);
 	},
 
-	addDefaultShortcuts: function(htmlDocument) {
-		var shortcutSettings = Project.modules.electronModule.settings.get('shortcuts');
+	addDefaultShortcuts: function() {
+		// If the main browser window has an HtmlDocument
+		if(this.mainBrowserWindowViewController.htmlDocument) {
+			var shortcutSettings = Project.modules.electronModule.settings.get('shortcuts');
 
-		console.log('This next line is for testing input.key events.');
-		this.mainBrowserWindowViewController.htmlDocument.on('input.*', function(event) {});
-		
-		if(shortcutSettings.closeFocusedWindow) {
-			//this.mainBrowserWindowViewController.htmlDocument.on('input.key.w.control', this.closeFocusedWindow.bind(this));
-		}
-		if(shortcutSettings.reloadFocusedWindow) {
-			this.mainBrowserWindowViewController.htmlDocument.on('input.key.r.(control|command)', this.reloadFocusedWindow.bind(this));
-		}
-		if(shortcutSettings.toggleFullScreenOnFocusedWindow) {
-			this.mainBrowserWindowViewController.htmlDocument.on('input.key.f11', this.toggleFullScreenOnFocusedWindow.bind(this));
-		}
-		if(shortcutSettings.toggleDeveloperToolsOnFocusedWindow) {
-			this.mainBrowserWindowViewController.htmlDocument.on('input.key.i.alt.(control|command)', this.toggleDeveloperToolsOnFocusedWindow.bind(this));
-		}
-		if(shortcutSettings.applyDefaultWindowStateOnFocusedWindow) {
-			this.mainBrowserWindowViewController.htmlDocument.on('input.key.d.(control|command)', this.applyDefaultWindowStateOnFocusedWindow.bind(this));
+			console.log('This next line is for testing input.key events.');
+			this.mainBrowserWindowViewController.htmlDocument.on('input.*', function(event) {});
+			
+			if(shortcutSettings.closeFocusedWindow) {
+				this.mainBrowserWindowViewController.htmlDocument.on('input.key.w.control', this.closeFocusedWindow.bind(this));
+			}
+			if(shortcutSettings.reloadFocusedWindow) {
+				this.mainBrowserWindowViewController.htmlDocument.on('input.key.r.(control|command)', this.reloadFocusedWindow.bind(this));
+			}
+			if(shortcutSettings.toggleFullScreenOnFocusedWindow) {
+				this.mainBrowserWindowViewController.htmlDocument.on('input.key.f11', this.toggleFullScreenOnFocusedWindow.bind(this));
+			}
+			if(shortcutSettings.toggleDeveloperToolsOnFocusedWindow) {
+				this.mainBrowserWindowViewController.htmlDocument.on('input.key.i.alt.(control|command)', this.toggleDeveloperToolsOnFocusedWindow.bind(this));
+			}
+			if(shortcutSettings.applyDefaultWindowStateOnFocusedWindow) {
+				this.mainBrowserWindowViewController.htmlDocument.on('input.key.d.(control|command)', this.applyDefaultWindowStateOnFocusedWindow.bind(this));
+			}
 		}
 	},
 

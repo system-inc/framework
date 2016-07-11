@@ -14,6 +14,26 @@ var InputKeyEventTest = ElectronTest.extend({
 		ElectronManager = Framework.require('system/electron/ElectronManager.js');
 	},
 
+	testAllInputKeyEvents: function*() {
+		// Create an HtmlDocument
+        var htmlDocument = new HtmlDocument();
+
+		// Create a textarea HtmlElement
+		var htmlElement = Html.textarea();
+
+		htmlElement.on('input.key.*', function(event) {
+			//Console.standardInfo(event.identifier, event);
+		});
+
+		// Append the HtmlElement to the HtmlDocument body
+		htmlDocument.body.append(htmlElement);
+
+		// Mount the HtmlDocument to the DOM
+        htmlDocument.mountToDom();
+
+        throw new Error('Throwing error to display browser window.');
+	},
+
 	testInputKeyEvent: function*() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
