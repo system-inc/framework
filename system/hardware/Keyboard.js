@@ -54,5 +54,14 @@ Keyboard.keyTitleMap = {
 	'arrowRight': 'right',
 };
 
+Keyboard.keyCodeMap = {
+	8: 'backspace',
+};
+
+Keyboard.unicodeMap = {
+	'U+0020': 'space',
+	'U+007F': 'delete',
+};
+
 // Export
 module.exports = Keyboard;

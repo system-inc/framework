@@ -131,27 +131,6 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		eventTypeSuffix = '';
 	}
 
-	// The identifier for the event
-	var eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+eventTypeSuffix;
-
-	// Set the identifier
-	inputKeyEventWithoutIdentifier.identifier = eventIdentifier;
-
-	// For keyup events
-	if(eventTypeSuffix == '.up') {
-		// Keys that do not normally emit press events for which we need to manually emit one
-		if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
-			//Console.standardError(eventIdentifier);
-			eventIdentifier = eventIdentifier.replaceLast('.up', '');
-			Console.log(eventIdentifier);
-			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
-		}
-	}
-
-	// Add the original event in the proper order
-	Console.log(inputKeyEventWithoutIdentifier.identifier);
-	events.append(inputKeyEventWithoutIdentifier);
-
 	// Build a list of modifier keys that are down
 	var modifierKeysDown = [];
 	inputKeyEventWithoutIdentifier.modifierKeysDown.each(function(keyThatIsPossiblyDown, isDown) {
@@ -171,85 +150,122 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 			}
 		}
 	});
+	var modifierKeysDownSuffix = '.'+modifierKeysDown.join('.');
 
-	// Process the modifier keys down
-	InputKeyEvent.processModifierKeysDown(events, emitter, domEvent, modifierKeysDown, inputKeyEventWithoutIdentifier, eventTypeSuffix, false);
+	// The identifier for the event
+	// e.g., "input.key.a.down"
+	var eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+eventTypeSuffix;
+	inputKeyEventWithoutIdentifier.identifier = eventIdentifier;
 
-	// Create additional events including the location of the key, e.g., "input.key.left.shift.up"
+	// For keyup events
+	if(eventTypeSuffix == '.up') {
+		// Keys that do not normally emit press events for which we need to manually emit one
+		if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
+			//Console.standardError(eventIdentifier);
+			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
+			Console.log(eventIdentifier);
+			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+
+			if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
+				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation;
+				Console.log(eventIdentifier);
+				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+			}
+		}
+	}
+
+	if(
+		modifierKeysDown.length &&
+		eventTypeSuffix == '.up' &&
+		inputKeyEventWithoutIdentifier.modifierKeysDown.control &&
+		InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]
+	) {
+	}
+	else {
+		Console.log(inputKeyEventWithoutIdentifier.identifier);
+		events.append(inputKeyEventWithoutIdentifier);
+	}
+
 	if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
-		// Process the modifier keys down with the location
-		// TODO make location do somethign here
-		InputKeyEvent.processModifierKeysDown(events, emitter, domEvent, modifierKeysDown, inputKeyEventWithoutIdentifier, eventTypeSuffix, true);
-
 		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+eventTypeSuffix;
 		Console.log(eventIdentifier);
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 	}
 
-	// Logging
-	//var eventIdentifiers = [];
-	//events.each(function(index, event) {
-	//	eventIdentifiers.append(event.identifier);
-	//});
-	//Console.standardInfo(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
-
-	Console.log('--- end '+domEvent.type);
-
-	return events;
-};
-
-InputKeyEvent.processModifierKeysDown = function(events, emitter, domEvent, modifierKeysDown, inputKeyEventWithoutIdentifier, eventTypeSuffix, useKeyLocation) {
-	var eventIdentifier = null;
-
-	var key = inputKeyEventWithoutIdentifier.key;
-	if(useKeyLocation) {
-		key = key+'.'+inputKeyEventWithoutIdentifier.keyLocation;
-	}
-
 	// If there are any modifier keys down, create additional events with the modifier keys, e.g., "input.key.a.control"
 	if(modifierKeysDown.length) {
-		var modifierKeysDownSuffix = '.'+modifierKeysDown.join('.');
-
 		// Handle keys that do not emit a keypress event but that do emit a keyup event
 		if(eventTypeSuffix == '.up') {
 			// Keys that do not normally emit press events for which we need to manually emit one
-			if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key] && !InputKeyEvent.modifierKeys[key]) {
+			if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key] && !InputKeyEvent.modifierKeys[inputKeyEventWithoutIdentifier.key]) {
 				// e.g., "input.key.f1" for F1 which does not emit a keypress
 				// TODO: Test this on Windows as Mac may not emit a keypress (because function + F1) but Windows may
 				// TODO: Is this causing dupes?
-				eventIdentifier = 'input.key.'+key;
+				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
 				Console.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 			}
 
 			// If the control key is down
-			if(inputKeyEventWithoutIdentifier.modifierKeysDown.control) {
-				if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]) {
-					// e.g., "input.key.a"
-					// TODO: Test this on Windows as Mac may not emit a keypress but Windows may
-					eventIdentifier = 'input.key.'+key;
-					Console.log(eventIdentifier);
-					events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
-				}
+			if(
+				inputKeyEventWithoutIdentifier.modifierKeysDown.control &&
+				InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]
+			) {
+				// e.g., "input.key.a"
+				// TODO: Test this on Windows as Mac may not emit a keypress but Windows may
+				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
+				Console.log(eventIdentifier);
+				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+
+				// e.g., "input.key.a.control"
+				// TODO: Test this on Windows as Mac may not emit a keypress but Windows may
+				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
+				Console.log(eventIdentifier);
+				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+
+				// e.g., "input.key.a.up"
+				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+eventTypeSuffix;
+				Console.log(eventIdentifier);
+				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 			}
 		}
 
-		// Add the original event in the proper order
-		events.append(inputKeyEventWithoutIdentifier);
-
 		// e.g., "input.key.a.control.up", "input.key.a.control", "input.key.a.control.down"
-		eventIdentifier = 'input.key.'+key+modifierKeysDownSuffix+eventTypeSuffix;
+		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix+eventTypeSuffix;
 		Console.log(eventIdentifier);
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+
+		// Create additional events including the location of the key
+		if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
+			// Create additional events including the location of the key
+			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+modifierKeysDownSuffix+eventTypeSuffix;
+			Console.log(eventIdentifier);
+			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+		}
 
 		// If the command key is down we need to emit some additional events since Command+Key only emits keydown events
 		// So we want to fire "input.key.l.command" in addition to "input.key.l.command.down"
 		if(inputKeyEventWithoutIdentifier.modifierKeysDown.meta && eventTypeSuffix == '.down') { // "command" or "windows"
-			eventIdentifier = 'input.key.'+key+modifierKeysDownSuffix;
+			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
+			Console.log(eventIdentifier);
+			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+
+			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
 			Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 	}
+
+	// Logging
+	var eventIdentifiers = [];
+	events.each(function(index, event) {
+		eventIdentifiers.append(event.identifier);
+	});
+	Console.standardInfo(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
+
+	Console.log('--- end '+domEvent.type);
+
+	return events;
 };
 
 InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
@@ -313,11 +329,30 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 	else if(key == 'clear' && domEvent.code == 'NumLock') {
 		key = 'numLock';
 	}
-	else if(key == 'dead') {
-		key = String.fromCharCode(73);
+	else if(key == ' ') {
+		key = 'space';
+	}
+	else if(key == 'dead' || !key) {
+		if(domEvent.charCode) {
+			key = String.fromCharacterCode(domEvent.charCode);
 
-		if(!inputKeyEvent.modifierKeysDown.shift) {
-			key = key.lowercase();
+			if(!inputKeyEvent.modifierKeysDown.shift) {
+				key = key.lowercase();
+			}	
+		}
+		else if(domEvent.keyIdentifier && !domEvent.keyIdentifier.startsWith('U+')) {
+			// If we don't have a key which will display a character
+			key = domEvent.keyIdentifier.lowercaseFirstCharacter();
+
+			if(key == 'win') {
+				key = Keyboard.keyTitleMap['meta'];
+			}
+		}
+		else if(domEvent.keyCode) {
+			key = Keyboard.keyCodeMap[domEvent.keyCode];
+		}
+		else if(domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
+			key = Keyboard.unicodeMap[domEvent.keyIdentifier];
 		}
 	}
 

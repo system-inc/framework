@@ -34,7 +34,7 @@ var InputKeyEventTest = ElectronTest.extend({
 		// Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
-        throw new Error('Throwing error to display browser window.');
+        //throw new Error('Throwing error to display browser window.');
 	},
 
 	testInputKeyEvent: function*() {
@@ -56,7 +56,7 @@ var InputKeyEventTest = ElectronTest.extend({
 		// Add an event listener to the textarea to capture the event when triggered
 
 		//htmlElement.on('input.key.*', function(event) {
-		htmlElement.on('input.key.A', function(event) {
+		htmlElement.on('input.key.a', function(event) {
 			Console.standardInfo(event.identifier, event);
 			capturedEvent = event;
 		});
@@ -68,16 +68,15 @@ var InputKeyEventTest = ElectronTest.extend({
 		yield ElectronManager.clickHtmlElement(htmlElement);
 
 		// Type a key
-		yield ElectronManager.pressKey('A');
-		Assert.true(Class.isInstance(capturedEvent, InputKeyEvent), '"input.key.A" events triggered by key presses are instances of InputKeyEvent');
+		yield ElectronManager.pressKey('a');
+		Assert.true(Class.isInstance(capturedEvent, InputKeyEvent), '"input.key.a" events triggered by key presses are instances of InputKeyEvent');
 
 		Assert.strictEqual(capturedEvent.modifierKeysDown.alt, false, 'modifierKeysDown.alt property is correctly set');
-		Assert.strictEqual(capturedEvent.modifierKeysDown.command, false, 'modifierKeysDown.command property is correctly set');
 		Assert.strictEqual(capturedEvent.modifierKeysDown.control, false, 'modifierKeysDown.control property is correctly set');
+		Assert.strictEqual(capturedEvent.modifierKeysDown.meta, false, 'modifierKeysDown.command property is correctly set');
 		Assert.strictEqual(capturedEvent.modifierKeysDown.shift, false, 'modifierKeysDown.shift property is correctly set');
-		Assert.strictEqual(capturedEvent.modifierKeysDown.windows, false, 'modifierKeysDown.windows property is correctly set');
 
-		Assert.strictEqual(capturedEvent.key, 'A', 'key property is correctly set');
+		Assert.strictEqual(capturedEvent.key, 'a', 'key property is correctly set');
 
 		Assert.strictEqual(capturedEvent.keyLocation, 'standard', 'keyLocation property is correctly set');
 
