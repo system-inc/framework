@@ -51,6 +51,7 @@ InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown = {
 	T: true,
 	y: true,
 	Y: true,
+
 	space: true,
 	home: true,
 	end: true,
@@ -98,6 +99,15 @@ InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress = {
 	right: true,
 };
 
+InputKeyEvent.modifierKeys = {
+	alt: true,
+	control: true,
+	meta: true,
+	command: true,
+	windows: true,
+	shift: true,
+};
+
 // Static methods
 
 InputKeyEvent.is = function(value) {
@@ -106,6 +116,7 @@ InputKeyEvent.is = function(value) {
 
 InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPattern) {
 	//Console.standardLog('InputKeyEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
+	Console.log('--- start '+domEvent.type);
 
 	var events = [];
 
@@ -132,11 +143,13 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
 			//Console.standardError(eventIdentifier);
 			eventIdentifier = eventIdentifier.replaceLast('.up', '');
+			Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 	}
 
-	// Add the event
+	// Add the original event in the proper order
+	Console.log(inputKeyEventWithoutIdentifier.identifier);
 	events.append(inputKeyEventWithoutIdentifier);
 
 	// Build a list of modifier keys that are down
@@ -154,10 +167,44 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 				}
 			}
 			else {
-				modifierKeysDown.append(key);
+				modifierKeysDown.append(keyThatIsPossiblyDown);
 			}
 		}
 	});
+
+	// Process the modifier keys down
+	InputKeyEvent.processModifierKeysDown(events, emitter, domEvent, modifierKeysDown, inputKeyEventWithoutIdentifier, eventTypeSuffix, false);
+
+	// Create additional events including the location of the key, e.g., "input.key.left.shift.up"
+	if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
+		// Process the modifier keys down with the location
+		// TODO make location do somethign here
+		InputKeyEvent.processModifierKeysDown(events, emitter, domEvent, modifierKeysDown, inputKeyEventWithoutIdentifier, eventTypeSuffix, true);
+
+		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+eventTypeSuffix;
+		Console.log(eventIdentifier);
+		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+	}
+
+	// Logging
+	//var eventIdentifiers = [];
+	//events.each(function(index, event) {
+	//	eventIdentifiers.append(event.identifier);
+	//});
+	//Console.standardInfo(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
+
+	Console.log('--- end '+domEvent.type);
+
+	return events;
+};
+
+InputKeyEvent.processModifierKeysDown = function(events, emitter, domEvent, modifierKeysDown, inputKeyEventWithoutIdentifier, eventTypeSuffix, useKeyLocation) {
+	var eventIdentifier = null;
+
+	var key = inputKeyEventWithoutIdentifier.key;
+	if(useKeyLocation) {
+		key = key+'.'+inputKeyEventWithoutIdentifier.keyLocation;
+	}
 
 	// If there are any modifier keys down, create additional events with the modifier keys, e.g., "input.key.a.control"
 	if(modifierKeysDown.length) {
@@ -166,11 +213,12 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		// Handle keys that do not emit a keypress event but that do emit a keyup event
 		if(eventTypeSuffix == '.up') {
 			// Keys that do not normally emit press events for which we need to manually emit one
-			if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
+			if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key] && !InputKeyEvent.modifierKeys[key]) {
 				// e.g., "input.key.f1" for F1 which does not emit a keypress
 				// TODO: Test this on Windows as Mac may not emit a keypress (because function + F1) but Windows may
 				// TODO: Is this causing dupes?
-				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
+				eventIdentifier = 'input.key.'+key;
+				Console.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 			}
 
@@ -179,42 +227,29 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 				if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]) {
 					// e.g., "input.key.a"
 					// TODO: Test this on Windows as Mac may not emit a keypress but Windows may
-					eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
+					eventIdentifier = 'input.key.'+key;
+					Console.log(eventIdentifier);
 					events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 				}
 			}
 		}
 
+		// Add the original event in the proper order
+		events.append(inputKeyEventWithoutIdentifier);
+
 		// e.g., "input.key.a.control.up", "input.key.a.control", "input.key.a.control.down"
-		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix+eventTypeSuffix;
+		eventIdentifier = 'input.key.'+key+modifierKeysDownSuffix+eventTypeSuffix;
+		Console.log(eventIdentifier);
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 		// If the command key is down we need to emit some additional events since Command+Key only emits keydown events
 		// So we want to fire "input.key.l.command" in addition to "input.key.l.command.down"
 		if(inputKeyEventWithoutIdentifier.modifierKeysDown.meta && eventTypeSuffix == '.down') { // "command" or "windows"
 			eventIdentifier = 'input.key.'+key+modifierKeysDownSuffix;
+			Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 	}
-
-	// Create additional events including the location of the key, e.g., "input.key.left.shift.up"
-	if(
-		inputKeyEventWithoutIdentifier.keyLocation == 'left' ||
-		inputKeyEventWithoutIdentifier.keyLocation == 'right' ||
-		inputKeyEventWithoutIdentifier.keyLocation == 'numericKeypad'
-	) {
-		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+eventTypeSuffix;
-		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
-	}
-
-	// Logging
-	var eventIdentifiers = [];
-	events.each(function(index, event) {
-		eventIdentifiers.append(event.identifier);
-	});
-	Console.standardInfo(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
-
-	return events;
 };
 
 InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
