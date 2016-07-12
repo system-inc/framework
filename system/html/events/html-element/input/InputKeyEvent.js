@@ -209,6 +209,7 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 			// If the control key is down
 			if(
 				inputKeyEventWithoutIdentifier.modifierKeysDown.control &&
+				inputKeyEventWithoutIdentifier.key != 'control' &&
 				InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]
 			) {
 				// e.g., "input.key.a"

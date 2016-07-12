@@ -34,7 +34,7 @@ var InputKeyEventTest = ElectronTest.extend({
 		// Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
-        //throw new Error('Throwing error to display browser window.');
+        throw new Error('Throwing error to display browser window.');
 	},
 
 	testInputKeyEvent: function*() {

@@ -78,9 +78,9 @@ var ElectronManager = Class.extend({
 		if(this.mainBrowserWindowViewController.htmlDocument) {
 			var shortcutSettings = Project.modules.electronModule.settings.get('shortcuts');
 
-			console.log('This next line is for testing input.key events.');
-			this.mainBrowserWindowViewController.htmlDocument.on('input.*', function(event) {});
-			return;
+			//console.log('This next line is for testing input.key events.');
+			//this.mainBrowserWindowViewController.htmlDocument.on('input.*', function(event) {});
+			//return;
 			
 			if(shortcutSettings.closeFocusedWindow) {
 				this.mainBrowserWindowViewController.htmlDocument.on('input.key.w.control', this.closeFocusedWindow.bind(this));
