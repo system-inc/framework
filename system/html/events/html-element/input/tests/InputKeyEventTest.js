@@ -19,8 +19,11 @@ var InputKeyEventTest = ElectronTest.extend({
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
+        // Loop through all keys and make elements that will highlight when the keys are pressed correctly
+
 		// Create a textarea HtmlElement
 		var htmlElement = Html.textarea();
+
 
 		htmlElement.on('input.key.*', function(event) {
 			//if(WildcardPatternMatcher.match('input.key.*.control', event.identifier)) {

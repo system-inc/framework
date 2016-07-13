@@ -258,11 +258,12 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 	}
 
 	// Logging
-	var eventIdentifiers = [];
-	events.each(function(index, event) {
-		eventIdentifiers.append(event.identifier);
-	});
-	Console.standardInfo(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
+	//var eventIdentifiers = [];
+	//events.each(function(index, event) {
+	//	eventIdentifiers.append(event.identifier);
+	//});
+	//Console.standardInfo(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
+	//Console.standardInfo('InputKeyEvent.createEventsFromDomEvent events', events);
 
 	Console.log('--- end '+domEvent.type);
 
@@ -333,28 +334,68 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 	else if(key == ' ') {
 		key = 'space';
 	}
-	else if(key == 'dead' || !key) {
+	else if(!key || key == 'dead' || key.length == 1 && !key.match(/\w/)) {
 		if(domEvent.charCode) {
 			key = String.fromCharacterCode(domEvent.charCode);
 
-			if(!inputKeyEvent.modifierKeysDown.shift) {
+			if(key && !inputKeyEvent.modifierKeysDown.shift) {
 				key = key.lowercase();
-			}	
+			}
+
+			//Console.log('String.fromCharacterCode', domEvent.charCode, 'key:', key);
 		}
-		else if(domEvent.keyIdentifier && !domEvent.keyIdentifier.startsWith('U+')) {
+		
+		if((!key || !key.match(/\w/)) && domEvent.keyIdentifier && !domEvent.keyIdentifier.startsWith('U+')) {
 			// If we don't have a key which will display a character
 			key = domEvent.keyIdentifier.lowercaseFirstCharacter();
 
 			if(key == 'win') {
 				key = Keyboard.keyTitleMap['meta'];
 			}
+			else if(Keyboard.keyIdentifierMap[key]) {
+				key = Keyboard.keyIdentifierMap[key];
+
+				if(key && key.length == 1 && inputKeyEvent.modifierKeysDown.shift) {
+					key = key.uppercase();
+				}
+			}
+
+			//Console.log('domEvent.keyIdentifier', key);
 		}
-		else if(domEvent.keyCode) {
+
+		if((!key || !key.match(/\w/)) && domEvent.code) {
+			key = domEvent.code.replaceFirst('key', '').lowercaseFirstCharacter();
+
+			if(key && key.length == 1 && inputKeyEvent.modifierKeysDown.shift) {
+				key = key.uppercase();
+			}
+
+			//Console.log('Keyboard.keyCodeMap domEvent.keyCode', key);
+		}
+		
+		if((!key || !key.match(/\w/)) && domEvent.keyCode) {
 			key = Keyboard.keyCodeMap[domEvent.keyCode];
+
+			//Console.log('Keyboard.keyCodeMap domEvent.keyCode', key);
 		}
-		else if(domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
+		
+		if((!key || !key.match(/\w/)) && domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
 			key = Keyboard.unicodeMap[domEvent.keyIdentifier];
+
+			//Console.log('Keyboard.unicodeMap domEvent.keyCode', key);
 		}
+
+		if((!key || !key.match(/\w/)) && domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
+			key = Keyboard.unicodeMap[domEvent.keyIdentifier];
+
+			//Console.log('Keyboard.unicodeMap domEvent.keyCode', key);
+		}
+	}
+
+	//Console.log('key', key, 'key is truthy', (key ? true : false));
+
+	if(!key) {
+		Console.standardError('no key for domEvent', domEvent);
 	}
 
 	// Set the key
