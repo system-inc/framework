@@ -1,6 +1,5 @@
 // Dependencies
 var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
-var Keyboard = Framework.require('system/hardware/Keyboard.js');
 
 // Class
 var InputKeyEvent = HtmlElementEvent.extend({
@@ -106,6 +105,84 @@ InputKeyEvent.modifierKeys = {
 	command: true,
 	windows: true,
 	shift: true,
+};
+
+
+InputKeyEvent.keyTitleMap = {
+	'~': 'tilde',
+	'`': 'graveAccent',
+
+	'!': 'exclamation',
+	'@': 'at',
+	'#': 'number',
+	'$': 'dollar',
+	'%': 'percent',
+	'^': 'caret',
+	'&': 'ampersand',
+	'*': 'asterisk',
+	'(': 'leftParenthesis',
+	')': 'rightParenthesis',
+
+	'-': 'minus',
+	'_': 'underscore',
+	'=': 'equals',
+	'+': 'plus',
+
+	'[': 'leftBracket',
+	'{': 'leftBrace',
+	']': 'rightBracket',
+	'}': 'rightBrace',
+	'\\': 'backslash',
+	'|': 'verticalBar',
+
+	';': 'semicolon',
+	':': 'colon',
+	'\'': 'singleQuote',
+	'"': 'doubleQuote',
+
+	',': 'comma',
+	'<': 'lessThan',
+	'.': 'period',
+	'>': 'moreThan',
+	'/': 'forwardSlash',
+	'?': 'question',
+
+	' ': 'space',
+
+	'meta': (Project.onWindows() ? 'windows' : (Project.onMacOs() ? 'command' : 'meta')),
+
+	'arrowUp': 'up',
+	'arrowDown': 'down',
+	'arrowLeft': 'left',
+	'arrowRight': 'right',
+};
+
+InputKeyEvent.keyCodeMap = {
+	2: 'b',
+	4: 'd',
+	5: 'e',
+	6: 'f',
+	7: 'g',
+	11: 'k',
+	14: 'n',
+	15: 'o',
+	21: 'u',
+	23: 'w',
+	25: 'y',
+	26: 'z',
+	//8: 'backspace',
+	//3: 'scrollLock',
+	//28: 'verticalBar',
+	//29: 'rightBracket',
+};
+
+InputKeyEvent.keyIdentifierMap = {
+	'clear': 'l',
+};
+
+InputKeyEvent.unicodeMap = {
+	'U+0020': 'space',
+	'U+007F': 'delete',
 };
 
 // Static methods
