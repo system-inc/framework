@@ -34,7 +34,7 @@ var ModalView = View.extend({
 	enableHideOnOutsideClick: function() {
 		this.modal.on('input.press', function(event) {
 			//Console.log('modal click');
-			event.data.stopPropagation();
+			event.stopPropagation();
 		}.bind(this));
 
 		// Close on clicking outside of modal

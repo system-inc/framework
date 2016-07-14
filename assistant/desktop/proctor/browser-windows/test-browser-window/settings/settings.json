@@ -30,20 +30,20 @@
 						oneDisplay: {
 							display: 1,
 							mode: 'normal',
-							width: .5, // Production
-							//width: .5, // Development
-							height: .5, // Production
-							//height: .5, // Development
+							//width: .5, // Production
+							//height: .5, // Production
+							width: 1, // Development
+							height: 1, // Development
 							x: 'right',
 							y: 'top',
 						},
 						twoDisplays: {
 							display: 2,
 							mode: 'normal',
-							width: .5, // Production
-							//width: .5, // Development
-							height: .5, // Production
-							//height: .5, // Development
+							//width: .5, // Production
+							//height: .5, // Production
+							width: 1, // Development
+							height: 1, // Development
 							x: 'left',
 							y: 'top',
 						},

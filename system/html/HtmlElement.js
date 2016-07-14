@@ -364,6 +364,18 @@ var HtmlElement = HtmlNode.extend({
         return this;
     },
 
+    find: function(selector) {
+		var result = null;
+		var domNode = this.domNode.querySelector(selector);
+		//Console.standardInfo(domNodes);
+
+		if(domNode && domNode.htmlNode) {
+			result = domNode.htmlNode;
+		}		
+
+		return result;
+	},
+
 });
 
 // Static properties

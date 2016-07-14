@@ -390,6 +390,18 @@ var HtmlDocument = XmlDocument.extend({
 		};
 	},
 
+	find: function(selector) {
+		var result = null;
+		var domNode = this.domDocument.querySelector(selector);
+		//Console.standardInfo(domNodes);
+
+		if(domNode && domNode.htmlNode) {
+			result = domNode.htmlNode;
+		}		
+
+		return result;
+	},
+
 });
 
 // Static methods

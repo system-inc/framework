@@ -110,6 +110,9 @@ var WildcardPatternMatcherTest = Test.extend({
 	    Assert.true(WildcardPatternMatcher.match('input.press.2.down', 'input.press.(1|2).down'));
 	    Assert.true(WildcardPatternMatcher.match('input.press.2.down', 'input.press.(2|1).down'));
 
+	    Assert.true(WildcardPatternMatcher.match('input.key.l.(control|command)', 'input.key.l.(alt|command|control|meta|shift|windows|up|down|left|right|backspace|delete|insert|contextMenu|escape)'));
+	    Assert.true(WildcardPatternMatcher.match('input.key.l.(control|command)', 'input.key.*(alt|command|control|meta|shift|windows|up|down|left|right|backspace|delete|insert|contextMenu|escape)'));
+
 	    // Ranges
 	    Assert.true(WildcardPatternMatcher.match('start.[a-z].end', 'start.b.end'));
 	    Assert.true(WildcardPatternMatcher.match('start.[A-Z].end', 'start.B.end'));
@@ -150,7 +153,7 @@ var WildcardPatternMatcherTest = Test.extend({
 		Assert.false(WildcardPatternMatcher.match('test.hello.)*', 'test.hello.)'));
 
 		// Invalid range
-		Assert.false(WildcardPatternMatcher.match('test.hello.[a-$]', 'test.hello.*)'));	
+		Assert.false(WildcardPatternMatcher.match('test.hello.[a-$]', 'test.hello.*)'));
 	},
 
 });

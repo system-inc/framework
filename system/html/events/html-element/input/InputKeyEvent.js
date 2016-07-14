@@ -181,6 +181,7 @@ InputKeyEvent.keyIdentifierMap = {
 };
 
 InputKeyEvent.unicodeMap = {
+	'U+0008': 'backspace',
 	'U+0020': 'space',
 	'U+007F': 'delete',
 };
@@ -248,6 +249,20 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 				Console.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 			}
+
+			if(modifierKeysDown.length) {
+				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
+				Console.log(eventIdentifier);
+				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+
+				// Create additional events including the location of the key
+				if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
+					// Create additional events including the location of the key
+					eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+modifierKeysDownSuffix;
+					Console.log(eventIdentifier);
+					events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+				}
+			}
 		}
 	}
 
@@ -257,6 +272,7 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		inputKeyEventWithoutIdentifier.modifierKeysDown.control &&
 		InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]
 	) {
+		// Do nothing
 	}
 	else {
 		Console.log(inputKeyEventWithoutIdentifier.identifier);
@@ -276,8 +292,6 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 			// Keys that do not normally emit press events for which we need to manually emit one
 			if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key] && !InputKeyEvent.modifierKeys[inputKeyEventWithoutIdentifier.key]) {
 				// e.g., "input.key.f1" for F1 which does not emit a keypress
-				// TODO: Test this on Windows as Mac may not emit a keypress (because function + F1) but Windows may
-				// TODO: Is this causing dupes?
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
 				Console.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
@@ -290,13 +304,11 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 				InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]
 			) {
 				// e.g., "input.key.a"
-				// TODO: Test this on Windows as Mac may not emit a keypress but Windows may
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
 				Console.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 				// e.g., "input.key.a.control"
-				// TODO: Test this on Windows as Mac may not emit a keypress but Windows may
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
 				Console.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
@@ -323,7 +335,11 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 
 		// If the command key is down we need to emit some additional events since Command+Key only emits keydown events
 		// So we want to fire "input.key.l.command" in addition to "input.key.l.command.down"
-		if(inputKeyEventWithoutIdentifier.modifierKeysDown.meta && eventTypeSuffix == '.down') { // "command" or "windows"
+		if(
+			inputKeyEventWithoutIdentifier.modifierKeysDown.meta && // "command" or "windows"
+			InputKeyEvent.modifierKeys[inputKeyEventWithoutIdentifier.key] == undefined && // do not include modifier keys as they still emit key up
+			eventTypeSuffix == '.down'
+		) {
 			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
 			Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
@@ -390,10 +406,15 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 	// Lowercase key titles (keys with more than one character)
 	if(key.length > 1) {
 		key = key.lowercaseFirstCharacter();
+
+		// Set dead keys to null
+		if(key == 'dead') {
+			key = null;
+		}
 	}
 
 	// Check the key title map for a match
-	var possibleKeyTitle = Keyboard.keyTitleMap[key];
+	var possibleKeyTitle = InputKeyEvent.keyTitleMap[key];
 	if(possibleKeyTitle) {
 		key = possibleKeyTitle;
 	}
@@ -411,7 +432,9 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 	else if(key == ' ') {
 		key = 'space';
 	}
-	else if(!key || key == 'dead' || key.length == 1 && !key.match(/\w/)) {
+	else if(!key || (key.length == 1 && !key.match(/\w/))) {
+		//Console.standardLog('no key', domEvent);
+
 		if(domEvent.charCode) {
 			key = String.fromCharacterCode(domEvent.charCode);
 
@@ -419,53 +442,53 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 				key = key.lowercase();
 			}
 
-			//Console.log('String.fromCharacterCode', domEvent.charCode, 'key:', key);
+			Console.log('String.fromCharacterCode', domEvent.charCode, 'key:', key);
 		}
 		
-		if((!key || !key.match(/\w/)) && domEvent.keyIdentifier && !domEvent.keyIdentifier.startsWith('U+')) {
+		if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyIdentifier && !domEvent.keyIdentifier.startsWith('U+')) {
 			// If we don't have a key which will display a character
 			key = domEvent.keyIdentifier.lowercaseFirstCharacter();
 
 			if(key == 'win') {
-				key = Keyboard.keyTitleMap['meta'];
+				key = InputKeyEvent.keyTitleMap['meta'];
 			}
-			else if(Keyboard.keyIdentifierMap[key]) {
-				key = Keyboard.keyIdentifierMap[key];
-
-				if(key && key.length == 1 && inputKeyEvent.modifierKeysDown.shift) {
-					key = key.uppercase();
-				}
+			else if(InputKeyEvent.keyIdentifierMap[key]) {
+				key = InputKeyEvent.keyIdentifierMap[key];
 			}
-
-			//Console.log('domEvent.keyIdentifier', key);
-		}
-
-		if((!key || !key.match(/\w/)) && domEvent.code) {
-			key = domEvent.code.replaceFirst('key', '').lowercaseFirstCharacter();
 
 			if(key && key.length == 1 && inputKeyEvent.modifierKeysDown.shift) {
 				key = key.uppercase();
 			}
 
-			//Console.log('Keyboard.keyCodeMap domEvent.keyCode', key);
+			Console.log('domEvent.keyIdentifier', key);
+		}
+
+		if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.code) {
+			key = domEvent.code.replaceFirst('Key', '').lowercaseFirstCharacter();
+
+			if(key && key.length == 1 && inputKeyEvent.modifierKeysDown.shift) {
+				key = key.uppercase();
+			}
+
+			Console.log('InputKeyEvent.keyCodeMap domEvent.keyCode', key);
 		}
 		
-		if((!key || !key.match(/\w/)) && domEvent.keyCode) {
-			key = Keyboard.keyCodeMap[domEvent.keyCode];
+		if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyCode) {
+			key = InputKeyEvent.keyCodeMap[domEvent.keyCode];
 
-			//Console.log('Keyboard.keyCodeMap domEvent.keyCode', key);
+			Console.log('InputKeyEvent.keyCodeMap domEvent.keyCode', key);
 		}
 		
-		if((!key || !key.match(/\w/)) && domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
-			key = Keyboard.unicodeMap[domEvent.keyIdentifier];
+		if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
+			key = InputKeyEvent.unicodeMap[domEvent.keyIdentifier];
 
-			//Console.log('Keyboard.unicodeMap domEvent.keyCode', key);
+			Console.log('InputKeyEvent.unicodeMap domEvent.keyCode', key);
 		}
 
-		if((!key || !key.match(/\w/)) && domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
-			key = Keyboard.unicodeMap[domEvent.keyIdentifier];
+		if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
+			key = InputKeyEvent.unicodeMap[domEvent.keyIdentifier];
 
-			//Console.log('Keyboard.unicodeMap domEvent.keyCode', key);
+			Console.log('InputKeyEvent.unicodeMap domEvent.keyCode', key);
 		}
 	}
 

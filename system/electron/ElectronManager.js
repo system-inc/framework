@@ -115,7 +115,9 @@ var ElectronManager = Class.extend({
 	},
 
 	reset: function(callback) {
-		this.mainBrowserWindow.webContents.session.clearStorageData(
+		Console.standardWarn(Electron.remote.getCurrentWebContents().session);
+		//return;
+		Electron.remote.getCurrentWebContents().session.clearStorageData(
 			{
 				storages: [
 					'appcache',
@@ -133,7 +135,7 @@ var ElectronManager = Class.extend({
 					'syncable',
 				],
 			},
-			callback
+			function() {} // Pass an empty callback - https://github.com/electron/electron/issues/6491
 		);
 	},
 
