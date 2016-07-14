@@ -270,606 +270,970 @@ var InputKeyEventTest = ElectronTest.extend({
 
 InputKeyEventTest.keys = {
 	'escape': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f1': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f2': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f3': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f4': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f5': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f6': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f7': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f8': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f9': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f10': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f11': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'f12': {
-		locations: {
-		},
-		requiresShift: false,
-	},
-	'printScroll': {
-		locations: {
-		},
-		requiresShift: false,
-	},
-	'scrollLock': {
-		locations: {
-		},
-		requiresShift: false,
-	},
-	'pause': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'graveAccent': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'tilde': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'1': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'exclamation': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'2': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'at': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'3': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'number': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'4': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'dollar': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'5': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'percent': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'6': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'caret': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'7': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'ampersand': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'8': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'asterisk': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'numericKeypad':
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'9': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'leftParenthesis': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'0': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'rightParenthesis': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'minus': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'underscore': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'equals': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'plus': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'backspace': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'tab': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'q': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'Q': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'w': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'W': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'e': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'E': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'r': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'R': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	't': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'T': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'y': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'Y': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'u': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'U': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'i': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'I': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'o': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'O': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'p': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'P': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'leftBracket': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'leftBrace': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'rightBracket': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'rightBrace': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'backslash': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'verticalBar': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'capsLock': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'a': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'A': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	's': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'S': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'd': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'D': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'f': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'F': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'g': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'G': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'h': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'H': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'j': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'J': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'k': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'K': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'l': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'L': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'semicolon': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'colon': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'singleQuote': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'doubleQuote': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'enter': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'numericKeypad',
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'shift': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'left': {
+				requiresShift: false,
+			},
+			'right': {
+				requiresShift: false,
+			},
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'z': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'Z': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'x': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'X': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'c': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'C': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'v': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'V': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'b': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'B': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'n': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'N': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'm': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'M': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'comma': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'lessThan': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'period': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},	
 	'moreThan': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},	
 	'forwardSlash': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'numericKeypad': {
+				requiresShift: true,
+			},
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'question': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'standard': {
+				requiresShift: true,
+			},
+		],
 	},
 	'control': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'left': {
+				requiresShift: false,
+			},
+			'right': {
+				requiresShift: false,
+			},
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'windows': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'left': {
+				requiresShift: false,
+			},
+			'right': {
+				requiresShift: false,
+			},
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'alt': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'left': {
+				requiresShift: false,
+			},
+			'right': {
+				requiresShift: false,
+			},
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'contextMenu': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'option': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'left': {
+				requiresShift: false,
+			},
+			'right': {
+				requiresShift: false,
+			},
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
 	'command': {
-		locations: {
-		},
-		requiresShift: false,
+		locations: [
+			'left': {
+				requiresShift: false,
+			},
+			'right': {
+				requiresShift: false,
+			},
+			'standard': {
+				requiresShift: false,
+			},
+		],
 	},
-	
+	'printScreen': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'scrollLock': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'pause': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'insert': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'home': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'pageUp': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'delete': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'end': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'pageDown': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'up': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'left': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'down': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'right': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},
+	'numLock': {
+		locations: [
+			'standard': {
+				requiresShift: false,
+			},
+		],
+	},	
 };
 
 // Export
