@@ -20,102 +20,149 @@ var InputKeyEventTest = ElectronTest.extend({
         var htmlDocument = new HtmlDocument();
 
         htmlDocument.head.append(Html.style(`
-        	.passed {
-        		background: #00AAFF;
+        	body {
+        		font-family: sans-serif;
+        		font-size: 12px;
+        		padding: 0 0 0 144px;
+        		margin: 0;
+        	}
+        	
+        	textarea {
+        		display: block;
+        		position: fixed;
+        		height: 128px;
+        		width: 128px;
+        		top: 0;
+        		left: 0;
         	}
         	.keyContainer {
         		float: left;
     			border: 1px solid #CCC;
-    			padding: 1em .5em;
-    			margin: .25em;
+    			border-radius: .5em;
+    			padding: 1em .5em 1em .5em;
+    			margin: 0 .25em .25em 0;
         	}
-        	.key {
-        		font-style: bold;
-        	}
-        	.state {
-        		font-size: .75em;
-        		margin: .25em;
-        		padding: .25em;
-        		border: 1px solid #CCC;
+	        	.key {
+	        		font-weight: bold;
+	        	}
+		        	.keyState {
+		        		padding: .25em;
+		        		margin: .25em 0;
+		        		border: 1px solid #CCC;
+		        	}
+        	.passed {
+        		background: #00AAFF;
         	}
     	`));
 
 		// Create a textarea HtmlElement
-		var textAreaElement = Html.textarea({
-			style: {
-				display: 'block',
-			},
-		});
+		var textAreaElement = Html.textarea();
 
 		textAreaElement.on('input.key.*', function(event) {
 			//Console.standardWarn(event.identifier, event);
-			var selector = '#key'+event.key;
-			if(event.keyLocation != 'standard') {
-				selector = selector+'-'+event.keyLocation;
-			}
-			//Console.standardInfo(selector);
-			
+			var selector = '#'+event.identifier.replace('.', '-');
+			//Console.standardInfo('selector', selector);
 			var htmlNode = htmlDocument.find(selector);
 
 			if(htmlNode) {
 				//Console.standardLog('htmlNode', htmlNode);
-
-				var keyState = event.identifier.split('.').last();
-				if(keyState != 'up' && keyState != 'down') {
-					keyState = 'press';
-				}
-
-				var stateElement = htmlNode.find('.'+keyState);
-
-				stateElement.addClass('passed');
+				htmlNode.addClass('passed');
 			}
 			else {
 				Console.standardError('could not find htmlNode for ', selector);
-			}
-
-			
+			}			
 		});
 		htmlDocument.body.append(textAreaElement);
 
 		// Loop through all keys and make elements that will highlight when the keys are pressed correctly
         InputKeyEventTest.keys.each(function(key, keyObject) {
-        	keyObject.locations.each(function(location, locationObject) {
-        		var currentKey = key;
+			keyObject.locations.each(function(location, locationObject) {
+				var currentKey = key;
 
-        		if(location != 'standard') {
-        			currentKey = key+'.'+location;
-        		}
+				if(location != 'standard') {
+					currentKey = key+'.'+location;
+				}
 
-        		var div = Html.div({
-	        		id: 'key'+currentKey.replace('.', '-'),
-	        		class: 'keyContainer',
-	    		});
+				var div = Html.div({
+					class: 'keyContainer',
+				});
 
-        		div.append(Html.div({
-        			content: currentKey,
-        			class: 'key',
-        		}));
-        		div.append(Html.div({
-        			content: 'down',
-        			class: 'state down',
-        		}));
-        		div.append(Html.div({
-        			content: 'press',
-        			class: 'state press',
-        		}));
-        		div.append(Html.div({
-        			content: 'up',
-        			class: 'state up',
-        		}));
+				div.append(Html.div({
+					content: 'input.key.'+currentKey,
+					class: 'key',
+				}));
 
-	        	htmlDocument.body.append(div);
-        	});
+				// input.key.identifier.down
+				div.append(Html.div({
+					id: ('input.key.'+currentKey+'.down').replace('.', '-'),
+					content: 'input.key.'+currentKey+'.down',
+					class: 'keyState',
+				}));
+
+				// input.key.identifier
+				div.append(Html.div({
+					id: ('input.key.'+currentKey).replace('.', '-'),
+					content: 'input.key.'+currentKey,
+					class: 'keyState',
+				}));
+
+				// input.key.identifier.up
+				div.append(Html.div({
+					id: ('input.key.'+currentKey+'.up').replace('.', '-'),
+					content: 'input.key.'+currentKey+'.up',
+					class: 'keyState',
+				}));
+
+				// input.key.identifier.control.down
+				div.append(Html.div({
+					id: ('input.key.'+currentKey+'.control.down').replace('.', '-'),
+					content: 'input.key.'+currentKey+'.control.down',
+					class: 'keyState',
+				}));
+
+				// input.key.identifier.control
+				div.append(Html.div({
+					id: ('input.key.'+currentKey+'.control').replace('.', '-'),
+					content: 'input.key.'+currentKey+'.control',
+					class: 'keyState',
+				}));
+
+				// input.key.identifier.control.up
+				div.append(Html.div({
+					id: ('input.key.'+currentKey+'.control.up').replace('.', '-'),
+					content: 'input.key.'+currentKey+'.control.up',
+					class: 'keyState',
+				}));
+
+				// input.key.identifier.shift.down
+				div.append(Html.div({
+					id: ('input.key.'+currentKey+'.shift.down').replace('.', '-'),
+					content: 'input.key.'+currentKey+'.shift.down',
+					class: 'keyState',
+				}));
+
+				// input.key.identifier.shift
+				div.append(Html.div({
+					id: ('input.key.'+currentKey+'.shift').replace('.', '-'),
+					content: 'input.key.'+currentKey+'.shift',
+					class: 'keyState',
+				}));
+
+				// input.key.identifier.shift.up
+				div.append(Html.div({
+					id: ('input.key.'+currentKey+'.shift.up').replace('.', '-'),
+					content: 'input.key.'+currentKey+'.shift.up',
+					class: 'keyState',
+				}));
+
+				htmlDocument.body.append(div);
+			});
         });
 
 		// Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
-        //throw new Error('Throwing error to display browser window.');
+        throw new Error('Throwing error to display browser window.');
 	},
 
 	testInputKeyEvent: function*() {
@@ -1028,6 +1075,9 @@ InputKeyEventTest.keys = {
 	},
 	'shift': {
 		locations: {
+			'standard': {
+				requiresShift: false,
+			},
 			'left': {
 				requiresShift: false,
 			},
@@ -1184,6 +1234,9 @@ InputKeyEventTest.keys = {
 	},
 	'control': {
 		locations: {
+			'standard': {
+				requiresShift: false,
+			},
 			'left': {
 				requiresShift: false,
 			},
@@ -1194,6 +1247,9 @@ InputKeyEventTest.keys = {
 	},
 	'windows': {
 		locations: {
+			'standard': {
+				requiresShift: false,
+			},
 			'left': {
 				requiresShift: false,
 			},
@@ -1204,6 +1260,9 @@ InputKeyEventTest.keys = {
 	},
 	'alt': {
 		locations: {
+			'standard': {
+				requiresShift: false,
+			},
 			'left': {
 				requiresShift: false,
 			},
@@ -1228,6 +1287,9 @@ InputKeyEventTest.keys = {
 	},
 	'option': {
 		locations: {
+			'standard': {
+				requiresShift: false,
+			},
 			'left': {
 				requiresShift: false,
 			},
@@ -1238,6 +1300,9 @@ InputKeyEventTest.keys = {
 	},
 	'command': {
 		locations: {
+			'standard': {
+				requiresShift: false,
+			},
 			'left': {
 				requiresShift: false,
 			},

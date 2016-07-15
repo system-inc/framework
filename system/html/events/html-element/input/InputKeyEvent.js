@@ -26,32 +26,46 @@ var InputKeyEvent = HtmlElementEvent.extend({
 // Static properties
 
 InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown = {
+	// TODO: TEST THESE ON MAC AND WINDOWS
+
+	// These actually emit keypress on Windows
 	a: true,
 	A: true,
-	b: true,
-	B: true,
-	d: true,
-	D: true,
-	e: true,
-	E: true,
-	f: true,
-	F: true,
+	//b: true,
+	//B: true,
+	c: true,
+	C: true,
+	//d: true,
+	//D: true,
+	//e: true,
+	//E: true,
+	//f: true,
+	//F: true,
 	h: true,
 	H: true,
-	k: true,
-	K: true,
-	n: true,
-	N: true,
-	o: true,
-	O: true,
-	p: true,
-	P: true,
-	t: true,
-	T: true,
+	//k: true,
+	//K: true,
+	//n: true,
+	//N: true,
+	//o: true,
+	//O: true,
+	//p: true,
+	//P: true,
+	//t: true,
+	//T: true,
+	v: true,
+	V: true,
+	x: true,
+	X: true,
 	y: true,
 	Y: true,
+	z: true,
+	Z: true,
 
-	space: true,
+	graveAccent: true,
+	tilde: true,
+
+	//space: true,
 	home: true,
 	end: true,
 	pageUp: true,
@@ -158,26 +172,32 @@ InputKeyEvent.keyTitleMap = {
 };
 
 InputKeyEvent.keyCodeMap = {
+	1: 'a',
 	2: 'b',
+	3: 'c',
 	4: 'd',
 	5: 'e',
 	6: 'f',
 	7: 'g',
+	8: 'h',
+	9: 'i',
+	10: 'j',
 	11: 'k',
+	12: 'l',
+	13: 'm',
 	14: 'n',
 	15: 'o',
+	16: 'p',
+	17: 'q',
+	18: 'r',
+	19: 's',
+	20: 't',
 	21: 'u',
+	22: 'v',
 	23: 'w',
+	24: 'x',
 	25: 'y',
 	26: 'z',
-	//8: 'backspace',
-	//3: 'scrollLock',
-	//28: 'verticalBar',
-	//29: 'rightBracket',
-};
-
-InputKeyEvent.keyIdentifierMap = {
-	'clear': 'l',
 };
 
 InputKeyEvent.unicodeMap = {
@@ -288,36 +308,26 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 	// If there are any modifier keys down, create additional events with the modifier keys, e.g., "input.key.a.control"
 	if(modifierKeysDown.length) {
 		// Handle keys that do not emit a keypress event but that do emit a keyup event
-		if(eventTypeSuffix == '.up') {
-			// Keys that do not normally emit press events for which we need to manually emit one
-			if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key] && !InputKeyEvent.modifierKeys[inputKeyEventWithoutIdentifier.key]) {
-				// e.g., "input.key.f1" for F1 which does not emit a keypress
-				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
-				Console.log(eventIdentifier);
-				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
-			}
+		if(
+			eventTypeSuffix == '.up' &&
+			inputKeyEventWithoutIdentifier.modifierKeysDown.control && // If the control key is down
+			inputKeyEventWithoutIdentifier.key != 'control' &&
+			InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]
+		) {
+			// e.g., "input.key.a"
+			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
+			Console.log(eventIdentifier);
+			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
-			// If the control key is down
-			if(
-				inputKeyEventWithoutIdentifier.modifierKeysDown.control &&
-				inputKeyEventWithoutIdentifier.key != 'control' &&
-				InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPressWhenControlIsDown[inputKeyEventWithoutIdentifier.key]
-			) {
-				// e.g., "input.key.a"
-				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
-				Console.log(eventIdentifier);
-				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
+			// e.g., "input.key.a.control"
+			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
+			Console.log(eventIdentifier);
+			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
-				// e.g., "input.key.a.control"
-				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
-				Console.log(eventIdentifier);
-				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
-
-				// e.g., "input.key.a.up"
-				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+eventTypeSuffix;
-				Console.log(eventIdentifier);
-				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
-			}
+			// e.g., "input.key.a.up"
+			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+eventTypeSuffix;
+			Console.log(eventIdentifier);
+			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 
 		// e.g., "input.key.a.control.up", "input.key.a.control", "input.key.a.control.down"
@@ -356,7 +366,7 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 	//	eventIdentifiers.append(event.identifier);
 	//});
 	//Console.standardInfo(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
-	//Console.standardInfo('InputKeyEvent.createEventsFromDomEvent events', events);
+	Console.standardInfo('InputKeyEvent.createEventsFromDomEvent events', events);
 
 	Console.log('--- end '+domEvent.type);
 
@@ -420,7 +430,20 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 	}
 
 	// Handle special cases
-	if(key == 'unidentified' && domEvent.code == 'ContextMenu') {
+	if(
+		// If the control key is down and it is a press event
+		inputKeyEvent.modifierKeysDown.control &&
+		domEvent.type == 'keypress' &&
+		domEvent.keyCode >= 1 && domEvent.keyCode <= 26
+	) {
+		if(domEvent.code && domEvent.code.startsWith('Key')) {
+			key = domEvent.code.replace('Key', '');
+		}
+		else {
+			key = InputKeyEvent.keyCodeMap[domEvent.keyCode];	
+		}
+	}
+	else if(key == 'unidentified' && domEvent.code == 'ContextMenu') {
 		key = 'contextMenu';
 	}
 	else if(key == 'help' && domEvent.code == 'Insert') {
@@ -437,11 +460,6 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 
 		if(domEvent.charCode) {
 			key = String.fromCharacterCode(domEvent.charCode);
-
-			if(key && !inputKeyEvent.modifierKeysDown.shift) {
-				key = key.lowercase();
-			}
-
 			Console.log('String.fromCharacterCode', domEvent.charCode, 'key:', key);
 		}
 		
@@ -452,43 +470,38 @@ InputKeyEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
 			if(key == 'win') {
 				key = InputKeyEvent.keyTitleMap['meta'];
 			}
-			else if(InputKeyEvent.keyIdentifierMap[key]) {
-				key = InputKeyEvent.keyIdentifierMap[key];
-			}
-
-			if(key && key.length == 1 && inputKeyEvent.modifierKeysDown.shift) {
-				key = key.uppercase();
-			}
 
 			Console.log('domEvent.keyIdentifier', key);
 		}
 
 		if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.code) {
 			key = domEvent.code.replaceFirst('Key', '').lowercaseFirstCharacter();
-
-			if(key && key.length == 1 && inputKeyEvent.modifierKeysDown.shift) {
-				key = key.uppercase();
-			}
-
 			Console.log('InputKeyEvent.keyCodeMap domEvent.keyCode', key);
 		}
 		
 		if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyCode) {
 			key = InputKeyEvent.keyCodeMap[domEvent.keyCode];
-
 			Console.log('InputKeyEvent.keyCodeMap domEvent.keyCode', key);
 		}
 		
 		if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
 			key = InputKeyEvent.unicodeMap[domEvent.keyIdentifier];
-
 			Console.log('InputKeyEvent.unicodeMap domEvent.keyCode', key);
 		}
 
 		if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
 			key = InputKeyEvent.unicodeMap[domEvent.keyIdentifier];
-
 			Console.log('InputKeyEvent.unicodeMap domEvent.keyCode', key);
+		}
+	}
+
+	// Make sure we have the right case
+	if(key && key.length == 1) {
+		if(inputKeyEvent.modifierKeysDown.shift) {
+			key = key.uppercase();
+		}
+		else {
+			key = key.lowercase();
 		}
 	}
 
