@@ -1,6 +1,9 @@
 // Dependencies
 var Electron = require('electron');
 
+// Enable async and await
+Electron.app.commandLine.appendSwitch('--js-flags', '--harmony-async-await');
+
 // Class
 var Application = {};
 
