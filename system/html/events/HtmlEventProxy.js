@@ -457,7 +457,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 				// Get the domObject from the htmlEventEmitter
 				var domObject = HtmlEventProxy.getDomObjectForHtmlEventEmitterAndDomEventIdentifier(htmlEventEmitter, domEventIdentifier);
 
-				Console.standardLog('Binding domEventIdentifier "'+domEventIdentifier+'" to DOM object will use for eventPattern "'+eventPattern+'"');
+				//Console.standardLog('Binding domEventIdentifier "'+domEventIdentifier+'" to DOM object will use for eventPattern "'+eventPattern+'"');
 				//Console.standardLog('domObject', domObject);
 
 				// Keep track of which DOM object event listeners we have added
@@ -490,7 +490,7 @@ HtmlEventProxy.addEventListener = function(eventPattern, functionToBind, timesTo
 			}
 			else {
 				htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier].count++;
-				Console.standardLog('Already bound domEventIdentifier "'+domEventIdentifier+'" to DOM object, will use the existing one for eventPattern "'+eventPattern+'"');
+				//Console.standardLog('Already bound domEventIdentifier "'+domEventIdentifier+'" to DOM object, will use the existing one for eventPattern "'+eventPattern+'"');
 				//Console.standardLog(domEventIdentifier, htmlEventEmitter.eventListenersOnDomObject[domEventIdentifier]);
 			}
 		});

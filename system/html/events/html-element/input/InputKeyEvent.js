@@ -214,7 +214,7 @@ InputKeyEvent.is = function(value) {
 
 InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPattern) {
 	//Console.standardLog('InputKeyEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
-	Console.log('--- start '+domEvent.type);
+	//Console.log('--- start '+domEvent.type);
 
 	var events = [];
 
@@ -261,25 +261,25 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
 			//Console.standardError(eventIdentifier);
 			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
-			Console.log(eventIdentifier);
+			//Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 			if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation;
-				Console.log(eventIdentifier);
+				//Console.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 			}
 
 			if(modifierKeysDown.length) {
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
-				Console.log(eventIdentifier);
+				//Console.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 				// Create additional events including the location of the key
 				if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
 					// Create additional events including the location of the key
 					eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+modifierKeysDownSuffix;
-					Console.log(eventIdentifier);
+					//Console.log(eventIdentifier);
 					events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 				}
 			}
@@ -295,13 +295,13 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		// Do nothing
 	}
 	else {
-		Console.log(inputKeyEventWithoutIdentifier.identifier);
+		//Console.log(inputKeyEventWithoutIdentifier.identifier);
 		events.append(inputKeyEventWithoutIdentifier);
 	}
 
 	if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
 		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+eventTypeSuffix;
-		Console.log(eventIdentifier);
+		//Console.log(eventIdentifier);
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 	}
 
@@ -316,30 +316,30 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 		) {
 			// e.g., "input.key.a"
 			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
-			Console.log(eventIdentifier);
+			//Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 			// e.g., "input.key.a.control"
 			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
-			Console.log(eventIdentifier);
+			//Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 			// e.g., "input.key.a.up"
 			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+eventTypeSuffix;
-			Console.log(eventIdentifier);
+			//Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 
 		// e.g., "input.key.a.control.up", "input.key.a.control", "input.key.a.control.down"
 		eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix+eventTypeSuffix;
-		Console.log(eventIdentifier);
+		//Console.log(eventIdentifier);
 		events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 		// Create additional events including the location of the key
 		if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
 			// Create additional events including the location of the key
 			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+modifierKeysDownSuffix+eventTypeSuffix;
-			Console.log(eventIdentifier);
+			//Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 
@@ -351,11 +351,11 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 			eventTypeSuffix == '.down'
 		) {
 			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
-			Console.log(eventIdentifier);
+			//Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
-			Console.log(eventIdentifier);
+			//Console.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 	}
@@ -366,9 +366,9 @@ InputKeyEvent.createEventsFromDomEvent = function(domEvent, emitter, eventPatter
 	//	eventIdentifiers.append(event.identifier);
 	//});
 	//Console.standardInfo(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
-	Console.standardInfo('InputKeyEvent.createEventsFromDomEvent events', events);
+	//Console.standardInfo('InputKeyEvent.createEventsFromDomEvent events', events);
 
-	Console.log('--- end '+domEvent.type);
+	//Console.log('--- end '+domEvent.type);
 
 	return events;
 };

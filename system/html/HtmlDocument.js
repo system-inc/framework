@@ -320,6 +320,8 @@ var HtmlDocument = XmlDocument.extend({
             text = this.domDocument.selection.createRange().text;
         }
 
+        Console.log('htmlDocument.getSelectedText', text);
+
         return text;
 	},
 

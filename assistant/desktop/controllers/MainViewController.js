@@ -56,13 +56,13 @@ var MainViewController = ViewController.extend({
         this.view.append(Html.h1('Proctor'));
 
         // Get all possible tests
-        this.tests = yield Proctor.getTests();
+        //this.tests = yield Proctor.getTests();
         //this.tests = yield Proctor.getTests(null, 'Class');
         //this.tests = yield Proctor.getTests(null, 'electron');
         //this.tests = yield Proctor.getTests(null, 'html', 'event');
         //this.tests = yield Proctor.getTests(null, 'web-interface');
         //this.tests = yield Proctor.getTests(null, new RegularExpression('(interface|event)'));
-        //this.tests = yield Proctor.getTests(null, 'InputKey');
+        this.tests = yield Proctor.getTests(null, 'InputKey');
         //Console.standardLog(tests);
 
         // Run tests form
