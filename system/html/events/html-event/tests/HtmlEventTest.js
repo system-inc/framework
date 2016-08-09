@@ -10,8 +10,8 @@ var HtmlEvent = Framework.require('system/html/events/html-event/HtmlEvent.js');
 var HtmlEventTest = ElectronTest.extend({
 
 	before: function*() {
-		// Initialize the ElectronManager here as to not throw an exception when electron is not present
-		ElectronManager = Framework.require('system/electron/ElectronManager.js');
+    	// Initialize the ElectronManager here as to not throw an exception when electron is not present
+    	ElectronManager = Framework.require('system/electron/ElectronManager.js');
 	},
 
 	testRemoveEventListener: function*() {

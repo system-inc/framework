@@ -62,7 +62,8 @@ var MainViewController = ViewController.extend({
         //this.tests = yield Proctor.getTests(null, 'html', 'event');
         //this.tests = yield Proctor.getTests(null, 'web-interface');
         //this.tests = yield Proctor.getTests(null, new RegularExpression('(interface|event)'));
-        this.tests = yield Proctor.getTests(null, 'InputKey');
+        //this.tests = yield Proctor.getTests(null, 'InputKey');
+        this.tests = yield Proctor.getTests(null, 'HtmlNode');
         //Console.standardLog(tests);
 
         // Run tests form

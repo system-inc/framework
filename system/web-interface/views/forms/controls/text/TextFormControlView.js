@@ -42,18 +42,17 @@ var TextFormControlView = FormControlView.extend({
         console.log('refactor this and break these variables into their own methods');
 
         // Selection data
-        var selectionTextStart = event.target.selectionStart;
-        var selectionTextEnd = event.target.selectionEnd;
         //var selectionText = this.getSelectionText();
-        var selectionText = this.htmlDocument.getSelectedText();
+        var selectionText = this.getSelectedText();
+        Console.standardLog(selectionText);
         var selectionIsMultiLine = selectionText.contains("\n");
 
         // Cursor data
         var cursorPosition = this.getCursorPosition();
-        var cursorPositionLineStart = allText.lastIndexOf("\n", selectionTextStart - 1) + 1;
+        var cursorPositionLineStart = allText.lastIndexOf("\n", this.getSelectionStart - 1) + 1;
         var cursorPositionLineEnd;
         // If we are on the last line
-        if(allText.substr(selectionTextEnd).indexOf("\n") == -1) {
+        if(allText.substr(this.getSelectionEnd).indexOf("\n") == -1) {
             cursorPositionLineEnd = allText.length;
         }
         // If are are not on the last line
@@ -66,21 +65,21 @@ var TextFormControlView = FormControlView.extend({
         }
         var cursorPositionLineText = allText.substr(cursorPositionLineStart, cursorPositionLineEnd - cursorPositionLineStart);
 
-        var selectionIsWholeLine = (selectionTextStart == cursorPositionLineStart && selectionTextEnd == cursorPositionLineEnd);
+        var selectionIsWholeLine = (this.getSelectionStart == cursorPositionLineStart && this.getSelectionEnd == cursorPositionLineEnd);
         var selectionTextLineEnd;
         // If we include the last line
-        if(allText.substr(selectionTextEnd).indexOf("\n") == -1) {
+        if(allText.substr(this.getSelectionEnd).indexOf("\n") == -1) {
             selectionTextLineEnd = allText.length;
         }
         // If the last line is not included
         else {
-            selectionTextLineEnd = selectionTextEnd + allText.substr(selectionTextEnd).indexOf("\n");
+            selectionTextLineEnd = this.getSelectionEnd + allText.substr(this.getSelectionEnd).indexOf("\n");
         }
         
         // Debug
         Console.log('-----');
-        Console.log('selectionTextStart '+selectionTextStart);
-        Console.log('selectionTextEnd '+selectionTextEnd);
+        Console.log('this.getSelectionStart '+this.getSelectionStart);
+        Console.log('this.getSelectionEnd '+this.getSelectionEnd);
         Console.log('selectionTextLineEnd '+selectionTextLineEnd);
         Console.log('selectionText '+selectionText);
         Console.log('selectionIsMultiLine '+selectionIsMultiLine);
@@ -92,18 +91,26 @@ var TextFormControlView = FormControlView.extend({
         Console.log('cursorPositionLineText '+cursorPositionLineText);
     },
 
+    getSelectionStart: function() {
+        return this.domNode.selectionStart;
+    },
+
+    getSelectionEnd: function() {
+        return this.domNode.selectionEnd;
+    },
+
 	getCursorIndex: function() {
         var index = 0;
 
         if(this.domNode.selectionStart != undefined) {
-            index = this.domNode.selectionStart;
+            index = this.getSelectionStart();
         }
         else {
             this.domNode.focus();
             var selection = this.htmlDocument.getSelection();
             var selectionRange = selection.createRange();
             var selectionLength = selection.createRange().text.length;
-            selectionRange.moveStart('character', -this.domNode.value.length);
+            selectionRange.moveStart('character', -this.getValue().length);
             index = selectionRange.text.length - selectionLength;
         }
 
@@ -120,11 +127,11 @@ var TextFormControlView = FormControlView.extend({
         }
 
         if(start == -1) {
-            start = this.domNode.value.length;
+            start = this.getValue().length;
         }
 
         if(end == -1) {
-            end = this.domNode.value.length;
+            end = this.getValue().length;
         }
 
         if(this.domNode.setSelectionRange) {

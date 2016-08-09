@@ -249,6 +249,89 @@ var HtmlNode = XmlNode.extend({
 		return domNode;
 	},
 
+	getSelectionText: function() {
+		var selectionText = '';
+
+		// Get the selection from the document
+		var selection = this.htmlDocument.getSelection();
+
+		// If the node is part of the selection
+		if(selection.containsNode(this.domNode, true)) {
+			//Console.standardLog('selection contains node', selection);
+
+			// Determine the direction of the selection
+			var documentPositionOfAnchorNodeToFocusNode = selection.anchorNode.compareDocumentPosition(selection.focusNode);
+			//console.log('documentPositionOfAnchorNodeToFocusNode', documentPositionOfAnchorNodeToFocusNode);
+			var direction = 'forward';
+			if(!documentPositionOfAnchorNodeToFocusNode && selection.anchorOffset > selection.focusOffset || documentPositionOfAnchorNodeToFocusNode === 2) {
+				direction = 'backward';
+			}
+			//Console.log('direction', direction);
+
+			// The direction of the selection tells us which nodes to use to determine if the selection starts or ends in this node
+			var firstNode = null;
+			var firstNodeOffset = null;
+			var lastNode = null;
+			var lastNodeOffset = null;
+
+			// When direction is foward we use anchor for the first node and focus for last node
+			if(direction == 'forward') {
+				firstNode = selection.anchorNode;
+				firstNodeOffset = selection.anchorOffset;
+				lastNode = selection.focusNode;
+				lastNodeOffset = selection.focusOffset;
+			}
+			// When direction is backward we use focus for the first node and anchor for the last node
+			else if(direction == 'backward') {
+				firstNode = selection.focusNode;
+				firstNodeOffset = selection.focusOffset;
+				lastNode = selection.anchorNode;
+				lastNodeOffset = selection.anchorOffset;
+			}
+
+			var selectionTextStartsInNode = false;
+			var selectionTextEndsInNode = false;
+
+			if(firstNode === this.domNode || this.domNode.contains(firstNode)) {
+				selectionTextStartsInNode = true;
+			}
+			if(lastNode === this.domNode || this.domNode.contains(lastNode)) {
+				selectionTextEndsInNode = true;
+			}
+
+			// If the selection begins in the node but does not end in the node
+			if(selectionTextStartsInNode && !selectionTextEndsInNode) {
+				//Console.log('The selection begins in the node but does not end in the node');
+				selectionText = this.domNode.textContent.substring(firstNodeOffset);
+			}
+			// If the selection ends in the node but does not begin in it
+			else if(!selectionTextStartsInNode && selectionTextEndsInNode) {
+				//Console.log('The selection ends in the node but does not begin in it');
+				selectionText = this.domNode.textContent.substring(0, lastNodeOffset);
+			}
+			// If the selection begins and ends in the node
+			else if(selectionTextStartsInNode && selectionTextEndsInNode) {
+				//Console.log('The selection begins and ends in the node');
+				// If the first node is the last node
+				if(firstNode === lastNode) {
+					selectionText = this.domNode.textContent.substring(firstNodeOffset, lastNodeOffset);	
+				}
+				// The selection spans across multiple nodes, so we use the range to get the text
+				else {
+					var selectionRange = selection.getRangeAt(0);
+					selectionText = selectionRange.toString();
+				}
+			}
+			// If the selection does not begin or end in this node, then the entire node must be selected
+			else {
+				//Console.log('The selection does not begin or end in this node, then the entire node is selected');
+				selectionText = this.domNode.textContent;
+			}
+		}
+
+        return selectionText;
+    },
+
 	getDimensions: function() {
 		this.getDimensionAndPositionFromDomNode();
 

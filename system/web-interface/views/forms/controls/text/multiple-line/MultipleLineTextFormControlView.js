@@ -29,7 +29,7 @@ var MultipleLineTextFormControlView = TextFormControlView.extend({
 		if(this.settings.get('tabbing')) {
 			Console.log('Enabling tabbing.');
 			this.on('input.key.tab.down', function(event) {
-				Console.log('tab!');
+				Console.standardLog('tab!', event);
 				event.preventDefault();
 				this.getCursorData();
 			}.bind(this));

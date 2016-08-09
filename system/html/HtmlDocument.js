@@ -310,7 +310,7 @@ var HtmlDocument = XmlDocument.extend({
 		return this.domWindow.getSelection();
 	},
 
-	getSelectedText: function() {
+	getSelectionText: function() {
 		var text = '';
 
         if(this.domWindow.getSelection) {
@@ -320,7 +320,7 @@ var HtmlDocument = XmlDocument.extend({
             text = this.domDocument.selection.createRange().text;
         }
 
-        Console.log('htmlDocument.getSelectedText', text);
+        Console.log('htmlDocument.getSelectionText', text);
 
         return text;
 	},
