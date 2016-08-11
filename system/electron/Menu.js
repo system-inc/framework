@@ -17,7 +17,7 @@ var Menu = EventEmitter.extend({
 	update: function() {
 		// TODO: https://github.com/atom/electron/issues/528
 		// Update just calls this.create() as Electron needs to recreate the entire menu to update menu labels
-		this.create();
+		this.create.apply(this, arguments);
 	},
 
 	show: function() {

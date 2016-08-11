@@ -10,9 +10,27 @@ var TextFormControlView = FormControlView.extend({
 
     construct: function(settings) {
         this.super.apply(this, arguments);
+
+        this.settings.setDefaults({
+            indentationSymbol: '    ', // four spaces
+            tabKeyInsertsIndentationSymbol: false,
+            indentationManagement: false,
+        });
+
+        // Set the indentation symbol from the settings
+        this.indentationSymbol = this.settings.get('indentationSymbol');
+
+        // Listen for tab key down if tabbing or selection tabbing are enabled
+        if(this.settings.get('tabKeyInsertsIndentationSymbol') || this.settings.get('indentationManagement')) {
+            this.on('input.key.tab.down', function(event) {
+                this.handleInputKeyTabDown(event);
+            }.bind(this));
+        }
     },
 
     setValue: function(value) {
+        // TODO: If we are programmitically changing the value of the control (as below with indentation management), we should make sure that undo still works perfectly
+
         // Make null an empty string
         if(value == null) {
             value = '';
@@ -38,74 +56,407 @@ var TextFormControlView = FormControlView.extend({
         this.valueChangedOnDom();
     },
 
-    getCursorData: function() {
-        console.log('refactor this and break these variables into their own methods');
+    handleInputKeyTabDown: function(event) {
+        //Console.standardLog('handleInputKeyTabDown', event);
 
-        // Selection data
-        //var selectionText = this.getSelectionText();
-        var selectionText = this.getSelectedText();
-        Console.standardLog(selectionText);
-        var selectionIsMultiLine = selectionText.contains("\n");
+        var eventReturnValue = true;
 
-        // Cursor data
-        var cursorPosition = this.getCursorPosition();
-        var cursorPositionLineStart = allText.lastIndexOf("\n", this.getSelectionStart - 1) + 1;
-        var cursorPositionLineEnd;
-        // If we are on the last line
-        if(allText.substr(this.getSelectionEnd).indexOf("\n") == -1) {
-            cursorPositionLineEnd = allText.length;
+        // Prevent the default behavior from happening (changing focus to the next element)
+        event.preventDefault();
+
+        // If tabKeyInsertsIndentationSymbol is enabled and indentationManagement is not enabled
+        if(this.settings.get('tabKeyInsertsIndentationSymbol') && !this.settings.get('indentationManagement')) {
+            // When the user presses tab, insert an indentation symbol regardless of selection or if the shift key is pressed
+            //Console.log('Inserting tab character');
+            this.insertIndentationSymbol();
         }
-        // If are are not on the last line
-        else {
-            cursorPositionLineEnd = cursorPositionLineStart + allText.substr(cursorPositionLineStart).indexOf("\n");
+        // If indentation management is enabled
+        else if(this.settings.get('indentationManagement')) {
+            eventReturnValue = false;
+
+            // Get the selection text
+            var selectedText = this.getSelectedText();
+
+            // If nothing is selected
+            if(selectedText === null) {
+                // Shift+tab with nothing selected, outdent the current line
+                if(event.modifierKeysDown.shift) {
+                    this.outdentCurrentLine();
+                }
+                // Tab with nothing selected, insert an indentation symbol
+                else {
+                    //Console.log('Tab with nothing selected, insert an indentation symbol');
+                    this.insertIndentationSymbol();
+                }
+            }
+            // If something is selected
+            else {
+                var multipleLinesSelected = (selectedText.getLineCount() > 1);
+
+                // If the shift key is down
+                if(event.modifierKeysDown.shift) {
+                    // Shift+tab with a multiple-line selection, outdent the selected lines
+                    if(multipleLinesSelected) {
+                        this.outdentSelectedLines();
+                    }
+                    // Shift+tab with a single-line selection, outdent the selected line
+                    else {
+                        this.outdentCurrentLine();
+                    }
+                }
+                else {
+                    // Tab with a multiple-line selection, indent the selected lines
+                    if(multipleLinesSelected) {
+                        this.indentSelectedLines();
+                    }
+                    // Tab with a single-line selection, indent the selected line
+                    else {
+                        this.indentCurrentLine();
+                    }
+                }
+            }
         }
 
-        if(cursorPositionLineEnd == -1) {
-            cursorPositionLineEnd = allText.length;
-        }
-        var cursorPositionLineText = allText.substr(cursorPositionLineStart, cursorPositionLineEnd - cursorPositionLineStart);
-
-        var selectionIsWholeLine = (this.getSelectionStart == cursorPositionLineStart && this.getSelectionEnd == cursorPositionLineEnd);
-        var selectionTextLineEnd;
-        // If we include the last line
-        if(allText.substr(this.getSelectionEnd).indexOf("\n") == -1) {
-            selectionTextLineEnd = allText.length;
-        }
-        // If the last line is not included
-        else {
-            selectionTextLineEnd = this.getSelectionEnd + allText.substr(this.getSelectionEnd).indexOf("\n");
-        }
-        
-        // Debug
-        Console.log('-----');
-        Console.log('this.getSelectionStart '+this.getSelectionStart);
-        Console.log('this.getSelectionEnd '+this.getSelectionEnd);
-        Console.log('selectionTextLineEnd '+selectionTextLineEnd);
-        Console.log('selectionText '+selectionText);
-        Console.log('selectionIsMultiLine '+selectionIsMultiLine);
-        Console.log('selectionIsWholeLine '+selectionIsWholeLine);
-
-        Console.log('cursorPosition '+cursorPosition);
-        Console.log('cursorPositionLineStart '+cursorPositionLineStart);
-        Console.log('cursorPositionLineEnd '+cursorPositionLineEnd);
-        Console.log('cursorPositionLineText '+cursorPositionLineText);
+        return eventReturnValue;
     },
 
-    getSelectionStart: function() {
+    insertIndentationSymbol: function() {
+        this.htmlDocument.insertText(this.settings.get('indentationSymbol'));
+    },
+
+    indentCurrentLine: function() {
+        //Console.log('indentCurrentLine');
+
+        // Insert an indentation symbol at the start of the current line
+        var updatedValue = this.getValue().insert(this.getCurrentLineStartIndex(), this.settings.get('indentationSymbol'));
+
+        // Capture these variables before updating the value on the text form control
+        var selectionStartIndex = this.getSelectionStartIndex();
+        var selectionEndIndex = this.getSelectionEndIndex();
+        var indentationSymbolLength = this.settings.get('indentationSymbol').length;
+
+        // Update the text form control value
+        this.setValue(updatedValue);
+
+        // Update the selection and cursor position
+        this.selectRange((selectionStartIndex + indentationSymbolLength), (selectionEndIndex + indentationSymbolLength));
+    },
+
+    outdentCurrentLine: function() {
+        //Console.log('outdentCurrentLine');
+
+        var selectionStartIndex = this.getSelectionStartIndex();
+        var selectionEndIndex = this.getSelectionEndIndex();
+        var selectionStartIndexDelta = 0;
+        var selectionEndIndexDelta = 0;
+        var valueChanged = false;
+        var currentLineText = this.getCurrentLineText();
+        var currentLineStartIndex = this.getCurrentLineStartIndex();
+        var currentLineEndIndex = this.getCurrentLineEndIndex();
+        var currentLineIsEntirelySelected = this.isCurrentLineEntirelySelected();
+        var updatedCurrentLineText = null;
+        var value = this.getValue();
+        var updatedValue = null;
+        var indentationSymbol = this.settings.get('indentationSymbol');
+        var indentationSymbolLength = indentationSymbol.length;
+
+        //Console.log('------');
+        //Console.log('selectionStartIndex', selectionStartIndex);
+        //Console.log('selectionEndIndex', selectionEndIndex);
+        //Console.log('selectionStartIndexDelta', selectionStartIndexDelta);
+        //Console.log('selectionEndIndexDelta', selectionEndIndexDelta);
+        //Console.log('currentLineText', currentLineText);
+        //Console.log('currentLineStartIndex', currentLineStartIndex);
+        //Console.log('currentLineEndIndex', currentLineEndIndex);
+        //Console.log('currentLineIsEntirelySelected', currentLineIsEntirelySelected);
+        //Console.log('updatedCurrentLineText', updatedCurrentLineText);
+        //Console.log('------');
+
+        // Find the first indentation symbol at the start of the line and remove it
+        if(currentLineText.startsWith(indentationSymbol)) {
+            // Keep track of how far we are moving our selection
+            selectionStartIndexDelta = -indentationSymbolLength;
+            selectionEndIndexDelta = -indentationSymbolLength;
+
+            // Replace the first indentation symbol in the string
+            updatedCurrentLineText = currentLineText.replaceFirst(indentationSymbol, '');
+
+            // Replace the old line with the new modified line
+            updatedValue = value.replaceRange(currentLineStartIndex, currentLineEndIndex, updatedCurrentLineText);
+
+            // Update the text form control value
+            this.setValue(updatedValue);
+
+            // Make sure we select range
+            valueChanged = true;
+        }
+        // If the line starts with white space, not an indentation symbol
+        else {
+            // Get the white space at the start of the string
+            var whiteSpaceAtStartOfString = this.getWhiteSpaceAtStartOfString(currentLineText);
+
+            // If the string begins with white space
+            if(whiteSpaceAtStartOfString) {
+                // Keep track of how far we are moving our selection
+                selectionStartIndexDelta = -whiteSpaceAtStartOfString.length;
+                selectionEndIndexDelta = -whiteSpaceAtStartOfString.length;
+
+                // Remove the white space at the start of the string
+                updatedCurrentLineText = currentLineText.replaceFirst(whiteSpaceAtStartOfString, '');
+
+                // Replace the old line with the new modified line
+                updatedValue = value.replaceRange(currentLineStartIndex, currentLineEndIndex, updatedCurrentLineText);
+
+                // Update the text form control value
+                this.setValue(updatedValue);
+
+                // Make sure we select range
+                valueChanged = true;
+            }
+        }
+
+        // If the value changed we should update the selection and cursor position
+        if(valueChanged) {
+            var updatedSelectionStartIndex = selectionStartIndex + selectionStartIndexDelta;
+            var updatedSelectionEndIndex = selectionEndIndex + selectionEndIndexDelta;
+            //Console.log('Range selection', updatedSelectionStartIndex, updatedSelectionEndIndex);
+
+            // If they have the whole line selected, keep the whole line selected
+            if(currentLineIsEntirelySelected) {
+                this.selectRange(currentLineStartIndex, updatedSelectionEndIndex);
+            }
+            // Make sure we don't jump back further than the start of the line
+            else if(currentLineStartIndex <= (selectionStartIndex + selectionStartIndexDelta)) {
+                //Console.log('Selecting range', updatedSelectionStartIndex, updatedSelectionEndIndex, selectionStartIndex, selectionStartIndexDelta, selectionEndIndex, selectionEndIndexDelta);
+                this.selectRange(updatedSelectionStartIndex, updatedSelectionEndIndex);
+            }
+            // Just stay at the front of the string
+            else {
+                //Console.log('Setting cursor position', this.getCurrentLineStartIndex());
+                this.setCursorIndex(currentLineStartIndex);
+            }
+        }
+    },
+
+    indentSelectedLines: function() {
+        //Console.log('indentSelectedLines');
+
+        var selectionStartIndex = this.getSelectionStartIndex();
+        var selectionEndIndex = this.getSelectionEndIndex();
+        var selectedLinesText = this.getSelectedLinesText();
+        var selectedLinesCount = this.getSelectedLinesCount();
+        var indentationSymbol = this.settings.get('indentationSymbol');
+        var indentationSymbolLength = indentationSymbol.length;
+        
+        // Add indentation to each selected line
+        var updatedSelectedLinesText = '';
+        selectedLinesText.split("\n").each(function(index, selectedLineText) {
+            updatedSelectedLinesText += indentationSymbol+selectedLineText+"\n";
+        });
+        updatedSelectedLinesText = updatedSelectedLinesText.replaceLast("\n", '');
+
+        //Console.log('selectedLinesText', selectedLinesText);
+        //Console.log('selectedLinesCount', selectedLinesCount);
+        //Console.log('updatedSelectedLinesText', updatedSelectedLinesText);
+        
+        var updatedValue = this.getValue().replaceRange(this.getFirstSelectedLineStartIndex(), this.getLastSelectedLineEndIndex(), updatedSelectedLinesText);
+
+        // Update the text form control value
+        this.setValue(updatedValue);
+
+        // Update the selection and cursor position
+        this.selectRange((selectionStartIndex + indentationSymbolLength), (selectionEndIndex + (indentationSymbolLength * selectedLinesCount)));
+    },
+
+    outdentSelectedLines: function() {
+        //Console.log('outdentSelectedLines');
+
+        var selectionStartIndex = this.getSelectionStartIndex();
+        var selectionEndIndex = this.getSelectionEndIndex();
+        var selectedLinesText = this.getSelectedLinesText();
+        var selectedLinesCount = this.getSelectedLinesCount();
+        var firstSelectedLineStartIndex = this.getFirstSelectedLineStartIndex();
+        var indentationSymbol = this.settings.get('indentationSymbol');
+        var indentationSymbolLength = indentationSymbol.length;
+        
+        // Go through each selected line and remove either the tab character or the white space, keeping track of how many characters have been removed
+        var charactersRemoved = 0;
+        var charactersRemovedFromFirstLine = 0;
+        var updatedSelectedLinesText = '';
+        selectedLinesText.split("\n").each(function(index, selectedLineText) {
+            // If the line starts with an indentation symbol
+            if(selectedLineText.startsWith(indentationSymbol)) {
+                charactersRemoved += indentationSymbol.length;
+
+                if(index == 0) {
+                    charactersRemovedFromFirstLine = charactersRemoved;
+                }
+
+                updatedSelectedLinesText += selectedLineText.replaceFirst(indentationSymbol, '')+"\n";
+            }
+            // if the line does not start with an indentation symbol
+            else {
+                // Get the white space at the start of the string
+                var whiteSpaceAtStartOfString = this.getWhiteSpaceAtStartOfString(selectedLineText);
+
+                // If the string starts with white space
+                if(whiteSpaceAtStartOfString) {
+                    // Keep track of how far we are moving our selection
+                    charactersRemoved += whiteSpaceAtStartOfString.length;
+
+                    if(index == 0) {
+                        charactersRemovedFromFirstLine = charactersRemoved;
+                    }
+
+                    // Replace the white space
+                    updatedSelectedLinesText += selectedLineText.replaceFirst(whiteSpaceAtStartOfString, '')+"\n";
+                }
+                // If the string does not start with white space, it is already outdented as much as possible
+                else {
+                    updatedSelectedLinesText += selectedLineText+"\n";
+                }
+            }
+        }.bind(this));
+        updatedSelectedLinesText = updatedSelectedLinesText.replaceLast("\n", '');
+
+        //Console.log('selectedLinesText', selectedLinesText);
+        //Console.log('selectedLinesCount', selectedLinesCount);
+        //Console.log('updatedSelectedLinesText', updatedSelectedLinesText);
+        
+        var updatedValue = this.getValue().replaceRange(this.getFirstSelectedLineStartIndex(), this.getLastSelectedLineEndIndex(), updatedSelectedLinesText);
+
+        // Update the text form control value
+        this.setValue(updatedValue);
+
+        // Update the selection and cursor position
+        var updatedSelectionStartIndex = selectionStartIndex - charactersRemovedFromFirstLine;
+        // Never select the line before
+        if(updatedSelectionStartIndex < firstSelectedLineStartIndex) {
+            updatedSelectionStartIndex = firstSelectedLineStartIndex;
+        }
+        var updatedSelectionEndIndex = selectionEndIndex - charactersRemoved;
+        this.selectRange(updatedSelectionStartIndex, updatedSelectionEndIndex);
+    },
+
+    getSelectedText: function() {
+        var selectedText = null;
+
+        if((this.getSelectionEndIndex() - this.getSelectionStartIndex()) > 0) {
+            selectedText = this.getValue().substring(this.getSelectionStartIndex(), this.getSelectionEndIndex());
+        }
+
+        return selectedText;
+    },
+
+    getSelectedLinesCount: function() {
+        var selectionLineCount = 0;
+        var selectedText = this.getSelectedText();
+        //Console.log('selectedText', selectedText);
+
+        if(selectedText) {
+            selectionLineCount = selectedText.getLineCount();
+        }
+
+        return selectionLineCount;
+    },
+
+    getSelectedLinesText: function() {
+        return this.getValue().substring(this.getFirstSelectedLineStartIndex(), this.getLastSelectedLineEndIndex());
+    },
+
+    getFirstSelectedLineStartIndex: function() {
+        return this.getCurrentLineStartIndex();
+    },
+
+    getLastSelectedLineEndIndex: function() {
+        var lastSelectedLineEndIndex = null;
+
+        var value = this.getValue();
+
+        // If we include the last line
+        if(this.doesSelectionContainLastLine()) {
+            // Then the last selected line end index is the end of all of the text
+            lastSelectedLineEndIndex = value.length;
+        }
+        // If the selection does not contain the last line
+        else {
+            // Then the last selected line end index is the selection end index plus the number of characters until the next line break
+            lastSelectedLineEndIndex = this.getSelectionEndIndex() + value.substring(this.getSelectionEndIndex()).indexOf("\n");
+        }
+
+        return lastSelectedLineEndIndex;
+    },
+
+    getSelectionStartIndex: function() {
         return this.domNode.selectionStart;
     },
 
-    getSelectionEnd: function() {
+    getSelectionEndIndex: function() {
         return this.domNode.selectionEnd;
     },
 
+    getCurrentLineNumber: function() {
+        return this.getValue().substring(0, this.getSelectionStartIndex()).split("\n").length;
+    },
+
+    getCurrentLineStartIndex: function() {
+        return this.getValue().lastIndexOf("\n", this.getSelectionStartIndex() - 1) + 1;
+    },
+
+    getCurrentLineEndIndex: function() {
+        var currentLineEndIndex = null;
+
+        var value = this.getValue();
+
+        // If the selection contains the last line
+        if(this.doesSelectionContainLastLine()) {
+            //Console.log('this.doesSelectionContainLastLine()', this.doesSelectionContainLastLine());
+            // Then the current line end index is the end of all of the text
+            currentLineEndIndex = value.length;
+        }
+        // If the selection does not contain the last line
+        else {
+            // Then the current line end index is the current line start index plus the number of characters until the next line break
+            currentLineEndIndex = this.getCurrentLineStartIndex() + value.substring(this.getCurrentLineStartIndex()).indexOf("\n");
+        }
+
+        // If we still do not have a line end index or if the line end index is -1, then there is only one line of text
+        if(currentLineEndIndex === null || currentLineEndIndex == -1) {
+            currentLineEndIndex = value.length;
+        }
+
+        return currentLineEndIndex;
+    },
+
+    getCurrentLineText: function() {
+        return this.getValue().substr(this.getCurrentLineStartIndex(), (this.getCurrentLineEndIndex() - this.getCurrentLineStartIndex()));
+    },
+
+    getCurrentLineTextUpToCursorIndex: function() {
+        var currentLineStartIndex = this.getCurrentLineStartIndex();
+        var cursorIndex = this.getCursorIndex();
+
+        return this.getValue().substr(currentLineStartIndex, cursorIndex - currentLineStartIndex);
+    },
+
+    doesSelectionContainLastLine: function() {
+        return this.getValue().substring(this.getSelectionEndIndex()).indexOf("\n") == -1;
+    },
+
+    isCurrentLineEntirelySelected: function() {
+        return (this.getSelectionStartIndex() == this.getCurrentLineStartIndex() && this.getSelectionEndIndex() == this.getCurrentLineEndIndex());
+    },
+
+    getCurrentColumnNumber: function() {
+        return this.getSelectionStartIndex() - this.getCurrentLineStartIndex() + 1;
+    },
+    
 	getCursorIndex: function() {
         var index = 0;
 
-        if(this.domNode.selectionStart != undefined) {
-            index = this.getSelectionStart();
-        }
-        else {
+        var index = this.getSelectionStartIndex();
+
+        if(index === undefined) {
             this.domNode.focus();
             var selection = this.htmlDocument.getSelection();
             var selectionRange = selection.createRange();
@@ -145,6 +496,16 @@ var TextFormControlView = FormControlView.extend({
             range.moveStart('character', start);
             range.select();
         }
+    },
+
+    getWhiteSpaceAtStartOfString: function(string) {
+        var whiteSpaceAtStartOfString = string.match(/^\s*/).get(0);
+
+        if(!whiteSpaceAtStartOfString) {
+            whiteSpaceAtStartOfString = '';
+        }
+
+        return whiteSpaceAtStartOfString;
     },
 
 });

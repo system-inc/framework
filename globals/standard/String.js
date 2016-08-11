@@ -375,6 +375,14 @@ String.prototype.toStream = function() {
 	return stream;
 };
 
+String.prototype.getLineCount = function() {
+	return this.split(/\r|\r\n|\n/g).length;
+};
+
+String.prototype.getCharacterCount = function() {
+	return this.length;
+};
+
 // Static methods
 
 String.is = function(value) {

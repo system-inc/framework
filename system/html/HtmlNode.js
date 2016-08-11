@@ -249,8 +249,18 @@ var HtmlNode = XmlNode.extend({
 		return domNode;
 	},
 
+	// TODO: At some point add some arguments to this function to allow it to specify the start and end offsets of the selection
+	select: function() {
+		var selection = this.htmlDocument.getSelection();
+        var range = this.htmlDocument.domDocument.createRange();
+        range.selectNodeContents(this.domNode);
+        //Console.standardLog(selection, range);
+        selection.removeAllRanges();
+        selection.addRange(range);
+	},
+
 	getSelectionText: function() {
-		var selectionText = '';
+		var selectionText = null;
 
 		// Get the selection from the document
 		var selection = this.htmlDocument.getSelection();
@@ -312,15 +322,8 @@ var HtmlNode = XmlNode.extend({
 			// If the selection begins and ends in the node
 			else if(selectionTextStartsInNode && selectionTextEndsInNode) {
 				//Console.log('The selection begins and ends in the node');
-				// If the first node is the last node
-				if(firstNode === lastNode) {
-					selectionText = this.domNode.textContent.substring(firstNodeOffset, lastNodeOffset);	
-				}
-				// The selection spans across multiple nodes, so we use the range to get the text
-				else {
-					var selectionRange = selection.getRangeAt(0);
-					selectionText = selectionRange.toString();
-				}
+				var selectionRange = selection.getRangeAt(0);
+				selectionText = selectionRange.toString();
 			}
 			// If the selection does not begin or end in this node, then the entire node must be selected
 			else {
