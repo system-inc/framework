@@ -410,6 +410,8 @@ HtmlElement.makeHtmlNode = function(value, parent, type) {
 
 	// If the value is currently not of type HtmlNode (it must be a string), turn it into an HtmlNode
 	if(!alreadyIsHtmlNode) {
+		//Console.standardLog(value);
+
 		if(value.contains('<')) {
 			Console.warn('HTML strings are not supported (I should implement), use View or HtmlElement or HtmlNode.', value);
 		}
