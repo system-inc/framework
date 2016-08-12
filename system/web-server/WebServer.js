@@ -13,7 +13,41 @@ var WebServer = Server.extend({
 	identifier: null,
 	directory: null,
 	requests: 0,
-	settings: null,
+	settings: new Settings({
+		directory: null,
+		verbose: true,
+		logs: {
+			general: {
+				enabled: true,
+				directory: Node.Path.join(Project.directory, 'logs'),
+				nameWithoutExtension: 'web-server-'+this.identifier.toDashes(),
+			},
+			requests: {
+				enabled: true,
+				directory: Node.Path.join(Project.directory, 'logs'),
+				nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-requests',
+			},
+			responses: {
+				enabled: true,
+				directory: Node.Path.join(Project.directory, 'logs'),
+				nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-responses',
+			},
+		},
+		protocols: {
+			http: {
+				ports: [],
+			},
+			https: {
+				keyFile: null,
+				certificateFile: null,
+			},
+		},
+		serverTimeoutInMilliseconds: 60000, // 60 seconds
+		requestTimeoutInMilliseconds: 20000, // 20 seconds
+		responseTimeoutInMilliseconds: 20000, // 20 seconds
+		maximumRequestBodySizeInBytes: 20000000, // 20 megabytes
+	}),
+	
 	router: null,
 	listeners: {},
 	logs: {
@@ -24,48 +58,7 @@ var WebServer = Server.extend({
 
 	construct: function(identifier, settings) {
 		this.identifier = identifier;
-		this.settings = (settings === undefined ? new Settings() : settings);
-
-		// If we received settings as an object, create a new Settings class
-		if(!Class.isInstance(settings, Settings)) {
-			this.settings = new Settings(settings);
-		}
-
-		// Set the default settings
-		this.settings.setDefaults({
-			directory: null,
-			verbose: true,
-			logs: {
-				general: {
-					enabled: true,
-					directory: Node.Path.join(Project.directory, 'logs'),
-					nameWithoutExtension: 'web-server-'+this.identifier.toDashes(),
-				},
-				requests: {
-					enabled: true,
-					directory: Node.Path.join(Project.directory, 'logs'),
-					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-requests',
-				},
-				responses: {
-					enabled: true,
-					directory: Node.Path.join(Project.directory, 'logs'),
-					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-responses',
-				},
-			},
-			protocols: {
-				http: {
-					ports: [],
-				},
-				https: {
-					keyFile: null,
-					certificateFile: null,
-				},
-			},
-			serverTimeoutInMilliseconds: 60000, // 60 seconds
-			requestTimeoutInMilliseconds: 20000, // 20 seconds
-			responseTimeoutInMilliseconds: 20000, // 20 seconds
-			maximumRequestBodySizeInBytes: 20000000, // 20 megabytes
-		});
+		this.settings.merge(settings);
 
 		// Set the web server directory
 		var settingsDirectory = this.settings.get('directory');

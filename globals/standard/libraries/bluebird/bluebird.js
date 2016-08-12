@@ -171,6 +171,7 @@ Async.prototype._consumeLateBuffer = function Async$_consumeLateBuffer() {
             if (fn.domain != null) {
                 fn.domain.emit("error", res.e);
             } else {
+                Console.error(res.e);
                 throw res.e;
             }
         }

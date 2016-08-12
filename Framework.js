@@ -103,19 +103,15 @@ var Framework = Class.extend({
 		//Console.log('Loading project settings...');
 
 		var Settings = Framework.require('system/settings/Settings.js');
-		this.settings = Settings.constructFromFile(Node.Path.join(this.directory, 'settings', 'settings.json'));
-		//Console.log('loadProjectSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
-
-		// Set the default settings
-		this.settings.setDefaults({
+		this.settings = Settings.constructFromFile({
 			environment: 'development',
 			modules: {},
-		});
-		//Console.log('this.settings', this.settings);
+		}, Node.Path.join(this.directory, 'settings', 'settings.json'));
+		//Console.log('loadProjectSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
 
 		// Merge the environment settings
 		//Console.log('Integrating environment settings...')
-		this.settings.integrateSettingsFromFile(Node.Path.join(this.directory, 'settings', 'environment.json'));
+		this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'environment.json'));
 		//Console.log(this.settings);
 	},
 

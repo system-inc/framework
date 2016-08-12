@@ -9,11 +9,10 @@ var View = HtmlElement.extend({
 	tag: 'div',
 
 	// Settings for the View
-	settings: null,
+	settings: new Settings(),
 
 	construct: function(settings) {
-		this.settings = new Settings(settings, {
-		});
+		this.settings.merge(settings);
 
 		// Every View is an HtmlElement
 		this.super();

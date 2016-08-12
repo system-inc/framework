@@ -33,7 +33,7 @@ var Module = Class.extend({
 		yield Module.initialize(this.dependencies);
 
 		// Initialize the settings
-		this.settings = new Settings(settings, this.defaultSettings);
+		this.settings = new Settings(this.defaultSettings, settings);
 	},
 
 });

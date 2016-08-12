@@ -10,11 +10,12 @@ var LinkView = View.extend({
 		class: 'link',
 	},
 
-	construct: function(linkContent, linkUrl, viewSettings) {
-		this.setContent(linkContent);
-		this.setAttribute('href', linkUrl);
-
-		this.super.call(this, viewSettings);
+	construct: function(settings) {
+		if(settings && settings.url) {
+			this.setAttribute('href', settings.url);
+		}
+		
+		this.super.apply(this, arguments);
 	},
 
 });

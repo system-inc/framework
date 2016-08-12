@@ -1,28 +1,41 @@
+// Dependencies
+var Settings = Framework.require('system/settings/Settings.js');
+var ViewContainer = Framework.require('system/web-interface/view-containers/ViewContainer.js');
+
 // Class
 var ViewController = Class.extend({
 
-	root: null,
-	parent: null,
-	children: [],
-
-	htmlDocument: null,
-
+	viewContainer: null,
 	view: null,
+	subviews: {},
 
-	// Settings for the ViewController
-	settings: null,
+	settings: new Settings(),
 
 	construct: function(settings) {
-		this.settings = new Settings(settings, {
-		});
+		this.settings.merge(settings);
+
+		this.createViewContainer();
+
+		this.createView();
+
+		this.createSubviews();
+
+		this.mount();
 	},
 
-	prepend: function(webController) {
-		this.children.prepend(webController);
+	createViewContainer: function() {
+		this.viewContainer = new ViewContainer();
 	},
 
-	append: function(webController) {
-		this.children.append(webController);
+	createView: function() {
+		this.view = this.viewContainer.body;
+	},
+
+	createSubviews: function() {
+	},
+
+	mount: function() {
+		this.viewContainer.mountToDom();
 	},
 
 });

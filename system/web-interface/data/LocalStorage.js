@@ -36,7 +36,7 @@ LocalStorage.set = function(keyName, value) {
 	return localStorage.setItem(keyName, value);
 }
 
-LocalStorage.delete = LocalStorage.remove = function(keyName) {
+LocalStorage.delete = function(keyName) {
 	return localStorage.removeItem(keyName);
 }
 

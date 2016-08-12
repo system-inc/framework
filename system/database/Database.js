@@ -17,7 +17,18 @@ var Database = Class.extend({
 
 	sizeInBytes: null,
 
-	settings: null,
+	settings: new Settings({
+		host: 'localhost',
+		port: '3306',
+		ipAddress: null,
+		socketPath: null,
+		username: null,
+		password: null,
+		databaseName: null,
+		connectionLimit: 10,
+		timeZone: 'local',
+		connectTimeout: 10000,
+	}),
 
 	databaseConnectionPool: null,
 
@@ -29,18 +40,7 @@ var Database = Class.extend({
 	},
 
 	construct: function(settings) {
-		this.settings = new Settings(settings, {
-			host: 'localhost',
-			port: '3306',
-			ipAddress: null,
-			socketPath: null,
-			username: null,
-			password: null,
-			databaseName: null,
-			connectionLimit: 10,
-			timeZone: 'local',
-			connectTimeout: 10000,
-		});
+		this.settings.merge(settings);
 
 		this.name = this.settings.get('databaseName');
 

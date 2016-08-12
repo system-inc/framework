@@ -6,7 +6,30 @@ var Terminal = Framework.require('system/console/Terminal.js');
 // Class
 var Command = Class.extend({
 
-	settings: null,
+	settings: new Settings({
+		usage: null,
+		supplementalNotes: null,
+
+		//requiredArguments: [],
+		//optionalArguments: [],
+
+		options: [
+			/* 
+			An option looks like:
+			{ 
+				identifier: 'path',
+				type: 'string', 
+				defaultValue: null,
+				description: 'The path.',
+				aliases: [
+					'p',
+				],
+				identifiers: [ // An array with the identifier and the aliases
+				],
+			},
+			*/
+		],
+	}),
 
 	usage: null,
 	supplementalNotes: null,
@@ -17,30 +40,7 @@ var Command = Class.extend({
 	options: null,
 
 	construct: function(argumentsArray, settings) {
-		this.settings = new Settings(settings, {
-			usage: null,
-			supplementalNotes: null,
-
-			//requiredArguments: [],
-			//optionalArguments: [],
-
-			options: [
-				/* 
-				An option looks like:
-				{ 
-					identifier: 'path',
-					type: 'string', 
-					defaultValue: null,
-					description: 'The path.',
-					aliases: [
-						'p',
-					],
-					identifiers: [ // An array with the identifier and the aliases
-					],
-				},
-				*/
-			],
-		});
+		this.settings.merge(settings);
 
 		// Set the usage and supplemental notes
 		this.usage = this.settings.get('usage');
