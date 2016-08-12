@@ -352,7 +352,7 @@ var HtmlElement = HtmlNode.extend({
         if(this.domNode) {
         	// Focus on the next update - this is important because you cannot .focus() on a DOM node unless it is visible
         	// Pending DOM updates may be making the DOM node visible, so we wait until they finish before calling .focus
-        	this.on('htmlNode.domUpdateExecuted', function() {
+        	this.once('htmlNode.domUpdateExecuted', function() {
 				this.domNode.focus();
         	}.bind(this));
 

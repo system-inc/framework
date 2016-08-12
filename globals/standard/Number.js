@@ -26,10 +26,35 @@ Number.toInteger = function(value) {
 	return parseInt(value, 10);
 };
 
+Number.toFloat = function(value) {
+	if(!value) {
+		return 0;
+	}
+
+	return parseFloat(value);
+};
+
+Number.precision = function(number) {
+	if(!isFinite(number)) {
+		return 0;
+	}
+
+	var e = 1;
+	var precision = 0;
+	while(Math.round(number * e) / e !== number) {
+		e *= 10;
+		precision++;
+	}
+
+	return precision;
+};
+
 Number.round = function(number, precision) {
 	precision = (precision === undefined ? 0 : precision);
 
-	var number = number.toFixed(precision);
+	number = Number.toFloat(number);
+
+	number = number.toFixed(precision);
 
 	// Make 0 precision numbers integers
 	if(precision == 0) {
@@ -52,6 +77,8 @@ Number.addCommas = function(number) {
 
 Number.toMoney = function(number, precision) {
 	precision = (precision === undefined ?  2 : precision);
+
+	number = Number.toFloat(number);
 
 	var formatted;
 	if(number < 0) {
