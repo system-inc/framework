@@ -3,6 +3,18 @@ var DataStore = Class.extend({
 
 	data: {},
 
+	get: function(path) {
+		return this.data.getValueByPath(path);
+	},
+
+	set: function(path, value) {
+		return this.data.setValueByPath(path, value);
+	},
+
+	delete: function(path) {
+		return this.data.deleteValueByPath(path);
+	},
+
 	getData: function() {
 		return this.data;
 	},
@@ -31,18 +43,6 @@ var DataStore = Class.extend({
 
 	integrate: function(data) {
 		return this.data.integrate(data);
-	},
-
-	get: function(path) {
-		return this.data.getValueByPath(path);
-	},
-
-	set: function(path, value) {
-		return this.data.setValueByPath(path, value);
-	},
-
-	delete: function(path) {
-		return this.data.deleteValueByPath(path, value);
 	},
 
 });

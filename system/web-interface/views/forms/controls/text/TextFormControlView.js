@@ -9,7 +9,7 @@ var TextFormControlView = FormControlView.extend({
     },
 
     construct: function(settings) {
-        this.super.apply(this, arguments);
+        this.super(settings);
 
         this.settings.setDefaults({
             indentationSymbol: '    ', // four spaces
@@ -51,7 +51,7 @@ var TextFormControlView = FormControlView.extend({
     },
 
     insertText: function(text) {
-        this.htmlDocument.insertText(text);
+        this.viewContainer.insertText(text);
 
         this.valueChangedOnDom();
     },
@@ -121,7 +121,7 @@ var TextFormControlView = FormControlView.extend({
     },
 
     insertIndentationSymbol: function() {
-        this.htmlDocument.insertText(this.settings.get('indentationSymbol'));
+        this.viewContainer.insertText(this.settings.get('indentationSymbol'));
     },
 
     indentCurrentLine: function() {
@@ -458,7 +458,7 @@ var TextFormControlView = FormControlView.extend({
 
         if(index === undefined) {
             this.domNode.focus();
-            var selection = this.htmlDocument.getSelection();
+            var selection = this.viewContainer.getSelection();
             var selectionRange = selection.createRange();
             var selectionLength = selection.createRange().text.length;
             selectionRange.moveStart('character', -this.getValue().length);

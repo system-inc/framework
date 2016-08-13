@@ -1,6 +1,5 @@
 // Dependencies
 var View = Framework.require('system/web-interface/views/View.js');
-var Html = Framework.require('system/html/Html.js');
 
 // Class
 var ButtonView = View.extend({

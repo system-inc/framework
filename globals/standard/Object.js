@@ -77,6 +77,31 @@ Object.prototype.setValueByPath = function(path, value) {
     return this;
 };
 
+Object.prototype.deleteValueByPath = function(path) {
+    var keys = path.split('.');
+    var current = this;
+
+    // Search for they key they specified
+    for(var i = 0; i < keys.length; i++) {
+        // If the key isn't set and it isn't the last
+        if(!current[keys[i]] && i != keys.length - 1) {
+            // Break out of the loop as there will be no value to delete
+            break;
+        }
+
+        // If the key is the last key, delete the value
+        if(i == keys.length - 1) {
+            delete current[keys[i]];
+        }
+        // If the key is not the last key, set current to the most recent key and loop again
+        else {
+            current = current[keys[i]];
+        }
+    }
+
+    return this;
+};
+
 Object.prototype.each = function(callback) {
     var context = this;
 

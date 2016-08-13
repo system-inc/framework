@@ -16,7 +16,7 @@ var Settings = Class.extend({
 
 		// Set the data store
 		this.dataStore = dataStore;
-		Console.standardLog('this.dataStore', this.dataStore);
+		//Console.standardLog('this.dataStore', this.dataStore);
 
 		// Set the defaults
 		this.setDefaults(defaultData);
@@ -32,6 +32,7 @@ var Settings = Class.extend({
 
 			// Get the current data
 			var data = this.dataStore.getData();
+			//Console.log('data', data);
 
 			// Set the data to the default data
 			this.dataStore.setData(this.defaults);
@@ -71,6 +72,10 @@ var Settings = Class.extend({
 
 	set: function(path, value) {
 		return this.dataStore.set(path, value);
+	},
+
+	delete: function(path) {
+		return this.dataStore.delete(path);
 	},
 
 });

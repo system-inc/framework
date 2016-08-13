@@ -20,7 +20,7 @@ var ViewController = Class.extend({
 
 		this.createSubviews();
 
-		this.mount();
+		this.initializeViewContainer();
 	},
 
 	createViewContainer: function() {
@@ -34,8 +34,15 @@ var ViewController = Class.extend({
 	createSubviews: function() {
 	},
 
-	mount: function() {
-		this.viewContainer.mountToDom();
+	initializeViewContainer: function() {
+		this.viewContainer.on('viewContainer.initialized', function() {
+			this.initialize();
+		}.bind(this));
+
+		this.viewContainer.initialize();
+	},
+
+	initialize: function() {
 	},
 
 });

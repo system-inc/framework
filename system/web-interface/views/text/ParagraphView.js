@@ -9,4 +9,4 @@ var ParagraphView = View.extend({
 });
 
 // Export
-module.exports = HeaderView;
+module.exports = ParagraphView;

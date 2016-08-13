@@ -11,7 +11,7 @@ var MultipleLineTextFormControlView = TextFormControlView.extend({
     },
 
     construct: function(settings) {
-        this.super.apply(this, arguments);
+        this.super(settings);
 
         this.settings.setDefaults({
         	wordWrap: false,
