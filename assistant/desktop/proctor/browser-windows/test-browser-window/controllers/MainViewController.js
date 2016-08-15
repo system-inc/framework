@@ -1,5 +1,5 @@
 // Dependencies
-var ViewController = Framework.require('system/web-interface/controllers/ViewController.js');
+var ViewController = Framework.require('system/web-interface/view-controllers/ViewController.js');
 var Proctor = Framework.require('system/test/Proctor.js');
 var Electron = Node.require('electron');
 

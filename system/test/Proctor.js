@@ -516,6 +516,7 @@ Proctor.globals = {
 
 		// Framework - Object
 		'clone',
+		'deleteValueByPath',
 		'each',
 		'getValueByPath',
 		'getValueForKey',

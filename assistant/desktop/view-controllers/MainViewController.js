@@ -1,22 +1,26 @@
 // Dependencies
-var ViewController = Framework.require('system/web-interface/controllers/ViewController.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
-var HtmlElement = Framework.require('system/html/HtmlElement.js');
+var Electron = Node.require('electron');
+var Proctor = Framework.require('system/test/Proctor.js');
+var ViewController = Framework.require('system/web-interface/view-controllers/ViewController.js');
+var HeaderView = Framework.require('system/web-interface/views/text/HeaderView.js');
+var ParagraphView = Framework.require('system/web-interface/views/text/ParagraphView.js');
+var TextView = Framework.require('system/web-interface/views/text/TextView.js');
 var FormView = Framework.require('system/web-interface/views/forms/FormView.js');
 var OptionFormFieldView = Framework.require('system/web-interface/views/forms/fields/options/OptionFormFieldView.js');
 var SingleLineTextFormFieldView = Framework.require('system/web-interface/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js');
 var SingleLineTextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
-var Proctor = Framework.require('system/test/Proctor.js');
 var TableView = Framework.require('system/web-interface/views/tables/TableView.js');
 var ButtonView = Framework.require('system/web-interface/views/buttons/ButtonView.js');
 var TestBrowserWindowPool = Project.require('proctor/browser-windows/TestBrowserWindowPool.js');
-var Electron = Node.require('electron');
 
 // Class
 var MainViewController = ViewController.extend({
 
     electronManager: null,
+
+    subviews: {
+        testsFormView: null,
+    },
 
     tests: null,
     testBrowserWindows: {},
@@ -28,6 +32,8 @@ var MainViewController = ViewController.extend({
     nextTestMethodIndex: null,
 
 	construct: function(electronManager) {
+        this.super();
+
         this.electronManager = electronManager;
 
         this.testBrowserWindowPool = new TestBrowserWindowPool();
@@ -41,70 +47,43 @@ var MainViewController = ViewController.extend({
         Electron.ipcRenderer.on('testBrowserWindow.report', function() {
             this.handleTestBrowserWindowReport.apply(this, arguments);
         }.bind(this));
-
-        this.layoutViews();
 	},
 
-    layoutViews: function*() {
-        // Create an HtmlDocument
-        this.htmlDocument = this.createHtmlDocument();
+    createViewContainer: function() {
+        this.super();
 
-        // Set this ViewController's view to be the body of the HtmlDocument
-        this.view = this.htmlDocument.body;
+        this.viewContainer.addStyleSheet('../../system/web-interface/themes/reset/style-sheets/reset.css');
+        this.viewContainer.addStyleSheet('../../system/web-interface/themes/framework/style-sheets/framework.css');
+        this.viewContainer.addStyleSheet('views/style-sheets/style-sheet.css');
+    },
 
+    createSubviews: function*() {
         // Header
-        this.view.append(Html.h1('Proctor'));
+        this.view.append(new HeaderView('Proctor'));
 
-        // Get all possible tests
+        // Tests
+        this.createTestsFormView();
+    },
+
+    createTestsFormView: function*() {
+        // Get all possible tests: Proctor.getTests(path, filePattern, methodPattern)
         //this.tests = yield Proctor.getTests();
-        //this.tests = yield Proctor.getTests(null, 'Class');
-        //this.tests = yield Proctor.getTests(null, 'electron');
-        //this.tests = yield Proctor.getTests(null, 'html', 'event');
-        //this.tests = yield Proctor.getTests(null, 'web-interface');
-        //this.tests = yield Proctor.getTests(null, new RegularExpression('(interface|event)'));
-        //this.tests = yield Proctor.getTests(null, 'InputKey');
-        this.tests = yield Proctor.getTests(null, 'HtmlNode');
-        //Console.standardLog(tests);
+        this.tests = yield Proctor.getTests(null, 'SingleLine');
+        //Console.standardLog(this.tests);
 
-        // Run tests form
-        this.view.append(this.createRunTestsFormView());
-
-        // Mount the HtmlDocument to the DOM
-        this.htmlDocument.mountToDom();
-    },
-
-    createHtmlDocument: function() {
-        // Create the HTML document
-        var htmlDocument = new HtmlDocument();
-        
-        // Default style sheet
-        htmlDocument.addStyleSheet('../../system/web-interface/themes/reset/style-sheets/reset.css');
-        htmlDocument.addStyleSheet('../../system/web-interface/themes/framework/style-sheets/framework.css');
-        htmlDocument.addStyleSheet('views/style-sheets/style-sheet.css');
-
-        return htmlDocument;
-    },
-
-    createRunTestsFormView: function() {
         // Create a FormView
-        var runTestsFormView = new FormView({
-            submitButton: {
+        this.subviews.testsFormView = new FormView({
+            submitButtonView: {
                 content: 'Run Tests',
             },
         });
 
-        runTestsFormView.on('form.submit', function(event) {
+        this.subviews.testsFormView.on('form.submit', function(event) {
             this.runTestMethods();
         }.bind(this));
 
-        // Checkbox
-        //var optionFormFieldView = new OptionFormFieldView('runTestsSynchronously', {
-        //    label: 'Run Tests Synchronously',
-        //});
-        //runTestsFormView.addFormFieldView(optionFormFieldView);
-
-        var summary = Html.p(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
-        runTestsFormView.append(summary);
+        var summary = new ParagraphView(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
+        this.subviews.testsFormView.append(summary);
         
         // Table for the tests
         var tableView = new TableView();
@@ -121,11 +100,11 @@ var MainViewController = ViewController.extend({
             tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusSpan, testMethod.runButton);
         }.bind(this));
 
-        runTestsFormView.append(tableView);
+        this.subviews.testsFormView.append(tableView);
 
         //Console.log(tableView.getData());
 
-        return runTestsFormView;
+        this.view.append(this.subviews.testsFormView);
     },
 
     runTestMethod: function*(testMethod) {

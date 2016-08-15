@@ -40,10 +40,15 @@ var ElectronManager = Class.extend({
 		//proctor.getAndRunTests();
 		//return;
 
-		// Require and construct the main controller
-		var ControllerClass = Project.require('controllers/'+Project.modules.electronModule.settings.get('mainBrowserWindow.viewControllerName')+'.js');
-		mainViewController = this.mainBrowserWindowViewController = new ControllerClass(this);
+		// Require and construct the application
+		var applicationClassFilePath = 'Application';
+		var application 
 
+		// Require and construct the main view controller
+		var viewControllerClassFilePath = 'view-controllers/'+Project.modules.electronModule.settings.get('mainBrowserWindow.viewControllerName')+'.js';
+		var ViewControllerClass = Project.require(viewControllerClassFilePath);
+		mainViewController = this.mainBrowserWindowViewController = new ViewControllerClass(this);
+		
 		// Add default shortcuts
 		this.registerShortcuts();
 
@@ -315,18 +320,18 @@ ElectronManager.sendInputEventMouse = function(type, x, y, button, globalX, glob
 	});
 };
 
-ElectronManager.clickHtmlElement = function(htmlElement, button, clickCount, modifiers) {
-	var htmlElementPosition = htmlElement.getPosition();
-	//Console.standardWarn('htmlElementPosition', htmlElementPosition);
+ElectronManager.clickView = function(view, button, clickCount, modifiers) {
+	var viewPosition = view.getPosition();
+	//Console.standardWarn('viewPosition', viewPosition);
 
-	return ElectronManager.click(Number.round(htmlElementPosition.relativeToDocumentViewport.x), Number.round(htmlElementPosition.relativeToDocumentViewport.y), button, clickCount, modifiers);
+	return ElectronManager.click(Number.round(viewPosition.relativeToDocumentViewport.x), Number.round(viewPosition.relativeToDocumentViewport.y), button, clickCount, modifiers);
 };
 
-ElectronManager.doubleClickHtmlElement = function(htmlElement, button, clickCount, modifiers) {
-	var htmlElementPosition = htmlElement.getPosition();
-	//Console.standardWarn('htmlElementPosition', htmlElementPosition);
+ElectronManager.doubleClickView = function(view, button, clickCount, modifiers) {
+	var viewPosition = view.getPosition();
+	//Console.standardWarn('viewPosition', viewPosition);
 
-	return ElectronManager.click(Number.round(htmlElementPosition.relativeToDocumentViewport.x), Number.round(htmlElementPosition.relativeToDocumentViewport.y), button, 2, modifiers);
+	return ElectronManager.click(Number.round(viewPosition.relativeToDocumentViewport.x), Number.round(viewPosition.relativeToDocumentViewport.y), button, 2, modifiers);
 };
 
 ElectronManager.click = function(relativeToDocumentViewportX, relativeToDocumentViewportY, button, clickCount, modifiers) {
@@ -379,9 +384,9 @@ ElectronManager.click = function(relativeToDocumentViewportX, relativeToDocument
 	});
 };
 
-ElectronManager.wheelRotateHtmlElement = function(htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers) {
-	var htmlElementPosition = htmlElement.getPosition();
-	return ElectronManager.wheelRotate(Number.round(htmlElementPosition.relativeToDocumentViewport.x), Number.round(htmlElementPosition.relativeToDocumentViewport.y),  deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
+ElectronManager.wheelRotateHtmlElement = function(view, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers) {
+	var viewPosition = view.getPosition();
+	return ElectronManager.wheelRotate(Number.round(viewPosition.relativeToDocumentViewport.x), Number.round(viewPosition.relativeToDocumentViewport.y),  deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
 };
 
 ElectronManager.wheelRotate = function(relativeToDocumentViewportX, relativeToDocumentViewportY, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers) {

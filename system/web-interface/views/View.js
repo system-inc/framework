@@ -12,6 +12,7 @@ var View = HtmlElement.extend({
 	settings: new Settings(),
 
 	viewContainer: null,
+	subviews: {},
 
 	construct: function(options, settings) {
 		this.settings.merge(settings);
@@ -29,6 +30,9 @@ var View = HtmlElement.extend({
 
 			this.emit('view.initialized', event);
 		}.bind(this));
+	},
+
+	createSubviews: function() {
 	},
 
 });

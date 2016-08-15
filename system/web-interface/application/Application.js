@@ -2,7 +2,12 @@
 var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
 
 // Class
-var ViewContainer = HtmlDocument.extend({
+var Application = Class.extend({
+
+	currentWindow: {},
+
+	// Applications can have multiple ViewManagers/windows which are (htmlDocuments?)
+	viewManagers: {},
 
 	construct: function() {
 		this.super();
@@ -25,4 +30,4 @@ var ViewContainer = HtmlDocument.extend({
 });
 
 // Export
-module.exports = ViewContainer;
+module.exports = Application;

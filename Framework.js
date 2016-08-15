@@ -231,6 +231,7 @@ var Framework = Class.extend({
 			return Node.require(identifier);
 		}
 		catch(exception) {
+			Console.error('Error when requiring', identifier);
 			throw exception;
 		}
 	},

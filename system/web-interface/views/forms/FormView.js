@@ -1,6 +1,6 @@
 // Dependencies
 var View = Framework.require('system/web-interface/views/View.js');
-var Html = Framework.require('system/html/Html.js');
+var Settings = Framework.require('system/settings/Settings.js');
 var FormFieldView = Framework.require('system/web-interface/views/forms/fields/FormFieldView.js');
 var ButtonView = Framework.require('system/web-interface/views/buttons/ButtonView.js');
 
@@ -9,32 +9,36 @@ var FormView = View.extend({
 
 	tag: 'form',
 
-	attributes: {
+	settings: new Settings({
+		submitButtonView: {
+			content: 'Submit',
+		},
+	}),
+
+	subviews: {
+		submitButtonContainerView: null,
+		submitButtonView: null,
 	},
 
-	submitButton: null,
-
-	construct: function(settings) {
-		// Call View's constructor
-		this.super.apply(this, arguments);
-
-		// Set default settings
-		this.settings.setDefaults({
-			submitButton: {
-				content: 'Submit',
-			},
-		});
-
-		// Add the submit button
-		this.addSubmitButton();
+	createSubviews: function() {
+		this.createSubmitButtonContainerView();
 	},
 
-	addSubmitButton: function() {
-		this.submitButton = new ButtonView(this.settings.get('submitButton.content'));
-        this.submitButton.on('input.press', function(event) {
+	createSubmitButtonContainerView: function() {
+		// Create the container
+		this.subviews.submitButtonContainerView = new View();
+
+		// Create the button
+		this.subviews.submitButtonView = new ButtonView(this.settings.get('submitButtonView.content'));
+        this.subviews.submitButtonView.on('input.press', function(event) {
         	this.submit();
         }.bind(this));
-        this.append(Html.p(this.submitButton));
+
+        // Add the button to the container
+        this.subviews.submitButtonContainerView.append(this.subviews.submitButtonView);
+
+        // Add the container to the view
+        this.append(this.subviews.submitButtonContainerView);
 	},
 
 	addFormFieldView: function(formFieldView) {
