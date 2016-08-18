@@ -1,3 +1,6 @@
+// Transpiler
+Transpiler = require('./custom/Transpiler.js');
+
 // Node
 Node = require('./globals/node/Node.js');
 Buffer = require('./globals/node/Buffer.js');
@@ -16,8 +19,9 @@ Class = require('./globals/custom/Class.js');
 Generator = require('./globals/custom/Generator.js');
 Json = require('./globals/custom/Json.js');
 Primitive = require('./globals/custom/Primitive.js');
-Time = require('./globals/custom/Time.js');
 Try = require('./globals/custom/Try.js');
+App = require('./globals/custom/App.js');
+Time = require('./globals/custom/Time.js');
 
 // Standard - depend on Class
 Error = require('./globals/standard/errors/Error.js');

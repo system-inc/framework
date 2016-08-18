@@ -1,63 +1,54 @@
 // Dependencies
-require('./globals/Globals.js');
+var Version = Framework.require('system/version/Version.js');
+var AsciiArt = Framework.require('system/ascii-art/AsciiArt.js');
+var Module = Framework.require('system/module/Module.js');
+var Command = Framework.require('system/command/Command.js');
 
 // Class
 var App = Class.extend({
 
-	title: 'Project',
+	title: 'App Title',
 	identifier: null,
 	description: null,
-
 	version: null,
+	directory: null,
 	settings: null,
 	environment: null,
 	command: null,
-
-	// Directories
-	directory: null,
-	framework: {
-		directory: __dirname,
-	},
-
 	modules: {},
+	interfaces: [],
 
-	construct: function(projectDirectory) {
-		// Set the project directory
-		this.directory = Node.Path.normalize(projectDirectory);
+	construct: function(appDirectory) {
+		// Set the app directory
+		this.directory = Node.Path.normalize(appDirectory);
 	},
 
 	initialize: function*(callback) {
-		// Set the version
-		Console.error('fix this');
-		var Version = App.require('system/version/Version.js');
-		App.version = new Version('0.1.0');
-
 		// Make it obvious we are starting
-		var AsciiArt = App.require('system/ascii-art/AsciiArt.js');
-		Console.writeLine(AsciiArt.framework.version[App.version.toString()]);
+		Console.writeLine(AsciiArt.framework.version[Framework.version.toString()]);
 
 		// Require the core modules
-		var Module = App.require('system/module/Module.js');
-		Module.require(App.coreModules);
+		
+		Module.require(this.framework.coreModules);
 
 		// Announce starting
 		//Console.log('Initializing Framework '+this.version+'...');
 
 		// Use core modules to load the project settings
-		yield this.loadProjectSettings();
+		yield this.loadAppSettings();
 
 		// Use project settings to set the title and the identifier
-		this.setPropertiesFromProjectSettings();
+		this.setPropertiesFromAppSettings();
 
 		// Load the command
-		var Command = App.require('system/command/Command.js');
+		
 		this.command = new Command(Node.Process.argv, this.settings.get('command'));
 
 		// Use project settings to configure the environment
 		this.configureEnvironment();
 
 		// After the environment is initialized, initialize the Framework core modules
-		yield Module.initialize(App.coreModules);
+		yield Module.initialize(this.framework.coreModules);
 
 		// Load all of the modules for the Project indicated in the project settings
 		yield this.requireAndInitializeProjectModules();
@@ -72,15 +63,15 @@ var App = Class.extend({
 		}
 	},
 
-	loadProjectSettings: function*() {
+	loadAppSettings: function*() {
 		//Console.log('Loading project settings...');
 
-		var Settings = App.require('system/settings/Settings.js');
+		var Settings = Framework.require('system/settings/Settings.js');
 		this.settings = Settings.constructFromFile({
 			environment: 'development',
 			modules: {},
 		}, Node.Path.join(this.directory, 'settings', 'settings.json'));
-		//Console.log('loadProjectSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
+		//Console.log('loadAppSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
 
 		// Merge the environment settings
 		//Console.log('Integrating environment settings...')
@@ -88,7 +79,7 @@ var App = Class.extend({
 		//Console.log(this.settings);
 	},
 
-	setPropertiesFromProjectSettings: function() {
+	setPropertiesFromAppSettings: function() {
 		// Set the title
 		var titleFromSettings = this.settings.get('title');
 		if(titleFromSettings) {
@@ -114,7 +105,7 @@ var App = Class.extend({
 		}
 
 		// Set the version
-		var Version = App.require('system/version/Version.js');
+		var Version = Framework.require('system/version/Version.js');
 		var versionFromSettings = this.settings.get('version');
 		if(versionFromSettings) {
 			this.version = new Version(versionFromSettings);
@@ -155,7 +146,7 @@ var App = Class.extend({
 		//Console.log(this.settings);
 		//Console.log('Loading modules for project...', this.settings.get('modules'));
 
-		var Module = App.require('system/module/Module.js');
+		var Module = Framework.require('system/module/Module.js');
 
 		// Load and initialize project modules separately in case multiple project modules rely on each other
 		var modulesForProject = [];
@@ -178,7 +169,7 @@ var App = Class.extend({
 
 	// Run all require calls through this method
 	require: function(identifier) {
-		//Console.log('App.require', arguments);
+		//Console.log('Framework.require', arguments);
 
 		// Ensure consistency of calls to .require()
 		if(!identifier.endsWith('.js')) {
@@ -193,12 +184,12 @@ var App = Class.extend({
 		else if(Class.isInstance(this, Framework)) {
 			identifier = Node.Path.join(Project.directory, identifier);
 		}
-		// If we are calling the method statically using App.require, use the Framework directory
+		// If we are calling the method statically using Framework.require, use the Framework directory
 		else {
-			identifier = Node.Path.join(App.directory, identifier);
+			identifier = Node.Path.join(Framework.directory, identifier);
 		}
 
-		//Console.log('App.require()', 'identifier', identifier);
+		//Console.log('Framework.require()', 'identifier', identifier);
 
 		try {
 			return Node.require(identifier);
@@ -210,21 +201,6 @@ var App = Class.extend({
 	},
 
 });
-
-// Static properties
-
-App.version = null;
-
-App.directory = __dirname;
-
-App.coreModules = [
-	'ConsoleModule',
-	'ArchiveModule',
-];
-
-// Static methods
-
-App.require = App.prototype.require;
 
 // Export
 module.exports = Framework;
