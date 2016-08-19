@@ -1,7 +1,13 @@
-// Static methods
+export default Buffer extends Buffer {
+
+	static is(value) {
+		return value instanceof Buffer;	
+	}
+
+}
 
 Buffer.is = function(value) {
-	return value instanceof Buffer;
+	
 };
 
 Buffer.concatenate = Buffer.concat;

@@ -1,5 +1,6 @@
 // Dependencies
-require('./globals/Globals.js');
+import './globals/Globals.js';
+
 //var Version = App.require('system/version/Version.js');
 
 //// Class
