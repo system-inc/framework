@@ -1,3 +1,6 @@
+// Using "class Array extends global.Array" here will break calls to var a = Array();
+// lodash uses that all over the place so for now we cannot use Babel and do this
+
 // Instance methods
 
 Array.prototype.clone = function() {
@@ -476,5 +479,8 @@ Array.toObject = function(array) {
 	return object;
 };
 
+// Global
+global.Array = Array;
+
 // Export
-module.exports = Array;
+export default Array;

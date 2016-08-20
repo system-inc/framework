@@ -359,5 +359,8 @@ Object.toArray = function(value) {
 	}
 };
 
+// Global
+global.Object = Object;
+
 // Export
-module.exports = Object;
+export default Object;

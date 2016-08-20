@@ -1,16 +1,16 @@
-export default Buffer extends Buffer {
+// Class
+class Buffer extends Node.Buffer {
+
+	static concatenate = Node.Buffer.concat;
 
 	static is(value) {
-		return value instanceof Buffer;	
+		return value instanceof Stream;
 	}
 
 }
 
-Buffer.is = function(value) {
-	
-};
-
-Buffer.concatenate = Buffer.concat;
+// Global
+global.Buffer = Buffer;
 
 // Export
-module.exports = Buffer;
+export default Buffer;

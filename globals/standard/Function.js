@@ -1,57 +1,84 @@
-// Instance methods
+// Class
+class Function extends global.Function {
 
-Function.prototype.getParameters = function() {
-	var parameters;
+	getParameters() {
+		var parameters;
 
-	// We store parameters in a function for generator functions that are defined in a Class
-	if(this.parameters !== undefined) {
-		parameters = this.parameters;
+		// We store parameters in a function for generator functions that are defined in a Class
+		if(this.parameters !== undefined) {
+			parameters = this.parameters;
+		}
+		// Use regular expressions to get parameter names from a function
+		else {
+			parameters = this.toString()
+				.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s))/mg,'')
+				.match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1]
+				.split(/,/);
+		}
+
+		return parameters;
 	}
-	// Use regular expressions to get parameter names from a function
-	else {
-		parameters = this.toString()
-			.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s))/mg,'')
-			.match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1]
-			.split(/,/);
+
+	isGenerator() {
+		return Function.isGenerator(this);
 	}
 
-	return parameters;
-};
+	static isGenerator(fn) {
+		if(!fn) {
+			return false;
+		}
 
-// Static methods
+		var isGenerator = false;
 
-Function.is = function(value) {
-	return value instanceof Function;
-};
+		// Faster method first
+		if(fn.constructor.name === 'GeneratorFunction') {
+			isGenerator = true;
+		}
+		// Slower method second
+		else if(/^function\s*\*/.test(fn.toString())) {
+			isGenerator = true;
+		}
 
-Function.delay = function(milliseconds, callback) {
-	return new Promise(function(resolve) {
-		setTimeout(function() {
-			if(callback != undefined && Function.is(callback)) {
-				resolve(callback());
-			}
-			else {
-				resolve(true);
-			}
-		}, milliseconds);
-	});
-};
+		return isGenerator;
+	};
 
-Function.schedule = function(milliseconds, callback) {
-	return setTimeout(callback, milliseconds);
-};
+	static is(value) {
+		return value instanceof Function;
+	}
 
-Function.cancel = function(scheduledFunction) {
-	return clearTimeout(scheduledFunction);
-};
+	static delay(milliseconds, callback) {
+		return new Promise(function(resolve) {
+			setTimeout(function() {
+				if(callback != undefined && Function.is(callback)) {
+					resolve(callback());
+				}
+				else {
+					resolve(true);
+				}
+			}, milliseconds);
+		});
+	}
 
-Function.recur = function(milliseconds, callback) {
-	return setInterval(callback, milliseconds);
-};
+	static schedule(milliseconds, callback) {
+		return setTimeout(callback, milliseconds);
+	}
 
-Function.stop = function(recurrence) {
-	return clearInterval(recurrence);
-};
+	static cancel(scheduledFunction) {
+		return clearTimeout(scheduledFunction);
+	}
+
+	static recur(milliseconds, callback) {
+		return setInterval(callback, milliseconds);
+	}
+
+	static stop(recurrence) {
+		return clearInterval(recurrence);
+	}
+
+}
+
+// Global
+global.Function = Function;
 
 // Export
-module.exports = Function;
+export default Function;

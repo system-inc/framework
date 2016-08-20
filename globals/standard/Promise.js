@@ -1,11 +1,14 @@
 // Class
-var Promise = require('./libraries/bluebird/bluebird.js'); // Use Bluebird for now - need to start using native promises
+class Promise extends global.Promise {
 
-// Static methods
+	static is(value) {
+		return value instanceof Promise;
+	}
 
-//Promise.is = function(object) {
-//	return Class.isInstance(object, Promise);
-//}
+}
+
+// Global
+global.Promise = Promise;
 
 // Export
-module.exports = Promise;
+export default Promise;

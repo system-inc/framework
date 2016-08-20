@@ -1,14 +1,20 @@
-// Static methods
+// Class
+class Boolean extends global.Boolean {
 
-Boolean.is = function(value) {
-	var is = false;
+	static is(value) {
+		var is = false;
 
-	if(value === true || value === false) {
-		is = true;
+		if(value === true || value === false) {
+			is = true;
+		}
+
+		return is;
 	}
 
-	return is;
-};
+}
+
+// Global
+global.Boolean = Boolean;
 
 // Export
-module.exports = Boolean;
+export default Boolean;

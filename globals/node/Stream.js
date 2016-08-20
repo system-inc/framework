@@ -1,30 +1,33 @@
 // Class
-var Stream = Node.Stream.Stream;
+class Stream extends Node.Stream.Stream {
 
-// Static methods
+	toString(encoding) {
+		return new Promise(function(resolve, reject) {
+			if(encoding) {
+				this.setEncoding(encoding);
+			}
 
-Stream.is = function(value) {
-	return value instanceof Stream;
-};
+			var string = '';
 
-Stream.prototype.toString = function(encoding) {
-	return new Promise(function(resolve, reject) {
-		if(encoding) {
-			this.setEncoding(encoding);
-		}
+			this.on('data', function(chunk) {
+				//Console.log('chunk size in bytes', chunk.toString().sizeInBytes());
+				string += chunk;
+			});
 
-		var string = '';
+			this.on('end', function() {
+				resolve(string);
+			});
+		}.bind(this));
+	}
 
-		this.on('data', function(chunk) {
-			//Console.log('chunk size in bytes', chunk.toString().sizeInBytes());
-			string += chunk;
-		});
+	static is(value) {
+		return value instanceof Stream;
+	}
 
-		this.on('end', function() {
-			resolve(string);
-		});
-	}.bind(this));
-};
+}
+
+// Global
+global.Stream = Stream;
 
 // Export
-module.exports = Stream;
+export default Stream;
