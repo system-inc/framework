@@ -1,19 +1,14 @@
 // Dependencies
-var File = Framework.require('system/file-system/File.js');
-var DataStore = Framework.require('system/data/DataStore.js');
+import File from './../../system/file-system/File.js';
+import DataStore from './../../system/data/DataStore.js';
 
 // Class
-var Settings = Class.extend({
+class Settings {
 
-	dataStore: null,
-	defaults: null,
+	dataStore = null;
+	defaults = null;
 
-	construct: function(defaultData, data, dataStore) {
-		// Create a new data store if none was provided
-		if(dataStore === undefined) {
-			dataStore = new DataStore();
-		}
-
+	constructor(defaultData, data, dataStore = new DataStore()) {
 		// Set the data store
 		this.dataStore = dataStore;
 		//Console.standardLog('this.dataStore', this.dataStore);
@@ -23,9 +18,9 @@ var Settings = Class.extend({
 
 		// Set the initial data for the data store
 		this.dataStore.merge(data);
-	},
+	}
 
-	setDefaults: function(defaultData) {
+	setDefaults(defaultData) {
 		if(defaultData) {
 			// Save the defaultData
 			this.defaults = defaultData.clone();
@@ -40,61 +35,59 @@ var Settings = Class.extend({
 			// Merge the current data on top of the defaults
 			this.dataStore.merge(data);
 		}
-	},
+	}
 
-	merge: function(data) {
+	merge(data) {
 		return this.dataStore.merge(data);
-	},
+	}
 
-	mergeFromFile: function(datafilePath) {
+	mergeFromFile(datafilePath) {
 		// Read the data from the file
 		var data = File.synchronous.read.json(datafilePath);
 		//Console.log('Settings from', datafilePath, 'to merge:', dataStore);
 
 		return this.merge(data);
-	},
+	}
 
-	integrate: function(data) {
+	integrate(data) {
 		return this.dataStore.integrate(data);
-	},
+	}
 
-	integrateFromFile: function(datafilePath) {
+	integrateFromFile(datafilePath) {
 		// Read the data from the file
 		var data = File.synchronous.read.json(datafilePath);
 		//Console.log('Settings from', datafilePath, 'to integrate:', dataStore);
 		
 		this.integrate(data);
-	},
+	}
 
-	get: function(path) {
+	get(path) {
 		return this.dataStore.get(path);
-	},
+	}
 
-	set: function(path, value) {
+	set(path, value) {
 		return this.dataStore.set(path, value);
-	},
+	}
 
-	delete: function(path) {
+	delete(path) {
 		return this.dataStore.delete(path);
-	},
+	}
 
-});
+	static constructFromFile(defaultData, datafilePath, dataStore) {
+		//Console.log('datafilePath', datafilePath);
 
-// Static methods
+		// Read the data from the file
+		var data = File.synchronous.read.json(datafilePath);
 
-Settings.constructFromFile = function(defaultData, datafilePath, dataStore) {
-	//Console.log('datafilePath', datafilePath);
+		//Console.log('dataStore', dataStore);
 
-	// Read the data from the file
-	var data = File.synchronous.read.json(datafilePath);
+		// Create a new settings object with the data
+		var settings = new Settings(defaultData, data, dataStore);
 
-	//Console.log('dataStore', dataStore);
+		return settings;
+	}
 
-	// Create a new settings object with the data
-	var settings = new Settings(defaultData, data, dataStore);
-
-	return settings;
-};
+}
 
 // Export
-module.exports = Settings;
+export default Settings;

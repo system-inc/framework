@@ -3,10 +3,10 @@ libraries/electron/windows/*
 libraries/electron/os-x/*
 libraries/electron/linux/*
 
-# Assistant
-assistant/command/logs/*
-assistant/desktop/logs/*
-assistant/desktop/proctor/browser-windows/test-browser-window/logs/*
+# Apps
+apps/framework-command-line/logs/*
+apps/framework-graphical/logs/*
+apps/framework-graphical/proctor/browser-windows/test-browser-window/logs/*
 
 # Test Web Server
 system/web-server/tests/logs/*

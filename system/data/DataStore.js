@@ -1,25 +1,25 @@
 // Class
-var DataStore = Class.extend({
+class DataStore {
 
-	data: {},
+	data = {};
 
-	get: function(path) {
+	get(path) {
 		return this.data.getValueByPath(path);
-	},
+	}
 
-	set: function(path, value) {
+	set(path, value) {
 		return this.data.setValueByPath(path, value);
-	},
+	}
 
-	delete: function(path) {
+	delete(path) {
 		return this.data.deleteValueByPath(path);
-	},
+	}
 
-	getData: function() {
+	getData() {
 		return this.data;
-	},
+	}
 
-	setData: function(data) {
+	setData(data) {
 		this.empty();
 
 		if(data && Object.is(data)) {
@@ -29,23 +29,23 @@ var DataStore = Class.extend({
 		}
 
 		return this.data;
-	},
+	}
 
-	empty: function() {
+	empty() {
 		this.data = {};
 
 		return this.data;
-	},
+	}
 
-	merge: function(data) {
+	merge(data) {
 		return this.data.merge(data);
-	},
+	}
 
-	integrate: function(data) {
+	integrate(data) {
 		return this.data.integrate(data);
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = DataStore;
+export default DataStore;

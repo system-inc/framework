@@ -1,6 +1,3 @@
-// Using "class Array extends global.Array" here will break calls to var a = Array();
-// lodash uses that all over the place so for now we cannot use Babel and do this
-
 // Instance methods
 
 Array.prototype.clone = function() {
@@ -100,10 +97,10 @@ Array.prototype.sortByLength = function(descending) {
 
 	this.sort(function(a, b) {
 		if(descending) {
-			return b.length - a.length;	
+			return b.length - a.length;
 		}
 		else {
-			return a.length - b.length;	
+			return a.length - b.length;
 		}
 	});
 
@@ -170,7 +167,7 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 			}
 			else {
 				searchRegularExpression = new RegularExpression('^'+search+'$', modifiers);
-			}	
+			}
 		}
 
 		// Loop through the array
@@ -238,39 +235,39 @@ Array.prototype.first = function() {
 };
 
 Array.prototype.second = function() {
-	return this.nth(1);	
+	return this.nth(1);
 };
 
 Array.prototype.third = function() {
-	return this.nth(2);	
+	return this.nth(2);
 };
 
 Array.prototype.fourth = function() {
-	return this.nth(3);	
+	return this.nth(3);
 };
 
 Array.prototype.fifth = function() {
-	return this.nth(4);	
+	return this.nth(4);
 };
 
 Array.prototype.sixth = function() {
-	return this.nth(5);	
+	return this.nth(5);
 };
 
 Array.prototype.seventh = function() {
-	return this.nth(6);	
+	return this.nth(6);
 };
 
 Array.prototype.eighth = function() {
-	return this.nth(7);	
+	return this.nth(7);
 };
 
 Array.prototype.ninth = function() {
-	return this.nth(8);	
+	return this.nth(8);
 };
 
 Array.prototype.tenth = function() {
-	return this.nth(9);	
+	return this.nth(9);
 };
 
 Array.prototype.last = function() {
@@ -279,7 +276,7 @@ Array.prototype.last = function() {
 	if(this[this.length - 1] !== undefined) {
 		last = this[this.length - 1];
 	}
-	
+
 	return last;
 };
 
@@ -289,7 +286,7 @@ Array.prototype.secondToLast = function() {
 	if(this[this.length - 2] !== undefined) {
 		secondToLast = this[this.length - 2];
 	}
-	
+
 	return secondToLast;
 };
 
@@ -299,7 +296,7 @@ Array.prototype.thirdToLast = function() {
 	if(this[this.length - 3] !== undefined) {
 		thirdToLast = this[this.length - 3];
 	}
-	
+
 	return thirdToLast;
 };
 
@@ -478,9 +475,3 @@ Array.toObject = function(array) {
 
 	return object;
 };
-
-// Global
-global.Array = Array;
-
-// Export
-export default Array;

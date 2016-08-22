@@ -1,29 +1,29 @@
 // Class
-var Time = Class.extend({
+class Time {
 
-	time: null,
-	precision: 'milliseconds',
+	dateObject = null;
+	precision = 'milliseconds';
 
-	construct: function(stringOrDate) {
+	construct(stringOrDate) {
 		if(stringOrDate !== undefined) {
 			if(String.is(stringOrDate)) {
-				this.time = new Date(stringOrDate);
+				this.dateObject = new Date(stringOrDate);
 			}
 			//else if(Class.isInstance(stringOrDate, Date)) {
 			else {
-				this.time = stringOrDate;
+				this.dateObject = stringOrDate;
 			}
 		}
 		else {
-			this.time = new Date();
+			this.dateObject = new Date();
 		}
-	},
+	}
 
-	setPrecision: function(precision) {
+	setPrecision(precision) {
 		this.precision = precision;
-	},
+	}
 
-	now: function() {
+	now() {
 		var now = null;
 
 		if(this.precision == 'milliseconds') {
@@ -38,33 +38,33 @@ var Time = Class.extend({
 		else if(this.precision == 'seconds') {
 			return this.nowInSeconds();
 		}
-		
+
 		return now;
-	},
+	}
 
-	nowInSeconds: function() {
+	nowInSeconds() {
 		return this.nowInMilliseconds() / 1000;
-	},
+	}
 
-	nowInMilliseconds: function() {
+	nowInMilliseconds() {
 		var now = new Date().getTime();
 
 		return now;
-	},
+	}
 
-	nowInMicroseconds: function() {
+	nowInMicroseconds() {
 		var now = new Date().getTime() * 1000;
 
 		return now;
-	},
+	}
 
-	nowInNanoseconds: function() {
+	nowInNanoseconds() {
 		var now = new Date().getTime() * 1000000;
 
-		return  now;
-	},
+		return now;
+	}
 
-	getShortTime: function() {
+	getShortTime() {
 		var shortTime = '';
 
 		shortTime += this.getHour12Padded();
@@ -72,9 +72,9 @@ var Time = Class.extend({
 		shortTime += ' '+this.getPeriod();
 
 		return shortTime;
-	},
+	}
 
-	getLongTime: function() {
+	getLongTime() {
 		var longTime = '';
 
 		longTime += this.getHour12Padded();
@@ -83,20 +83,20 @@ var Time = Class.extend({
 		longTime += ' '+this.getPeriod();
 
 		return longTime;
-	},
+	}
 
-	getPeriod: function() {
+	getPeriod() {
 		var period = 'AM';
 
-		var hours = this.time.getHours();
+		var hours = this.dateObject.getHours();
         if(hours > 11) {
             period = 'PM';
         }
 
         return period;
-	},
+	}
 
-	getDayWithDate: function() {
+	getDayWithDate() {
 		// Monday, January 1, 2014
 		var dayWithDate = '';
 
@@ -106,10 +106,10 @@ var Time = Class.extend({
 		dayWithDate += this.getYear();
 
 		return dayWithDate;
-	},
+	}
 
-	getDayWithDateAndTime: function(preposition) {
-		preposition = preposition === undefined ? ' ' : ' '+preposition+' ';
+	getDayWithDateAndTime(preposition) {
+		preposition = (preposition === undefined) ? ' ' : ' '+preposition+' ';
 
 		var dayWithDateAndTime = this.getDayWithDate();
 		dayWithDateAndTime += preposition;
@@ -118,9 +118,9 @@ var Time = Class.extend({
 		dayWithDateAndTime += this.getPeriod();
 
 		return dayWithDateAndTime;
-	},
+	}
 
-	getDayWithDateAndTimeWithSeconds: function(preposition) {
+	getDayWithDateAndTimeWithSeconds(preposition) {
 		preposition = preposition === undefined ? ' ' : ' '+preposition+' ';
 
 		var dayWithDateAndTimeWithSeconds = this.getDayWithDate();
@@ -131,42 +131,42 @@ var Time = Class.extend({
 		dayWithDateAndTimeWithSeconds += this.getPeriod();
 
 		return dayWithDateAndTimeWithSeconds;
-	},
+	}
 
-	getYear: function() {
-		return this.time.getFullYear();
-	},
+	getYear() {
+		return this.dateObject.getFullYear();
+	}
 
-	getMonth: function() {
-		return this.time.getMonth() + 1;
-	},
+	getMonth() {
+		return this.dateObject.getMonth() + 1;
+	}
 
-	getMonthPadded: function() {
-		return ('0'+(this.time.getMonth() + 1)).slice(-2);
-	},
+	getMonthPadded() {
+		return ('0'+(this.dateObject.getMonth() + 1)).slice(-2);
+	}
 
-	getMonthName: function() {
-		return Time.monthNames[this.time.getMonth()];
-	},
+	getMonthName() {
+		return Time.monthNames[this.dateObject.getMonth()];
+	}
 
-	getDay: function() {
-		return this.time.getDate();
-	},
+	getDay() {
+		return this.dateObject.getDate();
+	}
 
-	getDayPadded: function() {
-		return ('0'+this.time.getDate()).slice(-2);
-	},
+	getDayPadded() {
+		return ('0'+this.dateObject.getDate()).slice(-2);
+	}
 
-	getDayName: function() {
-		return Time.dayNames[this.time.getDay()];
-	},
+	getDayName() {
+		return Time.dayNames[this.dateObject.getDay()];
+	}
 
-	getWeekDay: function() {
-		return this.time.getDay() + 1;
-	},
+	getWeekDay() {
+		return this.dateObject.getDay() + 1;
+	}
 
-	getHour12: function() {
-		var hour = this.time.getHours();
+	getHour12() {
+		var hour = this.dateObject.getHours();
 
 		if(hour > 11) {
             hour = hour - 12;
@@ -176,45 +176,45 @@ var Time = Class.extend({
         }
 
         return hour;
-	},
+	}
 
-	getHour12Padded: function() {
+	getHour12Padded() {
         return ('0'+this.getHour12()).slice(-2);
-	},
+	}
 
-	getHour: function() {
-		return this.time.getHours();
-	},
+	getHour() {
+		return this.dateObject.getHours();
+	}
 
-	getHourPadded: function() {
-		return ('0'+(this.time.getHours())).slice(-2);
-	},
+	getHourPadded() {
+		return ('0'+(this.dateObject.getHours())).slice(-2);
+	}
 
-	getMinute: function() {
-		return this.time.getMinutes();
-	},
+	getMinute() {
+		return this.dateObject.getMinutes();
+	}
 
-	getMinutePadded: function() {
-		return ('0'+(this.time.getMinutes())).slice(-2);
-	},
+	getMinutePadded() {
+		return ('0'+(this.dateObject.getMinutes())).slice(-2);
+	}
 
-	getSecond: function() {
-		return this.time.getSeconds();
-	},
+	getSecond() {
+		return this.dateObject.getSeconds();
+	}
 
-	getSecondPadded: function() {
-		return ('0'+(this.time.getSeconds())).slice(-2);
-	},
+	getSecondPadded() {
+		return ('0'+(this.dateObject.getSeconds())).slice(-2);
+	}
 
-	getMillisecond: function() {
-		return this.time.getMilliseconds();
-	},
+	getMillisecond() {
+		return this.dateObject.getMilliseconds();
+	}
 
-	getMillisecondPadded: function() {
-		return ('00'+(this.time.getMilliseconds())).slice(-3);
-	},
+	getMillisecondPadded() {
+		return ('00'+(this.dateObject.getMilliseconds())).slice(-3);
+	}
 
-	getDateTime: function() {
+	getDateTime() {
 		var dateTime = this.getYear();
 		dateTime += '-'+this.getMonthPadded();
 		dateTime += '-'+this.getDayPadded();
@@ -223,16 +223,16 @@ var Time = Class.extend({
 		dateTime += ':'+this.getSecondPadded();
 
 		return dateTime;
-	},
+	}
 
-	getDateTimeWithMilliseconds: function() {
+	getDateTimeWithMilliseconds() {
 		var dateTime = this.getDateTime();
 		dateTime += ':'+this.getMillisecondPadded();
 
 		return dateTime;
-	},
+	}
 
-	getDateTimeWithHour12PaddedAndPeriod: function() {
+	getDateTimeWithHour12PaddedAndPeriod() {
 		var dateTime = this.getYear();
 		dateTime += '-'+this.getMonthPadded();
 		dateTime += '-'+this.getDayPadded();
@@ -242,23 +242,23 @@ var Time = Class.extend({
 		dateTime += ' '+this.getPeriod();
 
 		return dateTime;
-	},
+	}
 
 	// The number of seconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
-	getUnixTime: function() {
+	getUnixTime() {
 		return this.nowInSeconds().toFixed(0);
-	},
+	}
 
 	// The number of milliseconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
-	getUnixTimeInMilliseconds: function() {
+	getUnixTimeInMilliseconds() {
 		return this.nowInMilliseconds().toFixed(0);
-	},
+	}
 
-	getTimePosted: function() {
+	getTimePosted() {
         var now = new Date();
         var timePosted = '';
-        var hours = this.time.getHours();
-        var minutes = this.time.getMinutes();
+        var hours = this.dateObject.getHours();
+        var minutes = this.dateObject.getMinutes();
         var period = 'am';
         if(hours > 11) {
             hours = hours - 12;
@@ -273,73 +273,69 @@ var Time = Class.extend({
 
         // If today, put in 2:30 pm format
         if(
-            now.getFullYear() == this.time.getFullYear() &&
-            now.getMonth() == this.time.getMonth() &&
-            now.getDate() == this.time.getDate()
+            now.getFullYear() == this.dateObject.getFullYear() &&
+            now.getMonth() == this.dateObject.getMonth() &&
+            now.getDate() == this.dateObject.getDate()
         ) {
             timePosted = hours+':'+minutes+' '+period;
         }
         else {
-            timeDifference = (((new Date(now.getFullYear(), now.getMonth(), now.getDate())).getTime() - new Date(this.time.getFullYear(), this.time.getMonth(), this.time.getDate()).getTime()) / 1000),
-            dayDifference = Math.floor(timeDifference / 86400);    
+            timeDifference = (((new Date(now.getFullYear(), now.getMonth(), now.getDate())).getTime() - new Date(this.dateObject.getFullYear(), this.dateObject.getMonth(), this.dateObject.getDate()).getTime()) / 1000),
+            dayDifference = Math.floor(timeDifference / 86400);
 
             if(dayDifference == 1) {
                 timePosted = 'Yesterday';
             }
             else if(dayDifference < 7) {
-                timePosted = Time.dayNames[this.time.getDay()];
+                timePosted = Time.dayNames[this.dateObject.getDay()];
             }
             else if(dayDifference < 14) {
-                timePosted = 'Last '+Time.dayNames[this.time.getDay()];
+                timePosted = 'Last '+Time.dayNames[this.dateObject.getDay()];
             }
             else if(dayDifference >= 14) {
-                timePosted = Time.monthNames[this.time.getMonth()]+' '+this.time.getDate()+', '+this.time.getFullYear();
+                timePosted = Time.monthNames[this.dateObject.getMonth()]+' '+this.dateObject.getDate()+', '+this.dateObject.getFullYear();
             }
         }
 
         return timePosted;
-	},
+	}
 
-	toString: function() {
+	toString() {
 		var string = '';
 
-		if(this.time && this.time.toISOString) {
-			string = this.time.toISOString();
+		if(this.dateObject && this.dateObject.toISOString) {
+			string = this.dateObject.toISOString();
 		}
-		else if(this.time) {
-			string = this.time.toString();
+		else if(this.dateObject) {
+			string = this.dateObject.toString();
 		}
 
 		return string;
-	},
+	}
 
-});
+	static precision = 'milliseconds';
+	static dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	static monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-// Static properties
+	static now = Time.prototype.now;
+	static nowInMilliseconds = Time.prototype.nowInSeconds;
+	static nowInMilliseconds = Time.prototype.nowInMilliseconds;
+	static nowInMicroseconds = Time.prototype.nowInMicroseconds;
 
-Time.precision = 'milliseconds';
-Time.dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-Time.monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+	static constructFromDosDateTime(date, time) {
+		var day = date & 0x1f; // 1-31
+		var month = (date >> 5 & 0xf) - 1; // 1-12, 0-11
+		var year = (date >> 9 & 0x7f) + 1980; // 0-128, 1980-2108
 
-// Static methods
+		var millisecond = 0;
+		var second = (time & 0x1f) * 2; // 0-29, 0-58 (even numbers)
+		var minute = time >> 5 & 0x3f; // 0-59
+		var hour = time >> 11 & 0x1f; // 0-23
 
-Time.now = Time.prototype.now;
-Time.nowInMilliseconds = Time.prototype.nowInSeconds;
-Time.nowInMilliseconds = Time.prototype.nowInMilliseconds;
-Time.nowInMicroseconds = Time.prototype.nowInMicroseconds;
+		return new Time(new Date(year, month, day, hour, minute, second, millisecond));
+	}
 
-Time.constructFromDosDateTime = function(date, time) {
-	var day = date & 0x1f; // 1-31
-	var month = (date >> 5 & 0xf) - 1; // 1-12, 0-11
-	var year = (date >> 9 & 0x7f) + 1980; // 0-128, 1980-2108
-
-	var millisecond = 0;
-	var second = (time & 0x1f) * 2; // 0-29, 0-58 (even numbers)
-	var minute = time >> 5 & 0x3f; // 0-59
-	var hour = time >> 11 & 0x1f; // 0-23
-
-	return new Time(new Date(year, month, day, hour, minute, second, millisecond));
 }
 
-// Export
-module.exports = Time;
+// Global
+global.Time = Time;

@@ -1,25 +1,25 @@
 // Dependencies
-var FileSystemObject = Framework.require('system/file-system/FileSystemObject.js');
+import FileSystemObject from './FileSystemObject.js';
 
 // Class
-var Directory = FileSystemObject.extend({
+class Directory extends FileSystemObject {
 
-	construct: function(path) {
-		this.super.apply(this, arguments);
+	constructor(path) {
+		super(...arguments);
 
 		// Make sure directories always end with a separator
 		if(!this.path.endsWith(Node.Path.separator)) {
 			this.path = this.path+Node.Path.separator
 		}
-	},
+	}
 
-	list: function*(recursive) {
-		var list = yield FileSystemObject.list(this.path, recursive);
+	async list(recursive) {
+		var list = await FileSystemObject.list(this.path, recursive);
 
 		return list;
-	},
+	}
 
-	create: function*(directory, mode) {
+	async create(directory, mode) {
 		//Console.log('Creating directory: ', directory);
 
 		// Normalize the path for the operating system
@@ -48,46 +48,45 @@ var Directory = FileSystemObject.extend({
 		}
 
 		// Loop through each directory starting at root and make sure the directory exists and if it doesn't create it
-		yield directories.each(function*(index, currentDirectory) {
+		await directories.each(async function(index, currentDirectory) {
 			currentFullDirectory = currentFullDirectory+currentDirectory+Node.Path.separator;
 			//Console.log(currentFullDirectory);
 
 			// Check if the directory exists
-			if(yield Directory.exists(currentFullDirectory)) {
+			if(await Directory.exists(currentFullDirectory)) {
 				//Console.log(currentFullDirectory, 'exists');
 			}
 			// If the directory does not exist, create it
 			else {
 				//Console.log(currentFullDirectory, 'DOES NOT exist, creating');
-				yield Directory.make(currentFullDirectory, mode);
+				await Directory.make(currentFullDirectory, mode);
 				//Console.log('Created directory', currentFullDirectory);
 			}
 		});
-	},
+	}
 
-});
+	static create = Directory.prototype.create;
 
-// Static methods
-Directory.create = Directory.prototype.create;
+	static async make(path, mode) {
+	    return await new Promise(function(resolve, reject) {
+	    	Node.FileSystem.mkdir(path, mode, function(error) {
+	    		if(error) {
+	    			// Return true if the directory exists
+	    			if(error.code == 'EEXIST') {
+	    				resolve(true);
+	    			}
+	    			else {
+	    				reject(error);	
+	    			}
+	    		}
+	    		else {
+	    			resolve(true);
+	    		}
+	    	});
+	    });
+	}
 
-Directory.make = function(path, mode) {
-    return new Promise(function(resolve, reject) {
-    	Node.FileSystem.mkdir(path, mode, function(error) {
-    		if(error) {
-    			// Return true if the directory exists
-    			if(error.code == 'EEXIST') {
-    				resolve(true);
-    			}
-    			else {
-    				reject(error);	
-    			}
-    		}
-    		else {
-    			resolve(true);
-    		}
-    	});
-    });
-};
+}
 
 // Export
-module.exports = Directory;
+export default Directory;

@@ -33,7 +33,7 @@ class Node {
 		if(arguments.length) {
 			Console.writeLine(Console.prepareMessage.call(this, arguments, 'error'));
 		}
-		
+
 		Node.Process.exit(1);
 	}
 
@@ -41,6 +41,3 @@ class Node {
 
 // Global
 global.Node = Node;
-
-// Export
-export default Node;

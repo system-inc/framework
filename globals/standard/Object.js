@@ -1,7 +1,7 @@
 // Instance methods
 
 Object.prototype.isEmpty = function() {
-    return Object.isEmpty(this);   
+    return Object.isEmpty(this);
 };
 
 Object.prototype.hasKey = function(key) {
@@ -156,7 +156,7 @@ Object.prototype.merge = function() {
     // Gather the objects to merge
     for(var i = 0; i < arguments.length; i++) {
         if(arguments[i]) {
-            objectsToMerge.push(arguments[i]);  
+            objectsToMerge.push(arguments[i]);
         }
     };
 
@@ -195,7 +195,7 @@ Object.prototype.integrate = function() {
     // Gather the objects to merge
     for(var i = 0; i < arguments.length; i++) {
         if(arguments[i]) {
-            objectsToIntegrate.push(arguments[i]);  
+            objectsToIntegrate.push(arguments[i]);
         }
     };
 
@@ -214,7 +214,7 @@ Object.prototype.integrate = function() {
                     // If the array being integrated has a matching index to this array
                     if(objectToIntegrateValue[i]) {
                         var integratedObject = this[objectToIntegrateKey][i].integrate(objectToIntegrateValue[i]);
-                        integratedArray.push(integratedObject); 
+                        integratedArray.push(integratedObject);
                     }
                     // If the array being integrated does not have a matching index, just use this array element at the current index
                     else {
@@ -328,7 +328,7 @@ Object.clone = function(value) {
         // Call Object.clone for each item in the array or object
         for(var key in value) {
         	if(value.hasOwnProperty(key)) {
-        		clone[key] = Object.clone(value[key]);	
+        		clone[key] = Object.clone(value[key]);
         	}
         }
     }
@@ -358,9 +358,3 @@ Object.toArray = function(value) {
 		return value;
 	}
 };
-
-// Global
-global.Object = Object;
-
-// Export
-export default Object;

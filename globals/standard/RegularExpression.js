@@ -1,28 +1,22 @@
-// Class
-class RegularExpression extends RegExp {
+// Static methods
 
-	is(value) {
-		return value instanceof RegExp;
+RegExp.is = function(value) {
+	return value instanceof RegExp;
+};
+
+RegExp.equal = function(x, y) {
+	return (x instanceof RegExp) && (y instanceof RegExp) &&
+				 (x.source === y.source) && (x.global === y.global) &&
+				 (x.ignoreCase === y.ignoreCase) && (x.multiline === y.multiline);
+}
+
+RegExp.escape = function(string) {
+	if(Number.is(string)) {
+		string = ''+string;
 	}
 
-	equal(x, y) {
-	    return (x instanceof RegExp) && (y instanceof RegExp) && 
-	           (x.source === y.source) && (x.global === y.global) && 
-	           (x.ignoreCase === y.ignoreCase) && (x.multiline === y.multiline);
-	}
-
-	escape(string) {
-		if(Number.is(string)) {
-			string = ''+string;
-		}
-
-		return string.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-	}
-
+	return string.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }
 
 // Global
-global.RegularExpression = RegularExpression;
-
-// Export
-export default RegularExpression;
+global.RegularExpression = RegExp;

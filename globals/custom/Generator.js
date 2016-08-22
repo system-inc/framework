@@ -7,6 +7,3 @@ class Generator {
 
 // Global
 global.Generator = Generator;
-
-// Export
-export default Generator;

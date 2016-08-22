@@ -1,5 +1,5 @@
 {
-	title: 'Proctor',
+	title: 'Framework',
 	version: '0.1.0',
 	description: 'Proctor runs tests and reports if they succeeded or failed.',
 	command: {

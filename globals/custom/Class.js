@@ -41,7 +41,7 @@ class Class {
 					doesImplement = false;
 					break;
 				}
-			}		
+			}
 		}
 
 		return doesImplement;
@@ -51,6 +51,3 @@ class Class {
 
 // Global
 global.Class = Class;
-
-// Export
-export default Class;

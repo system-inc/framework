@@ -1,14 +1,5 @@
-// Class
-class Promise extends global.Promise {
+// Static methods
 
-	static is(value) {
-		return value instanceof Promise;
-	}
-
-}
-
-// Global
-global.Promise = Promise;
-
-// Export
-export default Promise;
+Promise.is = function(value) {
+	return value instanceof Promise;
+};

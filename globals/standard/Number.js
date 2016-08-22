@@ -111,13 +111,9 @@ Number.random = function(minimum, maximum, precision) {
 };
 
 // Minimum and maximum are both inclusive
-Number.cryptographicRandom = function*(minimum, maximum, precision) {
+Number.cryptographicRandom = async function(minimum = 0, maximum = 9007199254740992, precision = 0) {
 	// Dependencies
 	var Cryptography = Framework.require('system/cryptography/Cryptography.js');
-
-	minimum = minimum === undefined ? 0 : minimum;
-	maximum = maximum === undefined ? 9007199254740992 : maximum;
-	precision = precision === undefined ? 0 : precision;
 
 	// toFixed digits argument must be between 0 and 20
 	if(precision > 20) {
@@ -127,12 +123,9 @@ Number.cryptographicRandom = function*(minimum, maximum, precision) {
 		precision = 0;
 	}
 
-	var cryptographicRandom = yield Cryptography.random();
+	var cryptographicRandom = await Cryptography.random();
 
 	var random = cryptographicRandom * (maximum - minimum) + minimum;
 
     return Number(random.toFixed(precision));
-}.toPromise();
-
-// Export
-module.exports = Number;
+};

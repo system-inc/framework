@@ -1,36 +1,32 @@
-// Make sure global is set
+// Make sure global variable is set
 if(!global && window) {
 	global = window;
 }
 
+// Show unhandled errors
+process.on('unhandledRejection', function(error) {
+	console.log('Unhandled rejection:', error);
+});
+
 // Node
-import Node from './node/Node.js';
-import Buffer from './node/Buffer.js';
-import Stream from './node/Stream.js';
+import './node/Node.js';
+import './node/Buffer.js';
+import './node/Stream.js';
 
 // Standard
-import Array from './standard/Array.js';
-import Boolean from './standard/Boolean.js';
-import Function from './standard/Function.js';
-//import Object from './standard/Object.js';
-import Promise from './standard/Promise.js';
-import RegularExpression from './standard/RegularExpression.js';
-import String from './standard/String.js';
+import './standard/Array.js';
+import './standard/Boolean.js';
+//import './standard/errors/Error.js';
+import './standard/Function.js';
+import './standard/Number.js';
+import './standard/Object.js';
+import './standard/Promise.js';
+import './standard/RegularExpression.js';
+import './standard/String.js';
 
 // Custom
-import Class from './custom/Class.js';
-//import Generator from './custom/Generator.js';
-//import Json from './custom/Json.js';
-//Primitive = require('./custom/Primitive.js');
-//App = require('./custom/App.js');
-//Time = require('./custom/Time.js');
-
-//// Standard - depend on Class
-//Error = require('./standard/errors/Error.js');
-
-//// Standard - depend on Generator
-//Number = require('./standard/Number.js');
-
-
-//// Other
-//Console = require('./system/console/Console.js');
+import './custom/Class.js';
+import './custom/Generator.js';
+import './custom/Json.js';
+import './custom/Primitive.js';
+import './custom/Time.js';

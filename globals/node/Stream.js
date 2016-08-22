@@ -28,6 +28,3 @@ class Stream extends Node.Stream.Stream {
 
 // Global
 global.Stream = Stream;
-
-// Export
-export default Stream;

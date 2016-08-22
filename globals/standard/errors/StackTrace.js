@@ -1,10 +1,10 @@
 // Class
-var StackTrace = Class.extend({
+class StackTrace {
 
-	error: null,
-	callSites: null,
-	
-	construct: function(error, callSites) {
+	error = null;
+	callSites = null;
+
+	constructor(error, callSites) {
 		this.error = error;
 
 		// CallSite properties:
@@ -22,18 +22,18 @@ var StackTrace = Class.extend({
 		//   isNative: is this call in native V8 code?
 		//   isConstructor: is this a constructor call?
 		this.callSites = callSites;
-	},
+	}
 
-	shift: function(count) {
+	shift(count) {
 		if(this.callSites) {
 			for(var i = 0; i < count; i++) {
 				this.callSites.shift();
 			}
 		}
-	},
+	}
 
 	// WARNING: This method is super fragile and any changes could cause the app to crash and it is super hard to figure out why if this is broken
-	getCallSiteData: function(index) {
+	getCallSiteData(index) {
 		var callSiteData = {
 			typeName: null,
 			functionName: null,
@@ -47,7 +47,7 @@ var StackTrace = Class.extend({
 		if(this.callSites) {
 			var callSite = this.callSites[index];
 		}
-				
+
 		if(callSite) {
 			// Calling callSite.getTypeName() can sometimes throw an error for reasons I don't know, so I use this try catch block to fix it
 			try {
@@ -56,7 +56,7 @@ var StackTrace = Class.extend({
 			}
 			catch(error) {
 				callSiteData.typeName = 'unknown';
-			}			
+			}
 
 			if(callSite.getFunctionName) {
 				var functionName = callSite.getFunctionName();
@@ -65,33 +65,33 @@ var StackTrace = Class.extend({
 			else {
 				callSiteData.functionName = 'anonymous';
 			}
-		
+
 			if(callSite.getMethodName && callSite.getFunctionName && callSite.getFunctionName() && callSite.getMethodName() != callSite.getFunctionName() && !(callSite.getFunctionName().indexOf('.'+callSite.getMethodName(), callSite.getFunctionName().length - ('.'+callSite.getMethodName()).length) !== -1)) {
 				callSiteData.methodName = callSite.getMethodName();
 			}
 
 			callSiteData.file = callSite.getFileName();
 			if(callSiteData.file) {
-				callSiteData.fileName = callSiteData.file.substr(callSiteData.file.lastIndexOf(Node.Path.separator) + 1, callSiteData.file.length);	
+				callSiteData.fileName = callSiteData.file.substr(callSiteData.file.lastIndexOf(Node.Path.separator) + 1, callSiteData.file.length);
 			}
 			callSiteData.lineNumber = callSite.getLineNumber();
 			callSiteData.columnNumber = callSite.getColumnNumber();
 		}
 
 		return callSiteData;
-	},
+	}
 
 	// WARNING: This method is super fragile and any changes could cause the app to crash and it is super hard to figure out why if this is broken
-	stackTraceToString: function() {
+	stackTraceToString() {
 		var string = '';
-		
+
 		// Generate the stack track string
 		if(this.callSites) {
 			for(var i = 0; i < this.callSites.length; i++) {
 				var callSite = this.callSites[i];
 
 				string += '    at ';
-				
+
 				// Calling callSite.getTypeName() can sometimes throw an error for reasons I don't know, so I use this try catch block to fix it
 				var callSiteTypeName;
 				try {
@@ -124,7 +124,7 @@ var StackTrace = Class.extend({
 					string += callSiteFunctionName;
 				}
 				string += ' ';
-			
+
 				if(
 					callSite.getMethodName() &&
 					callSite.getFunctionName() &&
@@ -144,11 +144,11 @@ var StackTrace = Class.extend({
 		}
 
 		return string;
-	},
+	}
 
-	toString: function() {
+	toString() {
 		var string = '';
-		
+
 		// The error identifier
 		string += this.error.name+': ';
 
@@ -158,20 +158,20 @@ var StackTrace = Class.extend({
 		}
 		else {
 			string += '(no error message)';
-		}		
+		}
 
 		// Add a new line if we need one
 		if(string[string.length - 1] && string[string.length - 1] != "\n") {
-			string += "\n";	
+			string += "\n";
 		}
 
 		// Add stack trace
 		string += this.stackTraceToString();
 
 		return string;
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = StackTrace;
+export default StackTrace;

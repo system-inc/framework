@@ -1,9 +1,9 @@
 // Dependencies
-var StackTrace = require('./StackTrace.js');
+import StackTrace from './StackTrace.js';
 
 // Static properties
 
-Error.stackTraceLimit = 100;
+//Error.stackTraceLimit = 100;
 
 // Static methods
 
@@ -15,8 +15,6 @@ Error.prepareStackTrace = function(error, callSites) {
 	// Return an array of CallSite objects instead of a string when error.stack is accessed
 	return new StackTrace(error, callSites);
 };
-
-Error.extend = Class.extend; // Make Error extendable
 
 Error.toObject = function(error) {
 	var object = {
@@ -36,6 +34,3 @@ Error.toPublicObject = function(error) {
 
 	return object;
 };
-
-// Export
-module.exports = Error;

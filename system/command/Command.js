@@ -1,12 +1,12 @@
 // Dependencies
-var Settings = Framework.require('system/settings/Settings.js');
-var Version = Framework.require('system/version/Version.js');
-var Terminal = Framework.require('system/console/Terminal.js');
+import Settings from './../../system/settings/Settings.js';
+//import Terminal from './../../system/console/Terminal.js';
+import Version from './../../system/version/Version.js';
 
 // Class
-var Command = Class.extend({
+class Command {
 
-	settings: new Settings({
+	settings = new Settings({
 		usage: null,
 		supplementalNotes: null,
 
@@ -29,17 +29,17 @@ var Command = Class.extend({
 			},
 			*/
 		],
-	}),
+	});
 
-	usage: null,
-	supplementalNotes: null,
+	usage = null;
+	supplementalNotes = null;
 
-	command: null,
-	file: null,
-	arguments: null,
-	options: null,
+	command = null;
+	file = null;
+	arguments = null;
+	options = null;
 
-	construct: function(argumentsArray, settings) {
+	constructor(argumentsArray, settings) {
 		this.settings.merge(settings);
 
 		// Set the usage and supplemental notes
@@ -59,9 +59,9 @@ var Command = Class.extend({
 		this.parse(argumentsArray);
 
 		//Node.exit(this);
-	},
+	}
 
-	parse: function(argumentsArray) {
+	parse(argumentsArray) {
 		//Node.exit('parse', argumentsArray);
 
 		// Make sure we are working with an array
@@ -104,15 +104,15 @@ var Command = Class.extend({
 		//Node.exit(this);
 
 		return this;
-	},
+	}
 
-	showVersion: function() {
+	showVersion() {
 		Console.writeLine(Project.title+' '+(Project.version ? Project.version : '(unknown version)'));
 
 		Node.exit();
-	},
+	}
 
-	showHelp: function() {
+	showHelp() {
 		//Node.exit(this);
 
 		Console.writeLine(Project.title+' '+(Project.version ? Project.version : '(unknown version)'));
@@ -156,9 +156,9 @@ var Command = Class.extend({
 		}
 
 		Node.exit();
-	},
+	}
 
-	showCommandOptions: function() {
+	showCommandOptions() {
 		Console.writeLine('Command Options:');
 
 		var optionsSettings = this.settings.get('options');
@@ -167,9 +167,9 @@ var Command = Class.extend({
 		}.bind(this));
 
 		Console.writeLine();
-	},
+	}
 
-	getOptionValue: function(optionSettings, argumentsArray) {
+	getOptionValue(optionSettings, argumentsArray) {
 		//Node.exit(argumentsArray);
 
 		var optionValue = optionSettings.defaultValue;
@@ -211,9 +211,9 @@ var Command = Class.extend({
 		}
 
 		return optionValue;
-	},
+	}
 
-	argumentToOptionIdentifier: function(argument) {
+	argumentToOptionIdentifier(argument) {
 		var optionIdentifier = null;
 
 		if(argument && String.is(argument)) {
@@ -221,9 +221,9 @@ var Command = Class.extend({
 		}
 
 		return optionIdentifier;
-	},
+	}
 
-	getOptionValueFromArgumentUsingOptionSettings: function(optionSettings, argument) {
+	getOptionValueFromArgumentUsingOptionSettings(optionSettings, argument) {
 		var optionValue = argument;
 
 		// Handle booleans (turn true/false strings into actual booleans)
@@ -237,9 +237,9 @@ var Command = Class.extend({
 		}
 
 		return optionValue;
-	},
+	}
 
-	getOptionSettingsFromOptionIdentifier: function(optionIdentifier) {
+	getOptionSettingsFromOptionIdentifier(optionIdentifier) {
 		//Console.info('getOptionSettingsFromOptionIdentifier', 'optionIdentifier', optionIdentifier);
 
 		if(optionIdentifier === undefined) {
@@ -261,22 +261,20 @@ var Command = Class.extend({
 		//Node.exit();
 
 		return optionSettingsFromOptionIdentifier;
-	},
+	}
 
-});
+	static versionOptions = [
+		'v',
+		'version',
+	];
 
-// Static properties
+	static helpOptions = [
+		'?',
+		'h',
+		'help',
+	];
 
-Command.versionOptions = [
-	'v',
-	'version',
-];
-
-Command.helpOptions = [
-	'?',
-	'h',
-	'help',
-];
+}
 
 // Export
-module.exports = Command;
+export default Command;

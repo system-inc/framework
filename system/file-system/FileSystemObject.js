@@ -1,33 +1,30 @@
-// Dependencies
-var FileSystemObjectFactory = Framework.require('system/file-system/FileSystemObjectFactory.js');
-
 // Class
-var FileSystemObject = Class.extend({
+class FileSystemObject {
 
-	name: null, // The name of the file (with extension) or directory
-	path: null, // The full path to the file or directory, e.g., /directory/file.extension
-	directory: null, // The directory containing the file system object
-	size: null, // The size of the file system object in bytes
-	mode: null,
-	userId: null,
-	groupId: null,
-	blocks: null,
-	blockSize: null,
-	deviceId: null,
-	specialDeviceId: null,
-	indexNode: null,
-	hardLinks: null,
-	timeAccessed: null,
-	timeModified: null,
-	timeStatusChanged: null,
-	timeCreated: null,
-	nodeStatus: null,
+	name = null; // The name of the file (with extension) or directory
+	path = null; // The full path to the file or directory, e.g., /directory/file.extension
+	directory = null; // The directory containing the file system object
+	size = null; // The size of the file system object in bytes
+	mode = null;
+	userId = null;
+	groupId = null;
+	blocks = null;
+	blockSize = null;
+	deviceId = null;
+	specialDeviceId = null;
+	indexNode = null;
+	hardLinks = null;
+	timeAccessed = null;
+	timeModified = null;
+	timeStatusChanged = null;
+	timeCreated = null;
+	nodeStatus = null;
 
-	statusInitialized: false,
+	statusInitialized = false;
 
-	readStream: null,
+	readStream = null;
 	
-	construct: function(path) {
+	constructor(path) {
 		this.path = Node.Path.normalize(path);
 
 		// Make sure we have a path
@@ -42,12 +39,12 @@ var FileSystemObject = Class.extend({
 			// Figure out the directory
 			this.directory = this.path.substr(0, this.path.lastIndexOf(Node.Path.separator) + 1);
 		}
-	},
+	}
 
-	initializeStatus: function*() {
-		if(yield FileSystemObject.exists(this.path)) {
+	async initializeStatus() {
+		if(await FileSystemObject.exists(this.path)) {
 			// Get the file object status
-			this.nodeStatus = yield FileSystemObject.stat(this.path);
+			this.nodeStatus = await FileSystemObject.stat(this.path);
 
 			// Set the class variables
 			this.size = this.nodeStatus.size;
@@ -70,261 +67,266 @@ var FileSystemObject = Class.extend({
 		else {
 			Console.error('Could not initialize status, file system object at path '+this.path+', does not exist.');
 		}
-	},
+	}
 
-	sizeInBits: function() {
+	sizeInBits() {
 		return this.size * 8;
-	},
+	}
 
-	sizeInBytes: function() {
+	sizeInBytes() {
 		return this.size;
-	},
+	}
 
-	sizeInKilobytes: function() {
+	sizeInKilobytes() {
 		return this.size / 1000;
-	},
+	}
 
-	sizeInKibibytes: function() {
+	sizeInKibibytes() {
 		return this.size / 1024;
-	},
+	}
 
-	sizeInMegabytes: function() {
+	sizeInMegabytes() {
 		return this.sizeInKilobytes() / 1000;
-	},
+	}
 
-	sizeInMebibytes: function() {
+	sizeInMebibytes() {
 		return this.sizeInKibibytes() / 1024;
-	},
+	}
 
-	sizeInGigabytes: function() {
+	sizeInGigabytes() {
 		return this.sizeInMegabytes() / 1000;
-	},
+	}
 
-	sizeInGigibytes: function() {
+	sizeInGigibytes() {
 		return this.sizeInMebibytes() / 1024;
-	},
+	}
 
-	sizeInTerabytes: function() {
+	sizeInTerabytes() {
 		return this.sizeInTerabytes() / 1000;
-	},
+	}
 
-	sizeInTebibytes: function() {
+	sizeInTebibytes() {
 		return this.sizeInGigibytes() / 1024;
-	},
+	}
 
-	isFile: function() {
+	isFile() {
 		return this.nodeStatus.isFile();
-	},
+	}
 
-	isDirectory: function() {
+	isDirectory() {
 		return this.nodeStatus.isDirectory();
-	},
+	}
 
-	isBlockDevice: function() {
+	isBlockDevice() {
 		return this.nodeStatus.isBlockDevice();
-	},
+	}
 
-	isCharacterDevice: function() {
+	isCharacterDevice() {
 		return this.nodeStatus.isCharacterDevice();
-	},
+	}
 
-	isSymbolicLink: function() {
+	isSymbolicLink() {
 		return this.nodeStatus.isSymbolicLink();
-	},
+	}
 
-	isFifo: function() {
+	isFifo() {
 		return this.nodeStatus.isFifo();
-	},
+	}
 
-	isSocket: function() {
+	isSocket() {
 		return this.nodeStatus.isSocket();
-	},
+	}
 
-	exists: function(path) {
+	async exists(path) {
 		path = (path === undefined) ? this.path : Node.Path.normalize(path);
 		//Console.log('path', path);
 
-	    return new Promise(function(resolve, reject) {
+	    var exists = await new Promise(function(resolve, reject) {
 	    	Node.FileSystem.exists(path, function(exists) {
 	    		//Console.log(path, exists);
 	    		resolve(exists);
 	    	});
 	    });
-	},
 
-	watch: function*(callback) {
-		return FileSystemObject.watch(this.path, callback);
-	},
-	
-});
+        return exists;
+	}
 
-// Static methods
+	async watch(callback) {
+        var watch = await FileSystemObject.watch(this.path, callback);
+		
+        return watch;
+	}
 
-FileSystemObject.exists = FileSystemObject.prototype.exists;
+    static exists = FileSystemObject.prototype.exists;
 
-FileSystemObject.stat = function(path) {
-    return new Promise(function(resolve, reject) {
-    	Node.FileSystem.stat(path, function(error, stats) {
-    		if(error) {
-    			reject(error);
-    		}
-    		else {
-    			resolve(stats);
-    		}
-    	});
-    });
-};
-
-FileSystemObject.listFileNames = function(path) {
-    return new Promise(function(resolve, reject) {
-        Node.FileSystem.readdir(path, function(error, files) {
-            if(error) {
-                reject(error);
-            }
-            else {
-                resolve(files);
-            }
-        });
-    });
-};
-
-FileSystemObject.list = function(path, recursive) {
-    // Dependencies
-    var Directory = Framework.require('system/file-system/Directory.js');
-
-    return new Promise(function(resolve, reject) {
-        Generator.run(function*() {
-            var list = [];
-            var fileNames = yield FileSystemObject.listFileNames(path);
-
-            // Make sure we have the full path
-            yield fileNames.each(function*(index, fileName) {
-                var fileSystemObject = yield FileSystemObjectFactory.create(path+fileName);
-
-                // Handle recursion
-                if(recursive && Class.isInstance(fileSystemObject, Directory)) {
-                    // Get the directory listing of any directories
-                    var directoryList = yield fileSystemObject.list(true);
-
-                    // Add them to the list to return
-                    directoryList.each(function(index, directoryListItem) {
-                        list.push(directoryListItem);
-                    });
-                }
-
-                if(fileSystemObject) {
-                    list.push(fileSystemObject);
+    static async stat(path) {
+        var stat = await new Promise(function(resolve, reject) {
+            Node.FileSystem.stat(path, function(error, stats) {
+                if(error) {
+                    reject(error);
                 }
                 else {
-                    //Console.log('No fileSystemObject for', path+fileName);
-                }                
-            });
-
-            return list;
-        }, resolve);
-    });
-};
-
-FileSystemObject.watch = function(paths, callback) {
-    return new Promise(function(resolve, reject) {
-        Generator.run(function*() {
-            // Allow strings to be passed and convert it to an array
-            if(String.is(paths)) {
-                paths = [paths];
-            }
-
-            var fileSystemObjectsToWatch = [];
-
-            // Loop through the paths and collect all of the file system objects to watch
-            yield paths.each(function*(pathIndex, path) {
-                //Console.log('path', path);
-
-                // Instantiate a file or directory from the path
-                var fileSystemObject = yield FileSystemObjectFactory.create(path);
-
-                // Create an array to store file system objects to watch
-                fileSystemObjectsToWatch.append(fileSystemObject);
-
-                // If the path is a directory, get all of the files and folders in the directory and watch them as well
-                if(fileSystemObject.isDirectory()) {
-                    var childFileSystemObjects = yield fileSystemObject.list(true);
-
-                    childFileSystemObjects.each(function(childFileSystemObjectIndex, childFileSystemObject) {
-                        fileSystemObjectsToWatch.append(childFileSystemObject);
-                    });
+                    resolve(stats);
                 }
             });
+        });
 
-            // Make sure our file system object array is unique
-            var uniqueFileSystemObjectsToWatch = [];
-            fileSystemObjectsToWatch.each(function(fileSystemObjectToWatchIndex, fileSystemObjectToWatch) {
-                // Check to see if we are already watching
-                var alreadyWatchingFileSystemObject = false;
-                uniqueFileSystemObjectsToWatch.each(function(uniqueFileSystemObjectIndex, uniqueFileSystemObject) {
-                    if(fileSystemObjectToWatch.path == uniqueFileSystemObject.path) {
-                        alreadyWatchingFileSystemObject = true;
-                        return false; // break
+        return stat;
+    }
+
+    static async listFileNames(path) {
+        var fileNamesList = await new Promise(function(resolve, reject) {
+            Node.FileSystem.readdir(path, function(error, files) {
+                if(error) {
+                    reject(error);
+                }
+                else {
+                    resolve(files);
+                }
+            });
+        });
+
+        return fileNamesList;
+    }
+
+    static async list(path, recursive) {
+        var list = await new Promise(function(resolve, reject) {
+            Generator.run(async function() {
+                var list = [];
+                var fileNames = await FileSystemObject.listFileNames(path);
+
+                // Dependencies
+                //import FileSystemObjectFactory from './FileSystemObjectFactory.js';
+                var FileSystemObjectFactory = await System.import('./FileSystemObjectFactory.js');
+
+                // Make sure we have the full path
+                await fileNames.each(async function(index, fileName) {
+                    var fileSystemObject = await FileSystemObjectFactory.create(path+fileName);
+
+                    // Handle recursion
+                    if(recursive && Class.isInstance(fileSystemObject, Directory)) {
+                        // Get the directory listing of any directories
+                        var directoryList = await fileSystemObject.list(true);
+
+                        // Add them to the list to return
+                        directoryList.each(function(index, directoryListItem) {
+                            list.push(directoryListItem);
+                        });
                     }
+
+                    if(fileSystemObject) {
+                        list.push(fileSystemObject);
+                    }
+                    else {
+                        //Console.log('No fileSystemObject for', path+fileName);
+                    }                
                 });
 
-                if(!alreadyWatchingFileSystemObject) {
-                    uniqueFileSystemObjectsToWatch.append(fileSystemObjectToWatch);
+                return list;
+            }, resolve);
+        });
+
+        return list;
+    }
+
+    static async watch(paths, callback) {
+        // Allow strings to be passed and convert it to an array
+        if(String.is(paths)) {
+            paths = [paths];
+        }
+
+        var fileSystemObjectsToWatch = [];
+
+        // Loop through the paths and collect all of the file system objects to watch
+        await paths.each(async function(pathIndex, path) {
+            //Console.log('path', path);
+
+            // Instantiate a file or directory from the path
+            var fileSystemObject = await FileSystemObjectFactory.create(path);
+
+            // Create an array to store file system objects to watch
+            fileSystemObjectsToWatch.append(fileSystemObject);
+
+            // If the path is a directory, get all of the files and folders in the directory and watch them as well
+            if(fileSystemObject.isDirectory()) {
+                var childFileSystemObjects = await fileSystemObject.list(true);
+
+                childFileSystemObjects.each(function(childFileSystemObjectIndex, childFileSystemObject) {
+                    fileSystemObjectsToWatch.append(childFileSystemObject);
+                });
+            }
+        });
+
+        // Make sure our file system object array is unique
+        var uniqueFileSystemObjectsToWatch = [];
+        fileSystemObjectsToWatch.each(function(fileSystemObjectToWatchIndex, fileSystemObjectToWatch) {
+            // Check to see if we are already watching
+            var alreadyWatchingFileSystemObject = false;
+            uniqueFileSystemObjectsToWatch.each(function(uniqueFileSystemObjectIndex, uniqueFileSystemObject) {
+                if(fileSystemObjectToWatch.path == uniqueFileSystemObject.path) {
+                    alreadyWatchingFileSystemObject = true;
+                    return false; // break
                 }
             });
-            fileSystemObjectsToWatch = uniqueFileSystemObjectsToWatch;
 
-            // Watch each file system object
-            fileSystemObjectsToWatch.each(function(fileSystemObjectToWatchIndex, fileSystemObjectToWatch) {
-                Node.FileSystem.watchFile(
-                    fileSystemObjectToWatch.path,
-                    {
-                        persistent: true,
-                        interval: 1000,
-                    },
-                    function(currentNodeStatus, previousNodeStatus) {
-                        var currentStatus = {};
-                        var previousStatus = {};
+            if(!alreadyWatchingFileSystemObject) {
+                uniqueFileSystemObjectsToWatch.append(fileSystemObjectToWatch);
+            }
+        });
+        fileSystemObjectsToWatch = uniqueFileSystemObjectsToWatch;
 
-                        // Set the current status variables
-                        currentStatus.size = currentNodeStatus.size;
-                        currentStatus.mode = currentNodeStatus.mode;
-                        currentStatus.userId = currentNodeStatus.uid;
-                        currentStatus.groupId = currentNodeStatus.gid;
-                        currentStatus.blocks = currentNodeStatus.blocks;
-                        currentStatus.blockSize = currentNodeStatus.blksize;
-                        currentStatus.deviceId = currentNodeStatus.dev;
-                        currentStatus.specialDeviceId = currentNodeStatus.rdev;
-                        currentStatus.indexNode = currentNodeStatus.ino;
-                        currentStatus.hardLinks = currentNodeStatus.nlink;
-                        currentStatus.timeAccessed = new Time(currentNodeStatus.atime);
-                        currentStatus.timeModified = new Time(currentNodeStatus.mtime);
-                        currentStatus.timeStatusChanged = new Time(currentNodeStatus.ctime);
+        // Watch each file system object
+        fileSystemObjectsToWatch.each(function(fileSystemObjectToWatchIndex, fileSystemObjectToWatch) {
+            Node.FileSystem.watchFile(
+                fileSystemObjectToWatch.path,
+                {
+                    persistent: true,
+                    interval: 1000,
+                },
+                function(currentNodeStatus, previousNodeStatus) {
+                    var currentStatus = {};
+                    var previousStatus = {};
 
-                        // Set the current status variables
-                        previousStatus.size = previousNodeStatus.size;
-                        previousStatus.mode = previousNodeStatus.mode;
-                        previousStatus.userId = previousNodeStatus.uid;
-                        previousStatus.groupId = previousNodeStatus.gid;
-                        previousStatus.blocks = previousNodeStatus.blocks;
-                        previousStatus.blockSize = previousNodeStatus.blksize;
-                        previousStatus.deviceId = previousNodeStatus.dev;
-                        previousStatus.specialDeviceId = previousNodeStatus.rdev;
-                        previousStatus.indexNode = previousNodeStatus.ino;
-                        previousStatus.hardLinks = previousNodeStatus.nlink;
-                        previousStatus.timeAccessed = new Time(previousNodeStatus.atime);
-                        previousStatus.timeModified = new Time(previousNodeStatus.mtime);
-                        previousStatus.timeStatusChanged = new Time(previousNodeStatus.ctime);
+                    // Set the current status variables
+                    currentStatus.size = currentNodeStatus.size;
+                    currentStatus.mode = currentNodeStatus.mode;
+                    currentStatus.userId = currentNodeStatus.uid;
+                    currentStatus.groupId = currentNodeStatus.gid;
+                    currentStatus.blocks = currentNodeStatus.blocks;
+                    currentStatus.blockSize = currentNodeStatus.blksize;
+                    currentStatus.deviceId = currentNodeStatus.dev;
+                    currentStatus.specialDeviceId = currentNodeStatus.rdev;
+                    currentStatus.indexNode = currentNodeStatus.ino;
+                    currentStatus.hardLinks = currentNodeStatus.nlink;
+                    currentStatus.timeAccessed = new Time(currentNodeStatus.atime);
+                    currentStatus.timeModified = new Time(currentNodeStatus.mtime);
+                    currentStatus.timeStatusChanged = new Time(currentNodeStatus.ctime);
 
-                        return callback(fileSystemObjectToWatch, currentStatus, previousStatus);
-                    }
-                );
-            });
-            //Console.log('Watching', fileSystemObjectsToWatch.length, 'file system objects.');
+                    // Set the current status variables
+                    previousStatus.size = previousNodeStatus.size;
+                    previousStatus.mode = previousNodeStatus.mode;
+                    previousStatus.userId = previousNodeStatus.uid;
+                    previousStatus.groupId = previousNodeStatus.gid;
+                    previousStatus.blocks = previousNodeStatus.blocks;
+                    previousStatus.blockSize = previousNodeStatus.blksize;
+                    previousStatus.deviceId = previousNodeStatus.dev;
+                    previousStatus.specialDeviceId = previousNodeStatus.rdev;
+                    previousStatus.indexNode = previousNodeStatus.ino;
+                    previousStatus.hardLinks = previousNodeStatus.nlink;
+                    previousStatus.timeAccessed = new Time(previousNodeStatus.atime);
+                    previousStatus.timeModified = new Time(previousNodeStatus.mtime);
+                    previousStatus.timeStatusChanged = new Time(previousNodeStatus.ctime);
+
+                    return callback(fileSystemObjectToWatch, currentStatus, previousStatus);
+                }
+            );
+        });
+        //Console.log('Watching', fileSystemObjectsToWatch.length, 'file system objects.');
             
-            return fileSystemObjectsToWatch;
-        }, resolve);
-    });    
-};
+        return fileSystemObjectsToWatch;
+    }
+	
+}
 
 // Export
-module.exports = FileSystemObject;
+export default FileSystemObject;

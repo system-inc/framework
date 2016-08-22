@@ -1,9 +1,8 @@
 // Class
-var Primitive = {};
+class Primitive {
 
-// Static methods
+  static is = Node.Utility.isPrimitive;
 
-Primitive.is = Node.Utility.isPrimitive;
+}
 
-// Export
-module.exports = Primitive;
+global.Primitive = Primitive;

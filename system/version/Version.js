@@ -1,11 +1,12 @@
-var Version = Class.extend({
+// Class
+class Version {
 
-	major: null,
-	minor: null,
-	patch: null,
-	patchMinor: null,
+	major = null;
+	minor = null;
+	patch = null;
+	patchMinor = null;
 
-	construct: function(options) {
+	constructor(options) {
 		// Construct from a string
 		if(options && String.is(options)) {
 			var versions = options.replace('_', '.').split('.');
@@ -37,9 +38,9 @@ var Version = Class.extend({
 				this.patchMinor = options.patchMinor;
 			}	
 		}
-	},
+	}
 
-	toString: function() {
+	toString() {
 		var version = '';
 
 		// Major
@@ -69,9 +70,9 @@ var Version = Class.extend({
 		}
 
 		return version;
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = Version;
+export default Version;
