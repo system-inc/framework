@@ -1,25 +1,25 @@
 // Dependencies
-var File = Framework.require('system/file-system/File.js');
-var Directory = Framework.require('system/file-system/Directory.js');
-var Terminal = Framework.require('system/console/Terminal.js');
+import File from './../../system/file-system/File.js';
+import Directory from './../../system/file-system/Directory.js';
+//import Terminal from './../../system/console/Terminal.js';
 
 // Class
-var Log = Class.extend({
+class Log {
 
-	directory: null,
-	nameWithoutExtension: null,
-	buffer: '',
-	file: null,
-	writeStream: null,
-	initializingWriteStream: null,
+	directory = null;
+	nameWithoutExtension = null;
+	buffer = '';
+	file = null;
+	writeStream = null;
+	initializingWriteStream = null;
 
-	construct: function(directory, nameWithoutExtension) {
+	constructor(directory, nameWithoutExtension) {
 		this.directory = directory;
 		this.nameWithoutExtension = nameWithoutExtension;
 		this.file = new File(Node.Path.join(this.directory, this.nameWithoutExtension+'.log'));
-	},
+	}
 
-	write: function*(data, removeAnsiEscapeCodesFromString) {
+	async write(data, removeAnsiEscapeCodesFromString) {
 		// removeAnsiEscapeCodesFromString defaults to true
 		if(removeAnsiEscapeCodesFromString === undefined) {
 			removeAnsiEscapeCodesFromString = true;
@@ -53,13 +53,13 @@ var Log = Class.extend({
 			this.initializingWriteStream = true;
 
 			// Make sure the directory for the log exists
-			var directoryExists = yield Directory.exists(this.directory);
+			var directoryExists = await Directory.exists(this.directory);
 			if(!directoryExists) {
-				yield Directory.create(this.directory);	
+				await Directory.create(this.directory);	
 			}
 			
 			// Create a write stream
-			this.writeStream = yield File.createWriteStream(this.file.file, {
+			this.writeStream = await File.createWriteStream(this.file.file, {
 				'flags': 'a',
 				'encoding': 'utf8',
 			});
@@ -79,7 +79,7 @@ var Log = Class.extend({
 			}
 
 			// Write to the log
-			this.writeStream.write(data); // No need to yield here since we aren't doing anything with the results
+			this.writeStream.write(data); // No need to await here since we aren't doing anything with the results
 			//Console.log(this.writeStream);
 		}
 		// If we don't have a write stream, add the data to the buffer
@@ -88,7 +88,7 @@ var Log = Class.extend({
 		}
 	}
 
-});
+}
 
 // Export
-module.exports = Log;
+export default Log;

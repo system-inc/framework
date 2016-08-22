@@ -36,24 +36,29 @@ class Module {
 		this.settings = new Settings(this.defaultSettings, settings);
 	}
 
-	static require(moduleNames) {
+	static async require(moduleNames) {
 		//Console.log('moduleNames', moduleNames);
 
 		// Load each module
-		moduleNames.toArray().each(function(moduleNameIndex, moduleName) {
+		await moduleNames.toArray().each(async function(moduleNameIndex, moduleName) {
 			var modulePropertyName = moduleName.lowercaseFirstCharacter();
 
 			// Only require modules once
-			if(Project.modules[modulePropertyName]) {
-				//Console.info('Already called Module.require for '+moduleName+'.');
+			if(app.modules[modulePropertyName]) {
+				//console.log('Already called Module.require for '+moduleName+'.');
 			}
 			// Require the module
 			else {
 				// Require the module
-				var moduleClass = Framework.require('modules/'+moduleName.replaceLast('Module', '').toDashes()+'/'+moduleName+'.js');
+				var modulePath = Node.Path.join(app.framework.directory, 'modules', moduleName.replaceLast('Module', '').toDashes(), moduleName+'.js');
+				console.log('need to use System.import here?');
+				//var moduleClass = await System.import(modulePath);
+				console.log('modulePath', modulePath);
+				var moduleClass = require(modulePath).default;
+				//console.log('moduleClass', moduleClass);
 				var moduleInstance = new (moduleClass)(moduleName);
 
-				Project.modules[modulePropertyName] = moduleInstance;
+				app.modules[modulePropertyName] = moduleInstance;
 			}
 		});
 	}
@@ -65,7 +70,7 @@ class Module {
 		await moduleNames.toArray().each(async function(moduleNameIndex, moduleName) {
 			var modulePropertyName = moduleName.lowercaseFirstCharacter();
 
-			var moduleInstance = Project.modules[modulePropertyName];
+			var moduleInstance = app.modules[modulePropertyName];
 
 			// Only initialize modules once
 			if(moduleInstance.isInitialized) {
@@ -73,7 +78,7 @@ class Module {
 			}
 			else {
 				//Console.log('Initializing', moduleName, 'module...');
-				var settings = Project.settings.get('modules.'+moduleName.replaceLast('Module', '').lowercaseFirstCharacter());
+				var settings = app.settings.get('modules.'+moduleName.replaceLast('Module', '').lowercaseFirstCharacter());
 				
 				//Console.log('initializing', moduleName+'Module');
 				//Console.log(moduleInstance, settings);

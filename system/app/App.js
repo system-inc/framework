@@ -1,9 +1,9 @@
 // Dependencies
-import AsciiArt from './../ascii-art/AsciiArt.js';
-import Command from './../command/Command.js';
-import Module from './../module/Module.js';
-import Settings from './../settings/Settings.js';
-import Version from './../version/Version.js';
+import AsciiArt from './../../system/ascii-art/AsciiArt.js';
+import Command from './../../system/command/Command.js';
+import Module from './../../system/module/Module.js';
+import Settings from './../../system/settings/Settings.js';
+import Version from './../../system/version/Version.js';
 
 // Class
 class App {
@@ -21,7 +21,7 @@ class App {
 
 	framework = {
 		version: new Version('0.1.0'),
-		directory: __dirname,
+		directory: Node.Path.join(__dirname, '../', '../'),
 		coreModules: [
 			'ConsoleModule',
 			'ArchiveModule',
@@ -31,8 +31,6 @@ class App {
 	constructor(appDirectory) {
 		// Set the app directory
 		this.directory = Node.Path.normalize(appDirectory);
-
-		this.initialize();
 	}
 
 	async initialize(callback) {
@@ -43,7 +41,7 @@ class App {
 		Module.require(this.framework.coreModules);
 
 		// Announce starting
-		Console.log('Initializing Framework '+this.version+'...');
+		console.log('Initializing Framework '+this.version+'...');
 
 		// Use core modules to load the project settings
 		await this.loadAppSettings();
@@ -63,9 +61,9 @@ class App {
 		// Load all of the modules for the Project indicated in the project settings
 		await this.requireAndInitializeProjectModules();
 
-		//Console.log('Framework initialization complete.');
-		Console.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
-		//Console.log('Modules: '+Module.modules.initialized.join(', '));
+		//console.log('Framework initialization complete.');
+		console.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
+		//console.log('Modules: '+Module.modules.initialized.join(', '));
 
 		// Run the callback (which may be a generator)
 		if(callback) {
@@ -76,17 +74,17 @@ class App {
 	}
 
 	async loadAppSettings() {
-		//Console.log('Loading project settings...');
-		this.settings = Settings.constructFromFile({
+		//console.log('Loading project settings...');
+		this.settings = await Settings.constructFromFile({
 			environment: 'development',
 			modules: {},
 		}, Node.Path.join(this.directory, 'settings', 'settings.json'));
-		//Console.log('loadAppSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
+		//console.log('loadAppSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
 
 		// Merge the environment settings
-		//Console.log('Integrating environment settings...')
-		this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'environment.json'));
-		//Console.log(this.settings);
+		//console.log('Integrating environment settings...')
+		await this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'environment.json'));
+		//console.log(this.settings);
 	}
 
 	setPropertiesFromAppSettings() {
@@ -97,7 +95,7 @@ class App {
 		}
 
 		// Anounce project title
-		//Console.log('Settings for project "'+this.title+'" loaded.');
+		//console.log('Settings for project "'+this.title+'" loaded.');
 
 		// Set the identifier
 		var identifierFromSettings = this.settings.get('identifier');
@@ -125,7 +123,7 @@ class App {
 	configureEnvironment() {
 		this.environment = this.settings.get('environment');
 
-		//Console.log('Configuring environment ('+this.environment+')...');
+		//console.log('Configuring environment ('+this.environment+')...');
 
 		// Development
 		if(this.environment == 'development') {
@@ -153,8 +151,8 @@ class App {
 	}
 
 	async requireAndInitializeProjectModules() {
-		//Console.log(this.settings);
-		//Console.log('Loading modules for project...', this.settings.get('modules'));
+		//console.log(this.settings);
+		//console.log('Loading modules for project...', this.settings.get('modules'));
 
 		// Load and initialize project modules separately in case multiple project modules rely on each other
 		var modulesForProject = [];
@@ -163,7 +161,7 @@ class App {
 		this.settings.get('modules').each(function(moduleName, moduleSettings) {
 			moduleName = moduleName.uppercaseFirstCharacter()+'Module';
 
-			//Console.log('Loading "'+moduleName+'" module...');
+			//console.log('Loading "'+moduleName+'" module...');
 			Module.require(moduleName);
 
 			// Store the module name for initialization later

@@ -1,36 +1,36 @@
 // Dependencies
-var Module = Framework.require('system/module/Module.js');
-var Version = Framework.require('system/version/Version.js');
-var WebServer = Framework.require('system/web-server/WebServer.js');
-var Settings = Framework.require('system/settings/Settings.js');
+import Module from './../../system/module/Module.js';
+import Version from './../../system/version/Version.js';
+import WebServer from './../../system/web-server/WebServer.js';
+import Settings from './../../system/settings/Settings.js';
 
 // Class
-var WebServerModule = Module.extend({
+class WebServerModule extends Module {
 
-	version: new Version('0.1.0'),
+	version = new Version('0.1.0');
 
-	webServers: {},
+	webServers = {};
 
-	initialize: function*(settings) {
-		yield this.super.apply(this, arguments);
+	async initialize(settings) {
+		await this.super.apply(this, arguments);
 		//Console.log('WebServerModule initialize', this.settings);
 
-		yield this.createWebServers();
-	},
+		await this.createWebServers();
+	}
 
-	createWebServers: function*() {
+	async createWebServers() {
 		// Inspect the settings to see if they want a web server
 		var webServersSettings = this.settings.get('webServers');
 		if(webServersSettings) {
 			var webServerCount = 0;
-			yield webServersSettings.each(function*(webServerSettingsObjectIndex, webServerSettingsObject) {
+			await webServersSettings.each(async function(webServerSettingsObjectIndex, webServerSettingsObject) {
 				// Get an instance of class Settings to localize to the web server
 				var webServerSettings = new Settings(webServerSettingsObject);
 				var webServerIdentifier = webServerSettings.get('identifier');
 
 				// Make sure the web server has an identifier
 				if(!webServerIdentifier) {
-					webServerIdentifier = Project.identifier;
+					webServerIdentifier = app.identifier;
 					if(webServerCount > 0) {
 						webServerIdentifier += ''+webServerCount;
 					}
@@ -42,16 +42,16 @@ var WebServerModule = Module.extend({
 				this.webServers[webServerIdentifier] = new WebServer(webServerIdentifier, webServerSettings);
 				
 				// Start the web server
-				yield this.webServers[webServerIdentifier].start();
+				await this.webServers[webServerIdentifier].start();
 
 				webServerCount++;
 			}.bind(this));
 		}
 
 		return this.webServers;
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = WebServerModule;
+export default WebServerModule;

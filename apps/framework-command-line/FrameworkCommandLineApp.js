@@ -9,5 +9,8 @@ class FrameworkCommandLineApp extends App {
 
 }
 
-// Global
+// Global instance
 global.app = new FrameworkCommandLineApp(__dirname);
+
+// Initialize
+global.app.initialize();

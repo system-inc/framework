@@ -1,29 +1,29 @@
 // Dependencies
-var Log = Framework.require('system/log/Log.js');
-var File = Framework.require('system/file-system/File.js');
-var Directory = Framework.require('system/file-system/Directory.js');
-var Terminal = Framework.require('system/console/Terminal.js');
+import Log from './../../system/log/Log.js';
+import File from './../../system/file-system/File.js';
+import Directory from './../../system/file-system/Directory.js';
+//import Terminal from './../../system/console/Terminal.js';
 
 // Class
-var ConsoleSession = Class.extend({
+class ConsoleSession {
 
 	// Log
-	log: null,
+	log = null;
 
 	// Command history
-	commandHistoryFile: null,
-	commandHistory: [],
-	currentCommandHistoryIndex: -1,
-	currentCommandString: '',
-	currentCommandCursorIndex: 0,
-	commandColor : 'cyan',
+	commandHistoryFile = null;
+	commandHistory = [];
+	currentCommandHistoryIndex = -1;
+	currentCommandString = '';
+	currentCommandCursorIndex = 0;
+	commandColor = 'cyan';
 
-	construct: function() {
+	constructor() {
 		this.listen();
-	},
+	}
 
 	// Listen for incoming commands from standard in
-	listen: function() {
+	listen() {
 		// If the Console is on a terminal
 		if(Console.onTerminal()) {
 			if(Node.StandardIn.setRawMode) {
@@ -36,27 +36,27 @@ var ConsoleSession = Class.extend({
 				this.handleKey(key);
 			}.bind(this));
 		}
-	},
+	}
 
-	write: function(message) {
+	write(message) {
 		if(this.log) {
 			this.log.write(message);
 		}
-	},
+	}
 
-	attachLog: function(directory) {
+	attachLog(directory) {
 		this.log = new Log(directory, 'console');
 
 		this.write("\n"+'['+new Time().getDateTime()+'] Attached log to console session. Console activity is recorded to "'+this.log.file.path+'".'+"\n");
-	},
+	}
 
-	loadCommandHistory: function*(directory, fileNameWithoutExtension) {
+	async loadCommandHistory(directory, fileNameWithoutExtension) {
 		//Console.log('Loading history...', directory, fileNameWithoutExtension);
 
 		// Make sure the directory exists
-		var directoryExists = yield Directory.exists(directory);
+		var directoryExists = await Directory.exists(directory);
 		if(!directoryExists) {
-			yield Directory.create(directory);
+			await Directory.create(directory);
 		}
 
 		var file = Node.Path.join(directory, fileNameWithoutExtension+'.log');
@@ -86,10 +86,10 @@ var ConsoleSession = Class.extend({
 
 		//Console.log('this.commandHistoryFile', this.commandHistoryFile);
 
-		yield this.commandHistoryFile.open('a+');
-	},
+		await this.commandHistoryFile.open('a+');
+	}
 
-	handleKey: function(key) {
+	handleKey(key) {
 		// Ctrl-c
 		if(key == '\u0003') {
 			Node.exit();
@@ -300,9 +300,9 @@ var ConsoleSession = Class.extend({
 			// Move back to where the cursor should be
 			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
 		}
-	},
+	}
 
-	assistCommand: function(command) {
+	assistCommand(command) {
 		command = command.trim();
 
 		// The thing we are going to print out
@@ -484,9 +484,9 @@ var ConsoleSession = Class.extend({
 		Terminal.clearLine();
 		Terminal.cursorLeft(this.currentCommandString.length + 1);
 		Console.writeToTerminal(this.currentCommandString, false);
-	},
+	}
 
-	handleCommand: function(command) {
+	handleCommand(command) {
 		command = command.trim();
 
 		// Strip any trailing periods
@@ -542,9 +542,9 @@ var ConsoleSession = Class.extend({
 		}
 		
 		return;
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ConsoleSession;
+export default ConsoleSession;

@@ -41,9 +41,9 @@ class Settings {
 		return this.dataStore.merge(data);
 	}
 
-	mergeFromFile(datafilePath) {
+	async mergeFromFile(datafilePath) {
 		// Read the data from the file
-		var data = File.synchronous.read.json(datafilePath);
+		var data = await File.readJson(datafilePath);
 		//Console.log('Settings from', datafilePath, 'to merge:', dataStore);
 
 		return this.merge(data);
@@ -53,9 +53,9 @@ class Settings {
 		return this.dataStore.integrate(data);
 	}
 
-	integrateFromFile(datafilePath) {
+	async integrateFromFile(datafilePath) {
 		// Read the data from the file
-		var data = File.synchronous.read.json(datafilePath);
+		var data = await File.readJson(datafilePath);
 		//Console.log('Settings from', datafilePath, 'to integrate:', dataStore);
 		
 		this.integrate(data);
@@ -73,11 +73,12 @@ class Settings {
 		return this.dataStore.delete(path);
 	}
 
-	static constructFromFile(defaultData, datafilePath, dataStore) {
+	static async constructFromFile(defaultData, datafilePath, dataStore) {
 		//Console.log('datafilePath', datafilePath);
 
 		// Read the data from the file
-		var data = File.synchronous.read.json(datafilePath);
+		var data = await File.readJson(datafilePath);
+		console.log('data', data);
 
 		//Console.log('dataStore', dataStore);
 

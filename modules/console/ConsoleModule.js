@@ -1,30 +1,30 @@
 // Dependencies
-var Module = Framework.require('system/module/Module.js');
-var Version = Framework.require('system/version/Version.js');
-var ConsoleSession = Framework.require('system/console/ConsoleSession.js');
+import Module from './../../system/module/Module.js';
+import Version from './../../system/version/Version.js';
+import ConsoleSession from './../../system/console/ConsoleSession.js';
 
 // Class
-var ConsoleModule = Module.extend({
+class ConsoleModule extends Module {
 
-	version: new Version('0.1.0'),
+	version = new Version('0.1.0');
 
-	defaultSettings: {
-		'commandHistory': {
-			'enabled': true,
-			'directory': Node.Path.join(Project.directory, 'logs'),
-			'nameWithoutExtension': 'console-command-history',
+	defaultSettings = {
+		commandHistory: {
+			enabled: true,
+			directory: Node.Path.join(app.directory, 'logs'),
+			nameWithoutExtension: 'console-command-history',
 		},
-		'log': {
-			'enabled': true,
-			'directory': Node.Path.join(Project.directory, 'logs'),
-			'nameWithoutExtension': 'console',
+		log: {
+			enabled: true,
+			directory: Node.Path.join(app.directory, 'logs'),
+			nameWithoutExtension: 'console',
 		},
-	},
+	};
 
-	consoleSession: null,
+	consoleSession = null;
 
-	initialize: function*(settings) {
-		yield this.super.apply(this, arguments);
+	async initialize(settings) {
+		await super.initialize(...arguments);
 
 		// Create a ConsoleSession to manage logging and interaction with the console
 		Console.session = this.consoleSession = new ConsoleSession();
@@ -38,9 +38,9 @@ var ConsoleModule = Module.extend({
 		if(this.settings.get('commandHistory.enabled')) {
 			Console.session.loadCommandHistory(this.settings.get('commandHistory.directory'), this.settings.get('commandHistory.nameWithoutExtension'));
 		}
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = ConsoleModule;
+export default ConsoleModule;

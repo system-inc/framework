@@ -1,7 +1,7 @@
 // Class
 class Json {
 
-    is(value) {
+    static is(value) {
         var is = false;
 
         if(String.is(value)) {
@@ -22,7 +22,7 @@ class Json {
         return is;
     }
 
-    encode(object, replacer, indentation) {
+    static encode(object, replacer, indentation) {
         if(!object) {
             return '';
         }
@@ -31,7 +31,7 @@ class Json {
         return JSON.stringify(Json.decycle(object), replacer, indentation);
     }
 
-    decode(string) {
+    static decode(string) {
         if(!string) {
             return null;
         }
@@ -39,7 +39,7 @@ class Json {
         return Json.parse(string);
     }
 
-    indent(object, replacer, indentation = 4) {
+    static indent(object, replacer, indentation = 4) {
         var indentedJson = Json.encode(object, replacer, indentation);
 
         // Replace escaped new line characters with real new line characters and indentation
@@ -68,7 +68,7 @@ class Json {
 
         JSONPath is used to locate the unique object. $ indicates the top level of the object or array. [NUMBER] or [STRING] indicates a child member or property.
     */
-    decycle(objectToDecycle) {
+    static decycle(objectToDecycle) {
         var objects = []; // Keep a reference to each unique object or array
         var paths = []; // Keep the path to each unique object or array
 
@@ -154,7 +154,7 @@ class Json {
 
         produces an array containing a single element which is the array itself.
     */
-    retrocycle($) {
+    static retrocycle($) {
         var wellFormedPathRegularExpression = /^\$(?:\[(?:\d+|\"(?:[^\\\"\u0000-\u001f]|\\([\\\"\/bfnrt]|u[0-9a-zA-Z]{4}))*\")\])*$/;
 
         (function retrocycle(value) {
@@ -203,7 +203,7 @@ class Json {
     }
 
     // https://github.com/aseemk/json5
-    parse = (function() {
+    static parse = (function() {
        // This is a function that can parse a JSON5 text, producing a JavaScript
        // data structure. It is a simple, recursive descent parser. It does not use
        // eval or regular expressions, so it can be used as a model for implementing

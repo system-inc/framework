@@ -1,18 +1,18 @@
 // Dependencies
-var Module = Framework.require('system/module/Module.js');
-var Version = Framework.require('system/version/Version.js');
-var DatabaseManager = Framework.require('system/database/DatabaseManager.js');
+import Module from './../../system/module/Module.js';
+import Version from './../../system/version/Version.js';
+import DatabaseManager from './../../system/database/DatabaseManager.js';
 
 // Class
-var DatabaseModule = Module.extend({
+class DatabaseModule extends Module {
 
-	version: new Version('0.1.0'),
+	version = new Version('0.1.0');
 
-	databaseManager: null,
+	databaseManager = null;
 
-	initialize: function*(settings) {
+	async initialize(settings) {
 		//Node.exit('DatabaseModule initialize', settings);
-		yield this.super.apply(this, arguments);
+		await this.super.apply(this, arguments);
 
 		this.databaseManager = new DatabaseManager();
 
@@ -24,9 +24,9 @@ var DatabaseModule = Module.extend({
 				this.databaseManager.add(databaseIdentifier, databaseOptions);
 			}.bind(this));
 		}
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = DatabaseModule;
+export default DatabaseModule;

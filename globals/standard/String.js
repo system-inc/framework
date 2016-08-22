@@ -104,7 +104,9 @@ String.prototype.replaceFirst = function(pattern, replacement) {
 };
 
 String.prototype.replaceLast = function(pattern, replacement) {
+	//console.log('replaceLast', 'pattern', pattern, 'replacement', replacement);
 	var lastIndexOf = this.lastIndexOf(pattern);
+	//console.log('lastIndexOf', lastIndexOf);
 
 	if(lastIndexOf > -1) {
 		return this.replaceSubstring(pattern, replacement, lastIndexOf);
@@ -115,7 +117,7 @@ String.prototype.replaceLast = function(pattern, replacement) {
 };
 
 String.prototype.replaceSubstring = function(pattern, replacement, start) {
-	length = pattern.length;
+	var length = pattern.length;
 
 	var result = this.slice(0, start);
 	result += replacement.substring(0, length);

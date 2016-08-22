@@ -121,6 +121,13 @@ class File extends FileSystemObject {
         });
     }
 
+    static async readJson(path, options) {
+        // Get the file content
+        var fileContent = await File.read(path, options);
+
+        return Json.decode(fileContent);
+    }
+
     static open(path, flags, mode) {
         return new Promise(function(resolve, reject) {
             Node.FileSystem.open(path, flags, mode, function(error, fileDescriptor) {

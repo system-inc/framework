@@ -6,6 +6,7 @@ if(!global && window) {
 // Show unhandled errors
 process.on('unhandledRejection', function(error) {
 	console.log('Unhandled rejection:', error);
+	Node.exit();
 });
 
 // Node

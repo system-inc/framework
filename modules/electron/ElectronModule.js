@@ -1,15 +1,15 @@
 // Dependencies
-var Module = Framework.require('system/module/Module.js');
-var Version = Framework.require('system/version/Version.js');
-var ElectronManager = Framework.require('system/electron/ElectronManager.js');
+import Module from './../../system/module/Module.js';
+import Version from './../../system/version/Version.js';
+import ElectronManager from './../../system/electron/ElectronManager.js';
 
 // Class
-var ElectronModule = Module.extend({
+class ElectronModule extends Module {
 
-	version: new Version('0.1.0'),
-	electronManager: null,
+	version = new Version('0.1.0');
+	electronManager = null;
 
-	defaultSettings: {
+	defaultSettings = {
 		mainBrowserWindow: {
 			viewControllerName: 'MainViewController',
 			windowState: {
@@ -51,16 +51,16 @@ var ElectronModule = Module.extend({
 			toggleDeveloperToolsOnFocusedWindow: true,
 			applyDefaultWindowStateOnFocusedWindow: true,
 		},
-	},
+	};
 
-	initialize: function*() {
+	async initialize() {
 		yield this.super.apply(this, arguments);
 
 		this.electronManager = new ElectronManager();
 		this.electronManager.initialize();
 	},
 	
-});
+}
 
 // Export
-module.exports = ElectronModule;
+export default ElectronModule;
