@@ -47,21 +47,21 @@ class Terminal {
     }
 
     static eraseDisplay() {
-    	Terminal.write('\033[2J\033[0f');
+        Terminal.write('\x1b[2J\x1b[0f');
     }
 
     static clear = Terminal.reset = Terminal.eraseDisplay;
 
     static clearLine() {
-        Terminal.write('\033[2K');
+        Terminal.write('\x1b[2K');
     }
 
     static clearLineFromCursor() {
-        Terminal.write('\033[1K');
+        Terminal.write('\x1b[1K');
     }
 
     static cursorToBeginningOfLine() {
-        Terminal.write('\033b');
+        Terminal.write('\x1bb');
     }
 
     static cursorUp(distance) {

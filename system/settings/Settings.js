@@ -43,7 +43,7 @@ class Settings {
 
 	async mergeFromFile(datafilePath) {
 		// Read the data from the file
-		var data = await File.readJson(datafilePath);
+		var data = await File.readAndDecodeJson(datafilePath);
 		//Console.log('Settings from', datafilePath, 'to merge:', dataStore);
 
 		return this.merge(data);
@@ -54,11 +54,16 @@ class Settings {
 	}
 
 	async integrateFromFile(datafilePath) {
-		// Read the data from the file
-		var data = await File.readJson(datafilePath);
-		//Console.log('Settings from', datafilePath, 'to integrate:', dataStore);
-		
-		this.integrate(data);
+		try {
+			// Read the data from the file
+			var data = await File.readAndDecodeJson(datafilePath);
+			//Console.log('Settings from', datafilePath, 'to integrate:', dataStore);
+			
+			this.integrate(data);	
+		}
+		catch(error) {
+			console.error('--- no file at '+datafilePath);
+		}
 	}
 
 	get(path) {
@@ -77,7 +82,7 @@ class Settings {
 		//Console.log('datafilePath', datafilePath);
 
 		// Read the data from the file
-		var data = await File.readJson(datafilePath);
+		var data = await File.readAndDecodeJson(datafilePath);
 		console.log('data', data);
 
 		//Console.log('dataStore', dataStore);

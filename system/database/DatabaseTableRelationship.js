@@ -1,42 +1,42 @@
 // Class
-var DatabaseTableRelationship = Class.extend({
+class DatabaseTableRelationship {
 
-	database: null,
-	databaseName: null,
+	database = null;
+	databaseName = null;
 
-	table: null,
-	tableName: null,
+	table = null;
+	tableName = null;
 
-	name: null,
+	name = null;
 
-	column: null,
+	column = null;
 
-	referencedDatabase: null,
-	referencedDatabaseName: null,
-	referencedTable: null,
-	referencedTableName: null,
-	referencedColumn: null,
-	referencedColumnName: null,
+	referencedDatabase = null;
+	referencedDatabaseName = null;
+	referencedTable = null;
+	referencedTableName = null;
+	referencedColumn = null;
+	referencedColumnName = null;
 	
-	onUpdate: null,
-	onDelete: null,
+	onUpdate = null;
+	onDelete = null;
 
-	construct: function(name, table) {
+	constructor(name, table) {
 		this.name = name;
 		this.table = table;
 		this.tableName = table.name;
 		this.database = this.table.database;
 		this.databaseName = this.table.database.name;
-	},
+	}
 
-	loadProperties: function*(properties, constraint) {
+	async loadProperties(properties, constraint) {
 		if(properties === undefined) {
-			var propertiesQuery = yield this.database.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.database.name, this.table.name]);
+			var propertiesQuery = await this.database.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.database.name, this.table.name]);
 			properties = propertiesQuery.rows.getObjectWithKeyValue('constraintName', this.name);
 		}
 
 		if(constraint === undefined) {
-			var constraintQuery = yield this.database.query('SELECT * FROM `information_schema`.`REFERENTIAL_CONSTRAINTS` WHERE `CONSTRAINT_SCHEMA` = ? AND `CONSTRAINT_NAME` = ?', [this.database.name, this.name]);
+			var constraintQuery = await this.database.query('SELECT * FROM `information_schema`.`REFERENTIAL_CONSTRAINTS` WHERE `CONSTRAINT_SCHEMA` = ? AND `CONSTRAINT_NAME` = ?', [this.database.name, this.name]);
 			constraint = constraintQuery.rows.getObjectWithKeyValue('constraintName', this.name);
 		}
 
@@ -46,13 +46,13 @@ var DatabaseTableRelationship = Class.extend({
 		this.referencedColumnName = properties.referencedColumnName;
 		this.onUpdate = constraint.updateRule;
 		this.onDelete = constraint.deleteRule;
-	},
+	}
 
-	drop: function() {
+	drop() {
 
-	},
+	}
 
-	getSchema: function*() {
+	async getSchema() {
 		var schema = {};
 
 		schema.name = this.name;
@@ -64,9 +64,9 @@ var DatabaseTableRelationship = Class.extend({
 		schema.onDelete = this.onDelete;
 
 		return schema.sort();
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = DatabaseTableRelationship;
+export default DatabaseTableRelationship;

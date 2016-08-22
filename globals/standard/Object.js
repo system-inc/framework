@@ -337,7 +337,7 @@ Object.clone = function(value) {
         clone = value;
     }
     else {
-        Console.log(value);
+        console.log(value);
         throw new Error('Value is not clonable.');
     }
 

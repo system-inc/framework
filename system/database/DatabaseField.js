@@ -1,27 +1,27 @@
 // Class
-var DatabaseField = Class.extend({
+class DatabaseField {
 
-	//database: null,
-	databaseName: null,
+	//database = null;
+	databaseName = null;
 
-	//table: null,
-	tableName: null,
+	//table = null;
+	tableName = null;
 
-	//originalTable: null,
-	originalTableName: null,
+	//originalTable = null;
+	originalTableName = null;
 	
-	name: null,
-	originalName: null,
+	name = null;
+	originalName = null;
 
-	//characterSetId: null,
-	//length: null,
-	//type: null,
-	//flags: null,
-	//decimals: null,
-	//zeroFill: null,
-	//protocol41: null,
+	//characterSetId = null;
+	//length = null;
+	//type = null;
+	//flags = null;
+	//decimals = null;
+	//zeroFill = null;
+	//protocol41 = null;
 
-});
+}
 
 // Export
-module.exports = DatabaseField;
+export default DatabaseField;

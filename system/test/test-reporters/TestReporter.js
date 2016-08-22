@@ -1,22 +1,22 @@
 // Dependencies
-var Terminal = Framework.require('system/console/Terminal.js');
-var Assert = Framework.require('system/test/Assert.js');
+import Terminal from './../../../system/console/Terminal.js';
+import Assert from './../Assert.js';
 var AssertionError = Node.Assert.AssertionError;
 
 // Class
-var TestReporter = Class.extend({
+class TestReporter {
 
-	proctor: null,
-	currentTestClassName: null,
-	currentTestMethod: null,
-	totalTestMethodCount: 0,
-	currentTestMethodCount: 0,
-	currentTestMethodAssertionCount: 0,
-	currentAssertions: [],
-	passedAssertionCount: 0,
-	failedAssertionCount: 0,
+	proctor = null;
+	currentTestClassName = null;
+	currentTestMethod = null;
+	totalTestMethodCount = 0;
+	currentTestMethodCount = 0;
+	currentTestMethodAssertionCount = 0;
+	currentAssertions = [];
+	passedAssertionCount = 0;
+	failedAssertionCount = 0;
 
-	construct: function(proctor) {
+	constructor(proctor) {
 		this.proctor = proctor;
 
 		this.proctor.on('Proctor.startedRunningTests', function(event) {
@@ -66,29 +66,29 @@ var TestReporter = Class.extend({
 
 			this.finishedAssert(event.data);
 		}.bind(this));
-	},
+	}
 
-	startedRunningTests: function(data) {
+	startedRunningTests(data) {
 		// Clear the terminal
 		//Terminal.clear();
 
 		// Tell the user what we are doing
 		Console.writeLine("\n"+'Running '+data.testMethodCount+' '+(data.testMethodCount == 1 ? 'test' : 'tests')+' in '+data.testCount+' test '+(data.testCount == 1 ? 'class' : 'classes')+'...');
-	},
+	}
 
-	startedRunningTest: function(data) {
+	startedRunningTest(data) {
 		Console.writeLine("\n"+'  '+data.name+' '+Terminal.style('('+Node.Path.join(data.directory, data.fileName)+')', 'gray')+"\n");
-	},
+	}
 
-	startedRunningTestMethod: function(data) {
+	startedRunningTestMethod(data) {
 		//Console.writeLine('    startedRunningTestMethod', data);
-	},
+	}
 
-	finishedAssert: function(data) {
+	finishedAssert(data) {
 		//Console.writeLine('    finishedAssert', data);
-	},
+	}
 
-	finishedRunningTestMethod: function(data) {
+	finishedRunningTestMethod(data) {
 		//Console.writeLine('    finishedRunningTestMethod', data);	
 
 		if(data.status == 'passed') {
@@ -100,13 +100,13 @@ var TestReporter = Class.extend({
 		else if(data.status == 'skipped') {
 			Console.writeLine(Terminal.style('    ↓ (skipped) ', 'gray')+data.name);
 		}
-	},
+	}
 
-	finishedRunningTest: function(data) {
+	finishedRunningTest(data) {
 		//Console.writeLine('    finishedRunningTest', data);	
-	},	
+	}
 
-	finishedRunningTests: function(data) {
+	finishedRunningTests(data) {
 		//Console.info('finishedRunningTests data', data);
 
 		// Show the total passing tests
@@ -172,9 +172,9 @@ var TestReporter = Class.extend({
 		}
 
 		Console.write("\n");
-	},
+	}
 
-	getElapsedTimeString: function(elapsedTime, precision, useThresholds, warningThreshold, errorThreshhold) {
+	getElapsedTimeString(elapsedTime, precision, useThresholds, warningThreshold, errorThreshhold) {
 		var elapsedTimeString = '('+Number.addCommas(Number.round(elapsedTime, 3))+' '+precision+')';
 		var style = 'gray';
 
@@ -189,9 +189,9 @@ var TestReporter = Class.extend({
 		}
 
 		return Terminal.style(elapsedTimeString, style);
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = TestReporter;
+export default TestReporter;

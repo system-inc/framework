@@ -1,11 +1,11 @@
 // Dependencies
-var TestReporter = Framework.require('system/test/test-reporters/TestReporter.js');
-var Terminal = Framework.require('system/console/Terminal.js');
+import TestReporter from './TestReporter.js';
+import Terminal from './../../../system/console/Terminal.js';
 
 // Class
-var ConciseTestReporter = TestReporter.extend({
+class ConciseTestReporter extends TestReporter {
 
-});
+}
 
 // Export
-module.exports = ConciseTestReporter;
+export default ConciseTestReporter;

@@ -1,33 +1,33 @@
 // Dependencies
-var TestReporter = Framework.require('system/test/test-reporters/TestReporter.js');
+import TestReporter from './TestReporter.js';
 
 // Class
-var ElectronTestReporter = TestReporter.extend({
+class ElectronTestReporter extends TestReporter {
 
-	//startedRunningTests: function(data) {
+	//startedRunningTests(data) {
 	//	Console.log('start');
-	//},
+	//}
 
-	//startedRunningTest: function(data) {
-	//},
+	//startedRunningTest(data) {
+	//}
 
-	//startedRunningTestMethod: function(data) {
-	//},
+	//startedRunningTestMethod(data) {
+	//}
 
-	//finishedAssert: function(data) {
-	//},
+	//finishedAssert(data) {
+	//}
 
-	//finishedRunningTestMethod: function(data) {
-	//},
+	//finishedRunningTestMethod(data) {
+	//}
 
-	//finishedRunningTest: function(data) {
-	//},	
+	//finishedRunningTest(data) {
+	//}	
 
-	//finishedRunningTests: function(data) {
+	//finishedRunningTests(data) {
 	//	Console.log('end');
-	//},
+	//}
 
-});
+}
 
 // Export
-module.exports = ElectronTestReporter;
+export default ElectronTestReporter;

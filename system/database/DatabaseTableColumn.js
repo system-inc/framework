@@ -1,40 +1,40 @@
 // Class
-var DatabaseTableColumn = Class.extend({
+class DatabaseTableColumn {
 
-	database: null,
-	databaseName: null,
+	database = null;
+	databaseName = null;
 
-	table: null,
-	tableName: null,
+	table = null;
+	tableName = null;
 
-	name: null,
-	alias: null,
+	name = null;
+	alias = null;
 
-	dataType: null,
-	dataLength: null,
-	default: null,
+	dataType = null;
+	dataLength = null;
+	default = null;
 
-	primaryKey: null,
-	nullable: null,
-	unsigned: null,
-	autoIncrement: null,
-	zeroFill: null,
+	primaryKey = null;
+	nullable = null;
+	unsigned = null;
+	autoIncrement = null;
+	zeroFill = null;
 
-	characterSet: null,
-	collation: null,
-	comment: null,
+	characterSet = null;
+	collation = null;
+	comment = null;
 
-	construct: function(name, table) {
+	constructor(name, table) {
 		this.name = name;
 		this.table = table;
 		this.tableName = table.name;
 		this.database = this.table.database;
 		this.databaseName = this.table.database.name;
-	},
+	}
 
-	loadProperties: function*(properties) {
+	async loadProperties(properties) {
 		if(properties === undefined) {
-			var propertiesQuery = yield this.database.query('SHOW FULL COLUMNS FROM `'+this.table.name+'`');
+			var propertiesQuery = await this.database.query('SHOW FULL COLUMNS FROM `'+this.table.name+'`');
 			properties = propertiesQuery.rows.getObjectWithKeyValue('field', this.name);
 		}
 		
@@ -62,19 +62,19 @@ var DatabaseTableColumn = Class.extend({
 		// Load the character set if we don't have it
 		if(properties.characterSet === undefined) {
 	        // Get the character set
-	        var characterSetQuery = yield this.database.query('SELECT `CHARACTER_SET_NAME` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `COLUMN_NAME` = ?', [this.database.name, this.table.name, this.name]);
+	        var characterSetQuery = await this.database.query('SELECT `CHARACTER_SET_NAME` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `COLUMN_NAME` = ?', [this.database.name, this.table.name, this.name]);
 	        this.characterSet = characterSetQuery.rows.first().characterSetName;
 		}
 		else {
 			this.characterSet = properties.characterSet;
 		}
-	},
+	}
 
-	calculateOptimalDataType: function() {
+	calculateOptimalDataType() {
 
-	},
+	}
 
-	getSchema: function*() {
+	async getSchema() {
 		var schema = {};
 
 		schema.name = this.name;
@@ -91,9 +91,9 @@ var DatabaseTableColumn = Class.extend({
 		schema.comment = this.comment;
 
 		return schema;
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = DatabaseTableColumn;
+export default DatabaseTableColumn;

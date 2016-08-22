@@ -1,27 +1,27 @@
 // Class
-var Test = Class.extend({
+class Test {
 
-	shouldRun: function*() {
+	async shouldRun() {
 		return true;
-	},
+	}
 
-	before: function*() {
-		//Console.log('Before');
-	},
+	async before() {
+		//console.log('Before');
+	}
 
-	beforeEach: function*() {
-		//Console.log('Before each');
-	},
+	async beforeEach() {
+		//console.log('Before each');
+	}
 
-	after: function*() {
-		//Console.log('After');
-	},
+	async after() {
+		//console.log('After');
+	}
 
-	afterEach: function*() {
-		//Console.log('After each');
-	},
+	async afterEach() {
+		//console.log('After each');
+	}
 	
-});
+}
 
 // Export
-module.exports = Test;
+export default Test;

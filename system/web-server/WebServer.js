@@ -1,19 +1,19 @@
 // Dependencies
-var Server = Framework.require('system/server/Server.js');
-var Settings = Framework.require('system/settings/Settings.js');
-var Log = Framework.require('system/log/Log.js');
-var Router = Framework.require('system/web-server/routes/Router.js');
-var Request = Framework.require('system/web-server/Request.js');
-var Response = Framework.require('system/web-server/Response.js');
-var InternalServerError = Framework.require('system/web-server/errors/InternalServerError.js');
+import Server from './../../system/server/Server.js';
+import Settings from './../../system/settings/Settings.js';
+import Log from './../../system/log/Log.js';
+import Router from './routes/Router.js';
+import Request from './Request.js';
+import Response from './Response.js';
+import InternalServerError from './errors/InternalServerError.js';
 
 // Class
-var WebServer = Server.extend({
+class WebServer extends Server {
 
-	identifier: null,
-	directory: null,
-	requests: 0,
-	settings: new Settings({
+	identifier = null;
+	directory = null;
+	requests = 0;
+	settings = new Settings({
 		directory: null,
 		verbose: true,
 		logs: {
@@ -46,17 +46,19 @@ var WebServer = Server.extend({
 		requestTimeoutInMilliseconds: 20000, // 20 seconds
 		responseTimeoutInMilliseconds: 20000, // 20 seconds
 		maximumRequestBodySizeInBytes: 20000000, // 20 megabytes
-	}),
+	});
 	
-	router: null,
-	listeners: {},
-	logs: {
+	router = null;
+	listeners = {};
+	logs = {
 		general: null,
 		requests: null,
 		responses: null,
-	},
+	};
 
-	construct: function(identifier, settings) {
+	constructor(identifier, settings) {
+		super();
+
 		this.identifier = identifier;
 		this.settings.merge(settings);
 
@@ -93,9 +95,9 @@ var WebServer = Server.extend({
 		this.router = new Router();
 		this.router.loadRoutes(this.settings.get('router.routes'));
 		//Console.info('this.router', this.router); Node.exit();
-	},
+	}
 
-	resolveHttpsProtocolFiles: function() {
+	resolveHttpsProtocolFiles() {
 		// Make key and certificate file paths in settings absolute if they are initially provided as relative file paths
 
 		var httpsSettings = this.settings.get('protocols.https');
@@ -117,16 +119,16 @@ var WebServer = Server.extend({
 		}
 
 		this.settings.set('protocols.https', httpsSettings);
-	},
+	}
 
-	start: function*() {
+	async start() {
 		var protocols = this.settings.get('protocols');
 
 		// Loop through the protocols (http/https)
-		yield protocols.each(function*(protocol, protocolSettings) {
+		await protocols.each(async function(protocol, protocolSettings) {
 			// Create a listener for each port they want to listen on
 			if(protocolSettings.ports) {
-				yield protocolSettings.ports.toArray().each(function*(portIndex, port) {
+				await protocolSettings.ports.toArray().each(async function(portIndex, port) {
 					// If we are already listening on that port
 					if(this.listeners[port]) {
 						Console.error('Could not create a web server listener on port '+port+', a listener is already using the port.');
@@ -175,7 +177,7 @@ var WebServer = Server.extend({
 						this.listeners[port] = nodeServer;
 
 						// Make the web server listen on the port, wait on this until either an error or the "listening" event is emitted
-						yield new Promise(function(resolve, reject) {
+						await new Promise(function(resolve, reject) {
 							// Listen for errors
 							this.listeners[port].on('error', function(error) {
 								// Keep going if the address is in use
@@ -209,15 +211,15 @@ var WebServer = Server.extend({
 				}.bind(this));
 			}
 		}.bind(this));
-	},
+	}
 
-	stop: function*() {
+	async stop() {
 		if(this.settings.get('verbose')) {
 			Console.warn('Stopping '+this.identifier+' web server...');
 		}
 
-		yield this.listeners.each(function*(port, nodeServer) {
-			yield new Promise(function(resolve, reject) {
+		await this.listeners.each(async function(port, nodeServer) {
+			await new Promise(function(resolve, reject) {
 				nodeServer.close(function() {
 					if(this.settings.get('verbose')) {
 						Console.warn('No longer listening for HTTP requests on port '+port+'.');
@@ -226,9 +228,9 @@ var WebServer = Server.extend({
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
-	},
+	}
 
-	handleRequestConnection: function(nodeRequest, nodeResponse) {
+	handleRequestConnection(nodeRequest, nodeResponse) {
 		// Increment the requests counter right away in case of crashes
 		this.requests++;
 
@@ -262,9 +264,9 @@ var WebServer = Server.extend({
 
 		// Handle the request
 		this.handleRequest(request, response);
-	},
+	}
 
-	handleRequest: function*(request, response) {
+	async handleRequest(request, response) {
 		// Create a domain for the request
 		var domain = Node.Domain.create();
 
@@ -289,15 +291,15 @@ var WebServer = Server.extend({
 			request.received();
 
 			// Wait for the node request to finish
-			var nodeRequest = yield Request.receiveNodeRequest(request, this.settings.get('maximumRequestBodySizeInBytes'));
+			var nodeRequest = await Request.receiveNodeRequest(request, this.settings.get('maximumRequestBodySizeInBytes'));
 
 			// Use this to troubleshoot race conditions
 			//var randomMilliseconds = Number.random(1, 100);
 			//Console.log('Waiting '+randomMilliseconds+' milliseconds...');
-			//yield Function.delay(randomMilliseconds);
+			//await Function.delay(randomMilliseconds);
 
 			// Identify and follow the route
-			yield this.router.route(request, response);
+			await this.router.route(request, response);
 
 			// Exit the domain
 			domain.exit();
@@ -308,10 +310,10 @@ var WebServer = Server.extend({
 			// Exit the domain
 			domain.exit();
 		}
-	},
+	}
 
 	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
-	handleError: function(request, response, error) {
+	handleError(request, response, error) {
 		var logEntry = Console.prepareMessage.call(this, ['WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData()], 'write');
 		if(this.settings.get('verbose')) {
 			Console.log(logEntry);
@@ -341,10 +343,10 @@ var WebServer = Server.extend({
 		if(this.logs.general) {
 			this.logs.general.write(logEntry+"\n");
 		}
-	},
+	}
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
-	handleInternalServerError: function(error, nodeResponse, request) {
+	handleInternalServerError(error, nodeResponse, request) {
 		var logEntry = Console.prepareMessage.call(this, ['WebServer.handleInternalServerError() called. Error:', error], 'write');
 		if(this.settings.get('verbose')) {
 			Console.log(logEntry);
@@ -377,9 +379,9 @@ var WebServer = Server.extend({
 		if(this.logs.general) {
 			this.logs.general.write(logEntry+"\n");
 		}
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = WebServer;
+export default WebServer;

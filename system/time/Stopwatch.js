@@ -1,22 +1,22 @@
 // Class
-var Stopwatch = Class.extend({
+class Stopwatch {
 
-	precision: 'milliseconds',
+	precision = 'milliseconds';
 
-	startTime: null,
-	highResolutionStartTime: null,
+	startTime = null;
+	highResolutionStartTime = null;
 
-	stopTime: null,
-	highResolutionStopTime: null,
+	stopTime = null;
+	highResolutionStopTime = null;
 
-	elapsedTime: null,
-	highResolutionElapsedTime: null,
-	highResolutionElapsedTimeInNanoseconds: null,
+	elapsedTime = null;
+	highResolutionElapsedTime = null;
+	highResolutionElapsedTimeInNanoseconds = null;
 
-	laps: [],
-	time: null,
+	laps = [];
+	time = null;
 
-	construct: function(options) {
+	constructor(options) {
 		if(options && options.precision) {
 			this.precision = options.precision;
 		}
@@ -25,16 +25,16 @@ var Stopwatch = Class.extend({
 		this.time.setPrecision(this.precision);
 
 		this.start();
-	},
+	}
 
-	start: function() {
+	start() {
 		this.highResolutionStartTime = Node.Process.hrtime();
 		this.startTime = this.time.now();
 
 		return this;
-	},
+	}
 
-	stop: function() {
+	stop() {
 		this.highResolutionStopTime = Node.Process.hrtime();
 		this.stopTime = this.time.now();
 
@@ -47,9 +47,9 @@ var Stopwatch = Class.extend({
 		this.elapsedTime = this.stopTime - this.startTime;
 
 		return this;
-	},
+	}
 
-	getHighResolutionElapsedTime: function(precision) {
+	getHighResolutionElapsedTime(precision) {
 		if(precision === undefined) {
 			precision = this.precision;
 		}
@@ -70,9 +70,9 @@ var Stopwatch = Class.extend({
 		}
 
 		return highResolutionElapsedTime;
-	},
+	}
 
-	lap: function(note) {
+	lap(note) {
 		var note = note === undefined ? null : note;
 		var now = this.time.now();
 
@@ -93,9 +93,9 @@ var Stopwatch = Class.extend({
 		});
 
 		return this;
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = Stopwatch;
+export default Stopwatch;

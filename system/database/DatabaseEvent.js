@@ -1,7 +1,7 @@
 // Class
-var DatabaseEvent = Class.extend({
+class DatabaseEvent {
 
-});
+}
 
 // Export
-module.exports = DatabaseEvent;
+export default DatabaseEvent;

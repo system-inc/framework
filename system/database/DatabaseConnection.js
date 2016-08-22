@@ -1,22 +1,22 @@
 // Class
-var DatabaseConnection = Class.extend({
+class DatabaseConnection {
 
-	name: null,
-	socket: null,
-	port: null,
-	version: null,
-	compiledFor: null,
-	configurationFile: null,
-	serverUptime: null,
+	name = null;
+	socket = null;
+	port = null;
+	version = null;
+	compiledFor = null;
+	configurationFile = null;
+	serverUptime = null;
 
-	currentDatabase: null,
-	databases: [],
+	currentDatabase = null;
+	databases = [];
 
-	getDatabases: function() {
+	getDatabases() {
 		// query SHOW DATABASES
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = DatabaseConnection;
+export default DatabaseConnection;

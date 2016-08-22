@@ -121,7 +121,7 @@ class File extends FileSystemObject {
         });
     }
 
-    static async readJson(path, options) {
+    static async readAndDecodeJson(path, options) {
         // Get the file content
         var fileContent = await File.read(path, options);
 

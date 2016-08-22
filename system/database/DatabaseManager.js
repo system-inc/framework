@@ -1,22 +1,22 @@
 // Dependencies
-var Database = Framework.require('system/database/Database.js');
+import Database from './Database.js';
 
 // Class
-var DatabaseManager = Class.extend({
+class DatabaseManager {
 
-	databases: {},
+	databases = {};
 
-	add: function(databaseIdentifier, databaseSettings) {
+	add(databaseIdentifier, databaseSettings) {
 		var database = new Database(databaseSettings);
 
 		this.databases[databaseIdentifier] = database;
-	},
+	}
 
-	get: function(databaseIdentifier) {
+	get(databaseIdentifier) {
 		return this.databases.getValueForKey(databaseIdentifier);
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = DatabaseManager;
+export default DatabaseManager;

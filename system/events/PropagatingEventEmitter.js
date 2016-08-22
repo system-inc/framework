@@ -1,15 +1,14 @@
 // Dependencies
-var EventEmitter = Framework.require('system/events/EventEmitter.js');
-var PropagatingEvent = Framework.require('system/events/PropagatingEvent.js');
+import EventEmitter from './EventEmitter.js';
+import PropagatingEvent from './PropagatingEvent.js';
 
 // Class
-var PropagatingEventEmitter = EventEmitter.extend({
+class PropagatingEventEmitter extends EventEmitter {
 
-	eventClass: PropagatingEvent,
+	eventClass = PropagatingEvent;
+	parent = null;
 
-	parent: null,
-
-	emit: function*(eventIdentifier, data, eventOptions) {
+	async emit(eventIdentifier, data, eventOptions) {
 		//Console.log('PropagatingEventEmitter emit', this.tag, eventIdentifier);
 
 		var propagatingEvent = null;
@@ -146,15 +145,13 @@ var PropagatingEventEmitter = EventEmitter.extend({
 		}
 
 		return propagatingEvent;
-	},
+	}
 
-});
+	static is(value) {
+		return Class.isInstance(value, PropagatingEventEmitter);
+	}
 
-// Static methods
-
-PropagatingEventEmitter.is = function(value) {
-	return Class.isInstance(value, PropagatingEventEmitter);
-};
+}
 
 // Export
-module.exports = PropagatingEventEmitter;
+export default PropagatingEventEmitter;

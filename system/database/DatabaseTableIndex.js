@@ -1,38 +1,38 @@
 // Class
-var DatabaseTableIndex = Class.extend({
+class DatabaseTableIndex {
 
-	database: null,
-	databaseName: null,
+	database = null;
+	databaseName = null;
 
-	table: null,
-	tableName: null,
+	table = null;
+	tableName = null;
 
-	name: null,
+	name = null;
 
-	unique: null,
-	type: null,
-	//sequenceInIndex: null,
-	packed: null,
-	nullable: null,
-	collation: null,
-	cardinality: null,
-	subPart: null,
+	unique = null;
+	type = null;
+	//sequenceInIndex = null;
+	packed = null;
+	nullable = null;
+	collation = null;
+	cardinality = null;
+	subPart = null;
 
-	columns: [],
+	columns = [];
 	
-	comment: null,
+	comment = null;
 
-	construct: function(name, table) {
+	constructor(name, table) {
 		this.name = name;
 		this.table = table;
 		this.tableName = table.name;
 		this.database = this.table.database;
 		this.databaseName = this.table.database.name;
-	},
+	}
 
-	loadProperties: function*(properties) {
+	async loadProperties(properties) {
 		if(properties === undefined) {
-			var propertiesQuery = yield this.database.query('SHOW FULL COLUMNS FROM `'+this.table.name+'`');
+			var propertiesQuery = await this.database.query('SHOW FULL COLUMNS FROM `'+this.table.name+'`');
 			properties = propertiesQuery.rows.getObjectWithKeyValue('field', this.name);
 		}
 
@@ -48,17 +48,17 @@ var DatabaseTableIndex = Class.extend({
 		this.subPart = properties.subPart;
 		this.columns = [properties.columnName];
 		this.comment = properties.indexComment;
-	},
+	}
 
-	drop: function() {
+	drop() {
 
-	},
+	}
 
-	reorderColumns: function() {
+	reorderColumns() {
 
-	},
+	}
 
-	getSchema: function*() {
+	async getSchema() {
 		var schema = {};
 
 		schema.name = this.name;
@@ -74,9 +74,9 @@ var DatabaseTableIndex = Class.extend({
 		schema.comment = this.comment;
 
 		return schema.sort();
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = DatabaseTableIndex;
+export default DatabaseTableIndex;

@@ -1,9 +1,9 @@
 // Class
-var DatabaseConnectionPool = Class.extend({
+class DatabaseConnectionPool {
 
-	databaseConnections: [],
+	databaseConnections = [];
 
-});
+}
 
 // Export
-module.exports = DatabaseConnectionPool;
+export default DatabaseConnectionPool;

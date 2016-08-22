@@ -1,32 +1,32 @@
 // Dependencies
-var Event = Framework.require('system/events/Event.js');
-var EventListener = Framework.require('system/events/EventListener.js');
-var WildcardPatternMatcher = Framework.require('system/search/patterns/WildcardPatternMatcher.js');
+import Event from './Event.js';
+import EventListener from './EventListener.js';
+import WildcardPatternMatcher from './../../system/search/patterns/WildcardPatternMatcher.js';
 
 // Class
-var EventEmitter = Class.extend({
+class EventEmitter {
 
-	eventClass: Event,
+	eventClass = Event;
 
-	eventListeners: [],
+	eventListeners = [];
 
-	recommendedMaximumEventListenersPerEventIdentifier: null,
+	recommendedMaximumEventListenersPerEventIdentifier = null;
 
-	on: function*(eventPattern, functionToBind, timesToRun) {
+	async on(eventPattern, functionToBind, timesToRun) {
 		//Console.log('EventEmitter on', eventPattern, this.tag, Json.encode(this.attributes));
 
-		var on = yield this.addEventListener(eventPattern, functionToBind, timesToRun);
+		var on = await this.addEventListener(eventPattern, functionToBind, timesToRun);
 
 		return on;
-	},
+	}
 
-	once: function*(eventPattern, functionToBind) {
-		var once = yield this.addEventListener(eventPattern, functionToBind, 1);
+	async once(eventPattern, functionToBind) {
+		var once = await this.addEventListener(eventPattern, functionToBind, 1);
 
 		return once;
-	},
+	}
 
-	emit: function*(eventIdentifier, data, eventOptions) {
+	async emit(eventIdentifier, data, eventOptions) {
 		//Console.warn('EventEmitter.emit', eventIdentifier, eventOptions);
 
 		// Default data to null
@@ -37,8 +37,8 @@ var EventEmitter = Class.extend({
 		// Allow multiple events to be emitted by passing in an array
 		if(Array.is(eventIdentifier)) {
 			//Console.error('eventIdentifier is an array will multiple eventPatterns to emit');
-			yield eventIdentifier.each(function*(currentEventIdentifierIndex, currentEventIdentifier) {
-				yield this.emit(currentEventIdentifier, data);
+			await eventIdentifier.each(async function(currentEventIdentifierIndex, currentEventIdentifier) {
+				await this.emit(currentEventIdentifier, data);
 			}.bind(this));
 
 			return this;
@@ -51,8 +51,8 @@ var EventEmitter = Class.extend({
 			eventIdentifier = eventIdentifier.replace(',', ' ');
 			var eventIdentifierArray = eventIdentifier.split(' ');
 
-			yield eventIdentifierArray.each(function*(currentEventIdentifierIndex, currentEventIdentifier) {
-				yield this.emit(currentEventIdentifier, data);
+			await eventIdentifierArray.each(async function(currentEventIdentifierIndex, currentEventIdentifier) {
+				await this.emit(currentEventIdentifier, data);
 			}.bind(this));
 
 			return this;
@@ -87,8 +87,8 @@ var EventEmitter = Class.extend({
 			}
 			
 			// Run the bound functions in sequence
-			yield matchingEventListeners.each(function*(matchingEventListenerIndex, matchingEventListener) {
-				event.previousReturnValue = yield matchingEventListener.boundFunction(event);
+			await matchingEventListeners.each(async function(matchingEventListenerIndex, matchingEventListener) {
+				event.previousReturnValue = await matchingEventListener.boundFunction(event);
 
 				// Count the run
 				matchingEventListener.timesRan++;
@@ -107,15 +107,15 @@ var EventEmitter = Class.extend({
 		}
 
 		return event;
-	},
+	}
 
-	createEvent: function(emitter, eventIdentifier, data, eventOptions) {
+	createEvent(emitter, eventIdentifier, data, eventOptions) {
 		var event = new this.eventClass(emitter, eventIdentifier, data, eventOptions);
 
 		return event;
-	},
+	}
 
-	addEventListener: function*(eventPattern, functionToBind, timesToRun) {
+	async addEventListener(eventPattern, functionToBind, timesToRun) {
 		//Console.log('EventEmitter.bind', 'eventPattern', eventPattern, 'functionToBind', functionToBind, 'timesToRun', timesToRun);
 
 		// Allow multiple events to be registered by passing in an array
@@ -162,14 +162,14 @@ var EventEmitter = Class.extend({
 			Console.warn('Possible memory leak detected. There are '+eventListeners.length+' event listeners bound to the event pattern "'+eventPattern+'". The recommended maximum event listeners for this event pattern is '+this.recommendedMaximumEventListenersPerEventIdentifier+'.', "\n"+(new Error().stack.stackTraceToString()));
 		}
 
-		// Do this yield at the end of the function
+		// Do this await at the end of the function
 		// All EventEmitters emit 'eventEmitter.addedEventListener' when an event listener is added
-		yield this.emit('eventEmitter.addedEventListener', eventListener); // This bubbles
+		await this.emit('eventEmitter.addedEventListener', eventListener); // This bubbles
 
 		return this;
-	},
+	}
 
-	removeEventListener: function*(eventPattern, functionToUnbind) {
+	async removeEventListener(eventPattern, functionToUnbind) {
 		//Console.standardLog('removeEventListener', eventPattern, functionToUnbind);
 
 		var removedEventListeners = [];
@@ -203,24 +203,24 @@ var EventEmitter = Class.extend({
 
 		//Console.standardLog('removedEventListeners', removedEventListeners);
 
-		// Do this yield at the end of the function
+		// Do this await at the end of the function
 		// All EventEmitters emit 'eventEmitter.removedEventListener' when an event listener is removed
 		// Walk backward through the removed event listeners to emit them in order
 		for(var currentEventListenerIndex = removedEventListeners.length - 1; currentEventListenerIndex >= 0; currentEventListenerIndex--) {
 			var currentEventListener = removedEventListeners[currentEventListenerIndex];
-			yield this.emit('eventEmitter.removedEventListener', currentEventListener); // This bubbles
+			await this.emit('eventEmitter.removedEventListener', currentEventListener); // This bubbles
 		}
 
 		return this;
-	},
+	}
 
-	removeAllEventListeners: function() {
+	removeAllEventListeners() {
 		this.eventListeners = [];
 
 		return this;
-	},
+	}
 
-	getEventListeners: function(eventPattern) {
+	getEventListeners(eventPattern) {
 		// Create a place to store all of the matching bound function objects
 		var matchingEventListeners = [];
 
@@ -263,26 +263,18 @@ var EventEmitter = Class.extend({
 		}
 
 		return matchingEventListeners;
-	},
+	}
 
-	setRecommendedMaximumListenersPerEventIdentifier: function(recommendedMaximumEventListenersPerEventIdentifier) {
-		this.recommendedMaximumEventListenersPerEventIdentifier = recommendedMaximumEventListenersPerEventIdentifier;
+	/*
+		By default, the recommended maximum of functions that can be bound to any single event is 10. This recommended limit can be changed for individual
+		EventEmitter instances using the eventEmitter.setRecommendedMaximumListenersPerEventIdentifier(n) method. To change the default for all EventEmitter
+		instances, the EventEmitter.defaultRecommendedMaximumEventListenersPerEventIdentifier property can be used. Note that this is not a hard limit.
+		EventEmitter instances will allow more functions to be bound but will output a warning indicating that a possible EventEmitter memory leak has been detected.
+		For any single EventEmitter, the eventEmitter.setRecommendedMaximumListenersPerEventIdentifier method can be used to avoid this warning.
+	*/
+	static defaultRecommendedMaximumEventListenersPerEventIdentifier = 10;
 
-		return this.recommendedMaximumEventListenersPerEventIdentifier;
-	},
-
-});
-
-// Static properties
-
-/*
-	By default, the recommended maximum of functions that can be bound to any single event is 10. This recommended limit can be changed for individual
-	EventEmitter instances using the eventEmitter.setRecommendedMaximumListenersPerEventIdentifier(n) method. To change the default for all EventEmitter
-	instances, the EventEmitter.defaultRecommendedMaximumEventListenersPerEventIdentifier property can be used. Note that this is not a hard limit.
-	EventEmitter instances will allow more functions to be bound but will output a warning indicating that a possible EventEmitter memory leak has been detected.
-	For any single EventEmitter, the eventEmitter.setRecommendedMaximumListenersPerEventIdentifier method can be used to avoid this warning.
-*/
-EventEmitter.defaultRecommendedMaximumEventListenersPerEventIdentifier = 10;
+}
 
 // Export
-module.exports = EventEmitter;
+export default EventEmitter;

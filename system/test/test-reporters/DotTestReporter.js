@@ -1,19 +1,19 @@
 // Dependencies
-var TestReporter = Framework.require('system/test/test-reporters/TestReporter.js');
-var Terminal = Framework.require('system/console/Terminal.js');
+import TestReporter from './TestReporter.js';
+import Terminal from './../../../system/console/Terminal.js';
 
 // Class
-var DotTestReporter = TestReporter.extend({
+class DotTestReporter extends TestReporter {
 
-	startedRunningTests: function(data) {
+	startedRunningTests(data) {
 		Console.write("\n");
-	},
+	}
 
-	startedRunningTest: function(data) {
+	startedRunningTest(data) {
 		// Do nothing
-	},
+	}
 
-	finishedRunningTestMethod: function(data) {
+	finishedRunningTestMethod(data) {
 		// Line break at every 80 characters
 		if(this.totalTestMethodCount > 1 && this.totalTestMethodCount % 80 === 1)  {
 			Console.write("\n");
@@ -28,15 +28,15 @@ var DotTestReporter = TestReporter.extend({
 		else if(data.status == 'skipped') {
 			Console.write(Terminal.style('●', 'gray'));
 		}
-	},
+	}
 
-	finishedRunningTests: function(data) {
+	finishedRunningTests(data) {
 		Console.write("\n");
 
 		this.super.apply(this, arguments);
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = DotTestReporter;
+export default DotTestReporter;

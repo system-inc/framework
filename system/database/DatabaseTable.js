@@ -1,67 +1,67 @@
 // Dependencies
-var DatabaseTableColumn = Framework.require('system/database/DatabaseTableColumn.js');
-var DatabaseTableIndex = Framework.require('system/database/DatabaseTableIndex.js');
-var DatabaseTableRelationship = Framework.require('system/database/DatabaseTableRelationship.js');
-var Version = Framework.require('system/version/Version.js');
+import DatabaseTableColumn from './DatabaseTableColumn.js';
+import DatabaseTableIndex from './DatabaseTableIndex.js';
+import DatabaseTableRelationship from './DatabaseTableRelationship.js';
+import Version from './../../system/version/Version.js';
 
 // Class
-var DatabaseTable = Class.extend({
+class DatabaseTable {
 
-	database: null,
-	databaseName: null,
+	database = null;
+	databaseName = null;
 
-	name: null,
-	alias: null,
+	name = null;
+	alias = null;
 
-	engine: null, // The storage engine.
+	engine = null; // The storage engine.
 
-	version: null, // The version number of the table's .frm file.
+	version = null; // The version number of the table's .frm file.
 
-	rows: [],
-	rowCount: null, // The number of rows. Some storage engines, such as MyISAM, store the exact count. For other storage engines, such as InnoDB, this value is an approximation, and may vary from the actual value by as much as 40 to 50%.
-	rowFormat: null, // The row-storage format (fixed, dynamic, compressed, redundant, compact).
+	rows = [];
+	rowCount = null; // The number of rows. Some storage engines, such as MyISAM, store the exact count. For other storage engines, such as InnoDB, this value is an approximation, and may vary from the actual value by as much as 40 to 50%.
+	rowFormat = null; // The row-storage format (fixed, dynamic, compressed, redundant, compact).
 	
-	averageRowSizeInBytes: null,
+	averageRowSizeInBytes = null;
 
-	dataSizeInBytes: null, // The length of the data file.
-	maximumDataSizeInBytes: null, // The maximum length of the data file. This is the total number of bytes of data that can be stored in the table, given the data pointer size used.
+	dataSizeInBytes = null; // The length of the data file.
+	maximumDataSizeInBytes = null; // The maximum length of the data file. This is the total number of bytes of data that can be stored in the table, given the data pointer size used.
 
-	autoIncrement: null, // The next auto incremement value.
+	autoIncrement = null; // The next auto incremement value.
 
-	indexSizeInBytes: null,
+	indexSizeInBytes = null;
 
-	freeDataSizeInBytes: null, // The number of allocated but unused bytes, the size of the database files compared to the data stored in the database files.
+	freeDataSizeInBytes = null; // The number of allocated but unused bytes, the size of the database files compared to the data stored in the database files.
 
-	sizeInBytes: null,
+	sizeInBytes = null;
 
-	timeCreated: null,
-	timeUpdated: null,
-	timeChecked: null, // When the table was last checked. Not all storage engines update this time, in which case the value is always NULL.
+	timeCreated = null;
+	timeUpdated = null;
+	timeChecked = null; // When the table was last checked. Not all storage engines update this time, in which case the value is always NULL.
 
-	checksum: null,	
+	checksum = null;
 
-	createOptions: null, // Extra options used with CREATE TABLE. The original options supplied when CREATE TABLE is called are retained and the options reported here may differ from the active table settings and options.
+	createOptions = null; // Extra options used with CREATE TABLE. The original options supplied when CREATE TABLE is called are retained and the options reported here may differ from the active table settings and options.
 
-	comment: null,
+	comment = null;
 
-	characterSet: null,
-	collation: null,
+	characterSet = null;
+	collation = null;
 
-	columns: [],
-	columnCount: [],
-	indexes: [],
-	relationships: [],
+	columns = [];
+	columnCount = [];
+	indexes = [];
+	relationships = [];
 
-	construct: function(name, database) {
+	constructor(name, database) {
 		this.name = name;
 
 		this.database = database;
 		this.databaseName = database.name;
-	},
+	}
 
-	loadProperties: function*(properties, characterSet, columns, indexes, relationships) {
+	async loadProperties(properties, characterSet, columns, indexes, relationships) {
 		if(properties === undefined) {
-			var propertiesQuery = yield this.database.query('SHOW TABLE STATUS WHERE NAME = ?', this.name);
+			var propertiesQuery = await this.database.query('SHOW TABLE STATUS WHERE NAME = ?', this.name);
 			properties = propertiesQuery.rows.first();
 		}
 
@@ -85,7 +85,7 @@ var DatabaseTable = Class.extend({
 
         // Get the character set if necessary
         if(characterSet === undefined) {
-	        var characterSetQuery = yield this.database.query('SELECT `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`character_set_name` FROM `information_schema`.`TABLES`, `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY` WHERE `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`collation_name` = `information_schema`.`TABLES`.`table_collation` AND `information_schema`.`TABLES`.`table_schema` = ? AND `information_schema`.`TABLES`.`table_name` = ?', [this.database.name, this.name]);
+	        var characterSetQuery = await this.database.query('SELECT `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`character_set_name` FROM `information_schema`.`TABLES`, `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY` WHERE `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`collation_name` = `information_schema`.`TABLES`.`table_collation` AND `information_schema`.`TABLES`.`table_schema` = ? AND `information_schema`.`TABLES`.`table_name` = ?', [this.database.name, this.name]);
 	        this.characterSet = characterSetQuery.rows.first().characterSetName;
         }
         else {
@@ -94,43 +94,43 @@ var DatabaseTable = Class.extend({
 
         // Load the columns if passed
     	if(columns !== undefined) {
-    		yield this.loadColumns(columns);
+    		await this.loadColumns(columns);
     	}
 
     	// Load the indexes if passed
     	if(indexes !== undefined) {
-    		yield this.loadIndexes(indexes);
+    		await this.loadIndexes(indexes);
     	}
 
     	// Load the relationships if passed
     	if(relationships !== undefined) {
-    		yield this.loadRelationships(relationships);
+    		await this.loadRelationships(relationships);
     	}
-	},
+	}
 
-	loadColumns: function*(columns) {
+	async loadColumns(columns) {
 		if(columns === undefined) {
-			columns = yield this.database.query('SHOW FULL FIELDS FROM `'+this.name+'`');
+			columns = await this.database.query('SHOW FULL FIELDS FROM `'+this.name+'`');
 			columns = columns.rows;
 		}
 		
-		yield columns.each(function*(index, row) {
+		await columns.each(async function(index, row) {
 			var column = new DatabaseTableColumn(row.field, this);
-			yield column.loadProperties(row);
+			await column.loadProperties(row);
 
 			this.columns.push(column);
 		}.bind(this));
 
 		return this.columns;
-	},
+	}
 
-	loadIndexes: function*(indexes) {
+	async loadIndexes(indexes) {
 		if(indexes === undefined) {
-			var indexes = yield this.database.query('SHOW INDEXES FROM `'+this.name+'`');
+			var indexes = await this.database.query('SHOW INDEXES FROM `'+this.name+'`');
 			indexes = indexes.rows;
 		}
 
-		yield indexes.each(function*(index, row) {
+		await indexes.each(async function(index, row) {
 			// If we already have the index add the column
 			var hasIndex = this.hasIndex(row.keyName);
 			if(hasIndex) {
@@ -139,15 +139,15 @@ var DatabaseTable = Class.extend({
 			// If we don't already have the index
 			else {
 				var index = new DatabaseTableIndex(row.keyName, this);
-				yield index.loadProperties(row);
+				await index.loadProperties(row);
 				this.indexes.push(index);
 			}
 		}.bind(this));
 
 		return this.indexes;
-	},
+	}
 
-	hasIndex: function(name) {
+	hasIndex(name) {
 		var hasIndex = false;
 
 		this.indexes.each(function(index, value) {
@@ -158,67 +158,67 @@ var DatabaseTable = Class.extend({
 		});
 
 		return hasIndex;
-	},
+	}
 
-	loadRelationships: function*(relationships) {
+	async loadRelationships(relationships) {
 		if(relationships === undefined) {
-			var relationships = yield this.database.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.database.name, this.name]);
+			var relationships = await this.database.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.database.name, this.name]);
 			relationships = relationships.rows;
 
-			var constraints = yield this.database.query('SELECT * FROM `information_schema`.`REFERENTIAL_CONSTRAINTS` WHERE `CONSTRAINT_SCHEMA` = ? AND `TABLE_NAME` = ?', [this.database.name, this.name]);
+			var constraints = await this.database.query('SELECT * FROM `information_schema`.`REFERENTIAL_CONSTRAINTS` WHERE `CONSTRAINT_SCHEMA` = ? AND `TABLE_NAME` = ?', [this.database.name, this.name]);
 			relationships.each(function(index, row) {
 				row.constraint = constraints.rows.getObjectWithKeyValue('constraintName', row.constraintName);
 			});
 		}
 		
-		yield relationships.each(function*(index, row) {
+		await relationships.each(async function(index, row) {
 			var relationship = new DatabaseTableRelationship(row.constraintName, this);
 
-			yield relationship.loadProperties(row, row.constraint);
+			await relationship.loadProperties(row, row.constraint);
 
 			this.relationships.push(relationship);
 		}.bind(this));
 
 		return this.relationships;
-	},
+	}
 
-	search: function() {
+	search() {
 
-	},
+	}
 
-	rename: function() {
+	rename() {
 
-	},
+	}
 
-	truncate: function() {
+	truncate() {
 
-	},
+	}
 
-	drop: function() {
+	drop() {
 
-	},
+	}
 
-	reorderColumns: function() {
+	reorderColumns() {
 
-	},
+	}
 
-	duplicate: function() {
+	duplicate() {
 
-	},
+	}
 
-	calculateOptimalColumnDataTypes: function() {
+	calculateOptimalColumnDataTypes() {
 
-	},
+	}
 
-	findRedundantIndexes: function() {
+	findRedundantIndexes() {
 
-	},
+	}
 
-	toSql: function() {
+	toSql() {
 
-	},
+	}
 
-	getSchema: function*() {
+	async getSchema() {
 		var schema = {};
 
 		schema.name = this.name;
@@ -234,39 +234,39 @@ var DatabaseTable = Class.extend({
 		schema.relationships = this.relationships;
 
 		// Load the columns
-		//yield this.loadColumns(); // Not necessary with bulk call
+		//await this.loadColumns(); // Not necessary with bulk call
 
 		// Set the columns
 		schema.columns = [];
-		yield this.columns.each(function*(index, column) {
-			var columnSchema = yield column.getSchema();
+		await this.columns.each(async function(index, column) {
+			var columnSchema = await column.getSchema();
 			schema.columns.push(columnSchema);
 		}.bind(this));
 
 		// Load the indexes
-		//yield this.loadIndexes(); // Not necessary with bulk call
+		//await this.loadIndexes(); // Not necessary with bulk call
 
 		// Set the indexes
 		schema.indexes = [];
-		yield this.indexes.each(function*(indexIndex, index) {
-			var indexSchema = yield index.getSchema();
+		await this.indexes.each(async function(indexIndex, index) {
+			var indexSchema = await index.getSchema();
 			schema.indexes.push(indexSchema);
 		}.bind(this));
 
 		// Load the relationships
-		//yield this.loadRelationships(); // Not necessary with bulk call
+		//await this.loadRelationships(); // Not necessary with bulk call
 
 		// Set the relationships
 		schema.relationships = [];
-		yield this.relationships.each(function*(index, relationship) {
-			var relationshipSchema = yield relationship.getSchema();
+		await this.relationships.each(async function(index, relationship) {
+			var relationshipSchema = await relationship.getSchema();
 			schema.relationships.push(relationshipSchema);
 		}.bind(this));
 
 		return schema;
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = DatabaseTable;
+export default DatabaseTable;

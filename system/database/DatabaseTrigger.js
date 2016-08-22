@@ -1,7 +1,7 @@
 // Class
-var DatabaseTrigger = Class.extend({
+class DatabaseTrigger {
 
-});
+}
 
 // Export
-module.exports = DatabaseTrigger;
+export default DatabaseTrigger;

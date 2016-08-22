@@ -1,13 +1,13 @@
 // Class
-var Server = Class.extend({
+class Server {
 
-	construct: function() {
-	},
+	constructor() {
+	}
 
-	listen: function() {
-	},
+	listen() {
+	}
 	
-});
+}
 
 // Export
-module.exports = Server;
+export default Server;

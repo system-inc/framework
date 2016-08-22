@@ -1,7 +1,7 @@
 // Class
-var DatabaseFunction = Class.extend({
+class DatabaseFunction {
 
-});
+}
 
 // Export
-module.exports = DatabaseFunction;
+export default DatabaseFunction;

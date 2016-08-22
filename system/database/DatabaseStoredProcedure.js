@@ -1,7 +1,7 @@
 // Class
-var DatabaseStoredProcedure = Class.extend({
+class DatabaseStoredProcedure {
 
-});
+}
 
 // Export
-module.exports = DatabaseStoredProcedure;
+export default DatabaseStoredProcedure;

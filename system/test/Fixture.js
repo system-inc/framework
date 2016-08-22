@@ -1,10 +1,10 @@
 // Class
-var Fixture = Class.extend({
+class Fixture {
 
-	table: null,
-	rows: [],
+	table = null;
+	rows = [];
 
-});
+}
 
 // Export
-module.exports = Fixture;
+export default Fixture;

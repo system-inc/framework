@@ -1,7 +1,7 @@
 // Class
-var DatabaseView = Class.extend({
+class DatabaseView {
 
-});
+}
 
 // Export
-module.exports = DatabaseView;
+export default DatabaseView;

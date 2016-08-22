@@ -30,4 +30,4 @@ class TestModule extends Module {
 }
 
 // Export
-module.exports = TestModule;
+export default TestModule;

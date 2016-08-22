@@ -1,48 +1,50 @@
 // Dependencies
-var EventEmitter = Framework.require('system/events/EventEmitter.js');
-var Test = Framework.require('system/test/Test.js');
-var Stopwatch = Framework.require('system/time/Stopwatch.js');
-var Terminal = Framework.require('system/console/Terminal.js');
-var StandardTestReporter = Framework.require('system/test/test-reporters/StandardTestReporter.js');
-var DotTestReporter = Framework.require('system/test/test-reporters/DotTestReporter.js');
-var ConciseTestReporter = Framework.require('system/test/test-reporters/ConciseTestReporter.js');
-var ElectronTestReporter = Framework.require('system/test/test-reporters/ElectronTestReporter.js');
-var FileSystemObject = Framework.require('system/file-system/FileSystemObject.js');
-var FileSystemObjectFactory = Framework.require('system/file-system/FileSystemObjectFactory.js');
-var AsciiArt = Framework.require('system/ascii-art/AsciiArt.js');
+import EventEmitter from './../../system/events/EventEmitter.js';
+import Test from './Test.js';
+import Stopwatch from './../../system/time/Stopwatch.js';
+import Terminal from './../../system/console/Terminal.js';
+import StandardTestReporter from './test-reporters/StandardTestReporter.js';
+import DotTestReporter from './test-reporters/DotTestReporter.js';
+import ConciseTestReporter from './test-reporters/ConciseTestReporter.js';
+import ElectronTestReporter from './test-reporters/ElectronTestReporter.js';
+import FileSystemObject from './../../system/file-system/FileSystemObject.js';
+import FileSystemObjectFactory from './../../system/file-system/FileSystemObjectFactory.js';
+import AsciiArt from './../../system/ascii-art/AsciiArt.js';
 
 // Class
-var Proctor = EventEmitter.extend({
+class Proctor extends EventEmitter {
 
-	testReporter: null,
+	testReporter = null;
 
-	stopwatch: null,
+	stopwatch = null;
 
-	testMethods: {},
-	testMethodQueue: [],
-	testClassInstances: {},
+	testMethods = {};
+	testMethodQueue = [];
+	testClassInstances = {};
 
-	previousTestMethod: null,
-	nextTestMethod: null,
-	currentTestMethod: null,
-	currentTestMethodStopwatch: null,
-	currentTestMethodStatus: null,
-	currentTestClassStatus: null,
-	currentTestClassInstance: null,
-	currentTestClassInstanceStopwatch: null,
+	previousTestMethod = null;
+	nextTestMethod = null;
+	currentTestMethod = null;
+	currentTestMethodStopwatch = null;
+	currentTestMethodStatus = null;
+	currentTestClassStatus = null;
+	currentTestClassInstance = null;
+	currentTestClassInstanceStopwatch = null;
 
-	passedTestMethods: [],
-	passedTestClasses: [],
-	failedTestMethods: [],
-	failedTestClasses: [],
-	skippedTestMethods: [],
-	skippedTestClasses: [],
+	passedTestMethods = [];
+	passedTestClasses = [];
+	failedTestMethods = [];
+	failedTestClasses = [];
+	skippedTestMethods = [];
+	skippedTestClasses = [];
 
-	shouldRunCurrentTestClass: false,
+	shouldRunCurrentTestClass = false;
 
-	breakOnError: false,
+	breakOnError = false;
 	
-	construct: function(testReporterIdentifier, breakOnError) {
+	constructor(testReporterIdentifier, breakOnError) {
+		super();
+
 		// Instantiate a test reporter
 		if(testReporterIdentifier === undefined) {
 			this.testReporter = new StandardTestReporter(this);
@@ -67,9 +69,9 @@ var Proctor = EventEmitter.extend({
 		if(breakOnError !== undefined) {
 			this.breakOnError = breakOnError;
 		}
-	},
+	}
 
-	supervise: function*() {
+	async supervise() {
 		Console.log('Test supervising enabled. Tests will run whenever a test class file is updated.');
 
 		// Keep track of the last test class and methods changed
@@ -79,7 +81,7 @@ var Proctor = EventEmitter.extend({
 		};
 		
 		// Watch the project and framework directories
-		var watchedFileSystemObjects = yield FileSystemObject.watch([Project.directory, Project.framework.directory], function(fileSystemObject, currentStatus, previousStatus) {
+		var watchedFileSystemObjects = await FileSystemObject.watch([Project.directory, Project.framework.directory], function(fileSystemObject, currentStatus, previousStatus) {
 			//Console.log(fileSystemObject.path, 'updated.');
 
 			if(fileSystemObject.path.endsWith('Test.js')) {
@@ -114,27 +116,27 @@ var Proctor = EventEmitter.extend({
 
 		// Tell the user how many objects we are watching
 		Console.log('Watching', watchedFileSystemObjects.length, 'file system objects for updates...');
-	},
+	}
 
-	getAndRunTests: function*(path, filePattern, methodPattern) {
-		var tests = yield Proctor.getTests(path, filePattern, methodPattern);
+	async getAndRunTests(path, filePattern, methodPattern) {
+		var tests = await Proctor.getTests(path, filePattern, methodPattern);
 		//Console.standardLog('getAndRunTests', path, filePattern, methodPattern, tests);
 
 		this.addTests(tests);
 
-		yield this.runTests();
-	},
+		await this.runTests();
+	}
 
-	getAndRunTestMethod: function*(testClassFilePath, testClassName, testMethodName) {
-		var tests = yield Proctor.getTestMethod(testClassFilePath, testClassName, testMethodName);
+	async getAndRunTestMethod(testClassFilePath, testClassName, testMethodName) {
+		var tests = await Proctor.getTestMethod(testClassFilePath, testClassName, testMethodName);
 		//Console.standardLog('getAndRunTestMethod', testClassFilePath, testClassName, testMethodName);
 
 		this.addTests(tests);
 
-		yield this.runTests();
-	},
+		await this.runTests();
+	}
 
-	addTests: function(tests) {
+	addTests(tests) {
 		tests.classes.each(function(classIndex, classObject) {
 			this.addTest(classObject.name, classObject.file.name, classObject.file.directory);
 			this.testClassInstances[classObject.name] = classObject.instance;
@@ -144,9 +146,9 @@ var Proctor = EventEmitter.extend({
 			//Console.log(methodObject.name);
 			this.testMethods[methodObject.class.name].methods.append(methodObject.name);
 		}.bind(this));
-	},
+	}
 
-	getTestCount: function() {
+	get testCount() {
 		var count = 0;
 
 		this.testMethods.each(function(key, value) {
@@ -154,9 +156,9 @@ var Proctor = EventEmitter.extend({
 		});
 
 		return count;
-	},
+	}
 
-	getTestMethodCount: function() {
+	get testMethodCount() {
 		var count = 0;
 
 		this.testMethods.each(function(key, value) {
@@ -164,9 +166,9 @@ var Proctor = EventEmitter.extend({
 		});
 
 		return count;
-	},
+	}
 
-	addTest: function(name, fileName, directory) {
+	addTest(name, fileName, directory) {
 		if(!this.testMethods[name]) {
 			this.testMethods[name] = {
 				'name': name,
@@ -175,9 +177,9 @@ var Proctor = EventEmitter.extend({
 				'methods': [],
 			};
 		}
-	},
+	}
 
-	getElapsedTimeString: function(elapsedTime, precision, useThresholds, warningThreshold, errorThreshhold) {
+	getElapsedTimeString(elapsedTime, precision, useThresholds, warningThreshold, errorThreshhold) {
 		var elapsedTimeString = '('+Number.addCommas(Number.round(elapsedTime, 3))+' '+precision+')';
 		var style = 'gray';
 
@@ -192,9 +194,9 @@ var Proctor = EventEmitter.extend({
 		}
 
 		return Terminal.style(elapsedTimeString, style);
-	},
+	}
 
-	buildTestQueue: function() {
+	buildTestQueue() {
 		this.testMethods.each(function(testClassName, test) {
 			test.methods.each(function(filePatternIndex, filePattern) {
 				// Build a new structure for tests in the test queue
@@ -212,12 +214,12 @@ var Proctor = EventEmitter.extend({
 				this.testMethodQueue.push(testToAddToQueue);
 			}.bind(this));
 		}.bind(this));
-	},
+	}
 
-	runTests: function*() {
+	async runTests() {
 		// Get the totals
-		var testCount = this.getTestCount();
-		var testMethodCount = this.getTestMethodCount();
+		var testCount = this.testCount();
+		var testMethodCount = this.testMethodCount();
 
 		// Build the test queue
 		this.buildTestQueue();
@@ -234,9 +236,9 @@ var Proctor = EventEmitter.extend({
 
 		// Run the next test
 		this.runNextTest();
-	},
+	}
 
-	moveToNextTest: function() {
+	moveToNextTest() {
 		// Set the first test
 		if(!this.currentTestMethod && !this.testMethodQueue.isEmpty()) {
 			this.previousTestMethod = null;
@@ -253,9 +255,9 @@ var Proctor = EventEmitter.extend({
 			this.currentTestMethod = this.testMethodQueue.first();
 			this.nextTestMethod = this.testMethodQueue.get(1);
 		}
-	},
+	}
 
-	skipCurrentTest: function() {
+	skipCurrentTest() {
 		//Console.log('Skipping this.currentTestMethod', this.currentTestMethod);
 
 		this.currentTestMethodStatus = 'skipped';
@@ -271,9 +273,9 @@ var Proctor = EventEmitter.extend({
 		});
 
 		return this.runNextTest();
-	},
+	}
 
-	runNextTest: function*() {
+	async runNextTest() {
 		this.moveToNextTest();
 
 		// If we are out of tests
@@ -284,7 +286,7 @@ var Proctor = EventEmitter.extend({
 		// If we are on a new test
 		if(!this.previousTestMethod || (this.previousTestMethod && this.previousTestMethod.fileName != this.currentTestMethod.fileName)) {
 			// This method sets this.shouldRunCurrentTestClass
-			yield this.onNewTestClass();
+			await this.onNewTestClass();
 		}
 
 		// If we shouldn't run this test
@@ -298,7 +300,7 @@ var Proctor = EventEmitter.extend({
 		});
 
 		// Run .beforeEach on the test class
-		yield this.currentTestClassInstance.beforeEach();
+		await this.currentTestClassInstance.beforeEach();
 
 		// Create a domain for the test
 		var domain = Node.Domain.create();
@@ -319,7 +321,7 @@ var Proctor = EventEmitter.extend({
 		// Put a try catch block around the test
 		try {
 			//Console.info('Proctor.runNextTest running test', this.currentTestMethod.method);
-			yield this.currentTestClassInstance[this.currentTestMethod.method]();
+			await this.currentTestClassInstance[this.currentTestMethod.method]();
 			//Console.info('Proctor.runNextTest running test completed', this.currentTestMethod.method);
 
 			this.passCurrentTestMethod(domain);
@@ -330,9 +332,9 @@ var Proctor = EventEmitter.extend({
 
 			this.failCurrentTestMethod(error, domain);
 		}
-	},
+	}
 
-	passCurrentTestMethod: function(domain) {
+	passCurrentTestMethod(domain) {
 		// Stop the stopwatch for the test
 		this.currentTestMethodStopwatch.stop();
 
@@ -342,9 +344,9 @@ var Proctor = EventEmitter.extend({
 		this.currentTestMethodStatus = 'passed';
 
 		this.finishedRunningNextTest(domain);
-	},
+	}
 
-	failCurrentTestMethod: function(error, domain) {
+	failCurrentTestMethod(error, domain) {
 		// Stop the stopwatch for the test
 		this.currentTestMethodStopwatch.stop();
 
@@ -359,14 +361,14 @@ var Proctor = EventEmitter.extend({
 		this.currentTestClassStatus = 'failed';
 
 		this.finishedRunningNextTest(domain);
-	},
+	}
 
-	finishedRunningNextTest: function*(domain) {
+	async finishedRunningNextTest(domain) {
 		// Exit the domain
 		domain.exit();
 
 		// Run .afterEach on the test class
-		yield this.currentTestClassInstance.afterEach();
+		await this.currentTestClassInstance.afterEach();
 
 		this.emit('Proctor.finishedRunningTestMethod', {
 			status: this.currentTestMethodStatus,
@@ -375,7 +377,7 @@ var Proctor = EventEmitter.extend({
 			failedTestMethods: this.failedTestMethods,
 		});
 
-		//yield Function.delay(50);
+		//await Function.delay(50);
 
 		// Break on errors if we should
 		if(this.breakOnError && this.failedTestMethods.length) {
@@ -384,16 +386,16 @@ var Proctor = EventEmitter.extend({
 		else {
 			this.runNextTest();
 		}
-	},
+	}
 
-	onNewTestClass: function*() {
+	async onNewTestClass() {
 		// Close out the previous test if we aren't on the very first test
 		if(this.currentTestClassInstanceStopwatch) {
 			// Stop the test class stopwatch and report
 			this.currentTestClassInstanceStopwatch.stop();
 
 			// Run .after on the test class
-			yield this.currentTestClassInstance.after();
+			await this.currentTestClassInstance.after();
 
 			this.emit('Proctor.finishedRunningTest', {
 				name: this.previousTestMethod.name.replaceLast('Test', ''),
@@ -416,18 +418,18 @@ var Proctor = EventEmitter.extend({
 		this.currentTestClassInstance = this.testClassInstances[this.currentTestMethod.name];
 
 		// Check to see if we should run the test
-		this.shouldRunCurrentTestClass = yield this.currentTestClassInstance.shouldRun();
+		this.shouldRunCurrentTestClass = await this.currentTestClassInstance.shouldRun();
 
 		// Time all of the tests in the class
 		this.currentTestClassInstanceStopwatch = new Stopwatch();
 
 		if(this.shouldRunCurrentTestClass) {
 			// Run .before on the test class
-			yield this.currentTestClassInstance.before();
+			await this.currentTestClassInstance.before();
 		}
-	},
+	}
 
-	recordCurrentTestClassStatus: function() {
+	recordCurrentTestClassStatus() {
 		var testMethod = this.previousTestMethod;
 		// In case the first test is failing	
 		if(!testMethod) {
@@ -444,9 +446,9 @@ var Proctor = EventEmitter.extend({
 		else if(this.currentTestClassStatus == 'skipped') {
 			this.skippedTestClasses.append(testMethod.name);
 		}
-	},
+	}
 
-	noMoreTests: function() {
+	noMoreTests() {
 		//Console.log('noMoreTests');
 
 		// Store passing, failing, and skipped test classes
@@ -479,9 +481,9 @@ var Proctor = EventEmitter.extend({
 				Node.exit();
 			});
 		}
-	},
+	}
 
-	getLeakedGlobals: function() {
+	getLeakedGlobals() {
 		var leakedGlobals = [];
 
 		for(var key in global) {
@@ -491,411 +493,407 @@ var Proctor = EventEmitter.extend({
 		}
 
 		return leakedGlobals;
-	},
-
-});
-
-// Static properties
-
-Proctor.globals = {
-	expected: [
-		// Framework
-		'Console',
-		'Generator',
-		'Json',
-		'Node',
-		'Primitive',
-		'Project',
-		'Buffer',
-		'Class',
-		'Framework',
-		'RegularExpression',
-		'Stream',
-		'Time',
-		'Try',
-
-		// Framework - Object
-		'clone',
-		'deleteValueByPath',
-		'each',
-		'getValueByPath',
-		'getValueForKey',
-		'hasKey',
-		'integrate',
-		'isEmpty',
-		'merge',
-		'setValueByPath',
-		'sort',
-		'toArray',
-		'toJson',
-
-		// Framework - Electron
-		'mainBrowserWindowViewController',
-
-		// Node
-		'GLOBAL',
-		'console',
-		'global',
-		'length',
-		'process',
-		'root',
-		'clearImmediate',
-		'clearInterval',
-		'clearTimeout',
-		'setImmediate',
-		'setInterval',
-		'setTimeout',
-		'DTRACE_HTTP_CLIENT_REQUEST',
-		'DTRACE_HTTP_CLIENT_RESPONSE',
-		'DTRACE_HTTP_SERVER_REQUEST',
-		'DTRACE_HTTP_SERVER_RESPONSE',
-		'DTRACE_NET_SERVER_CONNECTION',
-		'DTRACE_NET_STREAM_END',
-
-		// Windows
-		'COUNTER_NET_SERVER_CONNECTION',
-		'COUNTER_NET_SERVER_CONNECTION_CLOSE',
-		'COUNTER_HTTP_SERVER_REQUEST',
-		'COUNTER_HTTP_SERVER_RESPONSE',
-		'COUNTER_HTTP_CLIENT_REQUEST',
-		'COUNTER_HTTP_CLIENT_RESPONSE',
-
-		// Electron
-		'document',
-		'require',
-		'module',
-		'__filename',
-		'__dirname',
-		'P',
-		'WebView',
-		'speechSynthesis',
-		'caches',
-		'localStorage',
-		'sessionStorage',
-		'webkitStorageInfo',
-		'indexedDB',
-		'webkitIndexedDB',
-		'ondeviceorientation',
-		'ondevicemotion',
-		'crypto',
-		'postMessage',
-		'blur',
-		'focus',
-		'close',
-		'applicationCache',
-		'performance',
-		'onunload',
-		'onstorage',
-		'onpopstate',
-		'onpageshow',
-		'onpagehide',
-		'ononline',
-		'onoffline',
-		'onmessage',
-		'onlanguagechange',
-		'onhashchange',
-		'onbeforeunload',
-		'onwaiting',
-		'onvolumechange',
-		'ontoggle',
-		'ontimeupdate',
-		'onsuspend',
-		'onsubmit',
-		'onstalled',
-		'onshow',
-		'onselect',
-		'onseeking',
-		'onseeked',
-		'onscroll',
-		'onresize',
-		'onreset',
-		'onratechange',
-		'onprogress',
-		'onplaying',
-		'onplay',
-		'onpause',
-		'onmousewheel',
-		'onmouseup',
-		'onmouseover',
-		'onmouseout',
-		'onmousemove',
-		'onmouseleave',
-		'onmouseenter',
-		'onmousedown',
-		'onloadstart',
-		'onloadedmetadata',
-		'onloadeddata',
-		'onload',
-		'onkeyup',
-		'onkeypress',
-		'onkeydown',
-		'oninvalid',
-		'oninput',
-		'onfocus',
-		'onerror',
-		'onended',
-		'onemptied',
-		'ondurationchange',
-		'ondrop',
-		'ondragstart',
-		'ondragover',
-		'ondragleave',
-		'ondragenter',
-		'ondragend',
-		'ondrag',
-		'ondblclick',
-		'oncuechange',
-		'oncontextmenu',
-		'onclose',
-		'onclick',
-		'onchange',
-		'oncanplaythrough',
-		'oncanplay',
-		'oncancel',
-		'onblur',
-		'onabort',
-		'isSecureContext',
-		'onwheel',
-		'onwebkittransitionend',
-		'onwebkitanimationstart',
-		'onwebkitanimationiteration',
-		'onwebkitanimationend',
-		'ontransitionend',
-		'onsearch',
-		'onanimationstart',
-		'onanimationiteration',
-		'onanimationend',
-		'styleMedia',
-		'defaultstatus',
-		'defaultStatus',
-		'screenTop',
-		'screenLeft',
-		'clientInformation',
-		'devicePixelRatio',
-		'outerHeight',
-		'outerWidth',
-		'screenY',
-		'screenX',
-		'pageYOffset',
-		'scrollY',
-		'pageXOffset',
-		'scrollX',
-		'innerHeight',
-		'innerWidth',
-		'screen',
-		'navigator',
-		'frameElement',
-		'parent',
-		'opener',
-		'top',
-		'frames',
-		'closed',
-		'status',
-		'toolbar',
-		'statusbar',
-		'scrollbars',
-		'personalbar',
-		'menubar',
-		'locationbar',
-		'history',
-		'location',
-		'name',
-		'self',
-		'window',
-		'stop',
-		'open',
-		'alert',
-		'confirm',
-		'prompt',
-		'print',
-		'requestAnimationFrame',
-		'cancelAnimationFrame',
-		'captureEvents',
-		'releaseEvents',
-		'getComputedStyle',
-		'matchMedia',
-		'moveTo',
-		'moveBy',
-		'resizeTo',
-		'resizeBy',
-		'getSelection',
-		'find',
-		'getMatchedCSSRules',
-		'webkitRequestAnimationFrame',
-		'webkitCancelAnimationFrame',
-		'webkitCancelRequestAnimationFrame',
-		'btoa',
-		'atob',
-		'requestIdleCallback',
-		'cancelIdleCallback',
-		'scroll',
-		'scrollTo',
-		'scrollBy',
-		'fetch',
-		'webkitRequestFileSystem',
-		'webkitResolveLocalFileSystemURL',
-		'openDatabase',
-		'TEMPORARY',
-		'PERSISTENT',
-		'addEventListener',
-		'removeEventListener',
-		'dispatchEvent',
-		'onunhandledrejection',
-		'onrejectionhandled',
-		'ondeviceorientationabsolute',
-		'createImageBitmap',
-	],
-	leaked: [],
-};
-
-// Static methods
-
-Proctor.resolvePath = function(path) {
-	// If the path does not exist, we are in the default Framework tests directory
-	if(!path) {
-		path = Project.framework.directory;
-	}
-	// If the path is not absolute, we are in the default Framework tests directory
-	else if(!Node.Path.isAbsolute(path)) {
-		path = Node.Path.join(Project.framework.directory, 'tests', path);
 	}
 
-	return path;
-};
+	static globals = {
+		expected: [
+			// Framework
+			'Console',
+			'Generator',
+			'Json',
+			'Node',
+			'Primitive',
+			'Project',
+			'Buffer',
+			'Class',
+			'Framework',
+			'RegularExpression',
+			'Stream',
+			'Time',
+			'Try',
 
-Proctor.getTestMethod = function*(testClassFilePath, testClassName, testMethodName) {
-	var tests = yield Proctor.getTests(testClassFilePath, testClassName, testMethodName, true);
+			// Framework - Object
+			'clone',
+			'deleteValueByPath',
+			'each',
+			'getValueByPath',
+			'getValueForKey',
+			'hasKey',
+			'integrate',
+			'isEmpty',
+			'merge',
+			'setValueByPath',
+			'sort',
+			'toArray',
+			'toJson',
 
-	return tests;
-}.toPromise();
+			// Framework - Electron
+			'mainBrowserWindowViewController',
 
-Proctor.getTests = function*(path, filePattern, methodPattern, matchStringMethodPatternExactly) {
-	var tests = {
-		classes: [],
-		methods: [],
+			// Node
+			'GLOBAL',
+			'console',
+			'global',
+			'length',
+			'process',
+			'root',
+			'clearImmediate',
+			'clearInterval',
+			'clearTimeout',
+			'setImmediate',
+			'setInterval',
+			'setTimeout',
+			'DTRACE_HTTP_CLIENT_REQUEST',
+			'DTRACE_HTTP_CLIENT_RESPONSE',
+			'DTRACE_HTTP_SERVER_REQUEST',
+			'DTRACE_HTTP_SERVER_RESPONSE',
+			'DTRACE_NET_SERVER_CONNECTION',
+			'DTRACE_NET_STREAM_END',
+
+			// Windows
+			'COUNTER_NET_SERVER_CONNECTION',
+			'COUNTER_NET_SERVER_CONNECTION_CLOSE',
+			'COUNTER_HTTP_SERVER_REQUEST',
+			'COUNTER_HTTP_SERVER_RESPONSE',
+			'COUNTER_HTTP_CLIENT_REQUEST',
+			'COUNTER_HTTP_CLIENT_RESPONSE',
+
+			// Electron
+			'document',
+			'require',
+			'module',
+			'__filename',
+			'__dirname',
+			'P',
+			'WebView',
+			'speechSynthesis',
+			'caches',
+			'localStorage',
+			'sessionStorage',
+			'webkitStorageInfo',
+			'indexedDB',
+			'webkitIndexedDB',
+			'ondeviceorientation',
+			'ondevicemotion',
+			'crypto',
+			'postMessage',
+			'blur',
+			'focus',
+			'close',
+			'applicationCache',
+			'performance',
+			'onunload',
+			'onstorage',
+			'onpopstate',
+			'onpageshow',
+			'onpagehide',
+			'ononline',
+			'onoffline',
+			'onmessage',
+			'onlanguagechange',
+			'onhashchange',
+			'onbeforeunload',
+			'onwaiting',
+			'onvolumechange',
+			'ontoggle',
+			'ontimeupdate',
+			'onsuspend',
+			'onsubmit',
+			'onstalled',
+			'onshow',
+			'onselect',
+			'onseeking',
+			'onseeked',
+			'onscroll',
+			'onresize',
+			'onreset',
+			'onratechange',
+			'onprogress',
+			'onplaying',
+			'onplay',
+			'onpause',
+			'onmousewheel',
+			'onmouseup',
+			'onmouseover',
+			'onmouseout',
+			'onmousemove',
+			'onmouseleave',
+			'onmouseenter',
+			'onmousedown',
+			'onloadstart',
+			'onloadedmetadata',
+			'onloadeddata',
+			'onload',
+			'onkeyup',
+			'onkeypress',
+			'onkeydown',
+			'oninvalid',
+			'oninput',
+			'onfocus',
+			'onerror',
+			'onended',
+			'onemptied',
+			'ondurationchange',
+			'ondrop',
+			'ondragstart',
+			'ondragover',
+			'ondragleave',
+			'ondragenter',
+			'ondragend',
+			'ondrag',
+			'ondblclick',
+			'oncuechange',
+			'oncontextmenu',
+			'onclose',
+			'onclick',
+			'onchange',
+			'oncanplaythrough',
+			'oncanplay',
+			'oncancel',
+			'onblur',
+			'onabort',
+			'isSecureContext',
+			'onwheel',
+			'onwebkittransitionend',
+			'onwebkitanimationstart',
+			'onwebkitanimationiteration',
+			'onwebkitanimationend',
+			'ontransitionend',
+			'onsearch',
+			'onanimationstart',
+			'onanimationiteration',
+			'onanimationend',
+			'styleMedia',
+			'defaultstatus',
+			'defaultStatus',
+			'screenTop',
+			'screenLeft',
+			'clientInformation',
+			'devicePixelRatio',
+			'outerHeight',
+			'outerWidth',
+			'screenY',
+			'screenX',
+			'pageYOffset',
+			'scrollY',
+			'pageXOffset',
+			'scrollX',
+			'innerHeight',
+			'innerWidth',
+			'screen',
+			'navigator',
+			'frameElement',
+			'parent',
+			'opener',
+			'top',
+			'frames',
+			'closed',
+			'status',
+			'toolbar',
+			'statusbar',
+			'scrollbars',
+			'personalbar',
+			'menubar',
+			'locationbar',
+			'history',
+			'location',
+			'name',
+			'self',
+			'window',
+			'stop',
+			'open',
+			'alert',
+			'confirm',
+			'prompt',
+			'print',
+			'requestAnimationFrame',
+			'cancelAnimationFrame',
+			'captureEvents',
+			'releaseEvents',
+			'getComputedStyle',
+			'matchMedia',
+			'moveTo',
+			'moveBy',
+			'resizeTo',
+			'resizeBy',
+			'getSelection',
+			'find',
+			'getMatchedCSSRules',
+			'webkitRequestAnimationFrame',
+			'webkitCancelAnimationFrame',
+			'webkitCancelRequestAnimationFrame',
+			'btoa',
+			'atob',
+			'requestIdleCallback',
+			'cancelIdleCallback',
+			'scroll',
+			'scrollTo',
+			'scrollBy',
+			'fetch',
+			'webkitRequestFileSystem',
+			'webkitResolveLocalFileSystemURL',
+			'openDatabase',
+			'TEMPORARY',
+			'PERSISTENT',
+			'addEventListener',
+			'removeEventListener',
+			'dispatchEvent',
+			'onunhandledrejection',
+			'onrejectionhandled',
+			'ondeviceorientationabsolute',
+			'createImageBitmap',
+		],
+		leaked: [],
 	};
 
-	// Resolve the path
-	path = Proctor.resolvePath(path);
-	//Console.log(path);
-	//Node.exit(path);
+	static resolvePath(path) {
+		// If the path does not exist, we are in the default Framework tests directory
+		if(!path) {
+			path = Project.framework.directory;
+		}
+		// If the path is not absolute, we are in the default Framework tests directory
+		else if(!Node.Path.isAbsolute(path)) {
+			path = Node.Path.join(Project.framework.directory, 'tests', path);
+		}
 
-	// If patterns are set and are strings, lowercase them for later matching
-	if(filePattern && String.is(filePattern)) {
-		filePattern = filePattern.lowercase();
+		return path;
 	}
-	if(methodPattern && String.is(methodPattern)) {
-		methodPattern = methodPattern.lowercase();	
+
+	static async getTestMethod(testClassFilePath, testClassName, testMethodName) {
+		var tests = await Proctor.getTests(testClassFilePath, testClassName, testMethodName, true);
+
+		return tests;
 	}
 
-	// Create a file or directory object from the path
-	var fileSystemObjectFromPath = yield FileSystemObjectFactory.create(path);
-	//Node.exit(fileSystemObject);
+	static async getTests(path, filePattern, methodPattern, matchStringMethodPatternExactly) {
+		var tests = {
+			classes: [],
+			methods: [],
+		};
 
-	// Store all of the file system objects
-	var fileSystemObjects = [];
-	
-	// If we are working with a directory of tests
-	if(fileSystemObjectFromPath.isDirectory()) {
-		// Recursively get all of the file system objects in the path
-		fileSystemObjects = yield fileSystemObjectFromPath.list(true);
-	}
-	// If we are working with a single test file
-	else {
-		fileSystemObjects.append(fileSystemObjectFromPath);
-	}
-	//return fileSystemObjects;
+		// Resolve the path
+		path = Proctor.resolvePath(path);
+		//Console.log(path);
+		//Node.exit(path);
 
-	// Loop through each of the file system objects
-	fileSystemObjects.each(function(index, fileSystemObject) {
-		//Console.log(fileSystemObject.path);
+		// If patterns are set and are strings, lowercase them for later matching
+		if(filePattern && String.is(filePattern)) {
+			filePattern = filePattern.lowercase();
+		}
+		if(methodPattern && String.is(methodPattern)) {
+			methodPattern = methodPattern.lowercase();	
+		}
 
-		// If we have a file
-		if(fileSystemObject.isFile()) {
-			// We need to see if this is a test class file, if the file is not "Test.js" but ends with "Test.js" it should be
-			if(fileSystemObject.name != 'Test.js' && fileSystemObject.name.endsWith('Test.js')) {
-				// Filter the tests if there is a filePattern
-				if(filePattern == null || fileSystemObject.path.lowercase().match(filePattern)) {
-					//Console.info(fileSystemObject.path.lowercase(), 'matched against', filePattern);
-					
-					var testClassName = fileSystemObject.nameWithoutExtension;
+		// Create a file or directory object from the path
+		var fileSystemObjectFromPath = await FileSystemObjectFactory.create(path);
+		//Node.exit(fileSystemObject);
 
-					// Require the test class file
-					try {
-						var testClass = Node.require(fileSystemObject.file);
+		// Store all of the file system objects
+		var fileSystemObjects = [];
+		
+		// If we are working with a directory of tests
+		if(fileSystemObjectFromPath.isDirectory()) {
+			// Recursively get all of the file system objects in the path
+			fileSystemObjects = await fileSystemObjectFromPath.list(true);
+		}
+		// If we are working with a single test file
+		else {
+			fileSystemObjects.append(fileSystemObjectFromPath);
+		}
+		//return fileSystemObjects;
 
-						// Check to see if the testClass is a function
-						if(!testClass || !Function.is(testClass)) {
-							throw new Error(fileSystemObject.file+' did not export a Test class.');
-						}
-						// If testClass is a function that can be instantiated
-						else {
-							// Instantiate the test class
-							var instantiatedTestClass = new testClass();
+		// Loop through each of the file system objects
+		fileSystemObjects.each(function(index, fileSystemObject) {
+			//Console.log(fileSystemObject.path);
 
-							// Make sure the instantiated class is an instance of Test
-							if(Class.isInstance(instantiatedTestClass, Test)) {
-								//Console.log('Adding test:', testClassName);
+			// If we have a file
+			if(fileSystemObject.isFile()) {
+				// We need to see if this is a test class file, if the file is not "Test.js" but ends with "Test.js" it should be
+				if(fileSystemObject.name != 'Test.js' && fileSystemObject.name.endsWith('Test.js')) {
+					// Filter the tests if there is a filePattern
+					if(filePattern == null || fileSystemObject.path.lowercase().match(filePattern)) {
+						//Console.info(fileSystemObject.path.lowercase(), 'matched against', filePattern);
+						
+						var testClassName = fileSystemObject.nameWithoutExtension;
 
-								// Add the test class to tests
-								var testClassObject = {
-									name: testClassName,
-									instance: instantiatedTestClass,
-									class: testClass,
-									file: fileSystemObject,
-								};
-								tests.classes.append(testClassObject);
+						// Require the test class file
+						try {
+							var testClass = Node.require(fileSystemObject.file);
 
-								// Loop through all of the class properties
-								for(var key in instantiatedTestClass) {						
-									// All tests must start with "test" and be a function
-									if(key.startsWith('test') && Function.is(instantiatedTestClass[key])) {
-										//Console.log('Test method name:', key);
+							// Check to see if the testClass is a function
+							if(!testClass || !Function.is(testClass)) {
+								throw new Error(fileSystemObject.file+' did not export a Test class.');
+							}
+							// If testClass is a function that can be instantiated
+							else {
+								// Instantiate the test class
+								var instantiatedTestClass = new testClass();
 
-										var appendTestMethod = false;
+								// Make sure the instantiated class is an instance of Test
+								if(Class.isInstance(instantiatedTestClass, Test)) {
+									//Console.log('Adding test:', testClassName);
 
-										// Filter test methods
-										if(matchStringMethodPatternExactly) {
-											if(key.lowercase() == methodPattern) {
+									// Add the test class to tests
+									var testClassObject = {
+										name: testClassName,
+										instance: instantiatedTestClass,
+										class: testClass,
+										file: fileSystemObject,
+									};
+									tests.classes.append(testClassObject);
+
+									// Loop through all of the class properties
+									for(var key in instantiatedTestClass) {						
+										// All tests must start with "test" and be a function
+										if(key.startsWith('test') && Function.is(instantiatedTestClass[key])) {
+											//Console.log('Test method name:', key);
+
+											var appendTestMethod = false;
+
+											// Filter test methods
+											if(matchStringMethodPatternExactly) {
+												if(key.lowercase() == methodPattern) {
+													appendTestMethod = true;
+												}
+											}
+											else if(methodPattern == null || key.lowercase().match(methodPattern)) {
+												//Console.log(key.lowercase(), 'matched against', methodPattern);
 												appendTestMethod = true;
 											}
-										}
-										else if(methodPattern == null || key.lowercase().match(methodPattern)) {
-											//Console.log(key.lowercase(), 'matched against', methodPattern);
-											appendTestMethod = true;
-										}
-										else {
-											//Console.log(key.lowercase(), 'did not match against', methodPattern);
-										}
+											else {
+												//Console.log(key.lowercase(), 'did not match against', methodPattern);
+											}
 
-										if(appendTestMethod) {
-											tests.methods.append({
-												name: key,
-												method: instantiatedTestClass[key],
-												class: testClassObject,
-											});
+											if(appendTestMethod) {
+												tests.methods.append({
+													name: key,
+													method: instantiatedTestClass[key],
+													class: testClassObject,
+												});
+											}
 										}
 									}
 								}
-							}
-							else {
-								throw new Error(fileSystemObject.file+' did not export a Test class.');
+								else {
+									throw new Error(fileSystemObject.file+' did not export a Test class.');
+								}
 							}
 						}
+						catch(error) {
+							Console.log('Caught an error while loading test.', error);
+						}
 					}
-					catch(error) {
-						Console.log('Caught an error while loading test.', error);
+					else {
+						//Console.log(fileSystemObject.path.lowercase(), 'did not match against', filePattern);
 					}
-				}
-				else {
-					//Console.log(fileSystemObject.path.lowercase(), 'did not match against', filePattern);
 				}
 			}
-		}
-	});
+		});
 
-	return tests;
-}.toPromise();
+		return tests;
+	}
+
+}
 
 // Export
-module.exports = Proctor;
+export default Proctor;

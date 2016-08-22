@@ -1,13 +1,13 @@
 // Dependencies
-var TestReporter = Framework.require('system/test/test-reporters/TestReporter.js');
-var ConciseTestReporter = Framework.require('system/test/test-reporters/ConciseTestReporter.js');
-var Terminal = Framework.require('system/console/Terminal.js');
+import TestReporter from './TestReporter.js';
+import ConciseTestReporter from './ConciseTestReporter.js';
+import Terminal from './../../../system/console/Terminal.js';
 var AssertionError = Node.Assert.AssertionError;
 
 // Class
-var StandardTestReporter = TestReporter.extend({
+class StandardTestReporter extends TestReporter {
 
-	finishedRunningTestMethod: function(data) {
+	finishedRunningTestMethod(data) {
 		this.super.apply(this, arguments);
 
 		// Print out the assertions
@@ -40,9 +40,9 @@ var StandardTestReporter = TestReporter.extend({
 				}
 			}
 		});
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = StandardTestReporter;
+export default StandardTestReporter;

@@ -1,36 +1,36 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var NotFoundError = Framework.require('system/web-server/errors/NotFoundError.js');
-var InternalServerError = Framework.require('system/web-server/errors/InternalServerError.js');
+import Test from './../Test.js';
+import Assert from './../Assert.js';
+import NotFoundError from './../../../system/web-server/errors/NotFoundError.js';
+import InternalServerError from './../../../system/web-server/errors/InternalServerError.js';
 
 // Class
-var AssertTest = Test.extend({
+class AssertTest extends Test {
 
-	testThrowsAsynchronously: function*() {
+	async testThrowsAsynchronously() {
 		// Should fail
-		//yield Assert.throwsAsynchronously(function*() {
+		//await Assert.throwsAsynchronously(async function() {
 		//	//throw new Error();
 		//}, 'throwsAsynchronously works');
 
 		// Should fail
-		//yield Assert.doesNotThrowAsynchronously(function*() {
+		//await Assert.doesNotThrowAsynchronously(async function() {
 		//	throw new Error();
 		//}, 'throwsAsynchronously works');
 
-		yield Assert.throwsAsynchronously(function*() {
+		await Assert.throwsAsynchronously(async function() {
 			throw new Error();
 		}, 'throwsAsynchronously works');
 
-		yield Assert.throwsAsynchronously(function*() {
+		await Assert.throwsAsynchronously(async function() {
 			throw new NotFoundError();
 		}, NotFoundError, 'throwsAsynchronously works with Error types');
 
-		yield Assert.doesNotThrowAsynchronously(function*() {
+		await Assert.doesNotThrowAsynchronously(async function() {
 		}, 'doesNotThrowAsynchronously works');
 	},
 
-});
+}
 
 // Export
-module.exports = AssertTest;
+export default AssertTest;

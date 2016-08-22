@@ -2,7 +2,7 @@
 import Log from './../../system/log/Log.js';
 import File from './../../system/file-system/File.js';
 import Directory from './../../system/file-system/Directory.js';
-//import Terminal from './../../system/console/Terminal.js';
+import Terminal from './../../system/console/Terminal.js';
 
 // Class
 class ConsoleSession {
