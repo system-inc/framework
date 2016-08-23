@@ -47,7 +47,7 @@ class ControllerRoute extends Route {
 		}
 
 		// Send the response
-		await this.super.apply(this, arguments);
+		await super.follow.apply(this, arguments);
 	}
 
 }

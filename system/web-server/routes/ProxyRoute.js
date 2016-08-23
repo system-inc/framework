@@ -1,27 +1,27 @@
 // Dependencies
-var Route = Framework.require('system/web-server/routes/Route.js');
-var Url = Framework.require('system/web/Url.js');
-var WebRequest = Framework.require('system/web/WebRequest.js');
+import Route './Route.js';
+import Url './../../system/web/Url.js';
+import WebRequest './../../system/web/WebRequest.js';
 
 // Class
-var ProxyRoute = Route.extend({
+class ProxyRoute extends Route {
 
 	type: 'proxy',
 	proxyUrl: null,
 	proxyHeaders: null,
 
-	construct: function(settings, parent) {
+	constructor(settings, parent) {
+		super(...arguments);
+
 		this.inheritProperty('proxyUrl', settings, parent);
 		// Make sure we are working with a URL object
 		if(this.proxyUrl) {
 			this.proxyUrl = new Url(this.proxyUrl);
 		}
 		this.inheritProperty('proxyHeaders', settings, parent);
+	}
 
-		this.super.apply(this, arguments);
-	},
-
-	getFullProxyUrl: function(requestUrl) {
+	getFullProxyUrl(requestUrl) {
 		//Console.highlight(requestUrl, this.proxyUrl);
 
 		// Clone the proxyUrl from the route
@@ -34,9 +34,9 @@ var ProxyRoute = Route.extend({
 		fullProxyUrl.rebuild();
 
 		return fullProxyUrl;
-	},
+	}
 
-	follow: function*(request, response) {
+	async follow(request, response) {
 		// Build a web request for the proxy
 		var fullProxyUrl = this.getFullProxyUrl(request.url);
 		//Console.highlight(fullProxyUrl);
@@ -54,7 +54,7 @@ var ProxyRoute = Route.extend({
 		//Console.highlight(webRequest);
 
 		// Execute the web request
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.highlight('webRequestResponse', webRequestResponse);
 
 		// Match the status code
@@ -72,10 +72,10 @@ var ProxyRoute = Route.extend({
 		//Console.log(content);
 
 		// Send the response
-		yield this.super.apply(this, arguments);
-	},
+		await super.follow.apply(this, arguments);
+	}
 
-});
+}
 
 // Export
-module.exports = ProxyRoute;
+export default ProxyRoute;

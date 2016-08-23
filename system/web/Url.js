@@ -1,22 +1,22 @@
 // Class
-var Url = Class.extend({
+class Url {
 
-	url: null,
-	protocol: null,
-	host: null,
-	port: null,
-	path: null,
-	query: null,
-	queryString: null,
-	fragment: null,
-	input: null,
+	url = null;
+	protocol = null;
+	host = null;
+	port = null;
+	path = null;
+	query = null;
+	queryString = null;
+	fragment = null;
+	input = null;
 
-	construct: function(string) {
+	constructor(string) {
 		this.input = string;
 		this.parse(string);	
-	},
+	}
 
-	parse: function(string) {
+	parse(string) {
 		if(!string) {
 			return;
 		}
@@ -69,21 +69,21 @@ var Url = Class.extend({
 
 		// Set the complete URL
 		this.url = this.getUrl();
-	},
+	}
 
-	getUrl: function() {
+	getUrl() {
 		return this.protocol+'://'+(this.host ? this.host : '')+(this.port && this.port != 80 && this.port != 443 ? ':'+this.port : '')+this.path+this.queryString+(this.fragment ? '#'+this.fragment : '');
-	},
+	}
 
-	rebuild: function() {
+	rebuild() {
 		this.url = this.getUrl();
-	},
+	}
 
-	toString: function() {
+	toString() {
 		return this.getUrl();
-	},
+	}
 
-	setQueryParameter: function(key, value) {
+	setQueryParameter(key, value) {
 		// Copy and pasted this code, can probably clean this up
 		var newAdditionalUrl = '';
 	    var tempArray = this.url.split('?');
@@ -101,24 +101,24 @@ var Url = Class.extend({
 	    }
 	    var rows_txt = temp + '' + key + '=' + value ;
 	    this.construct(baseUrl + '?' + newAdditionalUrl + rows_txt);
-	},
-
-});
-
-// Static methods
-Url.constructFromNodeRequest = function(nodeRequest) {
-	var protocol = 'http';
-	if(nodeRequest.connection.encrypted) {
-		protocol = 'https';
 	}
 
-	var urlString = protocol+'://'+nodeRequest.headers.host+nodeRequest.url;
+	static constructFromNodeRequest(nodeRequest) {
+		var protocol = 'http';
+		if(nodeRequest.connection.encrypted) {
+			protocol = 'https';
+		}
 
-	return new Url(urlString);
+		var urlString = protocol+'://'+nodeRequest.headers.host+nodeRequest.url;
+
+		return new Url(urlString);
+	}
+
+	static encode = encodeURIComponent;
+	
+	static decode = decodeURIComponent;
+
 }
 
-Url.encode = encodeURIComponent;
-Url.decode = decodeURIComponent;
-
 // Export
-module.exports = Url;
+export default Url;

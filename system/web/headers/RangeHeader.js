@@ -1,11 +1,11 @@
 // Class
-var RangeHeader = Class.extend({
+class RangeHeader {
 
-	unit: null, // Usually 'bytes'
-	ranges: [], // Range requests can have multiple ranges
-	input: null, // Store the original input for debugging
+	unit = null; // Usually 'bytes'
+	ranges = []; // Range requests can have multiple ranges
+	input = null; // Store the original input for debugging
 
-	construct: function(input) {
+	constructor(input) {
 		this.input = input;
 
 		var matches = input.match(/^([^\s]+)=((?:(?:\d+-\d+|-\d+|\d+-),?)+)$/);
@@ -22,9 +22,9 @@ var RangeHeader = Class.extend({
 			this.unit = 'bytes';
 			this.ranges.push('0-');
 		}
-	},
+	}
 
-	parseRange: function(input) {
+	parseRange(input) {
 		var parsedRange = {
 			start: null,
 			end: null,
@@ -41,9 +41,9 @@ var RangeHeader = Class.extend({
 		}
 
 		return parsedRange;
-	},
+	}
 
-	getReadStreamRange: function(size) {
+	getReadStreamRange(size) {
 		var range = this.ranges[0];
 
 		var rangeToReturn = {
@@ -77,9 +77,9 @@ var RangeHeader = Class.extend({
 		}
 
 		return rangeToReturn;
-	},
+	}
 
-	isPartial: function(size) {
+	isPartial(size) {
 		var isPartial = true;
 		var readStreamRange = this.getReadStreamRange(size);
 
@@ -89,9 +89,9 @@ var RangeHeader = Class.extend({
 		}
 
 		return isPartial;
-	},
+	}
 
-	getContentLength: function(size) {
+	getContentLength(size) {
 		var contentLength = null;
 		var readStreamRange = this.getReadStreamRange(size);
 
@@ -99,9 +99,9 @@ var RangeHeader = Class.extend({
 		//Console.log('contentLength', contentLength);
 
 		return contentLength;
-	},
+	}
 
-	getContentRange: function(size) {
+	getContentRange(size) {
 		var contentRange = this.unit+' ';
 		var readStreamRange = this.getReadStreamRange(size);
 
@@ -112,13 +112,13 @@ var RangeHeader = Class.extend({
 		//Console.log('contentRange', contentRange);
 
 		return contentRange;
-	},
+	}
 
-	toString: function() {
+	toString() {
 		return this.unit+'='+this.ranges.join(',');
-	},
+	}
 
-});
+}
 
 // Exports
-module.exports = RangeHeader;
+export default RangeHeader;

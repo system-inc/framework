@@ -1,17 +1,17 @@
 // Dependencies
-var Header = Framework.require('system/web/headers/Header.js');
-var Cookies = Framework.require('system/web/headers/Cookies.js');
-var Cookie = Framework.require('system/web/headers/Cookie.js');
+import Header './Header.js';
+import Cookies './Cookies.js';
+import Cookie './Cookie.js';
 
 // Class
-var Headers = Class.extend({
+class Headers {
 
-	headers: [],
+	headers = [];
 
-	construct: function(string) {
-	},
+	constructor(string) {
+	}
 
-	get: function(key, caseSensitive) {
+	get(key, caseSensitive) {
 		caseSensitive = caseSensitive === true ? true : false; // Case insensitive by default
 		var header = null;
 
@@ -33,9 +33,9 @@ var Headers = Class.extend({
 		}
 
 		return header;
-	},
+	}
 
-	getHeader: function(key, caseSensitive) {
+	getHeader(key, caseSensitive) {
 		caseSensitive = caseSensitive === true ? true : false;
 		var header = null;
 
@@ -57,17 +57,17 @@ var Headers = Class.extend({
 		}
 
 		return header;
-	},
+	}
 
-	create: function(key, value) {
+	create(key, value) {
 		var header = new Header(key, value);
 
 		this.headers.push(header);
 
 		return header;
-	},
+	}
 
-	update: function(key, value, caseSensitive) {
+	update(key, value, caseSensitive) {
 		caseSensitive = caseSensitive === true ? true : false;
 		var header = this.getHeader(key, false);
 
@@ -79,13 +79,13 @@ var Headers = Class.extend({
 		}
 
 		return header;
-	},
+	}
 
-	set: function(key, value, caseSensitive) {
+	set(key, value, caseSensitive) {
 		return this.update(key, value, caseSensitive);
-	},
+	}
 
-	delete: function(key, caseSensitive) {
+	delete(key, caseSensitive) {
 		caseSensitive = caseSensitive === true ? true : false;
 
 		var indexToDelete = null;
@@ -109,9 +109,9 @@ var Headers = Class.extend({
 		}
 
 		return this.headers;
-	},
+	}
 
-	getCookies: function() {
+	getCookies() {
 		var cookies = new Cookies();
 
 		this.headers.each(function(index, header) {
@@ -121,15 +121,15 @@ var Headers = Class.extend({
 		});
 
 		return cookies;
-	},
+	}
 
-	addCookies: function(cookies) {
+	addCookies(cookies) {
 		cookies.cookies.each(function(index, cookie) {
 			this.create('Set-Cookie', cookie.toHeaderString());
 		}.bind(this));
-	},
+	}
 
-	removeNullHeaders: function() {
+	removeNullHeaders() {
 		var headers = [];
 
 		this.headers.each(function(index, header) {
@@ -139,13 +139,13 @@ var Headers = Class.extend({
 		});
 
 		this.headers = headers;
-	},
+	}
 
-	length: function() {
+	length() {
 		return this.headers.length;
-	},
+	}
 
-	toArray: function() {
+	toArray() {
 		var array = [];
 
 		this.headers.each(function(index, header) {
@@ -153,9 +153,9 @@ var Headers = Class.extend({
 		}.bind(this));
 
 		return array;
-	},
+	}
 
-	toObject: function() {
+	toObject() {
 		var object = {};
 
 		this.headers.each(function(index, header) {
@@ -163,54 +163,53 @@ var Headers = Class.extend({
 		}.bind(this));
 
 		return object;
-	},
-	
-});
-
-// Static methods
-Headers.constructFromNodeHeaders = function(nodeHeaders) {
-	//Console.highlight(nodeHeaders); Node.exit();
-
-	var headers = new Headers();
-
-	if(nodeHeaders) {
-		nodeHeaders.each(function(headerName, headerValue) {
-			// Handle multiple headers of the same key (e.g., "Set-Cookie")
-			if(Array.is(headerValue)) {
-				headerValue.each(function(headerValueIndex, headerValueValue) {
-					headers.create(headerName, headerValueValue);
-				});
-			}
-			else {
-				headers.create(headerName, headerValue);
-			}
-		});	
-	}
-	
-	return headers;
-};
-
-Headers.nodeRawHeadersToString = function(rawHeaders) {
-	var rawHeadersString = '';
-
-	for(var index = 0; index < rawHeaders.length; index++) {
-		// Node is silly and uses even and odd numbers to specify key value pairs
-		// Zeroth
-	    if(index == 0) {
-	    	rawHeadersString += rawHeaders[index]+': ';
-	    }
-	    // Odd
-	    else if(index % 2) {
-	    	rawHeadersString += rawHeaders[index];
-	    }
-	    // Even
-	    else {
-	    	rawHeadersString += "\n"+rawHeaders[index]+': ';
-	    }
 	}
 
-	return rawHeadersString;
+	static constructFromNodeHeaders(nodeHeaders) {
+		//Console.highlight(nodeHeaders); Node.exit();
+
+		var headers = new Headers();
+
+		if(nodeHeaders) {
+			nodeHeaders.each(function(headerName, headerValue) {
+				// Handle multiple headers of the same key (e.g., "Set-Cookie")
+				if(Array.is(headerValue)) {
+					headerValue.each(function(headerValueIndex, headerValueValue) {
+						headers.create(headerName, headerValueValue);
+					});
+				}
+				else {
+					headers.create(headerName, headerValue);
+				}
+			});	
+		}
+		
+		return headers;
+	}
+
+	static nodeRawHeadersToString(rawHeaders) {
+		var rawHeadersString = '';
+
+		for(var index = 0; index < rawHeaders.length; index++) {
+			// Node is silly and uses even and odd numbers to specify key value pairs
+			// Zeroth
+		    if(index == 0) {
+		    	rawHeadersString += rawHeaders[index]+': ';
+		    }
+		    // Odd
+		    else if(index % 2) {
+		    	rawHeadersString += rawHeaders[index];
+		    }
+		    // Even
+		    else {
+		    	rawHeadersString += "\n"+rawHeaders[index]+': ';
+		    }
+		}
+
+		return rawHeadersString;
+	}
+	
 }
 
 // Export
-module.exports = Headers;
+export default Headers;

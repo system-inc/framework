@@ -1,15 +1,15 @@
 // Dependencies
-var Version = Framework.require('system/version/Version.js');
+import Version from './../../system/version/Version.js';
 
 // Class
-var Browser = Class.extend({
+class Browser {
 
-	name: null,
-	manufacturer: null,
-	version: null,
-	userAgent: null,
+	name = null;
+	manufacturer = null;
+	version = null;
+	userAgent = null;
 
-	parseUserAgent: function(userAgent) {
+	parseUserAgent(userAgent) {
 		// Return immediately if there is no user agent
 		if(!userAgent) {
 			return this;
@@ -41,49 +41,45 @@ var Browser = Class.extend({
 		}
 		
 		return this;
-	},
+	}
+
+	static browsers = [
+		{
+			'name': 'Chrome',
+			'manufacturer': 'Google',
+			'userAgentRegularExpressionString': 'Chrome',
+		},
+		{
+			'name': 'Firefox',
+			'manufacturer': 'Mozilla',
+			'userAgentRegularExpressionString': 'Firefox',
+		},
+		{
+			'name': 'Mobile Safari',
+			'manufacturer': 'Apple',
+			'userAgentRegularExpressionString': '[iPhone|iPad|iPod].*Safari',
+		},
+		{
+			'name': 'Safari',
+			'manufacturer': 'Apple',
+			'userAgentRegularExpressionString': 'Safari',
+		},
+		{
+			'name': 'Internet Explorer',
+			'manufacturer': 'Microsoft',
+			'userAgentRegularExpressionString': 'MSIE',
+		},
+	];
+
+	static constructFromUserAgent(userAgent) {
+		var browser = new Browser();
+
+		browser.parseUserAgent(userAgent);
+
+		return browser;
+	}
 	
-});
-
-// Static properties
-
-Browser.browsers = [
-	{
-		'name': 'Chrome',
-		'manufacturer': 'Google',
-		'userAgentRegularExpressionString': 'Chrome',
-	},
-	{
-		'name': 'Firefox',
-		'manufacturer': 'Mozilla',
-		'userAgentRegularExpressionString': 'Firefox',
-	},
-	{
-		'name': 'Mobile Safari',
-		'manufacturer': 'Apple',
-		'userAgentRegularExpressionString': '[iPhone|iPad|iPod].*Safari',
-	},
-	{
-		'name': 'Safari',
-		'manufacturer': 'Apple',
-		'userAgentRegularExpressionString': 'Safari',
-	},
-	{
-		'name': 'Internet Explorer',
-		'manufacturer': 'Microsoft',
-		'userAgentRegularExpressionString': 'MSIE',
-	},
-];
-
-// Static methods
-
-Browser.constructFromUserAgent = function(userAgent) {
-	var browser = new Browser();
-
-	browser.parseUserAgent(userAgent);
-
-	return browser;
-};
+}
 
 // Export
-module.exports = Browser;
+export default Browser;

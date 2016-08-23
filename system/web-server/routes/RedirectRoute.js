@@ -1,25 +1,25 @@
 // Dependencies
-var Route = Framework.require('system/web-server/routes/Route.js');
-var InternalServerError = Framework.require('system/web-server/errors/InternalServerError.js');
-var Url = Framework.require('system/web/Url.js');
+import Route from './Route.js';
+import InternalServerError from './../errors/InternalServerError.js';
+import Url from './../../../system/web/Url.js';
 
 // Class
-var RedirectRoute = Route.extend({
+class RedirectRoute extends Route {
 
-	type: 'redirect',
-	redirectStatusCode: null,
-	redirectHost: null,
-	redirectLocation: null,
+	type = 'redirect';
+	redirectStatusCode = null;
+	redirectHost = null;
+	redirectLocation = null;
 
-	construct: function(settings, parent) {
+	constructor(settings, parent) {
 		this.inheritProperty('redirectStatusCode', settings, parent);
 		this.inheritProperty('redirectHost', settings, parent);
 		this.inheritProperty('redirectLocation', settings, parent);
 
 		this.super.apply(this, arguments);
-	},
+	}
 
-	follow: function*(request, response) {
+	async follow(request, response) {
 		response.statusCode = this.redirectStatusCode;
 
 		// If it is a host redirect
@@ -46,10 +46,10 @@ var RedirectRoute = Route.extend({
 		}
 
 		// Send the response
-		yield this.super.apply(this, arguments);
-	},
+		await this.super.apply(this, arguments);
+	}
 
-});
+}
 
 // Export
-module.exports = RedirectRoute;
+export default RedirectRoute;

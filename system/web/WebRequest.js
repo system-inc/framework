@@ -1,27 +1,27 @@
 // Dependencies
-var Headers = Framework.require('system/web/headers/Headers.js');
-var Cookies = Framework.require('system/web/headers/Cookies.js');
-var Url = Framework.require('system/web/Url.js');
-var Version = Framework.require('system/version/Version.js');
-var Stopwatch = Framework.require('system/time/Stopwatch.js');
-var IpAddress = Framework.require('system/network/IpAddress.js');
-var Data = Framework.require('system/data/Data.js');
+import Headers './headers/Headers.js';
+import Cookies './headers/Cookies.js';
+import Url './Url.js';
+import Version './../../system/version/Version.js';
+import Stopwatch './../../system/time/Stopwatch.js';
+import IpAddress './../../system/network/IpAddress.js';
+import Data './../../system/data/Data.js';
 
 // Class
-var WebRequest = Class.extend({
+class WebRequest {
 
-	method: 'GET',
-	url: null,
-	data: null,
-	body: null,
-	headers: new Headers(),
-	cookies: new Cookies(),
-	encoding: null, // Must use null encoding in order for gzipped responses to work, can be null, binary, utf8, ascii, hex, base64
-	decode: true,
-	authorizeConnection: false,
-	requestCertificate: false,
+	method = 'GET';
+	url = null;
+	data = null;
+	body = null;
+	headers = new Headers();
+	cookies = new Cookies();
+	encoding = null; // Must use null encoding in order for gzipped responses to work, can be null, binary, utf8, ascii, hex, base64
+	decode = true;
+	authorizeConnection = false;
+	requestCertificate = false;
 
-	construct: function(url, options) {
+	constructor(url, options) {
 		// Make sure we are working with a URL object
 		if(String.is(url)) {
 			this.url = new Url(url);	
@@ -110,9 +110,9 @@ var WebRequest = Class.extend({
 
 		// Add cookies to the headers
 		this.headers.addCookies(this.cookies);
-	},
+	}
 
-	execute: function*(url, options) {
+	async execute(url, options) {
 		var webRequest = this;
 
 		// Allow execute to be called statically
@@ -138,153 +138,154 @@ var WebRequest = Class.extend({
 		//Console.log(response);
 
 		return response;
-	},
-	
-});
+	}
 
-// Static methods
-WebRequest.execute = WebRequest.prototype.execute;
+	static execute = WebRequest.prototype.execute;
 
-WebRequest.request = function(options) {
-    return new Promise(function(resolve, reject) {
-    	// Time the request
-    	var stopwatch = new Stopwatch({
-    		precision: 'milliseconds',
-    	});
+	static async request(options) {
+		var promiseResult = await new Promise(function(resolve, reject) {
+	    	// Time the request
+	    	var stopwatch = new Stopwatch({
+	    		precision: 'milliseconds',
+	    	});
 
-    	// Use either Node.Http or Node.Https
-    	var nodeHttpLibraryName = options.protocol.capitalize();
+	    	// Use either Node.Http or Node.Https
+	    	var nodeHttpLibraryName = options.protocol.capitalize();
 
-    	// Reform protocol, it expects it to end with a colon
-    	if(!options.protocol.endsWith(':')) {
-    		options.protocol = options.protocol + ':';
-    	}
+	    	// Reform protocol, it expects it to end with a colon
+	    	if(!options.protocol.endsWith(':')) {
+	    		options.protocol = options.protocol + ':';
+	    	}
 
-		var request = Node[nodeHttpLibraryName].request(options, function(response) {
-			// Set the encoding
-			if(options && options.encoding) {
-				response.setEncoding(options.encoding);
-			}
+			var request = Node[nodeHttpLibraryName].request(options, function(response) {
+				// Set the encoding
+				if(options && options.encoding) {
+					response.setEncoding(options.encoding);
+				}
 
-			var chunks = [];
+				var chunks = [];
 
-			//Console.log('response!!!', response);
+				//Console.log('response!!!', response);
 
-			// Bundle the webResponse
-			var webResponse = {
-				url: new Url(options.protocol+'//'+options.host+':'+options.port+options.path),
-				statusCode: response.statusCode,
-				statusMessage: response.statusMessage,
-				headers: Headers.constructFromNodeHeaders(response.headers),
-				rawHeaders: response.rawHeaders,
-				cookies: null, // This is set further down
-				body: '',
-				data: null,
-				trailers: response.trailers,
-				rawTrailers: response.rawTrailers,
-				httpVersion: new Version({
-					major: response.httpVersionMajor,
-					minor: response.httpVersionMinor,
-				}),
-				stopwatch: stopwatch,
-				request: {
-					rawHeaders: request._header,
-				},
-				bytesReceived: response.connection.bytesRead,
-				bytesSent: response.connection.bytesWritten,
-				ipAddress: new IpAddress(response.connection.remoteAddress),
-			};
-			//Console.log('webResponse (before finish)', webResponse);
+				// Bundle the webResponse
+				var webResponse = {
+					url: new Url(options.protocol+'//'+options.host+':'+options.port+options.path),
+					statusCode: response.statusCode,
+					statusMessage: response.statusMessage,
+					headers: Headers.constructFromNodeHeaders(response.headers),
+					rawHeaders: response.rawHeaders,
+					cookies: null, // This is set further down
+					body: '',
+					data: null,
+					trailers: response.trailers,
+					rawTrailers: response.rawTrailers,
+					httpVersion: new Version({
+						major: response.httpVersionMajor,
+						minor: response.httpVersionMinor,
+					}),
+					stopwatch: stopwatch,
+					request: {
+						rawHeaders: request._header,
+					},
+					bytesReceived: response.connection.bytesRead,
+					bytesSent: response.connection.bytesWritten,
+					ipAddress: new IpAddress(response.connection.remoteAddress),
+				};
+				//Console.log('webResponse (before finish)', webResponse);
 
-			// Header debugging
-			//Console.warn(webResponse.headers);
-			//Node.exit(response.rawHeaders);
-			//Node.exit(response.headers);
+				// Header debugging
+				//Console.warn(webResponse.headers);
+				//Node.exit(response.rawHeaders);
+				//Node.exit(response.headers);
 
-			// Set the cookies from the headers
-			webResponse.cookies = webResponse.headers.getCookies();
+				// Set the cookies from the headers
+				webResponse.cookies = webResponse.headers.getCookies();
 
-			var finish = function*() {
-				// Get the content encoding
-				var contentEncoding = webResponse.headers.get('content-encoding');
-				//Console.highlight(webResponse.headers);
-				//Console.highlight('contentEncoding', contentEncoding);
+				var finish = function*() {
+					// Get the content encoding
+					var contentEncoding = webResponse.headers.get('content-encoding');
+					//Console.highlight(webResponse.headers);
+					//Console.highlight('contentEncoding', contentEncoding);
 
-				// Concatenate all of the data chunks into one buffer
-				var buffer = Buffer.concat(chunks);
-				//Console.highlight('decode', options.decode, 'buffer', buffer.toString());
+					// Concatenate all of the data chunks into one buffer
+					var buffer = Buffer.concat(chunks);
+					//Console.highlight('decode', options.decode, 'buffer', buffer.toString());
 
-				// If we are to decode the response
-				if(options.decode) {
-					// Gzip or defalte
-					if(contentEncoding == 'gzip' || contentEncoding == 'deflate') {
-						webResponse.body = yield Data.decode(buffer, contentEncoding);
+					// If we are to decode the response
+					if(options.decode) {
+						// Gzip or defalte
+						if(contentEncoding == 'gzip' || contentEncoding == 'deflate') {
+							webResponse.body = yield Data.decode(buffer, contentEncoding);
+						}
+						// No content encoding
+						else {
+							webResponse.body = buffer.toString();
+						}
+
+						// Automatically decode the response body if it is JSON
+						if(Json.is(webResponse.body)) {
+							webResponse.data = Json.decode(webResponse.body);
+						}	
 					}
-					// No content encoding
+					// If we are not supposed to decode the response
 					else {
-						webResponse.body = buffer.toString();
+						webResponse.body = buffer;
 					}
 
-					// Automatically decode the response body if it is JSON
-					if(Json.is(webResponse.body)) {
-						webResponse.data = Json.decode(webResponse.body);
-					}	
+					// Set the trailers
+					webResponse.trailers = response.trailers;
+
+					// Stop and attach the stopwatch
+					webResponse.stopwatch = stopwatch.stop();
+
+					//Console.log('Web request finished:', webResponse);
+
+					// Resolve the promise
+					resolve(webResponse);
 				}
-				// If we are not supposed to decode the response
-				else {
-					webResponse.body = buffer;
-				}
 
-				// Set the trailers
-				webResponse.trailers = response.trailers;
+				// Build the body
+				response.on('data', function(chunk) {
+					//Console.log('Got chunk...', chunk.substring(0, 30));
+					chunks.push(chunk);
+				});
 
-				// Stop and attach the stopwatch
-				webResponse.stopwatch = stopwatch.stop();
+				// Resolve the promise when the response ends
+				response.on('end', function() {
+					//Console.log('end event');
+					finish.run();
+				});
 
-				//Console.log('Web request finished:', webResponse);
+				// Resolve the promise when the response ends
+				response.on('close', function() {
+					//Console.log('close event');
+					finish.run();
+				});
+			});
 
-				// Resolve the promise
-				resolve(webResponse);
+			//Console.log('WebRequest.request', request);
+
+			// Handle errors
+			request.on('error', function(error) {
+				Console.log('Problem with request:', error.message);
+				reject(error);
+			});
+
+			// Write the body if it exists
+			if(options.body) {
+				request.write(options.body);
 			}
 
-			// Build the body
-			response.on('data', function(chunk) {
-				//Console.log('Got chunk...', chunk.substring(0, 30));
-				chunks.push(chunk);
-			});
+			//Console.log('WebRequest.request', 'ending request...');
 
-			// Resolve the promise when the response ends
-			response.on('end', function() {
-				//Console.log('end event');
-				finish.run();
-			});
+			// Must always call .end() even if there is no data being written to the request body
+			request.end();
+	    });
 
-			// Resolve the promise when the response ends
-			response.on('close', function() {
-				//Console.log('close event');
-				finish.run();
-			});
-		});
-
-		//Console.log('WebRequest.request', request);
-
-		// Handle errors
-		request.on('error', function(error) {
-			Console.log('Problem with request:', error.message);
-			reject(error);
-		});
-
-		// Write the body if it exists
-		if(options.body) {
-			request.write(options.body);
-		}
-
-		//Console.log('WebRequest.request', 'ending request...');
-
-		// Must always call .end() even if there is no data being written to the request body
-		request.end();
-    });
+		return promiseResult;
+	}
+	
 }
 
 // Export
-module.exports = WebRequest;
+export default WebRequest;

@@ -1,25 +1,25 @@
 // Dependencies
-var RouteFactory = Framework.require('system/web-server/routes/RouteFactory.js');
+import RouteFactory from './RouteFactory.js';
 
 // Class
-var Route = Class.extend({
+class Route {
 	
 	// Any type
-	type: null, // controller, redirect, file, or proxy
-	context: null, // project or framework
-	protocols: null,
-	hosts: null,
-	ports: null,
-	methods: null,
-	expression: null,
-	fullExpression: null,
-	data: {},
-	capturedData: null,
-	description: null,
-	parent: null,
-	children: [],
+	type = null; // controller, redirect, file, or proxy
+	context = null; // project or framework
+	protocols = null;
+	hosts = null;
+	ports = null;
+	methods = null;
+	expression = null;
+	fullExpression = null;
+	data = {};
+	capturedData = null;
+	description = null;
+	parent = null;
+	children = [];
 
-	construct: function(settings, parent) {
+	constructor(settings, parent) {
 		// If we have a parent, set it
 		this.parent = (parent === undefined ? null : parent);
 
@@ -80,9 +80,9 @@ var Route = Class.extend({
 				this.children.push(RouteFactory.create(childRouteSettings, this));
 			}.bind(this));
 		}
-	},
+	}
 
-	inheritProperty: function(propertyName, settings, parent) {
+	inheritProperty(propertyName, settings, parent) {
 		// If the property is declared in the route settings, set it
 		if(settings[propertyName] !== undefined) {
 			this[propertyName] = settings[propertyName];
@@ -94,9 +94,9 @@ var Route = Class.extend({
 		}
 
 		return this;
-	},
+	}
 
-	match: function(request, response) {
+	match(request, response) {
 		// Use the routeMatch data structure to be able to keep track of match meta data without running into concurrency issues that would happen as a result of storing data on the route object
 		var routeMatch = {
 			route: null, // Will be populated on complete matches
@@ -174,14 +174,14 @@ var Route = Class.extend({
 		}
 
 		return routeMatch;
-	},
+	}
 
-	follow: function*(request, response) {
+	async follow(request, response) {
 		// Send the response
-		yield response.send();
+		await response.send();
 	},
 
-	getFullExpression: function() {
+	getFullExpression() {
 		var fullExpression = '';
 
 		if(this.parent) {
@@ -191,9 +191,9 @@ var Route = Class.extend({
 		fullExpression += this.expression;
 
 		return fullExpression;
-	},
+	}
 
-	getParents: function() {
+	getParents() {
 		var parents = [];
 
 		var currentParent = this.parent;
@@ -203,9 +203,9 @@ var Route = Class.extend({
 		}
 
 		return parents;
-	},
+	}
 
-	collectData: function(request) {
+	collectData(request) {
 		var collectedData = {};
 
 		// Go through each capture group named in the route and its parents and assign the proper key and value for the capture group name and its matches
@@ -233,9 +233,9 @@ var Route = Class.extend({
 		collectedData = collectedData.sort();
 
 		return collectedData;
-	},
+	}
 
-	getCaptureGroupNames: function() {
+	getCaptureGroupNames() {
 		var captureGroupNames = [];
 
 		// Make a flattened array of the route and it's parents
@@ -251,9 +251,9 @@ var Route = Class.extend({
 		});
 
 		return captureGroupNames;
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = Route;
+export default Route;
