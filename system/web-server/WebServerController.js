@@ -1,93 +1,91 @@
 // Dependencies
-var ServerController = Framework.require('system/server/ServerController.js');
+import ServerController from './../../system/server/ServerController.js';
 
 // Class
-var WebServerController = ServerController.extend({
+class WebServerController extends ServerController {
 
-	request: null,
-	response: null,
-	route: null,
-	data: null,
+	request = null;
+	response = null;
+	route = null;
+	data = null;
 
-	construct: function(request, response, route) {
-		this.super.apply(this, arguments);
+	construct(request, response, route) {
+		super(...arguments);
 
 		this.route = route;
 		this.data = this.route.collectData(request);
-	},
-
-});
-
-// Static methods
-
-WebServerController.getControllerInstance = function(controllerName, request, response, route) {
-	//Console.highlight(controllerName);
-	
-	var controllerInstance = null;
-
-	// Set the directory containing the controllers folder
-	var directory = Project.directory;
-	if(request.webServer) {
-		directory = request.webServer.directory;
 	}
 
-	// Load the controller class
-	var controllerPath = Node.Path.join(directory, 'controllers', controllerName+'.js');
-	var controllerClass = Framework.require(controllerPath);
+	static getControllerInstance(controllerName, request, response, route) {
+		//Console.highlight(controllerName);
+		
+		var controllerInstance = null;
 
-	// Instantiate the controller
-	controllerInstance = new controllerClass(request, response, route);
-
-	return controllerInstance;
-};
-
-WebServerController.getView = function*(viewPath, data) {
-	// See if the viewPath ends in a valid extension
-	var validExtensions = [
-		'.html',
-		'.json',
-		'.js',
-	];
-	var endsWithValidExtension = false;
-	validExtensions.each(function(index, extension) {
-		if(viewPath.endsWith(extension)) {
-			endsWithValidExtension = true;
-			return false; // break
+		// Set the directory containing the controllers folder
+		var directory = Project.directory;
+		if(request.webServer) {
+			directory = request.webServer.directory;
 		}
-	});
 
-	// If the view path does not end with a valid extension, assume .js
-	if(!endsWithValidExtension) {
-		viewPath = viewPath+'.js';
+		// Load the controller class
+		var controllerPath = Node.Path.join(directory, 'controllers', controllerName+'.js');
+		var controllerClass = Framework.require(controllerPath);
+
+		// Instantiate the controller
+		controllerInstance = new controllerClass(request, response, route);
+
+		return controllerInstance;
 	}
 
-	// Create a file to reference the view
-	var viewFile = new File(Node.Path.join(Project.directory, 'views', viewPath));
-	//Console.log('viewFile', viewFile);
+	static async getView(viewPath, data) {
+		// See if the viewPath ends in a valid extension
+		var validExtensions = [
+			'.html',
+			'.json',
+			'.js',
+		];
+		var endsWithValidExtension = false;
+		validExtensions.each(function(index, extension) {
+			if(viewPath.endsWith(extension)) {
+				endsWithValidExtension = true;
+				return false; // break
+			}
+		});
 
-	var viewFileExists = yield viewFile.exists();
-	//Console.log('viewFileExists', viewFileExists);
+		// If the view path does not end with a valid extension, assume .js
+		if(!endsWithValidExtension) {
+			viewPath = viewPath+'.js';
+		}
 
-	// Throw if the view file does not exist
-	if(!viewFileExists) {
-		throw new Error('View '+viewPath+' does not exist.');
+		// Create a file to reference the view
+		var viewFile = new File(Node.Path.join(Project.directory, 'views', viewPath));
+		//Console.log('viewFile', viewFile);
+
+		var viewFileExists = await viewFile.exists();
+		//Console.log('viewFileExists', viewFileExists);
+
+		// Throw if the view file does not exist
+		if(!viewFileExists) {
+			throw new Error('View '+viewPath+' does not exist.');
+		}
+
+		var response = null;
+
+		// If the view is not .js, read the file
+		if(viewFile.extension != 'js') {
+			response = await viewFile.read();
+			response = response.toString();
+			//Console.log('response', response);
+		}
+		else {
+			response = Framework.require(viewFile.path);
+			//Console.log('response', response)
+		}
+
+		return response;
 	}
 
-	var response = null;
-
-	// If the view is not .js, read the file
-	if(viewFile.extension != 'js') {
-		response = yield viewFile.read();
-		response = response.toString();
-		//Console.log('response', response);
-	}
-	else {
-		response = Framework.require(viewFile.path);
-		//Console.log('response', response)
-	}
-
-	return response;
-}.toPromise();
+}
 
 // Export
-module.exports = WebServerController;
+export default WebServerController;

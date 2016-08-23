@@ -1,49 +1,49 @@
 // Dependencies
-var Headers = Framework.require('system/web/headers/Headers.js');
-var Cookies = Framework.require('system/web/headers/Cookies.js');
-var RangeHeader = Framework.require('system/web/headers/RangeHeader.js');
-var Stopwatch = Framework.require('system/time/Stopwatch.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Data = Framework.require('system/data/Data.js');
-var File = Framework.require('system/file-system/File.js');
-var ArchivedFile = Framework.require('system/archive/file-system-objects/ArchivedFile.js');
+import Headers './../../system/web/headers/Headers.js';
+import Cookies './../../system/web/headers/Cookies.js';
+import RangeHeader './../../system/web/headers/RangeHeader.js';
+import Stopwatch './../../system/time/Stopwatch.js';
+import HtmlDocument './../../system/html/HtmlDocument.js';
+import Data './../../system/data/Data.js';
+import File './../../system/file-system/File.js';
+import ArchivedFile './../../system/archive/file-system-objects/ArchivedFile.js';
 
 // Class
-var Response = Class.extend({
+class Response {
 
-	id: null, // Unique identifier for the response
+	id = null; // Unique identifier for the response
 
-	request: null,
+	request = null;
 
-	stopwatches: {
+	stopwatches = {
 		process: null,
 		send: null,
-	},
-	buildStopwatch: null,
+	};
+	buildStopwatch = null;
 	
 	// Encodings
-	encoding: 'identity',
-	acceptedEncodings: [],
-	contentEncoded: false,
+	encoding = 'identity';
+	acceptedEncodings = [];
+	contentEncoded = false;
 
 	// Headers
-	statusCode: null,
-	headers: new Headers(),
-	cookies: new Cookies(),
+	statusCode = null;
+	headers = new Headers();
+	cookies = new Cookies();
 
 	// Content
-	content: '',
+	content = '';
 
 	// Keep track of whether or not the request has been handled (is sending or has been sent)
-	handled: false,
+	handled = false;
 
 	// The time the request is completely sent
-	time: null,
+	time = null;
 
-	nodeResponse: null,
-	webServer: null,
+	nodeResponse = null;
+	webServer = null;
 
-	construct: function(nodeResponse, request, webServer) {
+	constructor(nodeResponse, request, webServer) {
 		// Hold onto Node's response object
 		this.nodeResponse = nodeResponse;
 
@@ -57,9 +57,9 @@ var Response = Class.extend({
 
 		// The response ID matches the request ID
 		this.id = this.request.id;
-	},
+	}
 
-	setAcceptedEncodings: function(acceptEncodeHeaderString) {
+	setAcceptedEncodings(acceptEncodeHeaderString) {
 		if(acceptEncodeHeaderString && String.is(acceptEncodeHeaderString)) {
 			var acceptedEncodings = acceptEncodeHeaderString.split(',');
 			for(var i = 0; i < acceptedEncodings.length; i++) {
@@ -84,9 +84,9 @@ var Response = Class.extend({
 		}
 
 		return this.acceptedEncodings;
-	},
+	}
 
-	send: function*(evenIfHandled) {
+	async send(evenIfHandled) {
 		// Don't send the request if it is already handled unless forced
 		// evenIfHandled allows us to send an error response in the case of the code in this method failing
 		if(this.handled && !evenIfHandled) {
@@ -110,19 +110,19 @@ var Response = Class.extend({
 
 			// Handle when the content is an ArchivedFile
 			if(Class.isInstance(this.content, ArchivedFile)) {
-				yield this.handleContentIsArchivedFile();
+				await this.handleContentIsArchivedFile();
 			}
 			// Handle when the content is a File
 			else if(Class.isInstance(this.content, File)) {
-				yield this.handleContentIsFile();
+				await this.handleContentIsFile();
 			}
 			// Handle when the content is an HtmlDocument
 			else if(Class.isInstance(this.content, HtmlDocument)) {
-				yield this.handleContentIsHtmlDocument();
+				await this.handleContentIsHtmlDocument();
 			}
 			// If the content isn't a string, buffer, or stream, JSON encode it
 			else if(!String.is(this.content) && !Buffer.is(this.content) && !Stream.is(this.content)) {
-				yield this.handleContentIsObject();
+				await this.handleContentIsObject();
 			}
 		}
 
@@ -195,9 +195,9 @@ var Response = Class.extend({
 		else {
 			this.sendContent();
 		}
-	},
+	}
 
-	sendHeaders: function() {
+	sendHeaders() {
 		// Default statusCode is 200
 		if(!this.statusCode) {
 			this.statusCode = 200;
@@ -226,9 +226,9 @@ var Response = Class.extend({
 		this.nodeResponse.writeHead(this.statusCode, this.headers.toArray());
 
 		//Console.highlight(this.headers.toArray());
-	},
+	}
 
-	handleContentIsArchivedFile: function*() {
+	async handleContentIsArchivedFile() {
 		// Set the Content-Type header
 		//Console.highlight(this.content.path);
 		var contentType = File.getContentType(this.content.path);
@@ -247,12 +247,12 @@ var Response = Class.extend({
 		this.headers.set('Accept-Ranges', 'none');
 
 		// If the archived file is compressed with deflate and the requester has said they accept deflate, leave the archived file compressed and let the client deflate it
-		this.content = yield this.content.toReadStream();
-	},
+		this.content = await this.content.toReadStream();
+	}
 
-	handleContentIsFile: function*() {
+	async handleContentIsFile() {
 		// Check if the file exists
-		var fileExists = yield this.content.exists();
+		var fileExists = await this.content.exists();
 
 		// If the file exists
 		if(fileExists) {
@@ -264,7 +264,7 @@ var Response = Class.extend({
 			this.headers.set('Content-Disposition', 'inline; filename="'+this.content.name+'"');
 
 			// Set the Last-Modified header
-			yield this.content.initializeStatus();
+			await this.content.initializeStatus();
 			this.headers.set('Last-Modified', this.content.timeModified.time.toUTCString());
 
 			// Set the ETag header
@@ -288,37 +288,37 @@ var Response = Class.extend({
 				this.headers.set('Content-Range', this.request.range.getContentRange(this.content.sizeInBytes()));
 
 				// Turn the file into a read stream
-				this.content = yield this.content.toReadStream(readStreamRange);
+				this.content = await this.content.toReadStream(readStreamRange);
 			}
 			// Send the entire file
 			else {
 				// Turn the file into a read stream
-				this.content = yield this.content.toReadStream();
+				this.content = await this.content.toReadStream();
 			}
 		}
 		// If the file does not exist, send a 404
 		else {
 			throw new NotFoundError(this.content.name+' not found.');
 		}
-	},
+	}
 
-	handleContentIsHtmlDocument: function*() {
+	async handleContentIsHtmlDocument() {
 		this.headers.set('Content-Type', 'text/html');
 		this.content = this.content.toString(false); // No indentation
 
 		// Set the ETag header
 		this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.request.url+'/'+this.content).digest('hex'));
-	},
+	}
 
-	handleContentIsObject: function*() {
+	async handleContentIsObject() {
 		this.headers.set('Content-Type', 'application/json');
 		this.content = Json.encode(this.content);
 
 		// Set the ETag header
 		this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.request.url+'/'+this.content).digest('hex'));
-	},
+	}
 
-	sendContent: function*() {
+	async sendContent() {
 		//Console.log(this.content);
 		//Console.log(this.acceptedEncodings);
 		//Console.log('contentEncoded', this.contentEncoded);
@@ -352,7 +352,7 @@ var Response = Class.extend({
 		else {
 			// If the content is not encoded and we need to encode
 			if(!this.contentEncoded && (this.encoding == 'gzip' || this.encoding == 'deflate')) {
-				this.content = yield Data.encode(this.content, this.encoding);
+				this.content = await Data.encode(this.content, this.encoding);
 			}
 
 			// End the response
@@ -361,9 +361,9 @@ var Response = Class.extend({
 				this.sent();
 			}.bind(this));
 		}
-	},
+	}
 
-	sent: function() {
+	sent() {
 		// Record the time
 		this.time = new Time();
 
@@ -380,9 +380,9 @@ var Response = Class.extend({
 		if(this.webServer.logs.responses) {
 			this.webServer.logs.responses.write(responsesLogEntry+"\n")
 		}
-	},
+	}
 
-	prepareLogEntry: function() {
+	prepareLogEntry() {
 		var responsesLogEntry = '';
 
 		responsesLogEntry += '"'+this.id+'"';
@@ -393,33 +393,31 @@ var Response = Class.extend({
 		responsesLogEntry += ',"'+this.stopwatches.send.getHighResolutionElapsedTime()+'"';
 
 		return responsesLogEntry;
-	},
+	}
 
-});
+	static contentTypesToEncode = [
+	    'text/html',
+	    'application/x-javascript',
+	    'text/css',
+	    'application/javascript',
+	    'text/javascript',
+	    'text/plain',
+	    'text/xml',
+	    'application/json',
+	    'application/vnd.ms-fontobject',
+	    'application/x-font-opentype',
+	    'application/x-font-truetype',
+	    'application/x-font-ttf',
+	    'application/xml',
+	    'font/eot',
+	    'font/opentype',
+	    'font/otf',
+	    'image/svg+xml',
+	    'image/vnd.microsoft.icon',
+	    //'audio/mpeg', // Testing range requests with content-encoding
+	];
 
-// Static properties
-
-Response.contentTypesToEncode = [
-    'text/html',
-    'application/x-javascript',
-    'text/css',
-    'application/javascript',
-    'text/javascript',
-    'text/plain',
-    'text/xml',
-    'application/json',
-    'application/vnd.ms-fontobject',
-    'application/x-font-opentype',
-    'application/x-font-truetype',
-    'application/x-font-ttf',
-    'application/xml',
-    'font/eot',
-    'font/opentype',
-    'font/otf',
-    'image/svg+xml',
-    'image/vnd.microsoft.icon',
-    //'audio/mpeg', // Testing range requests with content-encoding
-];
+}
 
 // Export
-module.exports = Response;
+export default Response;

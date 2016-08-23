@@ -1,15 +1,15 @@
 // Dependencies
-var HttpError = Framework.require('system/web-server/errors/HttpError.js');
+import HttpError from './HttpError.js';
 
 // Class
-var NotFoundError = HttpError.extend({
+class NotFoundError extends HttpError {
 
-	name: 'NotFoundError',
-	identifier: 'notFoundError',
-	code: 404,
-	message: 'Could not find what was requested.',
+	name = 'NotFoundError';
+	identifier = 'notFoundError';
+	code = 404;
+	message = 'Could not find what was requested.';
 
-});
+}
 
 // Export
-module.exports = NotFoundError;
+export default NotFoundError;

@@ -1,15 +1,15 @@
 // Dependencies
-var HttpError = Framework.require('system/web-server/errors/HttpError.js');
+import HttpError from './HttpError.js';
 
 // Class
-var UnauthorizedError = HttpError.extend({
+class UnauthorizedError extends HttpError {
 
-	name: 'UnauthorizedError',
-	identifier: 'unauthorizedError',
-	code: 401,
-	message: 'Authentication is required.',
+	name = 'UnauthorizedError';
+	identifier = 'unauthorizedError';
+	code = 401;
+	message = 'Authentication is required.';
 
-});
+}
 
 // Export
-module.exports = UnauthorizedError;
+export default UnauthorizedError;

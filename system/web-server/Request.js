@@ -1,46 +1,46 @@
 // Dependencies
-var Headers = Framework.require('system/web/headers/Headers.js');
-var Cookies = Framework.require('system/web/headers/Cookies.js');
-var Url = Framework.require('system/web/Url.js');
-var IpAddressFactory = Framework.require('system/network/IpAddressFactory.js');
-var Browser = Framework.require('system/web/Browser.js');
-var Device = Framework.require('system/hardware/Device.js');
-var OperatingSystem = Framework.require('system/operating-system/OperatingSystem.js');
-var Geolocation = Framework.require('system/geolocation/Geolocation.js');
-var Country = Framework.require('system/geolocation/Country.js');
-var Version = Framework.require('system/version/Version.js');
-var RequestEntityTooLargeError = Framework.require('system/web-server/errors/RequestEntityTooLargeError.js');
+import Headers from './../../system/web/headers/Headers.js';
+import Cookies from './../../system/web/headers/Cookies.js';
+import Url from './../../system/web/Url.js';
+import IpAddressFactory from './../../system/network/IpAddressFactory.js';
+import Browser from './../../system/web/Browser.js';
+import Device from './../../system/hardware/Device.js';
+import OperatingSystem from './../../system/operating-system/OperatingSystem.js';
+import Geolocation from './../../system/geolocation/Geolocation.js';
+import Country from './../../system/geolocation/Country.js';
+import Version from './../../system/version/Version.js';
+import RequestEntityTooLargeError from './errors/RequestEntityTooLargeError.js';
 
 // Class
-var Request = Class.extend({
+class Request {
 
-	id: null, // Unique identifier for the request
+	id = null; // Unique identifier for the request
 
-	method: null,
-	url: null,
-	headers: null,
-	cookies: null,
-	body: '',
-	data: null,
+	method = null;
+	url = null;
+	headers = null;
+	cookies = null;
+	body = '';
+	data = null;
 
-	range: null, // The parsed Range header, this property is set in Response.js to gracefully handle parsing exceptions
+	range = null; // The parsed Range header, this property is set in Response.js to gracefully handle parsing exceptions
 
-	ipAddress: null,
-	connectingIpAddress: null,
+	ipAddress = null;
+	connectingIpAddress = null;
 
-	referrer: null,
-	browser: null,
-	device: null,
-	operatingSystem: null,
-	geolocation: null,
+	referrer = null;
+	browser = null;
+	device = null;
+	operatingSystem = null;
+	geolocation = null;
 
-	httpVersion: null,
-	time: null,
+	httpVersion = null;
+	time = null;
 
-	nodeRequest: null,
-	webServer: null,
+	nodeRequest = null;
+	webServer = null;
 	
-	construct: function(nodeRequest, webServer) {
+	constructor(nodeRequest, webServer) {
 		// Hold onto Node's request object
 		this.nodeRequest = nodeRequest;
 
@@ -114,19 +114,19 @@ var Request = Class.extend({
 			'major': nodeRequest.httpVersionMajor,
 			'minor': nodeRequest.httpVersionMinor,
 		});
-	},
+	}
 
-	isSecure: function() {
+	isSecure() {
 		return this.url.protocol == 'https';
-	},
+	}
 
-	processBody: function() {
+	processBody() {
 		if(Json.is(this.body)) {
 			this.data = Json.decode(this.body);
 		}
-	},
+	}
 
-	received: function() {
+	received() {
 		// Show the request in the console
 		var requestsLogEntry = this.prepareLogEntry();
 		if(this.webServer.settings.get('verbose')) {
@@ -137,9 +137,9 @@ var Request = Class.extend({
 		if(this.webServer.logs.requests) {
 			this.webServer.logs.requests.write(requestsLogEntry+"\n")
 		}
-	},
+	}
 
-	prepareLogEntry: function() {
+	prepareLogEntry() {
 		var requestsLogEntry = '';
 		requestsLogEntry += '"'+this.id+'"';
 		requestsLogEntry += ',"'+this.time.getDateTime()+'"';
@@ -149,9 +149,9 @@ var Request = Class.extend({
 		requestsLogEntry += ',"'+this.referrer.url+'"';
 
 		return requestsLogEntry;
-	},
+	}
 
-	getPublicErrorData: function() {
+	getPublicErrorData() {
 		return {
 			'id': this.id,
 			'method': this.method,
@@ -162,35 +162,35 @@ var Request = Class.extend({
 			'connectingIpAddress': this.connectingIpAddress.address,
 			'time': this.time.time,
 		};
-	},
+	}
+
+	static async receiveNodeRequest(request, maximumRequestBodySizeInBytes) {
+		var nodeRequest = await new Promise(function(resolve, reject) {
+	    	// Build the request body
+			request.nodeRequest.on('data', function(chunk) {
+				// Append the chunk to the body
+				request.body += chunk;
+
+	            // If there is too much data in the body, kill the connection
+	            if(request.body.sizeInBytes() > maximumRequestBodySizeInBytes) {
+	            	throw new RequestEntityTooLargeError('The request failed because it was larger than '+maximumRequestBodySizeInBytes+' bytes.');
+	            }
+			});
+
+			// When the nodeRequest finishes, resolve the promise
+			request.nodeRequest.on('end', function() {
+				// Process the completed body
+				request.processBody();
+
+				// Resolve the nodeRequest
+				resolve(request.nodeRequest);
+			});
+	    });
+
+	    return nodeRequest;
+	}
 	
-});
-
-// Static methods
-
-Request.receiveNodeRequest = function(request, maximumRequestBodySizeInBytes) {
-    return new Promise(function(resolve, reject) {
-    	// Build the request body
-		request.nodeRequest.on('data', function(chunk) {
-			// Append the chunk to the body
-			request.body += chunk;
-
-            // If there is too much data in the body, kill the connection
-            if(request.body.sizeInBytes() > maximumRequestBodySizeInBytes) {
-            	throw new RequestEntityTooLargeError('The request failed because it was larger than '+maximumRequestBodySizeInBytes+' bytes.');
-            }
-		});
-
-		// When the nodeRequest finishes, resolve the promise
-		request.nodeRequest.on('end', function() {
-			// Process the completed body
-			request.processBody();
-
-			// Resolve the nodeRequest
-			resolve(request.nodeRequest);
-		});
-    });
-};
+}
 
 // Export
-module.exports = Request;
+export default Request;

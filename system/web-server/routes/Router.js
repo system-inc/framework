@@ -1,13 +1,13 @@
 // Dependencies
-var RouteFactory = Framework.require('system/web-server/routes/RouteFactory.js');
-var NotFoundError = Framework.require('system/web-server/errors/NotFoundError.js');
+import RouteFactory from './routes/RouteFactory.js';
+import NotFoundError from './errors/NotFoundError.js';
 
 // Class
-var Router = Class.extend({
+class Router {
 
-	routes: [],
+	routes = [];
 
-	loadRoutes: function(routes, project) {
+	loadRoutes(routes, project) {
 		//Console.log('Loading routes...');
 
 		if(routes) {
@@ -17,9 +17,9 @@ var Router = Class.extend({
 		}
 
 		//Console.log(this.routes);
-	},
+	}
 
-	matchRoute: function(request, response) {
+	matchRoute(request, response) {
 		var route = null;
 
 		// Loop over all top level routes
@@ -36,23 +36,23 @@ var Router = Class.extend({
 		}
 		
 		return route;
-	},
+	}
 
-	route: function*(request, response) {
+	async route(request, response) {
 		var route = this.matchRoute(request, response);
 		//Console.log(route);
 
 		// Handle no route found
 		if(route) {
-			yield route.follow(request, response);
+			await route.follow(request, response);
 		}
 		else {
 			// Change this to getting error routes
 			throw new NotFoundError(request.method+' '+request.url.input+' did not match any routes.');
 		}
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = Router;
+export default Router;

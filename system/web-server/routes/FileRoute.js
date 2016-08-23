@@ -1,25 +1,25 @@
 // Dependencies
-var Route = Framework.require('system/web-server/routes/Route.js');
-var File = Framework.require('system/file-system/File.js');
+import Route from './Route.js';
+import File from './../../../system/file-system/File.js';
 
 // Class
-var FileRoute = Route.extend({
+class FileRoute extends Route {
 
-	type: 'file',
-	filePath: null,
+	type = 'file';
+	filePath = null;
 
-	construct: function(settings, parent) {
+	constructor(settings, parent) {
+		super(...arguments);
+
 		this.inheritProperty('filePath', settings, parent);
 
 		// Make sure filePath is a normalized path
 		if(!Object.isEmpty(this.filePath)) {
 			this.filePath = Node.Path.normalize(this.filePath);
 		}
+	}
 
-		this.super.apply(this, arguments);
-	},
-
-	follow: function*(request, response) {
+	async follow(request, response) {
 		// Build the file path
 		var filePath;
 
@@ -36,10 +36,10 @@ var FileRoute = Route.extend({
 		response.content = new File(filePath);
 
 		// Send the response
-		yield this.super.apply(this, arguments);
-	},
+		await this.super.apply(this, arguments);
+	}
 
-});
+}
 
 // Export
-module.exports = FileRoute;
+export default FileRoute;

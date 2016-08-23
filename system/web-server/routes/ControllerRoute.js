@@ -1,25 +1,25 @@
 // Dependencies
-var Route = Framework.require('system/web-server/routes/Route.js');
-var NotFoundError = Framework.require('system/web-server/errors/NotFoundError.js');
-var WebServerController = Framework.require('system/web-server/WebServerController.js');
+import Route from './Route.js';
+import NotFoundError from './../errors/NotFoundError.js';
+import WebServerController from './../WebServerController.js';
 
 // Class
-var ControllerRoute = Route.extend({
+class ControllerRoute extends Route {
 
-	type: 'controller',
-	controllerName: null,
-	controllerMethodName: null,
+	type = 'controller';
+	controllerName = null;
+	controllerMethodName = null;
 
-	construct: function(settings, parent) {
+	constructor(settings, parent) {
+		super(...arguments);
+
 		this.inheritProperty('controllerName', settings, parent);
 		this.inheritProperty('controllerMethodName', settings, parent);
 
-		this.super.apply(this, arguments);
-
 		//Console.info('ControllerRoute.construct', 'settings', settings, 'parent', parent);
-	},
+	}
 
-	follow: function*(request, response) {
+	async follow(request, response) {
 		// Try to get the controller
 		var controller = WebServerController.getControllerInstance(this.controllerName, request, response, this);
 
@@ -39,7 +39,7 @@ var ControllerRoute = Route.extend({
 			}.bind(this));
 
 			// Invoke the controller method and pass in the arguments array
-			response.content = yield controller[this.controllerMethodName].apply(controller, controllerMethodArguments);
+			response.content = await controller[this.controllerMethodName].apply(controller, controllerMethodArguments);
 		}
 		// Send a 404
 		else {
@@ -47,10 +47,10 @@ var ControllerRoute = Route.extend({
 		}
 
 		// Send the response
-		yield this.super.apply(this, arguments);
-	},
+		await this.super.apply(this, arguments);
+	}
 
-});
+}
 
 // Export
-module.exports = ControllerRoute;
+export default ControllerRoute;

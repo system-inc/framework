@@ -1,15 +1,15 @@
 // Dependencies
-var HttpError = Framework.require('system/web-server/errors/HttpError.js');
+import HttpError from './HttpError.js';
 
 // Class
-var InternalServerError = HttpError.extend({
+class InternalServerError extends HttpError {
 
-	name: 'InternalServerError',
-	identifier: 'internalServerError',
-	code: 500,
-	message: 'An unexpected condition was encountered.',
+	name = 'InternalServerError';
+	identifier = 'internalServerError';
+	code = 500;
+	message = 'An unexpected condition was encountered.';
 
-});
+}
 
 // Export
-module.exports = InternalServerError;
+export default InternalServerError;
