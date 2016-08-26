@@ -17,7 +17,7 @@ import './node/Stream.js';
 // Standard
 import './standard/Array.js';
 import './standard/Boolean.js';
-//import './standard/errors/Error.js';
+import './standard/errors/Error.js';
 import './standard/Function.js';
 import './standard/Number.js';
 import './standard/Object.js';

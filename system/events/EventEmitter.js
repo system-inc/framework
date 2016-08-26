@@ -155,7 +155,7 @@ class EventEmitter {
 
 		// Make sure this.recommendedMaximumEventListenersPerEventIdentifier is initialized
 		if(this.recommendedMaximumEventListenersPerEventIdentifier === null) {
-			this.setRecommendedMaximumListenersPerEventIdentifier(EventEmitter.defaultRecommendedMaximumEventListenersPerEventIdentifier);
+			this.recommendedMaximumEventListenersPerEventIdentifier = EventEmitter.defaultRecommendedMaximumEventListenersPerEventIdentifier;
 		}
 
 		if(eventListeners.length > this.recommendedMaximumEventListenersPerEventIdentifier) {

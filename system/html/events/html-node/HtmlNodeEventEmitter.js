@@ -1,19 +1,17 @@
 // Dependencies
-var HtmlEventEmitter = Framework.require('system/html/events/html-event/HtmlEventEmitter.js');
-var HtmlNodeEvent = Framework.require('system/html/events/html-node/HtmlNodeEvent.js');
+import HtmlEventEmitter from './../html-event/HtmlEventEmitter.js';
+import HtmlNodeEvent from './HtmlNodeEvent.js';
 
 // Class
-var HtmlNodeEventEmitter = HtmlEventEmitter.extend({
+class HtmlNodeEventEmitter extends HtmlEventEmitter {
 
-	eventClass: HtmlNodeEvent,
+	eventClass = HtmlNodeEvent;
 
-});
+	static is(value) {
+		return Class.isInstance(value, HtmlNodeEventEmitter);
+	}
 
-// Static methods
-
-HtmlNodeEventEmitter.is = function(value) {
-	return Class.isInstance(value, HtmlNodeEventEmitter);
-};
+}
 
 // Export
-module.exports = HtmlNodeEventEmitter;
+export default HtmlNodeEventEmitter;

@@ -1,29 +1,29 @@
 // Dependencies
-var XmlNode = Framework.require('system/xml/XmlNode.js');
-var HtmlNodeEventEmitter = Framework.require('system/html/events/html-node/HtmlNodeEventEmitter.js');
+import XmlNode from './../../system/xml/XmlNode.js';
+import HtmlNodeEventEmitter from './events/html-node/HtmlNodeEventEmitter.js';
 
 // Class
-var HtmlNode = XmlNode.extend({
+class HtmlNode extends XmlNode {
 
-	htmlDocument: null,
+	htmlDocument = null;
 
-	domNode: null,
-	isMountedToDom: false,
-	shouldExecuteDomUpdate: false, // Keep track of whether or not the HtmlElement is different from the DOM
+	domNode = null;
+	isMountedToDom = false;
+	shouldExecuteDomUpdate = false; // Keep track of whether or not the HtmlElement is different from the DOM
 
-	nodeIdentifier: null, // Used to uniquely identify HtmlNodes for tree comparisons againt the DOM
-	nodeIdentifierCounter: 0, // Used to ensure unique identifiers
+	nodeIdentifier = null // Used to uniquely identify HtmlNodes for tree comparisons againt the DOM
+	nodeIdentifierCounter = 0; // Used to ensure unique identifiers
 
-	dimensions: {
+	dimensions = {
 		width: null,
 		height: null,
 		visible: {
 			width: null,
 			height: null,
 		},
-	},
+	};
 
-	position: {
+	position = {
 		relativeToRelativeAncestor: {
 			x: null, // scrollLeft
 			y: null, // scrollTop
@@ -87,15 +87,15 @@ var HtmlNode = XmlNode.extend({
 		//relativeToDocument
 		//relativeToGlobal
 		//relativeToPreviousGlobalRelativePosition
-	},
+	};
 
-	construct: function(content, parent, type) {
-		this.super.apply(this, arguments);
+	constructor(content, parent, type) {
+		super(...arguments);
 
 		this.descendFromParent();
-	},
+	}
 
-	descendFromParent: function(parent) {
+	descendFromParent(parent) {
 		// Allow the parent relationship to be established with this call
 		if(parent) {
 			this.parent = parent;
@@ -115,10 +115,10 @@ var HtmlNode = XmlNode.extend({
 			this.nodeIdentifier = this.parent.nodeIdentifier+'.'+this.parent.nodeIdentifierCounter;
 			this.parent.nodeIdentifierCounter++;
 		}
-	},
+	}
 
 	// Called whenever the HtmlNode changes
-	updateDom: function() {
+	updateDom() {
 		//Console.log('HtmlNode.updateDom()');
 
 		// Mark the object as dirty
@@ -136,9 +136,9 @@ var HtmlNode = XmlNode.extend({
 		else {
 			this.htmlDocument.updateDom(this);
 		}
-	},
+	}
 
-	executeDomUpdate: function() {
+	executeDomUpdate() {
 		//Console.log('HtmlNode executeDomUpdate', this.tag);
 
 		// If we should execute an update
@@ -152,31 +152,31 @@ var HtmlNode = XmlNode.extend({
 		else {
 			//console.info('No need to run updates on this element', this);
 		}
-	},
+	}
 
-	domUpdateExecuted: function() {
+	domUpdateExecuted() {
 		// Mark the object as clean
 		this.shouldExecuteDomUpdate = false;
 
 		this.emit('htmlNode.domUpdateExecuted', this, {
 			propagationStopped: true, // Do not propagate this event
 		});
-	},
+	}
 
-	applyDomUpdates: function() {
+	applyDomUpdates() {
 		// Update the DOM node's value
 		this.updateDomNodeValue();
-	},
+	}
 
-	updateDomNodeValue: function() {
+	updateDomNodeValue() {
 		// Make sure the string matches
 		if(this.value != this.domNode.nodeValue) {
 			// Must use nodeValue here because innerHTML does not exist on DOM nodes which just have text
 			this.domNode.nodeValue = this.value;
 		}
-	},
+	}
 
-	createDomNode: function(htmlNode) {
+	createDomNode(htmlNode) {
 		// Allow this method to be called statically
 		if(!htmlNode) {
 			htmlNode = this;
@@ -187,9 +187,9 @@ var HtmlNode = XmlNode.extend({
 		//Console.log('HtmlNode domFragment for', htmlNode.tag, domFragment);
 
 		return domFragment;
-	},
+	}
 
-	appendDomNode: function() {
+	appendDomNode() {
 		//Console.log('HtmlNode.appendDomNode', this.tag);
 
 		var domFragment = this.createDomNode();
@@ -205,9 +205,9 @@ var HtmlNode = XmlNode.extend({
 		//Console.standardLog('this.domNode', this.domNode);
 
 		this.mountedToDom();
-	},
+	}
 
-	replaceDomNode: function(indexOfChildDomNodeToReplace) {
+	replaceDomNode(indexOfChildDomNodeToReplace) {
 		//Console.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace, this.tag);
 
 		var domFragment = this.createDomNode();
@@ -219,9 +219,9 @@ var HtmlNode = XmlNode.extend({
 		this.domNode = this.parent.domNode.childNodes[indexOfChildDomNodeToReplace];
 
 		this.mountedToDom();
-	},
+	}
 
-	mountedToDom: function() {
+	mountedToDom() {
 		//Console.log('HtmlNode mountedToDom', this.tag)
 		
 		// The domNode has a reference to the HtmlNode
@@ -235,9 +235,9 @@ var HtmlNode = XmlNode.extend({
 		this.emit('htmlNode.mountedToDom', this, {
 			propagationStopped: true, // Do not propagate this event
 		});
-	},
+	}
 
-	emptyDomNode: function(domNode) {
+	emptyDomNode(domNode) {
 		if(!domNode) {
 			domNode = this.domNode;
 		}
@@ -247,19 +247,19 @@ var HtmlNode = XmlNode.extend({
 		}
 
 		return domNode;
-	},
+	}
 
 	// TODO: At some point add some arguments to this function to allow it to specify the start and end offsets of the selection
-	select: function() {
+	select() {
 		var selection = this.htmlDocument.getSelection();
         var range = this.htmlDocument.domDocument.createRange();
         range.selectNodeContents(this.domNode);
         //Console.standardLog(selection, range);
         selection.removeAllRanges();
         selection.addRange(range);
-	},
+	}
 
-	getSelectionText: function() {
+	getSelectionText() {
 		var selectionText = null;
 
 		// Get the selection from the document
@@ -333,21 +333,21 @@ var HtmlNode = XmlNode.extend({
 		}
 
         return selectionText;
-    },
+    }
 
-	getDimensions: function() {
+	getDimensions() {
 		this.getDimensionAndPositionFromDomNode();
 
 		return this.dimensions;
-	},
+	}
 
-	getPosition: function() {
+	getPosition() {
 		this.getDimensionAndPositionFromDomNode();
 
 		return this.position;
-	},
+	}
 
-	getDimensionAndPositionFromDomNode: function() {
+	getDimensionAndPositionFromDomNode() {
 		if(this.domNode) {
 			var boundingClientRect = this.domNode.getBoundingClientRect();
 
@@ -400,28 +400,26 @@ var HtmlNode = XmlNode.extend({
 			dimensions: this.dimensions,
 			position: this.position,
 		};
-	},
+	}
 
-	click: function() {
+	click() {
 		if(this.domNode) {
 			this.domNode.click();
 		}
-	},
+	}
 
-});
+	static is(value) {
+		return Class.isInstance(value, HtmlNode);
+	}
 
-// Static methods
+	static createDomNode = HtmlNode.prototype.createDomNode;
 
-HtmlNode.is = function(value) {
-	return Class.isInstance(value, HtmlNode);
-};
+	static emptyDomNode = HtmlNode.prototype.emptyDomNode;
 
-HtmlNode.createDomNode = HtmlNode.prototype.createDomNode;
-
-HtmlNode.emptyDomNode = HtmlNode.prototype.emptyDomNode;
+}
 
 // Class implementations
-HtmlNode.implement(HtmlNodeEventEmitter);
+Class.implement(HtmlNode, HtmlNodeEventEmitter);
 
 // Export
-module.exports = HtmlNode;
+export default HtmlNode;

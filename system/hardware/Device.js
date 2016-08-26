@@ -1,25 +1,25 @@
 // Class
-var Device = Class.extend({
+class Device {
 
-	type: null, // mobile, tablet, desktop, robot
-	name: null,
-	model: null,
-	manufacturer: null,
-	architecture: null,
+	type = null; // mobile, tablet, desktop, robot
+	name = null;
+	model = null;
+	manufacturer = null;
+	architecture = null;
 
-	isMobile: function() {
+	isMobile() {
 		return this.type == 'mobile';
-	},
+	}
 
-	isTablet: function() {
+	isTablet() {
 		return this.type == 'tablet';
-	},
+	}
 
-	isDesktop: function() {
+	isDesktop() {
 		return this.type == 'desktop';
-	},
+	}
 
-	parseUserAgent: function(userAgent) {
+	parseUserAgent(userAgent) {
 		// Return immediately if there is no user agent
 		if(!userAgent) {
 			return this;
@@ -53,19 +53,17 @@ var Device = Class.extend({
 		}
 
 		return this;
-	},
+	}
+
+	static constructFromUserAgent(userAgent) {
+		var device = new Device();
+
+		device.parseUserAgent(userAgent);
+
+		return device;
+	}
 	
-});
-
-// Static methods
-
-Device.constructFromUserAgent = function(userAgent) {
-	var device = new Device();
-
-	device.parseUserAgent(userAgent);
-
-	return device;
-};
+}
 
 // Export
-module.exports = Device;
+export default Device;

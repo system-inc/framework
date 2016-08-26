@@ -1,10 +1,10 @@
 // Class
-var Country = Class.extend({
+class Country {
 
-	name: null,
-	code: null,
+	name = null;
+	code = null;
 
-});
+}
 
 // Export
-module.exports = Country;
+export default Country;

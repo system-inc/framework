@@ -81,7 +81,7 @@ class Proctor extends EventEmitter {
 		};
 		
 		// Watch the project and framework directories
-		var watchedFileSystemObjects = await FileSystemObject.watch([Project.directory, Project.framework.directory], function(fileSystemObject, currentStatus, previousStatus) {
+		var watchedFileSystemObjects = await FileSystemObject.watch([app.directory, app.framework.directory], function(fileSystemObject, currentStatus, previousStatus) {
 			//Console.log(fileSystemObject.path, 'updated.');
 
 			if(fileSystemObject.path.endsWith('Test.js')) {
@@ -102,7 +102,7 @@ class Proctor extends EventEmitter {
 				}
 				else {
 					// Spawn the child process
-				    var nodeChildProcess = exports.child = Node.ChildProcess.spawn('node', ['--harmony', Node.Path.join('tests', 'Project.js'), '-f', activeTest.class], {
+				    var nodeChildProcess = exports.child = Node.ChildProcess.spawn('node', ['--harmony', Node.Path.join('tests', 'app.js'), '-f', activeTest.class], {
 				    	stdio: 'inherit',
 				    });
 
@@ -749,11 +749,11 @@ class Proctor extends EventEmitter {
 	static resolvePath(path) {
 		// If the path does not exist, we are in the default Framework tests directory
 		if(!path) {
-			path = Project.framework.directory;
+			path = app.framework.directory;
 		}
 		// If the path is not absolute, we are in the default Framework tests directory
 		else if(!Node.Path.isAbsolute(path)) {
-			path = Node.Path.join(Project.framework.directory, 'tests', path);
+			path = Node.Path.join(app.framework.directory, 'tests', path);
 		}
 
 		return path;

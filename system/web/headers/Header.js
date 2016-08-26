@@ -1,19 +1,19 @@
 // Class
-var Header = Class.extend({
+class Header {
 
-	key: null,
-	value: null,
+	key = null;
+	value = null;
 
-	construct: function(key, value) {
+	constructor(key, value) {
 		this.key = key;
 		this.value = value;
-	},
+	}
 
-	toString: function() {
+	toString() {
 		return this.value;
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = Header;
+export default Header;

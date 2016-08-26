@@ -1,69 +1,67 @@
 // Dependencies
-var InputPressEvent = Framework.require('system/html/events/html-element/input/InputPressEvent.js');
+import InputPressEvent from './InputPressEvent.js';
 
 // Class
-var InputHoverEvent = InputPressEvent.extend({
+class InputHoverEvent extends InputPressEvent {
 
-});
-
-// Static methods
-
-InputHoverEvent.is = function(value) {
-	return Class.isInstance(value, InputHoverEvent);
-};
-
-InputHoverEvent.createEventsFromDomEvent = function(domEvent, emitter) {
-	//Console.standardLog('InputHoverEvent.createEventsFromDomEvent', domEvent.type, arguments);
-
-	var events = [];
-
-	// Use this for identifying which events to create
-	var inputHoverEventWithoutIdentifier = InputHoverEvent.createFromDomEvent(domEvent, emitter, null);
-
-	// The identifier for the event
-	var eventIdentifier = null;
-
-	if(domEvent.type == 'mousemove') {
-		eventIdentifier = 'input.hover';
-	}
-	if(domEvent.type == 'mouseenter') {
-		eventIdentifier = 'input.hover.in';
-	}
-	if(domEvent.type == 'mouseleave') {
-		eventIdentifier = 'input.hover.out';
-	}
-	if(domEvent.type == 'mouseover') {
-		eventIdentifier = 'input.hover.in.exact';
-	}
-	if(domEvent.type == 'mouseout') {
-		eventIdentifier = 'input.hover.out.exact';
+	static is(value) {
+		return Class.isInstance(value, InputHoverEvent);
 	}
 
-	// Set the identifier
-	inputHoverEventWithoutIdentifier.identifier = eventIdentifier;
+	static createEventsFromDomEvent(domEvent, emitter) {
+		//Console.standardLog('InputHoverEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
-	// Add the event
-	events.append(inputHoverEventWithoutIdentifier);
+		var events = [];
 
-	// Scroll direction .up, .down, .left, .right
-	if(inputHoverEventWithoutIdentifier.direction) {
-		events.append(InputHoverEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.'+inputHoverEventWithoutIdentifier.direction));
+		// Use this for identifying which events to create
+		var inputHoverEventWithoutIdentifier = InputHoverEvent.createFromDomEvent(domEvent, emitter, null);
+
+		// The identifier for the event
+		var eventIdentifier = null;
+
+		if(domEvent.type == 'mousemove') {
+			eventIdentifier = 'input.hover';
+		}
+		if(domEvent.type == 'mouseenter') {
+			eventIdentifier = 'input.hover.in';
+		}
+		if(domEvent.type == 'mouseleave') {
+			eventIdentifier = 'input.hover.out';
+		}
+		if(domEvent.type == 'mouseover') {
+			eventIdentifier = 'input.hover.in.exact';
+		}
+		if(domEvent.type == 'mouseout') {
+			eventIdentifier = 'input.hover.out.exact';
+		}
+
+		// Set the identifier
+		inputHoverEventWithoutIdentifier.identifier = eventIdentifier;
+
+		// Add the event
+		events.append(inputHoverEventWithoutIdentifier);
+
+		// Scroll direction .up, .down, .left, .right
+		if(inputHoverEventWithoutIdentifier.direction) {
+			events.append(InputHoverEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.'+inputHoverEventWithoutIdentifier.direction));
+		}
+
+		//Console.standardLog('events', events);
+
+		return events;
 	}
 
-	//Console.standardLog('events', events);
+	static createFromDomEvent(domEvent, emitter, identifier) {
+		var inputHoverEvent = new InputHoverEvent(emitter, identifier);
 
-	return events;
-};
+		InputPressEvent.initializeFromDomEvent(inputHoverEvent, domEvent);
 
-InputHoverEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
-	var inputHoverEvent = new InputHoverEvent(emitter, identifier);
+		inputHoverEvent.button = null;
 
-	InputPressEvent.initializeFromDomEvent(inputHoverEvent, domEvent);
+		return inputHoverEvent;
+	}
 
-	inputHoverEvent.button = null;
-
-	return inputHoverEvent;
-};
+}
 
 // Export
-module.exports = InputHoverEvent;
+export default InputHoverEvent;

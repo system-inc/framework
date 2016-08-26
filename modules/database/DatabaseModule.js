@@ -12,7 +12,7 @@ class DatabaseModule extends Module {
 
 	async initialize(settings) {
 		//Node.exit('DatabaseModule initialize', settings);
-		await this.super.apply(this, arguments);
+		await super.initialize(...arguments);
 
 		this.databaseManager = new DatabaseManager();
 

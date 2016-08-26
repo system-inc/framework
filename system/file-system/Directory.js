@@ -86,6 +86,10 @@ class Directory extends FileSystemObject {
 	    });
 	}
 
+	static is(value) {
+		return value instanceof Directory;
+	}
+
 }
 
 // Export

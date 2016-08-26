@@ -1,17 +1,17 @@
 // Dependencies
-var File = Framework.require('system/file-system/File.js');
-var SevenZip = Framework.require('system/archive/libraries/7-zip/SevenZip.js');
-var ArchivedFileSystemObjectFactory = Framework.require('system/archive/file-system-objects/ArchivedFileSystemObjectFactory.js');
+import File from './../../system/file-system/File.js';
+import SevenZip from './libraries/7-zip/SevenZip.js';
+import ArchivedFileSystemObjectFactory from './file-system-objects/ArchivedFileSystemObjectFactory.js';
 
 // Class
-var ArchiveFile = File.extend({
+class ArchiveFile extends File {
 
-	archivedFileSystemObjects: null,
+	archivedFileSystemObjects = null;
 
-	comment: null,
+	comment = null;
 
-	getArchivedFileSystemObjectByPath: function*(archivedFileSystemObjectPath) {
-		var list = yield this.list();
+	async getArchivedFileSystemObjectByPath(archivedFileSystemObjectPath) {
+		var list = await this.list();
 
 		var archivedFileSystemObject = null;
 
@@ -24,12 +24,12 @@ var ArchiveFile = File.extend({
 		});
 
 		return archivedFileSystemObject;
-	},
+	}
 
-	list: function*() {
+	async list() {
 		if(!this.archivedFileSystemObjects) {
 			// Get the 7-Zip list from the command line executable
-			var sevenZipList = yield SevenZip.list(this.file);
+			var sevenZipList = await SevenZip.list(this.file);
 			//Console.log(sevenZipList);
 
 			this.archivedFileSystemObjects = [];
@@ -45,9 +45,9 @@ var ArchiveFile = File.extend({
 		//Console.highlight('this.archivedFileSystemObjects', this.archivedFileSystemObjects);
 
 		return this.archivedFileSystemObjects;
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ArchiveFile;
+export default ArchiveFile;

@@ -1,19 +1,21 @@
 // Dependencies
-var XmlNode = Framework.require('system/xml/XmlNode.js');
+import XmlNode from './XmlNode.js';
 
 // Class
-var XmlElement = XmlNode.extend({
+class XmlElement extends XmlNode {
 
 	// XmlNode properties
-	type: 'element',
+	type = 'element';
 
 	// XmlElement properties
-	tag: null,
-	unary: false, // Tags are not unary (self-closing) by default
-	attributes: {},
-	children: [], // Array containing strings or elements
+	tag = null;
+	unary = false; // Tags are not unary (self-closing) by default
+	attributes = {};
+	children = []; // Array containing strings or elements
 
-	construct: function(tag, options, unary) {
+	constructor(tag, options, unary) {
+		super();
+
 		// this.children is an array and this.content is an alias to it
 		this.content = this.children;
 
@@ -48,9 +50,9 @@ var XmlElement = XmlNode.extend({
 				}
 			}.bind(this));
 		}
-	},
+	}
 
-	getAttribute: function(attributeName) {
+	getAttribute(attributeName) {
 		var attribute = null;
 
 		if(this.attributes[attributeName]) {
@@ -58,41 +60,41 @@ var XmlElement = XmlNode.extend({
 		}
 
 		return attribute;
-	},
+	}
 
-	setAttribute: function(attributeName, attributeValue) {
+	setAttribute(attributeName, attributeValue) {
 		this.attributes[attributeName] = attributeValue;
 
 		return this;
-	},
+	}
 
-	removeAttribute: function(attributeName) {
+	removeAttribute(attributeName) {
 		if(this.attributes[attributeName]) {
 			delete this.attributes[attributeName];
 		}
 
 		return this;
-	},
+	}
 
-	empty: function() {
+	empty() {
 		this.children = [];
 
 		return this;
-	},
+	}
 
-	prepend: function(stringOrXmlNode) {
+	prepend(stringOrXmlNode) {
 		this.children.prepend(XmlNode.makeXmlNode(stringOrXmlNode, this));
 
 		return this;
-	},	
+	}
 
-	append: function(stringOrXmlNode) {
+	append(stringOrXmlNode) {
 		this.children.append(XmlNode.makeXmlNode(stringOrXmlNode, this));
 
 		return this;
-	},
+	}
 
-	tagOpeningToString: function() {
+	tagOpeningToString() {
 		var string = '<'+this.tag;
 
 		// Attributes
@@ -105,9 +107,9 @@ var XmlElement = XmlNode.extend({
 		}	
 
 		return string;
-	},
+	}
 
-	tagClosingToString: function() {
+	tagClosingToString() {
 		var string = '';
 
 		if(this.unary) {
@@ -118,18 +120,18 @@ var XmlElement = XmlNode.extend({
 		}
 
 		return string;
-	},
+	}
 
 	// Just the tag without the children
-	tagToString: function() {
+	tagToString() {
 		var string = this.tagOpeningToString();
 		string += this.tagClosingToString();
 
 		return string;
-	},
+	}
 
 	// Just the children without the tag
-	childrenToString: function(indent, indentationLevel, indentationCharacter, indentationRepetitions) {
+	childrenToString(indent, indentationLevel, indentationCharacter, indentationRepetitions) {
 		var string = '';
 
 		this.children.each(function(index, xmlNode) {
@@ -149,9 +151,9 @@ var XmlElement = XmlNode.extend({
 		});
 
 		return string;
-	},
+	}
 
-	toString: function(indent, indentationLevel) {
+	toString(indent, indentationLevel) {
 		var string = '';
 		var indentationRepetitions = 4;
 		var indentationCharacter = ' ';
@@ -182,32 +184,30 @@ var XmlElement = XmlNode.extend({
 		string += this.tagClosingToString();
 
 		return string;
-	},
-
-});
-
-// Static methods
-
-XmlElement.is = function(value) {
-	return Class.isInstance(value, XmlElement);
-};
-
-XmlElement.attributeValueToString = function(attributeValue) {
-	var attributeValueString = attributeValue;
-
-	// Attributes that are not strings are turned into a string, e.g., "property1: value1; property2: value2;""
-	if(!String.is(attributeValue)) {
-		attributeValueString = '';
-
-		attributeValue.each(function(subAttributeName, subAttributeValue) {
-			attributeValueString += subAttributeName+': '+subAttributeValue+'; ';
-		});
-
-		attributeValueString = attributeValueString.trim();
 	}
 
-	return attributeValueString;
-};
+	static is(value) {
+		return Class.isInstance(value, XmlElement);
+	}
+
+	static attributeValueToString(attributeValue) {
+		var attributeValueString = attributeValue;
+
+		// Attributes that are not strings are turned into a string, e.g., "property1: value1; property2: value2;""
+		if(!String.is(attributeValue)) {
+			attributeValueString = '';
+
+			attributeValue.each(function(subAttributeName, subAttributeValue) {
+				attributeValueString += subAttributeName+': '+subAttributeValue+'; ';
+			});
+
+			attributeValueString = attributeValueString.trim();
+		}
+
+		return attributeValueString;
+	}
+
+}
 
 // Export
-module.exports = XmlElement;
+export default XmlElement;

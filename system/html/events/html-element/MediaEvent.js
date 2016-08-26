@@ -1,18 +1,14 @@
 // Dependencies
-var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
+import HtmlElementEvent from './../html-element/HtmlElementEvent.js';
 
 // Class
-var MediaEvent = HtmlElementEvent.extend({
+class MediaEvent extends HtmlElementEvent{
 
-	
+	static is(value) {
+		return Class.isInstance(value, MediaEvent);
+	}
 
-});
-
-// Static methods
-
-MediaEvent.is = function(value) {
-	return Class.isInstance(value, MediaEvent);
-};
+}
 
 // Export
-module.exports = MediaEvent;
+export default MediaEvent;

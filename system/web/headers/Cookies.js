@@ -1,27 +1,27 @@
 // Dependencies
-var Cookie = Framework.require('system/web/headers/Cookie.js');
+import Cookie from './Cookie.js';
 
 // Class
-var Cookies = Class.extend({
+class Cookies {
 
-	cookies: [],
+	cookies = [];
 
-	construct: function(string) {
+	constructor(string) {
 		if(string) {
 			this.parse(string);	
 		}
-	},
+	}
 
-	parse: function(string) {
+	parse(string) {
 		string.split(';').each(function(index, cookie) {
 			if(!cookie.empty()) {
 				var parts = cookie.split('=');
 	        	this.cookies.append(new Cookie(parts.shift().trim(), unescape(parts.join('='))));
 			}
 		}.bind(this));
-	},
+	}
 
-	get: function(key, caseSensitive) {
+	get(key, caseSensitive) {
 		caseSensitive = caseSensitive === true ? true : false;
 		var cookie = null;
 
@@ -43,9 +43,9 @@ var Cookies = Class.extend({
 		}
 
 		return cookie;
-	},
+	}
 
-	getCookie: function(key, caseSensitive) {
+	getCookie(key, caseSensitive) {
 		caseSensitive = caseSensitive === true ? true : false;
 		var cookie = null;
 
@@ -67,25 +67,25 @@ var Cookies = Class.extend({
 		}
 
 		return cookie;
-	},
+	}
 
-	add: function(cookie) {
+	add(cookie) {
 		this.cookies.append(cookie);
-	},
+	}
 
-	create: function(key, value) {
+	create(key, value) {
 		var cookie = new Cookie(key, value);
 
 		this.cookies.append(cookie);
 
 		return cookie;
-	},
+	}
 
-	set: function(key, value, caseSensitive) {
+	set(key, value, caseSensitive) {
 		return this.update(key, value, caseSensitive);
-	},
+	}
 
-	update: function(key, value, caseSensitive) {
+	update(key, value, caseSensitive) {
 		caseSensitive = caseSensitive === true ? true : false;
 		var cookie = this.getCookie(key, false);
 
@@ -97,17 +97,17 @@ var Cookies = Class.extend({
 		}
 
 		return cookie;
-	},
+	}
 
-	delete: function() {
+	delete() {
 
-	},
+	}
 
-	length: function() {
+	length() {
 		return this.cookies.length;
-	},
+	}
 
-	toHeadersArray: function() {
+	toHeadersArray() {
 		var headersArray = [];
 
 		this.cookies.each(function(index, cookie) {
@@ -115,9 +115,9 @@ var Cookies = Class.extend({
 		});
 
 		return headersArray;
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = Cookies;
+export default Cookies;

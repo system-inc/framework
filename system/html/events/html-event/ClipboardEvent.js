@@ -1,58 +1,56 @@
 // Dependencies
-var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
+import HtmlElementEvent from './../html-element/HtmlElementEvent.js';
 
 // Class
-var ClipboardEvent = HtmlElementEvent.extend({
+class ClipboardEvent extends HtmlElementEvent {
 
-	dataTransfer: null,
+	dataTransfer = null;
 
-});
-
-// Static methods
-
-ClipboardEvent.is = function(value) {
-	return Class.isInstance(value, ClipboardEvent);
-};
-
-ClipboardEvent.createEventsFromDomEvent = function(domEvent, emitter) {
-	Console.standardLog('ClipboardEvent.createEventsFromDomEvent', domEvent.type, arguments);
-
-	var events = [];
-
-	// Use this for identifying which events to create
-	var clipboardEventWithoutIdentifier = ClipboardEvent.createFromDomEvent(domEvent, emitter, null);
-
-	// The identifier for the event
-	var eventIdentifier = null;
-
-	if(domEvent.type == 'copy') {
-		eventIdentifier = 'clipboard.copy';
-	}
-	else if(domEvent.type == 'cut') {
-		eventIdentifier = 'clipboard.cut';
-	}
-	else if(domEvent.type == 'paste') {
-		eventIdentifier = 'clipboard.paste';
+	static is(value) {
+		return Class.isInstance(value, ClipboardEvent);
 	}
 
-	// Set the identifier
-	clipboardEventWithoutIdentifier.identifier = eventIdentifier;
+	static createEventsFromDomEvent(domEvent, emitter) {
+		Console.standardLog('ClipboardEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
-	// Add the event
-	events.append(clipboardEventWithoutIdentifier);
+		var events = [];
 
-	//Console.standardLog('events', events);
+		// Use this for identifying which events to create
+		var clipboardEventWithoutIdentifier = ClipboardEvent.createFromDomEvent(domEvent, emitter, null);
 
-	return events;
-};
+		// The identifier for the event
+		var eventIdentifier = null;
 
-ClipboardEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
-	var clipboardEvent = new ClipboardEvent(emitter, identifier);
+		if(domEvent.type == 'copy') {
+			eventIdentifier = 'clipboard.copy';
+		}
+		else if(domEvent.type == 'cut') {
+			eventIdentifier = 'clipboard.cut';
+		}
+		else if(domEvent.type == 'paste') {
+			eventIdentifier = 'clipboard.paste';
+		}
 
-	clipboardEvent.dataTransfer = domEvent.clipboardData;
+		// Set the identifier
+		clipboardEventWithoutIdentifier.identifier = eventIdentifier;
 
-	return clipboardEvent;
-};
+		// Add the event
+		events.append(clipboardEventWithoutIdentifier);
+
+		//Console.standardLog('events', events);
+
+		return events;
+	}
+
+	static createFromDomEvent(domEvent, emitter, identifier) {
+		var clipboardEvent = new ClipboardEvent(emitter, identifier);
+
+		clipboardEvent.dataTransfer = domEvent.clipboardData;
+
+		return clipboardEvent;
+	}
+
+}
 
 // Export
-module.exports = ClipboardEvent;
+export default ClipboardEvent;

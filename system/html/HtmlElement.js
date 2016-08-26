@@ -1,10 +1,10 @@
 // Dependencies
-var HtmlNode = Framework.require('system/html/HtmlNode.js');
-var XmlElement = Framework.require('system/xml/XmlElement.js');
-var HtmlElementEventEmitter = Framework.require('system/html/events/html-element/HtmlElementEventEmitter.js');
+import HtmlNode from './HtmlNode.js';
+import XmlElement from './../../system/xml/XmlElement.js';
+import HtmlElementEventEmitter from './events/html-element/HtmlElementEventEmitter.js';
 
 // Class
-var HtmlElement = HtmlNode.extend({
+class HtmlElement extends HtmlNode {
 
 	// HtmlElement cannot be a subclass of both XmlElement and HtmlNode
 	// So, we will extend from HtmlNode and reference the properties and methods we want from XmlElement
@@ -12,89 +12,82 @@ var HtmlElement = HtmlNode.extend({
 	// However, Class.doesImplement(HtmlElement, XmlElement) will return true
 
 	// XmlNode properties
-	type: XmlElement.prototype.type,
+	type = XmlElement.prototype.type;
 
 	// XmlElement properties
-	tag: XmlElement.prototype.tag,
-	unary: XmlElement.prototype.unary, // Tags are not unary (self-closing) by default
-	attributes: XmlElement.prototype.attributes,
-	children: XmlElement.prototype.children, // Array containing strings or elements
+	tag = XmlElement.prototype.tag;
+	unary = XmlElement.prototype.unary; // Tags are not unary (self-closing) by default
+	attributes = XmlElement.prototype.attributes;
+	children = XmlElement.prototype.children; // Array containing strings or elements
 
 	// XmlElement methods
-	getAttribute: XmlElement.prototype.getAttribute,
+	getAttribute = XmlElement.prototype.getAttribute;
 	// We implement these differently in HtmlElement below
-	//setAttribute: XmlElement.prototype.setAttribute,
-	//removeAttribute: XmlElement.prototype.removeAttribute,
-	//empty: XmlElement.prototype.empty,
-	//prepend: XmlElement.prototype.prepend,
-	//append: XmlElement.prototype.append,
-	tagOpeningToString: XmlElement.prototype.tagOpeningToString,
-	tagClosingToString: XmlElement.prototype.tagClosingToString,
-	tagToString: XmlElement.prototype.tagToString,
-	childrenToString: XmlElement.prototype.childrenToString,
-	toString: XmlElement.prototype.toString,
+	//setAttribute = XmlElement.prototype.setAttribute;
+	//removeAttribute = XmlElement.prototype.removeAttribute;
+	//empty = XmlElement.prototype.empty;
+	//prepend = XmlElement.prototype.prepend;
+	//append = XmlElement.prototype.append;
+	tagOpeningToString = XmlElement.prototype.tagOpeningToString;
+	tagClosingToString = XmlElement.prototype.tagClosingToString;
+	tagToString = XmlElement.prototype.tagToString;
+	childrenToString = XmlElement.prototype.childrenToString;
+	toString = XmlElement.prototype.toString;
 
 	// Uses XmlElement
-	construct: function(tag, options, unary) {
-		// Automatically detect if tags are supposed to be unary
-		if(unary === undefined) {
-			if(tag === undefined) {
-				tag = this.tag;
-			}
-		 	
-		 	if(HtmlElement.unaryTags.contains(tag)) {
-		 		unary = true;
-		 	}
-		}
+	constructor(tag, options, unary) {
+		super(...arguments);
+
+		// Detect if tags are supposed to be unary
+		if(HtmlElement.unaryTags.contains(this.tag)) {
+	 		this.unary = true;
+	 	}
 
 		// Update the DOM if attributes are already set
 		if(Object.keys(this.attributes).length) {
 			//Console.log('Attributes already set on tag', this.tag);
 			this.updateDom();
 		}
-
-		// Use XmlElement's constructor
-		XmlElement.prototype.construct.call(this, tag, options, unary);
-	},
+	}
 
 	// Method exists on XmlElement as well
-	setAttribute: function(attributeName, attributeValue) {
+	setAttribute(attributeName, attributeValue) {
 		XmlElement.prototype.setAttribute.apply(this, arguments);
 
 		this.updateDom();
 
 		return this;
-	},
+	}
 
 	// Method exists on XmlElement as well
-	removeAttribute: function(attributeName) {
+	removeAttribute(attributeName) {
 		XmlElement.prototype.removeAttribute.apply(this, arguments);
 
 		this.updateDom();
 
 		return this;
-	},
+	}
 
 	// Method exists on XmlElement as well
-	empty: function() {
+	empty() {
 		XmlElement.prototype.empty.apply(this, arguments);
 
 		this.updateDom();
 
 		return this;
-	},
+	}
 
 	// Method exists on XmlElement as well
-	prepend: function(stringOrHtmlNode) {
+	prepend(stringOrHtmlNode) {
 		this.children.prepend(HtmlElement.makeHtmlNode(stringOrHtmlNode, this));
 
 		this.updateDom();
 
 		return this;
-	},
+	}
 
 	// Method exists on XmlElement as well
-	append: function(stringOrHtmlNode) {
+	append(stringOrHtmlNode) {
 		if(!this.children) {
 			throw new Error('HtmlElement instance does not have .children set, this should never happen, it should always be an array.');
 		}
@@ -104,17 +97,17 @@ var HtmlElement = HtmlNode.extend({
 		this.updateDom();
 
 		return this;
-	},
+	}
 
-	setContent: function(content) {
+	setContent(content) {
 		// Empty the current content
 		this.empty();
 
 		// Append the new content
 		this.append(content);
-	},
+	}
 
-	descendFromParent: function(parent) {
+	descendFromParent(parent) {
 		// Use HtmlNode's method
 		this.super.apply(this, arguments);
 
@@ -128,9 +121,9 @@ var HtmlElement = HtmlNode.extend({
 		this.children.each(function(childIndex, child) {
 			child.descendFromParent(this);
 		}.bind(this));
-	},
+	}
 
-	applyDomUpdates: function() {
+	applyDomUpdates() {
 		//Console.log('HtmlElement applyDomUpdates', this.tag);
 
 		if(!this.domNode) {
@@ -142,9 +135,9 @@ var HtmlElement = HtmlNode.extend({
 
 		// Update the DOM element's children
 		this.updateDomNodeChildren();
-	},
+	}
 
-	updateDomNodeAttributes: function() {
+	updateDomNodeAttributes() {
 		//Console.log('updateDomNodeAttributes', this.tag, Json.encode(this.attributes));
 
 		// TODO:
@@ -206,9 +199,9 @@ var HtmlElement = HtmlNode.extend({
 				this.domNode.setAttribute(domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
 			}
 		}.bind(this));
-	},
+	}
 
-	updateDomNodeChildren: function() {
+	updateDomNodeChildren() {
 		// TODO: do I need to do this if I am already mounted to the DOM? each of my children should register changes if necessary
 		// which means I do not need to loop through them
 
@@ -246,9 +239,9 @@ var HtmlElement = HtmlNode.extend({
 		for(var i = this.children.length; i < domNodeChildNodesLength; i++) {
 			this.domNode.removeChild(this.domNode.childNodes[childIndex]);
 		}
-	},
+	}
 
-	createDomNode: function(htmlElement) {
+	createDomNode(htmlElement) {
 		// Allow this method to be called statically
 		if(!htmlElement) {
 			htmlElement = this;
@@ -261,9 +254,9 @@ var HtmlElement = HtmlNode.extend({
 		//Console.log('HtmlElement domFragment for', htmlElement.tagToString(), domFragment);
 
 		return domFragment;
-	},
+	}
 
-	addClass: function(className) {
+	addClass(className) {
 		var classAttributeValue = this.getAttribute('class');
 		var classes = [];
 
@@ -284,9 +277,9 @@ var HtmlElement = HtmlNode.extend({
 		this.setAttribute('class', classes.join(' '));
 
 		return this;
-	},
+	}
 
-	removeClass: function(className) {
+	removeClass(className) {
 		var classAttributeValue = this.getAttribute('class');
 
 		if(classAttributeValue) {
@@ -297,9 +290,9 @@ var HtmlElement = HtmlNode.extend({
 		}
 
 		return this;
-	},
+	}
 
-	setStyle: function(propertyOrObject, value) {
+	setStyle(propertyOrObject, value) {
 		if(!this.attributes.style) {
 			this.attributes.style = {};
 		}
@@ -317,35 +310,35 @@ var HtmlElement = HtmlNode.extend({
 		this.updateDom();
 
 		return this;
-	},
+	}
 
-	setHeight: function(height) {
+	setHeight(height) {
 		this.setStyle('height', height+'px');
 
 		return this;
-	},
+	}
 
-	setWidth: function(width) {
+	setWidth(width) {
 		this.setStyle('width', width+'px');
 
 		return this;
-	},
+	}
 
-	show: function() {
+	show() {
 		//Console.log('show');
 		this.setStyle('display', 'flex');
 
 		return this;
-	},
+	}
 
-	hide: function() {
+	hide() {
 		//Console.log('hide');
 		this.setStyle('display', 'none');
 
 		return this;
-	},
+	}
 
-    focus: function() {
+    focus() {
     	//Console.log('HtmlElement.focus', this.tag, this.attributes);
 
         // If we have a domNode
@@ -362,9 +355,9 @@ var HtmlElement = HtmlNode.extend({
         }
 
         return this;
-    },
+    }
 
-    find: function(selector) {
+    find(selector) {
 		var result = null;
 		var domNode = this.domNode.querySelector(selector);
 		//Console.standardInfo(domNodes);
@@ -374,64 +367,60 @@ var HtmlElement = HtmlNode.extend({
 		}		
 
 		return result;
-	},
+	}
 
-});
+	static unaryTags = [
+		'meta',
+		'link',
+		'base',
+		'hr',
+		'br',
+		'wbr',
+		'col',
+		'img',
+		'area',
+		'source',
+		'track',
+		'param',
+		'embed',
+		'input',
+		'keygen',
+		'command',
+	];
 
-// Static properties
+	static is(value) {
+		return Class.isInstance(value, HtmlElement);
+	}
 
-HtmlElement.unaryTags = [
-	'meta',
-	'link',
-	'base',
-	'hr',
-	'br',
-	'wbr',
-	'col',
-	'img',
-	'area',
-	'source',
-	'track',
-	'param',
-	'embed',
-	'input',
-	'keygen',
-	'command',
-];
+	static makeHtmlNode(value, parent, type) {
+		var alreadyIsHtmlNode = HtmlNode.is(value);
 
-// Static methods
+		// If the value is currently not of type HtmlNode (it must be a string), turn it into an HtmlNode
+		if(!alreadyIsHtmlNode) {
+			//Console.standardLog(value);
 
-HtmlElement.is = function(value) {
-	return Class.isInstance(value, HtmlElement);
-};
+			if(value.contains('<')) {
+				Console.warn('HTML strings are not supported (I should implement), use View or HtmlElement or HtmlNode.', value);
+			}
 
-HtmlElement.makeHtmlNode = function(value, parent, type) {
-	var alreadyIsHtmlNode = HtmlNode.is(value);
-
-	// If the value is currently not of type HtmlNode (it must be a string), turn it into an HtmlNode
-	if(!alreadyIsHtmlNode) {
-		//Console.standardLog(value);
-
-		if(value.contains('<')) {
-			Console.warn('HTML strings are not supported (I should implement), use View or HtmlElement or HtmlNode.', value);
+			value = new HtmlNode(value, parent, type);
+		}
+		// If the value is already an HtmlNode, make sure it inherits traits from the parent 
+		else {
+			value.descendFromParent(parent);
 		}
 
-		value = new HtmlNode(value, parent, type);
-	}
-	// If the value is already an HtmlNode, make sure it inherits traits from the parent 
-	else {
-		value.descendFromParent(parent);
+		return value;
 	}
 
-	return value;
-};
+	static createDomNode = HtmlElement.prototype.createDomNode;
 
-HtmlElement.createDomNode = HtmlElement.prototype.createDomNode;
+	static attributeValueToString = XmlElement.attributeValueToString;
 
-HtmlElement.attributeValueToString = XmlElement.attributeValueToString;
+}
 
 // Class implementations
-HtmlNode.implement(HtmlElementEventEmitter);
+Class.implement(HtmlNode, HtmlElementEventEmitter);
 
 // Export
-module.exports = HtmlElement;
+export default HtmlElement;

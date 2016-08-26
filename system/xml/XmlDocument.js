@@ -1,16 +1,13 @@
 // Class
-var XmlDocument = Class.extend({
+class XmlDocument {
 
-	declaration: null,
-	version: null, // The version of XML
-	encoding: null, // The encoding type
+	declaration = null;
+	version = null; // The version of XML
+	encoding = null; // The encoding type
 
-	children: [], // An array containing XmlNodes
+	children = []; // An array containing XmlNodes
 
-	construct: function() {
-	},
-
-	toString: function(indent) {
+	toString(indent) {
 		if(indent === undefined) {
 			indent = true;
 		}
@@ -52,9 +49,9 @@ var XmlDocument = Class.extend({
 		});
 
 		return string;
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = XmlDocument;
+export default XmlDocument;

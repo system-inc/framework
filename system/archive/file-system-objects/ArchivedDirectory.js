@@ -1,12 +1,12 @@
 // Dependencies
-var ArchivedFileSystemObject = Framework.require('system/archive/file-system-objects/ArchivedFileSystemObject.js');
-var Directory = Framework.require('system/file-system/Directory.js');
+import ArchivedFileSystemObject from './ArchivedFileSystemObject.js';
+import Directory from './../../../system/file-system/Directory.js';
 
 // Class
-var ArchivedDirectory = ArchivedFileSystemObject.extend({
+class ArchivedDirectory extends ArchivedFileSystemObject {
 
-	construct: function(archiveFile, path) {
-		this.super.apply(this, arguments);
+	constructor(archiveFile, path) {
+		super(...arguments);
 
 		this.type = 'directory';
 
@@ -18,7 +18,7 @@ var ArchivedDirectory = ArchivedFileSystemObject.extend({
 		this.directory = this.directory.replace('\\', '/');
 	},
 
-});
+}
 
 // Export
-module.exports = ArchivedDirectory;
+export default ArchivedDirectory;

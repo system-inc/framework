@@ -2,7 +2,9 @@
 import EventEmitter from './../../system/events/EventEmitter.js';
 
 // Class
-class Assert extends EventEmitter {
+class Assert {
+
+	static eventEmitter = new EventEmitter();
 
 	static true(value, message) {
 		try {
@@ -10,7 +12,7 @@ class Assert extends EventEmitter {
 				Assert.fail(value, 'truthy', message, '==');
 			}
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'true',
 				message: message,
@@ -19,7 +21,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'true',
 				message: message,
@@ -36,7 +38,7 @@ class Assert extends EventEmitter {
 				Assert.fail(value, 'falsey', message, '==');
 			}
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'false',
 				message: message,
@@ -45,7 +47,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'false',
 				message: message,
@@ -62,7 +64,7 @@ class Assert extends EventEmitter {
 				Assert.fail(actual, expected, message, '==');
 			}
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'equal',
 				message: message,
@@ -71,7 +73,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'equal',
 				message: message,
@@ -88,7 +90,7 @@ class Assert extends EventEmitter {
 				Assert.fail(actual, expected, message, '!=');
 			}
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'notEqual',
 				message: message,
@@ -97,7 +99,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'notEqual',
 				message: message,
@@ -227,7 +229,7 @@ class Assert extends EventEmitter {
 				Assert.fail(actual, expected, message, 'deepEqual');
 			}
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'deepEqual',
 				message: message,
@@ -236,7 +238,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'deepEqual',
 				message: message,
@@ -253,7 +255,7 @@ class Assert extends EventEmitter {
 				Assert.fail(actual, expected, message, 'notDeepEqual');
 			}
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'notDeepEqual',
 				message: message,
@@ -262,7 +264,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'notDeepEqual',
 				message: message,
@@ -279,7 +281,7 @@ class Assert extends EventEmitter {
 				Assert.fail(actual, expected, message, '===');
 			}
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'strictEqual',
 				message: message,
@@ -288,7 +290,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'strictEqual',
 				message: message,
@@ -305,7 +307,7 @@ class Assert extends EventEmitter {
 				Assert.fail(actual, expected, message, '!==');
 			}
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'notStrictEqual',
 				message: message,
@@ -314,7 +316,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'notStrictEqual',
 				message: message,
@@ -331,7 +333,7 @@ class Assert extends EventEmitter {
 				Assert.fail(actual, minimum, message, '>');
 			}
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'greaterThan',
 				message: message,
@@ -340,7 +342,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'greaterThan',
 				message: message,
@@ -357,7 +359,7 @@ class Assert extends EventEmitter {
 				Assert.fail(actual, minimum, message, '>=');
 			}
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'greaterThanOrEqualTo',
 				message: message,
@@ -366,7 +368,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'greaterThanOrEqualTo',
 				message: message,
@@ -383,7 +385,7 @@ class Assert extends EventEmitter {
 				Assert.fail(actual, maximum, message, '<');
 			}
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'lessThan',
 				message: message,
@@ -392,7 +394,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'lessThan',
 				message: message,
@@ -409,7 +411,7 @@ class Assert extends EventEmitter {
 				Assert.fail(actual, maximum, message, '<=');
 			}
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'lessThanOrEqualTo',
 				message: message,
@@ -418,7 +420,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'lessThanOrEqualTo',
 				message: message,
@@ -481,7 +483,7 @@ class Assert extends EventEmitter {
 		try {
 			Assert.doesThrow.apply(this, [true].concat(Array.prototype.slice.call(arguments)));
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'throws',
 				message: message,
@@ -490,7 +492,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'throws',
 				message: message,
@@ -543,7 +545,7 @@ class Assert extends EventEmitter {
 					}
 					// Success case
 					else {
-						Assert.emit('Assert.finished', {
+						Assert.eventEmitter.emit('Assert.finished', {
 							status: 'passed',
 							assertion: assertion,
 							message: message,
@@ -557,7 +559,7 @@ class Assert extends EventEmitter {
 					Console.warn('Stack traces aren\'t being captured correctly');
 					//Error.captureStackTrace(error, callee);
 
-					Assert.emit('Assert.finished', {
+					Assert.eventEmitter.emit('Assert.finished', {
 						status: 'failed',
 						assertion: assertion,
 						message: message,
@@ -604,7 +606,7 @@ class Assert extends EventEmitter {
 		try {
 			Assert.doesThrow.apply(this, [false].concat(Array.prototype.slice.call(arguments)));
 			
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'passed',
 				assertion: 'doesNotThrow',
 				message: message,
@@ -613,7 +615,7 @@ class Assert extends EventEmitter {
 		catch(error) {
 			Error.captureStackTrace(error, arguments.callee);
 
-			Assert.emit('Assert.finished', {
+			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'doesNotThrow',
 				message: message,

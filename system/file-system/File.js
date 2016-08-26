@@ -106,6 +106,10 @@ class File extends FileSystemObject {
         return writeStream;
     }
 
+    static is(value) {
+        return value instanceof File;
+    }
+
     static getContentType = File.prototype.getContentType;
 
     static read(path, options) {

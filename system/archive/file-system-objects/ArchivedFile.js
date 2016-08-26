@@ -1,18 +1,18 @@
 // Dependencies
-var ArchivedFileSystemObject = Framework.require('system/archive/file-system-objects/ArchivedFileSystemObject.js');
-var File = Framework.require('system/file-system/File.js');
+import ArchivedFileSystemObject from './ArchivedFileSystemObject.js';
+import File from './../../../system/file-system/File.js';
 
 // Class
-var ArchivedFile = ArchivedFileSystemObject.extend({
+class ArchivedFile extends ArchivedFileSystemObject {
 
 	// Mimic File properties
-	file: null,
-	fileWithoutExtension: null,
-	nameWithoutExtension: null,
-	extension: null,
+	file = null;
+	fileWithoutExtension = null;
+	nameWithoutExtension = null;
+	extension = null;
 
-	construct: function(archiveFile, path) {
-		this.super.apply(this, arguments);
+	constructor(archiveFile, path) {
+		super(...arguments);
 
 		this.type = 'file';
 
@@ -24,9 +24,9 @@ var ArchivedFile = ArchivedFileSystemObject.extend({
 		this.directory = this.directory.replace('\\', '/');
 		this.file = this.file.replace('\\', '/');
 		this.fileWithoutExtension = this.fileWithoutExtension.replace('\\', '/');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ArchivedFile;
+export default ArchivedFile;

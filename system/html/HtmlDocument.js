@@ -1,40 +1,40 @@
 // Dependencies
-var XmlDocument = Framework.require('system/xml/XmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
-var HtmlDocumentEventEmitter = Framework.require('system/html/events/html-document/HtmlDocumentEventEmitter.js');
-var Url = Framework.require('system/web/Url.js');
+import XmlDocument from './../../system/xml/XmlDocument.js';
+import Html from './Html.js';
+import HtmlDocumentEventEmitter from './events/html-document/HtmlDocumentEventEmitter.js';
+import Url from './../../system/web/Url.js';
 
 // Class
-var HtmlDocument = XmlDocument.extend({
+class HtmlDocument extends XmlDocument {
 
-	type: 'html',
+	type = 'html';
 
-	domDocument: null,
-	domWindow: null,
-	isMountedToDom: false,
-	//shouldScheduleDomUpdates: false, // Testing
-	shouldScheduleDomUpdates: true,
-	domUpdatesScheduled: false,
-	domUpdates: {},
+	domDocument = null;
+	domWindow = null;
+	isMountedToDom = false;
+	//shouldScheduleDomUpdates = false; // Testing
+	shouldScheduleDomUpdates = true;
+	domUpdatesScheduled = false;
+	domUpdates = {};
 
 	// Views
-	view: null,
-	head: null,
-	body: null,
-	titleHtmlElement: null,
+	view = null;
+	head = null;
+	body = null;
+	titleHtmlElement = null;
 
-	url: null,
+	url = null;
 
-	dimensions: {
+	dimensions = {
 		width: null,
 		height: null,
 		visible: {
 			width: null,
 			height: null,
 		},
-	},
+	};
 
-	position: {
+	position = {
 		relativeToRelativeAncestor: {
 			x: null, // scrollLeft
 			y: null, // scrollTop
@@ -98,9 +98,11 @@ var HtmlDocument = XmlDocument.extend({
 		//relativeToDocument
 		//relativeToGlobal
 		//relativeToPreviousGlobalRelativePosition
-	},
+	};
 
-	construct: function(declaration) {
+	constructor(declaration) {
+		super();
+
 		// Set the declaration
 		if(declaration) {
 			this.declaration = declaration;
@@ -145,9 +147,9 @@ var HtmlDocument = XmlDocument.extend({
 		this.children = [
 			this.view,
 		];
-	},
+	}
 
-	mountToDom: function() {
+	mountToDom() {
 		//Console.log('HtmlDocument mountToDom');
 
 		// Clear the head and body in preparation for writing the HTML document to the DOM
@@ -162,9 +164,9 @@ var HtmlDocument = XmlDocument.extend({
 
 		// At this point the HtmlDocument has been added to the DOM
 		this.mountedToDom();
-	},
+	}
 
-	mountedToDom: function() {
+	mountedToDom() {
 		//Console.log('HtmlDocument mountedToDom');
 
 		// The HtmlDocument is now added to the DOM
@@ -176,9 +178,9 @@ var HtmlDocument = XmlDocument.extend({
 
 		// Now that all of the callbacks have run, execute any pending DOM updates
 		this.executeDomUpdates();
-	},
+	}
 
-	printDomUpdates: function() {
+	printDomUpdates() {
 		console.info('**************************************');
 		console.info('Pending DOM Updates:')
 
@@ -191,9 +193,9 @@ var HtmlDocument = XmlDocument.extend({
 			});
 		}
 		console.info('**************************************');
-	},
+	}
 
-	updateDom: function(htmlNode) {
+	updateDom(htmlNode) {
 		//Console.log('HtmlDocument.updateDom', htmlNode);
 		//Console.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
 
@@ -209,9 +211,9 @@ var HtmlDocument = XmlDocument.extend({
 		else {
 			htmlNode.executeDomUpdate();
 		}
-	},
+	}
 
-	scheduleDomUpdate: function(htmlNode) {
+	scheduleDomUpdate(htmlNode) {
 		//Console.log('HtmlDocument.scheduleDomUpdate', htmlNode.tag, Json.encode(htmlNode.attributes));
 
 		// Add the HtmlElement to the list of updates to do
@@ -235,9 +237,9 @@ var HtmlDocument = XmlDocument.extend({
 		}
 
 		//Console.log('this.domUpdates', this.domUpdates);
-	},
+	}
 
-	executeDomUpdates: function() {
+	executeDomUpdates() {
 		//Console.log('HtmlDocument.executeDomUpdates', 'this.domUpdates', this.domUpdates);
 
 		// Iterate over all DOM updates
@@ -253,9 +255,9 @@ var HtmlDocument = XmlDocument.extend({
 		this.domUpdatesScheduled = false;
 
 		this.emit('htmlDocument.domUpdatesExecuted', this);
-	},
+	}
 
-	setTitle: function(title) {
+	setTitle(title) {
 		// Create the title tag if it doesn't exist
 		if(!this.titleHtmlElement) {
 			this.titleHtmlElement = Html.title(title);
@@ -265,22 +267,22 @@ var HtmlDocument = XmlDocument.extend({
 		else if(this.domDocument) {
 			this.domDocument.title = title;
 		}
-	},
+	}
 
-	addScript: function(path) {
+	addScript(path) {
 		this.head.append(Html.script({
 			src: path,
 		}));
-	},
+	}
 
-	addStyleSheet: function(path) {
+	addStyleSheet(path) {
 		this.head.append(Html.link({
 			rel: 'stylesheet',
 			href: path,
 		}));
-	},
+	}
 
-	insertText: function(text) {
+	insertText(text) {
 		var textInserted = false;
 
 		if(this.domDocument) {
@@ -288,29 +290,29 @@ var HtmlDocument = XmlDocument.extend({
 		}
 
 		return textInserted;
-	},
+	}
 
-	executeCut: function() {
+	executeCut() {
 		return this.domDocument.execCommand('copy', false, null);
-	},
+	}
 
-	executeCopy: function() {
+	executeCopy() {
 		return this.domDocument.execCommand('cut', false, null);
-	},
+	}
 
-	executePaste: function() {
+	executePaste() {
 		return this.domDocument.execCommand('paste', false, null);
-	},
+	}
 
-	print: function() {
+	print() {
 		this.domWindow.print();
-	},
+	}
 
-	getSelection: function() {
+	getSelection() {
 		return this.domWindow.getSelection();
-	},
+	}
 
-	getSelectionText: function() {
+	getSelectionText() {
 		var text = '';
 
         if(this.domWindow.getSelection) {
@@ -323,21 +325,21 @@ var HtmlDocument = XmlDocument.extend({
         Console.log('htmlDocument.getSelectionText', text);
 
         return text;
-	},
+	}
 
-	getDimensions: function() {
+	getDimensions() {
 		this.getDimensionAndPositionFromDomDocument();
 
 		return this.dimensions;
-	},
+	}
 
-	getPosition: function() {
+	getPosition() {
 		this.getDimensionAndPositionFromDomDocument();
 
 		return this.position;
-	},
+	}
 
-	getDimensionAndPositionFromDomDocument: function() {
+	getDimensionAndPositionFromDomDocument() {
 		if(this.domDocument) {
 			// Dimensions
 			this.dimensions.width = this.domDocument.documentElement.scrollWidth;
@@ -390,9 +392,9 @@ var HtmlDocument = XmlDocument.extend({
 			dimensions: this.dimensions,
 			position: this.position,
 		};
-	},
+	}
 
-	find: function(selector) {
+	find(selector) {
 		var result = null;
 		var domNode = this.domDocument.querySelector(selector);
 		//Console.standardInfo(domNodes);
@@ -402,18 +404,16 @@ var HtmlDocument = XmlDocument.extend({
 		}		
 
 		return result;
-	},
+	}
 
-});
+	static is(value) {
+		return Class.isInstance(value, HtmlDocument);
+	}
 
-// Static methods
-
-HtmlDocument.is = function(value) {
-	return Class.isInstance(value, HtmlDocument);
-};
+}
 
 // Class implementations
-HtmlDocument.implement(HtmlDocumentEventEmitter);
+Class.implement(HtmlDocument, HtmlDocumentEventEmitter);
 
 // Export
-module.exports = HtmlDocument;
+export default HtmlDocument;

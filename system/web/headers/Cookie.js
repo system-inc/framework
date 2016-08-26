@@ -1,13 +1,13 @@
 // Dependencies
-var Header = Framework.require('system/web/headers/Header.js');
+import Header from './Header.js';
 
 // Class
-var Cookie = Class.extend({
+class Cookie {
 
-	key: null,
-	value: null,
+	key = null;
+	value = null;
 
-	construct: function(key, value) {
+	constructor(key, value) {
 		this.key = key;
 
 		// Decode JSON strings into objects
@@ -17,15 +17,15 @@ var Cookie = Class.extend({
 		else {
 			this.value = value;	
 		}
-	},
+	}
 
-	toHeader: function() {
+	toHeader() {
 		var header = new Header('Set-Cookie', this.toHeaderString());
 
 		return header;
-	},
+	}
 
-	toHeaderString: function() {
+	toHeaderString() {
 		var value = this.value;
 
 		// Encode non-primitives into JSON strings
@@ -36,23 +36,22 @@ var Cookie = Class.extend({
 		var headerString = this.key+'='+value+';';
 
 		return headerString;
-	},
+	}
+
+	static constructFromHeaderString(headerString) {
+		var headerStringArray = headerString.split('=');
+		var key = headerStringArray.first();
+
+		// Remove the first item (the key)
+		headerStringArray.delete(0);
+		var value = headerStringArray.join('=').replaceLast(';', '');
+
+		var cookie = new Cookie(key, value);
+
+		return cookie;
+	}
 	
-});
-
-// Static methods
-Cookie.constructFromHeaderString = function(headerString) {
-	var headerStringArray = headerString.split('=');
-	var key = headerStringArray.first();
-
-	// Remove the first item (the key)
-	headerStringArray.delete(0);
-	var value = headerStringArray.join('=').replaceLast(';', '');
-
-	var cookie = new Cookie(key, value);
-
-	return cookie;
 }
 
 // Export
-module.exports = Cookie;
+export default Cookie;

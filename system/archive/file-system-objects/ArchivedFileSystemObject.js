@@ -1,61 +1,61 @@
 // Dependencies
-var FileSystemObject = Framework.require('system/file-system/FileSystemObject.js');
-var SevenZip = Framework.require('system/archive/libraries/7-zip/SevenZip.js');
+import FileSystemObject from './../../../system/file-system/FileSystemObject.js';
+import SevenZip from './../libraries/7-zip/SevenZip.js';
 
 // Class
-var ArchivedFileSystemObject = Class.extend({
+class ArchivedFileSystemObject {
 
-	archiveFile: null,
+	archiveFile = null;
 
 	// Convenience property
-	type: null, // Either "file" or "directory"
+	type = null; // Either "file" or "directory"
 
 	// Mimic FileSystemObject properties
-	name: null,
-	directory: null,
-	path: null,
-	timeAccessed: null,
-	timeModified: null,
-	timeStatusChanged: null,
-	timeCreated: null,
+	name = null;
+	directory = null;
+	path = null;
+	timeAccessed = null;
+	timeModified = null;
+	timeStatusChanged = null;
+	timeCreated = null;
 
-	readStream: null,
+	readStream = null;
 
 	// Archive properties
-	archiveMethod: null,
-	archiveMethodOptions: null,
-	archivedSizeInBytes: null,
-	extractedSizeInBytes: null,
-	comment: null,
+	archiveMethod = null;
+	archiveMethodOptions = null;
+	archivedSizeInBytes = null;
+	extractedSizeInBytes = null;
+	comment = null;
 
-	construct: function(archiveFile, path) {
+	constructor(archiveFile, path) {
 		this.archiveFile = archiveFile;
 
 		// Use FileSystemObject's constructor to setup class variables based on path
 		FileSystemObject.prototype.construct.call(this, path);
-	},
+	}
 
-	toReadStream: function*(options) {
+	async toReadStream(options) {
         if(!this.readStream) {
-            this.readStream = yield SevenZip.extract(this.archiveFile, this.path);
+            this.readStream = await SevenZip.extract(this.archiveFile, this.path);
         }
 
         return this.readStream;
-    },
+    }
 
-    isFile: function() {
+    isFile() {
 		return this.type == 'file';
-	},
+	}
 
-	isDirectory: function() {
+	isDirectory() {
 		return this.type == 'directory';
-	},
+	}
 
-	sizeInBytes: function() {
+	sizeInBytes() {
 		return this.archivedSizeInBytes;
 	}
 
-});
+}
 
 // Export
-module.exports = ArchivedFileSystemObject;
+export default ArchivedFileSystemObject;

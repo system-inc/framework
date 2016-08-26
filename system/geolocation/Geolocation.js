@@ -1,11 +1,11 @@
 // Class
-var Geolocation = Class.extend({
+class Geolocation {
 
-	latitude: null,
-	longitude: null,
-	country: null,
+	latitude = null;
+	longitude = null;
+	country = null;
 
-});
+}
 
 // Export
-module.exports = Geolocation;
+export default Geolocation;

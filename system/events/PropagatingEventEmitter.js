@@ -35,10 +35,10 @@ class PropagatingEventEmitter extends EventEmitter {
 			//Console.warn('ancestorEventEmittersInCapturePath', ancestorEventEmittersInCapturePath);
 
 			// Emit the event along the capturing path
-			yield ancestorEventEmittersInCapturePath.each(function*(ancestorEventEmitterIndex, ancestorEventEmitter) {
+			await ancestorEventEmittersInCapturePath.each(async function(ancestorEventEmitterIndex, ancestorEventEmitter) {
 				//Console.log('should emit on', ancestorEventEmitter.name);
 				// Emit the event all the way down until
-				propagatingEvent = yield ancestorEventEmitter.emit(eventIdentifier, propagatingEvent);
+				propagatingEvent = await ancestorEventEmitter.emit(eventIdentifier, propagatingEvent);
 			});
 
 			// Set data to be the propagating event, so when we shouldEmit below we emit the event instead of the initial data
@@ -101,7 +101,7 @@ class PropagatingEventEmitter extends EventEmitter {
 
 		// Conditionally emit the event at the current level
 		if(shouldEmit) {
-			propagatingEvent = yield this.super(eventIdentifier, data, eventOptions); // this will make propagatingEvent.currentEmitter = this
+			propagatingEvent = await this.super(eventIdentifier, data, eventOptions); // this will make propagatingEvent.currentEmitter = this
 		}
 
 		//Console.warn('propagatingEvent.currentPhase', propagatingEvent.currentPhase);
@@ -141,7 +141,7 @@ class PropagatingEventEmitter extends EventEmitter {
 				propagatingEvent = this.createEvent(this, eventIdentifier, data, eventOptions);
 			}
 
-			propagatingEvent = yield this.parent.emit(eventIdentifier, propagatingEvent);
+			propagatingEvent = await this.parent.emit(eventIdentifier, propagatingEvent);
 		}
 
 		return propagatingEvent;

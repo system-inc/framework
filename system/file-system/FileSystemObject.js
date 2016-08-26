@@ -157,6 +157,10 @@ class FileSystemObject {
         return watch;
 	}
 
+    static is(value) {
+        return value instanceof FileSystemObject;
+    }
+
     static exists = FileSystemObject.prototype.exists;
 
     static async stat(path) {
@@ -190,40 +194,40 @@ class FileSystemObject {
     }
 
     static async list(path, recursive) {
-        var list = await new Promise(function(resolve, reject) {
-            Generator.run(async function() {
-                var list = [];
-                var fileNames = await FileSystemObject.listFileNames(path);
+        var list = await new Promise(async function(resolve, reject) {
+            var list = [];
+            var fileNames = await FileSystemObject.listFileNames(path);
 
-                // Dependencies
-                //import FileSystemObjectFactory from './FileSystemObjectFactory.js';
-                var FileSystemObjectFactory = await System.import('./FileSystemObjectFactory.js');
+            // Dependencies
+            //import FileSystemObjectFactory from './FileSystemObjectFactory.js';
+            //var FileSystemObjectFactory = await System.import('./FileSystemObjectFactory.js');
+            var FileSystemObjectFactory = require('./FileSystemObjectFactory.js').default;
+            var Directory = require('./Directory.js').default;
 
-                // Make sure we have the full path
-                await fileNames.each(async function(index, fileName) {
-                    var fileSystemObject = await FileSystemObjectFactory.create(path+fileName);
+            // Make sure we have the full path
+            await fileNames.each(async function(index, fileName) {
+                var fileSystemObject = await FileSystemObjectFactory.create(path+fileName);
 
-                    // Handle recursion
-                    if(recursive && Class.isInstance(fileSystemObject, Directory)) {
-                        // Get the directory listing of any directories
-                        var directoryList = await fileSystemObject.list(true);
+                // Handle recursion
+                if(recursive && Directory.is(fileSystemObject)) {
+                    // Get the directory listing of any directories
+                    var directoryList = await fileSystemObject.list(true);
 
-                        // Add them to the list to return
-                        directoryList.each(function(index, directoryListItem) {
-                            list.push(directoryListItem);
-                        });
-                    }
+                    // Add them to the list to return
+                    directoryList.each(function(index, directoryListItem) {
+                        list.push(directoryListItem);
+                    });
+                }
 
-                    if(fileSystemObject) {
-                        list.push(fileSystemObject);
-                    }
-                    else {
-                        //Console.log('No fileSystemObject for', path+fileName);
-                    }                
-                });
+                if(fileSystemObject) {
+                    list.push(fileSystemObject);
+                }
+                else {
+                    //Console.log('No fileSystemObject for', path+fileName);
+                }                
+            });
 
-                return list;
-            }, resolve);
+            return list;
         });
 
         return list;

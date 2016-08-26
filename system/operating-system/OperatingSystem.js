@@ -1,14 +1,14 @@
 // Dependencies
-var Version = Framework.require('system/version/Version.js');
+import Version from './../../system/version/Version.js';
 
 // Class
-var OperatingSystem = Class.extend({
+class OperatingSystem {
 
-	name: null,
-	manufacturer: null,
-	version: null,
+	name = null;
+	manufacturer = null;
+	version = null;
 
-	parseUserAgent: function(userAgent) {
+	parseUserAgent(userAgent) {
 		// Return immediately if there is no user agent
 		if(!userAgent) {
 			return this;
@@ -74,54 +74,50 @@ var OperatingSystem = Class.extend({
 		}
 		
 		return this;
-	},
+	}
+
+	static operatingSystems = [
+		{
+			'name': 'iOS',
+			'manufacturer': 'Apple',
+			'userAgentRegularExpressionString': 'iPad',
+		},
+		{
+			'name': 'iOS',
+			'manufacturer': 'Apple',
+			'userAgentRegularExpressionString': 'iPhone',
+		},
+		{
+			'name': 'iOS',
+			'manufacturer': 'Apple',
+			'userAgentRegularExpressionString': 'iPod',
+		},
+		{
+			'name': 'OS X',
+			'manufacturer': 'Apple',
+			'userAgentRegularExpressionString': 'OS X',
+		},
+		{
+			'name': 'Windows',
+			'manufacturer': 'Microsoft',
+			'userAgentRegularExpressionString': 'Windows',
+		},
+		{
+			'name': 'Android',
+			'manufacturer': 'Google',
+			'userAgentRegularExpressionString': 'Android',
+		},
+	];
+
+	static constructFromUserAgent(userAgent) {
+		var operatingSystem = new OperatingSystem();
+
+		operatingSystem.parseUserAgent(userAgent);
+
+		return operatingSystem;	
+	}
 	
-});
-
-// Static properties
-
-OperatingSystem.operatingSystems = [
-	{
-		'name': 'iOS',
-		'manufacturer': 'Apple',
-		'userAgentRegularExpressionString': 'iPad',
-	},
-	{
-		'name': 'iOS',
-		'manufacturer': 'Apple',
-		'userAgentRegularExpressionString': 'iPhone',
-	},
-	{
-		'name': 'iOS',
-		'manufacturer': 'Apple',
-		'userAgentRegularExpressionString': 'iPod',
-	},
-	{
-		'name': 'OS X',
-		'manufacturer': 'Apple',
-		'userAgentRegularExpressionString': 'OS X',
-	},
-	{
-		'name': 'Windows',
-		'manufacturer': 'Microsoft',
-		'userAgentRegularExpressionString': 'Windows',
-	},
-	{
-		'name': 'Android',
-		'manufacturer': 'Google',
-		'userAgentRegularExpressionString': 'Android',
-	},
-];
-
-// Static methods
-
-OperatingSystem.constructFromUserAgent = function(userAgent) {
-	var operatingSystem = new OperatingSystem();
-
-	operatingSystem.parseUserAgent(userAgent);
-
-	return operatingSystem;	
-};
+}
 
 // Export
-module.exports = OperatingSystem;
+export default OperatingSystem;

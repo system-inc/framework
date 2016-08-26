@@ -1,6 +1,5 @@
 // Dependencies
-import MySql from './npm-mysql.js';
-import DatabaseField from './../../DatabaseField.js';
+import DatabaseField from './../DatabaseField.js';
 
 // Class
 class MySqlAdapter {
@@ -48,7 +47,7 @@ class MySqlAdapter {
 						sql: queryResults.sql,
 						//values: queryResults.values,
 						rows: rows,
-						fields: MySql.Adapter.reformFields(fields),
+						fields: MySqlAdapter.reformFields(fields),
 					};
 
 					resolve(result);

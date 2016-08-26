@@ -10,7 +10,7 @@ class TestModule extends Module {
 	proctor = null;
 
 	async initialize() {
-		await this.super.apply(this, arguments);
+		await super.initialize(...arguments);
 
 		// Create a Proctor to oversee all of the tests as they run
 		this.proctor = new Proctor(app.command.options.reporter, app.command.options.breakOnError);

@@ -1,68 +1,66 @@
 // Dependencies
-var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
+import HtmlElementEvent from './../HtmlElementEvent.js';
 
 // Class
-var InputSelectEvent = HtmlElementEvent.extend({
+class InputSelectEvent extends HtmlElementEvent {
 
-	selection: null,
-	text: null,
+	selection = null;
+	text = null;
 
-});
-
-// Static methods
-
-InputSelectEvent.is = function(value) {
-	return Class.isInstance(value, InputSelectEvent);
-};
-
-InputSelectEvent.createEventsFromDomEvent = function(domEvent, emitter) {
-	//Console.standardLog('InputSelectEvent.createEventsFromDomEvent', domEvent.type, arguments);
-
-	var events = [];
-
-	// Use this for identifying which events to create
-	var inputSelectEventWithoutIdentifier = InputSelectEvent.createFromDomEvent(domEvent, emitter, null);
-
-	// The identifier for the event
-	var eventIdentifier = null;
-
-	if(domEvent.type == 'select') {
-		eventIdentifier = 'input.select';
-	}
-	else if(domEvent.type == 'selectstart') {
-		eventIdentifier = 'input.select.start';
-	}
-	else if(domEvent.type == 'selectionchange') {
-		eventIdentifier = 'input.select.change';
+	static is(value) {
+		return Class.isInstance(value, InputSelectEvent);
 	}
 
-	// Set the identifier
-	inputSelectEventWithoutIdentifier.identifier = eventIdentifier;
+	static createEventsFromDomEvent(domEvent, emitter) {
+		//Console.standardLog('InputSelectEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
-	// Add the event
-	events.append(inputSelectEventWithoutIdentifier);
+		var events = [];
 
-	//Console.standardLog('events', events);
+		// Use this for identifying which events to create
+		var inputSelectEventWithoutIdentifier = InputSelectEvent.createFromDomEvent(domEvent, emitter, null);
 
-	return events;
-};
+		// The identifier for the event
+		var eventIdentifier = null;
 
-InputSelectEvent.createFromDomEvent = function(domEvent, emitter, identifier) {
-	var inputSelectEvent = new InputSelectEvent(emitter, identifier);
+		if(domEvent.type == 'select') {
+			eventIdentifier = 'input.select';
+		}
+		else if(domEvent.type == 'selectstart') {
+			eventIdentifier = 'input.select.start';
+		}
+		else if(domEvent.type == 'selectionchange') {
+			eventIdentifier = 'input.select.change';
+		}
 
-	// The emitter is an HtmlDocument
-	if(emitter.getSelection) {
-		inputSelectEvent.selection = emitter.getSelection();
+		// Set the identifier
+		inputSelectEventWithoutIdentifier.identifier = eventIdentifier;
+
+		// Add the event
+		events.append(inputSelectEventWithoutIdentifier);
+
+		//Console.standardLog('events', events);
+
+		return events;
 	}
-	// The emitter is an HtmlNode
-	else if(emitter.htmlDocument) {
-		inputSelectEvent.selection = emitter.htmlDocument.getSelection();
-	}	
 
-	inputSelectEvent.text = inputSelectEvent.selection.toString();
+	static createFromDomEvent(domEvent, emitter, identifier) {
+		var inputSelectEvent = new InputSelectEvent(emitter, identifier);
 
-	return inputSelectEvent;
-};
+		// The emitter is an HtmlDocument
+		if(emitter.getSelection) {
+			inputSelectEvent.selection = emitter.getSelection();
+		}
+		// The emitter is an HtmlNode
+		else if(emitter.htmlDocument) {
+			inputSelectEvent.selection = emitter.htmlDocument.getSelection();
+		}	
+
+		inputSelectEvent.text = inputSelectEvent.selection.toString();
+
+		return inputSelectEvent;
+	}
+
+}
 
 // Export
-module.exports = InputSelectEvent;
+export default InputSelectEvent;
