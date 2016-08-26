@@ -83,7 +83,7 @@ class Settings {
 
 		// Read the data from the file
 		var data = await File.readAndDecodeJson(datafilePath);
-		console.log('data', data);
+		//console.log('data', data);
 
 		//Console.log('dataStore', dataStore);
 

@@ -41,7 +41,7 @@ class App {
 		Module.require(this.framework.coreModules);
 
 		// Announce starting
-		console.log('Initializing Framework '+this.framework.version+'...');
+		//console.log('Initializing Framework '+this.framework.version+'...');
 
 		// Use core modules to load the project settings
 		await this.loadAppSettings();
@@ -69,8 +69,6 @@ class App {
 		if(callback) {
 			callback.bind(this).run();
 		}
-
-		console.log('hi');
 	}
 
 	async loadAppSettings() {
@@ -79,12 +77,12 @@ class App {
 			environment: 'development',
 			modules: {},
 		}, Node.Path.join(this.directory, 'settings', 'settings.json'));
-		console.log('loadAppSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
+		//console.log('loadAppSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
 
 		// Merge the environment settings
-		console.log('Integrating environment settings...')
+		//console.log('Integrating environment settings...')
 		await this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'environment.json'));
-		console.log(this.settings);
+		//console.log(this.settings);
 	}
 
 	setPropertiesFromAppSettings() {
