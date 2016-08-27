@@ -7,27 +7,28 @@ import Directory from './Directory.js';
 class FileSystemObjectFactory {
 
 	static async create(path) {
+		//app.log('FileSystemObjectFactory.create', ...arguments);
+
 		// Make sure we have a path
 		if(!path) {
-			return null;
+			throw new Error('No path provided at FileSystemObject.create(path).');
 		}
 
 		var fileSystemObject = null;
 
-		// Check to see if the file exists
-		if(await FileSystemObject.exists(path)) {
-			// Get the file object status
-			var nodeStatus = await FileSystemObject.stat(path);
+		// Get the file object status
+		//app.log('calling FileSystemObject.stat');
+		var nodeStatus = await FileSystemObject.stat(path);
+		//app.log('nodeStatus', nodeStatus);
 
-			// Make sure to always be an instance of File or Directory
-			if(nodeStatus.isFile()) {
-				fileSystemObject = new File(path);
-				await fileSystemObject.initializeStatus();
-			}
-			else if(nodeStatus.isDirectory()) {
-				fileSystemObject = new Directory(path);
-				await fileSystemObject.initializeStatus();
-			}
+		// Make sure to always be an instance of File or Directory
+		if(nodeStatus.isFile()) {
+			fileSystemObject = new File(path);
+			await fileSystemObject.initializeStatus();
+		}
+		else if(nodeStatus.isDirectory()) {
+			fileSystemObject = new Directory(path);
+			await fileSystemObject.initializeStatus();
 		}
 
 		return fileSystemObject;

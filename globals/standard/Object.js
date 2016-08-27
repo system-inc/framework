@@ -104,44 +104,54 @@ Object.prototype.deleteValueByPath = function(path) {
 
 Object.prototype.each = function(callback) {
     var context = this;
+    var callbackReturnValueForFirstItem = null;
+    var objectKeys = Object.keys(this);
 
-    // If the callback is not a generator, use a standard for loop
-    if(!Function.isGenerator(callback)) {
-        var objectKeys = Object.keys(this);
-        for(var i = 0; i < objectKeys.length; i++) {
-            var advance = callback.apply(context, [objectKeys[i], this[objectKeys[i]], this]);
+    // Start out with a standard for loop
+    for(var i = 0; i < objectKeys.length; i++) {
+        var advance = callback.apply(context, [objectKeys[i], this[objectKeys[i]], this]);
 
-            // If the callback returns false, break out of the for loop
-            if(advance === false) {
-                break;
-            }
+        // If the callback on the first item returns a Promise, break
+        if(i == 0 && Promise.is(advance)) {
+            callbackReturnValueForFirstItem = advance;
+            break;
+        }
+
+        // If the callback returns false, break out of the for loop
+        if(advance === false) {
+            break;
         }
     }
-    // If the callback is a generator, work some inception magic
-    else {
+
+    // If the callback for the first item returned a Promise
+    if(callbackReturnValueForFirstItem) {
+        console.log('FUNCTION IS ASYNC');
+
         // Keep track of the object
         var object = this;
 
         // This top level promise resolves after all object keys have been looped over
-        return new Promise(function(resolve) {
-            // Run an anonymous generator function which loops over each object key, allowing me to yield on a sub promise
-            Generator.run(function*() {
-                var objectKeys = Object.keys(object);
+        return new Promise(async function(resolve) {
+            // Wait for the first item's Promise to resolve
+            await callbackReturnValueForFirstItem;
 
-                // Use a for loop here instead of .each so I can use yield below
-                for(var i = 0; i < objectKeys.length; i++) {
-                    // Yield on a sub promise which resolves when the generator callback for the current object key completes
-                    var advance = yield new Promise(function(subResolve) {
-                        // Invoke and run the generator callback for the current object key, resolve the sub promise when complete
-                        Generator.run(callback.apply(context, [objectKeys[i], object[objectKeys[i]], object]), subResolve);
-                    });
+            // Use a for loop here instead of .each so I can use await below
+            // Start the loop on the second item
+            for(var i = 1; i < objectKeys.length; i++) {
+                // Await on a sub promise which resolves when the async callback for the current object key completes
+                var advance = await new Promise(async function(subResolve) {
+                    // Run the async callback for the current object key, resolve the sub promise when complete
+                    var callbackReturnValue = await callback.apply(context, [objectKeys[i], object[objectKeys[i]], object]);
+                    subResolve(callbackReturnValue);
+                });
 
-                    // If the callback returns false, break out of the for loop
-                    if(advance === false) {
-                        break;
-                    }
+                // If the callback returns false, break out of the for loop
+                if(advance === false) {
+                    break;
                 }
-            }, resolve);
+            }
+
+            resolve();
         });
     }
 };

@@ -73,37 +73,37 @@ class TestReporter {
 		//Terminal.clear();
 
 		// Tell the user what we are doing
-		Console.writeLine("\n"+'Running '+data.testMethodCount+' '+(data.testMethodCount == 1 ? 'test' : 'tests')+' in '+data.testCount+' test '+(data.testCount == 1 ? 'class' : 'classes')+'...');
+		app.log("\n"+'Running '+data.testMethodCount+' '+(data.testMethodCount == 1 ? 'test' : 'tests')+' in '+data.testCount+' test '+(data.testCount == 1 ? 'class' : 'classes')+'...');
 	}
 
 	startedRunningTest(data) {
-		Console.writeLine("\n"+'  '+data.name+' '+Terminal.style('('+Node.Path.join(data.directory, data.fileName)+')', 'gray')+"\n");
+		app.log("\n"+'  '+data.name+' '+Terminal.style('('+Node.Path.join(data.directory, data.fileName)+')', 'gray')+"\n");
 	}
 
 	startedRunningTestMethod(data) {
-		//Console.writeLine('    startedRunningTestMethod', data);
+		//app.log('    startedRunningTestMethod', data);
 	}
 
 	finishedAssert(data) {
-		//Console.writeLine('    finishedAssert', data);
+		//app.log('    finishedAssert', data);
 	}
 
 	finishedRunningTestMethod(data) {
-		//Console.writeLine('    finishedRunningTestMethod', data);	
+		//app.log('    finishedRunningTestMethod', data);	
 
 		if(data.status == 'passed') {
-			Console.writeLine(Terminal.style('    ✓', 'green')+' '+data.name+' ('+this.currentTestMethodAssertionCount+' '+(this.currentTestMethodAssertionCount == 1 ? 'assertion' : 'assertions')+') '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30));
+			app.log(Terminal.style('    ✓', 'green')+' '+data.name+' ('+this.currentTestMethodAssertionCount+' '+(this.currentTestMethodAssertionCount == 1 ? 'assertion' : 'assertions')+') '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30));
 		}
 		else if(data.status == 'failed') {
-			Console.writeLine(Terminal.style('    ✗ ('+data.failedTestMethods.length+') '+data.name+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30), 'red'));
+			app.log(Terminal.style('    ✗ ('+data.failedTestMethods.length+') '+data.name+' '+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision, true, 5, 30), 'red'));
 		}
 		else if(data.status == 'skipped') {
-			Console.writeLine(Terminal.style('    ↓ (skipped) ', 'gray')+data.name);
+			app.log(Terminal.style('    ↓ (skipped) ', 'gray')+data.name);
 		}
 	}
 
 	finishedRunningTest(data) {
-		//Console.writeLine('    finishedRunningTest', data);	
+		//app.log('    finishedRunningTest', data);	
 	}
 
 	finishedRunningTests(data) {
@@ -114,22 +114,22 @@ class TestReporter {
 		if(passingTestClassesCount == 0 && data.passedTestMethods.length) {
 			passingTestClassesCount = 1;
 		}
-		Console.writeLine(Terminal.style("\n"+data.passedTestMethods.length+' method'+(data.passedTestMethods.length == 1 ? '' : 's')+' passing with '+this.passedAssertionCount+' assertion'+(this.passedAssertionCount == 1 ? '' : 's')+' in '+passingTestClassesCount+' test class'+(passingTestClassesCount == 1 ? '' : 'es')+' ', 'green')+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision));
+		app.log(Terminal.style("\n"+data.passedTestMethods.length+' method'+(data.passedTestMethods.length == 1 ? '' : 's')+' passing with '+this.passedAssertionCount+' assertion'+(this.passedAssertionCount == 1 ? '' : 's')+' in '+passingTestClassesCount+' test class'+(passingTestClassesCount == 1 ? '' : 'es')+' ', 'green')+this.getElapsedTimeString(data.stopwatch.getHighResolutionElapsedTime(), data.stopwatch.time.precision));
 
 		// If we have failures
 		if(data.failedTestMethods.length > 0) {
 			// Show the total failed tests
-			Console.writeLine(Terminal.style(data.failedTestMethods.length+' method'+(data.failedTestMethods.length == 1 ? '' : 's')+' failing with '+this.failedAssertionCount+' assertion'+(this.failedAssertionCount == 1 ? '' : 's')+' in '+data.failedTestClasses.length+' test class'+(data.failedTestClasses.length == 1 ? '' : 'es')+': '+data.failedTestClasses.join(', '), 'red'));
+			app.log(Terminal.style(data.failedTestMethods.length+' method'+(data.failedTestMethods.length == 1 ? '' : 's')+' failing with '+this.failedAssertionCount+' assertion'+(this.failedAssertionCount == 1 ? '' : 's')+' in '+data.failedTestClasses.length+' test class'+(data.failedTestClasses.length == 1 ? '' : 'es')+': '+data.failedTestClasses.join(', '), 'red'));
 		}
 
 		// Show the total skipped tests
 		if(data.skippedTestMethods.length) {
-			Console.writeLine(Terminal.style(data.skippedTestMethods.length+' method'+(data.skippedTestMethods.length == 1 ? '' : 's')+' skipped in '+data.skippedTestClasses.length+' test class'+(data.skippedTestClasses.length == 1 ? '' : 'es'), 'gray'));
+			app.log(Terminal.style(data.skippedTestMethods.length+' method'+(data.skippedTestMethods.length == 1 ? '' : 's')+' skipped in '+data.skippedTestClasses.length+' test class'+(data.skippedTestClasses.length == 1 ? '' : 'es'), 'gray'));
 		}
 		
 		// Show the total leaked variables
 		if(data.leakedGlobals.length) {
-			Console.writeLine(Terminal.style(data.leakedGlobals.length+' leaked global variable'+(data.leakedGlobals.length == 1 ? '' : 's')+': '+data.leakedGlobals.join(', '), 'red'));
+			app.log(Terminal.style(data.leakedGlobals.length+' leaked global variable'+(data.leakedGlobals.length == 1 ? '' : 's')+': '+data.leakedGlobals.join(', '), 'red'));
 		}
 
 		// If we have failures
@@ -142,31 +142,31 @@ class TestReporter {
 				if(!errorIdentifier) {
 					errorIdentifier = Json.encode(failedTest.error);
 				}
-				Console.writeLine("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+errorIdentifier);	
+				app.log("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+errorIdentifier);	
 
 				// Show the location of the failed test
 				if(Error.is(failedTest.error)) {
 					var firstCallSiteData = failedTest.error.stack.getCallSiteData(0);
-					Console.writeLine(Terminal.style('    ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));	
+					app.log(Terminal.style('    ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));	
 				}
 				else {
-					Console.writeLine(Terminal.style('    (unknown location)', 'gray'));
+					app.log(Terminal.style('    (unknown location)', 'gray'));
 				}				
 
 				// If we have AssertionError data (Node's AssertionError has the properties 'actual', 'operator', and 'expected')
 				if(Class.isInstance(failedTest.error, AssertionError)) {
-					Console.writeLine('    '+Terminal.style(failedTest.error.actual+' '+failedTest.error.operator+' '+failedTest.error.expected, 'red'));	
+					app.log('    '+Terminal.style(failedTest.error.actual+' '+failedTest.error.operator+' '+failedTest.error.expected, 'red'));	
 				}
 				else {
-					Console.writeLine(Terminal.style('    (error is not an AssertionError)', 'red'));
+					app.log(Terminal.style('    (error is not an AssertionError)', 'red'));
 				}
 				
 				// Show the full error with stack trace
 				if(Error.is(failedTest.error)) {
-					Console.writeLine('    '+failedTest.error.stack.toString().replace("\n", "\n    ").trim());
+					app.log('    '+failedTest.error.stack.toString().replace("\n", "\n    ").trim());
 				}
 				else {
-					Console.writeLine('    (stack trace not available)');
+					app.log('    (stack trace not available)');
 				}
 			});
 		}

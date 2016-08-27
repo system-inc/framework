@@ -18,29 +18,22 @@ Function.prototype.getParameters = function() {
 	return parameters;
 };
 
-Function.prototype.isGenerator = function() {
-	return Function.isGenerator(this);
+Function.prototype.isAsync = function() {
+	return Function.isAsync(this);
 };
 
 // Static methods
 
-Function.isGenerator = function(fn) {
-	if(!fn) {
-		return false;
+Function.isAsync = function(fn) {
+	var isAsync = false;
+
+	// Is it an actual ES7 async function? (as of Nov-2015, no JS-runtime supports this yet)
+	// https://tc39.github.io/ecmascript-asyncawait/#async-function-constructor-properties
+	if(fn && fn.constructor && fn.constructor.name === 'AsyncFunction') {
+		isAsync = true;
 	}
 
-	var isGenerator = false;
-
-	// Faster method first
-	if(fn.constructor.name === 'GeneratorFunction') {
-		isGenerator = true;
-	}
-	// Slower method second
-	else if(/^function\s*\*/.test(fn.toString())) {
-		isGenerator = true;
-	}
-
-	return isGenerator;
+	return isAsync;
 };
 
 Function.is = function(value) {

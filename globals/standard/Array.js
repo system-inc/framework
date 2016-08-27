@@ -358,45 +358,54 @@ Array.prototype.random = function() {
 	return this[Number.random(0, this.length - 1)];
 };
 
-// Takes either a normal callback function or a generator callback function
+// Takes either a normal callback function or an async callback function
 Array.prototype.each = function(callback) {
 	var context = this;
+	var callbackReturnValueForFirstItem = null;
 
-	// If the callback is not a generator, use a standard for loop
-	if(!Function.isGenerator(callback)) {
-		//Array.prototype.forEach.apply(this, arguments)
-		for(var i = 0; i < this.length; i++) {
-			var advance = callback.apply(context, [i, this[i], this]);
+	// Start out with a standard for loop
+	for(var i = 0; i < this.length; i++) {
+		var advance = callback.apply(context, [i, this[i], this]);
 
-			// If the callback returns false, break out of the for loop
-			if(advance === false) {
-				break;
-			}
+		// If the callback on the first item returns a Promise, break
+		if(i == 0 && Promise.is(advance)) {
+			callbackReturnValueForFirstItem = advance;
+			break;
+		}
+
+		// If the callback returns false, break out of the for loop
+		if(advance === false) {
+			break;
 		}
 	}
-	// If the callback is a generator, work some inception magic
-	else {
+
+	// If the callback for the first item returned a Promise
+	if(callbackReturnValueForFirstItem) {
 		// Keep track of the array
 		var array = this;
 
 		// This top level promise resolves after all array elements have been looped over
-	    return new Promise(function(resolve) {
-	    	// Run an anonymous generator function which loops over each array element, allowing me to yield on a sub promise
-	    	Generator.run(function*() {
-	    		// Use a for loop here instead of .each so I can use yield below
-		    	for(var i = 0; i < array.length; i++) {
-		    		// Yield on a sub promise which resolves when the generator callback for the current array element completes
-		   			var advance = yield new Promise(function(subResolve) {
-		   				// Invoke and run the generator callback for the current array element, resolve the sub promise when complete
-						Generator.run(callback.apply(context, [i, array[i], array]), subResolve);
-					});
+	    return new Promise(async function(resolve) {
+	    	// Wait for the first item's Promise to resolve
+	    	await callbackReturnValueForFirstItem;
 
-					// If the callback returns false, break out of the for loop
-					if(advance === false) {
-						break;
-					}
-		    	}
-	    	}, resolve);
+    		// Use a for loop here instead of .each so I can use await below
+    		// Start the loop on the second item
+	    	for(var i = 1; i < array.length; i++) {
+	    		// Await on a sub promise which resolves when the async callback for the current array element completes
+	   			var advance = await new Promise(async function(subResolve) {
+	   				// Run the async callback for the current array element, resolve the sub promise when complete
+					var callbackReturnValue = await callback.apply(context, [i, array[i], array]);
+					subResolve(callbackReturnValue);
+				});
+
+				// If the callback returns false, break out of the for loop
+				if(advance === false) {
+					break;
+				}
+	    	}
+
+	    	resolve();
 	    });
 	}
 };

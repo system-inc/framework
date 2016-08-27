@@ -64,6 +64,7 @@ class Proctor extends EventEmitter {
 		else {
 			this.testReporter = new StandardTestReporter(this);
 		}
+		//app.log('this.testReporter', this.testReporter);
 
 		// Break on error
 		if(breakOnError !== undefined) {
@@ -72,7 +73,7 @@ class Proctor extends EventEmitter {
 	}
 
 	async supervise() {
-		Console.log('Test supervising enabled. Tests will run whenever a test class file is updated.');
+		app.log('Test supervising enabled. Tests will run whenever a test class file is updated.');
 
 		// Keep track of the last test class and methods changed
 		var activeTest = {
@@ -82,23 +83,23 @@ class Proctor extends EventEmitter {
 		
 		// Watch the project and framework directories
 		var watchedFileSystemObjects = await FileSystemObject.watch([app.directory, app.framework.directory], function(fileSystemObject, currentStatus, previousStatus) {
-			//Console.log(fileSystemObject.path, 'updated.');
+			//app.log(fileSystemObject.path, 'updated.');
 
 			if(fileSystemObject.path.endsWith('Test.js')) {
 				// Set the active test class
-				//Console.info(fileSystemObject.path);
+				//app.info(fileSystemObject.path);
 				activeTest.class = fileSystemObject.nameWithoutExtension;
-				//Console.info(activeTest.class);
+				//app.info(activeTest.class);
 
-				//Console.log("\r\n".repeat(64));
+				//app.log("\r\n".repeat(64));
 
-				Console.log(fileSystemObject.path, 'updated.');
-				Console.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingRight, 'blue'));
+				app.log(fileSystemObject.path, 'updated.');
+				app.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingRight, 'blue'));
 
 				// If there is no active test file
 				if(!activeTest.class) {
-					Console.log(Terminal.style("\r\n"+'Did not run tests, please update (touch) the test class file you would like to run.', 'red'));
-					Console.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
+					app.log(Terminal.style("\r\n"+'Did not run tests, please update (touch) the test class file you would like to run.', 'red'));
+					app.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
 				}
 				else {
 					// Spawn the child process
@@ -107,20 +108,21 @@ class Proctor extends EventEmitter {
 				    });
 
 					nodeChildProcess.on('close', function(code) {
-						Console.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
-						Console.log('Tests finished. Child process exited with code '+code+'. Will run tests on next file update...'+String.newline);
+						app.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
+						app.log('Tests finished. Child process exited with code '+code+'. Will run tests on next file update...'+String.newline);
 					});
 				}
 			}
 		});
 
 		// Tell the user how many objects we are watching
-		Console.log('Watching', watchedFileSystemObjects.length, 'file system objects for updates...');
+		app.log('Watching', watchedFileSystemObjects.length, 'file system objects for updates...');
 	}
 
 	async getAndRunTests(path, filePattern, methodPattern) {
+		//app.log('getAndRunTests', ...arguments);
 		var tests = await Proctor.getTests(path, filePattern, methodPattern);
-		//Console.standardLog('getAndRunTests', path, filePattern, methodPattern, tests);
+		//app.log('getAndRunTests', path, filePattern, methodPattern, tests);
 
 		this.addTests(tests);
 
@@ -143,7 +145,7 @@ class Proctor extends EventEmitter {
 		}.bind(this));
 
 		tests.methods.each(function(methodIndex, methodObject) {
-			//Console.log(methodObject.name);
+			//app.log(methodObject.name);
 			this.testMethods[methodObject.class.name].methods.append(methodObject.name);
 		}.bind(this));
 	}
@@ -217,18 +219,14 @@ class Proctor extends EventEmitter {
 	}
 
 	async runTests() {
-		// Get the totals
-		var testCount = this.testCount();
-		var testMethodCount = this.testMethodCount();
-
 		// Build the test queue
 		this.buildTestQueue();
-		//Console.log(this.testMethodQueue);
+		//app.log('this.testMethodQueue', this.testMethodQueue);
 
 		// Started running tests
 		this.emit('Proctor.startedRunningTests', {
-			testCount: testCount,
-			testMethodCount: testMethodCount,
+			testCount: this.testCount,
+			testMethodCount: this.testMethodCount,
 		});
 
 		// Start the stopwatch
@@ -258,7 +256,7 @@ class Proctor extends EventEmitter {
 	}
 
 	skipCurrentTest() {
-		//Console.log('Skipping this.currentTestMethod', this.currentTestMethod);
+		//app.log('Skipping this.currentTestMethod', this.currentTestMethod);
 
 		this.currentTestMethodStatus = 'skipped';
 		this.currentTestClassStatus = 'skipped';
@@ -276,6 +274,8 @@ class Proctor extends EventEmitter {
 	}
 
 	async runNextTest() {
+		//app.log('runNextTest');
+
 		this.moveToNextTest();
 
 		// If we are out of tests
@@ -302,39 +302,24 @@ class Proctor extends EventEmitter {
 		// Run .beforeEach on the test class
 		await this.currentTestClassInstance.beforeEach();
 
-		// Create a domain for the test
-		var domain = Node.Domain.create();
-
-		// Add an event listener to listen for errors on the domain
-		domain.on('error', function(error) {
-			//Console.warn('Caught domain error', error); Node.exit();
-
-			this.failCurrentTestMethod(error, domain);
-		}.bind(this));
-
-		// Enter the domain
-		domain.enter();
-
 		// Time the test
 		this.currentTestMethodStopwatch = new Stopwatch();
 
-		// Put a try catch block around the test
+		// Run the test
 		try {
-			//Console.info('Proctor.runNextTest running test', this.currentTestMethod.method);
+			app.info('Proctor.runNextTest running test', this.currentTestMethod.method);
 			await this.currentTestClassInstance[this.currentTestMethod.method]();
-			//Console.info('Proctor.runNextTest running test completed', this.currentTestMethod.method);
+			app.info('Proctor.runNextTest running test completed', this.currentTestMethod.method);
 
-			this.passCurrentTestMethod(domain);
+			this.passCurrentTestMethod();
 		}
-		// If the test fails
 		catch(error) {
-			//Console.warn('Caught error', error); Node.exit();
-
-			this.failCurrentTestMethod(error, domain);
+			//app.warn('Caught error', error);
+			this.failCurrentTestMethod(error);
 		}
 	}
 
-	passCurrentTestMethod(domain) {
+	passCurrentTestMethod() {
 		// Stop the stopwatch for the test
 		this.currentTestMethodStopwatch.stop();
 
@@ -343,10 +328,10 @@ class Proctor extends EventEmitter {
 
 		this.currentTestMethodStatus = 'passed';
 
-		this.finishedRunningNextTest(domain);
+		this.finishedRunningNextTest();
 	}
 
-	failCurrentTestMethod(error, domain) {
+	failCurrentTestMethod(error) {
 		// Stop the stopwatch for the test
 		this.currentTestMethodStopwatch.stop();
 
@@ -360,13 +345,10 @@ class Proctor extends EventEmitter {
 		this.currentTestMethodStatus = 'failed';
 		this.currentTestClassStatus = 'failed';
 
-		this.finishedRunningNextTest(domain);
+		this.finishedRunningNextTest();
 	}
 
-	async finishedRunningNextTest(domain) {
-		// Exit the domain
-		domain.exit();
-
+	async finishedRunningNextTest() {
 		// Run .afterEach on the test class
 		await this.currentTestClassInstance.afterEach();
 
@@ -449,7 +431,7 @@ class Proctor extends EventEmitter {
 	}
 
 	noMoreTests() {
-		//Console.log('noMoreTests');
+		//app.log('noMoreTests');
 
 		// Store passing, failing, and skipped test classes
 		this.recordCurrentTestClassStatus();
@@ -472,15 +454,16 @@ class Proctor extends EventEmitter {
 			leakedGlobals: leakedGlobals,
 		});
 
-		//Console.log('noMoreTests');
+		//app.log('noMoreTests');
 
 		// Exit the process if we are on a terminal
-		if(Console.onTerminal()) {
-			// Give the console session logger some time to finish writing to disk
-			Function.delay(250, function() {
-				Node.exit();
-			});
-		}
+		app.log('need to fix this next block'); Node.exit();
+		//if(Console.onTerminal()) {
+		//	// Give the console session logger some time to finish writing to disk
+		//	Function.delay(250, function() {
+		//		Node.exit();
+		//	});
+		//}
 	}
 
 	getLeakedGlobals() {
@@ -766,6 +749,8 @@ class Proctor extends EventEmitter {
 	}
 
 	static async getTests(path, filePattern, methodPattern, matchStringMethodPatternExactly) {
+		//app.log('Proctor.getTests', ...arguments);
+
 		var tests = {
 			classes: [],
 			methods: [],
@@ -773,7 +758,7 @@ class Proctor extends EventEmitter {
 
 		// Resolve the path
 		path = Proctor.resolvePath(path);
-		//Console.log(path);
+		//app.log(path);
 		//Node.exit(path);
 
 		// If patterns are set and are strings, lowercase them for later matching
@@ -786,25 +771,29 @@ class Proctor extends EventEmitter {
 
 		// Create a file or directory object from the path
 		var fileSystemObjectFromPath = await FileSystemObjectFactory.create(path);
-		//Node.exit(fileSystemObject);
+		//app.log('fileSystemObjectFromPath', fileSystemObjectFromPath);
 
 		// Store all of the file system objects
 		var fileSystemObjects = [];
 		
 		// If we are working with a directory of tests
 		if(fileSystemObjectFromPath.isDirectory()) {
+			//app.log('fileSystemObjectFromPath.isDirectory');
+
 			// Recursively get all of the file system objects in the path
+			//app.log('Proctor getting all file system objects');
 			fileSystemObjects = await fileSystemObjectFromPath.list(true);
+			//app.log('fileSystemObjects', fileSystemObjects);
 		}
 		// If we are working with a single test file
 		else {
 			fileSystemObjects.append(fileSystemObjectFromPath);
 		}
-		//return fileSystemObjects;
+		//app.log('fileSystemObjects', fileSystemObjects);
 
 		// Loop through each of the file system objects
 		fileSystemObjects.each(function(index, fileSystemObject) {
-			//Console.log(fileSystemObject.path);
+			//app.log(fileSystemObject.path);
 
 			// If we have a file
 			if(fileSystemObject.isFile()) {
@@ -812,26 +801,28 @@ class Proctor extends EventEmitter {
 				if(fileSystemObject.name != 'Test.js' && fileSystemObject.name.endsWith('Test.js')) {
 					// Filter the tests if there is a filePattern
 					if(filePattern == null || fileSystemObject.path.lowercase().match(filePattern)) {
-						//Console.info(fileSystemObject.path.lowercase(), 'matched against', filePattern);
+						//app.info(fileSystemObject.path.lowercase(), 'matched against', filePattern);
 						
 						var testClassName = fileSystemObject.nameWithoutExtension;
 
 						// Require the test class file
 						try {
-							var testClass = Node.require(fileSystemObject.file);
+							var testClass = require(fileSystemObject.file).default;
+							//app.log('testClass', testClass);
 
-							// Check to see if the testClass is a function
-							if(!testClass || !Function.is(testClass)) {
+							// Check to see if the testClass is a class
+							if(!testClass || !Class.is(testClass)) {
 								throw new Error(fileSystemObject.file+' did not export a Test class.');
 							}
-							// If testClass is a function that can be instantiated
+							// If testClass is a class that can be instantiated
 							else {
 								// Instantiate the test class
 								var instantiatedTestClass = new testClass();
+								//app.log('instantiatedTestClass', instantiatedTestClass);
 
 								// Make sure the instantiated class is an instance of Test
 								if(Class.isInstance(instantiatedTestClass, Test)) {
-									//Console.log('Adding test:', testClassName);
+									//app.log('Adding test:', testClassName);
 
 									// Add the test class to tests
 									var testClassObject = {
@@ -843,36 +834,37 @@ class Proctor extends EventEmitter {
 									tests.classes.append(testClassObject);
 
 									// Loop through all of the class properties
-									for(var key in instantiatedTestClass) {						
+									var testClassMethodNames = Class.getMethodNames(testClass);
+									testClassMethodNames.each(function(testClassMethodNamesIndex, testClassMethodName) {
 										// All tests must start with "test" and be a function
-										if(key.startsWith('test') && Function.is(instantiatedTestClass[key])) {
-											//Console.log('Test method name:', key);
+										if(testClassMethodName.startsWith('test')) {
+											//app.log('Test method name:', testClassMethodName);
 
 											var appendTestMethod = false;
 
 											// Filter test methods
 											if(matchStringMethodPatternExactly) {
-												if(key.lowercase() == methodPattern) {
+												if(testClassMethodName.lowercase() == methodPattern) {
 													appendTestMethod = true;
 												}
 											}
-											else if(methodPattern == null || key.lowercase().match(methodPattern)) {
-												//Console.log(key.lowercase(), 'matched against', methodPattern);
+											else if(methodPattern == null || testClassMethodName.lowercase().match(methodPattern)) {
+												//app.log(testClassMethodName.lowercase(), 'matched against', methodPattern);
 												appendTestMethod = true;
 											}
 											else {
-												//Console.log(key.lowercase(), 'did not match against', methodPattern);
+												//app.log(testClassMethodName.lowercase(), 'did not match against', methodPattern);
 											}
 
 											if(appendTestMethod) {
 												tests.methods.append({
-													name: key,
-													method: instantiatedTestClass[key],
+													name: testClassMethodName,
+													method: instantiatedTestClass[testClassMethodName],
 													class: testClassObject,
 												});
 											}
 										}
-									}
+									});
 								}
 								else {
 									throw new Error(fileSystemObject.file+' did not export a Test class.');
@@ -880,11 +872,12 @@ class Proctor extends EventEmitter {
 							}
 						}
 						catch(error) {
-							Console.log('Caught an error while loading test.', error);
+							app.log('Caught an error while loading test.', error);
+							Node.exit();
 						}
 					}
 					else {
-						//Console.log(fileSystemObject.path.lowercase(), 'did not match against', filePattern);
+						//app.log(fileSystemObject.path.lowercase(), 'did not match against', filePattern);
 					}
 				}
 			}

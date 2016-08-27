@@ -8,24 +8,41 @@ import Version from './../../system/version/Version.js';
 // Class
 class App {
 
+	
 	title = 'App Title';
-	identifier = null;
 	description = null;
+	
+	identifier = null;
 	version = null;
+
 	directory = null;
+
 	settings = null;
 	environment = null;
+
 	command = null;
+
 	modules = {};
-	interfaces = [];
+
+	/*
+		Ways to interact with an app
+
+		command line -> run the app with arguments
+		
+		textual interface? terminal? shell? -> while the app is running issue commands
+			basically once the app is running can we listen for terminal commands like cursor position, etc? and repaint the screen?
+			we can type and input comes over standard in 
+
+		graphical -> click on things
+
+	*/
+	interfaces = {};
+
+	logObject = null;
 
 	framework = {
 		version: new Version('0.1.0'),
 		directory: Node.Path.join(__dirname, '../', '../'),
-		coreModules: [
-			'ConsoleModule',
-			'ArchiveModule',
-		],
 	};
 
 	constructor(appDirectory) {
@@ -37,13 +54,10 @@ class App {
 		// Make it obvious we are starting
 		console.log(AsciiArt.framework.version[this.framework.version.toString()]);
 
-		// Require the core modules
-		Module.require(this.framework.coreModules);
-
 		// Announce starting
 		//console.log('Initializing Framework '+this.framework.version+'...');
 
-		// Use core modules to load the project settings
+		// Load the project settings
 		await this.loadAppSettings();
 
 		// Use project settings to set the title and the identifier
@@ -55,9 +69,6 @@ class App {
 		// Use project settings to configure the environment
 		this.configureEnvironment();
 
-		// After the environment is initialized, initialize the Framework core modules
-		await Module.initialize(this.framework.coreModules);
-
 		// Load all of the modules for the Project indicated in the project settings
 		await this.requireAndInitializeProjectModules();
 
@@ -67,7 +78,7 @@ class App {
 
 		// Run the callback (which may be a generator)
 		if(callback) {
-			callback.bind(this).run();
+			await callback();
 		}
 	}
 
@@ -145,6 +156,22 @@ class App {
 
 	onLinux() {
 		return Node.Process.platform == 'linux';
+	}
+
+	log() {
+		return console.log(...arguments);
+	}
+
+	info() {
+		return console.info(...arguments);
+	}
+
+	warn() {
+		return console.warn(...arguments);
+	}
+
+	error() {
+		return console.error(...arguments);
 	}
 
 	async requireAndInitializeProjectModules() {

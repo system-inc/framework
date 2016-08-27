@@ -62,7 +62,7 @@ class Settings {
 			this.integrate(data);	
 		}
 		catch(error) {
-			console.error('--- no file at '+datafilePath);
+			//console.error('--- no file at '+datafilePath);
 		}
 	}
 

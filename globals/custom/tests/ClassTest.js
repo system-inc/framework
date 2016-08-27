@@ -1,13 +1,13 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var Version = Framework.require('system/version/Version.js');
-var Settings = Framework.require('system/settings/Settings.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import Version from './../../../system/version/Version.js';
+import Settings from './../../../system/settings/Settings.js';
 
 // Class
-var ClassTest = Test.extend({
+class ClassTest extends Test {
 
-	testIsInstance: function() {
+	testIsInstance() {
 		Assert.false(Class.isInstance(Version), 'not a class definition');
 		Assert.false(Class.isInstance({}), '{} is not an instance of a class');
 		Assert.false(Class.isInstance([]), '[] is not an instance of a class');
@@ -16,73 +16,75 @@ var ClassTest = Test.extend({
 		Assert.true(Class.isInstance(new Version('1.0'), Version), 'observes classType parameter');
 		Assert.true(Class.isInstance(new Version('1.0'), Class), 'classType parameter may be Class');
 		Assert.false(Class.isInstance(new Version('1.0'), Settings), 'observes classType parameter');
-	},
+	}
 
-	testInheritance: function() {
-		var SpecialTestParentClass = Class.extend({
+	testInheritance() {
+		class SpecialTestParentClass {
 
-			parentClassConstruct: null,
-			parentStringClassVariable: 'string',
-			parentNullClassVariable: null,
-			parentArrayClassVariable: [],
-			parentObjectClassVariable: {},
-			parentClassInstanceClassVariable: new Version('1.0'),
-			parentTimeClassVariable: new Time(),
-			parentContainedReferenceClassVariable: {},
+			parentClassConstruct = null;
+			parentStringClassVariable = 'string';
+			parentNullClassVariable = null;
+			parentArrayClassVariable = [];
+			parentObjectClassVariable = {};
+			parentClassInstanceClassVariable = new Version('1.0');
+			parentTimeClassVariable = new Time();
+			parentContainedReferenceClassVariable = {};
 
-			construct: function() {
+			constructor() {
 				this.parentClassConstruct = 'constructed';
-			},
+			}
 
-			parentMethodToUse: function() {
+			parentMethodToUse() {
 				return 'child use me';
-			},
+			}
 
-			parentMethodToOverride: function() {
+			parentMethodToOverride() {
 				return 'override me';
-			},
+			}
 
-			parentStaticMethodDefinedInClass: function() {
+			parentStaticMethodDefinedInClass() {
 				return 'static method';
-			},
+			}
 
-		});
+			static parentStaticMethodDefinedInClass = SpecialTestParentClass.prototype.parentStaticMethodDefinedInClass;
 
-		SpecialTestParentClass.parentStaticMethodDefinedInClass = SpecialTestParentClass.prototype.parentStaticMethodDefinedInClass;
-		SpecialTestParentClass.parentStaticMethodDefinedOutOfClass = function() {
-			return 'static method defined out of Class.extend';
+			static parentStaticMethodDefinedOutOfClass() {
+				return 'static method defined out of Class.extend';
+			}
+
 		}
 
-		var SpecialTestChildClass = SpecialTestParentClass.extend({
+		class SpecialTestChildClass extends SpecialTestParentClass {
 
-			childClassConstruct: null,
-			childStringClassVariable: 'string',
-			childNullClassVariable: null,
-			childArrayClassVariable: [],
-			childObjectClassVariable: {},
+			childClassConstruct = null;
+			childStringClassVariable = 'string';
+			childNullClassVariable = null;
+			childArrayClassVariable = [];
+			childObjectClassVariable = {};
 
-			construct: function() {
-				this.super.apply(this, arguments);
+			constructor() {
+				super(...arguments);
 				this.childClassConstruct = 'constructed';
-			},
+			}
 
-			parentMethodToOverride: function() {
+			parentMethodToOverride() {
 				return 'overridden!';
-			},
+			}
 
-			childMethodToUse: function() {
+			childMethodToUse() {
 				return 'child use me';
-			},
+			}
 
-			childStaticMethodDefinedInClass: function() {
+			childStaticMethodDefinedInClass() {
 				return 'static method';
-			},
+			}
 
-		});
+			static childStaticMethodDefinedInClass = SpecialTestChildClass.prototype.childStaticMethodDefinedInClass;
 
-		SpecialTestChildClass.childStaticMethodDefinedInClass = SpecialTestChildClass.prototype.childStaticMethodDefinedInClass;
-		SpecialTestChildClass.childStaticMethodDefinedOutOfClass = function() {
-			return 'static method defined out of Class.extend';
+			static childStaticMethodDefinedOutOfClass() {
+				return 'static method defined out of Class.extend';
+			}
+
 		}
 
 		// Test the parent
@@ -181,77 +183,78 @@ var ClassTest = Test.extend({
 		//Console.log(specialTestParentClassInstance1.parentTimeClassVariable);
 		//Console.log(specialTestParentClassInstance2.parentTimeClassVariable);
 		Assert.equal(specialTestParentClassInstance1.parentTimeClassVariable.toString(), specialTestParentClassInstance2.parentTimeClassVariable.toString(), 'time class instance variables are the same time');
-	},
+	}
 
-	testGenerators: function*() {
-		var SpecialTestClass = Class.extend({
+	async testAsync() {
+		class SpecialTestClass {
 
-			generator: function*() {
-				var result = yield 'hello';
+			async asyncFunction() {
+				var result = await 'hello';
 
 				return result;
-			},
+			}
 
-		});
+		}
 
 		var specialTestClassInstance = new SpecialTestClass();
 
-		var actual = yield specialTestClassInstance.generator();
+		var actual = await specialTestClassInstance.asyncFunction();
 		var expected = 'hello';
-		Assert.equal(actual, expected, 'generator class methods return value when yielded')
+		Assert.equal(actual, expected, 'async class methods return value when awaited')
 
-		actual = specialTestClassInstance.generator();
-		Assert.true(Class.isInstance(actual, Promise), 'generator class methods return promise when not yielded');
-	},
+		actual = specialTestClassInstance.asyncFunction();
+		Assert.true(Class.isInstance(actual, Promise), 'async class methods return promise when not awaited');
+	}
 
-	testImplement: function*() {
+	async testImplement() {
 		// Class which will implement ClassToImplement
-		var MainClass = Class.extend({
+		class MainClass {
 
-			existingProperty: 'MainClass.existingProperty',
+			existingProperty = 'MainClass.existingProperty';
 
-			existingMethod: function() {
+			existingMethod() {
 				return 'MainClass.existingMethod';
-			},
+			}
 
-		});
+			static existingStaticProperty = 'MainClass.existingStaticProperty';
 
-		MainClass.existingStaticProperty = 'MainClass.existingStaticProperty';
+			static existingStaticMethod() {
+				return 'MainClass.existingStaticMethod';
+			}
 
-		MainClass.existingStaticMethod = function() {
-			return 'MainClass.existingStaticMethod';
-		};
+		}
 
 		// The class which will be implemented
-		var ClassToImplement = Class.extend({
+		class ClassToImplement {
 
-			existingProperty: 'ClassToImplement.existingProperty',
-			implementedProperty: 'ClassToImplement.implementedProperty',
+			existingProperty = 'ClassToImplement.existingProperty';
+			implementedProperty = 'ClassToImplement.implementedProperty';
 
-			existingMethod: function() {
+			existingMethod() {
 				return 'ClassToImplement.existingMethod';
-			},
+			}
 
-			implementedMethod: function() {
+			implementedMethod() {
 				return 'ClassToImplement.implementedMethod';
-			},
+			}
 
-			implementedGeneratorMethod: function*() {
-				return 'ClassToImplement.implementedGeneratorMethod';
-			},
+			async implementedAsyncMethod() {
+				return 'ClassToImplement.implementedAsyncMethod';
+			}
 
-		});
+			static existingStaticProperty = 'ClassToImplement.existingStaticProperty';
 
-		ClassToImplement.existingStaticProperty = 'ClassToImplement.existingStaticProperty';
-		ClassToImplement.implementedStaticProperty = 'ClassToImplement.implementedStaticProperty';
+			static implementedStaticProperty = 'ClassToImplement.implementedStaticProperty';
 
-		ClassToImplement.existingStaticMethod = function() {
-			return 'ClassToImplement.existingStaticMethod';
-		};
+			static existingStaticMethod() {
+				return 'ClassToImplement.existingStaticMethod';
+			}
 
-		ClassToImplement.implementedStaticMethod = function() {
-			return 'ClassToImplement.implementedStaticMethod';
-		};
+			static implementedStaticMethod() {
+				return 'ClassToImplement.implementedStaticMethod';
+			}
+
+		}
 
 		// Make sure MainClass does not implement ClassToImplement yet
 		Assert.false(Class.doesImplement(MainClass, ClassToImplement), 'Class.doesImplement() works');
@@ -276,11 +279,11 @@ var ClassTest = Test.extend({
 		Assert.strictEqual(mainClass.implementedProperty, 'ClassToImplement.implementedProperty', 'Implemented properties are copied to the implementing class');
 		Assert.strictEqual(mainClass.existingMethod(), 'MainClass.existingMethod', 'Existing methods are not overwritten');
 		Assert.strictEqual(mainClass.implementedMethod(), 'ClassToImplement.implementedMethod', 'Implemented methods are copied to the implementing class');
-		var yieldedImplementedGeneratorMethodValue = yield mainClass.implementedGeneratorMethod();
-		Assert.equal(yieldedImplementedGeneratorMethodValue, 'ClassToImplement.implementedGeneratorMethod', 'Implemented generator methods are copied to the implementing class');
-	},
+		var awaitedImplementedGeneratorMethodValue = await mainClass.implementedAsyncMethod();
+		Assert.equal(awaitedImplementedGeneratorMethodValue, 'ClassToImplement.implementedAsyncMethod', 'Implemented generator methods are copied to the implementing class');
+	}
 
-});
+}
 
 // Export
-module.exports = ClassTest;
+export default ClassTest;

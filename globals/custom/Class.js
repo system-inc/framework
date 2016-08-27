@@ -23,9 +23,27 @@ class Class {
 		// If a class type is provided
 		else if(value instanceof classType) {
 			is = true;
-		}		
+		}
 
 		return is;
+	}
+
+	static implement(classToReceiveImplementation, classToImplement) {
+		for(var classToImplementProperty in classToImplement) {
+			if(classToReceiveImplementation[classToImplementProperty] === undefined) {
+				//console.log(classToImplementProperty, 'does not exist on class, copying');
+				classToReceiveImplementation[classToImplementProperty] = Object.clone(classToImplement[classToImplementProperty]);
+			}
+		}
+
+		for(var classToImplementPrototypeProperty in classToImplement.prototype) {
+			if(classToReceiveImplementation.prototype[classToImplementPrototypeProperty] === undefined) {
+				//console.log(classToImplementPrototypeProperty, 'does not exist on class prototype, copying');
+				classToReceiveImplementation.prototype[classToImplementPrototypeProperty] = Object.clone(classToImplement.prototype[classToImplementPrototypeProperty]);
+			}
+		}
+		
+		return classToReceiveImplementation;
 	}
 
 	static doesImplement(classToCheck, classExpectedToBeImplemented) {
@@ -60,22 +78,16 @@ class Class {
 		return clone;
 	}
 
-	static implement(classToReceiveImplementation, classToImplement) {
-		for(var classToImplementProperty in classToImplement) {
-			if(classToReceiveImplementation[classToImplementProperty] === undefined) {
-				//console.log(classToImplementProperty, 'does not exist on class, copying');
-				classToReceiveImplementation[classToImplementProperty] = Object.clone(classToImplement[classToImplementProperty]);
-			}
+	static getMethodNames(classDefinition) {
+		//app.log('Class.getMethodNames', classDefinition);
+
+		var methodNames = [];
+
+		for(var key of Object.getOwnPropertyNames(classDefinition.prototype)) {
+			methodNames.append(key);
 		}
 
-		for(var classToImplementPrototypeProperty in classToImplement.prototype) {
-			if(classToReceiveImplementation.prototype[classToImplementPrototypeProperty] === undefined) {
-				//console.log(classToImplementPrototypeProperty, 'does not exist on class prototype, copying');
-				classToReceiveImplementation.prototype[classToImplementPrototypeProperty] = Object.clone(classToImplement.prototype[classToImplementPrototypeProperty]);
-			}
-		}
-		
-		return classToReceiveImplementation;
+		return methodNames;
 	}
 
 }

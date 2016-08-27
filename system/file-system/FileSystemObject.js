@@ -139,14 +139,26 @@ class FileSystemObject {
 
 	async exists(path) {
 		path = (path === undefined) ? this.path : Node.Path.normalize(path);
-		//Console.log('path', path);
+		//app.log('FileSystemObject.exists, path', path);
 
 	    var exists = await new Promise(function(resolve, reject) {
-	    	Node.FileSystem.exists(path, function(exists) {
-	    		//Console.log(path, exists);
-	    		resolve(exists);
+	    	Node.FileSystem.stat(path, function(error, stats) {
+	    		//app.log('Node.FileSystem.stat', error, stats);
+
+                if(!error) {
+                    //app.log('exists!');
+                    resolve(true);
+                }
+                else {
+                    //app.log('does not exist!');
+                    resolve(false);
+                }
 	    	});
+
+            //app.log('hiiii');
 	    });
+        //app.log('FileSystemObject.exists exists', exists, path);
+        //Node.exit();
 
         return exists;
 	}
@@ -194,41 +206,44 @@ class FileSystemObject {
     }
 
     static async list(path, recursive) {
-        var list = await new Promise(async function(resolve, reject) {
-            var list = [];
-            var fileNames = await FileSystemObject.listFileNames(path);
+        //app.log('FileSystemObject.list', ...arguments);
 
-            // Dependencies
-            //import FileSystemObjectFactory from './FileSystemObjectFactory.js';
-            //var FileSystemObjectFactory = await System.import('./FileSystemObjectFactory.js');
-            var FileSystemObjectFactory = require('./FileSystemObjectFactory.js').default;
-            var Directory = require('./Directory.js').default;
+        var list = [];
+        var fileNames = await FileSystemObject.listFileNames(path);
+        //Node.exit('fileNames', fileNames);
 
-            // Make sure we have the full path
-            await fileNames.each(async function(index, fileName) {
-                var fileSystemObject = await FileSystemObjectFactory.create(path+fileName);
+        // Dependencies
+        //import FileSystemObjectFactory from './FileSystemObjectFactory.js';
+        //var FileSystemObjectFactory = await System.import('./FileSystemObjectFactory.js');
+        var FileSystemObjectFactory = require('./FileSystemObjectFactory.js').default;
+        var Directory = require('./Directory.js').default;
 
-                // Handle recursion
-                if(recursive && Directory.is(fileSystemObject)) {
-                    // Get the directory listing of any directories
-                    var directoryList = await fileSystemObject.list(true);
+        // Make sure we have the full path
+        await fileNames.each(async function(index, fileName) {
+            //app.log('fileName', path+fileName);
+            var fileSystemObject = await FileSystemObjectFactory.create(path+fileName);
+            //app.log('fileSystemObject', fileSystemObject);
 
-                    // Add them to the list to return
-                    directoryList.each(function(index, directoryListItem) {
-                        list.push(directoryListItem);
-                    });
-                }
+            // Handle recursion
+            if(recursive && Directory.is(fileSystemObject)) {
+                // Get the directory listing of any directories
+                var directoryList = await fileSystemObject.list(true);
 
-                if(fileSystemObject) {
-                    list.push(fileSystemObject);
-                }
-                else {
-                    //Console.log('No fileSystemObject for', path+fileName);
-                }                
-            });
+                // Add them to the list to return
+                directoryList.each(function(index, directoryListItem) {
+                    list.append(directoryListItem);
+                });
+            }
 
-            return list;
+            if(fileSystemObject) {
+                list.append(fileSystemObject);
+            }
+            else {
+                app.log('No fileSystemObject for', path+fileName);
+            }
         });
+
+        //Node.exit('list', list);
 
         return list;
     }
@@ -243,7 +258,7 @@ class FileSystemObject {
 
         // Loop through the paths and collect all of the file system objects to watch
         await paths.each(async function(pathIndex, path) {
-            //Console.log('path', path);
+            //app.log('path', path);
 
             // Instantiate a file or directory from the path
             var fileSystemObject = await FileSystemObjectFactory.create(path);
@@ -325,7 +340,7 @@ class FileSystemObject {
                 }
             );
         });
-        //Console.log('Watching', fileSystemObjectsToWatch.length, 'file system objects.');
+        //app.log('Watching', fileSystemObjectsToWatch.length, 'file system objects.');
             
         return fileSystemObjectsToWatch;
     }

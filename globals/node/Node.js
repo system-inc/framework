@@ -31,7 +31,13 @@ class Node {
 
 	static exit() {
 		if(arguments.length) {
-			Console.writeLine(Console.prepareMessage.call(this, arguments, 'error'));
+			//Console.writeLine(Console.prepareMessage.call(this, arguments, 'error'));
+			if(app.log) {
+				app.log(...arguments);
+			}
+			else {
+				console.log(...arguments);
+			}
 		}
 
 		Node.Process.exit(1);

@@ -1,19 +1,23 @@
 // Dependencies
+import EventEmitter from './../../system/events/EventEmitter.js';
 import File from './../../system/file-system/File.js';
 import Directory from './../../system/file-system/Directory.js';
 import Terminal from './../../system/console/Terminal.js';
 
 // Class
-class Log {
+class Log extends EventEmitter {
 
 	directory = null;
 	nameWithoutExtension = null;
-	buffer = '';
 	file = null;
-	writeStream = null;
+
+	buffer = '';
 	initializingWriteStream = null;
+	writeStream = null;
 
 	constructor(directory, nameWithoutExtension) {
+		super();
+
 		this.directory = directory;
 		this.nameWithoutExtension = nameWithoutExtension;
 		this.file = new File(Node.Path.join(this.directory, this.nameWithoutExtension+'.log'));

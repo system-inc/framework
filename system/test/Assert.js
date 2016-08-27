@@ -2,7 +2,7 @@
 import EventEmitter from './../../system/events/EventEmitter.js';
 
 // Class
-class Assert {
+class Assert extends Node.Assert {
 
 	static eventEmitter = new EventEmitter();
 
@@ -19,8 +19,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'true',
@@ -45,8 +43,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'false',
@@ -71,8 +67,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'equal',
@@ -97,8 +91,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'notEqual',
@@ -236,8 +228,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'deepEqual',
@@ -262,8 +252,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'notDeepEqual',
@@ -288,8 +276,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'strictEqual',
@@ -314,8 +300,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'notStrictEqual',
@@ -340,8 +324,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'greaterThan',
@@ -366,8 +348,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'greaterThanOrEqualTo',
@@ -392,8 +372,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'lessThan',
@@ -418,8 +396,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'lessThanOrEqualTo',
@@ -490,8 +466,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'throws',
@@ -613,8 +587,6 @@ class Assert {
 			});
 		}
 		catch(error) {
-			Error.captureStackTrace(error, arguments.callee);
-
 			Assert.eventEmitter.emit('Assert.finished', {
 				status: 'failed',
 				assertion: 'doesNotThrow',

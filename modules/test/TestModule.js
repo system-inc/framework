@@ -10,10 +10,13 @@ class TestModule extends Module {
 	proctor = null;
 
 	async initialize() {
-		await super.initialize(...arguments);
+		//app.log(' --- TestModule initialize');
 
+		await super.initialize(...arguments);
+		
 		// Create a Proctor to oversee all of the tests as they run
 		this.proctor = new Proctor(app.command.options.reporter, app.command.options.breakOnError);
+		//app.log(' proctor created', this.proctor);
 		
 		//return; // Debug
 
@@ -23,7 +26,14 @@ class TestModule extends Module {
 		}
 		// Get and run the tests
 		else {
-			this.proctor.getAndRunTests(app.command.options.path, app.command.options.filePattern, app.command.options.methodPattern);
+			// If there is no path set the path to the framework directory
+			if(!app.command.options.path) {
+				app.command.options.path = app.framework.directory;
+			}
+
+			//app.log('getAndRunTests', app.command.options.path, app.command.options.filePattern, app.command.options.methodPattern);
+			//await this.proctor.getAndRunTests(app.command.options.path, app.command.options.filePattern, app.command.options.methodPattern);
+			await this.proctor.getAndRunTests(Node.Path.join(app.framework.directory, 'globals', 'custom', 'tests'), 'ClassTest', app.command.options.methodPattern);
 		}
 	}
 	
