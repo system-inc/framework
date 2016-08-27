@@ -1,4 +1,5 @@
 // Dependencies
+import EventEmitter from './../../system/events/EventEmitter.js';
 import AsciiArt from './../../system/ascii-art/AsciiArt.js';
 import Command from './../../system/command/Command.js';
 import Module from './../../system/module/Module.js';
@@ -6,9 +7,8 @@ import Settings from './../../system/settings/Settings.js';
 import Version from './../../system/version/Version.js';
 
 // Class
-class App {
+class App extends EventEmitter {
 
-	
 	title = 'App Title';
 	description = null;
 	
@@ -20,25 +20,86 @@ class App {
 	settings = null;
 	environment = null;
 
+	standardStreams = {
+		input: new StandardInputStream(),
+		output: new StandardOutputStream(),
+		error: new StandardErrorStream(),
+	};
+
 	command = null;
 
 	modules = {};
 
 	/*
-		Ways to interact with an app
+		Ways to interface with an app
 
-		command line -> run the app with arguments
+		should i make one app capable of doing all of these things?
+
+		commandLineInterface
+		command line -> run the app with arguments, one input, one output
+			i/o comes over standard in/out
+
+		interactiveCommandLineInterface
+		interactive command line? -> while the app is running issue command interactively
+			i/o comes over standard in/out
+			Persistent command history
+			Built-in help
+			Built-in tabbed auto-completion
+			Command-specific auto-completion
+			Customizable prompts
 		
-		textual interface? terminal? shell? -> while the app is running issue commands
-			basically once the app is running can we listen for terminal commands like cursor position, etc? and repaint the screen?
-			we can type and input comes over standard in 
+		textualInterface
+		textual interface -> similar to graphical except rendered by text and ansi escape codes
+			i/o comes over standard in/out
+			can handle mouse position, etc.
+			similar to nano/vim/top/htop
 
-		graphical -> click on things
+		graphicalInterface
+		graphical -> pixel by pixel options, powered by electron for now
 
+
+		so where does the log log to?
+
+		Log -> emits log, info, warn, and error events with data, by default does nothing
+
+			FileLog -> captures log events and writes them to a file
+			ConsoleLog -> captures log events and writes them to the console/standardOut
+
+		---
+
+		all framework apps have a interactive command line interface
+		app.standardStreams.output.write();
+		app.standardStreams.output.writeLine();
+
+		app.log calls
+			app.standardStreams.output.writeLine()
+			if standard out is not available it will call
+			console.log()
+			it will also emit
+			app.emit('log.log', data);
+
+
+		StandardStreamsLog
+			listens to standardStreams.input/output/error
+
+		app configures app.fileLog
+			this.standardStreams.input.on('data', function() {
+				this.emit('log.log', data);
+			}.bind(this));
+			this.standardStreams.error.on('data', function() {
+				this.emit('log.log', data);
+			}.bind(this));
+			this.standardStreams.output.on('data', function() {
+				this.emit('log.log', data);
+			}.bind(this));
+			app.fileLog
+
+		listens to standard streams and writes to logs
 	*/
 	interfaces = {};
 
-	logObject = null;
+	fileLog = null;
+	consoleLog = null;
 
 	framework = {
 		version: new Version('0.1.0'),
