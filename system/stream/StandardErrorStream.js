@@ -5,7 +5,15 @@ import StandardStream from './StandardStream.js';
 class StandardErrorStream extends StandardStream {
 
 	constructor() {
-		super(Node.Process.stderr);
+		super();
+
+		Node.Process.stderr.on('data', function(data) {
+			this.write(data)
+		}.bind(this));
+	}
+
+	write(data) {
+		Node.Process.stderr.write(data);
 	}
 
 }

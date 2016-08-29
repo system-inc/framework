@@ -5,7 +5,15 @@ import StandardStream from './StandardStream.js';
 class StandardInputStream extends StandardStream {
 
 	constructor() {
-		super(Node.Process.stdin);
+		super();
+
+		Node.Process.stdin.on('data', function(data) {
+			this.write(data)
+		}.bind(this));
+	}
+
+	write(data) {
+		Node.Process.stdin.write(data);
 	}
 
 }

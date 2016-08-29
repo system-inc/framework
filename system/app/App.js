@@ -1,5 +1,9 @@
 // Dependencies
 import EventEmitter from './../../system/events/EventEmitter.js';
+import StandardInputStream from './../../system/stream/StandardInputStream.js';
+import StandardOutputStream from './../../system/stream/StandardOutputStream.js';
+import StandardErrorStream from './../../system/stream/StandardErrorStream.js';
+import FileLog from './../../system/log/FileLog.js';
 import AsciiArt from './../../system/ascii-art/AsciiArt.js';
 import Command from './../../system/command/Command.js';
 import Module from './../../system/module/Module.js';
@@ -17,14 +21,25 @@ class App extends EventEmitter {
 
 	directory = null;
 
-	settings = null;
-	environment = null;
-
 	standardStreams = {
 		input: new StandardInputStream(),
 		output: new StandardOutputStream(),
 		error: new StandardErrorStream(),
 	};
+
+	settings = new Settings({
+		environment: 'development',
+		fileLog: {
+			enabled: true,
+			directory: null, // Will set this default in constructor
+			nameWithoutExtension: 'app',
+		},
+		modules: {},
+	});
+
+	environment = null;
+
+	fileLog = null;
 
 	command = null;
 
@@ -62,12 +77,13 @@ class App extends EventEmitter {
 
 		Log -> emits log, info, warn, and error events with data, by default does nothing
 
-			FileLog -> captures log events and writes them to a file
-			ConsoleLog -> captures log events and writes them to the console/standardOut
+			FileLog
+				captures anything written to standard streams (or console) and writes it to a file
+			app.log/info/warn/error just formats the data written to standard streams
 
 		---
 
-		all framework apps have a interactive command line interface
+		all framework apps have a interactive command line interface which uses standard streams
 		app.standardStreams.output.write();
 		app.standardStreams.output.writeLine();
 
@@ -98,17 +114,23 @@ class App extends EventEmitter {
 	*/
 	interfaces = {};
 
-	fileLog = null;
-	consoleLog = null;
-
 	framework = {
 		version: new Version('0.1.0'),
 		directory: Node.Path.join(__dirname, '../', '../'),
 	};
 
 	constructor(appDirectory) {
+		super();
+
 		// Set the app directory
 		this.directory = Node.Path.normalize(appDirectory);
+
+		// Set the default file log directory
+		this.settings.setDefaults({
+			fileLog: {
+				directory: Node.Path.join(this.directory, 'logs'),
+			},
+		});
 	}
 
 	async initialize(callback) {
@@ -120,6 +142,9 @@ class App extends EventEmitter {
 
 		// Load the project settings
 		await this.loadAppSettings();
+
+		// Configure file log
+		await this.configureFileLog();
 
 		// Use project settings to set the title and the identifier
 		this.setPropertiesFromAppSettings();
@@ -145,16 +170,38 @@ class App extends EventEmitter {
 
 	async loadAppSettings() {
 		//console.log('Loading project settings...');
-		this.settings = await Settings.constructFromFile({
-			environment: 'development',
-			modules: {},
-		}, Node.Path.join(this.directory, 'settings', 'settings.json'));
+		await this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'settings.json'));
 		//console.log('loadAppSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
 
 		// Merge the environment settings
 		//console.log('Integrating environment settings...')
 		await this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'environment.json'));
 		//console.log(this.settings);
+	}
+
+	async configureFileLog() {
+		var fileLogSettings = this.settings.get('fileLog');
+		console.log('fileLogSettings', fileLogSettings);
+
+		if(fileLogSettings.enabled) {
+			// Create the file log
+			this.fileLog = new FileLog(fileLogSettings.directory, fileLogSettings.nameWithoutExtension);
+
+			// Hook up standard input to the file log
+			this.standardStreams.input.on('stream.write', function(data) {
+				this.fileLog.emit('log.log', data);
+			}.bind(this));
+
+			// Hook up standard output to the file log
+			this.standardStreams.output.on('stream.write', function(data) {
+				this.fileLog.emit('log.log', data);
+			}.bind(this));
+
+			// Hook up standard error to the file log
+			this.standardStreams.error.on('stream.write', function(data) {
+				this.fileLog.emit('log.error', data);
+			}.bind(this));
+		}
 	}
 
 	setPropertiesFromAppSettings() {

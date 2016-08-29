@@ -20,34 +20,9 @@ class FileLog extends Log {
 		this.directory = directory;
 		this.nameWithoutExtension = nameWithoutExtension;
 		this.file = new File(Node.Path.join(this.directory, this.nameWithoutExtension+'.log'));
-
-		this.listen();
 	}
 
-	listen() {
-		this.on('log.log', function(data) {
-			this.write(data);
-		}.bind(this));
-
-		this.on('log.info', function(data) {
-			this.write(data);
-		}.bind(this));
-
-		this.on('log.warn', function(data) {
-			this.write(data);
-		}.bind(this));
-
-		this.on('log.error', function(data) {
-			this.write(data);
-		}.bind(this));
-	}
-
-	async write(data, removeAnsiEscapeCodesFromString) {
-		// removeAnsiEscapeCodesFromString defaults to true
-		if(removeAnsiEscapeCodesFromString === undefined) {
-			removeAnsiEscapeCodesFromString = true;
-		}
-
+	async write(data, removeAnsiEscapeCodesFromString = true) {
 		// Make sure we have something to write
 		if(!data) {
 			return;
@@ -114,4 +89,4 @@ class FileLog extends Log {
 }
 
 // Export
-export default Log;
+export default FileLog;
