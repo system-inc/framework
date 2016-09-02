@@ -11,10 +11,11 @@ class Log extends EventEmitter {
 	}
 
 	listen() {
-		this.on('log.*', function(data) {
-			data = this.processDataToWrite(data);
-			this.write(data);
-		});
+		this.on('log.*', async function(event) {
+			//console.log('log.*', event.data);
+			var data = this.processDataToWrite(event.data);
+			await this.write(data);
+		}.bind(this));
 	}
 
 	log() {

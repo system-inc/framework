@@ -26,10 +26,11 @@ class App extends EventEmitter {
 		output: new StandardOutputStream(),
 		error: new StandardErrorStream(),
 	};
+	standardStreamsFileLog = null;
 
 	settings = new Settings({
 		environment: 'development',
-		fileLog: {
+		standardStreamsFileLog: {
 			enabled: true,
 			directory: null, // Will set this default in constructor
 			nameWithoutExtension: 'app',
@@ -39,79 +40,10 @@ class App extends EventEmitter {
 
 	environment = null;
 
-	fileLog = null;
-
 	command = null;
 
 	modules = {};
 
-	/*
-		Ways to interface with an app
-
-		should i make one app capable of doing all of these things?
-
-		commandLineInterface
-		command line -> run the app with arguments, one input, one output
-			i/o comes over standard in/out
-
-		interactiveCommandLineInterface
-		interactive command line? -> while the app is running issue command interactively
-			i/o comes over standard in/out
-			Persistent command history
-			Built-in help
-			Built-in tabbed auto-completion
-			Command-specific auto-completion
-			Customizable prompts
-		
-		textualInterface
-		textual interface -> similar to graphical except rendered by text and ansi escape codes
-			i/o comes over standard in/out
-			can handle mouse position, etc.
-			similar to nano/vim/top/htop
-
-		graphicalInterface
-		graphical -> pixel by pixel options, powered by electron for now
-
-
-		so where does the log log to?
-
-		Log -> emits log, info, warn, and error events with data, by default does nothing
-
-			FileLog
-				captures anything written to standard streams (or console) and writes it to a file
-			app.log/info/warn/error just formats the data written to standard streams
-
-		---
-
-		all framework apps have a interactive command line interface which uses standard streams
-		app.standardStreams.output.write();
-		app.standardStreams.output.writeLine();
-
-		app.log calls
-			app.standardStreams.output.writeLine()
-			if standard out is not available it will call
-			console.log()
-			it will also emit
-			app.emit('log.log', data);
-
-
-		StandardStreamsLog
-			listens to standardStreams.input/output/error
-
-		app configures app.fileLog
-			this.standardStreams.input.on('data', function() {
-				this.emit('log.log', data);
-			}.bind(this));
-			this.standardStreams.error.on('data', function() {
-				this.emit('log.log', data);
-			}.bind(this));
-			this.standardStreams.output.on('data', function() {
-				this.emit('log.log', data);
-			}.bind(this));
-			app.fileLog
-
-		listens to standard streams and writes to logs
-	*/
 	interfaces = {};
 
 	framework = {
@@ -126,8 +58,8 @@ class App extends EventEmitter {
 		this.directory = Node.Path.normalize(appDirectory);
 
 		// Set the default file log directory
-		this.settings.setDefaults({
-			fileLog: {
+		this.settings.mergeDefaults({
+			standardStreamsFileLog: {
 				directory: Node.Path.join(this.directory, 'logs'),
 			},
 		});
@@ -135,16 +67,16 @@ class App extends EventEmitter {
 
 	async initialize(callback) {
 		// Make it obvious we are starting
-		console.log(AsciiArt.framework.version[this.framework.version.toString()]);
+		this.log(AsciiArt.framework.version[this.framework.version.toString()]);
 
 		// Announce starting
-		//console.log('Initializing Framework '+this.framework.version+'...');
+		//this.log('Initializing Framework '+this.framework.version+'...');
 
 		// Load the project settings
 		await this.loadAppSettings();
 
-		// Configure file log
-		await this.configureFileLog();
+		// After the project settings are loaded, we will know how to configure the standard streams file log
+		await this.configureStandardStreamsFileLog();
 
 		// Use project settings to set the title and the identifier
 		this.setPropertiesFromAppSettings();
@@ -158,9 +90,9 @@ class App extends EventEmitter {
 		// Load all of the modules for the Project indicated in the project settings
 		await this.requireAndInitializeProjectModules();
 
-		//console.log('Framework initialization complete.');
-		console.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
-		//console.log('Modules: '+Module.modules.initialized.join(', '));
+		//this.log('Framework initialization complete.');
+		this.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
+		//this.log('Modules: '+Module.modules.initialized.join(', '));
 
 		// Run the callback (which may be a generator)
 		if(callback) {
@@ -169,37 +101,37 @@ class App extends EventEmitter {
 	}
 
 	async loadAppSettings() {
-		//console.log('Loading project settings...');
+		//this.log('Loading project settings...');
 		await this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'settings.json'));
-		//console.log('loadAppSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
+		//this.log('loadAppSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
 
 		// Merge the environment settings
-		//console.log('Integrating environment settings...')
+		//this.log('Integrating environment settings...')
 		await this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'environment.json'));
-		//console.log(this.settings);
+		//this.log(this.settings);
 	}
 
-	async configureFileLog() {
-		var fileLogSettings = this.settings.get('fileLog');
-		console.log('fileLogSettings', fileLogSettings);
+	async configureStandardStreamsFileLog() {
+		var standardStreamsFileLogSettings = this.settings.get('standardStreamsFileLog');
+		//this.log('standardStreamsFileLogSettings', standardStreamsFileLogSettings);
 
-		if(fileLogSettings.enabled) {
+		if(standardStreamsFileLogSettings.enabled) {
 			// Create the file log
-			this.fileLog = new FileLog(fileLogSettings.directory, fileLogSettings.nameWithoutExtension);
+			this.standardStreamsFileLog = new FileLog(standardStreamsFileLogSettings.directory, standardStreamsFileLogSettings.nameWithoutExtension);
 
 			// Hook up standard input to the file log
 			this.standardStreams.input.on('stream.write', function(data) {
-				this.fileLog.emit('log.log', data);
+				this.standardStreamsFileLog.emit('log.log', data);
 			}.bind(this));
 
 			// Hook up standard output to the file log
 			this.standardStreams.output.on('stream.write', function(data) {
-				this.fileLog.emit('log.log', data);
+				this.standardStreamsFileLog.emit('log.log', data);
 			}.bind(this));
 
 			// Hook up standard error to the file log
 			this.standardStreams.error.on('stream.write', function(data) {
-				this.fileLog.emit('log.error', data);
+				this.standardStreamsFileLog.emit('log.error', data);
 			}.bind(this));
 		}
 	}
@@ -212,7 +144,7 @@ class App extends EventEmitter {
 		}
 
 		// Anounce project title
-		//console.log('Settings for project "'+this.title+'" loaded.');
+		//this.log('Settings for project "'+this.title+'" loaded.');
 
 		// Set the identifier
 		var identifierFromSettings = this.settings.get('identifier');
@@ -239,7 +171,7 @@ class App extends EventEmitter {
 	configureEnvironment() {
 		this.environment = this.settings.get('environment');
 
-		//console.log('Configuring environment ('+this.environment+')...');
+		//this.log('Configuring environment ('+this.environment+')...');
 
 		// Development
 		if(this.environment == 'development') {
@@ -267,24 +199,43 @@ class App extends EventEmitter {
 	}
 
 	log() {
-		return console.log(...arguments);
+		return this.standardStreams.output.writeLine(this.formatLogData(...arguments));
 	}
 
 	info() {
-		return console.info(...arguments);
+		return this.standardStreams.output.writeLine(this.formatLogData(...arguments));
 	}
 
 	warn() {
-		return console.warn(...arguments);
+		return this.standardStreams.output.writeLine(this.formatLogData(...arguments));
 	}
 
 	error() {
-		return console.error(...arguments);
+		return this.standardStreams.error.writeLine(this.formatLogData(...arguments));
+	}
+
+	formatLogData() {
+		var formattedLogData = '';
+
+		arguments.each(function(argumentKey, argument) {
+			var formattedLogDataForArgument = argument;
+
+			if(!String.is(formattedLogDataForArgument)) {
+				formattedLogDataForArgument = Json.encode(formattedLogDataForArgument);
+			}
+
+			formattedLogData += formattedLogDataForArgument+' ';
+		});
+
+		// Remove the last trailing space
+		formattedLogData = formattedLogData.replaceLast(' ', '');
+
+		return formattedLogData;
 	}
 
 	async requireAndInitializeProjectModules() {
-		//console.log(this.settings);
-		//console.log('Loading modules for project...', this.settings.get('modules'));
+		//this.log(this.settings);
+		//this.log('Loading modules for project...', this.settings.get('modules'));
 
 		// Load and initialize project modules separately in case multiple project modules rely on each other
 		var modulesForProject = [];
@@ -293,7 +244,7 @@ class App extends EventEmitter {
 		this.settings.get('modules').each(function(moduleName, moduleSettings) {
 			moduleName = moduleName.uppercaseFirstCharacter()+'Module';
 
-			//console.log('Loading "'+moduleName+'" module...');
+			//this.log('Loading "'+moduleName+'" module...');
 			Module.require(moduleName);
 
 			// Store the module name for initialization later

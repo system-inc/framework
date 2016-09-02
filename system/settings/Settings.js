@@ -8,33 +8,46 @@ class Settings {
 	dataStore = null;
 	defaults = null;
 
-	constructor(defaultData, data, dataStore = new DataStore()) {
+	constructor(defaults = {}, data = {}, dataStore = new DataStore()) {
 		// Set the data store
 		this.dataStore = dataStore;
 		//Console.standardLog('this.dataStore', this.dataStore);
 
 		// Set the defaults
-		this.setDefaults(defaultData);
+		this.setDefaults(defaults);
 
 		// Set the initial data for the data store
 		this.dataStore.merge(data);
 	}
 
-	setDefaults(defaultData) {
-		if(defaultData) {
-			// Save the defaultData
-			this.defaults = defaultData.clone();
+	setDefaults(defaults) {
+		if(defaults) {
+			// Set the defaults to a clone of defaults
+			this.defaults = defaults.clone();
 
-			// Get the current data
-			var data = this.dataStore.getData();
-			//Console.log('data', data);
-
-			// Set the data to the default data
-			this.dataStore.setData(this.defaults);
-
-			// Merge the current data on top of the defaults
-			this.dataStore.merge(data);
+			// Apply the defaults to the current data store
+			this.applyDefaults();
 		}
+	}
+
+	mergeDefaults(defaultsToMerge) {
+		// Merge in the new defaults to the existing defaults
+		this.defaults.merge(defaultsToMerge);
+
+		// Apply the defaults to the current data store
+		this.applyDefaults();
+	}
+
+	applyDefaults() {
+		// Get the current data
+		var data = this.dataStore.getData();
+		//Console.log('data', data);
+
+		// Set the data to the default data
+		this.dataStore.setData(this.defaults);
+
+		// Merge the current data on top of the defaults
+		this.dataStore.merge(data);
 	}
 
 	merge(data) {
@@ -78,7 +91,7 @@ class Settings {
 		return this.dataStore.delete(path);
 	}
 
-	static async constructFromFile(defaultData, datafilePath, dataStore) {
+	static async constructFromFile(defaults, datafilePath, dataStore) {
 		//Console.log('datafilePath', datafilePath);
 
 		// Read the data from the file
@@ -88,7 +101,7 @@ class Settings {
 		//Console.log('dataStore', dataStore);
 
 		// Create a new settings object with the data
-		var settings = new Settings(defaultData, data, dataStore);
+		var settings = new Settings(defaults, data, dataStore);
 
 		return settings;
 	}

@@ -13,6 +13,7 @@ class StandardErrorStream extends StandardStream {
 	}
 
 	write(data) {
+		super.write(data);
 		Node.Process.stderr.write(data);
 	}
 

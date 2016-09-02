@@ -138,28 +138,29 @@ class FileSystemObject {
 	}
 
 	async exists(path) {
-		path = (path === undefined) ? this.path : Node.Path.normalize(path);
-		//app.log('FileSystemObject.exists, path', path);
+        if(path === undefined && this) {
+            path = this.path;
+        }
+        else if(path) {
+            path = Node.Path.normalize(path);
+        }
 
-	    var exists = await new Promise(function(resolve, reject) {
-	    	Node.FileSystem.stat(path, function(error, stats) {
-	    		//app.log('Node.FileSystem.stat', error, stats);
+		console.log('FileSystemObject.exists, path', path);
 
-                if(!error) {
-                    //app.log('exists!');
-                    resolve(true);
-                }
-                else {
-                    //app.log('does not exist!');
-                    resolve(false);
-                }
-	    	});
+        var exists = null;
 
-            //app.log('hiiii');
-	    });
-        //app.log('FileSystemObject.exists exists', exists, path);
-        //Node.exit();
+        try {
+            var stat = Node.FileSystem.statSync(path);    
+            //console.log(stat);
+            exists = true;
+        }
+        catch(error) {
+            //console.log('error', error);
+            exists = false;
+        }
 
+        console.log('exists', exists);
+        
         return exists;
 	}
 

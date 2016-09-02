@@ -13,6 +13,7 @@ class StandardOutputStream extends StandardStream {
 	}
 
 	write(data) {
+		super.write(data);
 		Node.Process.stdout.write(data);
 	}
 

@@ -5,7 +5,6 @@ import EventEmitter from './../../system/events/EventEmitter.js';
 class StandardStream extends EventEmitter {
 
 	write(data) {
-		console.log('StandardStream.write data', data);
 		this.emit('stream.write', data);
 	}
 

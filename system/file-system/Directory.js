@@ -20,7 +20,7 @@ class Directory extends FileSystemObject {
 	}
 
 	async create(directory, mode) {
-		//Console.log('Creating directory: ', directory);
+		console.log('Creating directory: ', directory);
 
 		// Normalize the path for the operating system
 		var directory = Node.Path.normalize(directory);
@@ -33,7 +33,7 @@ class Directory extends FileSystemObject {
 		if(directory.endsWith(Node.Path.separator)) {
 			directory = directory.replaceLast(Node.Path.separator, '');
 		}
-		//Console.log(directory);
+		console.log('directory', directory);
 
 		var directories = directory.split(Node.Path.separator);
 
@@ -50,17 +50,17 @@ class Directory extends FileSystemObject {
 		// Loop through each directory starting at root and make sure the directory exists and if it doesn't create it
 		await directories.each(async function(index, currentDirectory) {
 			currentFullDirectory = currentFullDirectory+currentDirectory+Node.Path.separator;
-			//Console.log(currentFullDirectory);
+			console.log('currentFullDirectory', currentFullDirectory);
 
 			// Check if the directory exists
 			if(await Directory.exists(currentFullDirectory)) {
-				//Console.log(currentFullDirectory, 'exists');
+				console.log(currentFullDirectory, 'exists');
 			}
 			// If the directory does not exist, create it
 			else {
-				//Console.log(currentFullDirectory, 'DOES NOT exist, creating');
+				console.log(currentFullDirectory, 'DOES NOT exist, creating');
 				await Directory.make(currentFullDirectory, mode);
-				//Console.log('Created directory', currentFullDirectory);
+				console.log('Created directory', currentFullDirectory);
 			}
 		});
 	}
@@ -68,22 +68,23 @@ class Directory extends FileSystemObject {
 	static create = Directory.prototype.create;
 
 	static async make(path, mode) {
-	    return await new Promise(function(resolve, reject) {
-	    	Node.FileSystem.mkdir(path, mode, function(error) {
-	    		if(error) {
-	    			// Return true if the directory exists
-	    			if(error.code == 'EEXIST') {
-	    				resolve(true);
-	    			}
-	    			else {
-	    				reject(error);	
-	    			}
-	    		}
-	    		else {
-	    			resolve(true);
-	    		}
-	    	});
-	    });
+		var made = false;
+
+		try {
+			Node.FileSystem.mkdirSync(path, mode);
+			made = true;
+		}
+		catch(error) {
+			// Return true if the directory exists
+			if(error.code == 'EEXIST') {
+				made = true;
+			}
+			else {
+				made = false;	
+			}
+		}
+
+	    return made;
 	}
 
 	static is(value) {
