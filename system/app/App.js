@@ -108,7 +108,7 @@ class App extends EventEmitter {
 		// Merge the environment settings
 		//this.log('Integrating environment settings...')
 		await this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'environment.json'));
-		//this.log(this.settings);
+		//this.log('app.settings', this.settings);
 	}
 
 	async configureStandardStreamsFileLog() {
@@ -240,6 +240,9 @@ class App extends EventEmitter {
 		// Load and initialize project modules separately in case multiple project modules rely on each other
 		var modulesForProject = [];
 
+		var settings = this.settings.get('modules');
+		//console.log('settings', this.settings);
+
 		// Load the modules
 		this.settings.get('modules').each(function(moduleName, moduleSettings) {
 			moduleName = moduleName.uppercaseFirstCharacter()+'Module';
@@ -250,6 +253,8 @@ class App extends EventEmitter {
 			// Store the module name for initialization later
 			modulesForProject.append(moduleName);
 		}.bind(this));
+
+		//console.log('modulesForProject', modulesForProject);
 
 		// Initialize the modules for the Project
 		await Module.initialize(modulesForProject);

@@ -47,31 +47,29 @@ class FileLog extends Log {
 		//		Console.log('writable!');
 		//	}
 		//}
-		
-		console.log('FileLog.prototype.write - why is this not making a log?');
 
 		// If we do not have a write stream and are not initializing one, or if the current write stream is not writeable
 		//if((!this.writeStream && !this.initializingWriteStream) || (this.writeStream && !this.writeStream.writable)) {
 		if(!this.writeStream && !this.initializingWriteStream) {
-			console.log('--- no writeStream')
+			//console.log('no write stream, initializingWriteStream');
 
 			// Prevent other calls to .write() from creating more write streams
 			this.initializingWriteStream = true;
 
 			// Make sure the directory for the log exists
-			console.log('before exists');
 			var directoryExists = await Directory.exists(this.directory);
-			console.log('after exist, before create', directoryExists);
 			if(!directoryExists) {
+				//console.log('no directory, creating', this.directory);
 				await Directory.create(this.directory);	
 			}
-			console.log('after create', directoryExists);
 			
 			// Create a write stream
 			this.writeStream = await File.createWriteStream(this.file.file, {
 				'flags': 'a',
 				'encoding': 'utf8',
 			});
+
+			//console.log('write stream created', this.writeStream);
 
 			// Mark the write stream as initialized
 			if(this.writeStream) {
@@ -81,8 +79,6 @@ class FileLog extends Log {
 
 		// If we have a write stream, use it
 		if(this.writeStream) {
-			console.log('we have a write stream');
-
 			// Clear the buffer now that we have a write stream
 			if(this.buffer) {
 				data += this.buffer;

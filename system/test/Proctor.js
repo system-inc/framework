@@ -457,7 +457,11 @@ class Proctor extends EventEmitter {
 		//app.log('noMoreTests');
 
 		// Exit the process if we are on a terminal
-		app.log('need to fix this next block'); Node.exit();
+		app.log('need to fix this next block');
+		Function.delay(2500, function() {
+			Node.exit();
+		});
+
 		//if(Console.onTerminal()) {
 		//	// Give the console session logger some time to finish writing to disk
 		//	Function.delay(250, function() {
@@ -481,19 +485,15 @@ class Proctor extends EventEmitter {
 	static globals = {
 		expected: [
 			// Framework
-			'Console',
-			'Generator',
-			'Json',
 			'Node',
-			'Primitive',
-			'Project',
-			'Buffer',
 			'Class',
-			'Framework',
+			'Json',
+			'Primitive',
+			'Buffer',
 			'RegularExpression',
 			'Stream',
 			'Time',
-			'Try',
+			'app',
 
 			// Framework - Object
 			'clone',
@@ -509,9 +509,6 @@ class Proctor extends EventEmitter {
 			'sort',
 			'toArray',
 			'toJson',
-
-			// Framework - Electron
-			'mainBrowserWindowViewController',
 
 			// Node
 			'GLOBAL',
@@ -540,6 +537,15 @@ class Proctor extends EventEmitter {
 			'COUNTER_HTTP_SERVER_RESPONSE',
 			'COUNTER_HTTP_CLIENT_REQUEST',
 			'COUNTER_HTTP_CLIENT_RESPONSE',
+
+			// Babel
+			'core',
+			'__core-js_shared__',
+			'System',
+			'asap',
+			'Observable',
+			'regeneratorRuntime',
+			'_babelPolyfill',
 
 			// Electron
 			'document',

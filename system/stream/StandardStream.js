@@ -8,8 +8,9 @@ class StandardStream extends EventEmitter {
 		this.emit('stream.write', data);
 	}
 
-	writeLine(data) {
-		var data = data+"\n";
+	writeLine(data = '') {
+		data = data+"\n";
+		
 		this.write(data);
 	}
 

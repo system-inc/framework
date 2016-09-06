@@ -27,7 +27,6 @@ import './standard/String.js';
 
 // Custom
 import './custom/Class.js';
-import './custom/Generator.js';
 import './custom/Json.js';
 import './custom/Primitive.js';
 import './custom/Time.js';

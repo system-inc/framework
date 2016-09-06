@@ -11,7 +11,7 @@ class Settings {
 	constructor(defaults = {}, data = {}, dataStore = new DataStore()) {
 		// Set the data store
 		this.dataStore = dataStore;
-		//Console.standardLog('this.dataStore', this.dataStore);
+		//console.log('this.dataStore', this.dataStore);
 
 		// Set the defaults
 		this.setDefaults(defaults);
@@ -41,7 +41,7 @@ class Settings {
 	applyDefaults() {
 		// Get the current data
 		var data = this.dataStore.getData();
-		//Console.log('data', data);
+		//console.log('data', data);
 
 		// Set the data to the default data
 		this.dataStore.setData(this.defaults);
@@ -57,7 +57,7 @@ class Settings {
 	async mergeFromFile(datafilePath) {
 		// Read the data from the file
 		var data = await File.readAndDecodeJson(datafilePath);
-		//Console.log('Settings from', datafilePath, 'to merge:', dataStore);
+		//console.log('Settings from', datafilePath, 'to merge:', data);
 
 		return this.merge(data);
 	}
@@ -70,9 +70,9 @@ class Settings {
 		try {
 			// Read the data from the file
 			var data = await File.readAndDecodeJson(datafilePath);
-			//Console.log('Settings from', datafilePath, 'to integrate:', dataStore);
+			//console.log('Settings from', datafilePath, 'to integrate:', data);
 			
-			this.integrate(data);	
+			this.integrate(data);
 		}
 		catch(error) {
 			//console.error('--- no file at '+datafilePath);
@@ -92,13 +92,13 @@ class Settings {
 	}
 
 	static async constructFromFile(defaults, datafilePath, dataStore) {
-		//Console.log('datafilePath', datafilePath);
+		//console.log('datafilePath', datafilePath);
 
 		// Read the data from the file
 		var data = await File.readAndDecodeJson(datafilePath);
 		//console.log('data', data);
 
-		//Console.log('dataStore', dataStore);
+		//console.log('dataStore', dataStore);
 
 		// Create a new settings object with the data
 		var settings = new Settings(defaults, data, dataStore);

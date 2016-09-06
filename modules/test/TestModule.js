@@ -32,8 +32,8 @@ class TestModule extends Module {
 			}
 
 			//app.log('getAndRunTests', app.command.options.path, app.command.options.filePattern, app.command.options.methodPattern);
-			//await this.proctor.getAndRunTests(app.command.options.path, app.command.options.filePattern, app.command.options.methodPattern);
-			await this.proctor.getAndRunTests(Node.Path.join(app.framework.directory, 'globals', 'custom', 'tests'), 'ClassTest', app.command.options.methodPattern);
+			//this.proctor.getAndRunTests(app.command.options.path, app.command.options.filePattern, app.command.options.methodPattern);
+			this.proctor.getAndRunTests(Node.Path.join(app.framework.directory, 'globals', 'custom', 'tests'), 'ClassTest', app.command.options.methodPattern);
 		}
 	}
 	

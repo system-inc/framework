@@ -68,6 +68,8 @@ class Module {
 		var moduleNamesArray = moduleNames.toArray();
 
 		await moduleNamesArray.each(async function(moduleNameIndex, moduleName) {
+			//app.log('Module.initialize moduleName', moduleName);
+
 			var modulePropertyName = moduleName.lowercaseFirstCharacter();
 
 			var moduleInstance = app.modules[modulePropertyName];

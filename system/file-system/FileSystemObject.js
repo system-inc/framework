@@ -145,7 +145,7 @@ class FileSystemObject {
             path = Node.Path.normalize(path);
         }
 
-		console.log('FileSystemObject.exists, path', path);
+		//console.log('FileSystemObject.exists, path', path);
 
         var exists = null;
 
@@ -159,7 +159,7 @@ class FileSystemObject {
             exists = false;
         }
 
-        console.log('exists', exists);
+        //console.log('exists', exists);
         
         return exists;
 	}

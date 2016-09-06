@@ -1,5 +1,6 @@
 // Dependencies
 import TestReporter from './TestReporter.js';
+import AssertionError from './../errors/AssertionError.js';
 
 // Class
 class ElectronTestReporter extends TestReporter {
