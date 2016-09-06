@@ -7,7 +7,7 @@ require('babel-polyfill');
 // Integrate transpilation with import statements
 require('babel-register')({
 	presets: [
-		'es2015',
+		'latest',
 		'stage-0',
 	],
 	plugins: [
