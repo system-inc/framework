@@ -307,9 +307,9 @@ class Proctor extends EventEmitter {
 
 		// Run the test
 		try {
-			app.info('Proctor.runNextTest running test', this.currentTestMethod.method);
+			//app.info('Proctor.runNextTest running test', this.currentTestMethod.method);
 			await this.currentTestClassInstance[this.currentTestMethod.method]();
-			app.info('Proctor.runNextTest running test completed', this.currentTestMethod.method);
+			//app.info('Proctor.runNextTest running test completed', this.currentTestMethod.method);
 
 			this.passCurrentTestMethod();
 		}
@@ -458,7 +458,7 @@ class Proctor extends EventEmitter {
 
 		// Exit the process if we are on a terminal
 		app.log('need to fix this next block');
-		Function.delay(2500, function() {
+		Function.delay(250, function() {
 			Node.exit();
 		});
 
