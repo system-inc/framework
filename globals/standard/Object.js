@@ -301,6 +301,7 @@ Object.hasKey = function(object, key) {
 };
 
 Object.containsClassInstance = function(object) {
+    throw new Error('this needs to be fixed for my es6 changes');
     var containsClassInstance = object.constructor.toString().startsWith('function Class()');
 
     if(!containsClassInstance && (Object.is(object) || Array.is(object))) {

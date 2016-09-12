@@ -840,32 +840,32 @@ class Proctor extends EventEmitter {
 									tests.classes.append(testClassObject);
 
 									// Loop through all of the class properties
-									var testClassMethodNames = Class.getMethodNames(testClass);
-									testClassMethodNames.each(function(testClassMethodNamesIndex, testClassMethodName) {
+									var testClassInstanceMethodNames = Class.getInstanceMethodNames(testClass);
+									testClassInstanceMethodNames.each(function(testClassInstanceMethodNamesIndex, testClassInstanceMethodName) {
 										// All tests must start with "test" and be a function
-										if(testClassMethodName.startsWith('test')) {
-											//app.log('Test method name:', testClassMethodName);
+										if(testClassInstanceMethodName.startsWith('test')) {
+											//app.log('Test method name:', testClassInstanceMethodName);
 
 											var appendTestMethod = false;
 
 											// Filter test methods
 											if(matchStringMethodPatternExactly) {
-												if(testClassMethodName.lowercase() == methodPattern) {
+												if(testClassInstanceMethodName.lowercase() == methodPattern) {
 													appendTestMethod = true;
 												}
 											}
-											else if(methodPattern == null || testClassMethodName.lowercase().match(methodPattern)) {
-												//app.log(testClassMethodName.lowercase(), 'matched against', methodPattern);
+											else if(methodPattern == null || testClassInstanceMethodName.lowercase().match(methodPattern)) {
+												//app.log(testClassInstanceMethodName.lowercase(), 'matched against', methodPattern);
 												appendTestMethod = true;
 											}
 											else {
-												//app.log(testClassMethodName.lowercase(), 'did not match against', methodPattern);
+												//app.log(testClassInstanceMethodName.lowercase(), 'did not match against', methodPattern);
 											}
 
 											if(appendTestMethod) {
 												tests.methods.append({
-													name: testClassMethodName,
-													method: instantiatedTestClass[testClassMethodName],
+													name: testClassInstanceMethodName,
+													method: instantiatedTestClass[testClassInstanceMethodName],
 													class: testClassObject,
 												});
 											}
@@ -878,7 +878,7 @@ class Proctor extends EventEmitter {
 							}
 						}
 						catch(error) {
-							app.log('Caught an error while loading test.', error);
+							app.log('Caught an error while loading test.', testClassName, error, error.stack);
 							Node.exit();
 						}
 					}

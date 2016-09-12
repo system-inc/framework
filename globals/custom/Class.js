@@ -41,87 +41,63 @@ class Class {
 	}
 
 	static implement(classToReceiveImplementation, classToImplement) {
-		// Static properties and methods
-		for(var classToImplementProperty in classToImplement) {
-			//console.log('classToImplementProperty', classToImplementProperty);
-			if(classToReceiveImplementation[classToImplementProperty] === undefined) {
-				//console.log(classToImplementProperty, 'does not exist on class, copying');
-				classToReceiveImplementation[classToImplementProperty] = Object.clone(classToImplement[classToImplementProperty]);
-			}
-		}
-
-		// Static own property names
-		Object.getOwnPropertyNames(classToImplement).each(function(index, key) {
-			//console.log('classToImplement own property', key);
-			if(classToReceiveImplementation[key] === undefined) {
-				//console.log(key, 'does not exist on class, copying');
-				classToReceiveImplementation[key] = Object.clone(classToImplement[key]);
+		// Static properties
+		Class.getStaticPropertyNames(classToImplement).each(function(index, staticPropertyName) {
+			//console.log('classToImplement staticPropertyName', staticPropertyName);
+			if(classToReceiveImplementation[staticPropertyName] === undefined) {
+				//console.log(staticPropertyName, 'does not exist on class, copying');
+				classToReceiveImplementation[staticPropertyName] = Object.clone(classToImplement[staticPropertyName]);
 			}
 		});
 
-		// Prototype properties and methods
-		for(var classToImplementPrototypeProperty in classToImplement.prototype) {
-			if(classToReceiveImplementation.prototype[classToImplementPrototypeProperty] === undefined) {
-				console.log(classToImplementPrototypeProperty, 'does not exist on class prototype, copying');
-				classToReceiveImplementation.prototype[classToImplementPrototypeProperty] = Object.clone(classToImplement.prototype[classToImplementPrototypeProperty]);
-			}
-		}
+		// Get the instance properties of the class to receieve the implementation
+		var instancePropertyNamesOfClassToReceiveImplementation = {};
+		Class.getInstancePropertyNames(classToReceiveImplementation).each(function(index, key) {
+			instancePropertyNamesOfClassToReceiveImplementation[key] = true;
+		});
 
-		// Prototype own property names
-		Object.getOwnPropertyNames(classToImplement.prototype).each(function(index, key) {
-			//console.log('classToImplement own property', key);
-			if(classToReceiveImplementation.prototype[key] === undefined) {
-				console.log(key, 'does not exist on class, copying');
-				classToReceiveImplementation.prototype[key] = Object.clone(classToImplement.prototype[key]);
+		// Instance properties
+		Class.getInstancePropertyNames(classToImplement).each(function(index, instancePropertyName) {
+			//console.log('classToImplement instancePropertyName', instancePropertyName);
+			if(instancePropertyNamesOfClassToReceiveImplementation[instancePropertyName] === undefined) {
+				//console.log(instancePropertyName, 'does not exist on class, copying');
+				classToReceiveImplementation.prototype[instancePropertyName] = Object.clone(classToImplement.prototype[instancePropertyName]);
 			}
 		});
-		
+
 		return classToReceiveImplementation;
 	}
 
 	static doesImplement(classToCheck, classExpectedToBeImplemented) {
 		var doesImplement = true;
 
-		// Check static properties and methods
-		for(var key in classExpectedToBeImplemented) {
-			if(classToCheck[key] === undefined) {
-				//app.info('Class does not have property', key);
+		// Static properties
+		Class.getStaticPropertyNames(classExpectedToBeImplemented).each(function(index, staticPropertyName) {
+			//console.log('classExpectedToBeImplemented staticPropertyName', staticPropertyName);
+			if(classToCheck[staticPropertyName] === undefined) {
+				//console.log('Class does not have static property', staticPropertyName);
 				doesImplement = false;
-				break;
+				return false; // break
 			}
-		}
+		});
 
-		// Check static own property names
+		// Keep checking
 		if(doesImplement) {
-			Object.getOwnPropertyNames(classExpectedToBeImplemented).each(function(index, key) {
-				if(classToCheck[key] === undefined) {
-					//app.info('Class does not have property', key);
+			// Get the instance properties of the class to check
+			var instancePropertyNamesOfClassToCheck = {};
+			Class.getInstancePropertyNames(classToCheck).each(function(index, key) {
+				instancePropertyNamesOfClassToCheck[key] = true;
+			});
+
+			// Instance properties
+			Class.getInstancePropertyNames(classExpectedToBeImplemented).each(function(index, instancePropertyName) {
+				//console.log('classExpectedToBeImplemented instancePropertyName', instancePropertyName);
+				if(instancePropertyNamesOfClassToCheck[instancePropertyName] === undefined) {
+					//console.log('Class does not have instance property', instancePropertyName);
 					doesImplement = false;
 					return false; // break
 				}
-			});
-		}
-
-		// Check prototype properties and methods
-		if(doesImplement) {
-			for(var key in classExpectedToBeImplemented.prototype) {
-				if(classToCheck.prototype[key] === undefined) {
-					app.info('Class does not have prototype property', key);
-					doesImplement = false;
-					break;
-				}
-			}
-		}
-
-		// Check prototype own property names
-		if(doesImplement) {
-			Object.getOwnPropertyNames(classExpectedToBeImplemented.prototype).each(function(index, key) {
-				if(classToCheck.prototype[key] === undefined) {
-					//app.info('Class does not have property', key);
-					doesImplement = false;
-					return false; // break
-				}
-			});
+			});	
 		}
 
 		return doesImplement;
@@ -143,27 +119,66 @@ class Class {
 		return className;
 	}
 
-	static getMethodNames(classDefinition) {
-		//app.log('Class.getMethodNames', classDefinition);
-
-		var methodNames = [];
-
-		for(var key of Object.getOwnPropertyNames(classDefinition.prototype)) {
-			methodNames.append(key);
-		}
-
-		return methodNames;
-	}
-
 	static getStaticPropertyNames(classDefinition) {
+		var staticPropertyNames = [];
+
+		Object.getOwnPropertyNames(classDefinition).each(function(index, key) {
+			if(
+				key != 'length' &&
+				key != 'name' &&
+				key != 'prototype'
+			) {
+				staticPropertyNames.append(key);	
+			}
+		});
+
+		return staticPropertyNames;
 	}
 
 	static getInstancePropertyNames(classDefinition) {
+		var instancePropertyNames = [];
+
+		// One option is to update babel to define the class properties outside of the constructor
+		/*
+			Instead of
+
+			constructor() {
+				this.blah = 'blah';
+			}
+
+			do
+
+			ClassName.prototype.blah = 'blah';
+		*/
+
 		// Need to instance the class in order to get class properties that are not methods
 		// This is because the constructor must be called as it assigns properties (this.property = value;)
-		var classInstance = new classDefinition();
+		// I know, this is terrible, other options are to parse the function string though
+		//var classInstance = new classDefinition();
 
+		//// Get the instance properties from the instance
+		//Object.keys(classInstance).each(function(index, key) {
+		//	instancePropertyNames.append(key);
+		//});
 
+		// Get the instance methods from the definition
+		var instanceMethodNames = Class.getInstanceMethodNames(classDefinition);
+
+		instancePropertyNames.merge(instanceMethodNames);
+
+		return instancePropertyNames;
+	}
+
+	static getInstanceMethodNames(classDefinition) {
+		var methodNames = [];
+
+		Object.getOwnPropertyNames(classDefinition.prototype).each(function(index, key) {
+			if(key !== 'constructor') {
+				methodNames.append(key);
+			}
+		});
+
+		return methodNames;
 	}
 
 }

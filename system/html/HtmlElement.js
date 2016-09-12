@@ -109,7 +109,7 @@ class HtmlElement extends HtmlNode {
 
 	descendFromParent(parent) {
 		// Use HtmlNode's method
-		this.super.apply(this, arguments);
+		super.descendFromParent(...arguments);
 
 		// Add a DOM attribute for testing
 		//this.setAttribute('data-nodeIdentifier', this.nodeIdentifier);
@@ -120,7 +120,7 @@ class HtmlElement extends HtmlNode {
 		// Recurse through all children to make sure they descend
 		this.children.each(function(childIndex, child) {
 			child.descendFromParent(this);
-		}.bind(this));
+		}.bind(this));	
 	}
 
 	applyDomUpdates() {
