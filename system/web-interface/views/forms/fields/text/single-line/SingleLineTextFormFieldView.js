@@ -1,20 +1,20 @@
 // Dependencies
-var TextFormFieldView = Framework.require('system/web-interface/views/forms/fields/text/TextFormFieldView.js');
-var SingleLineTextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
+import TextFormFieldView from './../../../../../../../system/web-interface/views/forms/fields/text/TextFormFieldView.js';
+import SingleLineTextFormControlView from './../../../../../../../system/web-interface/views/forms/controls/text/single-line/SingleLineTextFormControlView.js';
 
 // Class
-var SingleLineTextFormFieldView = TextFormFieldView.extend({
+class SingleLineTextFormFieldView extends TextFormFieldView {
 
-	attributes: {
+	attributes = {
 		class: 'field text singleLine',
-	},
+	};
 
-	construct: function(identifier, settings) {
+	construct(identifier, settings) {
 		// Create the form control, SingleLineTextFormControlView
 		this.formControlView = new SingleLineTextFormControlView();
 
 		// Call super after setting this.formControlView
-		this.super.apply(this, arguments);
+		this.super(...arguments);
 
 		// Handle enterSubmits
 		if(this.settings.get('enterSubmits')) {
@@ -26,9 +26,9 @@ var SingleLineTextFormFieldView = TextFormFieldView.extend({
 
 		// Append the form control
 		this.append(this.formControlView);
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = SingleLineTextFormFieldView;
+export default SingleLineTextFormFieldView;

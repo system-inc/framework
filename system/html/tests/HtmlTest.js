@@ -1,19 +1,19 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var Html = Framework.require('system/html/Html.js');
-var HtmlElement = Framework.require('system/html/HtmlElement.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import Html from './../../../system/html/Html.js';
+import HtmlElement from './../../../system/html/HtmlElement.js';
 
 // Class
-var HtmlTest = Test.extend({
+class HtmlTest extends Test {
 
-	testHtml: function*() {
+	async testHtml() {
 		var actual = Html.p();
 
 		Assert.true(HtmlElement.is(actual), 'Static construction of p tag works');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = HtmlTest;
+export default HtmlTest;

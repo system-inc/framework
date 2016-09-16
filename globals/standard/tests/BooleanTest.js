@@ -1,20 +1,20 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
 
 // Class
-var BooleanTest = Test.extend({
+class BooleanTest extends Test {
 
-	testIs: function() {
+	testIs() {
 		Assert.true(Boolean.is(false), 'false');
 		Assert.true(Boolean.is(true), 'true');
 		
 		Assert.false(Boolean.is(), 'nothing');
 		Assert.false(Boolean.is(undefined), 'undefined');
 		Assert.false(Boolean.is(0), '0');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = BooleanTest;
+export default BooleanTest;

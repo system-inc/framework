@@ -1,11 +1,11 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
 
 // Class
-var PrimitiveTest = Test.extend({
+class PrimitiveTest extends Test {
 
-	testIs: function() {
+	testIs() {
 		Assert.true(Primitive.is(0), '0');
 		Assert.true(Primitive.is(1), '1');
 		Assert.true(Primitive.is(100), '100');
@@ -18,9 +18,9 @@ var PrimitiveTest = Test.extend({
 		Assert.false(Primitive.is([]), 'array literal ([])');
 		Assert.false(Primitive.is({}), 'object literal ({})');
 		Assert.false(Primitive.is(function() {}), 'function');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = PrimitiveTest;
+export default PrimitiveTest;

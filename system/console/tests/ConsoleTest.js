@@ -1,11 +1,11 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
 
 // Class
-var ConsoleTest = Test.extend({
+class ConsoleTest extends Test {
 
-	testConsole: function() {
+	testConsole() {
 		//Console.standardLog('Console.standardLog: Hello world');
 		//Console.standardInfo('Console.standardInfo: Hello world');
 		//Console.standardWarn('Console.standardWarn: Hello world');
@@ -17,9 +17,9 @@ var ConsoleTest = Test.extend({
 		//Console.highlight('Console.highlight: Hello world');
 		//Console.write('Console.write: Hello world');
 		//Console.writeLine('Console.writeLine: Hello world');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ConsoleTest;
+export default ConsoleTest;

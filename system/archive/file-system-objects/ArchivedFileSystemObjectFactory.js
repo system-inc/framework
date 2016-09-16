@@ -1,5 +1,5 @@
 // Class
-class ArchivedFileSystemObjectFactory = {
+class ArchivedFileSystemObjectFactory {
 
 	static createFromSevenZipArchivedFileSystemObjectProperties(archiveFile, sevenZipArchivedFileSystemObjectProperties) {	
 		//Console.highlight('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);

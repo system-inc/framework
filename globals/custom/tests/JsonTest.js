@@ -1,11 +1,11 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
 
 // Class
-var JsonTest = Test.extend({
+class JsonTest extends Test {
 
-	testIs: function() {
+	testIs() {
 		Assert.true(Json.is('{}'), 'object literal string "{}"');
 		Assert.true(Json.is('[]'), 'array literal string "[]"');
 		Assert.false(Json.is(''), 'empty string');
@@ -13,9 +13,9 @@ var JsonTest = Test.extend({
 		Assert.false(Json.is({}), 'object literal []');
 		Assert.false(Json.is(10), 'number');
 		Assert.false(Json.is(true), 'boolean');
-	},
+	}
 
-	testEncode: function() {
+	testEncode() {
 		Assert.strictEqual(Json.encode(), '', 'passing nothing should return a blank string');
 		Assert.strictEqual(Json.encode(null), '', 'passing null should return a blank string');
 		Assert.equal(Json.encode([]), '[]', 'empty array');
@@ -39,15 +39,15 @@ var JsonTest = Test.extend({
 
 		actual = Json.encode({
 			a: 1,
-			fn: function() {
+			fn() {
 				var a = 'test';
 			}
 		});
 		expected = '{"a":1}';
 		Assert.equal(actual, expected, 'functions are not encoded and keys pointing to functions are not visible');
-	},
+	}
 
-	testDecode: function() {
+	testDecode() {
 		Assert.strictEqual(Json.decode(), null, 'passing nothing should return null');
 		Assert.strictEqual(Json.decode(null), null, 'passing null should return null');
 		Assert.deepEqual(Json.decode('[]'), [], 'empty array');
@@ -68,9 +68,9 @@ var JsonTest = Test.extend({
 			'c': 3,
 		};
 		Assert.deepEqual(actual, expected, 'object');
-	},
+	}
 
-	testDecycle: function() {
+	testDecycle() {
 		var actual = {
 			fruit: 'apple',
 		};
@@ -86,9 +86,9 @@ var JsonTest = Test.extend({
 		};		
 
 		Assert.deepEqual(actual, expected);
-	},
+	}
 
-	testRetrocycle: function() {
+	testRetrocycle() {
 		var actual = {
 			fruit: 'apple',
 			cyclicalReference: {
@@ -98,9 +98,9 @@ var JsonTest = Test.extend({
 		actual = Json.retrocycle(actual);
 		
 		Assert.equal(actual.cyclicalReference.fruit, 'apple');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = JsonTest;
+export default JsonTest;

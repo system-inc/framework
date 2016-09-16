@@ -1,20 +1,20 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
+import ElectronTest from './../../../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../../../system/test/Assert.js';
+import HtmlDocument from './../../../../../system/html/HtmlDocument.js';
+import Html from './../../../../../system/html/Html.js';
+import ClipboardEvent from './../../../../../system/html/events/html-event/ClipboardEvent.js';
 var ElectronManager = null;
-var ClipboardEvent = Framework.require('system/html/events/html-event/ClipboardEvent.js');
 
 // Class
-var ClipboardEventTest = ElectronTest.extend({
+class ClipboardEventTest extends ElectronTest {
 
-	before: function*() {
+	async before() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
 		ElectronManager = Framework.require('system/electron/ElectronManager.js');
-	},
+	}
 
-	testClipboardEvent: function*() {
+	async testClipboardEvent() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -55,12 +55,12 @@ var ClipboardEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Double click into the text area twice to select some text
-        yield ElectronManager.doubleClickHtmlElement(textAreaElement);
+        await ElectronManager.doubleClickHtmlElement(textAreaElement);
 
         // This only works on Windows right now
-		//yield ElectronManager.copyUsingKeyboard();
-		//yield ElectronManager.cutUsingKeyboard();
-		//yield ElectronManager.pasteUsingKeyboard();
+		//await ElectronManager.copyUsingKeyboard();
+		//await ElectronManager.cutUsingKeyboard();
+		//await ElectronManager.pasteUsingKeyboard();
 
 		htmlDocument.executeCopy();
 		htmlDocument.executeCut();
@@ -71,9 +71,9 @@ var ClipboardEventTest = ElectronTest.extend({
 		Assert.true(Class.isInstance(capturedClipboardPasteEvent, ClipboardEvent), '"clipboard.paste" events are instances of ClipboardEvent');
 
 		//throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ClipboardEventTest;
+export default ClipboardEventTest;

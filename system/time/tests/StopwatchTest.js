@@ -1,19 +1,19 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var Stopwatch = Framework.require('system/time/Stopwatch.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import Stopwatch from './../../../system/time/Stopwatch.js';
 
 // Class
-var StopwatchTest = Test.extend({
+class StopwatchTest extends Test {
 
-	testGetHighResolutionElapsedTime: function*() {
+	async testGetHighResolutionElapsedTime() {
 		var action = new Stopwatch();
 		action.stop();
 
 		Assert.true(Number.is(action.getHighResolutionElapsedTime()), 'getHighResolutionElapsedTime()');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = StopwatchTest;
+export default StopwatchTest;

@@ -2,7 +2,7 @@
 class Buffer extends Node.Buffer {
 
 	static is(value) {
-		return value instanceof Stream;
+		return value instanceof Buffer;
 	}
 
 	static concatenate = Node.Buffer.concat;

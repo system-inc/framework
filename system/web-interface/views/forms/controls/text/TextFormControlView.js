@@ -1,14 +1,14 @@
 // Dependencies
-var FormControlView = Framework.require('system/web-interface/views/forms/controls/FormControlView.js');
+import FormControlView from './../../../../../../system/web-interface/views/forms/controls/FormControlView.js';
 
 // Class
-var TextFormControlView = FormControlView.extend({
+class TextFormControlView extends FormControlView {
 
-    attributes: {
+    attributes = {
         class: 'control text',
-    },
+    }
 
-    construct: function(settings) {
+    construct(settings) {
         this.super(settings);
 
         this.settings.setDefaults({
@@ -26,9 +26,9 @@ var TextFormControlView = FormControlView.extend({
                 this.handleInputKeyTabDown(event);
             }.bind(this));
         }
-    },
+    }
 
-    setValue: function(value) {
+    setValue(value) {
         // TODO: If we are programmitically changing the value of the control (as below with indentation management), we should make sure that undo still works perfectly
 
         // Make null an empty string
@@ -37,9 +37,9 @@ var TextFormControlView = FormControlView.extend({
         }
 
         return this.super(value);
-    },
+    }
 
-    getValue: function() {
+    getValue() {
         var value = this.value;
 
         // Make null an empty string
@@ -48,15 +48,15 @@ var TextFormControlView = FormControlView.extend({
         }
 
         return value;
-    },
+    }
 
-    insertText: function(text) {
+    insertText(text) {
         this.viewContainer.insertText(text);
 
         this.valueChangedOnDom();
-    },
+    }
 
-    handleInputKeyTabDown: function(event) {
+    handleInputKeyTabDown(event) {
         //Console.standardLog('handleInputKeyTabDown', event);
 
         var eventReturnValue = true;
@@ -118,13 +118,13 @@ var TextFormControlView = FormControlView.extend({
         }
 
         return eventReturnValue;
-    },
+    }
 
-    insertIndentationSymbol: function() {
+    insertIndentationSymbol() {
         this.viewContainer.insertText(this.settings.get('indentationSymbol'));
-    },
+    }
 
-    indentCurrentLine: function() {
+    indentCurrentLine() {
         //Console.log('indentCurrentLine');
 
         // Insert an indentation symbol at the start of the current line
@@ -140,9 +140,9 @@ var TextFormControlView = FormControlView.extend({
 
         // Update the selection and cursor position
         this.selectRange((selectionStartIndex + indentationSymbolLength), (selectionEndIndex + indentationSymbolLength));
-    },
+    }
 
-    outdentCurrentLine: function() {
+    outdentCurrentLine() {
         //Console.log('outdentCurrentLine');
 
         var selectionStartIndex = this.getSelectionStartIndex();
@@ -236,9 +236,9 @@ var TextFormControlView = FormControlView.extend({
                 this.setCursorIndex(currentLineStartIndex);
             }
         }
-    },
+    }
 
-    indentSelectedLines: function() {
+    indentSelectedLines() {
         //Console.log('indentSelectedLines');
 
         var selectionStartIndex = this.getSelectionStartIndex();
@@ -266,9 +266,9 @@ var TextFormControlView = FormControlView.extend({
 
         // Update the selection and cursor position
         this.selectRange((selectionStartIndex + indentationSymbolLength), (selectionEndIndex + (indentationSymbolLength * selectedLinesCount)));
-    },
+    }
 
-    outdentSelectedLines: function() {
+    outdentSelectedLines() {
         //Console.log('outdentSelectedLines');
 
         var selectionStartIndex = this.getSelectionStartIndex();
@@ -336,9 +336,9 @@ var TextFormControlView = FormControlView.extend({
         }
         var updatedSelectionEndIndex = selectionEndIndex - charactersRemoved;
         this.selectRange(updatedSelectionStartIndex, updatedSelectionEndIndex);
-    },
+    }
 
-    getSelectedText: function() {
+    getSelectedText() {
         var selectedText = null;
 
         if((this.getSelectionEndIndex() - this.getSelectionStartIndex()) > 0) {
@@ -346,9 +346,9 @@ var TextFormControlView = FormControlView.extend({
         }
 
         return selectedText;
-    },
+    }
 
-    getSelectedLinesCount: function() {
+    getSelectedLinesCount() {
         var selectionLineCount = 0;
         var selectedText = this.getSelectedText();
         //Console.log('selectedText', selectedText);
@@ -358,17 +358,17 @@ var TextFormControlView = FormControlView.extend({
         }
 
         return selectionLineCount;
-    },
+    }
 
-    getSelectedLinesText: function() {
+    getSelectedLinesText() {
         return this.getValue().substring(this.getFirstSelectedLineStartIndex(), this.getLastSelectedLineEndIndex());
-    },
+    }
 
-    getFirstSelectedLineStartIndex: function() {
+    getFirstSelectedLineStartIndex() {
         return this.getCurrentLineStartIndex();
-    },
+    }
 
-    getLastSelectedLineEndIndex: function() {
+    getLastSelectedLineEndIndex() {
         var lastSelectedLineEndIndex = null;
 
         var value = this.getValue();
@@ -385,25 +385,25 @@ var TextFormControlView = FormControlView.extend({
         }
 
         return lastSelectedLineEndIndex;
-    },
+    }
 
-    getSelectionStartIndex: function() {
+    getSelectionStartIndex() {
         return this.domNode.selectionStart;
-    },
+    }
 
-    getSelectionEndIndex: function() {
+    getSelectionEndIndex() {
         return this.domNode.selectionEnd;
-    },
+    }
 
-    getCurrentLineNumber: function() {
+    getCurrentLineNumber() {
         return this.getValue().substring(0, this.getSelectionStartIndex()).split("\n").length;
-    },
+    }
 
-    getCurrentLineStartIndex: function() {
+    getCurrentLineStartIndex() {
         return this.getValue().lastIndexOf("\n", this.getSelectionStartIndex() - 1) + 1;
-    },
+    }
 
-    getCurrentLineEndIndex: function() {
+    getCurrentLineEndIndex() {
         var currentLineEndIndex = null;
 
         var value = this.getValue();
@@ -426,32 +426,32 @@ var TextFormControlView = FormControlView.extend({
         }
 
         return currentLineEndIndex;
-    },
+    }
 
-    getCurrentLineText: function() {
+    getCurrentLineText() {
         return this.getValue().substr(this.getCurrentLineStartIndex(), (this.getCurrentLineEndIndex() - this.getCurrentLineStartIndex()));
-    },
+    }
 
-    getCurrentLineTextUpToCursorIndex: function() {
+    getCurrentLineTextUpToCursorIndex() {
         var currentLineStartIndex = this.getCurrentLineStartIndex();
         var cursorIndex = this.getCursorIndex();
 
         return this.getValue().substr(currentLineStartIndex, cursorIndex - currentLineStartIndex);
-    },
+    }
 
-    doesSelectionContainLastLine: function() {
+    doesSelectionContainLastLine() {
         return this.getValue().substring(this.getSelectionEndIndex()).indexOf("\n") == -1;
-    },
+    }
 
-    isCurrentLineEntirelySelected: function() {
+    isCurrentLineEntirelySelected() {
         return (this.getSelectionStartIndex() == this.getCurrentLineStartIndex() && this.getSelectionEndIndex() == this.getCurrentLineEndIndex());
-    },
+    }
 
-    getCurrentColumnNumber: function() {
+    getCurrentColumnNumber() {
         return this.getSelectionStartIndex() - this.getCurrentLineStartIndex() + 1;
-    },
+    }
     
-	getCursorIndex: function() {
+	getCursorIndex() {
         var index = 0;
 
         var index = this.getSelectionStartIndex();
@@ -466,13 +466,13 @@ var TextFormControlView = FormControlView.extend({
         }
 
         return index;
-    },
+    }
 
-    setCursorIndex: function(index) {
+    setCursorIndex(index) {
         this.selectRange(index, index);
-    },
+    }
 
-    selectRange: function(start, end) {
+    selectRange(start, end) {
         if(end === undefined) {
             end = start;
         }
@@ -496,9 +496,9 @@ var TextFormControlView = FormControlView.extend({
             range.moveStart('character', start);
             range.select();
         }
-    },
+    }
 
-    getWhiteSpaceAtStartOfString: function(string) {
+    getWhiteSpaceAtStartOfString(string) {
         var whiteSpaceAtStartOfString = string.match(/^\s*/).get(0);
 
         if(!whiteSpaceAtStartOfString) {
@@ -506,9 +506,9 @@ var TextFormControlView = FormControlView.extend({
         }
 
         return whiteSpaceAtStartOfString;
-    },
+    }
 
-});
+}
 
 // Export
-module.exports = TextFormControlView;
+export default TextFormControlView;

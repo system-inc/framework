@@ -1,23 +1,23 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var EventEmitter = Framework.require('system/events/EventEmitter.js');
-var Event = Framework.require('system/events/Event.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import EventEmitter from './../../../system/events/EventEmitter.js';
+import Event from './../../../system/events/Event.js';
 
 // Class
-var EventEmitterTest = Test.extend({
+class EventEmitterTest extends Test {
 
 	// This should trigger a console warning
-	//testRecommendedMaximumBoundFunctionsPerEventIdentifier: function*() {
+	//async testRecommendedMaximumBoundFunctionsPerEventIdentifier() {
 	//	var eventEmitter = new EventEmitter();
 	//	var functionsToBind = 11;
 	//	for(var i = 0; i < functionsToBind; i++) {
-	//		yield eventEmitter.on('event1', function() {
+	//		await eventEmitter.on('event1', function() {
 	//		});
 	//	}
 	//},
 
-	testCoreEventEmitterFunctionality: function*() {
+	async testCoreEventEmitterFunctionality() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -44,7 +44,7 @@ var EventEmitterTest = Test.extend({
 		Assert.strictEqual(eventListeners.length, 1, 'One event listener is bound');
 
 		// Emit an event
-		yield eventEmitter.emit('event1', 'event1Data');
+		await eventEmitter.emit('event1', 'event1Data');
 		Assert.true(Event.is(storedEvent), 'Emitted an instance of Event');
 		Assert.strictEqual(storedEvent.identifier, 'event1', 'identifier is set correctly');
 		Assert.strictEqual(storedEvent.data, 'event1Data', 'data is set correctly');
@@ -86,7 +86,7 @@ var EventEmitterTest = Test.extend({
 		eventEmitter.once('event1', functionToBind);
 
 		// Emit the event
-		yield eventEmitter.emit('event1', 'event1Data');
+		await eventEmitter.emit('event1', 'event1Data');
 		
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
@@ -97,7 +97,7 @@ var EventEmitterTest = Test.extend({
 		eventEmitter.on('event1', functionToBind, 3);
 
 		// Emit the event
-		yield eventEmitter.emit('event1', 'event1Data');
+		await eventEmitter.emit('event1', 'event1Data');
 		
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
@@ -105,7 +105,7 @@ var EventEmitterTest = Test.extend({
 		Assert.strictEqual(eventListeners.length, 1, 'Event listeners are bound after a listener bound with .on(eventIdentifier, function, 3) has been emitted once');
 
 		// Emit the event
-		yield eventEmitter.emit('event1', 'event1Data');
+		await eventEmitter.emit('event1', 'event1Data');
 
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
@@ -113,7 +113,7 @@ var EventEmitterTest = Test.extend({
 		Assert.strictEqual(eventListeners.length, 1, 'Event listeners are bound after a listener bound with .on(eventIdentifier, function, 3) has been emitted twice');
 
 		// Emit the event
-		yield eventEmitter.emit('event1', 'event1Data');
+		await eventEmitter.emit('event1', 'event1Data');
 
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
@@ -138,20 +138,20 @@ var EventEmitterTest = Test.extend({
 		});
 
 		// Trigger eventEmitter.addedEventListener by adding another event listener
-		yield eventEmitter.on('event1', function(event) {
+		await eventEmitter.on('event1', function(event) {
 		});
 		//Console.info('storedAddedEventListenerEvent', storedAddedEventListenerEvent);
 		Assert.strictEqual(storedAddedEventListenerEvent.data.eventPattern, 'event1', 'stored eventEmitter.addedEventListener event');
 
 		// Trigger eventEmitter.removedEventListener by adding another event listener
-		yield eventEmitter.removeEventListener('event1');
+		await eventEmitter.removeEventListener('event1');
 		//Console.info('storedRemovedEventListenerEvent', storedRemovedEventListenerEvent);
 		Assert.strictEqual(storedRemovedEventListenerEvent.data.eventPattern, 'event1', 'stored eventEmitter.removedEventListener event');
 
 		//Console.highlight(eventEmitter);
-	},
+	}
 
-	testEventPassing: function*() {
+	async testEventPassing() {
 		// Create the EventEmitter
 		var eventEmitter1 = new EventEmitter();
 		var eventEmitter2 = new EventEmitter();
@@ -169,18 +169,18 @@ var EventEmitterTest = Test.extend({
 		});
 
 		// Emit an event
-		var emittedEventForEventEmitter1 = yield eventEmitter1.emit('event1', 'event1Data');
+		var emittedEventForEventEmitter1 = await eventEmitter1.emit('event1', 'event1Data');
 		Assert.strictEqual(storedEventForEventEmitter1, emittedEventForEventEmitter1, '.emit() returns the emitted event');
 		Assert.strictEqual(storedEventForEventEmitter1.emitter, eventEmitter1, 'emitter is set correctly');
 		Assert.strictEqual(storedEventForEventEmitter1.currentEmitter, eventEmitter1, 'currentEmitter is set correctly');
 
 		// Emit the stored event (pass the event along)
-		var emittedEventForEventEmitter2 = yield eventEmitter2.emit('event1', emittedEventForEventEmitter1);
+		var emittedEventForEventEmitter2 = await eventEmitter2.emit('event1', emittedEventForEventEmitter1);
 		Assert.strictEqual(storedEventForEventEmitter2.emitter, eventEmitter1, 'emitter is set correctly');
 		Assert.strictEqual(storedEventForEventEmitter2.currentEmitter, eventEmitter2, 'currentEmitter is set correctly');		
-	},
+	}
 
-	testPreventDefault: function*() {
+	async testPreventDefault() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -205,12 +205,12 @@ var EventEmitterTest = Test.extend({
 		});
 
 		// Emit an event
-		var event = yield eventEmitter.emit('event1', 'event1Data');
+		var event = await eventEmitter.emit('event1', 'event1Data');
 
 		Assert.strictEqual(storeForEventListener2, 'defaultPrevented', '.preventDefault() affects the next event listener');
-	},
+	}
 
-	testDefaultEventCanBePrevented: function*() {
+	async testDefaultEventCanBePrevented() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -235,14 +235,14 @@ var EventEmitterTest = Test.extend({
 		});
 
 		// Emit an event where defaultPrevented does not work
-		var event = yield eventEmitter.emit('event1', 'event1Data', {
+		var event = await eventEmitter.emit('event1', 'event1Data', {
 			defaultCanBePrevented: false,
 		});
 
 		Assert.strictEqual(storeForEventListener2, 'defaultNotPrevented', 'Events constructed with the event option "defaultCanBePrevented" set to false make calls to .preventDefault() do nothing');
-	},
+	}
 
-	testStop: function*() {
+	async testStop() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -262,13 +262,13 @@ var EventEmitterTest = Test.extend({
 		});
 
 		// Emit an event
-		var event = yield eventEmitter.emit('event1', 'event1Data');
+		var event = await eventEmitter.emit('event1', 'event1Data');
 
 		Assert.strictEqual(storeForEventListener1.data, 'event1Data', 'Calling .stop() does not stop further code in the function from being executed');
 		Assert.strictEqual(storeForEventListener2, null, '.stop() prevents other listeners of the same event from being called');
-	},
+	}
 
-	testAddingMultipleEventListeners: function*() {
+	async testAddingMultipleEventListeners() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -286,15 +286,15 @@ var EventEmitterTest = Test.extend({
 		Assert.strictEqual(eventListeners.length, 3, 'The correct number of event listeners are bound');
 
 		// Emit event 1
-		yield eventEmitter.emit('event1');
+		await eventEmitter.emit('event1');
 		Assert.strictEqual(storedEvent.identifier, 'event1', 'identifier is set correctly');
 
 		// Emit event 2
-		yield eventEmitter.emit('event2');
+		await eventEmitter.emit('event2');
 		Assert.strictEqual(storedEvent.identifier, 'event2', 'identifier is set correctly');
 
 		// Emit event 3
-		yield eventEmitter.emit('event3');
+		await eventEmitter.emit('event3');
 		Assert.strictEqual(storedEvent.identifier, 'event3', 'identifier is set correctly');
 
 		// Add events using a string
@@ -308,19 +308,19 @@ var EventEmitterTest = Test.extend({
 		Assert.strictEqual(eventListeners.length, 7, 'The correct number of event listeners are bound');
 
 		// Emit event 4
-		yield eventEmitter.emit('event4');
+		await eventEmitter.emit('event4');
 		Assert.strictEqual(storedEvent.identifier, 'event4', 'identifier is set correctly');
 
 		// Emit event 5
-		yield eventEmitter.emit('event5');
+		await eventEmitter.emit('event5');
 		Assert.strictEqual(storedEvent.identifier, 'event5', 'identifier is set correctly');
 
 		// Emit event 6
-		yield eventEmitter.emit('event6');
+		await eventEmitter.emit('event6');
 		Assert.strictEqual(storedEvent.identifier, 'event6', 'identifier is set correctly');
 
 		// Emit event 7
-		yield eventEmitter.emit('event7');
+		await eventEmitter.emit('event7');
 		Assert.strictEqual(storedEvent.identifier, 'event7', 'identifier is set correctly');
 
 		// Add events using an array with strings with multiple events and regular expressions
@@ -334,29 +334,29 @@ var EventEmitterTest = Test.extend({
 		Assert.strictEqual(eventListeners.length, 12, 'The correct number of event listeners are bound');
 
 		// Emit event 8
-		yield eventEmitter.emit('event8');
+		await eventEmitter.emit('event8');
 		Assert.strictEqual(storedEvent.identifier, 'event8', 'identifier is set correctly');
 
 		// Emit event 9
-		yield eventEmitter.emit('event9');
+		await eventEmitter.emit('event9');
 		Assert.strictEqual(storedEvent.identifier, 'event9', 'identifier is set correctly');
 
 		// Emit event 10
-		yield eventEmitter.emit('event10');
+		await eventEmitter.emit('event10');
 		Assert.strictEqual(storedEvent.identifier, 'event10', 'identifier is set correctly');
 
 		// Emit event 11
-		yield eventEmitter.emit('event11');
+		await eventEmitter.emit('event11');
 		Assert.strictEqual(storedEvent.identifier, 'event11', 'identifier is set correctly');
 
 		// Emit event 12
-		yield eventEmitter.emit('event12');
+		await eventEmitter.emit('event12');
 		Assert.strictEqual(storedEvent.identifier, 'event12', 'identifier is set correctly');
 
 		//Console.highlight(eventEmitter);
-	},
+	}
 
-	testEmittingMultipleEvents: function*() {
+	async testEmittingMultipleEvents() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -393,20 +393,20 @@ var EventEmitterTest = Test.extend({
 		});
 
 		// Emit the events using an array
-		yield eventEmitter.emit(['event1', 'event2', 'event3']);
+		await eventEmitter.emit(['event1', 'event2', 'event3']);
 		Assert.strictEqual(storedEvent1.identifier, 'event1', 'identifier is set correctly');
 		Assert.strictEqual(storedEvent2.identifier, 'event2', 'identifier is set correctly');
 		Assert.strictEqual(storedEvent3.identifier, 'event3', 'identifier is set correctly');
 
 		// Emit the events using a string
-		yield eventEmitter.emit('event4,event5, event6 event7');
+		await eventEmitter.emit('event4,event5, event6 event7');
 		Assert.strictEqual(storedEvent4.identifier, 'event4', 'identifier is set correctly');
 		Assert.strictEqual(storedEvent5.identifier, 'event5', 'identifier is set correctly');
 		Assert.strictEqual(storedEvent6.identifier, 'event6', 'identifier is set correctly');
 		Assert.strictEqual(storedEvent7.identifier, 'event7', 'identifier is set correctly');
-	},
+	}
 
-	testWildcardEventPattern: function*() {
+	async testWildcardEventPattern() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -427,15 +427,15 @@ var EventEmitterTest = Test.extend({
 		Assert.strictEqual(eventListeners.length, 1, 'One event listener is bound');
 
 		// Emit a non-matching event
-		yield eventEmitter.emit('event');
+		await eventEmitter.emit('event');
 		Assert.strictEqual(storedEvent, null, 'Non-matching event pattern does not trigger event listener');
 
 		// Emit a matching event
-		yield eventEmitter.emit('event1');
+		await eventEmitter.emit('event1');
 		Assert.strictEqual(storedEvent.identifier, 'event1', 'Matching event pattern triggers event listener');
-	},
+	}
 
-	testRegularExpressionEventPattern: function*() {
+	async testRegularExpressionEventPattern() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
 
@@ -456,25 +456,25 @@ var EventEmitterTest = Test.extend({
 		Assert.strictEqual(eventListeners.length, 1, 'One event listener is bound');
 
 		// Emit a non-matching event
-		yield eventEmitter.emit('event');
+		await eventEmitter.emit('event');
 		Assert.strictEqual(storedEvent, null, 'Non-matching event pattern does not trigger event listener');
 
 		// Emit a matching event
-		yield eventEmitter.emit('event2');
+		await eventEmitter.emit('event2');
 		//Console.info(storedEvent);
 		Assert.strictEqual(storedEvent.identifier, 'event2', 'Matching event pattern triggers event listener');
-	},
+	}
 
 	// If an EventEmitter does not have at least one listener registered for the 'error' event, and an 'error' event is emitted, the error is thrown, a stack trace is printed, and the Node.js process exits
-	testThrowsErrorWithoutRegisteredListeners: function*() {
+	async testThrowsErrorWithoutRegisteredListeners() {
 		var eventEmitter = new EventEmitter();
 
-		yield Assert.throwsAsynchronously(function*() {
-			yield eventEmitter.emit('event1', new Error());
+		await Assert.throwsAsynchronously(async function() {
+			await eventEmitter.emit('event1', new Error());
 		}, 'Throw an error when an event is emitted with data being an instance of Error and there are no event listeners');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = EventEmitterTest;
+export default EventEmitterTest;

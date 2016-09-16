@@ -1,17 +1,17 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var View = Framework.require('system/web-interface/views/View.js');
-var HtmlElement = Framework.require('system/html/HtmlElement.js');
-var HtmlNode = Framework.require('system/html/HtmlNode.js');
-var XmlElement = Framework.require('system/xml/XmlElement.js');
-var XmlNode = Framework.require('system/xml/XmlNode.js');
-var EventEmitter = Framework.require('system/events/EventEmitter.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import View from './../../../system/web-interface/views/View.js';
+import HtmlElement from './../../../system/html/HtmlElement.js';
+import HtmlNode from './../../../system/html/HtmlNode.js';
+import XmlElement from './../../../system/xml/XmlElement.js';
+import XmlNode from './../../../system/xml/XmlNode.js';
+import EventEmitter from './../../../system/events/EventEmitter.js';
 
 // Class
-var ViewTest = Test.extend({
+class ViewTest extends Test {
 
-	testView: function*() {
+	async testView() {
 		//Console.info(HtmlElement);
 
 		// Create a new view
@@ -22,9 +22,9 @@ var ViewTest = Test.extend({
 		Assert.true(HtmlNode.is(actual), 'View is of type HtmlNode');
 		Assert.true(Class.doesImplement(View, XmlElement), 'View class implements XmlElement');
 		Assert.true(Class.doesImplement(View, EventEmitter), 'View class implements EventEmitter');
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = ViewTest;
+export default ViewTest;

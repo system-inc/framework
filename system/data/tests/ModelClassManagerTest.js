@@ -1,14 +1,14 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var Model = Framework.require('system/data/Model.js');
-var ModelProperty = Framework.require('system/data/ModelProperty.js');
-var ModelClassManager = Framework.require('system/data/ModelClassManager.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import Model from './../../../system/data/Model.js';
+import ModelProperty from './../../../system/data/ModelProperty.js';
+import ModelClassManager from './../../../system/data/ModelClassManager.js';
 
 // Class
-var ModelClassManagerTest = Test.extend({
+class ModelClassManagerTest extends Test {
 
-	testAddPropertyToModel: function*() {
+	async testAddPropertyToModel() {
 		// Create a new model
 		var TestModel = Model.extend({
 			name: 'TestModel',
@@ -30,9 +30,9 @@ var ModelClassManagerTest = Test.extend({
 		var actual = testModel.getTest();
 
 		Assert.equal(actual, 'test value', 'getting and setting a property');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ModelClassManagerTest;
+export default ModelClassManagerTest;

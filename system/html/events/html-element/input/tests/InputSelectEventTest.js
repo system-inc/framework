@@ -1,20 +1,20 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
+import ElectronTest from './../../../../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../../../../system/test/Assert.js';
+import HtmlDocument from './../../../../../../system/html/HtmlDocument.js';
+import Html from './../../../../../../system/html/Html.js';
+import InputSelectEvent from './../../../../../../system/html/events/html-element/input/InputSelectEvent.js';
 var ElectronManager = null;
-var InputSelectEvent = Framework.require('system/html/events/html-element/input/InputSelectEvent.js');
 
 // Class
-var InputSelectEventTest = ElectronTest.extend({
+class InputSelectEventTest extends ElectronTest {
 
-	before: function*() {
+	async before() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
 		ElectronManager = Framework.require('system/electron/ElectronManager.js');
-	},
+	}
 
-	testInputSelectEvent: function*() {
+	async testInputSelectEvent() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -56,8 +56,7 @@ var InputSelectEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Double click into the text area twice to select some text
-        yield ElectronManager.doubleClickHtmlElement(textAreaElement);
-
+        await ElectronManager.doubleClickHtmlElement(textAreaElement);
 		
 		Assert.true(Class.isInstance(capturedEventInputSelect, InputSelectEvent), '"input.select" events are instances of InputSelectEvent');
 
@@ -68,9 +67,9 @@ var InputSelectEventTest = ElectronTest.extend({
 		Assert.strictEqual(capturedEventInputSelect.text, 'FrameworkInputSelectEventTest', 'text property is set correctly');
 
 		//throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = InputSelectEventTest;
+export default InputSelectEventTest;

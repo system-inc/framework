@@ -1,20 +1,20 @@
 // Dependencies
-var HtmlElement = Framework.require('system/html/HtmlElement.js');
-var Settings = Framework.require('system/settings/Settings.js');
+import HtmlElement from './../../../system/html/HtmlElement.js';
+import Settings from './../../../system/settings/Settings.js';
 
 // Class
-var View = HtmlElement.extend({
+class View extends HtmlElement {
 
 	// All web elements use a div tag unless otherwise specified
-	tag: 'div',
+	tag = 'div';
 
 	// Settings for the View
-	settings: new Settings(),
+	settings = new Settings();
 
-	viewContainer: null,
-	subviews: {},
+	viewContainer = null;
+	subviews = {};
 
-	construct: function(options, settings) {
+	construct(options, settings) {
 		this.settings.merge(settings);
 
 		// Every View is an HtmlElement
@@ -30,12 +30,12 @@ var View = HtmlElement.extend({
 
 			this.emit('view.initialized', event);
 		}.bind(this));
-	},
+	}
 
-	createSubviews: function() {
-	},
+	createSubviews() {
+	}
 
-});
+}
 
 // Export
-module.exports = View;
+export default View;

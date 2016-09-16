@@ -1,12 +1,12 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var WildcardPatternMatcher = Framework.require('system/search/patterns/WildcardPatternMatcher.js');
+import Test from './../../../../system/test/Test.js';
+import Assert from './../../../../system/test/Assert.js';
+import WildcardPatternMatcher from './../../../../system/search/patterns/WildcardPatternMatcher.js';
 
 // Class
-var WildcardPatternMatcherTest = Test.extend({
+class WildcardPatternMatcherTest extends Test {
 
-	testWildcardPatternsMatch: function() {
+	testWildcardPatternsMatch() {
 		// Standard comparison
 	    Assert.true(WildcardPatternMatcher.match('abc', 'abc'));
 	    Assert.true(WildcardPatternMatcher.match('hello.world', 'hello.world'));
@@ -154,9 +154,9 @@ var WildcardPatternMatcherTest = Test.extend({
 
 		// Invalid range
 		Assert.false(WildcardPatternMatcher.match('test.hello.[a-$]', 'test.hello.*)'));
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = WildcardPatternMatcherTest;
+export default WildcardPatternMatcherTest;

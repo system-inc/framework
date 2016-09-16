@@ -1,20 +1,20 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
+import ElectronTest from './../../../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../../../system/test/Assert.js';
+import HtmlDocument from './../../../../../system/html/HtmlDocument.js';
+import Html from './../../../../../system/html/Html.js';
+import HtmlElementEvent from './../../../../../system/html/events/html-element/HtmlElementEvent.js';
 var ElectronManager = null;
-var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
 
 // Class
-var HtmlElementEventTest = ElectronTest.extend({
+class HtmlElementEventTest extends ElectronTest {
 
-	before: function*() {
+	async before() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
 		ElectronManager = Framework.require('system/electron/ElectronManager.js');
-	},
+	}
 
-	testHtmlElementEventFocus: function*() {
+	async testHtmlElementEventFocus() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -45,18 +45,18 @@ var HtmlElementEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Click into the textArea
-		yield ElectronManager.clickHtmlElement(textAreaElement);
+		await ElectronManager.clickHtmlElement(textAreaElement);
 
 		// Click out of the textArea
-		yield ElectronManager.clickHtmlElement(htmlDocument.body);
+		await ElectronManager.clickHtmlElement(htmlDocument.body);
 
 		Assert.true(Class.isInstance(capturedHtmlElementFocusEvent, HtmlElementEvent), '"htmlElement.focus" events are instances of HtmlElementEvent');
 		Assert.true(Class.isInstance(capturedHtmlElementBlurEvent, HtmlElementEvent), '"htmlElement.blur" events are instances of HtmlElementEvent');
 
 		//throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-	testHtmlElementEventScroll: function*() {
+	async testHtmlElementEventScroll() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -119,7 +119,7 @@ var HtmlElementEventTest = ElectronTest.extend({
 
         // Scroll down
         scrollableDivElement.domNode.scrollTop = 100;
-        yield Function.delay(50); // Give some time for the scroll event to emit
+        await Function.delay(50); // Give some time for the scroll event to emit
 
         Assert.true(Class.isInstance(capturedHtmlElementScrollDownEvent, HtmlElementEvent), '"htmlElement.scroll.down" events are instances of HtmlElementEvent');
 
@@ -139,7 +139,7 @@ var HtmlElementEventTest = ElectronTest.extend({
 
 		// Scroll up
 		scrollableDivElement.domNode.scrollTop = 0;
-        yield Function.delay(50); // Give some time for the scroll event to emit
+        await Function.delay(50); // Give some time for the scroll event to emit
 
         Assert.true(Class.isInstance(capturedHtmlElementScrollUpEvent, HtmlElementEvent), '"htmlElement.scroll.up" events are instances of HtmlElementEvent');
 
@@ -156,7 +156,7 @@ var HtmlElementEventTest = ElectronTest.extend({
 
         // Scroll right
         scrollableDivElement.domNode.scrollLeft = 100;
-        yield Function.delay(50); // Give some time for the scroll event to emit
+        await Function.delay(50); // Give some time for the scroll event to emit
 
         Assert.true(Class.isInstance(capturedHtmlElementScrollRightEvent, HtmlElementEvent), '"htmlElement.scroll.right" events are instances of HtmlElementEvent');
 
@@ -173,7 +173,7 @@ var HtmlElementEventTest = ElectronTest.extend({
 
         // Scroll left
         scrollableDivElement.domNode.scrollLeft = 0;
-        yield Function.delay(50); // Give some time for the scroll event to emit
+        await Function.delay(50); // Give some time for the scroll event to emit
 
         Assert.true(Class.isInstance(capturedHtmlElementScrollLeftEvent, HtmlElementEvent), '"htmlElement.scroll.left" events are instances of HtmlElementEvent');
 
@@ -183,9 +183,9 @@ var HtmlElementEventTest = ElectronTest.extend({
         Assert.strictEqual(capturedHtmlElementScrollRightEvent, null, 'scroll events emit correctly');
 
 		//throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-    testHtmlElementEventLoad: function*() {
+    async testHtmlElementEventLoad() {
         // Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -210,14 +210,14 @@ var HtmlElementEventTest = ElectronTest.extend({
         // Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
-        yield Function.delay(50); // Give some time for the image to load
+        await Function.delay(50); // Give some time for the image to load
 
         Assert.true(Class.isInstance(capturedHtmlElementLoadEvent, HtmlElementEvent), '"htmlElement.load" events are instances of HtmlElementEvent');
 
         //throw new Error('Throwing error to display browser window.');
-    },
+    }
 
-    testHtmlElementEventError: function*() {
+    async testHtmlElementEventError() {
         // Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -242,14 +242,14 @@ var HtmlElementEventTest = ElectronTest.extend({
         // Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
-        yield Function.delay(50); // Give some time for the image to error
+        await Function.delay(50); // Give some time for the image to error
 
         Assert.true(Class.isInstance(capturedHtmlElementErrorEvent, HtmlElementEvent), '"htmlElement.error" events are instances of HtmlElementEvent');
 
         //throw new Error('Throwing error to display browser window.');
-    },
+    }
 
-});
+}
 
 // Export
-module.exports = HtmlElementEventTest;
+export default HtmlElementEventTest;

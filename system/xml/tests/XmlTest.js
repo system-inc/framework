@@ -1,14 +1,14 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var XmlDocument = Framework.require('system/xml/XmlDocument.js');
-var XmlElement = Framework.require('system/xml/XmlElement.js');
-var Version = Framework.require('system/version/Version.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import XmlDocument from './../../../system/xml/XmlDocument.js';
+import XmlElement from './../../../system/xml/XmlElement.js';
+import Version from './../../../system/version/Version.js';
 
 // Class
-var XmlTest = Test.extend({
+class XmlTest extends Test {
 
-	testXmlDocumentDeclarations: function*() {
+	async testXmlDocumentDeclarations() {
 		// Blank XML document
 		var actual = new XmlDocument();
 		Assert.equal(actual.toString(false), '', 'toString of an empty XML document');
@@ -26,15 +26,15 @@ var XmlTest = Test.extend({
 		actual.version = new Version('1.0');
 		actual.encoding = 'UTF-8';
 		Assert.equal(actual.toString(false), '<?xml version="1.0" encoding="UTF-8"?>', 'toString of an empty XML document with an encoding and a version');
-	},
+	}
 
-	testXmlDocumentWithElements: function*() {
+	async testXmlDocumentWithElements() {
 		// Blank XML document
 		var actual = new XmlDocument();
 		//Console.log(actual);
-	},
+	}
 
-	testXmlElements: function*() {
+	async testXmlElements() {
 		// Blank XML element
 		var actual = new XmlElement('p');
 		Assert.equal(actual.toString(false), '<p></p>', 'toString of an empty XML element');
@@ -51,9 +51,9 @@ var XmlTest = Test.extend({
 		//actual.setAttribute('class', 'testClass');
 		//Assert.equal(actual.toString(false), '<p class="testClass"></p>', 'setAttribute');
 		//Console.log(actual.toString());
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = XmlTest;
+export default XmlTest;

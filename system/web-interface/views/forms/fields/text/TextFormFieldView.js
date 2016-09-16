@@ -1,14 +1,14 @@
 // Dependencies
-var FormFieldView = Framework.require('system/web-interface/views/forms/fields/FormFieldView.js');
+import FormFieldView from './../../../../../../system/web-interface/views/forms/fields/FormFieldView.js';
 
 // Class
-var TextFormFieldView = FormFieldView.extend({
+class TextFormFieldView extends FormFieldView {
 
-	attributes: {
+	attributes = {
 		class: 'field text',
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = TextFormFieldView;
+export default TextFormFieldView;

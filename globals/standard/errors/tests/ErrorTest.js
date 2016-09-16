@@ -1,11 +1,11 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
+import Test from './../../../../system/test/Test.js';
+import Assert from './../../../../system/test/Assert.js';
 
 // Class
-var ErrorTest = Test.extend({
+class ErrorTest extends Test {
 
-	testErrorConstruction: function*() {
+	async testErrorConstruction() {
 		var actual = new Error('testErrorConstruction error message.');
 		//Console.info(actual);
 
@@ -13,9 +13,9 @@ var ErrorTest = Test.extend({
 		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
 		Assert.equal(actual.name, 'Error', 'name is set correctly');
 		Assert.equal(actual.message, 'testErrorConstruction error message.', 'message is set correctly');
-	},
+	}
 
-	testThrowError: function*() {
+	async testThrowError() {
 		var actual = null;
 
 		try {
@@ -30,9 +30,9 @@ var ErrorTest = Test.extend({
 		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
 		Assert.equal(actual.name, 'Error', 'name is set correctly');
 		Assert.equal(actual.message, 'testThrowError error message.', 'message is set correctly');
-	},
+	}
 
-	testCatchReferenceErrorInNormalFunction: function() { // <- this is a normal function, not a generator
+	testCatchReferenceErrorInNormalFunction() { // <- this is a normal function, not a generator
 		var actual = null;
 
 		try {
@@ -58,9 +58,9 @@ var ErrorTest = Test.extend({
 		//Console.info(secondCallSiteData);
 		Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInNormalFunction'), 'second call site data function name is correct');
 		Assert.equal(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site data fileName is correct');
-	},
+	}
 
-	testCatchReferenceErrorInGeneratorFunction: function*() {
+	async testCatchReferenceErrorInGeneratorFunction() {
 		var actual = null;
 
 		try {
@@ -86,9 +86,9 @@ var ErrorTest = Test.extend({
 		//Console.info(secondCallSiteData);
 		Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInGeneratorFunction'), 'second call site data function name is correct');
 		Assert.equal(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site data fileName is correct');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ErrorTest;
+export default ErrorTest;

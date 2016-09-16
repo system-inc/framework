@@ -1,16 +1,16 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlElement = Framework.require('system/html/HtmlElement.js');
-var HtmlNode = Framework.require('system/html/HtmlNode.js');
-var XmlElement = Framework.require('system/xml/XmlElement.js');
-var XmlNode = Framework.require('system/xml/XmlNode.js');
-var EventEmitter = Framework.require('system/events/EventEmitter.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import HtmlElement from './../../../system/html/HtmlElement.js';
+import HtmlNode from './../../../system/html/HtmlNode.js';
+import XmlElement from './../../../system/xml/XmlElement.js';
+import XmlNode from './../../../system/xml/XmlNode.js';
+import EventEmitter from './../../../system/events/EventEmitter.js';
 
 // Class
-var HtmlElementTest = Test.extend({
+class HtmlElementTest extends Test {
 
-	testHtmlElement: function*() {
+	async testHtmlElement() {
 		//Console.info(HtmlElement);
 
 		Assert.true(Class.doesImplement(HtmlElement, EventEmitter), 'HtmlElement class implements EventEmitter');
@@ -21,9 +21,9 @@ var HtmlElementTest = Test.extend({
 		Assert.true(XmlNode.is(actual), 'HtmlElement is of type XmlNode');
 		Assert.true(HtmlNode.is(actual), 'HtmlElement is of type HtmlNode');
 		Assert.false(XmlElement.is(actual), 'HtmlElement is not a type XmlElement :( (I wish it were)');
-	},
+	}
 
-	testHtmlElementAddClass: function*() {
+	async testHtmlElementAddClass() {
 		var actual = new HtmlElement('div');
 		Assert.strictEqual(actual.getAttribute('class'), null, 'No class attribute by default');
 
@@ -38,9 +38,9 @@ var HtmlElementTest = Test.extend({
 		actual.addClass('myClass1');
 		actual.addClass('myClass2');
 		Assert.equal(actual.getAttribute('class'), 'myClass1 myClass2', 'Add two classes in two calls');
-	},
+	}
 
-	testHtmlElementRemoveClass: function*() {
+	async testHtmlElementRemoveClass() {
 		var actual = new HtmlElement('div');
 		actual.addClass('myClass1');
 		actual.removeClass('myClass1');
@@ -54,9 +54,9 @@ var HtmlElementTest = Test.extend({
 		actual.removeClass('myClass2');
 		//Console.highlight(actual.toString());
 		Assert.strictEqual(actual.getAttribute('class'), 'myClass1 myClass3', 'Remove a class out of three classes');
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = HtmlElementTest;
+export default HtmlElementTest;

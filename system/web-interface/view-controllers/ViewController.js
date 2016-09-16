@@ -1,17 +1,17 @@
 // Dependencies
-var Settings = Framework.require('system/settings/Settings.js');
-var ViewContainer = Framework.require('system/web-interface/view-containers/ViewContainer.js');
+import Settings from './../../../system/settings/Settings.js';
+//import ViewContainer from './../../../system/web-interface/view-containers/ViewContainer.js';
 
 // Class
-var ViewController = Class.extend({
+class ViewController {
 
-	viewContainer: null,
-	view: null,
-	subviews: {},
+	viewContainer = null;
+	view = null;
+	subviews = {};
 
-	settings: new Settings(),
+	settings = new Settings();
 
-	construct: function(settings) {
+	construct(settings) {
 		this.settings.merge(settings);
 
 		this.createViewContainer();
@@ -21,31 +21,31 @@ var ViewController = Class.extend({
 		this.createSubviews();
 
 		this.initializeViewContainer();
-	},
+	}
 
-	createViewContainer: function() {
-		this.viewContainer = new ViewContainer();
-	},
+	createViewContainer() {
+		//this.viewContainer = new ViewContainer();
+	}
 
-	createView: function() {
+	createView() {
 		this.view = this.viewContainer.body;
-	},
+	}
 
-	createSubviews: function() {
-	},
+	createSubviews() {
+	}
 
-	initializeViewContainer: function() {
+	initializeViewContainer() {
 		this.viewContainer.on('viewContainer.initialized', function() {
 			this.initialize();
 		}.bind(this));
 
 		this.viewContainer.initialize();
-	},
+	}
 
-	initialize: function() {
-	},
+	initialize() {
+	}
 
-});
+}
 
 // Export
-module.exports = ViewController;
+export default ViewController;

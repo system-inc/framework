@@ -1,16 +1,16 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var Database = Framework.require('system/database/Database.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import Database from './../../../system/database/Database.js';
 
 // Class
-var DatabaseTest = Test.extend({
+class DatabaseTest extends Test {
 
-	shouldRun: function*() {
+	async shouldRun() {
 		var shouldRun = true;
 
 		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
-		var testQueryResults = yield frameworkTestDatabase.query('SELECT 1 + 1 as `solution`');
+		var testQueryResults = await frameworkTestDatabase.query('SELECT 1 + 1 as `solution`');
 		//Console.info(testQueryResults);
 
 		if(Error.is(testQueryResults)) {
@@ -18,46 +18,46 @@ var DatabaseTest = Test.extend({
 		}
 
 		return shouldRun;
-	},
+	}
 
-	testQueryOnDatabaseGeneratedBySettings: function*() {
+	async testQueryOnDatabaseGeneratedBySettings() {
 		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
 
-		var actual = yield frameworkTestDatabase.query('SELECT * FROM user');
+		var actual = await frameworkTestDatabase.query('SELECT * FROM user');
 		//Console.log(actual);
 
 		Assert.true(actual.hasKey('sql'), 'Database.query() returns an object which has the key "sql"');
 		Assert.true(actual.hasKey('rows'), 'Database.query() returns an object which has the key "rows"');
 		Assert.true(actual.hasKey('fields'), 'Database.query() returns an object which has the key "fields"');
 		Assert.true(actual.hasKey('stopwatch'), 'Database.query() returns an object which has the key "stopwatch"');
-	},
+	}
 
-	testQueryOnDatabaseCreatedManually: function*() {
+	async testQueryOnDatabaseCreatedManually() {
 		var databaseSettings = Project.settings.get('modules.database.databases.frameworkTest');
 		//Console.log(databaseSettings);
 
 		var frameworkTestDatabase = new Database(databaseSettings);
 
-		var actual = yield frameworkTestDatabase.query('SELECT * FROM user');
+		var actual = await frameworkTestDatabase.query('SELECT * FROM user');
 		//Console.log(actual);
 
 		Assert.true(actual.hasKey('sql'), 'Database.query() returns an object which has the key "sql"');
 		Assert.true(actual.hasKey('rows'), 'Database.query() returns an object which has the key "rows"');
 		Assert.true(actual.hasKey('fields'), 'Database.query() returns an object which has the key "fields"');
 		Assert.true(actual.hasKey('stopwatch'), 'Database.query() returns an object which has the key "stopwatch"');
-	},
+	}
 
-	testGetSchema: function*() {
+	async testGetSchema() {
 		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
 
-		var actual = yield frameworkTestDatabase.getSchema();
+		var actual = await frameworkTestDatabase.getSchema();
 		//Console.log(actual);
 
 		Assert.true(actual.hasKey('name'), 'Database.getSchema() returns an object which has the key "name"');
 		Assert.true(actual.hasKey('tables'), 'Database.getSchema() returns an object which has the key "tables"');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = DatabaseTest;
+export default DatabaseTest;

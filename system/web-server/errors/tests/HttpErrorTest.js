@@ -1,12 +1,12 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HttpError = Framework.require('system/web-server/errors/HttpError.js');
+import Test from './../../../../system/test/Test.js';
+import Assert from './../../../../system/test/Assert.js';
+import HttpError from './../../../../system/web-server/errors/HttpError.js';
 
 // Class
-var HttpErrorTest = Test.extend({
+class HttpErrorTest extends Test {
 
-	testHttpErrorConstruction: function() {
+	testHttpErrorConstruction() {
 		var actual = new HttpError('testHttpErrorConstruction error message.');
 		//Console.info(actual);
 		//Console.info(Error.toObject(actual));
@@ -23,9 +23,9 @@ var HttpErrorTest = Test.extend({
 		//Console.info(firstCallSiteData);
 		Assert.true(firstCallSiteData.functionName.contains('testHttpErrorConstruction'), 'first call site data functionName is correct');
 		Assert.equal(firstCallSiteData.fileName, 'HttpErrorTest.js', 'first call site data fileName is correct');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = HttpErrorTest;
+export default HttpErrorTest;

@@ -1,20 +1,20 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
+import ElectronTest from './../../../../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../../../../system/test/Assert.js';
+import HtmlDocument from './../../../../../../system/html/HtmlDocument.js';
+import Html from './../../../../../../system/html/Html.js';
+import InputPressEvent from './../../../../../../system/html/events/html-element/input/InputPressEvent.js';
 var ElectronManager = null;
-var InputPressEvent = Framework.require('system/html/events/html-element/input/InputPressEvent.js');
 
 // Class
-var InputPressEventTest = ElectronTest.extend({
+class InputPressEventTest extends ElectronTest {
 
-	before: function*() {
+	async before() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
 		ElectronManager = Framework.require('system/electron/ElectronManager.js');
-	},
+	}
 
-	testClickEvent: function*() {
+	async testClickEvent() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -42,14 +42,14 @@ var InputPressEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Simulate a click
-        yield ElectronManager.clickHtmlElement(htmlElement);
+        await ElectronManager.clickHtmlElement(htmlElement);
 
         Assert.strictEqual(capturedEvent, null, '"click" events do not get bound');
 
         //throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-	testInputPressEvent: function*() {
+	async testInputPressEvent() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -79,7 +79,7 @@ var InputPressEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Simulate a click
-        yield ElectronManager.clickHtmlElement(htmlElement);
+        await ElectronManager.clickHtmlElement(htmlElement);
 
         Assert.true(Class.isInstance(capturedEvent, InputPressEvent), '"input.press" events are instances of HtmlEvent');
         Assert.true(Class.isInstance(capturedEvent, InputPressEvent), '"input.press" events are instances of InputPressEvent');
@@ -121,9 +121,9 @@ var InputPressEventTest = ElectronTest.extend({
 		Assert.strictEqual(capturedEvent.trusted, true, 'trusted property is correctly set');
 	
         //throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-	testInputPressEventInputPresses: function*() {
+	async testInputPressEventInputPresses() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -178,15 +178,15 @@ var InputPressEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
         
 		// Simulate a primary press
-        yield ElectronManager.clickHtmlElement(htmlElement);
+        await ElectronManager.clickHtmlElement(htmlElement);
         Assert.strictEqual(capturedPrimaryEvent, null, '"input.press.primary" events are not emitted, just use "input.press"');
 
         // Simulate a secondary press
-        yield ElectronManager.clickHtmlElement(htmlElement, 'right');
+        await ElectronManager.clickHtmlElement(htmlElement, 'right');
         Assert.true(Class.isInstance(capturedSecondaryEvent, InputPressEvent), '"input.press.secondary" events are instances of InputPressEvent');
 
         // Simulate a tertiary press
-        yield ElectronManager.clickHtmlElement(htmlElement, 'middle');
+        await ElectronManager.clickHtmlElement(htmlElement, 'middle');
         Assert.true(Class.isInstance(capturedTertiaryEvent, InputPressEvent), '"input.press.tertiary" events are instances of InputPressEvent');
 
         // No way to simulate button 4 and button 5 clicks
@@ -194,9 +194,9 @@ var InputPressEventTest = ElectronTest.extend({
         //Assert.true(Class.isInstance(capturedQuinaryEvent, InputPressEvent), '"input.press.quinary" events are instances of InputPressEvent');
 
         //throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-	testInputPressEventInputPressDouble: function*() {
+	async testInputPressEventInputPressDouble() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -226,14 +226,14 @@ var InputPressEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Simulate a double click
-        yield ElectronManager.doubleClickHtmlElement(htmlElement);
+        await ElectronManager.doubleClickHtmlElement(htmlElement);
 
         Assert.true(Class.isInstance(capturedEvent, InputPressEvent), '"input.press.double" events are instances of InputPressEvent');
 
         //throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-	testInputPressEventPropagation: function*() {
+	async testInputPressEventPropagation() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -296,7 +296,7 @@ var InputPressEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Click on the grandchild element
-        yield ElectronManager.clickHtmlElement(grandchildElement);
+        await ElectronManager.clickHtmlElement(grandchildElement);
 
         Assert.strictEqual(grandparentCapturedEvent, null, 'stopped "input.press" events do not propagate');
         Assert.true(Class.isInstance(parentCapturedEvent, InputPressEvent), '"input.press" events propagate correctly');
@@ -310,9 +310,9 @@ var InputPressEventTest = ElectronTest.extend({
         Assert.strictEqual(childCapturedEventCount, 1, 'propagated events trigger the correct number of times');
 
         //throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = InputPressEventTest;
+export default InputPressEventTest;

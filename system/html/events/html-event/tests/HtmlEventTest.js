@@ -1,20 +1,20 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
+import ElectronTest from './../../../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../../../system/test/Assert.js';
+import HtmlDocument from './../../../../../system/html/HtmlDocument.js';
+import Html from './../../../../../system/html/Html.js';
+import HtmlEvent from './../../../../../system/html/events/html-event/HtmlEvent.js';
 var ElectronManager = null;
-var HtmlEvent = Framework.require('system/html/events/html-event/HtmlEvent.js');
 
 // Class
-var HtmlEventTest = ElectronTest.extend({
+class HtmlEventTest extends ElectronTest {
 
-	before: function*() {
+	async before() {
     	// Initialize the ElectronManager here as to not throw an exception when electron is not present
     	ElectronManager = Framework.require('system/electron/ElectronManager.js');
-	},
+	}
 
-	testRemoveEventListener: function*() {
+	async testRemoveEventListener() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -52,7 +52,7 @@ var HtmlEventTest = ElectronTest.extend({
         Assert.strictEqual(divElement.eventListenersOnDomObject['click'].count, 2, 'the DOM event listeners have been added');
 
         // Click
-        yield ElectronManager.clickHtmlElement(divElement);
+        await ElectronManager.clickHtmlElement(divElement);
 
         Assert.strictEqual(capturedEventCount, 2, 'events emitted as expected');
 
@@ -63,7 +63,7 @@ var HtmlEventTest = ElectronTest.extend({
         Assert.strictEqual(divElement.eventListenersOnDomObject['click'].count, 1, 'a DOM event listener has been removed');
 
         // Click again
-        yield ElectronManager.clickHtmlElement(divElement);
+        await ElectronManager.clickHtmlElement(divElement);
 
         // The count should go up by 1
         Assert.strictEqual(capturedEventCount, 3, 'events do not emit after listener removed');
@@ -72,7 +72,7 @@ var HtmlEventTest = ElectronTest.extend({
         divElement.removeEventListener('input.press', boundFunction2);
 
         // Click again
-        yield ElectronManager.clickHtmlElement(divElement);
+        await ElectronManager.clickHtmlElement(divElement);
 
         // The count should not change
         Assert.strictEqual(capturedEventCount, 3, 'events do not emit after listener removed');
@@ -85,9 +85,9 @@ var HtmlEventTest = ElectronTest.extend({
         divElement.removeEventListener('input.press', boundFunction2);
 
 		//throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-	testRemoveEventListenerByEventPatternOnly: function*() {
+	async testRemoveEventListenerByEventPatternOnly() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -129,7 +129,7 @@ var HtmlEventTest = ElectronTest.extend({
         Assert.strictEqual(divElement.eventListenersOnDomObject['click'].count, 3, 'the DOM event listeners have been added');
 
         // Click
-        yield ElectronManager.clickHtmlElement(divElement);
+        await ElectronManager.clickHtmlElement(divElement);
 
         Assert.strictEqual(capturedEventCount, 2, '"input.press" events emitted as expected');
 
@@ -143,7 +143,7 @@ var HtmlEventTest = ElectronTest.extend({
         divElement.removeEventListener('input.press');
 
         // Click again
-        yield ElectronManager.clickHtmlElement(divElement);
+        await ElectronManager.clickHtmlElement(divElement);
 
         // The count should not change
         Assert.strictEqual(capturedEventCount, 2, 'events do not emit after listener removed');
@@ -156,9 +156,9 @@ var HtmlEventTest = ElectronTest.extend({
         Assert.strictEqual(divElement.eventListenersOnDomObject['click'], undefined, 'the DOM event listeners have been removed');
 
 		//throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-	testRemoveAllEventListeners: function*() {
+	async testRemoveAllEventListeners() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -191,7 +191,7 @@ var HtmlEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Click
-        yield ElectronManager.clickHtmlElement(divElement);
+        await ElectronManager.clickHtmlElement(divElement);
 
         Assert.strictEqual(capturedEventCount, 2, 'events emitted as expected');
 
@@ -203,14 +203,14 @@ var HtmlEventTest = ElectronTest.extend({
         Assert.strictEqual(divElement.eventListenersOnDomObject['click'], undefined, 'the DOM event listeners have been removed');
 
         // Click again
-        yield ElectronManager.clickHtmlElement(divElement);
+        await ElectronManager.clickHtmlElement(divElement);
 
         Assert.strictEqual(capturedEventCount, 2, 'events do not emit after the listeners are removed');
 
 		//throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = HtmlEventTest;
+export default HtmlEventTest;

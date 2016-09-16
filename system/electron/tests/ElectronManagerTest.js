@@ -1,16 +1,16 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import ElectronTest from './../../../system/electron/tests/ElectronTest.js';
 
 // Class
-var ElectronManagerTest = ElectronTest.extend({
+class ElectronManagerTest extends ElectronTest {
 
-	testElectronManager: function*() {
+	async testElectronManager() {
 		Assert.true(Object.hasKey(Node.Process.versions, 'electron'), 'Electron version is set');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ElectronManagerTest;
+export default ElectronManagerTest;

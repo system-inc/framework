@@ -1,21 +1,21 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var File = Framework.require('system/file-system/File.js');
-var WebServer = Framework.require('system/web-server/WebServer.js');
-var WebRequest = Framework.require('system/web/WebRequest.js');
-var Url = Framework.require('system/web/Url.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import File from './../../../system/file-system/File.js';
+import WebServer from './../../../system/web-server/WebServer.js';
+import WebRequest from './../../../system/web/WebRequest.js';
+import Url from './../../../system/web/Url.js';
 
 // Class
-var WebServerTest = Test.extend({
+class WebServerTest extends Test {
 
-	protocol: 'http',
-	host: 'localhost',
-	port: null,
-	baseUrl: null,
-	webServer: null,
+	protocol = 'http';
+	host = 'localhost';
+	port = null;
+	baseUrl = null;
+	webServer = null;
 
-	before: function*() {
+	async before() {
 		var webServerSettings = File.synchronous.read.json(Framework.directory+'/system/web-server/tests/settings/settings.json');
 
 		this.port = webServerSettings.modules.webServer.webServers[0].protocols.http.ports[0];
@@ -33,20 +33,20 @@ var WebServerTest = Test.extend({
 
 		//Console.highlight(this.webServer);
 
-		yield this.webServer.start();
+		await this.webServer.start();
 
 		// Block the test which will allow me to run requests in the browser against the web server
-		//yield Function.delay(1000 * 60 * 60);
-	},
+		//await Function.delay(1000 * 60 * 60);
+	}
 
-	after: function*() {
-		yield this.webServer.stop();
-	},
+	async after() {
+		await this.webServer.stop();
+	}
 
 	// Controller Route for Main.main() - /
-	testRootRoute: function*() {
+	async testRootRoute() {
 		var webRequest = new WebRequest(this.baseUrl, {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
@@ -65,12 +65,12 @@ var WebServerTest = Test.extend({
 		Assert.true(webRequestResponse.headers.getHeader('date'), '"Date" header is set');
 		Assert.equal(webRequestResponse.headers.getHeader('connection'), 'close', '"Connection" header is correct');
 		Assert.equal(webRequestResponse.headers.getHeader('transfer-encoding'), 'chunked', '"Transfer-Encoding" header is correct');
-	},
+	}
 
 	// File Route for .txt File - /files/text/data.txt;
-	testFileRouteForTextFile: function*() {
+	async testFileRouteForTextFile() {
 		var webRequest = new WebRequest(this.baseUrl+'files/text/data.txt', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 		
@@ -89,15 +89,15 @@ var WebServerTest = Test.extend({
 		Assert.true(webRequestResponse.headers.getHeader('date'), '"Date" header is set');
 		Assert.equal(webRequestResponse.headers.getHeader('connection'), 'close', '"Connection" header is correct');
 		Assert.equal(webRequestResponse.headers.getHeader('transfer-encoding'), 'chunked', '"Transfer-Encoding" header is correct');
-	},
+	}
 
-	testFileRouteForTextFileWithAcceptEncodingIdentity: function*() {
+	async testFileRouteForTextFileWithAcceptEncodingIdentity() {
 		var webRequest = new WebRequest(this.baseUrl+'files/text/data.txt', {
 			headers: {
 				'Accept-Encoding': 'identity',
 			},
 		});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 		
@@ -106,15 +106,15 @@ var WebServerTest = Test.extend({
 		Assert.strictEqual(webRequestResponse.body, '0123456789', 'body is correct');
 		Assert.equal(webRequestResponse.headers.getHeader('content-encoding'), 'identity', '"Content-Encoding" header is correct');
 		Assert.equal(webRequestResponse.headers.getHeader('transfer-encoding'), 'chunked', '"Transfer-Encoding" header is correct');
-	},
+	}
 
-	testFileRouteForTextFileWithAcceptEncodingNull: function*() {
+	async testFileRouteForTextFileWithAcceptEncodingNull() {
 		var webRequest = new WebRequest(this.baseUrl+'files/text/data.txt', {
 			headers: {
 				'Accept-Encoding': null,
 			},
 		});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 		
@@ -124,11 +124,11 @@ var WebServerTest = Test.extend({
 		Assert.strictEqual(webRequestResponse.body, '0123456789', 'body is correct');
 		Assert.equal(webRequestResponse.headers.getHeader('content-encoding'), 'identity', '"Content-Encoding" header is correct');
 		Assert.equal(webRequestResponse.headers.getHeader('transfer-encoding'), 'chunked', '"Transfer-Encoding" header is correct');
-	},
+	}
 
-	testControllerRouteWithCookies: function*() {
+	async testControllerRouteWithCookies() {
 		var webRequest = new WebRequest(this.baseUrl+'cookies', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
@@ -138,44 +138,44 @@ var WebServerTest = Test.extend({
 			cookieObjectKey2: ['d', 'e', 'f'],
 		};
 		Assert.deepEqual(webRequestResponse.cookies.get('testCookie2'), expectedTestCookie2, 'Second "Set-Cookie" header is correct');
-	},
+	}
 
-	testRedirectRoute: function*() {
+	async testRedirectRoute() {
 		var webRequest = new WebRequest(this.baseUrl+'redirect', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 301, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Moved Permanently', 'statusMessage is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('location'), 'http://www.system.inc:8181/redirect', 'Location header is correct');
-	},
+	}
 
-	//testProxyRoute: function*() {
+	//async testProxyRoute() {
 	//	var webRequest = new WebRequest(this.baseUrl+'proxy', {});
-	//	var webRequestResponse = yield webRequest.execute();
+	//	var webRequestResponse = await webRequest.execute();
 	//	Console.log('webRequest', webRequest);
 	//	Console.info('webRequestResponse', webRequestResponse);
 
 	//	//Assert.strictEqual(webRequestResponse.statusCode, 301, 'statusCode is correct');
 	//	//Assert.strictEqual(webRequestResponse.statusMessage, 'Moved Permanently', 'statusMessage is correct');
 	//	//Assert.strictEqual(webRequestResponse.headers.get('location'), 'http://www.system.inc:8181/redirect', 'Location header is correct');
-	//},
+	//}
 
-	testItemRoute: function*() {
+	async testItemRoute() {
 		var webRequest = new WebRequest(this.baseUrl+'items/item1', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.data.itemIdentifier, 'item1', 'Captured data is correct');
 		Assert.strictEqual(webRequestResponse.data.view, 'item', 'Data is correct');
 		Assert.strictEqual(webRequestResponse.data.root, 'Root data.', 'Inherited data is correct');
-	},
+	}
 
-	testRelatedItemRoute: function*() {
+	async testRelatedItemRoute() {
 		var webRequest = new WebRequest(this.baseUrl+'items/item1/related-items/related1', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
@@ -183,11 +183,11 @@ var WebServerTest = Test.extend({
 		Assert.strictEqual(webRequestResponse.data.relatedItemIdentifier, 'related1', 'Captured data is correct');
 		Assert.strictEqual(webRequestResponse.data.view, 'relatedItem', 'Data is correct');
 		Assert.strictEqual(webRequestResponse.data.root, 'Root data.', 'Inherited data is correct');
-	},
+	}
 
-	testPutOnlyRoute: function*() {
+	async testPutOnlyRoute() {
 		var webRequest = new WebRequest(this.baseUrl+'put-only', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
@@ -196,18 +196,18 @@ var WebServerTest = Test.extend({
 		webRequest = new WebRequest(this.baseUrl+'put-only', {
 			method: 'PUT',
 		});
-		webRequestResponse = yield webRequest.execute();
+		webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 200, 'Route matches when the method is PUT');
 		Assert.strictEqual(webRequestResponse.body, 'This method is only invoked on requests using the PUT method.', 'PUT only route body is correct');
-	},
+	}
 
-	testChildRoutes: function*() {
+	async testChildRoutes() {
 		// Level one
 		var webRequest = new WebRequest(this.baseUrl+'level-one/', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
@@ -216,7 +216,7 @@ var WebServerTest = Test.extend({
 
 		// Level two
 		webRequest = new WebRequest(this.baseUrl+'level-one/level-two', {});
-		webRequestResponse = yield webRequest.execute();
+		webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
@@ -226,7 +226,7 @@ var WebServerTest = Test.extend({
 
 		// Level three
 		webRequest = new WebRequest(this.baseUrl+'level-one/level-two/level-three', {});
-		webRequestResponse = yield webRequest.execute();
+		webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
@@ -234,160 +234,160 @@ var WebServerTest = Test.extend({
 		Assert.strictEqual(webRequestResponse.data.levelOneLevelTwo, 'levelOneLevelTwo', 'Data is inherited correctly');
 		Assert.strictEqual(webRequestResponse.data.view, 'levelOneLevelTwoLevelThree', 'Data is inherited correctly');
 		Assert.strictEqual(webRequestResponse.data.levelOneLevelTwoLevelThree, 'levelOneLevelTwoLevelThree', 'Data is correct');
-	},
+	}
 
-	testHttpErrorNotFoundError: function*() {
+	async testHttpErrorNotFoundError() {
 		var webRequest = new WebRequest(this.baseUrl+'404', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 404, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Not Found', 'statusMessage is correct');
-	},
+	}
 
-	testHttpErrorInternalServerErrorThrownInFunction: function*() {
+	async testHttpErrorInternalServerErrorThrownInFunction() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-internal-server-error-in-function', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 500, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Internal Server Error', 'statusMessage is correct');
 		Assert.strictEqual(webRequestResponse.data.errors.first().message, 'Internal Server Error thrown in function.', 'Error message is correct');
-	},
+	}
 
-	testHttpErrorInternalServerErrorThrownInGenerator: function*() {
+	async testHttpErrorInternalServerErrorThrownInGenerator() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-internal-server-error-in-generator', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 500, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Internal Server Error', 'statusMessage is correct');
 		Assert.strictEqual(webRequestResponse.data.errors.first().message, 'Internal Server Error thrown in generator.', 'Error message is correct');
-	},
+	}
 
-	testHttpErrorBadRequestError: function*() {
+	async testHttpErrorBadRequestError() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-bad-request-error', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 400, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Bad Request', 'statusMessage is correct');
-	},
+	}
 
-	testHttpErrorForbiddenError: function*() {
+	async testHttpErrorForbiddenError() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-forbidden-error', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 403, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Forbidden', 'statusMessage is correct');
-	},
+	}
 
-	testHttpErrorRequestedRangeNotSatisfiableError: function*() {
+	async testHttpErrorRequestedRangeNotSatisfiableError() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-requested-range-not-satisfiable-error', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 416, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Range Not Satisfiable', 'statusMessage is correct');
-	},
+	}
 
-	testHttpErrorRequestEntityTooLargeError: function*() {
+	async testHttpErrorRequestEntityTooLargeError() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-request-entity-too-large-error', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 413, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Payload Too Large', 'statusMessage is correct');
-	},
+	}
 
-	testHttpErrorUnauthorizedError: function*() {
+	async testHttpErrorUnauthorizedError() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-unauthorized-error', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 401, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Unauthorized', 'statusMessage is correct');
-	},
+	}
 
-	testContentIsArchivedFile: function*() {
+	async testContentIsArchivedFile() {
 		var webRequest = new WebRequest(this.baseUrl+'content/archived-file', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, 'Text in an archived file inside of an archive file.', 'body is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'text/plain', '"Content-Type" header is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('Content-Disposition'), 'inline; filename="archived-file-text.txt"', '"Content-Disposition" header is correct');
-	},
+	}
 
-	testContentIsFile: function*() {
+	async testContentIsFile() {
 		var webRequest = new WebRequest(this.baseUrl+'content/file', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, '0123456789', 'body is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'text/plain', '"Content-Type" header is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('Content-Disposition'), 'inline; filename="data.txt"', '"Content-Disposition" header is correct');
-	},
+	}
 
-	testContentIsHtmlDocument: function*() {
+	async testContentIsHtmlDocument() {
 		var webRequest = new WebRequest(this.baseUrl+'content/html-document', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, '<!DOCTYPE html><html><head></head><body><p>Test HTML document.</p></body></html>', 'body is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'text/html', '"Content-Type" header is correct');
-	},
+	}
 
-	testContentIsObject: function*() {
+	async testContentIsObject() {
 		var webRequest = new WebRequest(this.baseUrl+'content/object', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, '{"a":1,"b":2,"c":3}', 'body is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'application/json', '"Content-Type" header is correct');
-	},
+	}
 
-	testContentIsString: function*() {
+	async testContentIsString() {
 		var webRequest = new WebRequest(this.baseUrl+'content/string', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, 'Content is string.', 'body is correct');
-	},
+	}
 
-	testContentIsBuffer: function*() {
+	async testContentIsBuffer() {
 		var webRequest = new WebRequest(this.baseUrl+'content/buffer', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, 'Content is buffer.', 'body is correct');
-	},
+	}
 
-	testContentIsStream: function*() {
+	async testContentIsStream() {
 		var webRequest = new WebRequest(this.baseUrl+'content/stream', {});
-		var webRequestResponse = yield webRequest.execute();
+		var webRequestResponse = await webRequest.execute();
 		//Console.log('webRequest', webRequest);
 		//Console.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, 'ABCDEFGHIJ', 'body is correct');
-	},
+	}
 
-	testSingleRangeRequestsOnFile: function*() {
+	async testSingleRangeRequestsOnFile() {
 		var rangesToTest = [
 			{
 				range: 'bytes=0-3',
@@ -439,13 +439,13 @@ var WebServerTest = Test.extend({
 			},
 		];
 
-		yield rangesToTest.each(function*(index, rangeToTest) {
+		await rangesToTest.each(async function(index, rangeToTest) {
 			var webRequest = new WebRequest('http://localhost:8181/files/text/data.txt', {
 				headers: {
 					'Range': rangeToTest.range,
 				},
 			});
-			var webRequestResponse = yield webRequest.execute();
+			var webRequestResponse = await webRequest.execute();
 
 			//Console.highlight(
 			//	' webRequestResponse.statusCode', webRequestResponse.statusCode, "\n",
@@ -457,10 +457,10 @@ var WebServerTest = Test.extend({
 			Assert.equal(webRequestResponse.statusCode, rangeToTest.expectedStatusCode, 'Status code for '+rangeToTest.description);
 			Assert.equal(webRequestResponse.headers.get('Content-Range'), rangeToTest.expectedContentRangeHeader, 'Content-Range for '+rangeToTest.description);
 		});
-	},
+	}
 
 	// This is not implemented yet
-	//testMultipleRangeRequestsOnFile: function*() {
+	//async testMultipleRangeRequestsOnFile() {
 	//	var rangesToTest = [
 	//		{
 	//			range: 'bytes=0-4,5-9',
@@ -504,13 +504,13 @@ var WebServerTest = Test.extend({
 	//		},
 	//	];
 
-	//	yield rangesToTest.each(function*(index, rangeToTest) {
+	//	await rangesToTest.each(async function(index, rangeToTest) {
 	//		var webRequest = new WebRequest('http://localhost:8181/files/text/data.txt', {
 	//			headers: {
 	//				'Range': rangeToTest.range,
 	//			},
 	//		});
-	//		var webRequestResponse = yield webRequest.execute();
+	//		var webRequestResponse = await webRequest.execute();
 
 	//		Console.highlight(
 	//			' webRequestResponse.statusCode', webRequestResponse.statusCode, "\n",
@@ -522,9 +522,9 @@ var WebServerTest = Test.extend({
 	//		Assert.equal(webRequestResponse.statusCode, rangeToTest.expectedStatusCode, 'Status code for '+rangeToTest.description);
 	//		Assert.equal(webRequestResponse.headers.get('Content-Range'), rangeToTest.expectedContentRangeHeader, 'Content-Range for '+rangeToTest.description);
 	//	});
-	//},
+	//}
 
-	testSingleRangeRequestsOnFileSentWithGzipCompression: function*() {
+	async testSingleRangeRequestsOnFileSentWithGzipCompression() {
 		var rangesToTest = [
 			{
 				range: 'bytes=0-3',
@@ -576,14 +576,14 @@ var WebServerTest = Test.extend({
 			},
 		];
 
-		yield rangesToTest.each(function*(index, rangeToTest) {
+		await rangesToTest.each(async function(index, rangeToTest) {
 			var webRequest = new WebRequest('http://localhost:8181/files/text/data.txt', {
 				headers: {
 					'Accept-Encoding': 'gzip',
 					'Range': rangeToTest.range,
 				},
 			});
-			var webRequestResponse = yield webRequest.execute();
+			var webRequestResponse = await webRequest.execute();
 
 			//Console.highlight(
 			//	' webRequestResponse.statusCode', webRequestResponse.statusCode, "\n",
@@ -597,9 +597,9 @@ var WebServerTest = Test.extend({
 			Assert.equal(webRequestResponse.headers.get('Content-Range'), rangeToTest.expectedContentRangeHeader, 'Content-Range for '+rangeToTest.description);
 			Assert.equal(webRequestResponse.headers.get('Content-Encoding'), 'gzip', 'Content-Encoding is gzip for '+rangeToTest.description);
 		});
-	},
+	}
 
-	testSingleRangeRequestsOnFileSentWithDeflateCompression: function*() {
+	async testSingleRangeRequestsOnFileSentWithDeflateCompression() {
 		var rangesToTest = [
 			{
 				range: 'bytes=0-3',
@@ -651,14 +651,14 @@ var WebServerTest = Test.extend({
 			},
 		];
 
-		yield rangesToTest.each(function*(index, rangeToTest) {
+		await rangesToTest.each(async function(index, rangeToTest) {
 			var webRequest = new WebRequest('http://localhost:8181/files/text/data.txt', {
 				headers: {
 					'Accept-Encoding': 'deflate',
 					'Range': rangeToTest.range,
 				},
 			});
-			var webRequestResponse = yield webRequest.execute();
+			var webRequestResponse = await webRequest.execute();
 
 			//Console.highlight(
 			//	' webRequestResponse.statusCode', webRequestResponse.statusCode, "\n",
@@ -672,10 +672,10 @@ var WebServerTest = Test.extend({
 			Assert.equal(webRequestResponse.headers.get('Content-Range'), rangeToTest.expectedContentRangeHeader, 'Content-Range for '+rangeToTest.description);
 			Assert.equal(webRequestResponse.headers.get('Content-Encoding'), 'deflate', 'Content-Encoding is deflate for '+rangeToTest.description);
 		});
-	},
+	}
 
 	// This is not implemented yet
-	//testSingleRangeRequestsOnString: function*() {
+	//async testSingleRangeRequestsOnString() {
 	//	var rangesToTest = [
 	//		{
 	//			range: 'bytes=0-3',
@@ -727,13 +727,13 @@ var WebServerTest = Test.extend({
 	//		},
 	//	];
 
-	//	yield rangesToTest.each(function*(index, rangeToTest) {
+	//	await rangesToTest.each(async function(index, rangeToTest) {
 	//		var webRequest = new WebRequest('http://localhost:8181/api/data/numbers', {
 	//			headers: {
 	//				'Range': rangeToTest.range,
 	//			},
 	//		});
-	//		var webRequestResponse = yield webRequest.execute();
+	//		var webRequestResponse = await webRequest.execute();
 
 	//		//Console.highlight(
 	//		//	' webRequestResponse.statusCode', webRequestResponse.statusCode, "\n",
@@ -747,9 +747,9 @@ var WebServerTest = Test.extend({
 	//		Assert.equal(webRequestResponse.headers.get('Content-Range'), rangeToTest.expectedContentRangeHeader, 'Content-Range for '+rangeToTest.description);
 	//		Assert.equal(webRequestResponse.headers.get('Content-Encoding'), 'deflate', 'Content-Encoding is deflate for '+rangeToTest.description);
 	//	});
-	//},
+	//}
 
-});
+}
 
 // Export
-module.exports = WebServerTest;
+export default WebServerTest;

@@ -1,25 +1,25 @@
 // Dependencies
-var View = Framework.require('system/web-interface/views/View.js');
-var Html = Framework.require('system/html/Html.js');
-var HtmlElement = Framework.require('system/html/HtmlElement.js');
-var FormControlView = Framework.require('system/web-interface/views/forms/controls/FormControlView.js');
+import View from './../../../../../system/web-interface/views/View.js';
+import Html from './../../../../../system/html/Html.js';
+import HtmlElement from './../../../../../system/html/HtmlElement.js';
+import FormControlView from './../../../../../system/web-interface/views/forms/controls/FormControlView.js';
 
 // Class
-var FormFieldView = View.extend({
+class FormFieldView extends View {
 
-	attributes: {
+	attributes = {
 		class: 'field',
-	},
+	};
 
-	identifier: null,
+	identifier = null;
 
-	labelView: null,
+	labelView = null;
 
-	formControlView: null,
+	formControlView = null;
 
-	construct: function(identifier, settings) {
+	construct(identifier, settings) {
 		// Call the View constructor
-		this.super.call(this, settings);
+		this.super(...arguments);
 
 		// Set default settings
 		this.settings.setDefaults({
@@ -41,9 +41,9 @@ var FormFieldView = View.extend({
 		if(this.settings.get('label')) {
 			this.addLabel();
 		}
-	},
+	}
 
-	addLabel: function() {
+	addLabel() {
 		// Create the label
 		this.labelView = Html.label({
 			content: this.settings.get('label'),
@@ -60,9 +60,9 @@ var FormFieldView = View.extend({
 		this.append(this.labelView);
 
 		return this.labelView;
-	},
+	}
 
-	getValidationErrors: function() {
+	getValidationErrors() {
 		var validationErrors = [];
 
 		var validationSettings = this.settings.get('validation');
@@ -79,9 +79,9 @@ var FormFieldView = View.extend({
 		}
 
 		return validationErrors;
-	},
+	}
 
-	getData: function() {
+	getData() {
 		var getDataRecursively = function(view) {
 			var data = null;
 
@@ -111,9 +111,9 @@ var FormFieldView = View.extend({
 		var data = getDataRecursively(this);
 
 		return data;
-	},
+	}
 
-	clear: function() {
+	clear() {
 		var clearRecursively = function(view) {
 			// If the view is a FormControlView, clear it
 			if(FormControlView.is(view)) {
@@ -130,13 +130,13 @@ var FormFieldView = View.extend({
 		clearRecursively(this);
 
 		return this;
-	},
+	}
 
-	focus: function() {
+	focus() {
 		return this.formControlView.focus();
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = FormFieldView;
+export default FormFieldView;

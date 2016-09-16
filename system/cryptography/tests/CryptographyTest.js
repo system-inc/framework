@@ -1,18 +1,18 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var Cryptography = Framework.require('system/cryptography/Cryptography.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import Cryptography from './../../../system/cryptography/Cryptography.js';
 
 // Class
-var CryptographyTest = Test.extend({
+class CryptographyTest extends Test {
 
-	testRandom: function*() {
-		var actual = yield Cryptography.random();
+	async testRandom() {
+		var actual = await Cryptography.random();
 		Assert.greaterThanOrEqualTo(actual, 0, 'between 0 (inclusive)');
 		Assert.lessThan(actual, 1, 'and 1 (exclusive)');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = CryptographyTest;
+export default CryptographyTest;

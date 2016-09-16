@@ -11,10 +11,10 @@ Error.is = function(value) {
 	return value instanceof Error;
 };
 
-Error.prepareStackTrace = function(error, callSites) {
-	// Return an array of CallSite objects instead of a string when error.stack is accessed
-	return new StackTrace(error, callSites);
-};
+//Error.prepareStackTrace = function(error, callSites) {
+//	// Return an array of CallSite objects instead of a string when error.stack is accessed
+//	return new StackTrace(error, callSites);
+//};
 
 Error.toObject = function(error) {
 	var object = {

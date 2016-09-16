@@ -1,13 +1,13 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var PropagatingEventEmitter = Framework.require('system/events/PropagatingEventEmitter.js');
-var PropagatingEvent = Framework.require('system/events/PropagatingEvent.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import PropagatingEventEmitter from './../../../system/events/PropagatingEventEmitter.js';
+import PropagatingEvent from './../../../system/events/PropagatingEvent.js';
 
 // Class
-var PropagatingEventEmitterTest = Test.extend({
+class PropagatingEventEmitterTest extends Test {
 
-	testCorePropagatingEventEmitterFunctionality: function*() {
+	async testCorePropagatingEventEmitterFunctionality() {
 		// Create the hierarchy
 		var propagatingEventEmitter1 = new PropagatingEventEmitter();
 		var propagatingEventEmitter2 = new PropagatingEventEmitter();
@@ -51,7 +51,7 @@ var PropagatingEventEmitterTest = Test.extend({
 		});
 
 		// Emit event at level 3
-		yield propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3');
+		await propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3');
 
 		//Console.log('propagatingEventEmitter3StoredCurrentPhase', propagatingEventEmitter3StoredCurrentPhase);
 		//Console.log('propagatingEventEmitter2StoredCurrentPhase', propagatingEventEmitter2StoredCurrentPhase);
@@ -74,9 +74,9 @@ var PropagatingEventEmitterTest = Test.extend({
 		Assert.strictEqual(propagatingEventEmitter1StoredEvent.data, 'propagatingEventEmitter3', 'Event bubbled two levels');
 		Assert.strictEqual(propagatingEventEmitter1StoredEventCounter, 1, 'Event only triggered once');
 		Assert.strictEqual(propagatingEventEmitter1StoredCurrentPhase, PropagatingEvent.phases.bubbling, 'currentPhase is set correctly');
-	},
+	}
 
-	testStopPropagationMethod: function*() {
+	async testStopPropagationMethod() {
 		// Create the hierarchy
 		var propagatingEventEmitter1 = new PropagatingEventEmitter();
 		var propagatingEventEmitter2 = new PropagatingEventEmitter();
@@ -104,7 +104,7 @@ var PropagatingEventEmitterTest = Test.extend({
 		});
 
 		// Emit event at level 3
-		yield propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3');
+		await propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3');
 		//Console.info(propagatingEventEmitter1StoredEvent);
 		//Console.info(propagatingEventEmitter2StoredEvent);
 
@@ -112,9 +112,9 @@ var PropagatingEventEmitterTest = Test.extend({
 		Assert.strictEqual(propagatingEventEmitter2StoredEventCounter, 1, 'Event only triggered once');
 		Assert.strictEqual(propagatingEventEmitter2StoredEvent.data, 'propagatingEventEmitter3', 'Event bubbled one level');
 		Assert.strictEqual(propagatingEventEmitter1StoredEvent, null, '.stopPropagation() prevents the event from propagating');
-	},
+	}
 
-	testEventOptionPropagationStopped: function*() {
+	async testEventOptionPropagationStopped() {
 		// Create the hierarchy
 		var propagatingEventEmitter1 = new PropagatingEventEmitter();
 		var propagatingEventEmitter2 = new PropagatingEventEmitter();
@@ -149,7 +149,7 @@ var PropagatingEventEmitterTest = Test.extend({
 		});
 
 		// Emit event at level 3
-		yield propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
+		await propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
 			propagationStopped: true,
 		});
 		//Console.info(propagatingEventEmitter1StoredEvent);
@@ -160,9 +160,9 @@ var PropagatingEventEmitterTest = Test.extend({
 		Assert.strictEqual(propagatingEventEmitter3StoredEvent.data, 'propagatingEventEmitter3', 'Event option "propagationStopped" does not stop the first event listeners from executing');
 		Assert.strictEqual(propagatingEventEmitter2StoredEvent, null, 'Event option "propagationStopped" prevents the event from propagating');
 		Assert.strictEqual(propagatingEventEmitter1StoredEvent, null, 'Event option "propagationStopped" prevents the event from propagating');
-	},
+	}
 
-	testEventBubbling: function*() {
+	async testEventBubbling() {
 		// Create the PropagatingEventEmitter
 		var propagatingEventEmitterChild = new PropagatingEventEmitter();
 		propagatingEventEmitterChild.name = 'propagatingEventEmitterChild';
@@ -191,7 +191,7 @@ var PropagatingEventEmitterTest = Test.extend({
 		});
 
 		// Emit an event
-		var emittedEventForPropagatingEventEmitterChild = yield propagatingEventEmitterChild.emit('event', 'eventData');
+		var emittedEventForPropagatingEventEmitterChild = await propagatingEventEmitterChild.emit('event', 'eventData');
 
 		Assert.strictEqual(storedEventForPropagatingEventEmitterChild, emittedEventForPropagatingEventEmitterChild, '.emit() returns the emitted event');
 		Assert.strictEqual(storedEventEmitterForPropagatingEventEmitterChild, propagatingEventEmitterChild, 'emitter is set correctly');
@@ -201,9 +201,9 @@ var PropagatingEventEmitterTest = Test.extend({
 		Assert.strictEqual(storedEventForPropagatingEventEmitterParent, emittedEventForPropagatingEventEmitterChild, '.emit() returns the emitted event');
 		Assert.strictEqual(storedEventEmitterForPropagatingEventEmitterParent, propagatingEventEmitterChild, 'emitter is set correctly');
 		Assert.strictEqual(storedEventCurrentEmitterForPropagatingEventEmitterParent, propagatingEventEmitterParent, 'currentEmitter is set correctly');
-	},
+	}
 
-	testSkipBubblingPhase: function*() {
+	async testSkipBubblingPhase() {
 		// Create the hierarchy
 		var propagatingEventEmitter3 = new PropagatingEventEmitter();
 		var propagatingEventEmitter2 = new PropagatingEventEmitter();
@@ -241,7 +241,7 @@ var PropagatingEventEmitterTest = Test.extend({
 		});
 
 		// Emit event at level 3
-		yield propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
+		await propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
 			registeredPhases: {
 				bubbling: false,
 			},
@@ -255,9 +255,9 @@ var PropagatingEventEmitterTest = Test.extend({
 		Assert.strictEqual(propagatingEventEmitter3StoredEvent.data, 'propagatingEventEmitter3', 'Event phase "atEmitter" works');
 		Assert.strictEqual(propagatingEventEmitter2StoredEvent, null, 'Unregistering for the event phase "bubbling" prevents the event from bubbling');
 		Assert.strictEqual(propagatingEventEmitter1StoredEvent, null, 'Unregistering for the event phase "bubbling" prevents the event from bubbling');
-	},
+	}
 
-	testSkipAtEmitterPhase: function*() {
+	async testSkipAtEmitterPhase() {
 		// Create the hierarchy
 		var propagatingEventEmitter3 = new PropagatingEventEmitter();
 		var propagatingEventEmitter2 = new PropagatingEventEmitter();
@@ -295,7 +295,7 @@ var PropagatingEventEmitterTest = Test.extend({
 		});
 
 		// Emit event at level 3
-		yield propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
+		await propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
 			registeredPhases: {
 				atEmitter: false,
 			},
@@ -309,9 +309,9 @@ var PropagatingEventEmitterTest = Test.extend({
 		Assert.strictEqual(propagatingEventEmitter3StoredEvent, null, 'Event phase "atEmitter" does not trigger event listeners');
 		Assert.strictEqual(propagatingEventEmitter2StoredEvent.data, 'propagatingEventEmitter3', 'Unregistering for the event phase "atEmitter" still allows event phase "bubbling"');
 		Assert.strictEqual(propagatingEventEmitter1StoredEvent.data, 'propagatingEventEmitter3', 'Unregistering for the event phase "atEmitter" still allows event phase "bubbling"');
-	},
+	}
 
-	testCapturingPhase: function*() {
+	async testCapturingPhase() {
 		// Create the hierarchy
 		var propagatingEventEmitter3 = new PropagatingEventEmitter();
 		propagatingEventEmitter3.name = 'propagatingEventEmitter3';
@@ -358,7 +358,7 @@ var PropagatingEventEmitterTest = Test.extend({
 		});
 
 		// Emit event at level 3
-		yield propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
+		await propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
 			registeredPhases: {
 				capturing: true,
 				bubbling: false,
@@ -372,9 +372,9 @@ var PropagatingEventEmitterTest = Test.extend({
 		Assert.strictEqual(propagatingEventEmitter3StoredEventCurrentPhase, 'atEmitter', 'currentPhase is set correctly');
 		Assert.strictEqual(propagatingEventEmitter2StoredEventCurrentPhase, 'capturing', 'currentPhase is set correctly');
 		Assert.strictEqual(propagatingEventEmitter1StoredEventCurrentPhase, 'capturing', 'currentPhase is set correctly');
-	},
+	}
 
-	testSkipCapturingPhase: function*() {
+	async testSkipCapturingPhase() {
 		// Create the hierarchy
 		var propagatingEventEmitter3 = new PropagatingEventEmitter();
 		propagatingEventEmitter3.name = 'propagatingEventEmitter3';
@@ -421,7 +421,7 @@ var PropagatingEventEmitterTest = Test.extend({
 		});
 
 		// Emit event at level 3
-		yield propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
+		await propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
 			registeredPhases: {
 				capturing: false,
 				atEmitter: true,
@@ -436,9 +436,9 @@ var PropagatingEventEmitterTest = Test.extend({
 		Assert.strictEqual(propagatingEventEmitter3StoredEventCurrentPhase, 'atEmitter', '"atEmitter" phase not skipped');
 		Assert.strictEqual(propagatingEventEmitter2StoredEventCurrentPhase, null, '"capturing" phase skipped');
 		Assert.strictEqual(propagatingEventEmitter1StoredEventCurrentPhase, null, '"capturing" phase skipped');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = PropagatingEventEmitterTest;
+export default PropagatingEventEmitterTest;

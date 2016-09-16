@@ -28,7 +28,7 @@ class AssertTest extends Test {
 
 		await Assert.doesNotThrowAsynchronously(async function() {
 		}, 'doesNotThrowAsynchronously works');
-	},
+	}
 
 }
 

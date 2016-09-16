@@ -1,9 +1,9 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
 
 // Class
-var FfmpegTest = Test.extend({
+class FfmpegTest extends Test {
 
 	//testResizeImage: function*() {
 	//	var testFilePath = Node.Path.join(Project.framework.directory, 'modules', 'media', 'tests', 'files', 'images', 'test-1.jpg');
@@ -25,7 +25,7 @@ var FfmpegTest = Test.extend({
 	//	//Console.highlight(actual);
 	//},
 
-});
+}
 
 // Export
-module.exports = FfmpegTest;
+export default FfmpegTest;

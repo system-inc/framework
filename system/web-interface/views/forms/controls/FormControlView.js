@@ -1,17 +1,17 @@
 // Dependencies
-var View = Framework.require('system/web-interface/views/View.js');
+import View from './../../../../../system/web-interface/views/View.js';
 
 // Class
-var FormControlView = View.extend({
+class FormControlView extends View {
 
-	attributes: {
+	attributes = {
 		class: 'control',
-	},
+	};
 
-	value: null,
-	originalValue: null,
+	value = null;
+	originalValue = null;
 
-	construct: function(settings) {
+	construct(settings) {
 		this.super(null, settings);
 
 		this.on('form.control.change', function(event) {
@@ -19,41 +19,39 @@ var FormControlView = View.extend({
         }.bind(this));
 
 		this.originalValue = this.value;
-	},
+	}
 
-	getValue: function() {
+	getValue() {
 		return this.value;
-	},
+	}
 
-	setValue: function(value) {
+	setValue(value) {
 		this.value = this.domNode.value = value;
 
 		return this.value;
-	},
+	}
 
-	clear: function() {
+	clear() {
 		return this.setValue(null);
-	},
+	}
 
-	reset: function() {
+	reset() {
 		return this.setValue(this.originalValue);
-	},
+	}
 
 	// Two-way data binding: if the user changes the value on the DOM, the FormControlView is updated to reflect the new value
-	valueChangedOnDom: function() {
+	valueChangedOnDom() {
 		//Console.log('Value changed on DOM, updating FormControlView');
 		this.value = this.domNode.value;
 
 		return this.value;
-	},
+	}
 
-});
+	static is(value) {
+		return Class.isInstance(value, FormControlView);
+	}
 
-// Static methods
-
-FormControlView.is = function(value) {
-	return Class.isInstance(value, FormControlView);
-};
+}
 
 // Export
-module.exports = FormControlView;
+export default FormControlView;

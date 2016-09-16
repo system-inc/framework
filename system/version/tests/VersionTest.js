@@ -1,21 +1,21 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var Version = Framework.require('system/version/Version.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import Version from './../../../system/version/Version.js';
 
 // Class
-var VersionTest = Test.extend({
+class VersionTest extends Test {
 
-	testConstruct: function() {
+	testConstruct() {
 		var version = new Version('1.2.3.4');
 
 		Assert.equal(version.major, 1, 'major');
 		Assert.equal(version.minor, 2, 'minor');
 		Assert.equal(version.patch, 3, 'patch');
 		Assert.equal(version.patchMinor, 4, 'patchMinor');
-	},
+	}
 
-	testToString: function() {
+	testToString() {
 		var version = new Version('1.2.3.4');
 		var actual = version.toString();
 		var expected = '1.2.3.4';
@@ -35,9 +35,9 @@ var VersionTest = Test.extend({
 		actual = version.toString();
 		expected = '1.0';
 		Assert.equal(actual, expected, 'string generation out to major always includes minor');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = VersionTest;
+export default VersionTest;

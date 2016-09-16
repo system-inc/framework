@@ -1,20 +1,20 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
+import ElectronTest from './../../../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../../../system/test/Assert.js';
+import HtmlDocument from './../../../../../system/html/HtmlDocument.js';
+import Html from './../../../../../system/html/Html.js';
+import FormEvent from './../../../../../system/html/events/html-element/FormEvent.js';
 var ElectronManager = null;
-var FormEvent = Framework.require('system/html/events/html-element/FormEvent.js');
 
 // Class
-var FormEventTest = ElectronTest.extend({
+class FormEventTest extends ElectronTest {
 
-	before: function*() {
+	async before() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
 		ElectronManager = Framework.require('system/electron/ElectronManager.js');
-	},
+	}
 
-	testFormEvent: function*() {
+	async testFormEvent() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -57,16 +57,16 @@ var FormEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         // Click into the input
-		yield ElectronManager.clickHtmlElement(inputElement);
+		await ElectronManager.clickHtmlElement(inputElement);
 
 		// Type a key
-		yield ElectronManager.pressKey('A');
+		await ElectronManager.pressKey('A');
 
 		// Click the body to blur off of the inputElement which will cause the change event to be emitted
-		yield ElectronManager.clickHtmlElement(htmlDocument.body);
+		await ElectronManager.clickHtmlElement(htmlDocument.body);
 
 		// Click the submit button
-		yield ElectronManager.clickHtmlElement(submitButton);
+		await ElectronManager.clickHtmlElement(submitButton);
 
 		// form.control.change should have fired
 		Assert.true(Class.isInstance(capturedFormControlChangeEvent, FormEvent), '"form.control.change" events are instances of FormEvent');
@@ -84,9 +84,9 @@ var FormEventTest = ElectronTest.extend({
 		Assert.strictEqual(capturedFormSubmitEvent.emitter, formElement, 'emitter property on "form.submit" event is correct');
 
 		//throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = FormEventTest;
+export default FormEventTest;

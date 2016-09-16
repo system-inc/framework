@@ -1,12 +1,12 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var Version = Framework.require('system/version/Version.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import Version from './../../../system/version/Version.js';
 
 // Class
-var ObjectTest = Test.extend({
+class ObjectTest extends Test {
 
-	testIs: function() {
+	testIs() {
 		Assert.true(Object.is({}), 'object literal ({})');
 		Assert.false(Object.is([]), 'array literal ([])');
 		Assert.false(Object.is(Class), 'Class');
@@ -15,9 +15,9 @@ var ObjectTest = Test.extend({
 		Assert.true(Object.is(new Version('1.0')), 'new Version()');
 		Assert.false(Object.is(Number), 'Number');
 		Assert.false(Object.is(new Date()), 'new Date()');
-	},
+	}
 
-	testisEmpty: function() {
+	testisEmpty() {
 		var object = {};
 		Assert.true(Object.isEmpty(object), 'empty object');
 
@@ -35,9 +35,9 @@ var ObjectTest = Test.extend({
 
 		string = 'string';
 		Assert.false(Object.isEmpty(string), 'string with characters');
-	},
+	}
 
-	testPrototypeIsEmpty: function() {
+	testPrototypeIsEmpty() {
 		var object = {};
 		Assert.true(object.isEmpty(), 'empty object');
 
@@ -55,9 +55,9 @@ var ObjectTest = Test.extend({
 
 		string = 'string';
 		Assert.false(string.isEmpty(), 'string with characters');
-	},
+	}
 
-	testHasKey: function() {
+	testHasKey() {
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
@@ -66,9 +66,9 @@ var ObjectTest = Test.extend({
 
 		Assert.true(Object.hasKey(object, 'apple'), 'key exists');
 		Assert.false(Object.hasKey(object, 'pineapple'), 'key does not exist');
-	},
+	}
 
-	testPrototypeHasKey: function() {
+	testPrototypeHasKey() {
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
@@ -77,9 +77,9 @@ var ObjectTest = Test.extend({
 
 		Assert.true(object.hasKey('apple'));
 		Assert.false(object.hasKey('pineapple'));
-	},
+	}
 
-	testGetValueForKey: function() {
+	testGetValueForKey() {
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
@@ -88,9 +88,9 @@ var ObjectTest = Test.extend({
 
 		Assert.equal(object.getValueForKey('apple'), 'macintosh', 'key matches');
 		Assert.equal(object.getValueForKey('pineapple'), null, 'key does not match');
-	},
+	}
 
-	testEach: function() {
+	testEach() {
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
@@ -103,33 +103,33 @@ var ObjectTest = Test.extend({
 		});
 
 		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', 'key and value are passed in the correct order');
-	},
+	}
 
-	testEachWithGenerator: function*() {
-		// No yield in generator
+	async testEachWithGenerator() {
+		// No await in generator
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
 			'cherry': 'kirkland',
 		};
 		var string = '';
-		yield object.each(function*(key, value) {
+		await object.each(async function(key, value) {
 			string += key+value;
 		});
-		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', 'no yield, key and value are passed in the correct order');
+		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', 'no await, key and value are passed in the correct order');
 
-		// yield in generator
+		// await in generator
 		object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
 			'cherry': 'kirkland',
 		};
 		string = '';
-		yield object.each(function*(key, value) {
-			yield Function.delay(25);
-			string += yield key+value;
+		await object.each(async function(key, value) {
+			await Function.delay(25);
+			string += await key+value;
 		});
-		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', 'yield, key and value are passed in the correct order');
+		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', 'await, key and value are passed in the correct order');
 
 		// with .bind(this)
 		object = {
@@ -138,14 +138,14 @@ var ObjectTest = Test.extend({
 			'cherry': 'kirkland',
 		};
 		string = '';
-		yield object.each(function*(key, value) {
-			yield Function.delay(25);
-			string += yield key+value;
+		await object.each(async function(key, value) {
+			await Function.delay(25);
+			string += await key+value;
 		}.bind(this));
-		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', '.bind(this) with yield, key and value are passed in the correct order');
-	},
+		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', '.bind(this) with await, key and value are passed in the correct order');
+	}
 
-	testClone: function() {
+	testClone() {
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
@@ -171,9 +171,9 @@ var ObjectTest = Test.extend({
 		Assert.true(Class.isInstance(versionClone), 'instance clones pass Class.isInstance');
 		Assert.equal(version.toString(), '2.0', 'instance clones receive prototypes correctly');
 		Assert.equal(versionClone.toString(), '1.0', 'instance clones receive prototypes correctly');
-	},
+	}
 
-	testPrototypeClone: function() {
+	testPrototypeClone() {
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
@@ -184,9 +184,9 @@ var ObjectTest = Test.extend({
 
 		Assert.deepEqual(object, clone, 'simple object');
 		Assert.notStrictEqual(object, clone, 'simple object should not point to same reference');
-	},
+	}
 
-	testMerge: function() {
+	testMerge() {
 		var a = {
 		    'firstLevelA': {
 		    	'secondLevel': {
@@ -240,9 +240,9 @@ var ObjectTest = Test.extend({
 		};
 
 		Assert.deepEqual(c, expected, 'Merging should be recursive');
-	},
+	}
 
-	testSort: function() {
+	testSort() {
 		var object = {
 			'cherry': 'kirkland',
 			'apple': 'macintosh',
@@ -253,9 +253,9 @@ var ObjectTest = Test.extend({
 
 		Assert.true(Json.encode(sorted).startsWith('{"apple":'), 'keys are sorted alphabetically');
 		Assert.true(Json.encode(sorted).endsWith('kirkland"}'), 'keys are sorted alphabetically');
-	},
+	}
 
-	testToJson: function() {
+	testToJson() {
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
@@ -265,9 +265,9 @@ var ObjectTest = Test.extend({
 		var actual = object.toJson();
 		var expected = '{"apple":"macintosh","banana":"chiquita","cherry":"kirkland"}';
 		Assert.equal(actual, expected, 'JSON string matches')
-	},
+	}
 
-	testToArray: function() {
+	testToArray() {
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
@@ -277,9 +277,9 @@ var ObjectTest = Test.extend({
 		var actual = Object.toArray(actual);
 		Assert.true(Array.is(actual), 'is an array');
 		Assert.false(Object.is(actual), 'is not an object');
-	},
+	}
 
-	testPrototypeToArray: function() {
+	testPrototypeToArray() {
 		var object = {
 			'apple': 'macintosh',
 			'banana': 'chiquita',
@@ -289,9 +289,9 @@ var ObjectTest = Test.extend({
 		var actual = object.toArray();
 		Assert.true(Array.is(actual), 'is an array');
 		Assert.false(Object.is(actual), 'is not an object');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ObjectTest;
+export default ObjectTest;

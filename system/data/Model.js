@@ -1,14 +1,14 @@
 // Class
-var Model = Class.extend({
+class Model {
 
-	name: 'Model',
+	name = 'Model';
 
-	defaults: {},
-	properties: {},
-	adapter: null,
-	adapters: [],
+	defaults = {};
+	properties = {};
+	adapter = null;
+	adapters = [];
 
-	construct: function(values) {
+	construct(values) {
 		this.defaults.each(function(propertyName, propertyValue) {
 			this.set(propertyName, propertyValue);
 		}.bind(this));
@@ -18,13 +18,13 @@ var Model = Class.extend({
 				this.set(propertyName, propertyValue);
 			}.bind(this));
 		}
-	},
+	}
 
-	setPropertyValue: function(propertyName, propertyValue) {
+	setPropertyValue(propertyName, propertyValue) {
 		this.properties[propertyName].setValue(propertyValue);
-	},
+	}
 
-	set: function(valuesOrPropertyName, propertyValue) {
+	set(valuesOrPropertyName, propertyValue) {
 		// If valuesOrPropertyName is a string, then it is a propertyName
 		if(String.is(valuesOrPropertyName)) {
 			this.setPropertyValue(valuesOrPropertyName, propertyValue);
@@ -37,13 +37,13 @@ var Model = Class.extend({
 		}
 
 		return this;
-	},
+	}
 
-	get: function(propertyName) {
+	get(propertyName) {
 		return this.properties[propertyName].value;
-	},
+	}
 
-	isChanged: function() {
+	isChanged() {
 		var isChanged = false;
 
 		this.properties.each(function(propertyName, property) {
@@ -55,60 +55,60 @@ var Model = Class.extend({
 		}.bind(this));
 
 		return isChanged;
-	},
+	}
 
-	beforeSave: function*() {
-	},
+	async beforeSave() {
+	}
 
-	save: function*() {
-		yield this.beforeSave();
+	async save() {
+		await this.beforeSave();
 
-		yield this.adapter.save(this);
+		await this.adapter.save(this);
 
-		yield this.afterSave();
-	},
+		await this.afterSave();
+	}
 
-	afterSave: function*() {
-	},
+	async afterSave() {
+	}
 
-	beforeDelete: function*() {
-	},
+	async beforeDelete() {
+	}
 
-	delete: function*() {
-		yield this.beforeDelete();
+	async delete() {
+		await this.beforeDelete();
 
-		yield this.adapter.delete(this);
+		await this.adapter.delete(this);
 
-		yield this.afterDelete();
-	},
+		await this.afterDelete();
+	}
 
-	afterDelete: function*() {
-	},
+	async afterDelete() {
+	}
 
-	beforeValidate: function*() {
-	},
+	async beforeValidate() {
+	}
 
-	validate: function*() {
-		yield this.beforeValidate();
+	async validate() {
+		await this.beforeValidate();
 
 		var validationErrors = [];
-		yield this.properties.each(function*(propertyName, property) {
-			var validationError = yield property.validate();
+		await this.properties.each(async function(propertyName, property) {
+			var validationError = await property.validate();
 
 			if(validationError) {
 				validationErrors.push(validationError);
 			}
 		});
 
-		yield this.afterValidate();
+		await this.afterValidate();
 
 		return validationErrors;
-	},
+	}
 
-	afterValidate: function*() {
-	},
+	async afterValidate() {
+	}
 
-});
+}
 
 // Export
-module.exports = Model;
+export default Model;

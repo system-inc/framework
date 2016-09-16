@@ -1,24 +1,24 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
+import ElectronTest from './../../../../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../../../../system/test/Assert.js';
+import HtmlDocument from './../../../../../../system/html/HtmlDocument.js';
+import Html from './../../../../../../system/html/Html.js';
+import HtmlEvent from './../../../../../../system/html/events/html-event/HtmlEvent.js';
+import HtmlNodeEvent from './../../../../../../system/html/events/html-node/HtmlNodeEvent.js';
+import HtmlElementEvent from './../../../../../../system/html/events/html-element/HtmlElementEvent.js';
+import InputPressEvent from './../../../../../../system/html/events/html-element/input/InputPressEvent.js';
+import InputHoverEvent from './../../../../../../system/html/events/html-element/input/InputHoverEvent.js';
 var ElectronManager = null;
-var HtmlEvent = Framework.require('system/html/events/html-event/HtmlEvent.js');
-var HtmlNodeEvent = Framework.require('system/html/events/html-node/HtmlNodeEvent.js');
-var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
-var InputPressEvent = Framework.require('system/html/events/html-element/input/InputPressEvent.js');
-var InputHoverEvent = Framework.require('system/html/events/html-element/input/InputHoverEvent.js');
 
 // Class
-var InputHoverEventTest = ElectronTest.extend({
+class InputHoverEventTest extends ElectronTest {
 
-	before: function*() {
+	async before() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
 		ElectronManager = Framework.require('system/electron/ElectronManager.js');
-	},
+	}
 
-	testInputHoverEvent: function*() {
+	async testInputHoverEvent() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -69,10 +69,10 @@ var InputHoverEventTest = ElectronTest.extend({
         Console.standardInfo('htmlElementPosition', htmlElementPosition);
 
         // Simulate moving the mouse over
-        yield ElectronManager.sendInputEventMouse('mouseMove', htmlElementPosition.relativeToDocumentViewport.coordinates.center.x, htmlElementPosition.relativeToDocumentViewport.coordinates.center.y);
+        await ElectronManager.sendInputEventMouse('mouseMove', htmlElementPosition.relativeToDocumentViewport.coordinates.center.x, htmlElementPosition.relativeToDocumentViewport.coordinates.center.y);
 
         // Simulate moving the mouse out
-        yield ElectronManager.sendInputEventMouse('mouseMove', 0, 0);
+        await ElectronManager.sendInputEventMouse('mouseMove', 0, 0);
         
 		Assert.true(capturedEventInputHover, '"input.hover" events are emitted');
 		Assert.true(capturedEventInputHoverIn, '"input.hover.in" events are emitted');
@@ -81,9 +81,9 @@ var InputHoverEventTest = ElectronTest.extend({
 		Assert.true(capturedEventInputHoverOutExact, '"input.hover.out.exact" events are emitted');
 	
         //throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = InputHoverEventTest;
+export default InputHoverEventTest;

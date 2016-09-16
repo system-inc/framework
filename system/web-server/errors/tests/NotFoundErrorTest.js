@@ -1,13 +1,13 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HttpError = Framework.require('system/web-server/errors/HttpError.js');
-var NotFoundError = Framework.require('system/web-server/errors/NotFoundError.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import HttpError from './../../../system/web-server/errors/HttpError.js';
+import NotFoundError from './../../../system/web-server/errors/NotFoundError.js';
 
 // Class
-var NotFoundErrorTest = Test.extend({
+class NotFoundErrorTest extends Test {
 
-	testNotFoundErrorConstruction: function() {
+	testNotFoundErrorConstruction() {
 		var actual = new NotFoundError('testNotFoundErrorConstruction error message.');
 		//Console.info(actual);
 		//Console.info(Error.toObject(actual));
@@ -25,9 +25,9 @@ var NotFoundErrorTest = Test.extend({
 		//Console.info(firstCallSiteData);
 		Assert.true(firstCallSiteData.functionName.contains('testNotFoundErrorConstruction'), 'first call site data functionName is correct');
 		Assert.equal(firstCallSiteData.fileName, 'NotFoundErrorTest.js', 'first call site data fileName is correct');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = NotFoundErrorTest;
+export default NotFoundErrorTest;

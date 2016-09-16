@@ -1,17 +1,17 @@
 // Dependencies
-var TextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/TextFormControlView.js');
+import TextFormControlView from './../../../../../../../system/web-interface/views/forms/controls/text/TextFormControlView.js';
 
 // Class
-var SingleLineTextFormControlView = TextFormControlView.extend({
+class SingleLineTextFormControlView extends TextFormControlView {
 
-    tag: 'input',
+    tag = 'input';
 
-    attributes: {
+    attributes = {
         type: 'text',
         class: 'control text singleLine',
-    },
+    };
 
-});
+}
 
 // Export
-module.exports = SingleLineTextFormControlView;
+export default SingleLineTextFormControlView;

@@ -1,26 +1,26 @@
 // Dependencies
-var View = Framework.require('system/web-interface/views/View.js');
+import View from './../../../../system/web-interface/views/View.js';
 
 // Class
-var ImageView = View.extend({
+class ImageView extends View {
 
-	tag: 'img',
+	tag = 'img';
 
-	attributes: {
+	attributes = {
 		class: 'image',
-	},
+	}
 
-	construct: function(url, alternateText, settings) {
-		this.super.call(this, settings);
+	construct(url, alternateText, settings) {
+		this.super(...arguments);
 
 		this.setAttribute('src', url);
 
 		if(alternateText) {
 			this.setAttribute('alt', alternateText);	
 		}
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ImageView;
+export default ImageView;

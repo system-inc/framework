@@ -1,20 +1,20 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlNode = Framework.require('system/html/HtmlNode.js');
-var XmlNode = Framework.require('system/xml/XmlNode.js');
-var EventEmitter = Framework.require('system/events/EventEmitter.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
+import ElectronTest from './../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../system/test/Assert.js';
+import HtmlNode from './../../../system/html/HtmlNode.js';
+import XmlNode from './../../../system/xml/XmlNode.js';
+import EventEmitter from './../../../system/events/EventEmitter.js';
+import HtmlDocument from './../../../system/html/HtmlDocument.js';
+import Html from './../../../system/html/Html.js';
 
 // Class
-var HtmlNodeTest = ElectronTest.extend({
+class HtmlNodeTest extends ElectronTest {
 
-    testHtmlNode: function*() {
+    async testHtmlNode() {
     	Assert.true(Class.doesImplement(HtmlNode, EventEmitter), 'HtmlNode class implements EventEmitter');
-    },
+    }
 
-	testGetSelectionText: function*() {
+	async testGetSelectionText() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -40,9 +40,9 @@ var HtmlNodeTest = ElectronTest.extend({
         Assert.strictEqual(htmlDocument.body.getSelectionText(), 'This is line 2.', 'getSelectionText returns a string matching the selected text');
 
         //throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = HtmlNodeTest;
+export default HtmlNodeTest;

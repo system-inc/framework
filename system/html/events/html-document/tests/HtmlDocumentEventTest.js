@@ -1,21 +1,21 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
+import ElectronTest from './../../../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../../../system/test/Assert.js';
+import HtmlDocument from './../../../../../system/html/HtmlDocument.js';
+import Html from './../../../../../system/html/Html.js';
+import HtmlDocumentEvent from './../../../../../system/html/events/html-document/HtmlDocumentEvent.js';
+import HtmlEvent from './../../../../../system/html/events/html-event/HtmlEvent.js';
 var ElectronManager = null;
-var HtmlDocumentEvent = Framework.require('system/html/events/html-document/HtmlDocumentEvent.js');
-var HtmlEvent = Framework.require('system/html/events/html-event/HtmlEvent.js');
 
 // Class
-var FormEventTest = ElectronTest.extend({
+class FormEventTest extends ElectronTest {
 
-	before: function*() {
+	async before() {
     	// Initialize the ElectronManager here as to not throw an exception when electron is not present
     	ElectronManager = Framework.require('system/electron/ElectronManager.js');
-	},
+	}
 
-	testHtmlDocumentEventCustomDomEvents: function*() {
+	async testHtmlDocumentEventCustomDomEvents() {
     	// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -44,9 +44,9 @@ var FormEventTest = ElectronTest.extend({
         Assert.true(Class.isInstance(capturedDomUpdatesExecutedEvent, HtmlDocumentEvent), '"htmlDocument.domUpdatesExecuted" events are instances of HtmlDocumentEvent');
 
     	//throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-    testHtmlDocumentEventUrlFragmentChange: function*() {
+    async testHtmlDocumentEventUrlFragmentChange() {
         // Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -84,18 +84,18 @@ var FormEventTest = ElectronTest.extend({
 
         // Click the link to change the fragment
         aElement.click();
-        yield Function.delay(50); // Give some time for the event to emit
+        await Function.delay(50); // Give some time for the event to emit
 
         Assert.strictEqual(capturedEventHtmlDocumentUrlFragmentChange.data, htmlDocument.url, 'htmlDocument.url.fragment.change events emit correctly');
 
         // Need to go back to the original URL as Assistant app needs to use the fragment to identify the browser window
         aElementForStartingFragment.click();
-        yield Function.delay(50); // Give some time for the event to emit
+        await Function.delay(50); // Give some time for the event to emit
 
         //throw new Error('Throwing error to display browser window.');
-    },
+    }
 
-    testHtmlDocumentEventUnloadBefore: function*() {
+    async testHtmlDocumentEventUnloadBefore() {
         // Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -121,9 +121,9 @@ var FormEventTest = ElectronTest.extend({
         htmlDocument.mountToDom();
 
         //throw new Error('Throwing error to display browser window.');
-    },
+    }
 
-    testHtmlDocumentEventResize: function*() {
+    async testHtmlDocumentEventResize() {
         // Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -160,9 +160,9 @@ var FormEventTest = ElectronTest.extend({
         //Assert.true(Class.isInstance(capturedEventHtmlDocumentResize, HtmlDocumentEvent), '"htmlDocument.resize" events are instances of HtmlDocumentEvent');
 
         //throw new Error('Throwing error to display browser window.');
-    },
+    }
 
-    testHtmlDocumentEventScroll: function*() {
+    async testHtmlDocumentEventScroll() {
         // Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -214,7 +214,7 @@ var FormEventTest = ElectronTest.extend({
 
         // Scroll down
         htmlDocument.domDocument.scrollingElement.scrollTop = 100;
-        yield Function.delay(50); // Give some time for the scroll event to emit
+        await Function.delay(50); // Give some time for the scroll event to emit
 
         Assert.true(Class.isInstance(capturedHtmlDocumentScrollDownEvent, HtmlEvent), '"htmlDocument.scroll.down" events are instances of HtmlEvent');
 
@@ -234,7 +234,7 @@ var FormEventTest = ElectronTest.extend({
 
         // Scroll up
         htmlDocument.domDocument.scrollingElement.scrollTop = 0;
-        yield Function.delay(50); // Give some time for the scroll event to emit
+        await Function.delay(50); // Give some time for the scroll event to emit
 
         Assert.true(Class.isInstance(capturedHtmlDocumentScrollUpEvent, HtmlEvent), '"htmlDocument.scroll.up" events are instances of HtmlEvent');
 
@@ -251,7 +251,7 @@ var FormEventTest = ElectronTest.extend({
 
         // Scroll right
         htmlDocument.domDocument.scrollingElement.scrollLeft = 100;
-        yield Function.delay(50); // Give some time for the scroll event to emit
+        await Function.delay(50); // Give some time for the scroll event to emit
 
         Assert.true(Class.isInstance(capturedHtmlDocumentScrollRightEvent, HtmlEvent), '"htmlDocument.scroll.right" events are instances of HtmlEvent');
 
@@ -268,7 +268,7 @@ var FormEventTest = ElectronTest.extend({
 
         // Scroll left
         htmlDocument.domDocument.scrollingElement.scrollLeft = 0;
-        yield Function.delay(50); // Give some time for the scroll event to emit
+        await Function.delay(50); // Give some time for the scroll event to emit
 
         Assert.true(Class.isInstance(capturedHtmlDocumentScrollLeftEvent, HtmlEvent), '"htmlDocument.scroll.left" events are instances of HtmlEvent');
 
@@ -278,9 +278,9 @@ var FormEventTest = ElectronTest.extend({
         Assert.strictEqual(capturedHtmlDocumentScrollRightEvent, null, 'scroll events emit correctly');
 
         //throw new Error('Throwing error to display browser window.');
-    },
+    }
 
-});
+}
 
 // Export
-module.exports = FormEventTest;
+export default FormEventTest;

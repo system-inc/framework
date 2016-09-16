@@ -1,24 +1,24 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-var Html = Framework.require('system/html/Html.js');
+import ElectronTest from './../../../../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../../../../system/test/Assert.js';
+import HtmlDocument from './../../../../../../system/html/HtmlDocument.js';
+import Html from './../../../../../../system/html/Html.js';
+import HtmlEvent from './../../../../../../system/html/events/html-event/HtmlEvent.js';
+import HtmlNodeEvent from './../../../../../../system/html/events/html-node/HtmlNodeEvent.js';
+import HtmlElementEvent from './../../../../../../system/html/events/html-element/HtmlElementEvent.js';
+import InputPressEvent from './../../../../../../system/html/events/html-element/input/InputPressEvent.js';
+import InputScrollEvent from './../../../../../../system/html/events/html-element/input/InputScrollEvent.js';
 var ElectronManager = null;
-var HtmlEvent = Framework.require('system/html/events/html-event/HtmlEvent.js');
-var HtmlNodeEvent = Framework.require('system/html/events/html-node/HtmlNodeEvent.js');
-var HtmlElementEvent = Framework.require('system/html/events/html-element/HtmlElementEvent.js');
-var InputPressEvent = Framework.require('system/html/events/html-element/input/InputPressEvent.js');
-var InputScrollEvent = Framework.require('system/html/events/html-element/input/InputScrollEvent.js');
 
 // Class
-var InputScrollEventTest = ElectronTest.extend({
+class InputScrollEventTest extends ElectronTest {
 
-	before: function*() {
+	async before() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
 		ElectronManager = Framework.require('system/electron/ElectronManager.js');
-	},
+	}
 
-	testInputScrollEvent: function*() {
+	async testInputScrollEvent() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -70,30 +70,30 @@ var InputScrollEventTest = ElectronTest.extend({
 
         // Simulate a wheel scroll up
 		// htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers
-		yield ElectronManager.wheelRotateHtmlElement(htmlElement, 0, 1, 0, 1, 1, 1, true, true);
+		await ElectronManager.wheelRotateHtmlElement(htmlElement, 0, 1, 0, 1, 1, 1, true, true);
 
 		Assert.true(capturedEventInputScroll, '"input.scroll" events are emitted');
 		Assert.true(capturedEventInputScrollUp, '"input.scroll.up" events are emitted');
 
 		// Simulate a wheel scroll down
 		// htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers
-		yield ElectronManager.wheelRotateHtmlElement(htmlElement, 0, -1, 0, -1, 1, 1, true, true);
+		await ElectronManager.wheelRotateHtmlElement(htmlElement, 0, -1, 0, -1, 1, 1, true, true);
 		Assert.true(capturedEventInputScrollDown, '"input.scroll.down" events are emitted');
 
 		// Simulate a wheel scroll left
 		// htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers
-		yield ElectronManager.wheelRotateHtmlElement(htmlElement, 1, 0, 1, 0, 1, 1, true, true);
+		await ElectronManager.wheelRotateHtmlElement(htmlElement, 1, 0, 1, 0, 1, 1, true, true);
 		Assert.true(capturedEventInputScrollLeft, '"input.scroll.left" events are emitted');
 
 		// Simulate a wheel scroll right
 		// htmlElement, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers
-		yield ElectronManager.wheelRotateHtmlElement(htmlElement, -1, 0, -1, 0, 1, 1, true, true);
+		await ElectronManager.wheelRotateHtmlElement(htmlElement, -1, 0, -1, 0, 1, 1, true, true);
 		Assert.true(capturedEventInputScrollRight, '"input.scroll.right" events are emitted');
 	
         //throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = InputScrollEventTest;
+export default InputScrollEventTest;

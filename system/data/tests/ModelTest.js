@@ -1,13 +1,13 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var ModelClassManager = Framework.require('system/data/ModelClassManager.js');
-var DatabaseTest = Framework.require('system/database/tests/DatabaseTest.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import ModelClassManager from './../../../system/data/ModelClassManager.js';
+import DatabaseTest from './../../../system/database/tests/DatabaseTest.js';
 
 // Class
-var ModelTest = Test.extend({
+class ModelTest extends Test {
 
-	testModelSchema: {
+	testModelSchema = {
 		name: 'TestModel',
 		properties: [
 			{
@@ -50,23 +50,23 @@ var ModelTest = Test.extend({
 				type: 'time',
 			},
 		],
-	},
+	}
 
-	testModel: null,
+	testModel = null;
 
-	shouldRun: DatabaseTest.prototype.shouldRun, // Use DatabaseTests's shouldRun method
+	shouldRun = DatabaseTest.prototype.shouldRun; // Use DatabaseTests's shouldRun method
 
-	before: function() {
+	before() {
 		this.testModel = ModelClassManager.generateModelClassFromSchemaModel(this.testModelSchema);
 		//Console.highlight(this.testModel);
-	},
+	}
 
-	testSave: function*() {
+	async testSave() {
 		var testModel = new this.testModel();
 		
 		// Set everything
 		testModel.setTestBooleanProperty(true);
-		testModel.setTestDataProperty(00000100); // 64 in binary
+		testModel.setTestDataProperty(0b1000000); // 64 in binary
 		testModel.setTestDateProperty('1984-06-28');
 		testModel.setTestEnumerationProperty('banana');
 		testModel.setTestIntegerProperty(1000);
@@ -77,7 +77,7 @@ var ModelTest = Test.extend({
 
 		// Assert gets
 		Assert.strictEqual(testModel.getTestBooleanProperty(), true, 'get boolean');
-		Assert.strictEqual(testModel.getTestDataProperty(), 00000100, 'get data');
+		Assert.strictEqual(testModel.getTestDataProperty(), 0b1000000, 'get data');
 		Assert.strictEqual(testModel.getTestDateProperty(), '1984-06-28', 'get date');
 		Assert.strictEqual(testModel.getTestEnumerationProperty(), 'banana', 'get enumeration');
 		Assert.strictEqual(testModel.getTestIntegerProperty(), 1000, 'get integer');
@@ -86,10 +86,10 @@ var ModelTest = Test.extend({
 		Assert.strictEqual(testModel.getTestTimeProperty(), '1984-06-28 00:00:00', 'get time');
 
 		// This is where things get fun
-		//yield testModel.save();
-	},
+		//await testModel.save();
+	}
 
-});
+}
 
 // Export
-module.exports = ModelTest;
+export default ModelTest;

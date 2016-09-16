@@ -1,25 +1,25 @@
 // Dependencies
-var View = Framework.require('system/web-interface/views/View.js');
+import View from './../../../../system/web-interface/views/View.js';
 
 // Class
-var ButtonView = View.extend({
+class ButtonView extends View {
 
-	tag: 'a',
+	tag = 'a';
 
-	attributes: {
+	attributes = {
 		class: 'button',
-	},
+	};
 
-	construct: function(content, settings) {
-		this.super.call(this, settings);
+	construct(content, settings) {
+		this.super(...arguments);
 		this.settings.setDefaults({
 
 		});
 
 		this.append(content);
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ButtonView;
+export default ButtonView;

@@ -1,11 +1,11 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
 
 // Class
-var ElectronTest = Test.extend({
+class ElectronTest extends Test {
 
-	shouldRun: function*() {
+	async shouldRun() {
 		var shouldRun = true;
 
 		// If electron isn't in the versions object, we are not in the Electron environment
@@ -14,11 +14,11 @@ var ElectronTest = Test.extend({
 		}
 
 		return shouldRun;
-	},
+	}
 
 	// This is an abstract class, do not add any tests here
 
-});
+}
 
 // Export
-module.exports = ElectronTest;
+export default ElectronTest;

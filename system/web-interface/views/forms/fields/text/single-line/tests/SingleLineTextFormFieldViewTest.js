@@ -1,20 +1,20 @@
 // Dependencies
-var ElectronTest = Framework.require('system/electron/tests/ElectronTest.js');
-var Assert = Framework.require('system/test/Assert.js');
+import ElectronTest from './../../../../../../../../system/electron/tests/ElectronTest.js';
+import Assert from './../../../../../../../../system/test/Assert.js';
+import ViewController from './../../../../../../../../system/web-interface/view-controllers/ViewController.js';
+import FormView from './../../../../../../../../system/web-interface/views/forms/FormView.js';
+import SingleLineTextFormFieldView from './../../../../../../../../system/web-interface/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js';
 var ElectronManager = null;
-var ViewController = Framework.require('system/web-interface/view-controllers/ViewController.js');
-var FormView = Framework.require('system/web-interface/views/forms/FormView.js');
-var SingleLineTextFormFieldView = Framework.require('system/web-interface/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js');
 
 // Class
-var SingleLineTextFormFieldViewTest = ElectronTest.extend({
+class SingleLineTextFormFieldViewTest extends ElectronTest {
 
-	before: function*() {
-    	// Initialize the ElectronManager here as to not throw an exception when electron is not present
-    	ElectronManager = Framework.require('system/electron/ElectronManager.js');
-	},
+	async before() {
+        // Initialize the ElectronManager here as to not throw an exception when electron is not present
+        ElectronManager = require('./../../../../../../../../system/electron/ElectronManager.js');
+    }
 
-	testEnterSubmits: function*() {
+	async testEnterSubmits() {
         throw new Error('Throwing error to display browser window.');
         
         //// Create a new ViewController
@@ -100,9 +100,9 @@ var SingleLineTextFormFieldViewTest = ElectronTest.extend({
      //   Assert.true(Class.isInstance(capturedEventFormSubmit, HtmlEvent), '"form.submit" events emit on "input.key.enter"');
 
     	////throw new Error('Throwing error to display browser window.');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = SingleLineTextFormFieldViewTest;
+export default SingleLineTextFormFieldViewTest;

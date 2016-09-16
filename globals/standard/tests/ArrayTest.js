@@ -1,17 +1,17 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
 
 // Class
-var ArrayTest = Test.extend({
+class ArrayTest extends Test {
 
-	testIs: function() {
+	testIs() {
 		Assert.true(Array.is([]), 'array literal ([]) is an array');
 		Assert.false(Array.is('[]'), 'JSON array "[]" is not an array');
 		Assert.false(Array.is({}), 'object literal ({}) is not an array');
-	},
+	}
 
-	testUnique: function() {
+	testUnique() {
 		var actual = [
 			'apple',
 			'banana',
@@ -27,9 +27,9 @@ var ArrayTest = Test.extend({
 		];
 
 		Assert.deepEqual(actual, expected, 'Removes duplicate elements');
-	},
+	}
 
-	testSortObjects: function() {
+	testSortObjects() {
 		var actual = [
 			{
 				'type': 'file',
@@ -119,9 +119,9 @@ var ArrayTest = Test.extend({
 			},			
 		];
 		Assert.deepEqual(actual, expected, 'Sorts objects using two properties');
-	},
+	}
 
-	testSortObjectsByKeyValue: function() {
+	testSortObjectsByKeyValue() {
 		var actual = [
 			{
 				'a': 10,
@@ -187,9 +187,9 @@ var ArrayTest = Test.extend({
 		];
 
 		Assert.deepEqual(actual, expected, 'Sorts objects by key value where the value is a string');
-	},
+	}
 
-	testMerge: function() {
+	testMerge() {
 		Assert.deepEqual([1,2,3], [1].merge([2,3]), 'array of primitives');
 		Assert.deepEqual([], [].merge([]), 'two empty arrays');
 
@@ -231,9 +231,9 @@ var ArrayTest = Test.extend({
 			},
 		];
 		Assert.deepEqual(actual, expected, 'array of objects');
-	},
+	}
 
-	testContains: function() {
+	testContains() {
 		var array = [
 			'aa',
 			'bb',
@@ -248,9 +248,9 @@ var ArrayTest = Test.extend({
 		Assert.equal(array.contains('AA'), 2, 'case insensitive by default');
 		Assert.equal(array.contains('AA', true), 0, 'case sensitive');
 		Assert.false(array.contains('AA', true), 'no matches is falsey');
-	},
+	}
 
-	testCount: function() {
+	testCount() {
 		var array = [
 			'aa',
 			'bb',
@@ -265,9 +265,9 @@ var ArrayTest = Test.extend({
 		Assert.equal(array.count('AA'), 2, 'case insensitive by default');
 		Assert.equal(array.count('AA', true), 0, 'case sensitivity');
 		Assert.false(array.count('AA', true), 'no matches is falsey');
-	},
+	}
 
-	testFirst: function() {
+	testFirst() {
 		var array = [
 			'a',
 			'b',
@@ -277,9 +277,9 @@ var ArrayTest = Test.extend({
 		Assert.equal(array.first(), 'a', 'returns element at index 0');
 
 		Assert.strictEqual([].first(), null, 'empty array returns null');
-	},
+	}
 
-	testLast: function() {
+	testLast() {
 		var array = [
 			'a',
 			'b',
@@ -289,9 +289,9 @@ var ArrayTest = Test.extend({
 		Assert.equal(array.last(), 'c', 'returns element at last index');
 
 		Assert.strictEqual([].last(), null, 'empty array returns null');
-	},
+	}
 
-	testGet: function() {
+	testGet() {
 		var array = [
 			'a',
 			'b',
@@ -301,9 +301,9 @@ var ArrayTest = Test.extend({
 		Assert.equal(array.get(1), 'b', 'returns element at specified index');
 		Assert.strictEqual(array.get(10), null, 'non-existent index returns null');
 		Assert.strictEqual([].get(0), null, 'empty array returns null');
-	},
+	}
 
-	testDelete: function() {
+	testDelete() {
 		var array = [
 			'a',
 			'b',
@@ -328,9 +328,9 @@ var ArrayTest = Test.extend({
 			'c',
 		];
 		Assert.deepEqual(actual, expected, 'delete at non-existent index does nothing');
-	},
+	}
 
-	testEach: function() {
+	testEach() {
 		var array = [
 			'a',
 			'b',
@@ -343,9 +343,9 @@ var ArrayTest = Test.extend({
 		});
 
 		Assert.equal(string, '0a1b2c', 'index and element are passed in the correct order');
-	},
+	}
 
-	testEachWithGenerator: function*() {
+	async testEachWithGenerator() {
 		var array = [
 			'a',
 			'b',
@@ -353,14 +353,14 @@ var ArrayTest = Test.extend({
 		];
 
 		var string = '';
-		yield array.each(function*(index, element) {
+		await array.each(async function(index, element) {
 			string += index+element;
 		});
 
 		Assert.equal(string, '0a1b2c', 'index and element are passed in the correct order');
-	},
+	}
 
-	testToObject: function() {
+	testToObject() {
 		var array = [
 			'a',
 			'b',
@@ -371,9 +371,9 @@ var ArrayTest = Test.extend({
 		var actual = object.toJson();
 		var expected = '{"0":"a","1":"b","2":"c"}';
 		Assert.equal(actual, expected, 'turned into object');
-	},
+	}
 
-	testPrototypeToObject: function() {
+	testPrototypeToObject() {
 		var array = [
 			'a',
 			'b',
@@ -383,9 +383,9 @@ var ArrayTest = Test.extend({
 		var actual = array.toJson();
 		var expected = '{"0":"a","1":"b","2":"c"}';
 		Assert.equal(actual, expected, 'turned into object');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = ArrayTest;
+export default ArrayTest;

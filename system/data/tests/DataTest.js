@@ -1,25 +1,25 @@
 // Dependencies
-var Test = Framework.require('system/test/Test.js');
-var Assert = Framework.require('system/test/Assert.js');
-var Data = Framework.require('system/data/Data.js');
+import Test from './../../../system/test/Test.js';
+import Assert from './../../../system/test/Assert.js';
+import Data from './../../../system/data/Data.js';
 
 // Class
-var DataTest = Test.extend({
+class DataTest extends Test {
 
-	testGzipEncodeDecode: function*() {
+	async testGzipEncodeDecode() {
 		var actual = 'Encode and decode me.';
 
-		actual = yield Data.encode(actual, 'gzip');
+		actual = await Data.encode(actual, 'gzip');
 		//Console.log(actual.toString());
-		actual = yield Data.decode(actual, 'gzip');
+		actual = await Data.decode(actual, 'gzip');
 		//Console.log(actual);
 
 		var expected = 'Encode and decode me.';
 
 		Assert.equal(actual, expected, 'gzip encode and decode a string');
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = DataTest;
+export default DataTest;
