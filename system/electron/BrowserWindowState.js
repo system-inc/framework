@@ -79,18 +79,18 @@ var BrowserWindowState = Class.extend({
 	},
 
 	apply: function() {
-		//Console.log(this.mode);
+		//app.log(this.mode);
 
 		if(this.mode == 'maximized') {
-			//Console.log('maximizing');
+			//app.log('maximizing');
 			this.browserWindow.maximize();
 		}
 		else if(this.mode == 'minimized') {
-			//Console.log('minimizing');
+			//app.log('minimizing');
 			this.browserWindow.minimize();
 		}
 		else if(this.mode == 'fullScreen') {
-			//Console.log('setting full screen');
+			//app.log('setting full screen');
 			this.browserWindow.setFullScreen(true);
 		}
 
@@ -129,7 +129,7 @@ var BrowserWindowState = Class.extend({
 		// Set the display
 		this.display = defaultSettingsForDisplayCount.display;
 		var currentDisplay = displays[this.display - 1];
-		//Console.log(currentDisplay);
+		//app.log(currentDisplay);
 
 		// Set the width
 		var width = defaultSettingsForDisplayCount.width;
@@ -149,7 +149,7 @@ var BrowserWindowState = Class.extend({
 		this.height = height;
 		//this.height = 768;
 
-		//Console.log(width, height);
+		//app.log(width, height);
 
 		// Set the x
 		var x = defaultSettingsForDisplayCount.x;
@@ -219,13 +219,13 @@ var BrowserWindowState = Class.extend({
 	getFromLocalStorage: function() {
 		// Try local storage to see if browserWindowState is set
 		var browserWindowStateFromLocalStorage = LocalStorage.get(this.identifier+'BrowserWindowState');
-		//Console.log('browserWindowStateFromLocalStorage', browserWindowStateFromLocalStorage);
+		//app.log('browserWindowStateFromLocalStorage', browserWindowStateFromLocalStorage);
 
 		return browserWindowStateFromLocalStorage;
 	},
 
 	saveToLocalStorage: function() {
-		//Console.log('saveToLocalStorage', Json.encode(this.toObject()));
+		//app.log('saveToLocalStorage', Json.encode(this.toObject()));
 		LocalStorage.set(this.identifier+'BrowserWindowState', this.toObject());
 	},
 
@@ -241,7 +241,7 @@ var BrowserWindowState = Class.extend({
 		// Display added
 		if(this.settings.defaultWindowState.applyOn.displayAdded) {
 			Electron.screen.on('display-added', function(event, newDisplay) {
-				//Console.log('display-added', event)
+				//app.log('display-added', event)
 				this.applyDefault();
 			}.bind(this));	
 		}
@@ -249,7 +249,7 @@ var BrowserWindowState = Class.extend({
 		// Display removed
 		if(this.settings.defaultWindowState.applyOn.displayRemoved) {
 			Electron.screen.on('display-removed', function(event, oldDisplay) {
-				//Console.log('display-removed', event)
+				//app.log('display-removed', event)
 				this.applyDefault();
 			}.bind(this));
 		}
@@ -257,7 +257,7 @@ var BrowserWindowState = Class.extend({
 		// Display metrics changed
 		if(this.settings.defaultWindowState.applyOn.displayMetricsChanged) {
 			Electron.screen.on('display-metrics-changed', function(event, display, changedMetrics) {
-				//Console.log('display-metrics-changed', event)
+				//app.log('display-metrics-changed', event)
 				this.applyDefault();
 			}.bind(this));
 		}

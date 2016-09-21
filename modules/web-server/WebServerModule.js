@@ -13,7 +13,7 @@ class WebServerModule extends Module {
 
 	async initialize(settings) {
 		await super.initialize(...arguments);
-		//Console.log('WebServerModule initialize', this.settings);
+		//app.log('WebServerModule initialize', this.settings);
 
 		await this.createWebServers();
 	}
@@ -36,7 +36,7 @@ class WebServerModule extends Module {
 					}
 				}
 
-				//Console.log('Initializing web server...');
+				//app.log('Initializing web server...');
 
 				// Create the web server
 				this.webServers[webServerIdentifier] = new WebServer(webServerIdentifier, webServerSettings);

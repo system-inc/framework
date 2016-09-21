@@ -27,7 +27,7 @@ var Pool = EventEmitter.extend({
 		}
 
 		if(!this.createReusablesAsNecessary) {
-			//Console.log('Creating '+this.minimumSize+' reusables...');
+			//app.log('Creating '+this.minimumSize+' reusables...');
 
 			for(var i = 0; i < this.minimumSize; i++) {
 				this.createReusable();
@@ -60,11 +60,11 @@ var Pool = EventEmitter.extend({
 			}
 			// If we don't have any free reusables
 			else {
-				//Console.log('Waiting for reusable...');
+				//app.log('Waiting for reusable...');
 
 				// If we can start the process of creating a new reusable
 				if(this.size < this.maximumSize) {
-					//Console.log(this.size, 'is less than', this.maximumSize, 'creating new reusable...');
+					//app.log(this.size, 'is less than', this.maximumSize, 'creating new reusable...');
 
 					// Create a new reusable
 					this.createReusable();

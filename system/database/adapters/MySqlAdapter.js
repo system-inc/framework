@@ -37,7 +37,7 @@ class MySqlAdapter {
 	static async query(connection, query, values) {
 		var query = await new Promise(function(resolve, reject) {
 			var queryResults = connection.query(query, values, function(error, rows, fields) {
-				//Console.log(queryResults.sql);
+				//app.log(queryResults.sql);
 
 				if(error) {
 					resolve(error);

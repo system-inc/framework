@@ -26,7 +26,7 @@ class SevenZip {
 		sevenZipArguments = sevenZipArguments.merge(argumentsArray);
 
 		// Log the executable and arguments
-		//Console.log('sevenZipExecutable', sevenZipExecutable, 'sevenZipArguments', sevenZipArguments);
+		//app.log('sevenZipExecutable', sevenZipExecutable, 'sevenZipArguments', sevenZipArguments);
 
 		// Spawn 7-Zip as a new child process
 		var sevenZipChildProcess = Node.ChildProcess.spawn(sevenZipExecutable, sevenZipArguments, {
@@ -35,38 +35,38 @@ class SevenZip {
 
 		// When data is sent to standard in
 		sevenZipChildProcess.stdin.on('data', function(data) {
-			//Console.log('7-Zip standard in data');
+			//app.log('7-Zip standard in data');
 		});
 
 		// When standard in has an error
 		sevenZipChildProcess.stdin.on('error', function(data) {
-			//Console.log('7-Zip standard in error', data);
+			//app.log('7-Zip standard in error', data);
 		});
 
 		// When data is sent to standard out
 		sevenZipChildProcess.stdout.on('data', function(data) {
-			//Console.log('7-Zip standard out', data);
-			//Console.log('7-Zip standard out data');
+			//app.log('7-Zip standard out', data);
+			//app.log('7-Zip standard out data');
 		});
 
 		// When standard out has an error
 		sevenZipChildProcess.stdout.on('error', function(data) {
-			//Console.log('7-Zip standard out error', data);
+			//app.log('7-Zip standard out error', data);
 		});
 
 		// When data is sent to standard error
 		sevenZipChildProcess.stderr.on('data', function(data) {
-			//Console.error('7-Zip standard error', data);
+			//app.error('7-Zip standard error', data);
 		});
 
 		// When 7-Zip exits
 		sevenZipChildProcess.on('exit', function(code) {
-			//Console.log('7-Zip terminated with code', code);
+			//app.log('7-Zip terminated with code', code);
 		});
 
 		// When 7-Zip has an error
 		sevenZipChildProcess.on('error', function(error) {
-			//Console.error('7-Zip error', error);
+			//app.error('7-Zip error', error);
 		});
 
 		// We always send processed data from 7-Zip to standard out
@@ -145,22 +145,22 @@ class SevenZip {
 		var archivedFileSystemObjectsDelimiter = '----------';
 
 		var indexOfArchivedFileSystemObjectsDelimiter = listString.indexOf(archivedFileSystemObjectsDelimiter);
-		//Console.log(indexOfArchivedFileSystemObjectsDelimiter);
+		//app.log(indexOfArchivedFileSystemObjectsDelimiter);
 
 		//var archiveFileString = listString.substring(0, indexOfArchivedFileSystemObjectsDelimiter + archivedFileSystemObjectsDelimiter.length).trim();
-		//Console.log('archiveFileString', archiveFileString);
+		//app.log('archiveFileString', archiveFileString);
 		//var archiveFile = SevenZip.parseArchiveFileString(archiveFileString);
-		//Console.log('archiveFile', archiveFile);
+		//app.log('archiveFile', archiveFile);
 
 		var archivedFileSystemObjectsString = listString.substring(indexOfArchivedFileSystemObjectsDelimiter + archivedFileSystemObjectsDelimiter.length).trim();
-		//Console.log('archivedFileSystemObjectsString', archivedFileSystemObjectsString);
+		//app.log('archivedFileSystemObjectsString', archivedFileSystemObjectsString);
 
 		var archivedFileSystemObjectsStringArray = archivedFileSystemObjectsString.split('Path = ');
 		archivedFileSystemObjectsStringArray = archivedFileSystemObjectsStringArray.delete(0);
-		//Console.log('archivedFileSystemObjectsStringArray', archivedFileSystemObjectsStringArray);
+		//app.log('archivedFileSystemObjectsStringArray', archivedFileSystemObjectsStringArray);
 
 		archivedFileSystemObjectsStringArray.each(function(index, archivedFileSystemObjectString) {
-			//Console.log('archivedFileSystemObjectString', archivedFileSystemObjectString);
+			//app.log('archivedFileSystemObjectString', archivedFileSystemObjectString);
 
 			// Parse the string
 			var archivedFileSystemObjectProperties = SevenZip.parseArchivedFileSystemObjectString(archivedFileSystemObjectString);

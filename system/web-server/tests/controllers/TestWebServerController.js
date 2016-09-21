@@ -29,8 +29,8 @@ var TestWebServerController = WebServerController.extend({
 			cookieObjectKey1: ['a', 'b', 'c'],
 			cookieObjectKey2: ['d', 'e', 'f'],
 		});
-		//Console.warn(this.response.headers);
-		//Console.warn(this.response.cookies);
+		//app.warn(this.response.headers);
+		//app.warn(this.response.cookies);
 
 		return 'Route with cookies.';
 	},
@@ -89,10 +89,10 @@ var TestWebServerController = WebServerController.extend({
 
 	contentArchivedFile: function*() {
 		var archiveFile = new ArchiveFile(Node.Path.join(Framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'archives', 'archive-text.zip'));
-		//Console.log('archiveFile', archiveFile);
+		//app.log('archiveFile', archiveFile);
 
 		var archivedFileSystemObjects = yield archiveFile.list();
-		//Console.log('archivedFileSystemObjects', archivedFileSystemObjects);
+		//app.log('archivedFileSystemObjects', archivedFileSystemObjects);
 
 		var archivedFileText = archivedFileSystemObjects.first();
 

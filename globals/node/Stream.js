@@ -10,7 +10,7 @@ class Stream extends Node.Stream.Stream {
 			var string = '';
 
 			this.on('data', function(chunk) {
-				//Console.log('chunk size in bytes', chunk.toString().sizeInBytes());
+				//app.log('chunk size in bytes', chunk.toString().sizeInBytes());
 				string += chunk;
 			});
 

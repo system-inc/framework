@@ -19,7 +19,7 @@ class PropagatingEvent extends Event {
 			},
 		}.merge(options);
 
-		//Console.info('options', options);
+		//app.info('options', options);
 
 		// Set propagationStopped option
 		if(options.propagationStopped) {

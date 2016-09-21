@@ -67,7 +67,7 @@ class TextFormControlView extends FormControlView {
         // If tabKeyInsertsIndentationSymbol is enabled and indentationManagement is not enabled
         if(this.settings.get('tabKeyInsertsIndentationSymbol') && !this.settings.get('indentationManagement')) {
             // When the user presses tab, insert an indentation symbol regardless of selection or if the shift key is pressed
-            //Console.log('Inserting tab character');
+            //app.log('Inserting tab character');
             this.insertIndentationSymbol();
         }
         // If indentation management is enabled
@@ -85,7 +85,7 @@ class TextFormControlView extends FormControlView {
                 }
                 // Tab with nothing selected, insert an indentation symbol
                 else {
-                    //Console.log('Tab with nothing selected, insert an indentation symbol');
+                    //app.log('Tab with nothing selected, insert an indentation symbol');
                     this.insertIndentationSymbol();
                 }
             }
@@ -125,7 +125,7 @@ class TextFormControlView extends FormControlView {
     }
 
     indentCurrentLine() {
-        //Console.log('indentCurrentLine');
+        //app.log('indentCurrentLine');
 
         // Insert an indentation symbol at the start of the current line
         var updatedValue = this.getValue().insert(this.getCurrentLineStartIndex(), this.settings.get('indentationSymbol'));
@@ -143,7 +143,7 @@ class TextFormControlView extends FormControlView {
     }
 
     outdentCurrentLine() {
-        //Console.log('outdentCurrentLine');
+        //app.log('outdentCurrentLine');
 
         var selectionStartIndex = this.getSelectionStartIndex();
         var selectionEndIndex = this.getSelectionEndIndex();
@@ -160,17 +160,17 @@ class TextFormControlView extends FormControlView {
         var indentationSymbol = this.settings.get('indentationSymbol');
         var indentationSymbolLength = indentationSymbol.length;
 
-        //Console.log('------');
-        //Console.log('selectionStartIndex', selectionStartIndex);
-        //Console.log('selectionEndIndex', selectionEndIndex);
-        //Console.log('selectionStartIndexDelta', selectionStartIndexDelta);
-        //Console.log('selectionEndIndexDelta', selectionEndIndexDelta);
-        //Console.log('currentLineText', currentLineText);
-        //Console.log('currentLineStartIndex', currentLineStartIndex);
-        //Console.log('currentLineEndIndex', currentLineEndIndex);
-        //Console.log('currentLineIsEntirelySelected', currentLineIsEntirelySelected);
-        //Console.log('updatedCurrentLineText', updatedCurrentLineText);
-        //Console.log('------');
+        //app.log('------');
+        //app.log('selectionStartIndex', selectionStartIndex);
+        //app.log('selectionEndIndex', selectionEndIndex);
+        //app.log('selectionStartIndexDelta', selectionStartIndexDelta);
+        //app.log('selectionEndIndexDelta', selectionEndIndexDelta);
+        //app.log('currentLineText', currentLineText);
+        //app.log('currentLineStartIndex', currentLineStartIndex);
+        //app.log('currentLineEndIndex', currentLineEndIndex);
+        //app.log('currentLineIsEntirelySelected', currentLineIsEntirelySelected);
+        //app.log('updatedCurrentLineText', updatedCurrentLineText);
+        //app.log('------');
 
         // Find the first indentation symbol at the start of the line and remove it
         if(currentLineText.startsWith(indentationSymbol)) {
@@ -219,7 +219,7 @@ class TextFormControlView extends FormControlView {
         if(valueChanged) {
             var updatedSelectionStartIndex = selectionStartIndex + selectionStartIndexDelta;
             var updatedSelectionEndIndex = selectionEndIndex + selectionEndIndexDelta;
-            //Console.log('Range selection', updatedSelectionStartIndex, updatedSelectionEndIndex);
+            //app.log('Range selection', updatedSelectionStartIndex, updatedSelectionEndIndex);
 
             // If they have the whole line selected, keep the whole line selected
             if(currentLineIsEntirelySelected) {
@@ -227,19 +227,19 @@ class TextFormControlView extends FormControlView {
             }
             // Make sure we don't jump back further than the start of the line
             else if(currentLineStartIndex <= (selectionStartIndex + selectionStartIndexDelta)) {
-                //Console.log('Selecting range', updatedSelectionStartIndex, updatedSelectionEndIndex, selectionStartIndex, selectionStartIndexDelta, selectionEndIndex, selectionEndIndexDelta);
+                //app.log('Selecting range', updatedSelectionStartIndex, updatedSelectionEndIndex, selectionStartIndex, selectionStartIndexDelta, selectionEndIndex, selectionEndIndexDelta);
                 this.selectRange(updatedSelectionStartIndex, updatedSelectionEndIndex);
             }
             // Just stay at the front of the string
             else {
-                //Console.log('Setting cursor position', this.getCurrentLineStartIndex());
+                //app.log('Setting cursor position', this.getCurrentLineStartIndex());
                 this.setCursorIndex(currentLineStartIndex);
             }
         }
     }
 
     indentSelectedLines() {
-        //Console.log('indentSelectedLines');
+        //app.log('indentSelectedLines');
 
         var selectionStartIndex = this.getSelectionStartIndex();
         var selectionEndIndex = this.getSelectionEndIndex();
@@ -255,9 +255,9 @@ class TextFormControlView extends FormControlView {
         });
         updatedSelectedLinesText = updatedSelectedLinesText.replaceLast("\n", '');
 
-        //Console.log('selectedLinesText', selectedLinesText);
-        //Console.log('selectedLinesCount', selectedLinesCount);
-        //Console.log('updatedSelectedLinesText', updatedSelectedLinesText);
+        //app.log('selectedLinesText', selectedLinesText);
+        //app.log('selectedLinesCount', selectedLinesCount);
+        //app.log('updatedSelectedLinesText', updatedSelectedLinesText);
         
         var updatedValue = this.getValue().replaceRange(this.getFirstSelectedLineStartIndex(), this.getLastSelectedLineEndIndex(), updatedSelectedLinesText);
 
@@ -269,7 +269,7 @@ class TextFormControlView extends FormControlView {
     }
 
     outdentSelectedLines() {
-        //Console.log('outdentSelectedLines');
+        //app.log('outdentSelectedLines');
 
         var selectionStartIndex = this.getSelectionStartIndex();
         var selectionEndIndex = this.getSelectionEndIndex();
@@ -319,9 +319,9 @@ class TextFormControlView extends FormControlView {
         }.bind(this));
         updatedSelectedLinesText = updatedSelectedLinesText.replaceLast("\n", '');
 
-        //Console.log('selectedLinesText', selectedLinesText);
-        //Console.log('selectedLinesCount', selectedLinesCount);
-        //Console.log('updatedSelectedLinesText', updatedSelectedLinesText);
+        //app.log('selectedLinesText', selectedLinesText);
+        //app.log('selectedLinesCount', selectedLinesCount);
+        //app.log('updatedSelectedLinesText', updatedSelectedLinesText);
         
         var updatedValue = this.getValue().replaceRange(this.getFirstSelectedLineStartIndex(), this.getLastSelectedLineEndIndex(), updatedSelectedLinesText);
 
@@ -351,7 +351,7 @@ class TextFormControlView extends FormControlView {
     getSelectedLinesCount() {
         var selectionLineCount = 0;
         var selectedText = this.getSelectedText();
-        //Console.log('selectedText', selectedText);
+        //app.log('selectedText', selectedText);
 
         if(selectedText) {
             selectionLineCount = selectedText.getLineCount();
@@ -410,7 +410,7 @@ class TextFormControlView extends FormControlView {
 
         // If the selection contains the last line
         if(this.doesSelectionContainLastLine()) {
-            //Console.log('this.doesSelectionContainLastLine()', this.doesSelectionContainLastLine());
+            //app.log('this.doesSelectionContainLastLine()', this.doesSelectionContainLastLine());
             // Then the current line end index is the end of all of the text
             currentLineEndIndex = value.length;
         }

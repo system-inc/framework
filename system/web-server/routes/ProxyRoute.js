@@ -65,11 +65,11 @@ class ProxyRoute extends Route {
 
 		// Set the headers
 		response.headers = responseHeaders;
-		//Console.log(response.headers);
+		//app.log(response.headers);
 		
 		// Set the content
 		response.content = webRequestResponse.body;
-		//Console.log(content);
+		//app.log(content);
 
 		// Send the response
 		await super.follow.apply(this, arguments);

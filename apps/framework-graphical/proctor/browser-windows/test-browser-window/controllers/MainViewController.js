@@ -13,7 +13,7 @@ var MainViewController = ViewController.extend({
 
         // Set the testBrowserWindowUniqueIdentifier - must use window. as we do not have an HtmlDocument object
         var testBrowserWindowUniqueIdentifier = window.location.hash.replace('#', '');
-        //Console.log('testBrowserWindowUniqueIdentifier', testBrowserWindowUniqueIdentifier);
+        //app.log('testBrowserWindowUniqueIdentifier', testBrowserWindowUniqueIdentifier);
 
         // Handle commands from the mainBrowserWindow
         Electron.ipcRenderer.on('mainBrowserWindow.commandTestBrowserWindow', function(eventFromIpcMain, command, data) {
@@ -49,7 +49,7 @@ var MainViewController = ViewController.extend({
                     });
                 });
 
-                //Console.log('Testing below');
+                //app.log('Testing below');
                 proctor.getAndRunTestMethod(testClassFilePath, testClassName, testMethodName);
             }
             // close

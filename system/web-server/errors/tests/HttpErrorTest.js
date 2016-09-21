@@ -8,8 +8,8 @@ class HttpErrorTest extends Test {
 
 	testHttpErrorConstruction() {
 		var actual = new HttpError('testHttpErrorConstruction error message.');
-		//Console.info(actual);
-		//Console.info(Error.toObject(actual));
+		//app.info(actual);
+		//app.info(Error.toObject(actual));
 
 		Assert.true(Error.is(actual), 'Error.is()');
 		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
@@ -20,7 +20,7 @@ class HttpErrorTest extends Test {
 		Assert.equal(actual.message, 'testHttpErrorConstruction error message.', 'message is set correctly');
 
 		var firstCallSiteData = actual.stack.getCallSiteData(0);
-		//Console.info(firstCallSiteData);
+		//app.info(firstCallSiteData);
 		Assert.true(firstCallSiteData.functionName.contains('testHttpErrorConstruction'), 'first call site data functionName is correct');
 		Assert.equal(firstCallSiteData.fileName, 'HttpErrorTest.js', 'first call site data fileName is correct');
 	}

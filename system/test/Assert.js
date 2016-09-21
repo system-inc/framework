@@ -486,7 +486,7 @@ class Assert extends Node.Assert {
 	}
 
 	static doesThrowAsynchronously(shouldThrow, block, expectedError, message, callee) {
-		//Console.info('callee', callee);
+		//app.info('callee', callee);
 
 		// Allow the user to not pass an expected Exception type
 		if(String.is(expectedError)) {
@@ -503,7 +503,7 @@ class Assert extends Node.Assert {
 		return new Promise(function(resolve, reject) {
 			function finish(error) {
 				try {
-					//Console.info(error);
+					//app.info(error);
 
 					// Failure case - if we should not throw but there is an error
 					if(!shouldThrow && error) {
@@ -530,7 +530,7 @@ class Assert extends Node.Assert {
 				}
 				catch(error) {
 					// TODO: This isn't working
-					Console.warn('Stack traces aren\'t being captured correctly');
+					app.warn('Stack traces aren\'t being captured correctly');
 					//Error.captureStackTrace(error, callee);
 
 					Assert.eventEmitter.emit('Assert.finished', {
@@ -541,7 +541,7 @@ class Assert extends Node.Assert {
 					});
 
 					// TODO:
-					Console.error('Rejected errors here aren\'t bubbling up to the Proctor correctly, need to fix this');
+					app.error('Rejected errors here aren\'t bubbling up to the Proctor correctly, need to fix this');
 
 					reject(error); // This isn't being caught by the proctor
 				}

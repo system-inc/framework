@@ -10,9 +10,9 @@ class DataTest extends Test {
 		var actual = 'Encode and decode me.';
 
 		actual = await Data.encode(actual, 'gzip');
-		//Console.log(actual.toString());
+		//app.log(actual.toString());
 		actual = await Data.decode(actual, 'gzip');
-		//Console.log(actual);
+		//app.log(actual);
 
 		var expected = 'Encode and decode me.';
 

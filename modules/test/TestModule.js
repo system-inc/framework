@@ -17,7 +17,6 @@ class TestModule extends Module {
 		// Create a Proctor to oversee all of the tests as they run
 		this.proctor = new Proctor(app.command.options.reporter, app.command.options.breakOnError);
 		//app.log(' proctor created', this.proctor);
-		
 		//return; // Debug
 
 		// If test supervising is enabled
@@ -31,9 +30,17 @@ class TestModule extends Module {
 				app.command.options.path = app.framework.directory;
 			}
 
-			//app.log('getAndRunTests', app.command.options.path, app.command.options.filePattern, app.command.options.methodPattern);
 			//this.proctor.getAndRunTests(app.command.options.path, app.command.options.filePattern, app.command.options.methodPattern);
-			this.proctor.getAndRunTests(Node.Path.join(app.framework.directory, 'globals'), null, app.command.options.methodPattern);
+
+			// Debug
+			var path = null;
+			var filePattern = null;
+			var methodPattern = null;
+			path = Node.Path.join(app.framework.directory, 'globals');
+			//filePattern = 'buffer';
+			methodPattern = app.command.options.methodPattern;
+			app.log('path', path, 'filePattern', filePattern, 'methodPattern', methodPattern);
+			this.proctor.getAndRunTests(path, filePattern, methodPattern);
 		}
 	}
 	

@@ -106,17 +106,17 @@ class Route {
 
 		// Check the request's expression against the route's fullExpression
 		var requestExpression = request.url.path;
-		//Console.log("\n"+'Checking if request expression', requestExpression, 'matches with route full expression', this.fullExpression);
+		//app.log("\n"+'Checking if request expression', requestExpression, 'matches with route full expression', this.fullExpression);
 
 		routeMatch.partial = requestExpression.match(new RegularExpression(this.fullExpression));
 		if(routeMatch.partial) {
-			//Console.log('Partially!');
+			//app.log('Partially!');
 		}
 		routeMatch.complete = requestExpression.match(new RegularExpression('^'+this.fullExpression+'$'));
 		if(routeMatch.complete) {
 			routeMatch.route = this;
 			this.capturedData = routeMatch.complete;
-			//Console.log('Completely! Setting match.');
+			//app.log('Completely! Setting match.');
 		}
 
 		// If we have a partial match (the match may be complete as well)
@@ -139,36 +139,36 @@ class Route {
 		// If we have a match
 		if(routeMatch.route) {
 			// Check the methods
-			//Console.log('Comparing methods', routeMatch.route.methods, 'against', request.method);
+			//app.log('Comparing methods', routeMatch.route.methods, 'against', request.method);
 			if(routeMatch.route && routeMatch.route.methods != '*' && !routeMatch.route.methods.contains(request.method)) {
-				//Console.log('Method match failed!');
+				//app.log('Method match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the protocols
-			//Console.log('Comparing protocols', routeMatch.route.protocols, 'against', request.url.protocol);
+			//app.log('Comparing protocols', routeMatch.route.protocols, 'against', request.url.protocol);
 			if(routeMatch.route && routeMatch.route.protocols != '*' && !routeMatch.route.protocols.contains(request.url.protocol)) {
-				//Console.log('Protocol match failed!');
+				//app.log('Protocol match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the host
-			//Console.log('Comparing hosts', routeMatch.route.hosts.toArray(), 'against', request.url.host);
+			//app.log('Comparing hosts', routeMatch.route.hosts.toArray(), 'against', request.url.host);
 			if(routeMatch.route && routeMatch.route.hosts != '*' && !routeMatch.route.hosts.toArray().contains(request.url.host, false, 'either')) {
-				//Console.log('Host match failed!');
+				//app.log('Host match failed!');
 				routeMatch.route = null;
 			}
 
 			// Check the ports
-			//Console.log('Comparing ports', routeMatch.route.ports, 'against', request.url.port);
+			//app.log('Comparing ports', routeMatch.route.ports, 'against', request.url.port);
 			if(routeMatch.route && routeMatch.route.ports != '*' && !routeMatch.route.ports.contains(request.url.port)) {
-				//Console.log('Port match failed!');
+				//app.log('Port match failed!');
 				routeMatch.route = null;
 			}
 			
 			// If we do not completely match
 			if(routeMatch.route && !routeMatch.complete) {
-				//Console.log('We do not have a complete match!');
+				//app.log('We do not have a complete match!');
 				routeMatch.route = null;
 			}
 		}

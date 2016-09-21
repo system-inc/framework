@@ -8,7 +8,7 @@ class Router {
 	routes = [];
 
 	loadRoutes(routes, project) {
-		//Console.log('Loading routes...');
+		//app.log('Loading routes...');
 
 		if(routes) {
 			routes.each(function(routeSettingsIndex, routeSettings) {
@@ -16,7 +16,7 @@ class Router {
 			}.bind(this));
 		}
 
-		//Console.log(this.routes);
+		//app.log(this.routes);
 	}
 
 	matchRoute(request, response) {
@@ -40,7 +40,7 @@ class Router {
 
 	async route(request, response) {
 		var route = this.matchRoute(request, response);
-		//Console.log(route);
+		//app.log(route);
 
 		// Handle no route found
 		if(route) {

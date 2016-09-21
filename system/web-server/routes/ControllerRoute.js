@@ -16,7 +16,7 @@ class ControllerRoute extends Route {
 		this.inheritProperty('controllerName', settings, parent);
 		this.inheritProperty('controllerMethodName', settings, parent);
 
-		//Console.info('ControllerRoute.construct', 'settings', settings, 'parent', parent);
+		//app.info('ControllerRoute.construct', 'settings', settings, 'parent', parent);
 	}
 
 	async follow(request, response) {

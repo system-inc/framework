@@ -152,7 +152,7 @@ class Terminal {
 
     static demonstrateStyles() {
         Terminal.ansiStyles.each(function(style) {
-            Console.log(Terminal.color('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', style)+' '+style);
+            app.log(Terminal.color('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', style)+' '+style);
         });
     }
 

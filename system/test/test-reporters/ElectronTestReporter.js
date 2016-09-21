@@ -6,7 +6,7 @@ import AssertionError from './../errors/AssertionError.js';
 class ElectronTestReporter extends TestReporter {
 
 	//startedRunningTests(data) {
-	//	Console.log('start');
+	//	app.log('start');
 	//}
 
 	//startedRunningTest(data) {
@@ -25,7 +25,7 @@ class ElectronTestReporter extends TestReporter {
 	//}	
 
 	//finishedRunningTests(data) {
-	//	Console.log('end');
+	//	app.log('end');
 	//}
 
 }

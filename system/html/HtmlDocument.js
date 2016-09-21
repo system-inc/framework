@@ -127,7 +127,7 @@ class HtmlDocument extends XmlDocument {
 			this.domDocument = document;
 			this.domWindow = document.defaultView; // window
 			document.htmlDocument = this;
-			//Console.log('DOM present, HtmlDocument connected to DOM', this);
+			//app.log('DOM present, HtmlDocument connected to DOM', this);
 
 			// Manually connect this <html> HtmlElement to document.documentElement
 			this.view.domNode = this.domDocument.documentElement;
@@ -150,14 +150,14 @@ class HtmlDocument extends XmlDocument {
 	}
 
 	mountToDom() {
-		//Console.log('HtmlDocument mountToDom');
+		//app.log('HtmlDocument mountToDom');
 
 		// Clear the head and body in preparation for writing the HTML document to the DOM
 		// Even though we are removing script references from <head>, any previously included scripts will still have code available (we want this to be the case)
 		this.head.emptyDomNode();
 		this.body.emptyDomNode();
 
-		//Console.log('HtmlDocument.mountToDom', this);
+		//app.log('HtmlDocument.mountToDom', this);
 
 		// Add this.view to the DOM
 		this.view.executeDomUpdate();
@@ -167,7 +167,7 @@ class HtmlDocument extends XmlDocument {
 	}
 
 	mountedToDom() {
-		//Console.log('HtmlDocument mountedToDom');
+		//app.log('HtmlDocument mountedToDom');
 
 		// The HtmlDocument is now added to the DOM
 		this.isMountedToDom = true;
@@ -196,8 +196,8 @@ class HtmlDocument extends XmlDocument {
 	}
 
 	updateDom(htmlNode) {
-		//Console.log('HtmlDocument.updateDom', htmlNode);
-		//Console.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
+		//app.log('HtmlDocument.updateDom', htmlNode);
+		//app.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
 
 		// Do nothing if the HtmlDocument is not added to the DOM yet
 		if(!this.isMountedToDom) {
@@ -214,7 +214,7 @@ class HtmlDocument extends XmlDocument {
 	}
 
 	scheduleDomUpdate(htmlNode) {
-		//Console.log('HtmlDocument.scheduleDomUpdate', htmlNode.tag, Json.encode(htmlNode.attributes));
+		//app.log('HtmlDocument.scheduleDomUpdate', htmlNode.tag, Json.encode(htmlNode.attributes));
 
 		// Add the HtmlElement to the list of updates to do
 		if(htmlNode) {
@@ -224,7 +224,7 @@ class HtmlDocument extends XmlDocument {
 
 		// If an update isn't scheduled already, use the next animation frame to run all updates
 		if(!this.domUpdatesScheduled) {
-			//Console.log('scheduling executeDomUpdates');
+			//app.log('scheduling executeDomUpdates');
 			this.domUpdatesScheduled = true;
 
 			this.domWindow.requestAnimationFrame(function() {
@@ -233,14 +233,14 @@ class HtmlDocument extends XmlDocument {
 			}.bind(this));
 		}
 		else {
-			//Console.log('executeDomUpdates already scheduled')
+			//app.log('executeDomUpdates already scheduled')
 		}
 
-		//Console.log('this.domUpdates', this.domUpdates);
+		//app.log('this.domUpdates', this.domUpdates);
 	}
 
 	executeDomUpdates() {
-		//Console.log('HtmlDocument.executeDomUpdates', 'this.domUpdates', this.domUpdates);
+		//app.log('HtmlDocument.executeDomUpdates', 'this.domUpdates', this.domUpdates);
 
 		// Iterate over all DOM updates
 		this.domUpdates.each(function(htmlNodeIdentifier, htmlNode) {
@@ -322,7 +322,7 @@ class HtmlDocument extends XmlDocument {
             text = this.domDocument.selection.createRange().text;
         }
 
-        Console.log('htmlDocument.getSelectionText', text);
+        app.log('htmlDocument.getSelectionText', text);
 
         return text;
 	}

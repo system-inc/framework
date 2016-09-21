@@ -7,7 +7,7 @@ class ErrorTest extends Test {
 
 	async testErrorConstruction() {
 		var actual = new Error('testErrorConstruction error message.');
-		//Console.info(actual);
+		//app.info(actual);
 
 		Assert.true(Error.is(actual), 'Error.is()');
 		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
@@ -24,7 +24,7 @@ class ErrorTest extends Test {
 		catch(error) {
 			actual = error;
 		}
-		//Console.info(actual);
+		//app.info(actual);
 		
 		Assert.true(Error.is(actual), 'Error.is()');
 		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
@@ -42,7 +42,7 @@ class ErrorTest extends Test {
 		catch(error) {
 			actual = error;
 		}
-		//Console.info(actual);
+		app.info('actual', actual);
 
 		Assert.true(Error.is(actual), 'Error.is()');
 		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
@@ -51,11 +51,11 @@ class ErrorTest extends Test {
 		Assert.equal(actual.message, 'zzz is not defined', 'message is set correctly');
 
 		var firstCallSiteData = actual.stack.getCallSiteData(0);
-		//Console.info(firstCallSiteData);
+		//app.info(firstCallSiteData);
 		Assert.equal(firstCallSiteData.functionName, 'eval', 'first call site data is correct');
 		
 		var secondCallSiteData = actual.stack.getCallSiteData(1);
-		//Console.info(secondCallSiteData);
+		//app.info(secondCallSiteData);
 		Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInNormalFunction'), 'second call site data function name is correct');
 		Assert.equal(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site data fileName is correct');
 	}
@@ -70,7 +70,7 @@ class ErrorTest extends Test {
 		catch(error) {
 			actual = error;
 		}
-		//Console.info(actual);
+		//app.info(actual);
 
 		Assert.true(Error.is(actual), 'Error.is()');
 		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
@@ -79,11 +79,11 @@ class ErrorTest extends Test {
 		Assert.equal(actual.message, 'zzz is not defined', 'message is set correctly');
 
 		var firstCallSiteData = actual.stack.getCallSiteData(0);
-		//Console.info(firstCallSiteData);
+		//app.info(firstCallSiteData);
 		Assert.equal(firstCallSiteData.functionName, 'eval', 'first call site data is correct');
 		
 		var secondCallSiteData = actual.stack.getCallSiteData(1);
-		//Console.info(secondCallSiteData);
+		//app.info(secondCallSiteData);
 		Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInGeneratorFunction'), 'second call site data function name is correct');
 		Assert.equal(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site data fileName is correct');
 	}

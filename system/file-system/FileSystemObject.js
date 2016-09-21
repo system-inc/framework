@@ -65,7 +65,7 @@ class FileSystemObject {
 			this.statusInitialized = true;
 		}
 		else {
-			Console.error('Could not initialize status, file system object at path '+this.path+', does not exist.');
+			app.error('Could not initialize status, file system object at path '+this.path+', does not exist.');
 		}
 	}
 

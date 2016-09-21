@@ -39,12 +39,12 @@ class FileLog extends Log {
 
 		// Troubleshooting why modifying or deleting the log file breaks things, writable is unreliable
 		//if(this.writeStream) {
-		//	Console.log(this.writeStream);
+		//	app.log(this.writeStream);
 		//	if(!this.writeStream.writable) {
-		//		Console.log('!!!!!!!!!! unwritable!');
+		//		app.log('!!!!!!!!!! unwritable!');
 		//	}
 		//	else {
-		//		Console.log('writable!');
+		//		app.log('writable!');
 		//	}
 		//}
 
@@ -87,7 +87,7 @@ class FileLog extends Log {
 
 			// Write to the log
 			this.writeStream.write(data); // No need to await here since we aren't doing anything with the results
-			//Console.log(this.writeStream);
+			//app.log(this.writeStream);
 		}
 		// If we don't have a write stream, add the data to the buffer
 		else {

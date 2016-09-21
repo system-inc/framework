@@ -10,13 +10,13 @@ class ArchivedFileSystemObjectFactory {
 		if(sevenZipArchivedFileSystemObjectProperties.folder == '+') {
 			var ArchivedDirectory = Framework.require('system/archive/file-system-objects/ArchivedDirectory.js');
 			archivedFileSystemObject = new ArchivedDirectory(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
-			//Console.log('ArchivedDirectory', archivedFileSystemObject);
+			//app.log('ArchivedDirectory', archivedFileSystemObject);
 		}
 		// Files
 		else {
 			var ArchivedFile = Framework.require('system/archive/file-system-objects/ArchivedFile.js');
 			archivedFileSystemObject = new ArchivedFile(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
-			//Console.log('ArchivedFile', archivedFileSystemObject);
+			//app.log('ArchivedFile', archivedFileSystemObject);
 		}
 
 		archivedFileSystemObject.extractedSizeInBytes = sevenZipArchivedFileSystemObjectProperties.size;

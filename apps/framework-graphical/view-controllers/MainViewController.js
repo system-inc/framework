@@ -102,7 +102,7 @@ var MainViewController = ViewController.extend({
 
         this.subviews.testsFormView.append(tableView);
 
-        //Console.log(tableView.getData());
+        //app.log(tableView.getData());
 
         this.view.append(this.subviews.testsFormView);
     },
@@ -205,7 +205,7 @@ var MainViewController = ViewController.extend({
 
             // If a test failed
             if(data.data.failedTestMethods.length) {
-                //Console.log('failed a test!');
+                //app.log('failed a test!');
                 // Show the window and the dev tools
                 testBrowserWindow.openDeveloperTools();
                 testBrowserWindow.show();

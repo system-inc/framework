@@ -69,7 +69,7 @@ class WebRequest {
 			}
 		}
 
-		//Console.log(this.url);
+		//app.log(this.url);
 		
 		// If set, make sure body is a string
 		if(this.body && !String.is(this.body)) {
@@ -79,9 +79,9 @@ class WebRequest {
 		// If data is set, method is GET, and no body, convert data to query parameters
 		if(this.data && this.method == 'GET' && !this.body) {
 			this.data.each(function(key, value) {
-				//Console.log('setting query param', key, value, this.url);
+				//app.log('setting query param', key, value, this.url);
 				this.url.setQueryParameter(key, value);
-				//Console.log('query param set', key, value, this.url);
+				//app.log('query param set', key, value, this.url);
 			}.bind(this));
 		}
 		// If data is set, method is anything but GET, and no body, convert data to body
@@ -135,7 +135,7 @@ class WebRequest {
 		};
 
 		var response = yield WebRequest.request(options);
-		//Console.log(response);
+		//app.log(response);
 
 		return response;
 	}
@@ -165,7 +165,7 @@ class WebRequest {
 
 				var chunks = [];
 
-				//Console.log('response!!!', response);
+				//app.log('response!!!', response);
 
 				// Bundle the webResponse
 				var webResponse = {
@@ -191,10 +191,10 @@ class WebRequest {
 					bytesSent: response.connection.bytesWritten,
 					ipAddress: new IpAddress(response.connection.remoteAddress),
 				};
-				//Console.log('webResponse (before finish)', webResponse);
+				//app.log('webResponse (before finish)', webResponse);
 
 				// Header debugging
-				//Console.warn(webResponse.headers);
+				//app.warn(webResponse.headers);
 				//Node.exit(response.rawHeaders);
 				//Node.exit(response.headers);
 
@@ -238,7 +238,7 @@ class WebRequest {
 					// Stop and attach the stopwatch
 					webResponse.stopwatch = stopwatch.stop();
 
-					//Console.log('Web request finished:', webResponse);
+					//app.log('Web request finished:', webResponse);
 
 					// Resolve the promise
 					resolve(webResponse);
@@ -246,28 +246,28 @@ class WebRequest {
 
 				// Build the body
 				response.on('data', function(chunk) {
-					//Console.log('Got chunk...', chunk.substring(0, 30));
+					//app.log('Got chunk...', chunk.substring(0, 30));
 					chunks.push(chunk);
 				});
 
 				// Resolve the promise when the response ends
 				response.on('end', function() {
-					//Console.log('end event');
+					//app.log('end event');
 					finish.run();
 				});
 
 				// Resolve the promise when the response ends
 				response.on('close', function() {
-					//Console.log('close event');
+					//app.log('close event');
 					finish.run();
 				});
 			});
 
-			//Console.log('WebRequest.request', request);
+			//app.log('WebRequest.request', request);
 
 			// Handle errors
 			request.on('error', function(error) {
-				Console.log('Problem with request:', error.message);
+				app.log('Problem with request:', error.message);
 				reject(error);
 			});
 
@@ -276,7 +276,7 @@ class WebRequest {
 				request.write(options.body);
 			}
 
-			//Console.log('WebRequest.request', 'ending request...');
+			//app.log('WebRequest.request', 'ending request...');
 
 			// Must always call .end() even if there is no data being written to the request body
 			request.end();

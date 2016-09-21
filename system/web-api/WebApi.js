@@ -16,24 +16,24 @@ var WebApi = Class.extend({
     },
 
     request: function*(method, path, data, options) {
-        //Console.log(method, path, data);
+        //app.log(method, path, data);
 
         // Build the URL
         var url = new Url(this.url.toString()+path);
-        //Console.log(url.toString());
+        //app.log(url.toString());
 
         // Set the options
         var options = {
             method: method,
             body: data,
         }.merge(options);
-        //Console.log(options);
+        //app.log(options);
 
         // Make the request
         var webRequest = new WebRequest(url, options);
-        //Console.log('webRequest:', webRequest);
+        //app.log('webRequest:', webRequest);
         var webRequestResponse = yield webRequest.execute();
-        //Console.log('webRequestResponse:', webRequestResponse);
+        //app.log('webRequestResponse:', webRequestResponse);
 
         return webRequestResponse;
     },

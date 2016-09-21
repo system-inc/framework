@@ -161,7 +161,7 @@ class StringTest extends Test {
 		//	}
 
 		//	if((i + 1) % 10000 == 0) {
-		//		Console.log('Generated '+Number.addCommas(i + 1)+' unique identifiers without collision.');
+		//		app.log('Generated '+Number.addCommas(i + 1)+' unique identifiers without collision.');
 		//	}
 		//}
 	}

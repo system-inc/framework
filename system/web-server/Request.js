@@ -74,7 +74,7 @@ class Request {
 		//};
 
 		// IP address
-		//Console.log(Json.encode(nodeRequest.connection.remoteAddress));
+		//app.log(Json.encode(nodeRequest.connection.remoteAddress));
 		this.ipAddress = this.connectingIpAddress = IpAddressFactory.create(nodeRequest.connection.remoteAddress);
 		
 		// Referrer
@@ -130,7 +130,7 @@ class Request {
 		// Show the request in the console
 		var requestsLogEntry = this.prepareLogEntry();
 		if(this.webServer.settings.get('verbose')) {
-			Console.log(this.webServer.identifier+' request: '+requestsLogEntry);
+			app.log(this.webServer.identifier+' request: '+requestsLogEntry);
 		}
 
 		// Conditionally log the request

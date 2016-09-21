@@ -11,7 +11,7 @@ import EventEmitter from './../../../system/events/EventEmitter.js';
 class HtmlElementTest extends Test {
 
 	async testHtmlElement() {
-		//Console.info(HtmlElement);
+		//app.info(HtmlElement);
 
 		Assert.true(Class.doesImplement(HtmlElement, EventEmitter), 'HtmlElement class implements EventEmitter');
 

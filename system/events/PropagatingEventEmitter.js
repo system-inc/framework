@@ -9,7 +9,7 @@ class PropagatingEventEmitter extends EventEmitter {
 	parent = null;
 
 	async emit(eventIdentifier, data, eventOptions) {
-		//Console.log('PropagatingEventEmitter emit', this.tag, eventIdentifier);
+		//app.log('PropagatingEventEmitter emit', this.tag, eventIdentifier);
 
 		var propagatingEvent = null;
 
@@ -20,7 +20,7 @@ class PropagatingEventEmitter extends EventEmitter {
 		}
 
 		if(shouldEmitAncestorEventEmittersInCapturePath) {
-			//Console.log('shouldEmitAncestorEventEmittersInCapturePath', shouldEmitAncestorEventEmittersInCapturePath);
+			//app.log('shouldEmitAncestorEventEmittersInCapturePath', shouldEmitAncestorEventEmittersInCapturePath);
 
 			// Create the event, we must be the target emitter, so we pass "this" into createEvent
 			propagatingEvent = this.createEvent(this, eventIdentifier, data, eventOptions);
@@ -32,11 +32,11 @@ class PropagatingEventEmitter extends EventEmitter {
 				ancestorEventEmittersInCapturePath.prepend(context.parent);
 				context = context.parent;
 			}
-			//Console.warn('ancestorEventEmittersInCapturePath', ancestorEventEmittersInCapturePath);
+			//app.warn('ancestorEventEmittersInCapturePath', ancestorEventEmittersInCapturePath);
 
 			// Emit the event along the capturing path
 			await ancestorEventEmittersInCapturePath.each(async function(ancestorEventEmitterIndex, ancestorEventEmitter) {
-				//Console.log('should emit on', ancestorEventEmitter.name);
+				//app.log('should emit on', ancestorEventEmitter.name);
 				// Emit the event all the way down until
 				propagatingEvent = await ancestorEventEmitter.emit(eventIdentifier, propagatingEvent);
 			});
@@ -48,13 +48,13 @@ class PropagatingEventEmitter extends EventEmitter {
 		// If we are emitting an existing event (propagating)
 		if(PropagatingEvent.is(data)) {
 			// Set the propagatingEvent to the data
-			//Console.info('setting propagatingEvent to data');
+			//app.info('setting propagatingEvent to data');
 			propagatingEvent = data;
 		}
 
 		// If we have a propagatingEvent
 		if(propagatingEvent) {
-			//Console.error('we have a propagating event');
+			//app.error('we have a propagating event');
 
 			// Update the currentPhase of the event
 			// We are at the emitter
@@ -97,14 +97,14 @@ class PropagatingEventEmitter extends EventEmitter {
 			shouldEmit = false;
 		}
 
-		//Console.warn('propagatingEvent.currentPhase', propagatingEvent.currentPhase);
+		//app.warn('propagatingEvent.currentPhase', propagatingEvent.currentPhase);
 
 		// Conditionally emit the event at the current level
 		if(shouldEmit) {
 			propagatingEvent = await this.super(eventIdentifier, data, eventOptions); // this will make propagatingEvent.currentEmitter = this
 		}
 
-		//Console.warn('propagatingEvent.currentPhase', propagatingEvent.currentPhase);
+		//app.warn('propagatingEvent.currentPhase', propagatingEvent.currentPhase);
 
 		// Determine if we should bubble
 		var shouldBubble = true;
@@ -128,7 +128,7 @@ class PropagatingEventEmitter extends EventEmitter {
 			}
 			// Don't bubble if the event is in the "capturing" phase
 			else if(propagatingEvent.currentPhase == PropagatingEvent.phases.capturing) {
-				//Console.info('not bubbling because we are capturing')
+				//app.info('not bubbling because we are capturing')
 				shouldBubble = false;
 			}
 		}

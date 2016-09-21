@@ -19,7 +19,7 @@ var MultipleLineTextFormControlView = TextFormControlView.extend({
 
 		// Word wrap
 		if(this.settings.get('wordWrap')) {
-			//Console.log('Enabling word wrap.');
+			//app.log('Enabling word wrap.');
 			this.enableWordWrap();
 		}
     },

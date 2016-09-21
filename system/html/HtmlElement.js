@@ -45,7 +45,7 @@ class HtmlElement extends HtmlNode {
 
 		// Update the DOM if attributes are already set
 		if(Object.keys(this.attributes).length) {
-			//Console.log('Attributes already set on tag', this.tag);
+			//app.log('Attributes already set on tag', this.tag);
 			this.updateDom();
 		}
 	}
@@ -124,7 +124,7 @@ class HtmlElement extends HtmlNode {
 	}
 
 	applyDomUpdates() {
-		//Console.log('HtmlElement applyDomUpdates', this.tag);
+		//app.log('HtmlElement applyDomUpdates', this.tag);
 
 		if(!this.domNode) {
 			throw new Error('No .domNode present for tag '+this.tag+', this should never happen.');
@@ -138,7 +138,7 @@ class HtmlElement extends HtmlNode {
 	}
 
 	updateDomNodeAttributes() {
-		//Console.log('updateDomNodeAttributes', this.tag, Json.encode(this.attributes));
+		//app.log('updateDomNodeAttributes', this.tag, Json.encode(this.attributes));
 
 		// TODO:
 		// Because the virtual DOM is the state of truth, can we just keep track of all changes
@@ -150,7 +150,7 @@ class HtmlElement extends HtmlNode {
 
 		// Loop through all of the DOM element's attributes
 		this.domNode.attributes.each(function(domNodeAttributeIndex, domNodeAttribute) {
-			//Console.log(domNodeAttributeIndex, domNodeAttribute, domNodeAttribute.name, domNodeAttribute.value);
+			//app.log(domNodeAttributeIndex, domNodeAttribute, domNodeAttribute.name, domNodeAttribute.value);
 
 			// Keep track of all DOM element attribute names so we know later on if we need to add anything
 			domNodeAttributeNames[domNodeAttribute.name] = true;
@@ -186,16 +186,16 @@ class HtmlElement extends HtmlNode {
 			}
 		}.bind(this));
 
-		//Console.log('domNodeAttributesToUpdate', this.tag, domNodeAttributesToUpdate);
+		//app.log('domNodeAttributesToUpdate', this.tag, domNodeAttributesToUpdate);
 
 		// Update the DOM element's attributes
 		domNodeAttributesToUpdate.each(function(domNodeAttributeToUpdateName, domNodeAttributeToUpdate) {
 			if(domNodeAttributeToUpdate.action == 'remove') {
-				//Console.log('removeAttribute', domNodeAttributeToUpdateName);
+				//app.log('removeAttribute', domNodeAttributeToUpdateName);
 				this.domNode.removeAttribute(domNodeAttributeToUpdateName);
 			}
 			else if(domNodeAttributeToUpdate.action == 'set') {
-				//Console.log('setAttribute', this.tag, domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
+				//app.log('setAttribute', this.tag, domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
 				this.domNode.setAttribute(domNodeAttributeToUpdateName, domNodeAttributeToUpdate.value);
 			}
 		}.bind(this));
@@ -217,7 +217,7 @@ class HtmlElement extends HtmlNode {
 			if(childIndex < domNodeChildNodesLength) {
 				var currentChildDomNode = this.domNode.childNodes[childIndex];
 
-				//Console.log('Comparing to current domNode', 'currentChildDomNode', currentChildDomNode, 'child', child);
+				//app.log('Comparing to current domNode', 'currentChildDomNode', currentChildDomNode, 'child', child);
 
 				// If the child's domNode matches the current child DOM node
 				if(child.domNode === currentChildDomNode) {
@@ -251,7 +251,7 @@ class HtmlElement extends HtmlNode {
 		var domFragment = document.createElement(htmlElement.tag);
 		//var domFragment = document.createElement(htmlElement.tag);
 		//var domFragment = document.createRange().createContextualFragment(htmlElement.tagToString()); // This does not work consistently
-		//Console.log('HtmlElement domFragment for', htmlElement.tagToString(), domFragment);
+		//app.log('HtmlElement domFragment for', htmlElement.tagToString(), domFragment);
 
 		return domFragment;
 	}
@@ -325,21 +325,21 @@ class HtmlElement extends HtmlNode {
 	}
 
 	show() {
-		//Console.log('show');
+		//app.log('show');
 		this.setStyle('display', 'flex');
 
 		return this;
 	}
 
 	hide() {
-		//Console.log('hide');
+		//app.log('hide');
 		this.setStyle('display', 'none');
 
 		return this;
 	}
 
     focus() {
-    	//Console.log('HtmlElement.focus', this.tag, this.attributes);
+    	//app.log('HtmlElement.focus', this.tag, this.attributes);
 
         // If we have a domNode
         if(this.domNode) {
@@ -400,7 +400,7 @@ class HtmlElement extends HtmlNode {
 			//Console.standardLog(value);
 
 			if(value.contains('<')) {
-				Console.warn('HTML strings are not supported (I should implement), use View or HtmlElement or HtmlNode.', value);
+				app.warn('HTML strings are not supported (I should implement), use View or HtmlElement or HtmlNode.', value);
 			}
 
 			value = new HtmlNode(value, parent, type);

@@ -13,7 +13,7 @@ class EventEmitter {
 	recommendedMaximumEventListenersPerEventIdentifier = null;
 
 	async on(eventPattern, functionToBind, timesToRun) {
-		//Console.log('EventEmitter on', eventPattern, this.tag, Json.encode(this.attributes));
+		//app.log('EventEmitter on', eventPattern, this.tag, Json.encode(this.attributes));
 
 		var on = await this.addEventListener(eventPattern, functionToBind, timesToRun);
 
@@ -27,7 +27,7 @@ class EventEmitter {
 	}
 
 	async emit(eventIdentifier, data, eventOptions) {
-		//Console.warn('EventEmitter.emit', eventIdentifier, eventOptions);
+		//app.warn('EventEmitter.emit', eventIdentifier, eventOptions);
 
 		// Default data to null
 		if(data === undefined) {
@@ -36,7 +36,7 @@ class EventEmitter {
 
 		// Allow multiple events to be emitted by passing in an array
 		if(Array.is(eventIdentifier)) {
-			//Console.error('eventIdentifier is an array will multiple eventPatterns to emit');
+			//app.error('eventIdentifier is an array will multiple eventPatterns to emit');
 			await eventIdentifier.each(async function(currentEventIdentifierIndex, currentEventIdentifier) {
 				await this.emit(currentEventIdentifier, data);
 			}.bind(this));
@@ -45,7 +45,7 @@ class EventEmitter {
 		}
 		// Allow multiple events to be emitted separated by spaces or ", "
 		else if(String.is(eventIdentifier) && (eventIdentifier.contains(' ') || eventIdentifier.contains(','))) {
-			//Console.error('eventIdentifier is a string will multiple eventPatterns to emit');
+			//app.error('eventIdentifier is a string will multiple eventPatterns to emit');
 
 			eventIdentifier = eventIdentifier.replace(', ', ' ');
 			eventIdentifier = eventIdentifier.replace(',', ' ');
@@ -58,10 +58,10 @@ class EventEmitter {
 			return this;
 		}
 
-		//Console.log('EventEmitter.emit', 'eventIdentifier', eventIdentifier, 'data', data);
+		//app.log('EventEmitter.emit', 'eventIdentifier', eventIdentifier, 'data', data);
 
 		var matchingEventListeners = this.getEventListeners(eventIdentifier);
-		//Console.info('matchingEventListeners', matchingEventListeners);
+		//app.info('matchingEventListeners', matchingEventListeners);
 
 		// Create reference to the event to emit
 		var event = null
@@ -95,7 +95,7 @@ class EventEmitter {
 
 				// Unbind the function if the function has been run too many times
 				if(matchingEventListener.timesRan == matchingEventListener.timesToRun) {
-					//Console.info('Remove event listener after it has been run too many times', matchingEventListener, this.eventListeners.indexOf(matchingEventListener));
+					//app.info('Remove event listener after it has been run too many times', matchingEventListener, this.eventListeners.indexOf(matchingEventListener));
 					this.eventListeners.delete(this.eventListeners.indexOf(matchingEventListener));
 				}
 
@@ -116,7 +116,7 @@ class EventEmitter {
 	}
 
 	async addEventListener(eventPattern, functionToBind, timesToRun) {
-		//Console.log('EventEmitter.bind', 'eventPattern', eventPattern, 'functionToBind', functionToBind, 'timesToRun', timesToRun);
+		//app.log('EventEmitter.bind', 'eventPattern', eventPattern, 'functionToBind', functionToBind, 'timesToRun', timesToRun);
 
 		// Allow multiple events to be registered by passing in an array
 		if(Array.is(eventPattern)) {
@@ -159,7 +159,7 @@ class EventEmitter {
 		}
 
 		if(eventListeners.length > this.recommendedMaximumEventListenersPerEventIdentifier) {
-			Console.warn('Possible memory leak detected. There are '+eventListeners.length+' event listeners bound to the event pattern "'+eventPattern+'". The recommended maximum event listeners for this event pattern is '+this.recommendedMaximumEventListenersPerEventIdentifier+'.', "\n"+(new Error().stack.stackTraceToString()));
+			app.warn('Possible memory leak detected. There are '+eventListeners.length+' event listeners bound to the event pattern "'+eventPattern+'". The recommended maximum event listeners for this event pattern is '+this.recommendedMaximumEventListenersPerEventIdentifier+'.', "\n"+(new Error().stack.stackTraceToString()));
 		}
 
 		// Do this await at the end of the function
@@ -177,7 +177,7 @@ class EventEmitter {
 		// Walk backwards through the array so we can edit the array in place
 		for(var currentEventListenerIndex = this.eventListeners.length - 1; currentEventListenerIndex >= 0; currentEventListenerIndex--) {
 			var currentEventListener = this.eventListeners[currentEventListenerIndex];
-			//Console.info('currentEventListener', currentEventListener);
+			//app.info('currentEventListener', currentEventListener);
 			var shouldRemoveCurrentEventListener = false;
 			  
 			if(
@@ -247,13 +247,13 @@ class EventEmitter {
 					if(RegularExpression.is(eventPattern)) {
 						// If the regular expressions are the same
 						if(RegularExpression.equal(eventListener.eventPattern, eventPattern)) {
-							//Console.info('eventListener.eventPattern and eventPattern are both regular expressions and are the same');
+							//app.info('eventListener.eventPattern and eventPattern are both regular expressions and are the same');
 							matchingEventListeners.append(eventListener);
 						}
 					}
 					// If the event pattern is a string
 					else {
-						//Console.info('eventListener.eventPattern is a regular expression and eventPattern is a string');
+						//app.info('eventListener.eventPattern is a regular expression and eventPattern is a string');
 						if(eventListener.eventPattern.test(eventPattern)) {
 							matchingEventListeners.append(eventListener);
 						}

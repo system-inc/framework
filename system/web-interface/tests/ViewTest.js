@@ -12,7 +12,7 @@ import EventEmitter from './../../../system/events/EventEmitter.js';
 class ViewTest extends Test {
 
 	async testView() {
-		//Console.info(HtmlElement);
+		//app.info(HtmlElement);
 
 		// Create a new view
 		var actual = new View();

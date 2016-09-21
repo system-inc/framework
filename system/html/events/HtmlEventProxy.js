@@ -259,7 +259,7 @@ class HtmlEventProxy {
 	static htmlEventPatternToDomEventIdentifiers(htmlEventPattern) {
 		var domEventIdentifiers = [];
 
-		//Console.log('HtmlEventProxy.htmlEventPatternToDomEventIdentifiers', htmlEventPattern);
+		//app.log('HtmlEventProxy.htmlEventPatternToDomEventIdentifiers', htmlEventPattern);
 
 		HtmlEventProxy.domEventIdentifierMap.each(function(domEventIdentifier, domEventIdentifierObject) {
 			domEventIdentifierObject.eventPatterns.each(function(eventPattern) {
@@ -372,7 +372,7 @@ class HtmlEventProxy {
 
 		if(map[eventPattern]) {
 			throw new Error('Event listener not bound for "'+eventPattern+'". You must use '+map[eventPattern]+' instead of "'+eventPattern+'".');
-			//Console.error('Event listener not bound for "'+eventPattern+'". You must use', map[eventPattern], 'instead of "'+eventPattern+'".');
+			//app.error('Event listener not bound for "'+eventPattern+'". You must use', map[eventPattern], 'instead of "'+eventPattern+'".');
 		}
 	}
 
@@ -500,7 +500,7 @@ class HtmlEventProxy {
 				'htmlDocument.domUpdatesExecuted',
 			];
 			if(!common.contains(eventPattern)) {
-				Console.log('No domEventIdentifier found for "'+eventPattern+'", the eventPattern must not be for a standard event.');
+				app.log('No domEventIdentifier found for "'+eventPattern+'", the eventPattern must not be for a standard event.');
 			}
 		}
 
@@ -525,7 +525,7 @@ class HtmlEventProxy {
 			var eventsToBeUnbound = htmlEventEmitter.getEventListeners(eventPattern);
 			eventPatternCount = eventsToBeUnbound.length;
 			Console.standardWarn('We will be unbinding', eventPatternCount, 'events for', eventPattern);
-			Console.log(eventsToBeUnbound);
+			app.log(eventsToBeUnbound);
 		}
 
 		// Loop through each DOM event identifier for the given event pattern

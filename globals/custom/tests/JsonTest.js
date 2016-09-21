@@ -76,7 +76,7 @@ class JsonTest extends Test {
 		};
 		actual.cyclicalReference = actual;
 		actual = Json.decycle(actual);
-		//Console.log(actual);
+		//app.log(actual);
 
 		var expected = {
 			fruit: 'apple',

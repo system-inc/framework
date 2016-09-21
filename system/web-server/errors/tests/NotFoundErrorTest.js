@@ -9,8 +9,8 @@ class NotFoundErrorTest extends Test {
 
 	testNotFoundErrorConstruction() {
 		var actual = new NotFoundError('testNotFoundErrorConstruction error message.');
-		//Console.info(actual);
-		//Console.info(Error.toObject(actual));
+		//app.info(actual);
+		//app.info(Error.toObject(actual));
 		
 		Assert.true(Error.is(actual), 'Error.is()');
 		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');
@@ -22,7 +22,7 @@ class NotFoundErrorTest extends Test {
 		Assert.equal(actual.message, 'testNotFoundErrorConstruction error message.', 'message is set correctly');
 
 		var firstCallSiteData = actual.stack.getCallSiteData(0);
-		//Console.info(firstCallSiteData);
+		//app.info(firstCallSiteData);
 		Assert.true(firstCallSiteData.functionName.contains('testNotFoundErrorConstruction'), 'first call site data functionName is correct');
 		Assert.equal(firstCallSiteData.fileName, 'NotFoundErrorTest.js', 'first call site data fileName is correct');
 	}

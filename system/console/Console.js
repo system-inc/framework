@@ -7,9 +7,9 @@ var Console = console;
 // Static properties
 
 // Keep a reference to the standard console methods
-Console.standardLog = Console.log;
-Console.standardInfo = Console.info;
-Console.standardWarn = Console.warn;
+Console.standardLog = app.log;
+Console.standardInfo = app.info;
+Console.standardWarn = app.warn;
 Console.standardError = Console.error;
 
 // Session for logging
@@ -28,7 +28,7 @@ Console.onDeveloperTools = function() {
 	return Console.location == 'developerTools';
 };
 
-Console.log = function() {
+app.log = function() {
 	if(Console.onDeveloperTools()) {
 		Console.writeToDeveloperTools(arguments, 'log');
 	}
@@ -37,7 +37,7 @@ Console.log = function() {
 	}
 };
 
-Console.info = function() {
+app.info = function() {
 	if(Console.onDeveloperTools()) {
 		Console.writeToDeveloperTools(arguments, 'info');
 	}
@@ -46,7 +46,7 @@ Console.info = function() {
 	}
 };
 
-Console.warn = function() {
+app.warn = function() {
 	if(Console.onDeveloperTools()) {
 		Console.writeToDeveloperTools(arguments, 'warn');
 	}

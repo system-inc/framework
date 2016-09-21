@@ -16,7 +16,7 @@ class ArchiveFile extends File {
 		var archivedFileSystemObject = null;
 
 		list.each(function(index, currentArchivedFileSystemObject) {
-			//Console.log('Comparing', "\n", Terminal.style(archivedFileSystemObjectPath, 'red'), 'to', "\n", Terminal.style(currentArchivedFileSystemObject.path, 'blue'));
+			//app.log('Comparing', "\n", Terminal.style(archivedFileSystemObjectPath, 'red'), 'to', "\n", Terminal.style(currentArchivedFileSystemObject.path, 'blue'));
 			if(archivedFileSystemObjectPath == currentArchivedFileSystemObject.path) {
 				archivedFileSystemObject = currentArchivedFileSystemObject;
 				return false; // break
@@ -30,13 +30,13 @@ class ArchiveFile extends File {
 		if(!this.archivedFileSystemObjects) {
 			// Get the 7-Zip list from the command line executable
 			var sevenZipList = await SevenZip.list(this.file);
-			//Console.log(sevenZipList);
+			//app.log(sevenZipList);
 
 			this.archivedFileSystemObjects = [];
 
 			// Create new ArchivedFileSystemObjects from the list
 			sevenZipList.each(function(sevenZipArchivedFileSystemObjectPropertiesIndex, sevenZipArchivedFileSystemObjectProperties) {
-				//Console.log('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
+				//app.log('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
 				var archivedFileSystemObject = ArchivedFileSystemObjectFactory.createFromSevenZipArchivedFileSystemObjectProperties(this, sevenZipArchivedFileSystemObjectProperties);
 				this.archivedFileSystemObjects.append(archivedFileSystemObject);
 			}.bind(this));

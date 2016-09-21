@@ -94,7 +94,7 @@ class WebServer extends Server {
 		// Load the routes into the router
 		this.router = new Router();
 		this.router.loadRoutes(this.settings.get('router.routes'));
-		//Console.info('this.router', this.router); Node.exit();
+		//app.info('this.router', this.router); Node.exit();
 	}
 
 	resolveHttpsProtocolFiles() {
@@ -131,7 +131,7 @@ class WebServer extends Server {
 				await protocolSettings.ports.toArray().each(async function(portIndex, port) {
 					// If we are already listening on that port
 					if(this.listeners[port]) {
-						Console.error('Could not create a web server listener on port '+port+', a listener is already using the port.');
+						app.error('Could not create a web server listener on port '+port+', a listener is already using the port.');
 					}
 					// If the port is free
 					else {
@@ -141,19 +141,19 @@ class WebServer extends Server {
 						if(protocol == 'https') {
 							// Make sure they have a keyFile and a certificateFile
 							if(Object.isEmpty(protocolSettings.keyFile)) {
-								Console.error('Could not create a secure web server (HTTPS) listener on port '+port+', the key file is not set.');
+								app.error('Could not create a secure web server (HTTPS) listener on port '+port+', the key file is not set.');
 								return;
 							}
 							if(Object.isEmpty(protocolSettings.certificateFile)) {
-								Console.error('Could not create a secure web server (HTTPS) listener on port '+port+', the certicate file is not set.');
+								app.error('Could not create a secure web server (HTTPS) listener on port '+port+', the certicate file is not set.');
 								return;
 							}
 							if(!File.synchronous.exists(protocolSettings.keyFile)) {
-								Console.error('Could not create a secure web server (HTTPS) listener on port '+port+', the key file "'+protocolSettings.keyFile+'" does not exist.');
+								app.error('Could not create a secure web server (HTTPS) listener on port '+port+', the key file "'+protocolSettings.keyFile+'" does not exist.');
 								return;
 							}
 							if(!File.synchronous.exists(protocolSettings.certificateFile)) {
-								Console.error('Could not create a secure web server (HTTPS) listener on port '+port+', the certificate file "'+protocolSettings.certificateFile+'" does not exist.');
+								app.error('Could not create a secure web server (HTTPS) listener on port '+port+', the certificate file "'+protocolSettings.certificateFile+'" does not exist.');
 								return;
 							}
 
@@ -161,7 +161,7 @@ class WebServer extends Server {
 								key: File.synchronous.read(protocolSettings.keyFile).toString(),
 								cert: File.synchronous.read(protocolSettings.certificateFile).toString(),
 							};
-							//Console.log(httpsServerSettings);
+							//app.log(httpsServerSettings);
 
 							nodeServer = Node.Https.createServer(httpsServerSettings, this.handleRequestConnection.bind(this));
 						}
@@ -182,12 +182,12 @@ class WebServer extends Server {
 							this.listeners[port].on('error', function(error) {
 								// Keep going if the address is in use
 								if(error.code == 'EADDRINUSE') {
-									Console.error('Could not listen to '+protocol.uppercase()+' requests on port '+port+', the port is already in use.');
+									app.error('Could not listen to '+protocol.uppercase()+' requests on port '+port+', the port is already in use.');
 									resolve(true);
 								}
 								// Keep going if the user account does not have access
 								else if(error.code == 'EACCES') {
-									Console.error('Could not listen to '+protocol.uppercase()+' requests on port '+port+', your system user account does not have permission to use port '+port+'.');
+									app.error('Could not listen to '+protocol.uppercase()+' requests on port '+port+', your system user account does not have permission to use port '+port+'.');
 									resolve(true);
 								}
 								// Throw an error in all other cases
@@ -199,7 +199,7 @@ class WebServer extends Server {
 							// Listen for the listening event
 							this.listeners[port].on('listening', function() {
 								if(this.settings.get('verbose')) {
-									Console.log('Listening for '+protocol.uppercase()+' requests on port '+port+'.');
+									app.log('Listening for '+protocol.uppercase()+' requests on port '+port+'.');
 								}
 								resolve(true);
 							}.bind(this));
@@ -215,14 +215,14 @@ class WebServer extends Server {
 
 	async stop() {
 		if(this.settings.get('verbose')) {
-			Console.warn('Stopping '+this.identifier+' web server...');
+			app.warn('Stopping '+this.identifier+' web server...');
 		}
 
 		await this.listeners.each(async function(port, nodeServer) {
 			await new Promise(function(resolve, reject) {
 				nodeServer.close(function() {
 					if(this.settings.get('verbose')) {
-						Console.warn('No longer listening for HTTP requests on port '+port+'.');
+						app.warn('No longer listening for HTTP requests on port '+port+'.');
 					}
 					resolve(true);
 				}.bind(this));
@@ -295,7 +295,7 @@ class WebServer extends Server {
 
 			// Use this to troubleshoot race conditions
 			//var randomMilliseconds = Number.random(1, 100);
-			//Console.log('Waiting '+randomMilliseconds+' milliseconds...');
+			//app.log('Waiting '+randomMilliseconds+' milliseconds...');
 			//await Function.delay(randomMilliseconds);
 
 			// Identify and follow the route
@@ -316,7 +316,7 @@ class WebServer extends Server {
 	handleError(request, response, error) {
 		var logEntry = Console.prepareMessage.call(this, ['WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData()], 'write');
 		if(this.settings.get('verbose')) {
-			Console.log(logEntry);
+			app.log(logEntry);
 		}
 
 		// Mark the response as handled
@@ -349,7 +349,7 @@ class WebServer extends Server {
 	handleInternalServerError(error, nodeResponse, request) {
 		var logEntry = Console.prepareMessage.call(this, ['WebServer.handleInternalServerError() called. Error:', error], 'write');
 		if(this.settings.get('verbose')) {
-			Console.log(logEntry);
+			app.log(logEntry);
 		}
 		
 		nodeResponse.writeHead(500, [['Content-Type', 'application/json']]);

@@ -31,7 +31,7 @@ class XmlTest extends Test {
 	async testXmlDocumentWithElements() {
 		// Blank XML document
 		var actual = new XmlDocument();
-		//Console.log(actual);
+		//app.log(actual);
 	}
 
 	async testXmlElements() {
@@ -50,7 +50,7 @@ class XmlTest extends Test {
 		//actual = new XmlElement('p');
 		//actual.setAttribute('class', 'testClass');
 		//Assert.equal(actual.toString(false), '<p class="testClass"></p>', 'setAttribute');
-		//Console.log(actual.toString());
+		//app.log(actual.toString());
 	}
 
 }

@@ -76,7 +76,7 @@ class Module {
 
 			// Only initialize modules once
 			if(moduleInstance.isInitialized) {
-				//Console.info('Already called Module.initialize for '+moduleName+'.'); // Can comment this out, just leaving this here to see when it triggers
+				//app.info('Already called Module.initialize for '+moduleName+'.'); // Can comment this out, just leaving this here to see when it triggers
 			}
 			else {
 				//app.log('Initializing', moduleName, 'module...');

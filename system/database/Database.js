@@ -93,7 +93,7 @@ class Database {
 		stopwatch.stop();
 
 		// Debug
-		//Console.log(stopwatch.elapsedTime+'ms', queryResults.sql);
+		//app.log(stopwatch.elapsedTime+'ms', queryResults.sql);
 
 		// Calculate the average query time
 		this.statistics.averageQueryTimeInMilliseconds = (this.statistics.averageQueryTimeInMilliseconds + stopwatch.elapsedTime) / 2;
@@ -132,22 +132,22 @@ class Database {
 		var tables = [];
 
 		var allTables = await this.query('SHOW TABLE STATUS');
-		//Console.log(allTables);
+		//app.log(allTables);
 
 		var allTableCharacterSets = await this.query('SELECT `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`character_set_name`, `information_schema`.`TABLES`.`table_name` FROM `information_schema`.`TABLES`, `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY` WHERE `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`collation_name` = `information_schema`.`TABLES`.`table_collation` AND `table_schema` = ?', [this.name]);
-		//Console.log(allTableCharacterSets);
+		//app.log(allTableCharacterSets);
 
 		var allTableColumns = await this.query('SELECT * FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? ORDER BY `ORDINAL_POSITION` ASC', [this.name]);
-		//Console.log(allTableColumns);
+		//app.log(allTableColumns);
 
 		var allTableIndexes = await this.query('SELECT DISTINCT `TABLE_NAME`, `STATISTICS`.* FROM `information_schema`.`STATISTICS` WHERE `TABLE_SCHEMA` = ?', [this.name]);
-		//Console.log(allTableColumns);
+		//app.log(allTableColumns);
 
 		var allTableRelationships = await this.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.name]);
-		//Console.log(allTableRelationships);
+		//app.log(allTableRelationships);
 
 		var allTableRelationshipConstraints = await this.query('SELECT * FROM `information_schema`.`REFERENTIAL_CONSTRAINTS` WHERE `CONSTRAINT_SCHEMA` = ?', [this.name]);
-		//Console.log(allTableRelationshipConstraints);
+		//app.log(allTableRelationshipConstraints);
 		
 		await allTables.rows.each(async function(allTablesIndex, allTablesTable) {
 			// Create the table

@@ -49,7 +49,7 @@ class File extends FileSystemObject {
 	}
 
 	async open(flags) {
-		//Console.log('Running file.open on', this.file, 'with flags', flags);
+		//app.log('Running file.open on', this.file, 'with flags', flags);
 		this.descriptor = await File.open(this.file, flags);
 
 		return this.descriptor;
@@ -62,12 +62,12 @@ class File extends FileSystemObject {
     }
 
     async readToBuffer(length, position) {
-        //Console.log('length', length, 'position', position);
+        //app.log('length', length, 'position', position);
         
         // If there is no file descriptor, open the file in read only mode
         if(!this.descriptor) {
             await this.open('r');
-            //Console.log('Opened file in read mode', this.descriptor);
+            //app.log('Opened file in read mode', this.descriptor);
         }
 
         return new Promise(function(resolve, reject) {
@@ -78,7 +78,7 @@ class File extends FileSystemObject {
                     reject(error);
                 }
                 else {
-                    //Console.log('bytesRead', bytesRead);
+                    //app.log('bytesRead', bytesRead);
                     resolve(buffer);
                 }
             });
@@ -86,7 +86,7 @@ class File extends FileSystemObject {
     }
 
 	async write(data) {
-		//Console.log('Running file.write', 'with descriptor', this.descriptor, data);
+		//app.log('Running file.write', 'with descriptor', this.descriptor, data);
 		var response = await File.write(this.descriptor, data);
 
         return response;
@@ -184,7 +184,7 @@ class File extends FileSystemObject {
                 resolve(readStream);
             });
             readStream.on('error', function(error) {
-                Console.error(error);
+                app.error(error);
                 reject(error);
             });
         });
@@ -200,7 +200,7 @@ class File extends FileSystemObject {
                 resolve(writeStream);
             });
             writeStream.on('error', function(error) {
-                Console.error(error);
+                app.error(error);
                 reject(error);
             });
         });

@@ -91,7 +91,7 @@ class FormView extends View {
 			this.emit('form.submit', this.getData());
 		}
 		else {
-			Console.error('failed validation', validationErrors);
+			app.error('failed validation', validationErrors);
 		}
 	}
 

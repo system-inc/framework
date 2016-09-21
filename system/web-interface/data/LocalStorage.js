@@ -17,15 +17,15 @@ var LocalStorage = DataStore.extend({
 	},
 
 	get: function(path) {
-		//Console.log('LocalStorage.prototype.get path', path);
+		//app.log('LocalStorage.prototype.get path', path);
 
 		if(this.rootPath) {
 			path = this.rootPath+'.'+path;
 		}
-		//Console.log('path', path);
+		//app.log('path', path);
 
 		var value = LocalStorage.getValueByPath(path);
-		//Console.log('path', path, 'value', value);
+		//app.log('path', path, 'value', value);
 		
 		return value;
 	},
@@ -55,11 +55,11 @@ var LocalStorage = DataStore.extend({
 	},
 
 	setData: function(data) {
-		//Console.log('LocalStorage.prototype.setData', data);
+		//app.log('LocalStorage.prototype.setData', data);
 
 		// If there is a root path
 		if(this.rootPath) {
-			//Console.log('this.rootPath', this.rootPath);
+			//app.log('this.rootPath', this.rootPath);
 			// Delete the current value at the root path
 			LocalStorage.delete(this.rootPath);
 
@@ -89,7 +89,7 @@ var LocalStorage = DataStore.extend({
 	},
 
 	merge: function(data) {
-		//Console.log('LocalStorage.prototype.merge', data);
+		//app.log('LocalStorage.prototype.merge', data);
 
 		return LocalStorage.merge(data, this.rootPath);
 	},
@@ -103,7 +103,7 @@ var LocalStorage = DataStore.extend({
 // Static methods
 
 LocalStorage.get = function(key) {
-	//Console.log('LocalStorage.get', arguments);
+	//app.log('LocalStorage.get', arguments);
 
 	var value = null;
 
@@ -131,16 +131,16 @@ LocalStorage.get = function(key) {
 };
 
 LocalStorage.getValueByPath = function(path) {
-	//Console.log('LocalStorage.getValueByPath', arguments);
+	//app.log('LocalStorage.getValueByPath', arguments);
 
 	var value = null;
 
 	var keys = path.split('.');
 	var firstKey = keys.first();
-	//Console.log('firstKey', firstKey);
+	//app.log('firstKey', firstKey);
 
 	var object = LocalStorage.get(firstKey);
-	//Console.log('object', object);
+	//app.log('object', object);
 
 	// If the path is a single key
 	if(keys.length == 1) {
@@ -168,7 +168,7 @@ LocalStorage.getValueByPath = function(path) {
 };
 
 LocalStorage.reformGetValue = function(getValue) {
-	//Console.log('LocalStorage.reformGetValue', arguments);
+	//app.log('LocalStorage.reformGetValue', arguments);
 
 	// Handle Primitive strings
 	if(getValue == 'true') {
@@ -192,14 +192,14 @@ LocalStorage.reformGetValue = function(getValue) {
 };
 
 LocalStorage.set = function(key, value) {
-	//Console.log('LocalStorage.set', arguments);
+	//app.log('LocalStorage.set', arguments);
 
-	//Console.log('LocalStorage.set', key, value)
+	//app.log('LocalStorage.set', key, value)
 	return localStorage.setItem(key, LocalStorage.reformSetValue(value));
 };
 
 LocalStorage.reformSetValue = function(setValue) {
-	//Console.log('LocalStorage.reformSetValue', arguments);
+	//app.log('LocalStorage.reformSetValue', arguments);
 
 	// Encode non-primitives
 	if(!Primitive.is(setValue)) {
@@ -210,7 +210,7 @@ LocalStorage.reformSetValue = function(setValue) {
 };
 
 LocalStorage.setValueByPath = function(path, value) {
-	//Console.log('LocalStorage.setValueByPath', arguments);
+	//app.log('LocalStorage.setValueByPath', arguments);
 
 	var keys = path.split('.');
 	var firstKey = keys.first();
@@ -244,13 +244,13 @@ LocalStorage.setValueByPath = function(path, value) {
 };
 
 LocalStorage.delete = function(key) {
-	//Console.log('LocalStorage.delete', arguments);
+	//app.log('LocalStorage.delete', arguments);
 
 	return localStorage.removeItem(key);
 };
 
 LocalStorage.deleteValueByPath = function(path) {
-	//Console.log('LocalStorage.deleteValueByPath', arguments);
+	//app.log('LocalStorage.deleteValueByPath', arguments);
 
 	var keys = path.split('.');
 	var firstKey = keys.first();
@@ -282,17 +282,17 @@ LocalStorage.deleteValueByPath = function(path) {
 };
 
 LocalStorage.empty = function() {
-	Console.log('LocalStorage.empty', arguments);
+	app.log('LocalStorage.empty', arguments);
 
 	return localStorage.clear();
 };
 
 LocalStorage.merge = function(data, key) {
-	//Console.log('LocalStorage.merge', data, key);
+	//app.log('LocalStorage.merge', data, key);
 
 	// Read the current value of all of local storage or the key if it is set
 	var currentValue = LocalStorage.get(key);
-	//Console.log('currentValue', currentValue);
+	//app.log('currentValue', currentValue);
 
 	// Make sure we are working with an object
 	if(!Object.is(currentValue)) {
@@ -319,7 +319,7 @@ LocalStorage.merge = function(data, key) {
 };
 
 LocalStorage.integrate = function(data, key) {
-	//Console.log('LocalStorage.integrate', arguments);
+	//app.log('LocalStorage.integrate', arguments);
 
 	// Read the current value of all of local storage or the key if it is set
 	var currentValue = LocalStorage.get(key);

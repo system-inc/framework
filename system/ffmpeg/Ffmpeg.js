@@ -15,13 +15,13 @@ Ffmpeg.execute = function*(input, argumentsArray) {
 
 	// If the input is a string, assume it is the file path
 	if(String.is(input)) {
-		//Console.log('Ffmpeg.execute input is file path');
+		//app.log('Ffmpeg.execute input is file path');
 		inputType = 'file';
 		inputArgument = input;
 	}
 	// If the input is a file object
 	else if(Class.isInstance(input, File)) {
-		//Console.log('Ffmpeg.execute input is File object');
+		//app.log('Ffmpeg.execute input is File object');
 		inputType = 'file';
 		inputArgument = input.file;
 	}
@@ -69,7 +69,7 @@ Ffmpeg.execute = function*(input, argumentsArray) {
 	ffmpegArguments.push('pipe:1');
 
 	// Log the ffmpeg file and arguments
-	//Console.log('ffmpegFile', ffmpegFile, 'ffmpegArguments', ffmpegArguments);
+	//app.log('ffmpegFile', ffmpegFile, 'ffmpegArguments', ffmpegArguments);
 
 	// Spawn ffmpeg as a new child process
 	var ffmpegChildProcess = Node.ChildProcess.spawn(ffmpegFile, ffmpegArguments, {
@@ -83,39 +83,39 @@ Ffmpeg.execute = function*(input, argumentsArray) {
 
 	// When data is sent to standard in
 	ffmpegChildProcess.stdin.on('data', function(data) {
-		//Console.log('ffmpeg standard in data', data);
-		//Console.log('ffmpeg standard in data');
+		//app.log('ffmpeg standard in data', data);
+		//app.log('ffmpeg standard in data');
 	});
 
 	// When standard in has an error
 	ffmpegChildProcess.stdin.on('error', function(data) {
-		//Console.log('ffmpeg standard in error', data);
+		//app.log('ffmpeg standard in error', data);
 	});
 
 	// When data is sent to standard out
 	ffmpegChildProcess.stdout.on('data', function(data) {
-		//Console.log('ffmpeg standard out', data);
-		//Console.log('ffmpeg standard out data');
+		//app.log('ffmpeg standard out', data);
+		//app.log('ffmpeg standard out data');
 	});
 
 	// When standard out has an error
 	ffmpegChildProcess.stdout.on('error', function(data) {
-		//Console.log('ffmpeg standard out error', data);
+		//app.log('ffmpeg standard out error', data);
 	});
 
 	// When data is sent to standard error
 	ffmpegChildProcess.stderr.on('data', function(data) {
-		//Console.error('ffmpeg standard error', data);
+		//app.error('ffmpeg standard error', data);
 	});
 
 	// When ffmpeg exits
 	ffmpegChildProcess.on('exit', function(code) {
-		//Console.log('ffmpeg terminated with code', code);
+		//app.log('ffmpeg terminated with code', code);
 	});
 
 	// When ffmpeg has an error
 	ffmpegChildProcess.on('error', function(error) {
-		//Console.error('ffmpeg error', error);
+		//app.error('ffmpeg error', error);
 	});
 
 	// We always send processed data from ffmpeg to standard out
@@ -191,7 +191,7 @@ Ffmpeg.imageFromVideoAtPosition = function*(input, position, width, height) {
 //	//var input = 'udp://225.1.1.1:8208';
 //    var input = 'trans.mp4';
 
-//    Console.log("Input: " + input, ffmpeg)
+//    app.log("Input: " + input, ffmpeg)
 
 //    resp.writeHead(200, {
 //        //'Transfer-Encoding': 'binary'
@@ -210,19 +210,19 @@ Ffmpeg.imageFromVideoAtPosition = function*(input, position, width, height) {
 //		ffmpeg.stdout.pipe(resp);
 
 //		ffmpeg.stdout.on("data",function(data) {
-//			Console.log("Data");
+//			app.log("Data");
 //		});
 
 //		ffmpeg.stderr.on("data", function (data) {
-//			Console.log("Error -> " + data);
+//			app.log("Error -> " + data);
 //		});
 
 //		ffmpeg.on("exit", function (code) {
-//			Console.log("ffmpeg terminated with code " + code);
+//			app.log("ffmpeg terminated with code " + code);
 //		});
 
 //		ffmpeg.on("error", function (e) {
-//			Console.log("ffmpeg system error: " + e);
+//			app.log("ffmpeg system error: " + e);
 //		});
 //   }
    
@@ -236,7 +236,7 @@ Ffmpeg.imageFromVideoAtPosition = function*(input, position, width, height) {
 
 //    function shut(event) {
 //        //TODO: Stream is only shut when the browser has exited, so switching screens in the client app does not kill the session
-//        Console.log("Live streaming connection to client has " + event)
+//        app.log("Live streaming connection to client has " + event)
 //        if (ffmpeg) {
 //            ffmpeg.kill();
 //			ffmpeg = null;
@@ -246,7 +246,7 @@ Ffmpeg.imageFromVideoAtPosition = function*(input, position, width, height) {
 //}
 
 //var http_server = http.createServer(livestream).listen(9090, function () {
-//	Console.log("Server listening on port 9090");
+//	app.log("Server listening on port 9090");
 //});
 
 // Export

@@ -8,7 +8,7 @@ class ArchiveTest extends Test {
 
 	async testZipWithComment() {
 		var archiveFilePath = Node.Path.join(__dirname, 'files', 'zip-with-comment.zip');
-		//Console.log('archiveFilePath', archiveFilePath);
+		//app.log('archiveFilePath', archiveFilePath);
 
 		var archiveFile = new ArchiveFile(archiveFilePath);
 
@@ -29,7 +29,7 @@ class ArchiveTest extends Test {
 
 	async testRarWithComment() {
 		var archiveFilePath = Node.Path.join(__dirname, 'files', 'rar-with-comment.rar');
-		//Console.log('archiveFilePath', archiveFilePath);
+		//app.log('archiveFilePath', archiveFilePath);
 
 		var archiveFile = new ArchiveFile(archiveFilePath);
 
@@ -50,7 +50,7 @@ class ArchiveTest extends Test {
 
 	async testRar5WithComment() {
 		var archiveFilePath = Node.Path.join(__dirname, 'files', 'rar5-with-comment.rar');
-		//Console.log('archiveFilePath', archiveFilePath);
+		//app.log('archiveFilePath', archiveFilePath);
 
 		var archiveFile = new ArchiveFile(archiveFilePath);
 

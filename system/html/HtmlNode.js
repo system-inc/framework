@@ -119,18 +119,18 @@ class HtmlNode extends XmlNode {
 
 	// Called whenever the HtmlNode changes
 	updateDom() {
-		//Console.log('HtmlNode.updateDom()');
+		//app.log('HtmlNode.updateDom()');
 
 		// Mark the object as dirty
 		this.shouldExecuteDomUpdate = true;
 
 		// Don't do anything if we aren't connected to the DOM
 		if(!this.htmlDocument) {
-			//Console.warn('Unable to updateDom, HtmlElement is missing the htmlDocument property.', this);
+			//app.warn('Unable to updateDom, HtmlElement is missing the htmlDocument property.', this);
 		}
 		// Don't do anything if we don't have a domNode
 		else if(!this.domNode) {
-			//Console.warn('Unable to updateDom, HtmlElement is missing the domNode property.', this);
+			//app.warn('Unable to updateDom, HtmlElement is missing the domNode property.', this);
 		}
 		// Register an update with the HtmlDocument
 		else {
@@ -139,7 +139,7 @@ class HtmlNode extends XmlNode {
 	}
 
 	executeDomUpdate() {
-		//Console.log('HtmlNode executeDomUpdate', this.tag);
+		//app.log('HtmlNode executeDomUpdate', this.tag);
 
 		// If we should execute an update
 		if(this.shouldExecuteDomUpdate) {
@@ -184,13 +184,13 @@ class HtmlNode extends XmlNode {
 
 		// Must use document global here as this.domDocument may not be populated
 		var domFragment = document.createRange().createContextualFragment(htmlNode.toString());
-		//Console.log('HtmlNode domFragment for', htmlNode.tag, domFragment);
+		//app.log('HtmlNode domFragment for', htmlNode.tag, domFragment);
 
 		return domFragment;
 	}
 
 	appendDomNode() {
-		//Console.log('HtmlNode.appendDomNode', this.tag);
+		//app.log('HtmlNode.appendDomNode', this.tag);
 
 		var domFragment = this.createDomNode();
 
@@ -208,7 +208,7 @@ class HtmlNode extends XmlNode {
 	}
 
 	replaceDomNode(indexOfChildDomNodeToReplace) {
-		//Console.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace, this.tag);
+		//app.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace, this.tag);
 
 		var domFragment = this.createDomNode();
 
@@ -222,7 +222,7 @@ class HtmlNode extends XmlNode {
 	}
 
 	mountedToDom() {
-		//Console.log('HtmlNode mountedToDom', this.tag)
+		//app.log('HtmlNode mountedToDom', this.tag)
 		
 		// The domNode has a reference to the HtmlNode
 		this.domNode.htmlNode = this;
@@ -276,7 +276,7 @@ class HtmlNode extends XmlNode {
 			if(!documentPositionOfAnchorNodeToFocusNode && selection.anchorOffset > selection.focusOffset || documentPositionOfAnchorNodeToFocusNode === 2) {
 				direction = 'backward';
 			}
-			//Console.log('direction', direction);
+			//app.log('direction', direction);
 
 			// The direction of the selection tells us which nodes to use to determine if the selection starts or ends in this node
 			var firstNode = null;
@@ -311,23 +311,23 @@ class HtmlNode extends XmlNode {
 
 			// If the selection begins in the node but does not end in the node
 			if(selectionTextStartsInNode && !selectionTextEndsInNode) {
-				//Console.log('The selection begins in the node but does not end in the node');
+				//app.log('The selection begins in the node but does not end in the node');
 				selectionText = this.domNode.textContent.substring(firstNodeOffset);
 			}
 			// If the selection ends in the node but does not begin in it
 			else if(!selectionTextStartsInNode && selectionTextEndsInNode) {
-				//Console.log('The selection ends in the node but does not begin in it');
+				//app.log('The selection ends in the node but does not begin in it');
 				selectionText = this.domNode.textContent.substring(0, lastNodeOffset);
 			}
 			// If the selection begins and ends in the node
 			else if(selectionTextStartsInNode && selectionTextEndsInNode) {
-				//Console.log('The selection begins and ends in the node');
+				//app.log('The selection begins and ends in the node');
 				var selectionRange = selection.getRangeAt(0);
 				selectionText = selectionRange.toString();
 			}
 			// If the selection does not begin or end in this node, then the entire node must be selected
 			else {
-				//Console.log('The selection does not begin or end in this node, then the entire node is selected');
+				//app.log('The selection does not begin or end in this node, then the entire node is selected');
 				selectionText = this.domNode.textContent;
 			}
 		}

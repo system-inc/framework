@@ -177,14 +177,14 @@ class Command {
 		for(var i = 0; i < argumentsArray.length; i++) {
 			// Check to see if the current argument matches the current option
 			if(optionSettings.identifiers.contains(this.argumentToOptionIdentifier(argumentsArray[i]))) {
-				//Console.info('optionSettings.identifier', optionSettings.identifier, 'matches', '"'+this.argumentToOptionIdentifier(argumentsArray[i])+'"');
-				//Console.log('current argument', argumentsArray[i]);
-				//Console.log('next argument', argumentsArray[i + 1]);
+				//app.info('optionSettings.identifier', optionSettings.identifier, 'matches', '"'+this.argumentToOptionIdentifier(argumentsArray[i])+'"');
+				//app.log('current argument', argumentsArray[i]);
+				//app.log('next argument', argumentsArray[i + 1]);
 
 				var currentArgumentOptionSettingsFromOptionIdentifier = this.getOptionSettingsFromOptionIdentifier(argumentsArray[i]);
-				//Console.log('currentArgumentOptionSettingsFromOptionIdentifier', currentArgumentOptionSettingsFromOptionIdentifier);
+				//app.log('currentArgumentOptionSettingsFromOptionIdentifier', currentArgumentOptionSettingsFromOptionIdentifier);
 				var nextArgumentOptionSettingsFromNextOptionIdentifier = this.getOptionSettingsFromOptionIdentifier(argumentsArray[i + 1]);
-				//Console.log('nextArgumentOptionSettingsFromNextOptionIdentifier', nextArgumentOptionSettingsFromNextOptionIdentifier);
+				//app.log('nextArgumentOptionSettingsFromNextOptionIdentifier', nextArgumentOptionSettingsFromNextOptionIdentifier);
 				var nextArgumentExists = (argumentsArray[i + 1] !== undefined);
 
 				// If the current argument is an option
@@ -240,7 +240,7 @@ class Command {
 	}
 
 	getOptionSettingsFromOptionIdentifier(optionIdentifier) {
-		//Console.info('getOptionSettingsFromOptionIdentifier', 'optionIdentifier', optionIdentifier);
+		//app.info('getOptionSettingsFromOptionIdentifier', 'optionIdentifier', optionIdentifier);
 
 		if(optionIdentifier === undefined) {
 			return null;

@@ -51,7 +51,7 @@ class ConsoleSession {
 	}
 
 	async loadCommandHistory(directory, fileNameWithoutExtension) {
-		//Console.log('Loading history...', directory, fileNameWithoutExtension);
+		//app.log('Loading history...', directory, fileNameWithoutExtension);
 
 		// Make sure the directory exists
 		var directoryExists = await Directory.exists(directory);
@@ -65,14 +65,14 @@ class ConsoleSession {
 		if(File.synchronous.exists(file)) {
 			commandHistory = File.synchronous.read(file);
 		}
-		//Console.log('commandHistory', commandHistory);
+		//app.log('commandHistory', commandHistory);
 
 		if(!commandHistory) {
-			//Console.log('No history found.');
+			//app.log('No history found.');
 			this.commandHistory = [];
 		}
 		else {
-			//Console.log(commandHistory.toString());
+			//app.log(commandHistory.toString());
 			commandHistory.toString().split("\n").each(function(index, string) {
 				if(string) {
 					this.commandHistory.prepend(string);
@@ -80,11 +80,11 @@ class ConsoleSession {
 			}.bind(this));
 		}
 
-		//Console.log('this.commandHistory', this.commandHistory);
+		//app.log('this.commandHistory', this.commandHistory);
 
 		this.commandHistoryFile = new File(file);
 
-		//Console.log('this.commandHistoryFile', this.commandHistoryFile);
+		//app.log('this.commandHistoryFile', this.commandHistoryFile);
 
 		await this.commandHistoryFile.open('a+');
 	}
@@ -96,13 +96,13 @@ class ConsoleSession {
 		}
 		// Up
 		else if(key == '\u001b[A') {
-			//Console.log('up', 'this.currentCommandHistoryIndex', this.currentCommandHistoryIndex);
+			//app.log('up', 'this.currentCommandHistoryIndex', this.currentCommandHistoryIndex);
 
 			if(this.currentCommandHistoryIndex < this.commandHistory.length - 1) {
 				this.currentCommandHistoryIndex++;
 			}
 
-			//Console.log(this.currentCommandHistoryIndex, this.commandHistory);
+			//app.log(this.currentCommandHistoryIndex, this.commandHistory);
 
 			if(this.commandHistory[this.currentCommandHistoryIndex] !== undefined) {
 				this.currentCommandString = this.commandHistory[this.currentCommandHistoryIndex];	
@@ -125,13 +125,13 @@ class ConsoleSession {
 		}
 		// Down
 		else if(key == '\u001b[B') {
-			//Console.log('down', 'this.currentCommandHistoryIndex', this.currentCommandHistoryIndex);
+			//app.log('down', 'this.currentCommandHistoryIndex', this.currentCommandHistoryIndex);
 
 			if(this.currentCommandHistoryIndex > -1) {
 				this.currentCommandHistoryIndex--;
 			}
 
-			//Console.log(this.currentCommandHistoryIndex, this.commandHistory);
+			//app.log(this.currentCommandHistoryIndex, this.commandHistory);
 
 			if(this.currentCommandHistoryIndex == -1) {
 				this.currentCommandString = '';
@@ -212,16 +212,16 @@ class ConsoleSession {
 
 				// Add if there is nothing in the command history
 				if(this.commandHistory.length == 0) {
-					//Console.log('this.commandHistory is empty, adding "'+this.currentCommandString+'"');
+					//app.log('this.commandHistory is empty, adding "'+this.currentCommandString+'"');
 					shouldAddCurrentCommandToCommandHistory = true;
 				}
 				// Don't stack multiple of the same commands
 				else if(this.currentCommandString == this.commandHistory[0]) {
-					//Console.log('this.currentCommandString "'+this.currentCommandString+'" is the same as the last command entered, not adding to command history');
+					//app.log('this.currentCommandString "'+this.currentCommandString+'" is the same as the last command entered, not adding to command history');
 					shouldAddCurrentCommandToCommandHistory = false;
 				}
 				else {
-					//Console.log('Adding "'+this.currentCommandString+'" to this.commandHistory');
+					//app.log('Adding "'+this.currentCommandString+'" to this.commandHistory');
 					shouldAddCurrentCommandToCommandHistory = true;
 				}
 
@@ -237,7 +237,7 @@ class ConsoleSession {
 			// Log the command
 			this.write('> '+this.currentCommandString);
 
-			//Console.log('enter');
+			//app.log('enter');
 			this.handleCommand(this.currentCommandString);
 			this.currentCommandString = '';
 			this.currentCommandCursorIndex = 0;
@@ -283,8 +283,8 @@ class ConsoleSession {
 		}
 		// Any other key
 		else {
-			//Console.log(key);
-			//Console.log(key.charCodeAt(0));
+			//app.log(key);
+			//app.log(key.charCodeAt(0));
 			this.currentCommandString = this.currentCommandString.insert(this.currentCommandCursorIndex, key);
 			this.currentCommandCursorIndex += key.length;
 
@@ -344,7 +344,7 @@ class ConsoleSession {
 			// Try to run the command as is (without a trailing period)
 			try {
 				context = eval(commandToEval);
-				//Console.log('got context!', command, commandToEval);
+				//app.log('got context!', command, commandToEval);
 			}
 			catch(error) {
 				context = undefined;
@@ -355,7 +355,7 @@ class ConsoleSession {
 				try {
 					commandToEval = variableArray.join('.');
 					context = eval(commandToEval);
-					//Console.log('got context!', command, commandToEval);
+					//app.log('got context!', command, commandToEval);
 				}
 				catch(error) {
 					context = undefined;
@@ -384,7 +384,7 @@ class ConsoleSession {
 			}
 		}
 		availableCommandArray = availablePropertiesArray.sort().concatenate(availableFunctionsArray.sort());
-		//Console.log(availableCommandArray);
+		//app.log(availableCommandArray);
 
 		// Find all of the commands that potentially match
 		var partialMatchArray = [];
@@ -494,7 +494,7 @@ class ConsoleSession {
 			command = command.substring(0, command.length - 1);
 		}
 
-		//Console.log('Command:', command);
+		//app.log('Command:', command);
 
 		var response;
 

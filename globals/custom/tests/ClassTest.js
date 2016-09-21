@@ -141,8 +141,8 @@ class ClassTest extends Test {
 		Assert.deepEqual(specialTestChildClassInstance.childArrayClassVariable, [], 'childArrayClassVariable key set correctly');
 		Assert.deepEqual(specialTestChildClassInstance.childObjectClassVariable, {}, 'childObjectClassVariable key set correctly');
 
-		//Console.log(specialTestParentClassInstance.parentContainedReferenceClassVariable);
-		//Console.log(specialTestChildClassInstance.parentContainedReferenceClassVariable);
+		//app.log(specialTestParentClassInstance.parentContainedReferenceClassVariable);
+		//app.log(specialTestChildClassInstance.parentContainedReferenceClassVariable);
 		Assert.true(specialTestChildClassInstance.parentContainedReferenceClassVariable.isEmpty(), 'child object references are contained to their instantiation and are not tied to parent object references');
 
 		specialTestParentClassInstance.parentClassInstanceClassVariable.major = 2;
@@ -181,8 +181,8 @@ class ClassTest extends Test {
 		Assert.equal(specialTestParentClassInstance1.parentClassInstanceClassVariable.toString(), '1.0', 'class instance class variables are in their own memory space');
 		Assert.equal(specialTestParentClassInstance2.parentClassInstanceClassVariable.toString(), '2.0', 'class instance class variables are in their own memory space');
 
-		//Console.log(specialTestParentClassInstance1.parentTimeClassVariable);
-		//Console.log(specialTestParentClassInstance2.parentTimeClassVariable);
+		//app.log(specialTestParentClassInstance1.parentTimeClassVariable);
+		//app.log(specialTestParentClassInstance2.parentTimeClassVariable);
 		Assert.equal(specialTestParentClassInstance1.parentTimeClassVariable.toString(), specialTestParentClassInstance2.parentTimeClassVariable.toString(), 'time class instance variables are the same time');
 	}
 

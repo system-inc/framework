@@ -12,7 +12,7 @@ var ElectronManager = Class.extend({
 	initialize: function*() {
 		// Do nothing if Electron is not active (e.g., we are running a Framework app that uses Electron but from the console so there is no Electron window)
 		if(!Node.Process.versions.electron) {
-			Console.warn('Electron is disabled. No Electron application code will be executed.');
+			app.warn('Electron is disabled. No Electron application code will be executed.');
 			return;
 		}
 
@@ -121,7 +121,7 @@ var ElectronManager = Class.extend({
 	},
 
 	applyDefaultWindowStateOnFocusedWindow: function() {
-		//Console.log(applyDefaultWindowStateOnFocusedWindow);
+		//app.log(applyDefaultWindowStateOnFocusedWindow);
 
 		// TODO: For apps with multiple windows, need to make this work on the focused window
 		this.mainBrowserWindowState.applyDefault();
@@ -538,7 +538,7 @@ ElectronManager.copyUsingKeyboard = function*() {
 	}
 	else {
 		// TODO: Does not work on macOS
-		Console.warn('ElectronManager.copyUsingKeyboard does not work on macOS.');
+		app.warn('ElectronManager.copyUsingKeyboard does not work on macOS.');
 		yield ElectronManager.keyDown('c', ['meta']);
 	}
 }.toPromise();
@@ -549,7 +549,7 @@ ElectronManager.cutUsingKeyboard = function*() {
 	}
 	else {
 		// TODO: Does not work on macOS
-		Console.warn('ElectronManager.cutUsingKeyboard does not work on macOS.');
+		app.warn('ElectronManager.cutUsingKeyboard does not work on macOS.');
 		yield ElectronManager.keyDown('x', ['meta']);
 	}
 }.toPromise();
@@ -560,7 +560,7 @@ ElectronManager.pasteUsingKeyboard = function*() {
 	}
 	else {
 		// TODO: Does not work on macOS
-		Console.warn('ElectronManager.pasteUsingKeyboard does not work on macOS.');
+		app.warn('ElectronManager.pasteUsingKeyboard does not work on macOS.');
 		yield ElectronManager.keyDown('v', ['meta']);
 	}
 }.toPromise();

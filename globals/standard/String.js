@@ -256,7 +256,7 @@ String.prototype.toSpaces = function() {
 	// This is assuming we have a string like 'ThisIsMyString'
 	// We should make this function intelligent and autodetect other types like 'this_is_my_string' and 'this is my string'
 	string = string.replace(/([A-Z])/g, function(match) {
-		//Console.log(arguments);
+		//app.log(arguments);
 		return ' '+match.toLowerCase();
 	});
 

@@ -34,7 +34,7 @@ class XmlElement extends XmlNode {
 		}
 		// Allow options to be an object
 		else if(options) {
-			//Console.log(options);
+			//app.log(options);
 
 			options.each(function(optionName, optionValue) {
 				// Handle content (children)

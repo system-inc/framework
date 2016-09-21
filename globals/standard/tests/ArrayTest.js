@@ -18,7 +18,7 @@ class ArrayTest extends Test {
 			'banana',
 			'cherry',
 		].unique();
-		//Console.log(actual);
+		//app.log(actual);
 
 		var expected = [
 			'apple',
@@ -51,7 +51,7 @@ class ArrayTest extends Test {
 			'key': 'type',
 			'direction': 'ascending',
 		});
-		//Console.log(actual);
+		//app.log(actual);
 		var expected = [
 			{
 				'type': 'directory',
@@ -99,7 +99,7 @@ class ArrayTest extends Test {
 				'direction': 'ascending',
 			},
 		]);
-		//Console.log(actual);
+		//app.log(actual);
 		expected = [
 			{
 				'type': 'directory',
@@ -136,7 +136,7 @@ class ArrayTest extends Test {
 				'b': 'originally third, should be second',
 			},
 		].sortObjectsByKeyValue('a');
-		//Console.log(actual);
+		//app.log(actual);
 
 		var expected = [
 			{
@@ -169,7 +169,7 @@ class ArrayTest extends Test {
 				'b': 'originally third, should be second',
 			},
 		].sortObjectsByKeyValue('a');
-		//Console.log(actual);
+		//app.log(actual);
 
 		expected = [
 			{

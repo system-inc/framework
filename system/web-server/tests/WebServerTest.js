@@ -47,8 +47,8 @@ class WebServerTest extends Test {
 	async testRootRoute() {
 		var webRequest = new WebRequest(this.baseUrl, {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 200, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'statusMessage is correct');
@@ -71,8 +71,8 @@ class WebServerTest extends Test {
 	async testFileRouteForTextFile() {
 		var webRequest = new WebRequest(this.baseUrl+'files/text/data.txt', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 		
 		Assert.strictEqual(webRequestResponse.statusCode, 200, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'statusMessage is correct');
@@ -98,8 +98,8 @@ class WebServerTest extends Test {
 			},
 		});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 		
 		Assert.strictEqual(webRequestResponse.statusCode, 200, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'statusMessage is correct');
@@ -115,8 +115,8 @@ class WebServerTest extends Test {
 			},
 		});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 		
 		Assert.strictEqual(webRequest.headers.getHeader('accept-encoding'), null, '"Accept-Encoding" header is not set');
 		Assert.strictEqual(webRequestResponse.statusCode, 200, 'statusCode is correct');
@@ -129,8 +129,8 @@ class WebServerTest extends Test {
 	async testControllerRouteWithCookies() {
 		var webRequest = new WebRequest(this.baseUrl+'cookies', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.equal(webRequestResponse.cookies.get('testCookie1'), 'testCookie1Value', 'First "Set-Cookie" header is correct');
 		var expectedTestCookie2 = {
@@ -143,8 +143,8 @@ class WebServerTest extends Test {
 	async testRedirectRoute() {
 		var webRequest = new WebRequest(this.baseUrl+'redirect', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 301, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Moved Permanently', 'statusMessage is correct');
@@ -154,8 +154,8 @@ class WebServerTest extends Test {
 	//async testProxyRoute() {
 	//	var webRequest = new WebRequest(this.baseUrl+'proxy', {});
 	//	var webRequestResponse = await webRequest.execute();
-	//	Console.log('webRequest', webRequest);
-	//	Console.info('webRequestResponse', webRequestResponse);
+	//	app.log('webRequest', webRequest);
+	//	app.info('webRequestResponse', webRequestResponse);
 
 	//	//Assert.strictEqual(webRequestResponse.statusCode, 301, 'statusCode is correct');
 	//	//Assert.strictEqual(webRequestResponse.statusMessage, 'Moved Permanently', 'statusMessage is correct');
@@ -165,8 +165,8 @@ class WebServerTest extends Test {
 	async testItemRoute() {
 		var webRequest = new WebRequest(this.baseUrl+'items/item1', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.data.itemIdentifier, 'item1', 'Captured data is correct');
 		Assert.strictEqual(webRequestResponse.data.view, 'item', 'Data is correct');
@@ -176,8 +176,8 @@ class WebServerTest extends Test {
 	async testRelatedItemRoute() {
 		var webRequest = new WebRequest(this.baseUrl+'items/item1/related-items/related1', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.data.itemIdentifier, 'item1', 'Captured data is correct');
 		Assert.strictEqual(webRequestResponse.data.relatedItemIdentifier, 'related1', 'Captured data is correct');
@@ -188,8 +188,8 @@ class WebServerTest extends Test {
 	async testPutOnlyRoute() {
 		var webRequest = new WebRequest(this.baseUrl+'put-only', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 404, 'Route does not match when method is not PUT');
 
@@ -197,8 +197,8 @@ class WebServerTest extends Test {
 			method: 'PUT',
 		});
 		webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 200, 'Route matches when the method is PUT');
 		Assert.strictEqual(webRequestResponse.body, 'This method is only invoked on requests using the PUT method.', 'PUT only route body is correct');
@@ -208,8 +208,8 @@ class WebServerTest extends Test {
 		// Level one
 		var webRequest = new WebRequest(this.baseUrl+'level-one/', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.data.levelOne, 'levelOne', 'First level data is correct');
 		Assert.strictEqual(webRequestResponse.data.view, 'levelOne', 'First level data is correct');
@@ -217,8 +217,8 @@ class WebServerTest extends Test {
 		// Level two
 		webRequest = new WebRequest(this.baseUrl+'level-one/level-two', {});
 		webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.data.levelOne, 'levelOne', 'Data is inherited correctly');
 		Assert.strictEqual(webRequestResponse.data.view, 'levelOneLevelTwo', 'Data is inherited correctly');
@@ -227,8 +227,8 @@ class WebServerTest extends Test {
 		// Level three
 		webRequest = new WebRequest(this.baseUrl+'level-one/level-two/level-three', {});
 		webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.data.levelOne, 'levelOne', 'Data is inherited correctly');
 		Assert.strictEqual(webRequestResponse.data.levelOneLevelTwo, 'levelOneLevelTwo', 'Data is inherited correctly');
@@ -239,8 +239,8 @@ class WebServerTest extends Test {
 	async testHttpErrorNotFoundError() {
 		var webRequest = new WebRequest(this.baseUrl+'404', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 404, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Not Found', 'statusMessage is correct');
@@ -249,8 +249,8 @@ class WebServerTest extends Test {
 	async testHttpErrorInternalServerErrorThrownInFunction() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-internal-server-error-in-function', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 500, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Internal Server Error', 'statusMessage is correct');
@@ -260,8 +260,8 @@ class WebServerTest extends Test {
 	async testHttpErrorInternalServerErrorThrownInGenerator() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-internal-server-error-in-generator', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 500, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Internal Server Error', 'statusMessage is correct');
@@ -271,8 +271,8 @@ class WebServerTest extends Test {
 	async testHttpErrorBadRequestError() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-bad-request-error', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 400, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Bad Request', 'statusMessage is correct');
@@ -281,8 +281,8 @@ class WebServerTest extends Test {
 	async testHttpErrorForbiddenError() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-forbidden-error', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 403, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Forbidden', 'statusMessage is correct');
@@ -291,8 +291,8 @@ class WebServerTest extends Test {
 	async testHttpErrorRequestedRangeNotSatisfiableError() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-requested-range-not-satisfiable-error', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 416, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Range Not Satisfiable', 'statusMessage is correct');
@@ -301,8 +301,8 @@ class WebServerTest extends Test {
 	async testHttpErrorRequestEntityTooLargeError() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-request-entity-too-large-error', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 413, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Payload Too Large', 'statusMessage is correct');
@@ -311,8 +311,8 @@ class WebServerTest extends Test {
 	async testHttpErrorUnauthorizedError() {
 		var webRequest = new WebRequest(this.baseUrl+'throw-unauthorized-error', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 401, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'Unauthorized', 'statusMessage is correct');
@@ -321,8 +321,8 @@ class WebServerTest extends Test {
 	async testContentIsArchivedFile() {
 		var webRequest = new WebRequest(this.baseUrl+'content/archived-file', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, 'Text in an archived file inside of an archive file.', 'body is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'text/plain', '"Content-Type" header is correct');
@@ -332,8 +332,8 @@ class WebServerTest extends Test {
 	async testContentIsFile() {
 		var webRequest = new WebRequest(this.baseUrl+'content/file', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, '0123456789', 'body is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'text/plain', '"Content-Type" header is correct');
@@ -343,8 +343,8 @@ class WebServerTest extends Test {
 	async testContentIsHtmlDocument() {
 		var webRequest = new WebRequest(this.baseUrl+'content/html-document', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, '<!DOCTYPE html><html><head></head><body><p>Test HTML document.</p></body></html>', 'body is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'text/html', '"Content-Type" header is correct');
@@ -353,8 +353,8 @@ class WebServerTest extends Test {
 	async testContentIsObject() {
 		var webRequest = new WebRequest(this.baseUrl+'content/object', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, '{"a":1,"b":2,"c":3}', 'body is correct');
 		Assert.strictEqual(webRequestResponse.headers.get('Content-Type'), 'application/json', '"Content-Type" header is correct');
@@ -363,8 +363,8 @@ class WebServerTest extends Test {
 	async testContentIsString() {
 		var webRequest = new WebRequest(this.baseUrl+'content/string', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, 'Content is string.', 'body is correct');
 	}
@@ -372,8 +372,8 @@ class WebServerTest extends Test {
 	async testContentIsBuffer() {
 		var webRequest = new WebRequest(this.baseUrl+'content/buffer', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, 'Content is buffer.', 'body is correct');
 	}
@@ -381,8 +381,8 @@ class WebServerTest extends Test {
 	async testContentIsStream() {
 		var webRequest = new WebRequest(this.baseUrl+'content/stream', {});
 		var webRequestResponse = await webRequest.execute();
-		//Console.log('webRequest', webRequest);
-		//Console.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.body, 'ABCDEFGHIJ', 'body is correct');
 	}

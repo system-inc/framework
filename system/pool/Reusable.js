@@ -54,41 +54,41 @@ var Reusable = Class.extend({
 		// Cancel any currently scheduled retirement
 		this.cancelScheduledRetirement();
 
-		//Console.log('Retiring!');
+		//app.log('Retiring!');
 		this.pool.retireReusable(this);
 	},
 
 	scheduleRetirement: function() {
 		if(this.timeInMillisecondsToWaitToRetireWhenAvailable) {
-			//Console.log('Scheduling retirement after', this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds');
+			//app.log('Scheduling retirement after', this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds');
 
 			// Cancel the currently scheduled retirement
 			this.cancelScheduledRetirement();
 
 			this.scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable = Function.schedule(this.timeInMillisecondsToWaitToRetireWhenAvailable, function() {
-				//Console.log(this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds have passed, may possibly retire...');
+				//app.log(this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds have passed, may possibly retire...');
 
 				if(this.pool.shouldRetireReusable()) {
-					//Console.log('this.pool.shouldRetireReusable() returned true');
+					//app.log('this.pool.shouldRetireReusable() returned true');
 					this.retire();	
 				}
 				else {
-					//Console.log('this.pool.shouldRetireReusable() returned false');
+					//app.log('this.pool.shouldRetireReusable() returned false');
 				}
 			}.bind(this));	
 		}
 	},
 
 	cancelScheduledRetirement: function() {
-		//Console.log('Reusable cancelScheduledRetirement');
+		//app.log('Reusable cancelScheduledRetirement');
 
 		if(this.scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable) {
 			Function.cancel(this.scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable);
 			this.scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable = null;
-			//Console.log('Canceled scheduled retirement function');
+			//app.log('Canceled scheduled retirement function');
 		}
 		else {
-			//Console.log('No scheduled retirement function to cancel');
+			//app.log('No scheduled retirement function to cancel');
 		}
 	},
 

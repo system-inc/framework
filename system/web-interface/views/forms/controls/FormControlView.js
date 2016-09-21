@@ -41,7 +41,7 @@ class FormControlView extends View {
 
 	// Two-way data binding: if the user changes the value on the DOM, the FormControlView is updated to reflect the new value
 	valueChangedOnDom() {
-		//Console.log('Value changed on DOM, updating FormControlView');
+		//app.log('Value changed on DOM, updating FormControlView');
 		this.value = this.domNode.value;
 
 		return this.value;

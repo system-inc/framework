@@ -176,11 +176,11 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 			if(regularExpressionLocation == 'search' || regularExpressionLocation == 'either') {
 				// Perform the match check
 				if(String.is(this[i]) && this[i].match(searchRegularExpression)) {
-					//Console.log(this[i], 'MATCHED against the regular expression', searchRegularExpression.source);
+					//app.log(this[i], 'MATCHED against the regular expression', searchRegularExpression.source);
 					contains++;
 				}
 				else {
-					//Console.log(this[i], 'DID NOT MATCH against the regular expression', searchRegularExpression.source);
+					//app.log(this[i], 'DID NOT MATCH against the regular expression', searchRegularExpression.source);
 				}
 			}
 
@@ -197,11 +197,11 @@ Array.prototype.contains = function(search, caseSensitive, regularExpressionLoca
 
 				// Perform the match check
 				if(String.is(search) && search.match(arrayRegularExpression)) {
-					//Console.log(search, 'MATCHED against the regular expression', arrayRegularExpression.source);
+					//app.log(search, 'MATCHED against the regular expression', arrayRegularExpression.source);
 					contains++;
 				}
 				else {
-					//Console.log(search, 'DID NOT MATCH against the regular expression', arrayRegularExpression.source);
+					//app.log(search, 'DID NOT MATCH against the regular expression', arrayRegularExpression.source);
 				}
 			}
 		}

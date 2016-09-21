@@ -208,7 +208,7 @@ class InputKeyEvent extends HtmlElementEvent {
 
 	static createEventsFromDomEvent(domEvent, emitter, eventPattern) {
 		//Console.standardLog('InputKeyEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
-		//Console.log('--- start '+domEvent.type);
+		//app.log('--- start '+domEvent.type);
 
 		var events = [];
 
@@ -255,25 +255,25 @@ class InputKeyEvent extends HtmlElementEvent {
 			if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
 				//Console.standardError(eventIdentifier);
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
-				//Console.log(eventIdentifier);
+				//app.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 				if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
 					eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation;
-					//Console.log(eventIdentifier);
+					//app.log(eventIdentifier);
 					events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 				}
 
 				if(modifierKeysDown.length) {
 					eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
-					//Console.log(eventIdentifier);
+					//app.log(eventIdentifier);
 					events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 					// Create additional events including the location of the key
 					if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
 						// Create additional events including the location of the key
 						eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+modifierKeysDownSuffix;
-						//Console.log(eventIdentifier);
+						//app.log(eventIdentifier);
 						events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 					}
 				}
@@ -289,13 +289,13 @@ class InputKeyEvent extends HtmlElementEvent {
 			// Do nothing
 		}
 		else {
-			//Console.log(inputKeyEventWithoutIdentifier.identifier);
+			//app.log(inputKeyEventWithoutIdentifier.identifier);
 			events.append(inputKeyEventWithoutIdentifier);
 		}
 
 		if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
 			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+eventTypeSuffix;
-			//Console.log(eventIdentifier);
+			//app.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 
@@ -310,30 +310,30 @@ class InputKeyEvent extends HtmlElementEvent {
 			) {
 				// e.g., "input.key.a"
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
-				//Console.log(eventIdentifier);
+				//app.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 				// e.g., "input.key.a.control"
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
-				//Console.log(eventIdentifier);
+				//app.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 				// e.g., "input.key.a.up"
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+eventTypeSuffix;
-				//Console.log(eventIdentifier);
+				//app.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 			}
 
 			// e.g., "input.key.a.control.up", "input.key.a.control", "input.key.a.control.down"
 			eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix+eventTypeSuffix;
-			//Console.log(eventIdentifier);
+			//app.log(eventIdentifier);
 			events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 			// Create additional events including the location of the key
 			if(inputKeyEventWithoutIdentifier.keyLocation != 'standard') {
 				// Create additional events including the location of the key
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+'.'+inputKeyEventWithoutIdentifier.keyLocation+modifierKeysDownSuffix+eventTypeSuffix;
-				//Console.log(eventIdentifier);
+				//app.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 			}
 
@@ -345,11 +345,11 @@ class InputKeyEvent extends HtmlElementEvent {
 				eventTypeSuffix == '.down'
 			) {
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
-				//Console.log(eventIdentifier);
+				//app.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key+modifierKeysDownSuffix;
-				//Console.log(eventIdentifier);
+				//app.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 			}
 		}
@@ -362,7 +362,7 @@ class InputKeyEvent extends HtmlElementEvent {
 		//Console.standardInfo(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
 		//Console.standardInfo('InputKeyEvent.createEventsFromDomEvent events', events);
 
-		//Console.log('--- end '+domEvent.type);
+		//app.log('--- end '+domEvent.type);
 
 		return events;
 	}
@@ -454,7 +454,7 @@ class InputKeyEvent extends HtmlElementEvent {
 
 			if(domEvent.charCode) {
 				key = String.fromCharacterCode(domEvent.charCode);
-				Console.log('String.fromCharacterCode', domEvent.charCode, 'key:', key);
+				app.log('String.fromCharacterCode', domEvent.charCode, 'key:', key);
 			}
 			
 			if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyIdentifier && !domEvent.keyIdentifier.startsWith('U+')) {
@@ -465,27 +465,27 @@ class InputKeyEvent extends HtmlElementEvent {
 					key = InputKeyEvent.keyTitleMap['meta'];
 				}
 
-				Console.log('domEvent.keyIdentifier', key);
+				app.log('domEvent.keyIdentifier', key);
 			}
 
 			if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.code) {
 				key = domEvent.code.replaceFirst('Key', '').lowercaseFirstCharacter();
-				Console.log('InputKeyEvent.keyCodeMap domEvent.keyCode', key);
+				app.log('InputKeyEvent.keyCodeMap domEvent.keyCode', key);
 			}
 			
 			if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyCode) {
 				key = InputKeyEvent.keyCodeMap[domEvent.keyCode];
-				Console.log('InputKeyEvent.keyCodeMap domEvent.keyCode', key);
+				app.log('InputKeyEvent.keyCodeMap domEvent.keyCode', key);
 			}
 			
 			if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
 				key = InputKeyEvent.unicodeMap[domEvent.keyIdentifier];
-				Console.log('InputKeyEvent.unicodeMap domEvent.keyCode', key);
+				app.log('InputKeyEvent.unicodeMap domEvent.keyCode', key);
 			}
 
 			if((!key || (key.length == 1 && !key.match(/\w/))) && domEvent.keyIdentifier && domEvent.keyIdentifier.startsWith('U+')) {
 				key = InputKeyEvent.unicodeMap[domEvent.keyIdentifier];
-				Console.log('InputKeyEvent.unicodeMap domEvent.keyCode', key);
+				app.log('InputKeyEvent.unicodeMap domEvent.keyCode', key);
 			}
 		}
 
@@ -499,7 +499,7 @@ class InputKeyEvent extends HtmlElementEvent {
 			}
 		}
 
-		//Console.log('key', key, 'key is truthy', (key ? true : false));
+		//app.log('key', key, 'key is truthy', (key ? true : false));
 
 		if(!key) {
 			Console.standardError('no key for domEvent', domEvent);

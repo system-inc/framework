@@ -45,7 +45,7 @@ class FunctionTest extends Test {
 		var stopwatch = new Stopwatch();
 		await Function.delay(50);
 		stopwatch.stop();
-		//Console.log(stopwatch.elapsedTime);
+		//app.log(stopwatch.elapsedTime);
 
 		// http://stackoverflow.com/questions/21097421/what-is-the-reason-javascript-settimeout-is-so-inaccurate
 		Assert.greaterThanOrEqualTo(stopwatch.elapsedTime, 35, 'delaying 50 milliseconds should make the stopwatch elapsed time at least 35 (50 +/- 15) milliseconds');

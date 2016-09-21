@@ -98,10 +98,10 @@ class Response {
 
 		// Handle range requests
 		var requestRangeHeader = this.request.headers.get('Range');
-		//Console.log('requestRangeHeader', requestRangeHeader);
+		//app.log('requestRangeHeader', requestRangeHeader);
 		if(requestRangeHeader) {
 			this.request.range = new RangeHeader(requestRangeHeader);
-			//Console.log('this.request.range', this.request.range);
+			//app.log('this.request.range', this.request.range);
 		}
 
 		// If the content is something
@@ -131,7 +131,7 @@ class Response {
 		if(ifModifiedSince) {
 			var lastModified = this.headers.get('Last-Modified');
 			if(lastModified) {
-				//Console.log(ifModifiedSince, lastModified);
+				//app.log(ifModifiedSince, lastModified);
 				if(ifModifiedSince === lastModified) {
 					this.statusCode = 304; // Not Modified
 				}
@@ -143,7 +143,7 @@ class Response {
 		if(ifNoneMatch) {
 			var eTag = this.headers.get('ETag');
 			if(eTag) {
-				//Console.log(ifNoneMatch, eTag);
+				//app.log(ifNoneMatch, eTag);
 				if(ifNoneMatch === eTag) {
 					this.statusCode = 304; // Not Modified
 				}
@@ -186,7 +186,7 @@ class Response {
 		this.sendHeaders();
 
 		if(doNotSendContent) {
-			//Console.log('not sending content');
+			//app.log('not sending content');
 			this.nodeResponse.end(function() {
 				this.sent();
 			}.bind(this));
@@ -276,7 +276,7 @@ class Response {
 			// Support range requests (byte serving), currently do not support multiple ranges in a single request
 			if(this.request.range && this.request.range.ranges.length == 1) {
 				var readStreamRange = this.request.range.getReadStreamRange(this.content.sizeInBytes());
-				//Console.log('readStreamRange', readStreamRange);
+				//app.log('readStreamRange', readStreamRange);
 
 				// Always set the status code to 206 when we set Content-Range, even if we are sending the entire resource
 				this.statusCode = 206;
@@ -319,9 +319,9 @@ class Response {
 	}
 
 	async sendContent() {
-		//Console.log(this.content);
-		//Console.log(this.acceptedEncodings);
-		//Console.log('contentEncoded', this.contentEncoded);
+		//app.log(this.content);
+		//app.log(this.acceptedEncodings);
+		//app.log('contentEncoded', this.contentEncoded);
 
 		// Handle streams
 		if(Stream.is(this.content)) {
@@ -329,7 +329,7 @@ class Response {
 			if(!this.contentEncoded && this.encoding == 'deflate') {
 				var deflate = Node.Zlib.createDeflate();
 				this.content.pipe(deflate).pipe(this.nodeResponse).on('finish', function() {
-					//Console.log('done sending!')
+					//app.log('done sending!')
 					this.sent();
 				}.bind(this));
 			}
@@ -337,14 +337,14 @@ class Response {
 			else if(!this.contentEncoded && this.encoding == 'gzip') {
 				var gzip = Node.Zlib.createGzip();
 				this.content.pipe(gzip).pipe(this.nodeResponse).on('finish', function() {
-					//Console.log('done sending!')
+					//app.log('done sending!')
 					this.sent();
 				}.bind(this));
 			}
 			// If there is no encoding
 			else {
 				this.content.pipe(this.nodeResponse).on('finish', function() {
-					//Console.log('done sending!')
+					//app.log('done sending!')
 					this.sent();
 				}.bind(this));
 			}
@@ -373,7 +373,7 @@ class Response {
 		// Show the request in the console
 		var responsesLogEntry = this.prepareLogEntry();
 		if(this.webServer.settings.get('verbose')) {
-			Console.log(this.webServer.identifier+' response: '+responsesLogEntry);
+			app.log(this.webServer.identifier+' response: '+responsesLogEntry);
 		}
 
 		// Conditionally log the request

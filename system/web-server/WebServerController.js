@@ -59,10 +59,10 @@ class WebServerController extends ServerController {
 
 		// Create a file to reference the view
 		var viewFile = new File(Node.Path.join(Project.directory, 'views', viewPath));
-		//Console.log('viewFile', viewFile);
+		//app.log('viewFile', viewFile);
 
 		var viewFileExists = await viewFile.exists();
-		//Console.log('viewFileExists', viewFileExists);
+		//app.log('viewFileExists', viewFileExists);
 
 		// Throw if the view file does not exist
 		if(!viewFileExists) {
@@ -75,11 +75,11 @@ class WebServerController extends ServerController {
 		if(viewFile.extension != 'js') {
 			response = await viewFile.read();
 			response = response.toString();
-			//Console.log('response', response);
+			//app.log('response', response);
 		}
 		else {
 			response = Framework.require(viewFile.path);
-			//Console.log('response', response)
+			//app.log('response', response)
 		}
 
 		return response;

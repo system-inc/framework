@@ -96,7 +96,7 @@ class RangeHeader {
 		var readStreamRange = this.getReadStreamRange(size);
 
 		contentLength = readStreamRange.end - readStreamRange.start + 1;
-		//Console.log('contentLength', contentLength);
+		//app.log('contentLength', contentLength);
 
 		return contentLength;
 	}
@@ -109,7 +109,7 @@ class RangeHeader {
 
 		contentRange += '/'+size;
 
-		//Console.log('contentRange', contentRange);
+		//app.log('contentRange', contentRange);
 
 		return contentRange;
 	}

@@ -23,7 +23,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		var eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 0, 'No event listeners are bound');
 
 		// Variable used to store the event when it is emitted
@@ -40,7 +40,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 1, 'One event listener is bound');
 
 		// Emit an event
@@ -57,7 +57,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 0, 'No event listeners are bound after removeEventListener by specific function');
 
 		// Bind the event again
@@ -68,7 +68,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 0, 'No event listeners are bound after removeEventListener by event pattern');
 
 		// Bind the event again
@@ -79,7 +79,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 0, 'No event listeners are bound after removeAllEventListeners');
 
 		// Bind an event listener with once
@@ -90,7 +90,7 @@ class EventEmitterTest extends Test {
 		
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 0, 'No event listeners are bound after a listener bound with .once() is emitted once');
 
 		// Bind an event listener which will only emit 3 times
@@ -101,7 +101,7 @@ class EventEmitterTest extends Test {
 		
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 1, 'Event listeners are bound after a listener bound with .on(eventIdentifier, function, 3) has been emitted once');
 
 		// Emit the event
@@ -109,7 +109,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 1, 'Event listeners are bound after a listener bound with .on(eventIdentifier, function, 3) has been emitted twice');
 
 		// Emit the event
@@ -117,7 +117,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 0, 'No event listeners are bound after a listener bound with .on(eventIdentifier, function, 3) has been emitted three times');
 
 		// All EventEmitters emit the event 'addedListener' when new listeners are added and 'removeListener' when a listener is removed
@@ -140,12 +140,12 @@ class EventEmitterTest extends Test {
 		// Trigger eventEmitter.addedEventListener by adding another event listener
 		await eventEmitter.on('event1', function(event) {
 		});
-		//Console.info('storedAddedEventListenerEvent', storedAddedEventListenerEvent);
+		//app.info('storedAddedEventListenerEvent', storedAddedEventListenerEvent);
 		Assert.strictEqual(storedAddedEventListenerEvent.data.eventPattern, 'event1', 'stored eventEmitter.addedEventListener event');
 
 		// Trigger eventEmitter.removedEventListener by adding another event listener
 		await eventEmitter.removeEventListener('event1');
-		//Console.info('storedRemovedEventListenerEvent', storedRemovedEventListenerEvent);
+		//app.info('storedRemovedEventListenerEvent', storedRemovedEventListenerEvent);
 		Assert.strictEqual(storedRemovedEventListenerEvent.data.eventPattern, 'event1', 'stored eventEmitter.removedEventListener event');
 
 		//Console.highlight(eventEmitter);
@@ -282,7 +282,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		var eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 3, 'The correct number of event listeners are bound');
 
 		// Emit event 1
@@ -304,7 +304,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		var eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 7, 'The correct number of event listeners are bound');
 
 		// Emit event 4
@@ -330,7 +330,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		var eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 12, 'The correct number of event listeners are bound');
 
 		// Emit event 8
@@ -423,7 +423,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		var eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 1, 'One event listener is bound');
 
 		// Emit a non-matching event
@@ -452,7 +452,7 @@ class EventEmitterTest extends Test {
 
 		// List bound event listeners
 		var eventListeners = eventEmitter.getEventListeners();
-		//Console.info('eventListeners', eventListeners);
+		//app.info('eventListeners', eventListeners);
 		Assert.strictEqual(eventListeners.length, 1, 'One event listener is bound');
 
 		// Emit a non-matching event
@@ -461,7 +461,7 @@ class EventEmitterTest extends Test {
 
 		// Emit a matching event
 		await eventEmitter.emit('event2');
-		//Console.info(storedEvent);
+		//app.info(storedEvent);
 		Assert.strictEqual(storedEvent.identifier, 'event2', 'Matching event pattern triggers event listener');
 	}
 

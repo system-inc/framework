@@ -11,7 +11,7 @@ class DatabaseTest extends Test {
 
 		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
 		var testQueryResults = await frameworkTestDatabase.query('SELECT 1 + 1 as `solution`');
-		//Console.info(testQueryResults);
+		//app.info(testQueryResults);
 
 		if(Error.is(testQueryResults)) {
 			shouldRun = false;
@@ -24,7 +24,7 @@ class DatabaseTest extends Test {
 		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
 
 		var actual = await frameworkTestDatabase.query('SELECT * FROM user');
-		//Console.log(actual);
+		//app.log(actual);
 
 		Assert.true(actual.hasKey('sql'), 'Database.query() returns an object which has the key "sql"');
 		Assert.true(actual.hasKey('rows'), 'Database.query() returns an object which has the key "rows"');
@@ -34,12 +34,12 @@ class DatabaseTest extends Test {
 
 	async testQueryOnDatabaseCreatedManually() {
 		var databaseSettings = Project.settings.get('modules.database.databases.frameworkTest');
-		//Console.log(databaseSettings);
+		//app.log(databaseSettings);
 
 		var frameworkTestDatabase = new Database(databaseSettings);
 
 		var actual = await frameworkTestDatabase.query('SELECT * FROM user');
-		//Console.log(actual);
+		//app.log(actual);
 
 		Assert.true(actual.hasKey('sql'), 'Database.query() returns an object which has the key "sql"');
 		Assert.true(actual.hasKey('rows'), 'Database.query() returns an object which has the key "rows"');
@@ -51,7 +51,7 @@ class DatabaseTest extends Test {
 		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
 
 		var actual = await frameworkTestDatabase.getSchema();
-		//Console.log(actual);
+		//app.log(actual);
 
 		Assert.true(actual.hasKey('name'), 'Database.getSchema() returns an object which has the key "name"');
 		Assert.true(actual.hasKey('tables'), 'Database.getSchema() returns an object which has the key "tables"');

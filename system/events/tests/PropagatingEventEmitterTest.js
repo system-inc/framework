@@ -28,7 +28,7 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Store event at level 3
 		propagatingEventEmitter3.on('event', function(event) {
-			//Console.log('level3!', event.currentPhase);
+			//app.log('level3!', event.currentPhase);
 			propagatingEventEmitter3StoredEventCounter++;
 			propagatingEventEmitter3StoredEvent = event;
 			propagatingEventEmitter3StoredCurrentPhase = event.currentPhase;
@@ -36,7 +36,7 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Store event at level 2
 		propagatingEventEmitter2.on('event', function(event) {
-			//Console.log('level2!', event.currentPhase);
+			//app.log('level2!', event.currentPhase);
 			propagatingEventEmitter2StoredEventCounter++;
 			propagatingEventEmitter2StoredEvent = event;
 			propagatingEventEmitter2StoredCurrentPhase = event.currentPhase;
@@ -44,7 +44,7 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Store event at level 1
 		propagatingEventEmitter1.on('event', function(event) {
-			//Console.log('level1!', event.currentPhase);
+			//app.log('level1!', event.currentPhase);
 			propagatingEventEmitter1StoredEventCounter++;
 			propagatingEventEmitter1StoredEvent = event;
 			propagatingEventEmitter1StoredCurrentPhase = event.currentPhase;
@@ -53,13 +53,13 @@ class PropagatingEventEmitterTest extends Test {
 		// Emit event at level 3
 		await propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3');
 
-		//Console.log('propagatingEventEmitter3StoredCurrentPhase', propagatingEventEmitter3StoredCurrentPhase);
-		//Console.log('propagatingEventEmitter2StoredCurrentPhase', propagatingEventEmitter2StoredCurrentPhase);
-		//Console.log('propagatingEventEmitter1StoredCurrentPhase', propagatingEventEmitter1StoredCurrentPhase);
+		//app.log('propagatingEventEmitter3StoredCurrentPhase', propagatingEventEmitter3StoredCurrentPhase);
+		//app.log('propagatingEventEmitter2StoredCurrentPhase', propagatingEventEmitter2StoredCurrentPhase);
+		//app.log('propagatingEventEmitter1StoredCurrentPhase', propagatingEventEmitter1StoredCurrentPhase);
 		
-		//Console.info(propagatingEventEmitter3StoredEvent);
-		//Console.info(propagatingEventEmitter2StoredEvent);
-		//Console.info(propagatingEventEmitter1StoredEvent);
+		//app.info(propagatingEventEmitter3StoredEvent);
+		//app.info(propagatingEventEmitter2StoredEvent);
+		//app.info(propagatingEventEmitter1StoredEvent);
 		
 		// Level 3
 		Assert.true(PropagatingEvent.is(propagatingEventEmitter1StoredEvent), 'Event emitted from PropagatingEventEmitter is a PropagatingEvent');
@@ -105,8 +105,8 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Emit event at level 3
 		await propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3');
-		//Console.info(propagatingEventEmitter1StoredEvent);
-		//Console.info(propagatingEventEmitter2StoredEvent);
+		//app.info(propagatingEventEmitter1StoredEvent);
+		//app.info(propagatingEventEmitter2StoredEvent);
 
 		// Level 3 event should have bubbled up to level 2 and not level 1
 		Assert.strictEqual(propagatingEventEmitter2StoredEventCounter, 1, 'Event only triggered once');
@@ -152,9 +152,9 @@ class PropagatingEventEmitterTest extends Test {
 		await propagatingEventEmitter3.emit('event', 'propagatingEventEmitter3', {
 			propagationStopped: true,
 		});
-		//Console.info(propagatingEventEmitter1StoredEvent);
-		//Console.info(propagatingEventEmitter2StoredEvent);
-		//Console.info(propagatingEventEmitter3StoredEvent);
+		//app.info(propagatingEventEmitter1StoredEvent);
+		//app.info(propagatingEventEmitter2StoredEvent);
+		//app.info(propagatingEventEmitter3StoredEvent);
 
 		// The event should not propagate
 		Assert.strictEqual(propagatingEventEmitter3StoredEvent.data, 'propagatingEventEmitter3', 'Event option "propagationStopped" does not stop the first event listeners from executing');
@@ -221,21 +221,21 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Level 3
 		propagatingEventEmitter3.on('event', function(event) {
-			//Console.log('Level 3!', event.currentPhase);
+			//app.log('Level 3!', event.currentPhase);
 			propagatingEventEmitter3StoredEventCounter++;
 			propagatingEventEmitter3StoredEvent = event;
 		});
 
 		// Level 2
 		propagatingEventEmitter2.on('event', function(event) {
-			//Console.log('Level 2!', event.currentPhase);
+			//app.log('Level 2!', event.currentPhase);
 			propagatingEventEmitter2StoredEventCounter++;
 			propagatingEventEmitter2StoredEvent = event;
 		});
 
 		// Level 1
 		propagatingEventEmitter1.on('event', function(event) {
-			//Console.log('Level 1!', event.currentPhase);
+			//app.log('Level 1!', event.currentPhase);
 			propagatingEventEmitter1StoredEventCounter++;
 			propagatingEventEmitter1StoredEvent = event;
 		});
@@ -247,9 +247,9 @@ class PropagatingEventEmitterTest extends Test {
 			},
 		});
 
-		//Console.info(propagatingEventEmitter1StoredEvent);
-		//Console.info(propagatingEventEmitter2StoredEvent);
-		//Console.info(propagatingEventEmitter3StoredEvent);
+		//app.info(propagatingEventEmitter1StoredEvent);
+		//app.info(propagatingEventEmitter2StoredEvent);
+		//app.info(propagatingEventEmitter3StoredEvent);
 
 		// The event should not bubble
 		Assert.strictEqual(propagatingEventEmitter3StoredEvent.data, 'propagatingEventEmitter3', 'Event phase "atEmitter" works');
@@ -275,21 +275,21 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Level 3
 		propagatingEventEmitter3.on('event', function(event) {
-			//Console.log('Level 3!', event.currentPhase);
+			//app.log('Level 3!', event.currentPhase);
 			propagatingEventEmitter3StoredEventCounter++;
 			propagatingEventEmitter3StoredEvent = event;
 		});
 
 		// Level 2
 		propagatingEventEmitter2.on('event', function(event) {
-			//Console.log('Level 2!', event.currentPhase);
+			//app.log('Level 2!', event.currentPhase);
 			propagatingEventEmitter2StoredEventCounter++;
 			propagatingEventEmitter2StoredEvent = event;
 		});
 
 		// Level 1
 		propagatingEventEmitter1.on('event', function(event) {
-			//Console.log('Level 1!', event.currentPhase);
+			//app.log('Level 1!', event.currentPhase);
 			propagatingEventEmitter1StoredEventCounter++;
 			propagatingEventEmitter1StoredEvent = event;
 		});
@@ -301,9 +301,9 @@ class PropagatingEventEmitterTest extends Test {
 			},
 		});
 
-		//Console.info(propagatingEventEmitter1StoredEvent);
-		//Console.info(propagatingEventEmitter2StoredEvent);
-		//Console.info(propagatingEventEmitter3StoredEvent);
+		//app.info(propagatingEventEmitter1StoredEvent);
+		//app.info(propagatingEventEmitter2StoredEvent);
+		//app.info(propagatingEventEmitter3StoredEvent);
 
 		// The event should not bubble
 		Assert.strictEqual(propagatingEventEmitter3StoredEvent, null, 'Event phase "atEmitter" does not trigger event listeners');
@@ -335,7 +335,7 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Level 3 (atEmitter)
 		propagatingEventEmitter3.on('event', function(event) {
-			//Console.log('Level 3!', event.currentPhase);
+			//app.log('Level 3!', event.currentPhase);
 			propagatingEventEmitter3StoredEventCounter++;
 			propagatingEventEmitter3StoredEvent = event;
 			propagatingEventEmitter3StoredEventCurrentPhase = event.currentPhase;
@@ -343,7 +343,7 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Level 2 (capturing)
 		propagatingEventEmitter2.on('event', function(event) {
-			//Console.log('Level 2!', event.currentPhase);
+			//app.log('Level 2!', event.currentPhase);
 			propagatingEventEmitter2StoredEventCounter++;
 			propagatingEventEmitter2StoredEvent = event;
 			propagatingEventEmitter2StoredEventCurrentPhase = event.currentPhase;
@@ -351,7 +351,7 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Level 1 (capturing)
 		propagatingEventEmitter1.on('event', function(event) {
-			//Console.log('Level 1!', event.currentPhase);
+			//app.log('Level 1!', event.currentPhase);
 			propagatingEventEmitter1StoredEventCounter++;
 			propagatingEventEmitter1StoredEvent = event;
 			propagatingEventEmitter1StoredEventCurrentPhase = event.currentPhase;
@@ -365,9 +365,9 @@ class PropagatingEventEmitterTest extends Test {
 			},
 		});
 
-		//Console.info(propagatingEventEmitter1StoredEvent);
-		//Console.info(propagatingEventEmitter2StoredEvent);
-		//Console.info(propagatingEventEmitter3StoredEvent);
+		//app.info(propagatingEventEmitter1StoredEvent);
+		//app.info(propagatingEventEmitter2StoredEvent);
+		//app.info(propagatingEventEmitter3StoredEvent);
 
 		Assert.strictEqual(propagatingEventEmitter3StoredEventCurrentPhase, 'atEmitter', 'currentPhase is set correctly');
 		Assert.strictEqual(propagatingEventEmitter2StoredEventCurrentPhase, 'capturing', 'currentPhase is set correctly');
@@ -398,7 +398,7 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Level 3
 		propagatingEventEmitter3.on('event', function(event) {
-			//Console.log('Level 3!', event.currentPhase);
+			//app.log('Level 3!', event.currentPhase);
 			propagatingEventEmitter3StoredEventCounter++;
 			propagatingEventEmitter3StoredEvent = event;
 			propagatingEventEmitter3StoredEventCurrentPhase = event.currentPhase;
@@ -406,7 +406,7 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Level 2
 		propagatingEventEmitter2.on('event', function(event) {
-			//Console.log('Level 2!', event.currentPhase);
+			//app.log('Level 2!', event.currentPhase);
 			propagatingEventEmitter2StoredEventCounter++;
 			propagatingEventEmitter2StoredEvent = event;
 			propagatingEventEmitter2StoredEventCurrentPhase = event.currentPhase;
@@ -414,7 +414,7 @@ class PropagatingEventEmitterTest extends Test {
 
 		// Level 1
 		propagatingEventEmitter1.on('event', function(event) {
-			//Console.log('Level 1!', event.currentPhase);
+			//app.log('Level 1!', event.currentPhase);
 			propagatingEventEmitter1StoredEventCounter++;
 			propagatingEventEmitter1StoredEvent = event;
 			propagatingEventEmitter1StoredEventCurrentPhase = event.currentPhase;
@@ -429,9 +429,9 @@ class PropagatingEventEmitterTest extends Test {
 			},
 		});
 
-		//Console.info(propagatingEventEmitter1StoredEvent);
-		//Console.info(propagatingEventEmitter2StoredEvent);
-		//Console.info(propagatingEventEmitter3StoredEvent);
+		//app.info(propagatingEventEmitter1StoredEvent);
+		//app.info(propagatingEventEmitter2StoredEvent);
+		//app.info(propagatingEventEmitter3StoredEvent);
 
 		Assert.strictEqual(propagatingEventEmitter3StoredEventCurrentPhase, 'atEmitter', '"atEmitter" phase not skipped');
 		Assert.strictEqual(propagatingEventEmitter2StoredEventCurrentPhase, null, '"capturing" phase skipped');
