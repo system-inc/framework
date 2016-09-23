@@ -50,11 +50,11 @@ class ErrorTest extends Test {
 		Assert.equal(actual.name, 'ReferenceError', 'name is set correctly');
 		Assert.equal(actual.message, 'zzz is not defined', 'message is set correctly');
 
-		var firstCallSiteData = actual.stack.getCallSiteData(0);
-		//app.info(firstCallSiteData);
+		var firstCallSiteData = actual.stack.getCallSite(0);
+		//app.info('firstCallSiteData', firstCallSiteData);
 		Assert.equal(firstCallSiteData.functionName, 'eval', 'first call site data is correct');
 		
-		var secondCallSiteData = actual.stack.getCallSiteData(1);
+		var secondCallSiteData = actual.stack.getCallSite(1);
 		//app.info('secondCallSiteData', secondCallSiteData);
 		Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInNormalFunction'), 'second call site data function name is correct');
 		Assert.equal(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site data fileName is correct');
@@ -78,14 +78,14 @@ class ErrorTest extends Test {
 		Assert.equal(actual.name, 'ReferenceError', 'name is set correctly');
 		Assert.equal(actual.message, 'zzz is not defined', 'message is set correctly');
 
-		var firstCallSiteData = actual.stack.getCallSiteData(0);
-		//app.info(firstCallSiteData);
+		var firstCallSiteData = actual.stack.getCallSite(0);
+		app.info(firstCallSiteData);
 		Assert.equal(firstCallSiteData.functionName, 'eval', 'first call site data is correct');
 		
-		var secondCallSiteData = actual.stack.getCallSiteData(1);
-		//app.info('secondCallSiteData', secondCallSiteData);
+		var secondCallSiteData = actual.stack.getCallSite(1);
+		app.info('secondCallSiteData', secondCallSiteData);
 		app.info('need to make StackTrace use the correct source map data, uncomment this next test');
-		//Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInGeneratorFunction'), 'second call site data function name is correct');
+		Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInGeneratorFunction'), 'second call site data function name is correct');
 		Assert.equal(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site data fileName is correct');
 	}
 

@@ -201,7 +201,7 @@ Console.prepareMessage = function(passedArguments, messageType, removeAnsiEscape
 	    Error.captureStackTrace(error, passedArguments.callee);
 
 	    // Get the location data of the first call site
-	    var callSiteData = error.stack.getCallSiteData(0);
+	    var callSiteData = error.stack.getCallSite(0);
 
     	message = '('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+message;
     	message = '['+new Time().getDateTime()+'] '+message;

@@ -146,7 +146,7 @@ class TestReporter {
 
 				// Show the location of the failed test
 				if(Error.is(failedTest.error)) {
-					var firstCallSiteData = failedTest.error.stack.getCallSiteData(0);
+					var firstCallSiteData = failedTest.error.stack.getCallSite(0);
 					app.standardStreams.output.writeLine(Terminal.style('    ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));	
 				}
 				else {

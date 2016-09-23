@@ -19,7 +19,7 @@ class HttpErrorTest extends Test {
 		Assert.equal(actual.code, null, 'code is set correctly');
 		Assert.equal(actual.message, 'testHttpErrorConstruction error message.', 'message is set correctly');
 
-		var firstCallSiteData = actual.stack.getCallSiteData(0);
+		var firstCallSiteData = actual.stack.getCallSite(0);
 		//app.info(firstCallSiteData);
 		Assert.true(firstCallSiteData.functionName.contains('testHttpErrorConstruction'), 'first call site data functionName is correct');
 		Assert.equal(firstCallSiteData.fileName, 'HttpErrorTest.js', 'first call site data fileName is correct');

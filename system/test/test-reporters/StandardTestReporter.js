@@ -32,7 +32,7 @@ class StandardTestReporter extends TestReporter {
 				
 				// Show the location of the failed assertion
 				if(Error.is(assertionData.error)) {
-					var firstCallSiteData = assertionData.error.stack.getCallSiteData(0);
+					var firstCallSiteData = assertionData.error.stack.getCallSite(0);
 					app.standardStreams.output.writeLine(Terminal.style('        ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'red'));
 				}
 				else {

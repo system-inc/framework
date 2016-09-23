@@ -21,7 +21,7 @@ class NotFoundErrorTest extends Test {
 		Assert.equal(actual.code, 404, 'code is set correctly');
 		Assert.equal(actual.message, 'testNotFoundErrorConstruction error message.', 'message is set correctly');
 
-		var firstCallSiteData = actual.stack.getCallSiteData(0);
+		var firstCallSiteData = actual.stack.getCallSite(0);
 		//app.info(firstCallSiteData);
 		Assert.true(firstCallSiteData.functionName.contains('testNotFoundErrorConstruction'), 'first call site data functionName is correct');
 		Assert.equal(firstCallSiteData.fileName, 'NotFoundErrorTest.js', 'first call site data fileName is correct');
