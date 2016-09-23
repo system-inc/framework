@@ -33,7 +33,7 @@ require('babel-register')({
 		//// async await
 		//'transform-async-to-generator',
 	],
-	sourceMaps: true,
+	sourceMaps: 'both',
 });
 
 require('./FrameworkCommandLineApp.js');

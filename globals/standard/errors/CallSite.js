@@ -5,6 +5,8 @@ class CallSite {
 
 	standardCallSite = null;
 
+	sourceMap = null;
+
 	typeName = null;
 	functionName = null;
 	methodName = null;
@@ -43,6 +45,10 @@ class CallSite {
 		}
 		this.lineNumber = standardCallSite.getLineNumber();
 		this.columnNumber = standardCallSite.getColumnNumber();
+	}
+
+	getSourceMap() {
+		
 	}
 
 	// returns the value of this
