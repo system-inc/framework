@@ -121,6 +121,11 @@ class StackTrace {
 		return string;
 	}
 
+	// Allow calls to error.stack.replace (because error.stack is not a string)
+	replace() {
+		return this.toString().replace(...arguments);
+	}
+
 }
 
 // Export

@@ -34,12 +34,14 @@ class TestModule extends Module {
 
 			// Debug
 			var path = null;
-			var filePattern = null;
-			var methodPattern = null;
-			path = Node.Path.join(app.framework.directory, 'globals');
-			//filePattern = 'buffer';
-			methodPattern = app.command.options.methodPattern;
-			app.log('path', path, 'filePattern', filePattern, 'methodPattern', methodPattern);
+			var filePattern = app.command.options.filePattern;
+			var methodPattern = app.command.options.methodPattern;
+			
+			//path = Node.Path.join(app.framework.directory, 'globals');
+			//filePattern = '';
+			//methodPattern = '';			
+			//app.log('path', path, 'filePattern', filePattern, 'methodPattern', methodPattern);
+			
 			this.proctor.getAndRunTests(path, filePattern, methodPattern);
 		}
 	}

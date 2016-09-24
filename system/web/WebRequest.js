@@ -1,11 +1,11 @@
 // Dependencies
-import Headers './headers/Headers.js';
-import Cookies './headers/Cookies.js';
-import Url './Url.js';
-import Version './../../system/version/Version.js';
-import Stopwatch './../../system/time/Stopwatch.js';
-import IpAddress './../../system/network/IpAddress.js';
-import Data './../../system/data/Data.js';
+import Headers from './headers/Headers.js';
+import Cookies from './headers/Cookies.js';
+import Url from './Url.js';
+import Version from './../../system/version/Version.js';
+import Stopwatch from './../../system/time/Stopwatch.js';
+import IpAddress from './../../system/network/IpAddress.js';
+import Data from './../../system/data/Data.js';
 
 // Class
 class WebRequest {
@@ -134,7 +134,7 @@ class WebRequest {
 			requestCert: webRequest.requestCertificate,
 		};
 
-		var response = yield WebRequest.request(options);
+		var response = await WebRequest.request(options);
 		//app.log(response);
 
 		return response;
@@ -201,7 +201,7 @@ class WebRequest {
 				// Set the cookies from the headers
 				webResponse.cookies = webResponse.headers.getCookies();
 
-				var finish = function*() {
+				var finish = async function() {
 					// Get the content encoding
 					var contentEncoding = webResponse.headers.get('content-encoding');
 					//Console.highlight(webResponse.headers);
@@ -215,7 +215,7 @@ class WebRequest {
 					if(options.decode) {
 						// Gzip or defalte
 						if(contentEncoding == 'gzip' || contentEncoding == 'deflate') {
-							webResponse.body = yield Data.decode(buffer, contentEncoding);
+							webResponse.body = await Data.decode(buffer, contentEncoding);
 						}
 						// No content encoding
 						else {

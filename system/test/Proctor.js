@@ -131,7 +131,7 @@ class Proctor extends EventEmitter {
 
 	async getAndRunTestMethod(testClassFilePath, testClassName, testMethodName) {
 		var tests = await Proctor.getTestMethod(testClassFilePath, testClassName, testMethodName);
-		//Console.standardLog('getAndRunTestMethod', testClassFilePath, testClassName, testMethodName);
+		Console.standardLog('getAndRunTestMethod', testClassFilePath, testClassName, testMethodName);
 
 		this.addTests(tests);
 
@@ -878,7 +878,7 @@ class Proctor extends EventEmitter {
 							}
 						}
 						catch(error) {
-							app.log('Caught an error while loading test.', testClassName, error, error.stack);
+							app.log('Caught an error while loading test.', testClassName, error.stack.toString());
 							Node.exit();
 						}
 					}

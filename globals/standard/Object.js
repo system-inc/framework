@@ -125,7 +125,7 @@ Object.prototype.each = function(callback) {
 
     // If the callback for the first item returned a Promise
     if(callbackReturnValueForFirstItem) {
-        console.log('FUNCTION IS ASYNC');
+        //console.log('FUNCTION IS ASYNC');
 
         // Keep track of the object
         var object = this;

@@ -1,3 +1,6 @@
+// Dependencies
+import Cryptography from './../../system/cryptography/Cryptography.js';
+
 // Instance methods
 
 Number.prototype.isInteger = function() {
@@ -112,10 +115,6 @@ Number.random = function(minimum, maximum, precision) {
 
 // Minimum and maximum are both inclusive
 Number.cryptographicRandom = async function(minimum = 0, maximum = 9007199254740992, precision = 0) {
-	// Dependencies
-	var Cryptography = require('./../../system/cryptography/Cryptography.js');
-	app.log('Cryptography.random', Cryptography.random);
-
 	// toFixed digits argument must be between 0 and 20
 	if(precision > 20) {
 		precision = 20;

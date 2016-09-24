@@ -105,7 +105,7 @@ class ObjectTest extends Test {
 		Assert.equal(string, 'applemacintoshbananachiquitacherrykirkland', 'key and value are passed in the correct order');
 	}
 
-	async testEachWithGenerator() {
+	async testEachWithAsync() {
 		// No await in generator
 		var object = {
 			'apple': 'macintosh',
@@ -166,9 +166,9 @@ class ObjectTest extends Test {
 
 		Assert.notStrictEqual(version, versionClone, 'instance clones are not in the same memory');
 		Assert.notEqual(version.major, versionClone.major, 'properties of instance clones are not in the same memory');
-		Assert.true(versionClone instanceof Class, 'instance clones are instanceof Class');
-		Assert.true(versionClone instanceof Version, 'instance clones are instanceof their subclass');
 		Assert.true(Class.isInstance(versionClone), 'instance clones pass Class.isInstance');
+		Assert.true(versionClone instanceof Version, 'instance clones are instanceof their subclass');
+		Assert.true(Class.isInstance(versionClone, Version), 'instance clones are instanceof their subclass');
 		Assert.equal(version.toString(), '2.0', 'instance clones receive prototypes correctly');
 		Assert.equal(versionClone.toString(), '1.0', 'instance clones receive prototypes correctly');
 	}
