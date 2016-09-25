@@ -204,12 +204,12 @@ class WebRequest {
 				var finish = async function() {
 					// Get the content encoding
 					var contentEncoding = webResponse.headers.get('content-encoding');
-					//Console.highlight(webResponse.headers);
-					//Console.highlight('contentEncoding', contentEncoding);
+					//app.highlight(webResponse.headers);
+					//app.highlight('contentEncoding', contentEncoding);
 
 					// Concatenate all of the data chunks into one buffer
 					var buffer = Buffer.concat(chunks);
-					//Console.highlight('decode', options.decode, 'buffer', buffer.toString());
+					//app.highlight('decode', options.decode, 'buffer', buffer.toString());
 
 					// If we are to decode the response
 					if(options.decode) {

@@ -31,7 +31,7 @@ class FileRoute extends Route {
 		else if(this.filePath) {
 			filePath = Node.Path.join(request.webServer.directory, 'views', this.filePath);
 		}
-		//Console.highlight(filePath);
+		//app.highlight(filePath);
 
 		response.content = new File(filePath);
 

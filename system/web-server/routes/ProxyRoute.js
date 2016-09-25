@@ -22,7 +22,7 @@ class ProxyRoute extends Route {
 	}
 
 	getFullProxyUrl(requestUrl) {
-		//Console.highlight(requestUrl, this.proxyUrl);
+		//app.highlight(requestUrl, this.proxyUrl);
 
 		// Clone the proxyUrl from the route
 		var fullProxyUrl = Object.clone(this.proxyUrl);
@@ -39,23 +39,23 @@ class ProxyRoute extends Route {
 	async follow(request, response) {
 		// Build a web request for the proxy
 		var fullProxyUrl = this.getFullProxyUrl(request.url);
-		//Console.highlight(fullProxyUrl);
+		//app.highlight(fullProxyUrl);
 
 		// Use the headers from the request
 		var requestHeaders = Object.clone(request.headers);
 		requestHeaders.update('host', fullProxyUrl.host);
-		//Console.highlight('requestHeaders', requestHeaders);
+		//app.highlight('requestHeaders', requestHeaders);
 
 		// Create a web request
 		var webRequest = new WebRequest(fullProxyUrl, {
 			decode: false,
 			headers: requestHeaders,
 		});
-		//Console.highlight(webRequest);
+		//app.highlight(webRequest);
 
 		// Execute the web request
 		var webRequestResponse = await webRequest.execute();
-		//Console.highlight('webRequestResponse', webRequestResponse);
+		//app.highlight('webRequestResponse', webRequestResponse);
 
 		// Match the status code
 		response.statusCode = webRequestResponse.statusCode;

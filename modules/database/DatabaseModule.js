@@ -18,7 +18,7 @@ class DatabaseModule extends Module {
 
 		// Add any databases to the database manager
 		var databases = this.settings.get('databases');
-		//Console.highlight(databases);
+		//app.highlight(databases);
 		if(databases) {
 			databases.each(function(databaseIdentifier, databaseOptions) {
 				this.databaseManager.add(databaseIdentifier, databaseOptions);

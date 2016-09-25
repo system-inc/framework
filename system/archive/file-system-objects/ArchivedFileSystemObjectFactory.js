@@ -1,20 +1,24 @@
+// Dependencies
+//import ArchivedDirectory from './../../../system/archive/file-system-objects/ArchivedDirectory.js';
+//import ArchivedFile from './../../../system/archive/file-system-objects/ArchivedFile.js';
+
 // Class
 class ArchivedFileSystemObjectFactory {
 
 	static createFromSevenZipArchivedFileSystemObjectProperties(archiveFile, sevenZipArchivedFileSystemObjectProperties) {	
-		//Console.highlight('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
+		//app.highlight('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
 
 		var archivedFileSystemObject = null;
 
 		// Directories
 		if(sevenZipArchivedFileSystemObjectProperties.folder == '+') {
-			var ArchivedDirectory = Framework.require('system/archive/file-system-objects/ArchivedDirectory.js');
+			var ArchivedDirectory = require('./../../../system/archive/file-system-objects/ArchivedDirectory.js').default;
 			archivedFileSystemObject = new ArchivedDirectory(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
 			//app.log('ArchivedDirectory', archivedFileSystemObject);
 		}
 		// Files
 		else {
-			var ArchivedFile = Framework.require('system/archive/file-system-objects/ArchivedFile.js');
+			var ArchivedFile = require('./../../../system/archive/file-system-objects/ArchivedFile.js').default;
 			archivedFileSystemObject = new ArchivedFile(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
 			//app.log('ArchivedFile', archivedFileSystemObject);
 		}

@@ -17,7 +17,7 @@ class WebServerController extends ServerController {
 	}
 
 	static getControllerInstance(controllerName, request, response, route) {
-		//Console.highlight(controllerName);
+		//app.highlight(controllerName);
 		
 		var controllerInstance = null;
 

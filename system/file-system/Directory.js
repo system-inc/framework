@@ -5,7 +5,15 @@ import FileSystemObject from './FileSystemObject.js';
 class Directory extends FileSystemObject {
 
 	constructor(path) {
+		//console.log('Directory.constructor path', path);
 		super(...arguments);
+		//console.log('Directory.constructor this.path', this.path);
+
+		this.initializeDirectory();
+	}
+
+	initializeDirectory() {
+		//console.log('Directory.initializeDirectory', this.path, arguments);
 
 		// Make sure directories always end with a separator
 		if(!this.path.endsWith(Node.Path.separator)) {

@@ -8,28 +8,38 @@ import ModelClassManager from './../../../system/data/ModelClassManager.js';
 // Class
 class ModelClassManagerTest extends Test {
 
-	async testAddPropertyToModel() {
+	testAddPropertyToModel() {
+		//Transpiler.logCachedTranspiledSourceForPath(__filename);
+
 		// Create a new model
-		var TestModel = Model.extend({
-			name: 'TestModel',
-		});
+		//class TestModel extends Model {
+		//	name = 'TestModel';
+		//}
+
+		class BlahBlah {
+
+		}
+
+		ModelClassManager.addModelPropertyToModelClass(BlahBlah, 1);
 		
 		// Create a new model property
-		var testModelProperty = new ModelProperty('test');
+		//var testModelProperty = new ModelProperty('test');
+
+		//console.log('TestModel', TestModel); Node.exit();
 
 		// Add the model property to the class
-		var TestModel = ModelClassManager.addModelPropertyToModelClass(testModelProperty, TestModel);
+		//ModelClassManager.addModelPropertyToModelClass(testModelProperty, TestModel);
 
 		// Instantiate a new model
-		var testModel = new TestModel();
+		//var testModel = new TestModel();
 
-		// Call the setter
-		testModel.setTest('test value');
+		//// Call the setter
+		//testModel.setTest('test value');
 
-		// Call the getter
-		var actual = testModel.getTest();
+		//// Call the getter
+		//var actual = testModel.getTest();
 
-		Assert.equal(actual, 'test value', 'getting and setting a property');
+		//Assert.equal(actual, 'test value', 'getting and setting a property');
 	}
 
 }

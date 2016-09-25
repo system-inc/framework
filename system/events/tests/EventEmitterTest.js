@@ -128,12 +128,12 @@ class EventEmitterTest extends Test {
 		var storedRemovedAllEventListenersEvent = null;
 
 		eventEmitter.on('eventEmitter.addedEventListener', function(event) {
-			//Console.highlight(event);
+			//app.highlight(event);
 			storedAddedEventListenerEvent = event;
 		});
 
 		eventEmitter.on('eventEmitter.removedEventListener', function(event) {
-			//Console.highlight(event);
+			//app.highlight(event);
 			storedRemovedEventListenerEvent = event;
 		});
 
@@ -148,7 +148,7 @@ class EventEmitterTest extends Test {
 		//app.info('storedRemovedEventListenerEvent', storedRemovedEventListenerEvent);
 		Assert.strictEqual(storedRemovedEventListenerEvent.data.eventPattern, 'event1', 'stored eventEmitter.removedEventListener event');
 
-		//Console.highlight(eventEmitter);
+		//app.highlight(eventEmitter);
 	}
 
 	async testEventPassing() {
@@ -353,7 +353,7 @@ class EventEmitterTest extends Test {
 		await eventEmitter.emit('event12');
 		Assert.strictEqual(storedEvent.identifier, 'event12', 'identifier is set correctly');
 
-		//Console.highlight(eventEmitter);
+		//app.highlight(eventEmitter);
 	}
 
 	async testEmittingMultipleEvents() {

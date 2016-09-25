@@ -14,7 +14,7 @@ class ConsoleTest extends Test {
 		//app.info('app.info: Hello world');
 		//app.warn('app.warn: Hello world');
 		//app.error('app.error: Hello world');
-		//Console.highlight('Console.highlight: Hello world');
+		//app.highlight('app.highlight: Hello world');
 		//Console.write('Console.write: Hello world');
 		//Console.writeLine('Console.writeLine: Hello world');
 	}

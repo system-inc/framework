@@ -13,7 +13,7 @@ class OperatingSystem {
 		if(!userAgent) {
 			return this;
 		}
-		//Console.highlight(userAgent);
+		//app.highlight(userAgent);
 
 		// Detect the matching operating system
 		var matchingOperatingSystem = null;
@@ -24,7 +24,7 @@ class OperatingSystem {
 				return false; // break
 			}
 		});
-		//Console.highlight(matchingOperatingSystem);
+		//app.highlight(matchingOperatingSystem);
 
 		// Get the version and break it out into major, minor, patch, and patch minor
 		if(matchingOperatingSystem !== null) {
@@ -32,7 +32,7 @@ class OperatingSystem {
 			this.manufacturer = matchingOperatingSystem.manufacturer;
 
 			var operatingSystemVersionRegularExpressionString = '^.*'+matchingOperatingSystem.userAgentRegularExpressionString+'.+?([\\d\\._]+).*$';
-			//Console.highlight(operatingSystemVersionRegularExpressionString);
+			//app.highlight(operatingSystemVersionRegularExpressionString);
 			var operatingSystemVersionMatches = userAgent.match(new RegularExpression(operatingSystemVersionRegularExpressionString, 'i'));
 			if(operatingSystemVersionMatches && operatingSystemVersionMatches[1]) {
 				this.version = new Version(operatingSystemVersionMatches[1]);

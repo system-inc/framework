@@ -31,7 +31,7 @@ class WebServerTest extends Test {
 
 		this.webServer = new WebServer('test', webServerSettings.modules.webServer.webServers[0]);
 
-		//Console.highlight(this.webServer);
+		//app.highlight(this.webServer);
 
 		await this.webServer.start();
 
@@ -447,7 +447,7 @@ class WebServerTest extends Test {
 			});
 			var webRequestResponse = await webRequest.execute();
 
-			//Console.highlight(
+			//app.highlight(
 			//	' webRequestResponse.statusCode', webRequestResponse.statusCode, "\n",
 			//	'webRequestResponse.headers.get(\'Content-Range\')', webRequestResponse.headers.get('Content-Range'), "\n",
 			//	'webRequestResponse.body', webRequestResponse.body
@@ -512,7 +512,7 @@ class WebServerTest extends Test {
 	//		});
 	//		var webRequestResponse = await webRequest.execute();
 
-	//		Console.highlight(
+	//		app.highlight(
 	//			' webRequestResponse.statusCode', webRequestResponse.statusCode, "\n",
 	//			'webRequestResponse.headers.get(\'Content-Range\')', webRequestResponse.headers.get('Content-Range'), "\n",
 	//			'webRequestResponse.body', webRequestResponse.body
@@ -585,7 +585,7 @@ class WebServerTest extends Test {
 			});
 			var webRequestResponse = await webRequest.execute();
 
-			//Console.highlight(
+			//app.highlight(
 			//	' webRequestResponse.statusCode', webRequestResponse.statusCode, "\n",
 			//	'webRequestResponse.headers.get(\'Content-Encoding\')', webRequestResponse.headers.get('Content-Encoding'), "\n",
 			//	'webRequestResponse.headers.get(\'Content-Range\')', webRequestResponse.headers.get('Content-Range'), "\n",
@@ -660,7 +660,7 @@ class WebServerTest extends Test {
 			});
 			var webRequestResponse = await webRequest.execute();
 
-			//Console.highlight(
+			//app.highlight(
 			//	' webRequestResponse.statusCode', webRequestResponse.statusCode, "\n",
 			//	'webRequestResponse.headers.get(\'Content-Encoding\')', webRequestResponse.headers.get('Content-Encoding'), "\n",
 			//	'webRequestResponse.headers.get(\'Content-Range\')', webRequestResponse.headers.get('Content-Range'), "\n",
@@ -735,7 +735,7 @@ class WebServerTest extends Test {
 	//		});
 	//		var webRequestResponse = await webRequest.execute();
 
-	//		//Console.highlight(
+	//		//app.highlight(
 	//		//	' webRequestResponse.statusCode', webRequestResponse.statusCode, "\n",
 	//		//	'webRequestResponse.headers.get(\'Content-Encoding\')', webRequestResponse.headers.get('Content-Encoding'), "\n",
 	//		//	'webRequestResponse.headers.get(\'Content-Range\')', webRequestResponse.headers.get('Content-Range'), "\n",

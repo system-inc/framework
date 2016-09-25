@@ -33,7 +33,7 @@ class Browser {
 			this.manufacturer = matchingBrowser.manufacturer;
 
 			var browserVersionRegularExpressionString = '^.*'+matchingBrowser.userAgentRegularExpressionString+'.+?([\\d|\\.]+).*$';
-			//Console.highlight(browserVersionRegularExpressionString);
+			//app.highlight(browserVersionRegularExpressionString);
 			var browserVersionMatches = userAgent.match(new RegularExpression(browserVersionRegularExpressionString, 'i'));
 			if(browserVersionMatches && browserVersionMatches[1]) {
 				this.version = new Version(browserVersionMatches[1]);

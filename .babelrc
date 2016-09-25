@@ -1,7 +1,0 @@
-{
-	"presets": [
-		"latest",
-		"stage-0"
-	],
-	"sourceMaps": true
-}

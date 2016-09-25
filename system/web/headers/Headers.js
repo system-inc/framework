@@ -166,7 +166,7 @@ class Headers {
 	}
 
 	static constructFromNodeHeaders(nodeHeaders) {
-		//Console.highlight(nodeHeaders); Node.exit();
+		//app.highlight(nodeHeaders); Node.exit();
 
 		var headers = new Headers();
 

@@ -214,6 +214,10 @@ class App extends EventEmitter {
 		return this.standardStreams.error.writeLine(this.formatLogData(...arguments));
 	}
 
+	highlight() {
+		return this.standardStreams.output.writeLine(this.formatLogData(...arguments));
+	}
+
 	formatLogData() {
 		var formattedLogData = '';
 

@@ -24,7 +24,7 @@ class Device {
 		if(!userAgent) {
 			return this;
 		}
-		//Console.highlight(userAgent);
+		//app.highlight(userAgent);
 
 		// Set the type, name, and manufacturer
 		if(userAgent.contains('iPhone')) {

@@ -4,7 +4,7 @@ var ArchiveModule = app.modules.archiveModule;
 // Class
 class SevenZip {
 
-	async execute(argumentsArray) {
+	static async execute(argumentsArray) {
 		// Locate the 7-Zip executable
 		var sevenZipExecutable = null;
 
@@ -73,7 +73,7 @@ class SevenZip {
 		return sevenZipChildProcess.stdout;
 	}
 
-	async extract(source, archivedFileSystemObjectPath) {
+	static async extract(source, archivedFileSystemObjectPath) {
 		var readStream = await SevenZip.execute([
 			'e', // extract
 			source.file, // archive file
@@ -83,7 +83,7 @@ class SevenZip {
 		return readStream;
 	}
 
-	async list(source) {
+	static async list(source) {
 		var list = [];
 
 		var listStream = await SevenZip.execute([
@@ -139,7 +139,7 @@ class SevenZip {
 		*/
 
 		var listString = await listStream.toString();
-		//Console.highlight('listString', listString);
+		//app.highlight('listString', listString);
 
 		// This marks where the archived file system objects start getting printed out
 		var archivedFileSystemObjectsDelimiter = '----------';
@@ -169,12 +169,12 @@ class SevenZip {
 			list.append(archivedFileSystemObjectProperties);
 		});
 
-		//Console.highlight('list', list);
+		//app.highlight('list', list);
 
 		return list;
 	}
 
-	parseArchiveFileString(archiveFileString) {
+	static parseArchiveFileString(archiveFileString) {
 		var archiveFileProperties = {
 			type: null,
 			size: null,
@@ -188,8 +188,8 @@ class SevenZip {
 		return archiveFileProperties;
 	}
 
-	parseArchivedFileSystemObjectString(archivedFileSystemObjectString) {
-		//Console.highlight('archivedFileSystemObjectString', archivedFileSystemObjectString);
+	static parseArchivedFileSystemObjectString(archivedFileSystemObjectString) {
+		//app.highlight('archivedFileSystemObjectString', archivedFileSystemObjectString);
 
 		var archivedFileSystemObjectProperties = {
 			path: null,
@@ -219,7 +219,7 @@ class SevenZip {
 		archivedFileSystemObjectProperties.encrypted = archivedFileSystemObjectString.match(/.*Encrypted\s=\s(.*)?\s/).second();
 
 		var commentMatches = archivedFileSystemObjectString.match(/.*Comment\s=\s(.*)?\s/);
-		//Console.highlight('commentMatches', commentMatches);
+		//app.highlight('commentMatches', commentMatches);
 		if(commentMatches && commentMatches.second()) {
 			archivedFileSystemObjectProperties.comment = commentMatches.second();
 		}
@@ -229,7 +229,7 @@ class SevenZip {
 		archivedFileSystemObjectProperties.hostOperatingSystem = archivedFileSystemObjectString.match(/.*Host\sOS\s=\s(.*)?\s/).second();
 
 		var versionMatches = archivedFileSystemObjectString.match(/.*Version\s=\s(.*)/);
-		//Console.highlight('versionMatches', versionMatches);
+		//app.highlight('versionMatches', versionMatches);
 		if(versionMatches && versionMatches.second()) {
 			archivedFileSystemObjectProperties.version = versionMatches.second();	
 		}	

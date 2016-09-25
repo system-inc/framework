@@ -44,7 +44,7 @@ class HtmlElementTest extends Test {
 		var actual = new HtmlElement('div');
 		actual.addClass('myClass1');
 		actual.removeClass('myClass1');
-		//Console.highlight(actual.toString());
+		//app.highlight(actual.toString());
 		Assert.strictEqual(actual.getAttribute('class'), null, 'Remove a class');
 
 		actual = new HtmlElement('div');
@@ -52,7 +52,7 @@ class HtmlElementTest extends Test {
 		actual.addClass('myClass2');
 		actual.addClass('myClass3');
 		actual.removeClass('myClass2');
-		//Console.highlight(actual.toString());
+		//app.highlight(actual.toString());
 		Assert.strictEqual(actual.getAttribute('class'), 'myClass1 myClass3', 'Remove a class out of three classes');
 	}
 	

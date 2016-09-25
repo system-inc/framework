@@ -25,21 +25,25 @@ class FileSystemObject {
 	readStream = null;
 	
 	constructor(path) {
-		this.path = Node.Path.normalize(path);
-
-		// Make sure we have a path
-		if(this.path) {
-			// Figure out the name
-			var name = this.path;
-			if(this.path.endsWith(Node.Path.separator)) {
-				name = name.replaceLast(Node.Path.separator, '');
-			}
-			this.name = name.substr(name.lastIndexOf(Node.Path.separator) + 1, name.length);
-
-			// Figure out the directory
-			this.directory = this.path.substr(0, this.path.lastIndexOf(Node.Path.separator) + 1);
-		}
+        this.initializeFileSystemObject(path);
 	}
+
+    initializeFileSystemObject(path) {
+        this.path = Node.Path.normalize(path);
+
+        // Make sure we have a path
+        if(this.path) {
+            // Figure out the name
+            var name = this.path;
+            if(this.path.endsWith(Node.Path.separator)) {
+                name = name.replaceLast(Node.Path.separator, '');
+            }
+            this.name = name.substr(name.lastIndexOf(Node.Path.separator) + 1, name.length);
+
+            // Figure out the directory
+            this.directory = this.path.substr(0, this.path.lastIndexOf(Node.Path.separator) + 1);
+        }
+    }
 
 	async initializeStatus() {
 		if(await FileSystemObject.exists(this.path)) {

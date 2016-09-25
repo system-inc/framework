@@ -5,7 +5,7 @@ if(!global && window) {
 
 // Show unhandled errors
 process.on('unhandledRejection', function(error) {
-	console.error('Unhandled rejection:', error);
+	console.error('Unhandled rejection:', error.stack.toString());
 	Node.exit();
 });
 
@@ -30,3 +30,4 @@ import './custom/Class.js';
 import './custom/Json.js';
 import './custom/Primitive.js';
 import './custom/Time.js';
+import './custom/Transpiler.js';

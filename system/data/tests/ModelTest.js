@@ -58,7 +58,7 @@ class ModelTest extends Test {
 
 	before() {
 		this.testModel = ModelClassManager.generateModelClassFromSchemaModel(this.testModelSchema);
-		//Console.highlight(this.testModel);
+		//app.highlight(this.testModel);
 	}
 
 	async testSave() {
@@ -73,7 +73,7 @@ class ModelTest extends Test {
 		testModel.setTestNumberProperty(123456789.123456789);
 		testModel.setTestStringProperty('a string');
 		testModel.setTestTimeProperty('1984-06-28 00:00:00');
-		//Console.highlight(testModel);
+		//app.highlight(testModel);
 
 		// Assert gets
 		Assert.strictEqual(testModel.getTestBooleanProperty(), true, 'get boolean');

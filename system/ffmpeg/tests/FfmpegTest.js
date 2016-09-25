@@ -11,7 +11,7 @@ class FfmpegTest extends Test {
 
 	//	var actual = yield FfmpegWrapper.resizeImage(testFile, 50);
 
-	//	//Console.highlight('actual', actual);
+	//	//app.highlight('actual', actual);
 
 	//	//Assert.equal('meh', 'meh2', 'Actual equals expected');
 	//},
@@ -22,7 +22,7 @@ class FfmpegTest extends Test {
 	//		bitrate: 1200,
 	//	});
 
-	//	//Console.highlight(actual);
+	//	//app.highlight(actual);
 	//},
 
 }

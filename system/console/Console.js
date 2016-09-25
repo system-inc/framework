@@ -64,7 +64,7 @@ Console.error = function() {
 	}
 };
 
-Console.highlight = function() {
+app.highlight = function() {
 	if(Console.onDeveloperTools()) {
 		Console.writeToDeveloperTools(arguments, 'highlight');
 	}

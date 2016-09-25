@@ -17,7 +17,7 @@ class ArchivedFile extends ArchivedFileSystemObject {
 		this.type = 'file';
 
 		// Use File's constructor to setup class variables based on path
-		File.prototype.construct.call(this, this.path);
+		File.prototype.initializeFile.call(this, this.path);
 
 		// Force all path separators to be forward slashes
 		this.path = this.path.replace('\\', '/');

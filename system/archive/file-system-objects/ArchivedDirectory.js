@@ -10,13 +10,13 @@ class ArchivedDirectory extends ArchivedFileSystemObject {
 
 		this.type = 'directory';
 
-		// Use Directory's constructor to setup class variables based on path
-		Directory.prototype.construct.call(this, this.path);
+		// Use Directory's initialize to setup class variables based on path
+		Directory.prototype.initializeDirectory.call(this, this.path);
 
 		// Force all path separators to be forward slashes
 		this.path = this.path.replace('\\', '/');
 		this.directory = this.directory.replace('\\', '/');
-	},
+	}
 
 }
 

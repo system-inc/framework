@@ -30,7 +30,7 @@ class ArchiveFile extends File {
 		if(!this.archivedFileSystemObjects) {
 			// Get the 7-Zip list from the command line executable
 			var sevenZipList = await SevenZip.list(this.file);
-			//app.log(sevenZipList);
+			//app.log('sevenZipList', sevenZipList);
 
 			this.archivedFileSystemObjects = [];
 
@@ -42,7 +42,7 @@ class ArchiveFile extends File {
 			}.bind(this));
 		}
 
-		//Console.highlight('this.archivedFileSystemObjects', this.archivedFileSystemObjects);
+		//app.highlight('this.archivedFileSystemObjects', this.archivedFileSystemObjects);
 
 		return this.archivedFileSystemObjects;
 	}

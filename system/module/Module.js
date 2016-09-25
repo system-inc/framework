@@ -1,4 +1,4 @@
-// Dependencies
+	// Dependencies
 import Settings from './../../system/settings/Settings.js';
 
 // Class

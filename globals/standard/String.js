@@ -116,7 +116,7 @@ String.prototype.replaceLast = function(pattern, replacement) {
 	}
 };
 
-String.prototype.replaceSubstring = function(pattern, replacement, start) {
+String.prototype.replaceSubstring = function(pattern, replacement = '', start = 0) {
 	var length = pattern.length;
 
 	var result = this.slice(0, start);

@@ -13,16 +13,16 @@ class ArchiveTest extends Test {
 		var archiveFile = new ArchiveFile(archiveFilePath);
 
 		var archivedFileSystemObjects = await archiveFile.list();
-		//Console.highlight('archivedFileSystemObjects', archivedFileSystemObjects);
+		//app.highlight('archivedFileSystemObjects', archivedFileSystemObjects);
 
 		var archivedFile = archivedFileSystemObjects.second();
-		//Console.highlight('archivedFile', archivedFile);
+		//app.highlight('archivedFile', archivedFile);
 
 		var archivedFileStream = await archivedFile.toReadStream();
-		//Console.highlight('archivedFileStream', archivedFileStream);
+		//app.highlight('archivedFileStream', archivedFileStream);
 
 		var archivedFileString = await archivedFileStream.toString();
-		//Console.highlight('archivedFileString', archivedFileString);
+		//app.highlight('archivedFileString', archivedFileString);
 
 		Assert.equal(archivedFileString, "Hi! This zip file has a comment inside of it.\r\n\r\nEnjoy!\r\n\r\nKirk\r\n");
 	}
@@ -34,16 +34,16 @@ class ArchiveTest extends Test {
 		var archiveFile = new ArchiveFile(archiveFilePath);
 
 		var archivedFileSystemObjects = await archiveFile.list();
-		//Console.highlight('archivedFileSystemObjects', archivedFileSystemObjects);
+		//app.highlight('archivedFileSystemObjects', archivedFileSystemObjects);
 
 		var archivedFile = archivedFileSystemObjects.third();
-		//Console.highlight('archivedFile', archivedFile);
+		//app.highlight('archivedFile', archivedFile);
 
 		var archivedFileStream = await archivedFile.toReadStream();
-		//Console.highlight('archivedFileStream', archivedFileStream);
+		//app.highlight('archivedFileStream', archivedFileStream);
 
 		var archivedFileString = await archivedFileStream.toString();
-		//Console.highlight('archivedFileString', archivedFileString);
+		//app.highlight('archivedFileString', archivedFileString);
 
 		Assert.equal(archivedFileString, "File D!\r\n\r\nWoo hoo.");
 	}
@@ -55,16 +55,16 @@ class ArchiveTest extends Test {
 		var archiveFile = new ArchiveFile(archiveFilePath);
 
 		var archivedFileSystemObjects = await archiveFile.list();
-		//Console.highlight('archivedFileSystemObjects', archivedFileSystemObjects);
+		//app.highlight('archivedFileSystemObjects', archivedFileSystemObjects);
 
 		var archivedFile = archivedFileSystemObjects.third();
-		//Console.highlight('archivedFile', archivedFile);
+		//app.highlight('archivedFile', archivedFile);
 
 		var archivedFileStream = await archivedFile.toReadStream();
-		//Console.highlight('archivedFileStream', archivedFileStream);
+		//app.highlight('archivedFileStream', archivedFileStream);
 
 		var archivedFileString = await archivedFileStream.toString();
-		//Console.highlight('archivedFileString', archivedFileString);
+		//app.highlight('archivedFileString', archivedFileString);
 
 		Assert.equal(archivedFileString, "File D!\r\n\r\nWoo hoo.");
 	}

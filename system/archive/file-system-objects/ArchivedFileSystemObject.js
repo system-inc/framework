@@ -31,8 +31,8 @@ class ArchivedFileSystemObject {
 	constructor(archiveFile, path) {
 		this.archiveFile = archiveFile;
 
-		// Use FileSystemObject's constructor to setup class variables based on path
-		FileSystemObject.prototype.construct.call(this, path);
+		// Use FileSystemObject's initialize method to setup class variables based on path
+		FileSystemObject.prototype.initializeFileSystemObject.call(this, path);
 	}
 
 	async toReadStream(options) {

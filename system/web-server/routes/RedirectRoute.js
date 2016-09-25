@@ -30,7 +30,7 @@ class RedirectRoute extends Route {
 			// Replace the host with the desired host
 			url.host = this.redirectHost;
 
-			//Console.highlight('Redirecting to', url.getUrl());
+			//app.highlight('Redirecting to', url.getUrl());
 
 			// Redirect the client to the URL with the new host
 			response.headers.set('Location', url.getUrl());

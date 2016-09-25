@@ -21,10 +21,22 @@ class Stream extends Node.Stream.Stream {
 	}
 
 	static is(value) {
-		return value instanceof Stream;
+		var is = false;
+
+		if(value instanceof Stream) {
+			is = true;
+		}
+		else if(value instanceof Node.Stream.Stream) {
+			is = true;
+		}
+
+		return is;
 	}
 
 }
+
+// Patch Node's Stream with a nice toString method
+Node.Stream.Stream.prototype.toString = Stream.prototype.toString;
 
 // Global
 global.Stream = Stream;

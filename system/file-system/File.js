@@ -13,7 +13,11 @@ class File extends FileSystemObject {
 
 	constructor(path) {
 		super(...arguments);
-		
+        
+        this.initializeFile();
+	}
+
+    initializeFile() {
         this.file = this.path;
 
         // Handle files starting with ., such as .DS_Store , or files without extensions
@@ -27,7 +31,7 @@ class File extends FileSystemObject {
             this.nameWithoutExtension = this.name.substr(0, this.name.lastIndexOf('.'));
             this.fileWithoutExtension = this.directory+this.nameWithoutExtension;
         }
-	}
+    }
 
 	getContentType(file) {
         var context = this;

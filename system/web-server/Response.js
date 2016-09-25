@@ -106,7 +106,7 @@ class Response {
 
 		// If the content is something
 		if(this.content) {
-			//Console.highlight(this.content);
+			//app.highlight(this.content);
 
 			// Handle when the content is an ArchivedFile
 			if(Class.isInstance(this.content, ArchivedFile)) {
@@ -225,12 +225,12 @@ class Response {
 		// Write the headers out
 		this.nodeResponse.writeHead(this.statusCode, this.headers.toArray());
 
-		//Console.highlight(this.headers.toArray());
+		//app.highlight(this.headers.toArray());
 	}
 
 	async handleContentIsArchivedFile() {
 		// Set the Content-Type header
-		//Console.highlight(this.content.path);
+		//app.highlight(this.content.path);
 		var contentType = File.getContentType(this.content.path);
 		this.headers.set('Content-Type', contentType);
 
@@ -357,7 +357,7 @@ class Response {
 
 			// End the response
 			this.nodeResponse.end(this.content, function() {
-				//Console.highlight('Ending response');
+				//app.highlight('Ending response');
 				this.sent();
 			}.bind(this));
 		}
