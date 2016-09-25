@@ -13,7 +13,6 @@ system/web-server/tests/logs/*
 
 # NPM
 npm-debug.log
-#node_modules/*
 
 # Operating System
 .DS_Store
@@ -23,4 +22,3 @@ npm-debug.log
 .Trashes
 ehthumbs.db
 Thumbs.db
-node_modules/
