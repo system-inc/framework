@@ -179,7 +179,7 @@ class Route {
 	async follow(request, response) {
 		// Send the response
 		await response.send();
-	},
+	}
 
 	getFullExpression() {
 		var fullExpression = '';

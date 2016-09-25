@@ -9,7 +9,7 @@ class DatabaseTest extends Test {
 	async shouldRun() {
 		var shouldRun = true;
 
-		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
+		var frameworkTestDatabase = app.modules.databaseModule.databaseManager.get('frameworkTest');
 		var testQueryResults = await frameworkTestDatabase.query('SELECT 1 + 1 as `solution`');
 		//app.info(testQueryResults);
 
@@ -21,7 +21,7 @@ class DatabaseTest extends Test {
 	}
 
 	async testQueryOnDatabaseGeneratedBySettings() {
-		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
+		var frameworkTestDatabase = app.modules.databaseModule.databaseManager.get('frameworkTest');
 
 		var actual = await frameworkTestDatabase.query('SELECT * FROM user');
 		//app.log(actual);
@@ -33,7 +33,7 @@ class DatabaseTest extends Test {
 	}
 
 	async testQueryOnDatabaseCreatedManually() {
-		var databaseSettings = Project.settings.get('modules.database.databases.frameworkTest');
+		var databaseSettings = app.settings.get('modules.database.databases.frameworkTest');
 		//app.log(databaseSettings);
 
 		var frameworkTestDatabase = new Database(databaseSettings);
@@ -48,7 +48,7 @@ class DatabaseTest extends Test {
 	}
 
 	async testGetSchema() {
-		var frameworkTestDatabase = Project.modules.databaseModule.databaseManager.get('frameworkTest');
+		var frameworkTestDatabase = app.modules.databaseModule.databaseManager.get('frameworkTest');
 
 		var actual = await frameworkTestDatabase.getSchema();
 		//app.log(actual);

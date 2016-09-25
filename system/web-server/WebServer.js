@@ -13,40 +13,7 @@ class WebServer extends Server {
 	identifier = null;
 	directory = null;
 	requests = 0;
-	settings = new Settings({
-		directory: null,
-		verbose: true,
-		logs: {
-			general: {
-				enabled: true,
-				directory: Node.Path.join(Project.directory, 'logs'),
-				nameWithoutExtension: 'web-server-'+this.identifier.toDashes(),
-			},
-			requests: {
-				enabled: true,
-				directory: Node.Path.join(Project.directory, 'logs'),
-				nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-requests',
-			},
-			responses: {
-				enabled: true,
-				directory: Node.Path.join(Project.directory, 'logs'),
-				nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-responses',
-			},
-		},
-		protocols: {
-			http: {
-				ports: [],
-			},
-			https: {
-				keyFile: null,
-				certificateFile: null,
-			},
-		},
-		serverTimeoutInMilliseconds: 60000, // 60 seconds
-		requestTimeoutInMilliseconds: 20000, // 20 seconds
-		responseTimeoutInMilliseconds: 20000, // 20 seconds
-		maximumRequestBodySizeInBytes: 20000000, // 20 megabytes
-	});
+	settings = null; // Set this in constructor as I need to use context to set defaults
 	
 	router = null;
 	listeners = {};
@@ -60,7 +27,41 @@ class WebServer extends Server {
 		super();
 
 		this.identifier = identifier;
-		this.settings.merge(settings);
+
+		this.settings = new Settings({
+			directory: null,
+			verbose: true,
+			logs: {
+				general: {
+					enabled: true,
+					directory: Node.Path.join(app.directory, 'logs'),
+					nameWithoutExtension: 'web-server-'+this.identifier.toDashes(),
+				},
+				requests: {
+					enabled: true,
+					directory: Node.Path.join(app.directory, 'logs'),
+					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-requests',
+				},
+				responses: {
+					enabled: true,
+					directory: Node.Path.join(app.directory, 'logs'),
+					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-responses',
+				},
+			},
+			protocols: {
+				http: {
+					ports: [],
+				},
+				https: {
+					keyFile: null,
+					certificateFile: null,
+				},
+			},
+			serverTimeoutInMilliseconds: 60000, // 60 seconds
+			requestTimeoutInMilliseconds: 20000, // 20 seconds
+			responseTimeoutInMilliseconds: 20000, // 20 seconds
+			maximumRequestBodySizeInBytes: 20000000, // 20 megabytes
+		}, settings);
 
 		// Set the web server directory
 		var settingsDirectory = this.settings.get('directory');
@@ -68,7 +69,7 @@ class WebServer extends Server {
 			this.directory = Node.Path.normalize(settingsDirectory);
 		}
 		else {
-			this.directory = Project.directory;
+			this.directory = app.directory;
 		}
 		// Update the settings with this.directory
 		this.settings.set('directory', this.directory);
@@ -106,7 +107,7 @@ class WebServer extends Server {
 		if(!Object.isEmpty(httpsSettings.keyFile)) {
 			httpsSettings.keyFile = Node.Path.normalize(httpsSettings.keyFile);
 			if(!Node.Path.isAbsolute(httpsSettings.keyFile)) {
-				httpsSettings.keyFile = Node.Path.join(Project.directory, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.keyFile);
+				httpsSettings.keyFile = Node.Path.join(app.directory, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.keyFile);
 			}
 		}
 
@@ -114,7 +115,7 @@ class WebServer extends Server {
 		if(!Object.isEmpty(httpsSettings.certificateFile)) {
 			httpsSettings.certificateFile = Node.Path.normalize(httpsSettings.certificateFile);
 			if(!Node.Path.isAbsolute(httpsSettings.certificateFile)) {
-				httpsSettings.certificateFile = Node.Path.join(Project.directory, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.certificateFile);
+				httpsSettings.certificateFile = Node.Path.join(app.directory, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.certificateFile);
 			}
 		}
 

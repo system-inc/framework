@@ -88,7 +88,7 @@ var TestWebServerController = WebServerController.extend({
 	},
 
 	contentArchivedFile: function*() {
-		var archiveFile = new ArchiveFile(Node.Path.join(Framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'archives', 'archive-text.zip'));
+		var archiveFile = new ArchiveFile(Node.Path.join(app.framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'archives', 'archive-text.zip'));
 		//app.log('archiveFile', archiveFile);
 
 		var archivedFileSystemObjects = yield archiveFile.list();
@@ -100,7 +100,7 @@ var TestWebServerController = WebServerController.extend({
 	},
 
 	contentFile: function() {
-		var file = new File(Node.Path.join(Framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'text', 'data.txt'));
+		var file = new File(Node.Path.join(app.framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'text', 'data.txt'));
 
 		return file;
 	},

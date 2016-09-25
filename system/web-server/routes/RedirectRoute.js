@@ -12,11 +12,11 @@ class RedirectRoute extends Route {
 	redirectLocation = null;
 
 	constructor(settings, parent) {
+		super(...arguments);
+
 		this.inheritProperty('redirectStatusCode', settings, parent);
 		this.inheritProperty('redirectHost', settings, parent);
 		this.inheritProperty('redirectLocation', settings, parent);
-
-		this.super.apply(this, arguments);
 	}
 
 	async follow(request, response) {

@@ -1,3 +1,8 @@
+import RedirectRoute from './RedirectRoute.js';
+import FileRoute from './FileRoute.js';
+import ProxyRoute from './ProxyRoute.js';
+import ControllerRoute from './ControllerRoute.js';
+
 // Class
 class RouteFactory {
 
@@ -11,22 +16,22 @@ class RouteFactory {
 
 		// RedirectRoute
 		if(settings.type == 'redirect') {
-			var RedirectRoute = Framework.require('system/web-server/routes/RedirectRoute.js');
+			//var RedirectRoute = require('./RedirectRoute.js');
 			route = new RedirectRoute(settings, parent);
 		}
 		// FileRoute
 		else if(settings.type == 'file') {
-			var FileRoute = Framework.require('system/web-server/routes/FileRoute.js');
+			//var FileRoute = require('./FileRoute.js');
 			route = new FileRoute(settings, parent);
 		}
 		// ProxyRoute
 		else if(settings.type == 'proxy') {
-			var ProxyRoute = Framework.require('system/web-server/routes/ProxyRoute.js');
+			//var ProxyRoute = require('./ProxyRoute.js');
 			route = new ProxyRoute(settings, parent);
 		}
 		// ControllerRoute is the default subclass
 		else {
-			var ControllerRoute = Framework.require('system/web-server/routes/ControllerRoute.js');
+			//var ControllerRoute = require('./ControllerRoute.js');
 			route = new ControllerRoute(settings, parent);
 		}
 

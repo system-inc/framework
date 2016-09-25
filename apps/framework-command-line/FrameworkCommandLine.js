@@ -1,5 +1,5 @@
 // Disable the Babel cache for debugging
-process.env.BABEL_DISABLE_CACHE = 1;
+//process.env.BABEL_DISABLE_CACHE = 1;
 
 // Include the Babel polyfill when generator support is not available
 require('babel-polyfill');

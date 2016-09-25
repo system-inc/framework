@@ -16,7 +16,7 @@ class WebServerTest extends Test {
 	webServer = null;
 
 	async before() {
-		var webServerSettings = File.synchronous.read.json(Framework.directory+'/system/web-server/tests/settings/settings.json');
+		var webServerSettings = await File.readAndDecodeJson(app.framework.directory+'/system/web-server/tests/settings/settings.json');
 
 		this.port = webServerSettings.modules.webServer.webServers[0].protocols.http.ports[0];
 
@@ -27,7 +27,7 @@ class WebServerTest extends Test {
 		webServerSettings.modules.webServer.webServers[0].verbose = false;
 
 		// Set the web server directory
-		webServerSettings.modules.webServer.webServers[0].directory = Node.Path.normalize(Framework.directory+'/system/web-server/tests/');
+		webServerSettings.modules.webServer.webServers[0].directory = Node.Path.normalize(app.framework.directory+'/system/web-server/tests/');
 
 		this.webServer = new WebServer('test', webServerSettings.modules.webServer.webServers[0]);
 

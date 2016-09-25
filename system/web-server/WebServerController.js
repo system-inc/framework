@@ -9,7 +9,7 @@ class WebServerController extends ServerController {
 	route = null;
 	data = null;
 
-	construct(request, response, route) {
+	constructor(request, response, route) {
 		super(...arguments);
 
 		this.route = route;
@@ -22,7 +22,7 @@ class WebServerController extends ServerController {
 		var controllerInstance = null;
 
 		// Set the directory containing the controllers folder
-		var directory = Project.directory;
+		var directory = app.directory;
 		if(request.webServer) {
 			directory = request.webServer.directory;
 		}
@@ -58,7 +58,7 @@ class WebServerController extends ServerController {
 		}
 
 		// Create a file to reference the view
-		var viewFile = new File(Node.Path.join(Project.directory, 'views', viewPath));
+		var viewFile = new File(Node.Path.join(app.directory, 'views', viewPath));
 		//app.log('viewFile', viewFile);
 
 		var viewFileExists = await viewFile.exists();

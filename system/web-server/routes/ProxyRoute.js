@@ -1,14 +1,14 @@
 // Dependencies
-import Route './Route.js';
-import Url './../../system/web/Url.js';
-import WebRequest './../../system/web/WebRequest.js';
+import Route from './Route.js';
+import Url from './../../../system/web/Url.js';
+import WebRequest from './../../../system/web/WebRequest.js';
 
 // Class
 class ProxyRoute extends Route {
 
-	type: 'proxy',
-	proxyUrl: null,
-	proxyHeaders: null,
+	type = 'proxy';
+	proxyUrl = null;
+	proxyHeaders = null;
 
 	constructor(settings, parent) {
 		super(...arguments);

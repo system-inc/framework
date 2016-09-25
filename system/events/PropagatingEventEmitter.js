@@ -101,7 +101,7 @@ class PropagatingEventEmitter extends EventEmitter {
 
 		// Conditionally emit the event at the current level
 		if(shouldEmit) {
-			propagatingEvent = await this.super(eventIdentifier, data, eventOptions); // this will make propagatingEvent.currentEmitter = this
+			propagatingEvent = await super.emit(eventIdentifier, data, eventOptions); // this will make propagatingEvent.currentEmitter = this
 		}
 
 		//app.warn('propagatingEvent.currentPhase', propagatingEvent.currentPhase);

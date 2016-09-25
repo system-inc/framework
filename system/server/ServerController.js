@@ -1,15 +1,15 @@
 // Class
-var ServerController = Class.extend({
+class ServerController {
 
-	request: null,
-	response: null,
+	request = null;
+	response = null;
 
-	construct: function(request, response) {
+	constructor(request, response) {
 		this.request = request;
 		this.response = response;
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = ServerController;
+export default ServerController;
