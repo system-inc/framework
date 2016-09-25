@@ -253,13 +253,13 @@ class WebRequest {
 				// Resolve the promise when the response ends
 				response.on('end', function() {
 					//app.log('end event');
-					finish.run();
+					finish();
 				});
 
 				// Resolve the promise when the response ends
 				response.on('close', function() {
 					//app.log('close event');
-					finish.run();
+					finish();
 				});
 			});
 

@@ -268,24 +268,6 @@ class WebServer extends Server {
 	}
 
 	async handleRequest(request, response) {
-		// Create a domain for the request
-		var domain = Node.Domain.create();
-
-		// Must add the node request and response to the domain since they were created before the domain
-		domain.add(request.nodeRequest);
-		domain.add(response.nodeResponse);
-
-		// Add an event listener to listen for errors on the domain
-		domain.on('error', function(error) {
-			this.handleError(request, response, error);
-
-			// Exit the domain
-			domain.exit();
-		}.bind(this));
-
-		// Enter the domain
-		domain.enter();
-
 		// Process the request
 		try {
 			// Mark the request as received
@@ -301,15 +283,9 @@ class WebServer extends Server {
 
 			// Identify and follow the route
 			await this.router.route(request, response);
-
-			// Exit the domain
-			domain.exit();
 		}
 		catch(error) {
 			this.handleError(request, response, error);
-
-			// Exit the domain
-			domain.exit();
 		}
 	}
 
@@ -348,7 +324,9 @@ class WebServer extends Server {
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
 	handleInternalServerError(error, nodeResponse, request) {
-		var logEntry = Console.prepareMessage.call(this, ['WebServer.handleInternalServerError() called. Error:', error], 'write');
+		app.log('WebServer.js need to fix next line and use the line beneath');
+		var logEntry = 'WebServer.handleInternalServerError() called.';
+		//var logEntry = Console.prepareMessage.call(this, ['WebServer.handleInternalServerError() called. Error:', error], 'write');
 		if(this.settings.get('verbose')) {
 			app.log(logEntry);
 		}
