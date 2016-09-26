@@ -361,7 +361,7 @@ Array.prototype.random = function() {
 // Takes either a normal callback function or an async callback function
 Array.prototype.each = function(callback) {
 	var context = this;
-	var callbackReturnValueForFirstItem = null;
+	var promiseFromFirstItemCallback = null;
 
 	// Start out with a standard for loop
 	for(var i = 0; i < this.length; i++) {
@@ -369,7 +369,7 @@ Array.prototype.each = function(callback) {
 
 		// If the callback on the first item returns a Promise, break
 		if(i == 0 && Promise.is(advance)) {
-			callbackReturnValueForFirstItem = advance;
+			promiseFromFirstItemCallback = advance;
 			break;
 		}
 
@@ -380,29 +380,34 @@ Array.prototype.each = function(callback) {
 	}
 
 	// If the callback for the first item returned a Promise
-	if(callbackReturnValueForFirstItem) {
+	if(promiseFromFirstItemCallback) {
 		// Keep track of the array
 		var array = this;
 
 		// This top level promise resolves after all array elements have been looped over
 	    return new Promise(async function(resolve) {
 	    	// Wait for the first item's Promise to resolve
-	    	await callbackReturnValueForFirstItem;
+	    	var resolvedValueFromPromiseFromFirstItemCallback = await promiseFromFirstItemCallback;
 
-    		// Use a for loop here instead of .each so I can use await below
-    		// Start the loop on the second item
-	    	for(var i = 1; i < array.length; i++) {
-	    		// Await on a sub promise which resolves when the async callback for the current array element completes
-	   			var advance = await new Promise(async function(subResolve) {
-	   				// Run the async callback for the current array element, resolve the sub promise when complete
-					var callbackReturnValue = await callback.apply(context, [i, array[i], array]);
-					subResolve(callbackReturnValue);
-				});
+	    	// If the return value from the Promise from the first item is false, do not do anything
+	    	if(resolvedValueFromPromiseFromFirstItemCallback === false) {
+	    	}
+	    	else {
+				// Use a for loop here instead of .each so I can use await below
+	    		// Start the loop on the second item
+		    	for(var i = 1; i < array.length; i++) {
+		    		// Await on a sub promise which resolves when the async callback for the current array element completes
+		   			var advance = await new Promise(async function(subResolve) {
+		   				// Run the async callback for the current array element, resolve the sub promise when complete
+						var callbackReturnValue = await callback.apply(context, [i, array[i], array]);
+						subResolve(callbackReturnValue);
+					});
 
-				// If the callback returns false, break out of the for loop
-				if(advance === false) {
-					break;
-				}
+					// If the callback returns false, break out of the for loop
+					if(advance === false) {
+						break;
+					}
+		    	}
 	    	}
 
 	    	resolve();

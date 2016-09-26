@@ -124,7 +124,7 @@ Object.defineProperty(Object.prototype, 'each', {
     enumerable: false,
     value: function(callback) {
         var context = this;
-        var callbackReturnValueForFirstItem = null;
+        var promiseFromFirstItemCallback = null;
         var objectKeys = Object.keys(this);
 
         // Start out with a standard for loop
@@ -133,7 +133,7 @@ Object.defineProperty(Object.prototype, 'each', {
 
             // If the callback on the first item returns a Promise, break
             if(i == 0 && Promise.is(advance)) {
-                callbackReturnValueForFirstItem = advance;
+                promiseFromFirstItemCallback = advance;
                 break;
             }
 
@@ -144,7 +144,7 @@ Object.defineProperty(Object.prototype, 'each', {
         }
 
         // If the callback for the first item returned a Promise
-        if(callbackReturnValueForFirstItem) {
+        if(promiseFromFirstItemCallback) {
             //console.log('FUNCTION IS ASYNC');
 
             // Keep track of the object
@@ -153,21 +153,26 @@ Object.defineProperty(Object.prototype, 'each', {
             // This top level promise resolves after all object keys have been looped over
             return new Promise(async function(resolve) {
                 // Wait for the first item's Promise to resolve
-                await callbackReturnValueForFirstItem;
+                var resolvedValueFromPromiseFromFirstItemCallback = await promiseFromFirstItemCallback;
 
-                // Use a for loop here instead of .each so I can use await below
-                // Start the loop on the second item
-                for(var i = 1; i < objectKeys.length; i++) {
-                    // Await on a sub promise which resolves when the async callback for the current object key completes
-                    var advance = await new Promise(async function(subResolve) {
-                        // Run the async callback for the current object key, resolve the sub promise when complete
-                        var callbackReturnValue = await callback.apply(context, [objectKeys[i], object[objectKeys[i]], object]);
-                        subResolve(callbackReturnValue);
-                    });
+                // If the return value from the Promise from the first item is false, do not do anything
+                if(resolvedValueFromPromiseFromFirstItemCallback === false) {
+                }
+                else {
+                    // Use a for loop here instead of .each so I can use await below
+                    // Start the loop on the second item
+                    for(var i = 1; i < objectKeys.length; i++) {
+                        // Await on a sub promise which resolves when the async callback for the current object key completes
+                        var advance = await new Promise(async function(subResolve) {
+                            // Run the async callback for the current object key, resolve the sub promise when complete
+                            var callbackReturnValue = await callback.apply(context, [objectKeys[i], object[objectKeys[i]], object]);
+                            subResolve(callbackReturnValue);
+                        });
 
-                    // If the callback returns false, break out of the for loop
-                    if(advance === false) {
-                        break;
+                        // If the callback returns false, break out of the for loop
+                        if(advance === false) {
+                            break;
+                        }
                     }
                 }
 

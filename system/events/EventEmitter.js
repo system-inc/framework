@@ -13,7 +13,7 @@ class EventEmitter {
 	recommendedMaximumEventListenersPerEventIdentifier = null;
 
 	async on(eventPattern, functionToBind, timesToRun) {
-		//app.log('EventEmitter on', eventPattern, this.tag, Json.encode(this.attributes));
+		//console.log('EventEmitter on', eventPattern, this.tag, Json.encode(this.attributes));
 
 		var on = await this.addEventListener(eventPattern, functionToBind, timesToRun);
 
@@ -58,10 +58,10 @@ class EventEmitter {
 			return this;
 		}
 
-		//app.log('EventEmitter.emit', 'eventIdentifier', eventIdentifier, 'data', data);
+		//console.log('EventEmitter.emit', 'eventIdentifier', eventIdentifier);
 
 		var matchingEventListeners = this.getEventListeners(eventIdentifier);
-		//app.info('matchingEventListeners', matchingEventListeners);
+		//console.log('matchingEventListeners', matchingEventListeners);
 
 		// Create reference to the event to emit
 		var event = null
@@ -101,6 +101,7 @@ class EventEmitter {
 
 				// Check to see if event.stop() was called
 				if(event.stopped) {
+					//console.log('event stopped!', eventIdentifier);
 					return false; // break
 				}
 			}.bind(this));	
@@ -116,7 +117,7 @@ class EventEmitter {
 	}
 
 	async addEventListener(eventPattern, functionToBind, timesToRun) {
-		//app.log('EventEmitter.bind', 'eventPattern', eventPattern, 'functionToBind', functionToBind, 'timesToRun', timesToRun);
+		//console.log('EventEmitter.bind', 'eventPattern', eventPattern, 'functionToBind', functionToBind, 'timesToRun', timesToRun);
 
 		// Allow multiple events to be registered by passing in an array
 		if(Array.is(eventPattern)) {

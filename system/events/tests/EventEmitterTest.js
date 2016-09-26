@@ -263,8 +263,10 @@ class EventEmitterTest extends Test {
 
 		// Emit an event
 		var event = await eventEmitter.emit('event1', 'event1Data');
-
+		
 		Assert.strictEqual(storeForEventListener1.data, 'event1Data', 'Calling .stop() does not stop further code in the function from being executed');
+		
+		//app.log('storeForEventListener2', storeForEventListener2);
 		Assert.strictEqual(storeForEventListener2, null, '.stop() prevents other listeners of the same event from being called');
 	}
 

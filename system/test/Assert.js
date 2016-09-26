@@ -478,14 +478,14 @@ class Assert extends Node.Assert {
 	}
 
 	static throwsAsynchronously(block, expectedError, message) {
-		return Assert.doesThrowAsynchronously(true, block, expectedError, message, arguments.callee);
+		return Assert.doesThrowAsynchronously(true, block, expectedError, message, arguments);
 	}
 
 	static doesNotThrowAsynchronously(block, expectedError, message) {
-		return Assert.doesThrowAsynchronously(false, block, expectedError, message, arguments.callee);
+		return Assert.doesThrowAsynchronously(false, block, expectedError, message, arguments);
 	}
 
-	static doesThrowAsynchronously(shouldThrow, block, expectedError, message, callee) {
+	static doesThrowAsynchronously(shouldThrow, block, expectedError, message) {
 		//app.info('callee', callee);
 
 		// Allow the user to not pass an expected Exception type
@@ -494,13 +494,9 @@ class Assert extends Node.Assert {
 			expectedError = null;
 		}
 
-		if(!callee) {
-			callee = arguments.callee;
-		}
-
 		var assertion = shouldThrow ? 'throwsAsynchronously' : 'doesNotThrowAsynchronously';
 
-		return new Promise(function(resolve, reject) {
+		return new Promise(async function(resolve, reject) {
 			function finish(error) {
 				try {
 					//app.info(error);
@@ -548,31 +544,13 @@ class Assert extends Node.Assert {
 			}
 
 			// Run the block - this will trigger a domain error if there is an issue
-			(async function() {
-				// Create a domain for the test
-				var domain = Node.Domain.create();
-
-				// Add an event listener to listen for errors on the domain
-				domain.on('error', function(error) {
-					finish(error);
-
-					// Exit the domain
-					domain.exit();
-				}.bind(this));
-
-				// Enter the domain
-				domain.enter();
-
-				try {
-					await block.run();
-					finish();
-					domain.exit();
-				}
-				catch(error) {
-					finish(error);
-					domain.exit();
-				}
-			}).run();
+			try {
+				await block.run();
+				finish();
+			}
+			catch(error) {
+				finish(error);
+			}
 		});
 	}
 

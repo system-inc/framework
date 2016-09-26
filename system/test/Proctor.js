@@ -493,6 +493,7 @@ class Proctor extends EventEmitter {
 			'RegularExpression',
 			'Stream',
 			'Time',
+			'Transpiler',
 			'app',
 
 			// Framework - Object

@@ -6,22 +6,27 @@ import ModelProperty from './../../system/data/ModelProperty.js';
 class ModelClassManager {
 
 	static addModelPropertyToModelClass(modelProperty, modelClass) {
-		app.log('modelProperty', modelProperty, 'modelClass', modelClass);
-
-		//// Add the model property to properties
-		//modelClass.prototype.properties[modelProperty.name] = modelProperty;
-		
-		//// Add the getter
-		//modelClass.prototype['get'+modelProperty.name.capitalize()] = function() {
-		//	return this.get(modelProperty.name);
-		//}
-
-		//// Add the setter
-		//modelClass.prototype['set'+modelProperty.name.capitalize()] = function(value) {
-		//	return this.set(modelProperty.name, value);
-		//}
-
+		// Add the model property to properties
+		//console.log('modelClass.prototype.properties', modelClass.prototype.properties);
+		//console.log('ModelClassManager - need to find the best way to change a class prototype after it has been created');
+		console.log('I cant change the prototype here because of the way classes work, the construct method does everything and it will overwrite these changes'); 
+		return modelClass;
 		//return modelClass;
+		//Node.exit();
+
+		modelClass.prototype.properties[modelProperty.name] = modelProperty;
+		
+		// Add the getter
+		modelClass.prototype['get'+modelProperty.name.capitalize()] = function() {
+			return this.get(modelProperty.name);
+		}
+
+		// Add the setter
+		modelClass.prototype['set'+modelProperty.name.capitalize()] = function(value) {
+			return this.set(modelProperty.name, value);
+		}
+
+		return modelClass;
 	}
 
 	static addModelPropertiesToModelClass(modelProperties, modelClass) {
