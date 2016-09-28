@@ -11,8 +11,8 @@ class FormControlView extends View {
 	value = null;
 	originalValue = null;
 
-	construct(settings) {
-		this.super(null, settings);
+	constructor(settings) {
+		super(null, settings);
 
 		this.on('form.control.change', function(event) {
             this.valueChangedOnDom();

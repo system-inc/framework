@@ -4,7 +4,7 @@ class Time {
 	dateObject = null;
 	precision = 'milliseconds';
 
-	construct(stringOrDate) {
+	constructor(stringOrDate) {
 		if(stringOrDate !== undefined) {
 			if(String.is(stringOrDate)) {
 				this.dateObject = new Date(stringOrDate);

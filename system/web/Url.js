@@ -100,7 +100,7 @@ class Url {
 	        }
 	    }
 	    var rows_txt = temp + '' + key + '=' + value ;
-	    this.construct(baseUrl + '?' + newAdditionalUrl + rows_txt);
+	    this.constructor(baseUrl + '?' + newAdditionalUrl + rows_txt);
 	}
 
 	static constructFromNodeRequest(nodeRequest) {

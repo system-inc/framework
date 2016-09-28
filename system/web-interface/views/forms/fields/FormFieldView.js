@@ -17,9 +17,9 @@ class FormFieldView extends View {
 
 	formControlView = null;
 
-	construct(identifier, settings) {
+	constructor(identifier, settings) {
 		// Call the View constructor
-		this.super(...arguments);
+		super(...arguments);
 
 		// Set default settings
 		this.settings.setDefaults({

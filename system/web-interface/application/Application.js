@@ -10,7 +10,7 @@ var Application = Class.extend({
 	viewManagers: {},
 
 	construct: function() {
-		this.super();
+		super();
 
 		// Emit htmlDocument.mountedToDom events as viewContainer.initialized
 		this.on('htmlDocument.mountedToDom', function(event) {

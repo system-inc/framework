@@ -46,7 +46,7 @@ class RedirectRoute extends Route {
 		}
 
 		// Send the response
-		await this.super.apply(this, arguments);
+		await super.follow(...arguments);
 	}
 
 }

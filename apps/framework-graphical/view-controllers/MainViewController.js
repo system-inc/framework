@@ -32,7 +32,7 @@ var MainViewController = ViewController.extend({
     nextTestMethodIndex: null,
 
 	construct: function(electronManager) {
-        this.super();
+        super();
 
         this.electronManager = electronManager;
 
@@ -50,7 +50,7 @@ var MainViewController = ViewController.extend({
 	},
 
     createViewContainer: function() {
-        this.super();
+        super.createViewContainer();
 
         this.viewContainer.addStyleSheet('../../system/web-interface/themes/reset/style-sheets/reset.css');
         this.viewContainer.addStyleSheet('../../system/web-interface/themes/framework/style-sheets/framework.css');

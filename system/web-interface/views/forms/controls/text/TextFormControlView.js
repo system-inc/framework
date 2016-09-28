@@ -8,8 +8,8 @@ class TextFormControlView extends FormControlView {
         class: 'control text',
     }
 
-    construct(settings) {
-        this.super(settings);
+    constructor(settings) {
+        super(settings);
 
         this.settings.setDefaults({
             indentationSymbol: '    ', // four spaces
@@ -36,7 +36,7 @@ class TextFormControlView extends FormControlView {
             value = '';
         }
 
-        return this.super(value);
+        return super.setValue(value);
     }
 
     getValue() {

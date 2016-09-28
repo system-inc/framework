@@ -10,13 +10,13 @@ var PasswordSingleLineTextFormFieldView = TextFormFieldView.extend({
 	},
 
 	construct: function(identifier, settings) {
+		super(...arguments);
+
 		// Create the form control
 		this.textFormControlView = new PasswordSingleLineTextFormControlView();
 
 		// Append the form control
 		this.append(this.textFormControlView);
-
-		this.super.apply(this, arguments);
 	},
 
 });

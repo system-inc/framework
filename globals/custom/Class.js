@@ -173,7 +173,10 @@ class Class {
 		var methodNames = [];
 
 		Object.getOwnPropertyNames(classDefinition.prototype).each(function(index, key) {
-			if(key !== 'constructor') {
+			if(
+				key !== 'constructor' &&
+				Function.is(classDefinition.prototype[key])
+			) {
 				methodNames.append(key);
 			}
 		});

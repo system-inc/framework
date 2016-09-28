@@ -1,22 +1,19 @@
 // Class
-class Buffer extends Node.Buffer {
+var Buffer = Node.Buffer;
 
-	static is(value) {
-		var is = false;
+// Static methods
+Buffer.is = function(value) {
+	var is = false;
 
-		if(value instanceof Buffer) {
-			is = true;
-		}
-		else if(value instanceof Node.Buffer) {
-			is = true;
-		}
-
-		return is;
+	if(value instanceof Buffer) {
+		is = true;
+	}
+	else if(value instanceof Node.Buffer) {
+		is = true;
 	}
 
-	static concatenate = Node.Buffer.concat;
-
-}
+	return is;
+};
 
 // Global
 global.Buffer = Buffer;

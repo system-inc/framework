@@ -11,9 +11,6 @@ class ModelClassManagerTest extends Test {
 	async testAddPropertyToModel() {
 		//Transpiler.logCachedTranspiledSourceForPath(__filename);
 
-		app.log('ModelClassManagerTest - fix this test');
-		return;
-
 		// Create a new model
 		class TestModel extends Model {
 			name = 'TestModel';
@@ -21,6 +18,7 @@ class ModelClassManagerTest extends Test {
 		
 		// Create a new model property
 		var testModelProperty = new ModelProperty('test');
+		//app.log('testModelProperty', testModelProperty);
 
 		// Add the model property to the class
 		ModelClassManager.addModelPropertyToModelClass(testModelProperty, TestModel);

@@ -6,10 +6,10 @@ var LinkView = Framework.require('system/web-interface/views/links/LinkView.js')
 var LinkListItemView = ListItemView.extend({
 
 	construct: function(linkContent, linkUrl, linkViewSettings, listItemViewSettings) {
+		super(listItemViewSettings);
+
 		var linkView = new LinkView(linkContent, linkUrl, linkViewSettings);
 		this.append(linkView);
-
-		this.super.call(this, listItemViewSettings);
 	},
 
 });

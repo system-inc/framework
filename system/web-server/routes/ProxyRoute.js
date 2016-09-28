@@ -72,7 +72,7 @@ class ProxyRoute extends Route {
 		//app.log(content);
 
 		// Send the response
-		await super.follow.apply(this, arguments);
+		await super.follow(...arguments);
 	}
 
 }

@@ -10,13 +10,13 @@ class ButtonView extends View {
 		class: 'button',
 	};
 
-	construct(content, settings) {
-		this.super(...arguments);
-		this.settings.setDefaults({
+	constructor(options, settings) {
+		super(...arguments);
 
+		this.settings.setDefaults({
 		});
 
-		this.append(content);
+		this.append(options);
 	}
 
 }

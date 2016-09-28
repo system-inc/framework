@@ -1,13 +1,13 @@
 // Class
 class Transpiler {
 
-	static logCachedTranspiledSourceForPath() {
+	static logCachedTranspiledSourceForPath(path) {
 		var TranspilerCache = require('babel-register/lib/cache').get()
 
 		TranspilerCache.each(function(key, value) {
 			var keyObject = Json.decode(key.substring(0, key.length - 7));
 			
-			if(keyObject.filename == __filename) {
+			if(keyObject.filename == path) {
 				console.log(value.code);
 				return false; // break
 			}

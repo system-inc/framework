@@ -4,12 +4,14 @@ import TextFormControlView from './../../../../../../../system/web-interface/vie
 // Class
 class SingleLineTextFormControlView extends TextFormControlView {
 
-    tag = 'input';
-
     attributes = {
         type: 'text',
         class: 'control text singleLine',
     };
+
+    constructor(options, settings, tag = 'input') {
+    	super(...arguments);
+    }
 
 }
 

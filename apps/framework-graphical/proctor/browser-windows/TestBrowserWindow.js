@@ -15,7 +15,7 @@ var TestBrowserWindow = Reusable.extend({
         // Send a message to the main process to create a testBrowserWindow
         Electron.ipcRenderer.send('mainBrowserWindow.createTestBrowserWindow', this.uniqueIdentifier);
 
-        // Do not call this.super() as we are not available until the application creates a test browser window
+        // Do not call super() as we are not available until the application creates a test browser window
         // MainBrowserWindow.handleTestBrowserWindowReport will call release() on this when it is ready
 	},
 
@@ -49,7 +49,7 @@ var TestBrowserWindow = Reusable.extend({
 		//Console.standardWarn('TestBrowserWindow retire');
 		Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', this.uniqueIdentifier, 'close', {});
 
-		this.super();
+		super.retire();
 	},
 	
 });

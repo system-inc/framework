@@ -14,7 +14,8 @@ var ModalView = View.extend({
 	},
 
 	construct: function(settings) {
-		this.super.apply(this, arguments);
+		super(null, settings);
+
 		this.settings.setDefaults({
 			hideOnOutsideClick: true,
 		});

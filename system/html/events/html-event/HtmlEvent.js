@@ -15,7 +15,7 @@ class HtmlEvent extends PropagatingEvent {
 			this.domEvent.stopImmediatePropagation();
 		}
 
-		return this.super.apply(this, arguments);
+		return super.stop(...arguments);
 	}
 
 	stopPropagation() {
@@ -23,7 +23,7 @@ class HtmlEvent extends PropagatingEvent {
 			this.domEvent.stopPropagation();
 		}
 
-		return this.super.apply(this, arguments);
+		return super.stopPropagation(...arguments);
 	}
 
 	preventDefault() {
@@ -31,7 +31,7 @@ class HtmlEvent extends PropagatingEvent {
 			this.domEvent.preventDefault();
 		}
 
-		return this.super.apply(this, arguments);
+		return super.preventDefault(...arguments);
 	}
 
 	static is(value) {

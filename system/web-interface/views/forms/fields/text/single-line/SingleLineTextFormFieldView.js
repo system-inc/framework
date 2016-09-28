@@ -9,12 +9,11 @@ class SingleLineTextFormFieldView extends TextFormFieldView {
 		class: 'field text singleLine',
 	};
 
-	construct(identifier, settings) {
+	constructor(identifier, settings) {
+		super(...arguments);
+
 		// Create the form control, SingleLineTextFormControlView
 		this.formControlView = new SingleLineTextFormControlView();
-
-		// Call super after setting this.formControlView
-		this.super(...arguments);
 
 		// Handle enterSubmits
 		if(this.settings.get('enterSubmits')) {

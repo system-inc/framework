@@ -36,7 +36,7 @@ class FileRoute extends Route {
 		response.content = new File(filePath);
 
 		// Send the response
-		await super.follow.apply(this, arguments);
+		await super.follow(...arguments);
 	}
 
 }

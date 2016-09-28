@@ -8,7 +8,7 @@ class Model {
 	adapter = null;
 	adapters = [];
 
-	construct(values) {
+	constructor(values) {
 		this.defaults.each(function(propertyName, propertyValue) {
 			this.set(propertyName, propertyValue);
 		}.bind(this));
@@ -21,6 +21,10 @@ class Model {
 	}
 
 	setPropertyValue(propertyName, propertyValue) {
+		app.log('Model setPropertyValue propertyName', propertyName, 'propertyValue', propertyValue);
+		app.log('this.properties', this.properties);
+		app.log('this.properties.'+propertyName, this.properties[propertyName]);
+
 		this.properties[propertyName].setValue(propertyValue);
 	}
 

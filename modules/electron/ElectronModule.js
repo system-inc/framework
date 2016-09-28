@@ -54,7 +54,7 @@ class ElectronModule extends Module {
 	};
 
 	async initialize() {
-		yield this.super.apply(this, arguments);
+		await super.initialize(...arguments);
 
 		this.electronManager = new ElectronManager();
 		this.electronManager.initialize();

@@ -11,7 +11,7 @@ class ViewController {
 
 	settings = new Settings();
 
-	construct(settings) {
+	constructor(settings) {
 		this.settings.merge(settings);
 
 		this.createViewContainer();

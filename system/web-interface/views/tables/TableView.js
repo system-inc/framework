@@ -11,9 +11,8 @@ var TableView = View.extend({
 	rows: [],
 
 	construct: function(settings) {
-		this.super.apply(this, arguments);
+		super(...arguments);
 		this.settings.setDefaults({
-
 		});
 	},
 

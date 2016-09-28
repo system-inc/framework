@@ -5,20 +5,18 @@ import Settings from './../../../system/settings/Settings.js';
 // Class
 class View extends HtmlElement {
 
-	// All web elements use a div tag unless otherwise specified
-	tag = 'div';
-
 	// Settings for the View
 	settings = new Settings();
 
 	viewContainer = null;
 	subviews = {};
 
-	construct(options, settings) {
-		this.settings.merge(settings);
-
+	// All web elements use a div tag unless otherwise specified
+	constructor(options, settings, tag = 'div') {
 		// Every View is an HtmlElement
-		this.super(this.tag, options);
+		super(tag, options);
+
+		this.settings.merge(settings);
 
 		// Set the viewContainer alias
 		this.viewContainer = this.htmlDocument;

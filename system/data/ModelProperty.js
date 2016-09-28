@@ -14,7 +14,7 @@ class ModelProperty {
 
 	validationRules = [];
 
-	construct(name) {
+	constructor(name) {
 		this.name = name;
 	}
 

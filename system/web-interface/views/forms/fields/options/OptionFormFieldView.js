@@ -10,14 +10,15 @@ var OptionFormFieldView = FormFieldView.extend({
 	},
 
 	construct: function(identifier, settings) {
+		// TOOD: Broken
+		// Call super after setting this.formControlView
+		super(...arguments);
+
 		// Create the form control, OptionFormControlView
 		this.formControlView = new OptionFormControlView();
 		
 		// Append the form control
 		this.append(this.formControlView);
-
-		// Call super after setting this.formControlView
-		this.super.apply(this, arguments);
 	},
 
 });

@@ -4,14 +4,12 @@ import View from './../../../../system/web-interface/views/View.js';
 // Class
 class ImageView extends View {
 
-	tag = 'img';
-
 	attributes = {
 		class: 'image',
 	}
 
-	construct(url, alternateText, settings) {
-		this.super(...arguments);
+	constructor(url, alternateText, settings, tag = 'img') {
+		super(null, settings, tag);
 
 		this.setAttribute('src', url);
 

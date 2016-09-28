@@ -19,8 +19,8 @@ var NotificationView = View.extend({
 				this.hide();
 			}.bind(this));
 		}
-		
-		this.super();
+
+		super.show();
 	},
 
 });
