@@ -11,6 +11,11 @@ class ModelTest extends Test {
 		name: 'TestModel',
 		properties: [
 			{
+				name: 'testStringPropertyWithDefaultValue',
+				type: 'string',
+				defaultValue: 'defaultValue!',
+			},
+			{
 				name: 'testBooleanProperty',
 				type: 'boolean',
 			},
@@ -62,9 +67,6 @@ class ModelTest extends Test {
 	}
 
 	async testSave() {
-		app.log('ModelTest - fix this test');
-		return;
-		
 		var testModel = new this.testModel();
 		
 		// Set everything
@@ -79,6 +81,7 @@ class ModelTest extends Test {
 		//app.highlight(testModel);
 
 		// Assert gets
+		Assert.strictEqual(testModel.getTestStringPropertyWithDefaultValue(), 'defaultValue!', 'get string with default value');
 		Assert.strictEqual(testModel.getTestBooleanProperty(), true, 'get boolean');
 		Assert.strictEqual(testModel.getTestDataProperty(), 0b1000000, 'get data');
 		Assert.strictEqual(testModel.getTestDateProperty(), '1984-06-28', 'get date');

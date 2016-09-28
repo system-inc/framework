@@ -5,7 +5,7 @@ class ModelProperty {
 	description = '';
 	type = null;
 	typeOptions = {};
-	default = null;
+	defaultValue = null;
 	required = null;
 	key = null;
 
@@ -49,7 +49,21 @@ class ModelProperty {
 		return isChanged;
 	}
 
-	static constructFromSchemaModelProperty(schemaModelProperty) {
+	toSchema() {
+		var schema = {
+			name: this.name,
+			description: this.description,
+			type: this.type,
+			typeOptions: this.typeOptions,
+			defaultValue: this.defaultValue,
+			required: this.required,
+			key: this.key,
+		};
+
+		return schema;
+	}
+
+	static constructFromSchema(schemaModelProperty) {
 		var modelProperty = new ModelProperty(schemaModelProperty.name);
 
 		if(schemaModelProperty.description) {
@@ -64,8 +78,8 @@ class ModelProperty {
 			modelProperty.typeOptions = schemaModelProperty.typeOptions;
 		}
 
-		if(schemaModelProperty.default) {
-			modelProperty.default = schemaModelProperty.default;
+		if(schemaModelProperty.defaultValue) {
+			modelProperty.defaultValue = schemaModelProperty.defaultValue;
 		}
 
 		if(schemaModelProperty.required) {

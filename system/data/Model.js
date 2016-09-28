@@ -1,17 +1,18 @@
+// Dependencies
+import ModelProperty from './ModelProperty.js';
+
 // Class
 class Model {
 
-	name = 'Model';
-
-	defaults = {};
+	name = null;
 	properties = {};
+
 	adapter = null;
 	adapters = [];
 
 	constructor(values) {
-		this.defaults.each(function(propertyName, propertyValue) {
-			this.set(propertyName, propertyValue);
-		}.bind(this));
+		// Construct the model from the schema (e.g., MyModel.schema)
+		this.constructFromSchema(this.constructor.schema); // this.constructor references the model class definition
 
 		if(values) {
 			values.each(function(propertyName, propertyValue) {
@@ -20,10 +21,38 @@ class Model {
 		}
 	}
 
+	constructFromSchema(schema) {
+		this.name = schema.name;
+
+		// Create properties on the instance
+		schema.properties.each(function(index, modelPropertySchema) {
+			// Set the property on this.properties
+			this.properties[modelPropertySchema.name] = ModelProperty.constructFromSchema(modelPropertySchema);
+
+			// Add the getter
+			this['get'+modelPropertySchema.name.capitalize()] = function() {
+				return this.get(modelPropertySchema.name);
+			}
+
+			// Add the setter
+			var setterKey = 'set'+modelPropertySchema.name.capitalize();
+			this[setterKey] = function(value) {
+				return this.set(modelPropertySchema.name, value);
+			}
+
+			// Set default values
+			if(modelPropertySchema.defaultValue !== null) {
+				this[setterKey](modelPropertySchema.defaultValue);
+			}
+		}.bind(this));
+	}
+
+	get(propertyName) {
+		return this.properties[propertyName].value;
+	}
+
 	setPropertyValue(propertyName, propertyValue) {
-		app.log('Model setPropertyValue propertyName', propertyName, 'propertyValue', propertyValue);
-		app.log('this.properties', this.properties);
-		app.log('this.properties.'+propertyName, this.properties[propertyName]);
+		//app.log('Model setPropertyValue propertyName', propertyName, 'propertyValue', propertyValue);
 
 		this.properties[propertyName].setValue(propertyValue);
 	}
@@ -43,14 +72,10 @@ class Model {
 		return this;
 	}
 
-	get(propertyName) {
-		return this.properties[propertyName].value;
-	}
-
 	isChanged() {
 		var isChanged = false;
 
-		this.properties.each(function(propertyName, property) {
+		this.constructor.properties.each(function(propertyName, property) {
 			if(property.isChanged()) {
 				isChanged = true;
 
@@ -96,7 +121,7 @@ class Model {
 		await this.beforeValidate();
 
 		var validationErrors = [];
-		await this.properties.each(async function(propertyName, property) {
+		await this.constructor.properties.each(async function(propertyName, property) {
 			var validationError = await property.validate();
 
 			if(validationError) {
@@ -112,6 +137,10 @@ class Model {
 	async afterValidate() {
 	}
 
+	static schema = {
+		name: null,
+		properties: {},
+	};
 }
 
 // Export

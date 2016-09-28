@@ -8,12 +8,11 @@ import ModelClassManager from './../../../system/data/ModelClassManager.js';
 // Class
 class ModelClassManagerTest extends Test {
 
-	async testAddPropertyToModel() {
+	async testAddModelPropertyToModel() {
 		//Transpiler.logCachedTranspiledSourceForPath(__filename);
 
 		// Create a new model
 		class TestModel extends Model {
-			name = 'TestModel';
 		}
 		
 		// Create a new model property
@@ -22,6 +21,7 @@ class ModelClassManagerTest extends Test {
 
 		// Add the model property to the class
 		ModelClassManager.addModelPropertyToModelClass(testModelProperty, TestModel);
+		//app.log('TestModel.schema', TestModel.schema);
 
 		// Instantiate a new model
 		var testModel = new TestModel();
