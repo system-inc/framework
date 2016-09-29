@@ -9,8 +9,8 @@ class NotFoundErrorTest extends Test {
 
 	testNotFoundErrorConstruction() {
 		var actual = new NotFoundError('testNotFoundErrorConstruction error message.');
-		//app.info(actual);
 		//app.info(Error.toObject(actual));
+		//app.info(actual);
 		
 		Assert.true(Error.is(actual), 'Error.is()');
 		Assert.true(Class.isInstance(actual, Error), 'is instance of Error');

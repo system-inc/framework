@@ -438,21 +438,23 @@ class Assert extends Node.Assert {
 	}
 
 	static expectedError(actual, expected) {
+		var expectedError = false;
+
 		if(!actual || !expected) {
-			return false;
+			expectedError = false;
 		}
-
-		if(Object.prototype.toString.call(expected) == '[object RegExp]') {
-			return expected.test(actual);
+		else {
+			if(actual instanceof expected) {
+				expectedError = true;
+			}
+			else {
+				//console.log('error types do not match');
+				//console.log('actual', actual);
+				//console.log('expected', expected);
+			}
 		}
-		else if(actual instanceof expected) {
-			return true;
-		}
-		else if(expected.call({}, actual) === true) {
-			return true;
-		}
-
-		return false;
+		
+		return expectedError;
 	}
 
 	static throws(block, error, message) {
@@ -543,9 +545,9 @@ class Assert extends Node.Assert {
 				}
 			}
 
-			// Run the block - this will trigger a domain error if there is an issue
+			// Run the block
 			try {
-				await block.run();
+				await block();
 				finish();
 			}
 			catch(error) {

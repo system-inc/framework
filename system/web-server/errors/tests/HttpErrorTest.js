@@ -23,8 +23,8 @@ class HttpErrorTest extends Test {
 
 		var firstCallSiteData = actual.stack.getCallSite(0);
 		//app.log(firstCallSiteData);
-		Assert.true(firstCallSiteData.functionName.contains('ExtendableError'), 'first call site data functionName is correct');
-		Assert.true(firstCallSiteData.fileName.contains('ExtendableError.js'), 'first call site data fileName is correct');
+		Assert.true(firstCallSiteData.functionName.contains('testHttpErrorConstruction'), 'first call site data functionName is correct');
+		Assert.true(firstCallSiteData.fileName.contains('HttpErrorTest.js'), 'first call site data fileName is correct');
 	}
 
 }
