@@ -7,14 +7,23 @@ class StandardErrorStream extends StandardStream {
 	constructor() {
 		super();
 
-		Node.Process.stderr.on('data', function(data) {
-			this.write(data)
-		}.bind(this));
+		if(Node.Process.stderr.readable) {
+			Node.Process.stderr.on('data', function(data) {
+				this.write(data)
+			}.bind(this));	
+		}
+		else {
+			console.warn('Standard error stream is not readable.');
+		}
 	}
 
 	write(data) {
+		// Use console.error if standard out is not readable
+		if(!Node.Process.stderr.readable) {
+			console.error(data);
+		}
+
 		super.write(data);
-		Node.Process.stderr.write(data);
 	}
 
 }

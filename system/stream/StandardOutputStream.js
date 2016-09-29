@@ -7,14 +7,23 @@ class StandardOutputStream extends StandardStream {
 	constructor() {
 		super();
 
-		Node.Process.stdout.on('data', function(data) {
-			this.write(data)
-		}.bind(this));
+		if(Node.Process.stdout.readable) {
+			Node.Process.stdout.on('data', function(data) {
+				this.write(data)
+			}.bind(this));
+		}
+		else {
+			console.warn('Standard output stream is not readable.');
+		}
 	}
 
 	write(data) {
+		// Use console.log if standard out is not readable
+		if(!Node.Process.stdout.readable) {
+			console.log(data);
+		}
+
 		super.write(data);
-		Node.Process.stdout.write(data);
 	}
 
 }

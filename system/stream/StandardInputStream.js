@@ -7,14 +7,18 @@ class StandardInputStream extends StandardStream {
 	constructor() {
 		super();
 
-		Node.Process.stdin.on('data', function(data) {
-			this.write(data)
-		}.bind(this));
+		if(Node.Process.stdin.readable) {
+			Node.Process.stdin.on('data', function(data) {
+				this.write(data)
+			}.bind(this));
+		}
+		else {
+			console.warn('Standard input stream is not readable.');
+		}
 	}
 
 	write(data) {
 		super.write(data);
-		Node.Process.stdin.write(data);
 	}
 
 }

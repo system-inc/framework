@@ -14,38 +14,3 @@ require('babel-register')({
 });
 
 require('./FrameworkCommandLineApp.js');
-
-//var Babel = require('babel-core');
-//var transpiledCode = Babel.transform(
-//	`
-//		class ChildClass extends ParentClass {
-
-//			classProperty = 'child';
-//			childClassProperty = 'child';
-
-//		}
-
-//		class ParentClass extends GrandParentClass {
-
-//			classProperty = 'parent';
-//			parentClassProperty = 'parent';
-
-//		}
-
-//		class GrandParentClass {
-
-//			classProperty = 'grandParent';
-//			grandParentClassProperty = 'grandParent';
-
-//		}
-//	`,
-//	{
-//		presets: [
-//			'latest',
-//			'stage-0',
-//		],
-//		sourceMaps: 'both',
-//	}
-//);
-
-//console.log(transpiledCode.code);
