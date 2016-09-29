@@ -26,6 +26,15 @@ class StandardOutputStream extends StandardStream {
 		super.write(data);
 	}
 
+	writeLine(data = '') {
+		// Only append a new line if the stream is readable, because if we fallback to console.log it will automatically add a line ending
+		if(Node.Process.stdout.readable) {
+			data = data+"\n";
+		}		
+		
+		this.write(data);
+	}
+
 }
 
 // Export

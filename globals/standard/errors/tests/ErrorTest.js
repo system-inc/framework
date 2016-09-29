@@ -57,7 +57,7 @@ class ErrorTest extends Test {
 		var secondCallSiteData = actual.stack.getCallSite(1);
 		//app.info('secondCallSiteData', secondCallSiteData);
 		Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInNormalFunction'), 'second call site function name is correct');
-		Assert.strictEqual(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site fileName is correct');
+		Assert.true(secondCallSiteData.fileName.endsWith('ErrorTest.js'), 'second call site fileName is correct');
 		Assert.strictEqual(secondCallSiteData.lineNumber, 40, 'second call site line number is correct');
 	}
 
@@ -86,9 +86,9 @@ class ErrorTest extends Test {
 		var secondCallSiteData = actual.stack.getCallSite(1);
 		//app.info('secondCallSiteData', Json.indent(secondCallSiteData));
 		//app.info(actual.stack.toString());
-		// TODO: Make this test work, right now in Babel it is calling the function name _callee3$
+		// TODO: Make this test work, right now in Babel it is calling the function name _callee3$ - I think this is a known issue
 		//Assert.true(secondCallSiteData.functionName.contains('testCatchReferenceErrorInGeneratorFunction'), 'second call site function name is correct');
-		Assert.strictEqual(secondCallSiteData.fileName, 'ErrorTest.js', 'second call site fileName is correct');
+		Assert.true(secondCallSiteData.fileName.endsWith('ErrorTest.js'), 'second call site fileName is correct');
 		Assert.strictEqual(secondCallSiteData.lineNumber, 69, 'second call site line number is correct');
 	}
 

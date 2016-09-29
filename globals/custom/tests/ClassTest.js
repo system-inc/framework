@@ -180,10 +180,6 @@ class ClassTest extends Test {
 		specialTestParentClassInstance2.parentClassInstanceClassVariable.major = 2;
 		Assert.equal(specialTestParentClassInstance1.parentClassInstanceClassVariable.toString(), '1.0', 'class instance class variables are in their own memory space');
 		Assert.equal(specialTestParentClassInstance2.parentClassInstanceClassVariable.toString(), '2.0', 'class instance class variables are in their own memory space');
-
-		//app.log(specialTestParentClassInstance1.parentTimeClassVariable);
-		//app.log(specialTestParentClassInstance2.parentTimeClassVariable);
-		Assert.equal(specialTestParentClassInstance1.parentTimeClassVariable.toString(), specialTestParentClassInstance2.parentTimeClassVariable.toString(), 'time class instance variables are the same time');
 	}
 
 	async testAsync() {
