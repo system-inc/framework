@@ -6,37 +6,21 @@ import HtmlElementEventEmitter from './events/html-element/HtmlElementEventEmitt
 // Class
 class HtmlElement extends HtmlNode {
 
-	// HtmlElement cannot be a subclass of both XmlElement and HtmlNode
-	// So, we will extend from HtmlNode and reference the properties and methods we want from XmlElement
-	// As a consequence, instanceof XmlElement will not return true for objects of type HtmlElement
-	// However, Class.doesImplement(HtmlElement, XmlElement) will return true
+	// XmlNode instance properties
+	type = 'element';
 
-	// XmlNode properties
-	type = XmlElement.prototype.type;
+	// XmlElement instance properties
+	tag = null;
+	unary = false; // Tags are not unary (self-closing) by default
+	attributes = {};
+	children = []; // Array containing strings or elements
 
-	// XmlElement properties
-	tag = XmlElement.prototype.tag;
-	unary = XmlElement.prototype.unary; // Tags are not unary (self-closing) by default
-	attributes = XmlElement.prototype.attributes;
-	children = XmlElement.prototype.children; // Array containing strings or elements
-
-	// XmlElement methods
-	getAttribute = XmlElement.prototype.getAttribute;
-	// We implement these differently in HtmlElement below
-	//setAttribute = XmlElement.prototype.setAttribute;
-	//removeAttribute = XmlElement.prototype.removeAttribute;
-	//empty = XmlElement.prototype.empty;
-	//prepend = XmlElement.prototype.prepend;
-	//append = XmlElement.prototype.append;
-	tagOpeningToString = XmlElement.prototype.tagOpeningToString;
-	tagClosingToString = XmlElement.prototype.tagClosingToString;
-	tagToString = XmlElement.prototype.tagToString;
-	childrenToString = XmlElement.prototype.childrenToString;
+	// XmlElement instance methods
 	toString = XmlElement.prototype.toString;
 
-	// Uses XmlElement
 	constructor(tag, options, unary) {
-		super(...arguments);
+		super(); // HtmlNode's constructor
+		XmlElement.prototype.initialize.apply(this, arguments); // XmlElement's initialize
 
 		// Detect if tags are supposed to be unary
 		if(HtmlElement.unaryTags.contains(this.tag)) {
@@ -108,19 +92,22 @@ class HtmlElement extends HtmlNode {
 	}
 
 	descendFromParent(parent) {
-		// Use HtmlNode's method
-		super.descendFromParent(...arguments);
+		if(parent) {
+			// Use HtmlNode's method
+			super.descendFromParent(...arguments);
 
-		// Add a DOM attribute for testing
-		//this.setAttribute('data-nodeIdentifier', this.nodeIdentifier);
+			// Add a DOM attribute for testing
+			//this.setAttribute('data-nodeIdentifier', this.nodeIdentifier);
 
-		// Reset the identifierCounter
-		this.nodeIdentifierCounter = 0;
+			// Reset the identifierCounter
+			this.nodeIdentifierCounter = 0;
 
-		// Recurse through all children to make sure they descend
-		this.children.each(function(childIndex, child) {
-			child.descendFromParent(this);
-		}.bind(this));	
+			// Recurse through all children to make sure they descend
+			//app.log('this.children', this.children);
+			this.children.each(function(childIndex, child) {
+				child.descendFromParent(this);
+			}.bind(this));
+		}
 	}
 
 	applyDomUpdates() {
@@ -420,7 +407,8 @@ class HtmlElement extends HtmlNode {
 }
 
 // Class implementations
-Class.implement(HtmlNode, HtmlElementEventEmitter);
+Class.implement(HtmlElement, XmlElement);
+Class.implement(HtmlElement, HtmlElementEventEmitter);
 
 // Export
 export default HtmlElement;

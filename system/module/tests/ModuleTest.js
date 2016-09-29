@@ -6,8 +6,10 @@ import Assert from './../../../system/test/Assert.js';
 class ModuleTest extends Test {
 
 	testInitialize() {
+		//app.log(Object.keys(app.modules));
+
 		// Console is a core module so it should already have been initialized
-		Assert.true(Object.hasKey(Project.modules.consoleModule, 'settings'), 'ConsoleModule has key "settings" after Module.initialize()');
+		Assert.true(Object.hasKey(app.modules.testModule, 'settings'), 'TestModule has key "settings" after Module.initialize()');
 	}
 
 }

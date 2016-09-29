@@ -15,7 +15,10 @@ class XmlElement extends XmlNode {
 
 	constructor(tag, options, unary) {
 		super();
+		this.initialize(...arguments);
+	}
 
+	initialize(tag, options, unary) {
 		// this.children is an array and this.content is an alias to it
 		this.content = this.children;
 
