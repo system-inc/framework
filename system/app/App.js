@@ -224,7 +224,19 @@ class App extends EventEmitter {
 		arguments.each(function(argumentKey, argument) {
 			var formattedLogDataForArgument = argument;
 
-			if(!String.is(formattedLogDataForArgument) && argument !== undefined) {
+			if(formattedLogDataForArgument === true) {
+				formattedLogDataForArgument = 'true';
+			}
+			else if(formattedLogDataForArgument === false) {
+				formattedLogDataForArgument = 'false';
+			}
+			else if(formattedLogDataForArgument === undefined) {
+				formattedLogDataForArgument = 'undefined';
+			}
+			else if(formattedLogDataForArgument === null) {
+				formattedLogDataForArgument = 'null';
+			}
+			else if(!String.is(formattedLogDataForArgument) && argument !== undefined) {
 				formattedLogDataForArgument = Json.indent(formattedLogDataForArgument);
 
 				// If Json encoding fails (e..g, when a logging a class)
