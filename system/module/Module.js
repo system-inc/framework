@@ -1,4 +1,4 @@
-	// Dependencies
+// Dependencies
 import Settings from './../../system/settings/Settings.js';
 
 // Class
@@ -51,12 +51,19 @@ class Module {
 			else {
 				// Require the module
 				var modulePath = Node.Path.join(app.framework.directory, 'modules', moduleName.replaceLast('Module', '').toDashes(), moduleName+'.js');
-				//console.log('modulePath', modulePath);
-				var moduleClass = require(modulePath).default;
-				//console.log('moduleClass', moduleClass);
-				var moduleInstance = new (moduleClass)(moduleName);
+				//console.log('modulePath', modulePath);	
 
-				app.modules[modulePropertyName] = moduleInstance;
+				try {
+					var moduleClass = require(modulePath).default;
+					//console.log('moduleClass', moduleClass);
+					var moduleInstance = new (moduleClass)(moduleName);
+
+					app.modules[modulePropertyName] = moduleInstance;	
+				}
+				catch(error) {
+					app.error('Failed to load '+moduleName+' from '+modulePath+'.', "\n\n", error);
+					Node.exit();
+				}
 			}
 		});
 	}

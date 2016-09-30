@@ -36,7 +36,14 @@ class App extends EventEmitter {
 			directory: null, // Will set this default in constructor
 			nameWithoutExtension: 'app',
 		},
-		modules: {},
+		commandHistory: {
+			enabled: true,
+			directory: null, // Will set this default in constructor
+			nameWithoutExtension: 'command-history',
+		},
+		modules: {
+			archive: {}, // Archive is a default module which is enabled for all apps
+		},
 	});
 
 	environment = null;
@@ -63,6 +70,9 @@ class App extends EventEmitter {
 			standardStreamsFileLog: {
 				directory: Node.Path.join(this.directory, 'logs'),
 			},
+			commandHistory: {
+				directory: Node.Path.join(this.directory, 'logs'),
+			},
 		});
 	}
 
@@ -70,26 +80,29 @@ class App extends EventEmitter {
 		// Announce starting
 		//this.log('Initializing Framework '+this.framework.version+'...');
 
-		// Load the project settings
+		// Load the app settings
 		await this.loadAppSettings();
 
-		// After the project settings are loaded, we will know how to configure the standard streams file log
+		// After the app settings are loaded, we will know how to configure the standard streams file log
 		await this.configureStandardStreamsFileLog();
+
+		// After the app settings are loaded, we will know how to configure the command history
+		await this.configureCommandHistory();
 
 		// Make it obvious we are starting
 		this.standardStreams.output.writeLine(AsciiArt.framework.version[this.framework.version.toString()]);
 
-		// Use project settings to set the title and the identifier
+		// Use app settings to set the title and the identifier
 		this.setPropertiesFromAppSettings();
 
 		// Load the command
 		this.command = new Command(Node.Process.argv, this.settings.get('command'));
 
-		// Use project settings to configure the environment
+		// Use app settings to configure the environment
 		this.configureEnvironment();
 
-		// Load all of the modules for the Project indicated in the project settings
-		await this.requireAndInitializeProjectModules();
+		// Load all of the modules for the App indicated in the app settings
+		await this.requireAndInitializeAppModules();
 
 		//this.log('Framework initialization complete.');
 		this.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
@@ -102,7 +115,7 @@ class App extends EventEmitter {
 	}
 
 	async loadAppSettings() {
-		//this.log('Loading project settings...');
+		//this.log('Loading app settings...');
 		await this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'settings.json'));
 		//this.log('loadAppSettings settings.json path ', Node.Path.join(this.directory, 'settings', 'settings.json'));
 
@@ -137,6 +150,28 @@ class App extends EventEmitter {
 		}
 	}
 
+	async configureCommandHistory() {
+		var commandHistorySettings = this.settings.get('commandHistory');
+		this.log('commandHistorySettings', commandHistorySettings);
+
+		if(commandHistorySettings.enabled) {
+			this.log('read in command history');
+		}
+
+		//// Create a ConsoleSession to manage logging and interaction with the console
+		//Console.session = this.consoleSession = new ConsoleSession();
+
+		//// Attach a log to the console if enabled
+		//if(this.settings.get('log.enabled')) {
+		//	Console.session.attachLog(this.settings.get('log.directory'), this.settings.get('log.nameWithoutExtension'));
+		//}
+
+		//// Load command history if enabled
+		//if(this.settings.get('commandHistory.enabled')) {
+		//	Console.session.loadCommandHistory(this.settings.get('commandHistory.directory'), this.settings.get('commandHistory.nameWithoutExtension'));
+		//}
+	}
+
 	setPropertiesFromAppSettings() {
 		// Set the title
 		var titleFromSettings = this.settings.get('title');
@@ -144,8 +179,8 @@ class App extends EventEmitter {
 			this.title = titleFromSettings;
 		}
 
-		// Anounce project title
-		//this.log('Settings for project "'+this.title+'" loaded.');
+		// Anounce app title
+		//this.log('Settings for app "'+this.title+'" loaded.');
 
 		// Set the identifier
 		var identifierFromSettings = this.settings.get('identifier');
@@ -199,30 +234,56 @@ class App extends EventEmitter {
 		return Node.Process.platform == 'linux';
 	}
 
+	developerToolsAvailable() {
+		return (process && process.versions && process.versions.electron);
+	}
+
 	log() {
+		if(this.developerToolsAvailable()) {
+			console.log(...arguments);
+		}
+
 		var formattedLogData = this.formatLogData(...arguments);
 		return this.standardStreams.output.writeLine(formattedLogData);
 	}
 
 	info() {
+		if(this.developerToolsAvailable()) {
+			console.info(...arguments);
+		}
+
 		var formattedLogData = this.formatLogData(...arguments);
 		formattedLogData = Terminal.style(formattedLogData, 'cyan');
 		return this.standardStreams.output.writeLine(formattedLogData);
 	}
 
 	warn() {
+		if(this.developerToolsAvailable()) {
+			console.warn(...arguments);
+		}
+
 		var formattedLogData = this.formatLogData(...arguments);
 		formattedLogData = Terminal.style(formattedLogData, 'yellow');
 		return this.standardStreams.output.writeLine(formattedLogData);
 	}
 
 	error() {
+		if(this.developerToolsAvailable()) {
+			console.error(...arguments);
+		}
+
 		var formattedLogData = this.formatLogData(...arguments);
 		formattedLogData = Terminal.style(formattedLogData, 'red');
 		return this.standardStreams.output.writeLine(formattedLogData);
 	}
 
 	highlight() {
+		if(this.developerToolsAvailable()) {
+			var highlight = "%c\n\n                                                |>>>\r\n                                                |\r\n                                            _  _|_  _\r\n                                           |;|_|;|_|;|\r\n                                           \\\\.    .  \/\r\n                                            \\\\:  .  \/\r\n                                             ||:   |\r\n                                             ||:.  |\r\n                                             ||:  .|\r\n                                             ||:   |       \\,\/\r\n                                             ||: , |            \/`\\\r\n                                             ||:   |\r\n                                             ||: . |\r\n              __                            _||_   |\r\n     ____--`~    \'--~~__            __ ----~    ~`---,              ___\r\n-~--~                   ~---__ ,--~\'                  ~~----_____-~\'   `~----~~\n\n\n\n";
+			console.log(highlight, 'color: #CCC');
+			console.log(...arguments);
+		}
+
 		var formattedLogData = this.formatLogData(...arguments);
 		formattedLogData = Terminal.style(formattedLogData, 'green');
 		return this.standardStreams.output.writeLine(formattedLogData);
@@ -286,15 +347,15 @@ class App extends EventEmitter {
 		return formattedLogData;
 	}
 
-	async requireAndInitializeProjectModules() {
+	async requireAndInitializeAppModules() {
 		//this.log(this.settings);
-		//this.log('Loading modules for project...', this.settings.get('modules'));
+		//this.log('Loading modules for app...', this.settings.get('modules'));
 
-		// Load and initialize project modules separately in case multiple project modules rely on each other
-		var modulesForProject = [];
+		// Load and initialize app modules separately in case multiple app modules rely on each other
+		var modulesForApp = [];
 
 		var settings = this.settings.get('modules');
-		//console.log('settings', this.settings);
+		//this.log('settings', this.settings);
 
 		// Load the modules
 		this.settings.get('modules').each(function(moduleName, moduleSettings) {
@@ -304,13 +365,13 @@ class App extends EventEmitter {
 			Module.require(moduleName);
 
 			// Store the module name for initialization later
-			modulesForProject.append(moduleName);
+			modulesForApp.append(moduleName);
 		}.bind(this));
 
-		//console.log('modulesForProject', modulesForProject);
+		//this.log('modulesForApp', modulesForApp);
 
-		// Initialize the modules for the Project
-		await Module.initialize(modulesForProject);
+		// Initialize the modules for the App
+		await Module.initialize(modulesForApp);
 	}
 
 }

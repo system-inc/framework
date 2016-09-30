@@ -1,8 +1,9 @@
 {
-	//title: 'Framework',
-	//version: '0.1.0',
-	//description: 'Proctor runs tests and reports if they succeeded or failed.',
+	title: 'Framework',
+	version: '0.1.0',
+	description: 'Framework allows you to manage your configurations, tests, and apps.',
 	//command: {
+		// Proctor runs tests and reports if they succeeded or failed.
 	//	usage: "node framework/proctor/command/Project.js (Node)\n./framework/scripts/proctor-command.sh (OS X)\nsh framework\\scripts\\proctor-command.sh (Windows)",
 	//	supplementalNotes: 'Visit https://www.system.inc/framework/documentation/testing/ to learn more about testing.',
 	//	options: [
@@ -64,7 +65,7 @@
 	//	],
 	//},
 	//// List all modules to test
-	//modules: {
+	modules: {
 	//	archive: {},
 	//	database: {
 	//		databases: {
@@ -80,5 +81,5 @@
 	//	ffmpeg: {},
 	//	test: {},
 	//	webServer: {},
-	//},
+	},
 }
