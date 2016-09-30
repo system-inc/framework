@@ -150,7 +150,7 @@ class EventEmitter {
 
 		// Add the event listener
 		if(this.eventListeners === undefined) {
-			console.log('eventListeners is undefined');
+			//app.log('eventListeners is undefined');
 			this.eventListeners = [];
 		}
 		this.eventListeners.append(eventListener);

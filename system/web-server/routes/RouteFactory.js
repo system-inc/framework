@@ -16,24 +16,23 @@ class RouteFactory {
 
 		// RedirectRoute
 		if(settings.type == 'redirect') {
-			//var RedirectRoute = require('./RedirectRoute.js');
 			route = new RedirectRoute(settings, parent);
 		}
 		// FileRoute
 		else if(settings.type == 'file') {
-			//var FileRoute = require('./FileRoute.js');
 			route = new FileRoute(settings, parent);
 		}
 		// ProxyRoute
 		else if(settings.type == 'proxy') {
-			//var ProxyRoute = require('./ProxyRoute.js');
 			route = new ProxyRoute(settings, parent);
 		}
 		// ControllerRoute is the default subclass
 		else {
-			//var ControllerRoute = require('./ControllerRoute.js');
 			route = new ControllerRoute(settings, parent);
 		}
+
+		// Create children routes
+		route.createChildrenRoutes(settings);
 
 		return route;
 	}

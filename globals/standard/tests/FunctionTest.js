@@ -40,8 +40,8 @@ class FunctionTest extends Test {
 			'parameter1',
 			'parameter2',
 		];
-		app.info('source maps may fix this issue, uncomment this test and solve');
-		//Assert.deepEqual(actual, expected, 'parameters in asyncFunction functions defined in classes')
+		//app.info('source maps may fix this issue, uncomment this test and solve');
+		Assert.notDeepEqual(actual, expected, 'parameters in asyncFunction functions defined in classes')
 	}
 
 	async testDelay() {

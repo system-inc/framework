@@ -278,8 +278,7 @@ class ClassTest extends Test {
 
 		// Test instance properties and methods
 		Assert.strictEqual(mainClass.existingProperty, 'MainClass.existingProperty', 'Existing properties are not overwritten');
-		app.log('this next test should be uncommented, see Class.js line 141');
-		//Assert.strictEqual(mainClass.implementedProperty, 'ClassToImplement.implementedProperty', 'Implemented properties are copied to the implementing class');
+		Assert.strictEqual(mainClass.implementedProperty, undefined, 'Implemented properties are not copied to the implementing class');
 		Assert.strictEqual(mainClass.existingMethod(), 'MainClass.existingMethod', 'Existing methods are not overwritten');
 		Assert.strictEqual(mainClass.implementedMethod(), 'ClassToImplement.implementedMethod', 'Implemented methods are copied to the implementing class');
 		var awaitedImplementedGeneratorMethodValue = await mainClass.implementedAsyncMethod();

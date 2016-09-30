@@ -1,7 +1,7 @@
 // Dependencies
 import Server from './../../system/server/Server.js';
 import Settings from './../../system/settings/Settings.js';
-import Log from './../../system/log/Log.js';
+import FileLog from './../../system/log/FileLog.js';
 import Router from './routes/Router.js';
 import Request from './Request.js';
 import Response from './Response.js';
@@ -76,17 +76,17 @@ class WebServer extends Server {
 
 		// Conditionally attach the general log
 		if(this.settings.get('logs.general.enabled')) {
-			this.logs.general = new Log(this.settings.get('logs.general.directory'), this.settings.get('logs.general.nameWithoutExtension'));
+			this.logs.general = new FileLog(this.settings.get('logs.general.directory'), this.settings.get('logs.general.nameWithoutExtension'));
 		}
 
 		// Conditionally attach the requests log
 		if(this.settings.get('logs.requests.enabled')) {
-			this.logs.requests = new Log(this.settings.get('logs.requests.directory'), this.settings.get('logs.requests.nameWithoutExtension'));
+			this.logs.requests = new FileLog(this.settings.get('logs.requests.directory'), this.settings.get('logs.requests.nameWithoutExtension'));
 		}
 
 		// Conditionally attach the responses log
 		if(this.settings.get('logs.responses.enabled')) {
-			this.logs.responses = new Log(this.settings.get('logs.responses.directory'), this.settings.get('logs.responses.nameWithoutExtension'));
+			this.logs.responses = new FileLog(this.settings.get('logs.responses.directory'), this.settings.get('logs.responses.nameWithoutExtension'));
 		}
 
 		// Allow HTTPS files to be configured in settings just using a file name
@@ -291,7 +291,10 @@ class WebServer extends Server {
 
 	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
 	handleError(request, response, error) {
-		var logEntry = Console.prepareMessage.call(this, ['WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData()], 'write');
+		//console.log('WebServer.js need to handle next line');
+		//app.log('error', error);
+		//var logEntry = Console.prepareMessage.call(this, ['WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData()], 'write');
+		var logEntry = 'WebServer.handleError() called.';
 		if(this.settings.get('verbose')) {
 			app.log(logEntry);
 		}
@@ -324,7 +327,8 @@ class WebServer extends Server {
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
 	handleInternalServerError(error, nodeResponse, request) {
-		app.log('WebServer.js need to fix next line and use the line beneath');
+		//app.log('error', error);
+		//app.log('WebServer.js need to fix next line and use the line beneath');
 		var logEntry = 'WebServer.handleInternalServerError() called.';
 		//var logEntry = Console.prepareMessage.call(this, ['WebServer.handleInternalServerError() called. Error:', error], 'write');
 		if(this.settings.get('verbose')) {

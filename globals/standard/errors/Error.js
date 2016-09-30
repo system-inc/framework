@@ -1,6 +1,16 @@
 // Dependencies
 import StackTrace from './StackTrace.js';
 
+// Instance methods
+
+Error.prototype.toObject = function() {
+	return Error.toObject(this);
+}
+
+Error.prototype.toString = function() {
+	return this.stack.toString();
+}
+
 // Static properties
 
 //Error.stackTraceLimit = 100;

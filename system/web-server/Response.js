@@ -238,10 +238,10 @@ class Response {
 		this.headers.set('Content-Disposition', 'inline; filename="'+this.content.name+'"');
 
 		// Set the Last-Modified header
-		this.headers.set('Last-Modified', this.content.timeModified.time.toUTCString());
+		this.headers.set('Last-Modified', this.content.timeModified.dateObject.toUTCString());
 
 		// Set the ETag header
-		this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.archivedSizeInBytes+'/'+this.content.extractedSizeInBytes).digest('hex'));
+		this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.dateObject.toUTCString()+'/'+this.content.archivedSizeInBytes+'/'+this.content.extractedSizeInBytes).digest('hex'));
 
 		// Byte serving is not supported
 		this.headers.set('Accept-Ranges', 'none');
@@ -265,10 +265,10 @@ class Response {
 
 			// Set the Last-Modified header
 			await this.content.initializeStatus();
-			this.headers.set('Last-Modified', this.content.timeModified.time.toUTCString());
+			this.headers.set('Last-Modified', this.content.timeModified.dateObject.toUTCString());
 
 			// Set the ETag header
-			this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.time.toUTCString()+'/'+this.content.sizeInBytes()).digest('hex'));
+			this.headers.set('ETag', Node.Cryptography.createHash('md5').update(this.name+'/'+this.content.timeModified.dateObject.toUTCString()+'/'+this.content.sizeInBytes()).digest('hex'));
 
 			// Advertise byte serving
 			this.headers.set('Accept-Ranges', 'bytes');

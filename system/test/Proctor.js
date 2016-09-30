@@ -456,18 +456,12 @@ class Proctor extends EventEmitter {
 
 		//app.log('noMoreTests');
 
-		// Exit the process if we are on a terminal
-		app.log('need to fix this next block');
-		Function.delay(250, function() {
-			Node.exit();
-		});
-
-		//if(Console.onTerminal()) {
-		//	// Give the console session logger some time to finish writing to disk
-		//	Function.delay(250, function() {
-		//		Node.exit();
-		//	});
-		//}
+		// Exit the process if we are on a terminal and not in Electron
+		if(!Node.Process.versions.electron) {
+			Function.delay(250, function() {
+				Node.exit();
+			});
+		}
 	}
 
 	getLeakedGlobals() {

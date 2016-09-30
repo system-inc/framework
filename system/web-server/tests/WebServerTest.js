@@ -48,7 +48,7 @@ class WebServerTest extends Test {
 		var webRequest = new WebRequest(this.baseUrl, {});
 		var webRequestResponse = await webRequest.execute();
 		//app.log('webRequest', webRequest);
-		//app.info('webRequestResponse', webRequestResponse);
+		//app.log('webRequestResponse', webRequestResponse);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 200, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'statusMessage is correct');
@@ -128,8 +128,8 @@ class WebServerTest extends Test {
 
 	async testControllerRouteWithCookies() {
 		var webRequest = new WebRequest(this.baseUrl+'cookies', {});
-		var webRequestResponse = await webRequest.execute();
 		//app.log('webRequest', webRequest);
+		var webRequestResponse = await webRequest.execute();
 		//app.info('webRequestResponse', webRequestResponse);
 
 		Assert.equal(webRequestResponse.cookies.get('testCookie1'), 'testCookie1Value', 'First "Set-Cookie" header is correct');

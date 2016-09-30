@@ -15,11 +15,12 @@ class ControllerRoute extends Route {
 
 		this.inheritProperty('controllerName', settings, parent);
 		this.inheritProperty('controllerMethodName', settings, parent);
-
-		//app.info('ControllerRoute.construct', 'settings', settings, 'parent', parent);
+		//app.highlight('ControllerRoute.construct', 'settings', settings, 'parent', parent);
 	}
 
 	async follow(request, response) {
+		//app.log('this.controllerName', this.controllerName);
+
 		// Try to get the controller
 		var controller = WebServerController.getControllerInstance(this.controllerName, request, response, this);
 

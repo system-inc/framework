@@ -16,7 +16,7 @@ class Router {
 			}.bind(this));
 		}
 
-		//app.log(this.routes);
+		//app.info('this.routes', this.routes);
 	}
 
 	matchRoute(request, response) {
@@ -40,12 +40,12 @@ class Router {
 
 	async route(request, response) {
 		var route = this.matchRoute(request, response);
-		//app.log(route);
+		//app.warn('route', route);
 
-		// Handle no route found
 		if(route) {
 			await route.follow(request, response);
 		}
+		// Handle no route found
 		else {
 			// Change this to getting error routes
 			throw new NotFoundError(request.method+' '+request.url.input+' did not match any routes.');

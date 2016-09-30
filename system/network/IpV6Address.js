@@ -1,16 +1,17 @@
 // Dependencies
-var IpAddress = Framework.require('system/network/IpAddress.js');
+import IpAddress from './IpAddress.js';
 
 // Class
-var IpV6Address = IpAddress.extend({
+class IpV6Address extends IpAddress {
 
-	version: 6,
+	version = 6;
 
-	construct: function(address) {
+	constructor(address) {
+		super();
 		this.address = (address == undefined ? this.address : address);
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = IpV6Address;
+export default IpV6Address;

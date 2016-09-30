@@ -3,9 +3,7 @@ import ServerController from './../../system/server/ServerController.js';
 
 // Class
 class WebServerController extends ServerController {
-
-	request = null;
-	response = null;
+	
 	route = null;
 	data = null;
 
@@ -17,9 +15,7 @@ class WebServerController extends ServerController {
 	}
 
 	static getControllerInstance(controllerName, request, response, route) {
-		//app.highlight(controllerName);
-		
-		var controllerInstance = null;
+		//app.highlight(arguments);
 
 		// Set the directory containing the controllers folder
 		var directory = app.directory;
@@ -29,10 +25,15 @@ class WebServerController extends ServerController {
 
 		// Load the controller class
 		var controllerPath = Node.Path.join(directory, 'controllers', controllerName+'.js');
-		var controllerClass = Framework.require(controllerPath);
+		//app.log('controllerPath', controllerPath);
+		var controllerClass = require(controllerPath).default;
 
 		// Instantiate the controller
-		controllerInstance = new controllerClass(request, response, route);
+		//app.highlight(request, response);
+		var controllerInstance = new controllerClass(request, response, route);
+		//controllerInstance.request = request;
+		//controllerInstance.response = response;
+		//app.warn(controllerInstance);
 
 		return controllerInstance;
 	}

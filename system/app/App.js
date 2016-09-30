@@ -8,6 +8,7 @@ import AsciiArt from './../../system/ascii-art/AsciiArt.js';
 import Command from './../../system/command/Command.js';
 import Module from './../../system/module/Module.js';
 import Settings from './../../system/settings/Settings.js';
+import Terminal from './../../system/console/Terminal.js';
 import Version from './../../system/version/Version.js';
 
 // Class
@@ -67,7 +68,7 @@ class App extends EventEmitter {
 
 	async initialize(callback) {
 		// Make it obvious we are starting
-		this.log(AsciiArt.framework.version[this.framework.version.toString()]);
+		this.standardStreams.output.writeLine(AsciiArt.framework.version[this.framework.version.toString()]);
 
 		// Announce starting
 		//this.log('Initializing Framework '+this.framework.version+'...');
@@ -199,23 +200,32 @@ class App extends EventEmitter {
 	}
 
 	log() {
-		return this.standardStreams.output.writeLine(this.formatLogData(...arguments));
+		var formattedLogData = this.formatLogData(...arguments);
+		return this.standardStreams.output.writeLine(formattedLogData);
 	}
 
 	info() {
-		return this.standardStreams.output.writeLine(this.formatLogData(...arguments));
+		var formattedLogData = this.formatLogData(...arguments);
+		formattedLogData = Terminal.style(formattedLogData, 'cyan');
+		return this.standardStreams.output.writeLine(formattedLogData);
 	}
 
 	warn() {
-		return this.standardStreams.output.writeLine(this.formatLogData(...arguments));
+		var formattedLogData = this.formatLogData(...arguments);
+		formattedLogData = Terminal.style(formattedLogData, 'yellow');
+		return this.standardStreams.output.writeLine(formattedLogData);
 	}
 
 	error() {
-		return this.standardStreams.error.writeLine(this.formatLogData(...arguments));
+		var formattedLogData = this.formatLogData(...arguments);
+		formattedLogData = Terminal.style(formattedLogData, 'red');
+		return this.standardStreams.output.writeLine(formattedLogData);
 	}
 
 	highlight() {
-		return this.standardStreams.output.writeLine(this.formatLogData(...arguments));
+		var formattedLogData = this.formatLogData(...arguments);
+		formattedLogData = Terminal.style(formattedLogData, 'green');
+		return this.standardStreams.output.writeLine(formattedLogData);
 	}
 
 	formatLogData() {
@@ -224,19 +234,32 @@ class App extends EventEmitter {
 		arguments.each(function(argumentKey, argument) {
 			var formattedLogDataForArgument = argument;
 
-			if(formattedLogDataForArgument === true) {
+			if(formattedLogDataForArgument === undefined) {
+				formattedLogDataForArgument = 'undefined';
+			}
+			else if(formattedLogDataForArgument === true) {
 				formattedLogDataForArgument = 'true';
 			}
 			else if(formattedLogDataForArgument === false) {
 				formattedLogDataForArgument = 'false';
 			}
-			else if(formattedLogDataForArgument === undefined) {
-				formattedLogDataForArgument = 'undefined';
-			}
 			else if(formattedLogDataForArgument === null) {
 				formattedLogDataForArgument = 'null';
 			}
-			else if(!String.is(formattedLogDataForArgument) && argument !== undefined) {
+			// Functions
+			if(Function.is(argument)) {
+				formattedLogDataForArgument = Node.Utility.inspect(argument, {
+					'showHidden': true,
+					'depth': 2,
+					'colors': true,
+				});
+			}
+			// Errors
+			else if(Error.is(formattedLogDataForArgument)) {
+				formattedLogDataForArgument = Terminal.style(formattedLogDataForArgument.toString(), 'red');
+			}
+			// Non-strings
+			else if(!String.is(formattedLogDataForArgument)) {
 				formattedLogDataForArgument = Json.indent(formattedLogDataForArgument);
 
 				// If Json encoding fails (e..g, when a logging a class)
@@ -251,6 +274,14 @@ class App extends EventEmitter {
 
 		// Remove the last trailing space
 		formattedLogData = formattedLogData.replaceLast(' ', '');
+
+		// Create a new error
+		var error = new Error('Error manually created to get stack trace.');
+
+	    // Get the location data of the first call site
+	    var callSiteData = error.stack.getCallSite(2);
+
+    	formattedLogData = '['+new Time().getDateTime()+'] ('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+formattedLogData;
 
 		return formattedLogData;
 	}

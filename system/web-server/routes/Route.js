@@ -6,7 +6,7 @@ class Route {
 	
 	// Any type
 	type = null; // controller, redirect, file, or proxy
-	context = null; // project or framework
+	context = null; // app or framework
 	protocols = null;
 	hosts = null;
 	ports = null;
@@ -49,9 +49,9 @@ class Route {
 		// Get and set the fullExpression
 		this.fullExpression = this.getFullExpression();
 
-		// Make sure we have a default context of project
+		// Make sure we have a default context of app
 		if(this.context == null) {
-			this.context = 'project';
+			this.context = 'app';
 		}
 
 		// Make sure we have default methods
@@ -73,7 +73,9 @@ class Route {
 		if(this.ports == null) {
 			this.ports = '*';
 		}
+	}
 
+	createChildrenRoutes(settings) {
 		// Create route children if they exist
 		if(settings.children) {
 			settings.children.each(function(index, childRouteSettings) {

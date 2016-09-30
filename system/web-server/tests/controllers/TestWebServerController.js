@@ -1,29 +1,29 @@
 // Dependencies
-var WebServerController = Framework.require('system/web-server/WebServerController.js');
-var InternalServerError = Framework.require('system/web-server/errors/InternalServerError.js');
-var BadRequestError = Framework.require('system/web-server/errors/BadRequestError.js');
-var ForbiddenError = Framework.require('system/web-server/errors/ForbiddenError.js');
-var RequestedRangeNotSatisfiableError = Framework.require('system/web-server/errors/RequestedRangeNotSatisfiableError.js');
-var RequestEntityTooLargeError = Framework.require('system/web-server/errors/RequestEntityTooLargeError.js');
-var UnauthorizedError = Framework.require('system/web-server/errors/UnauthorizedError.js');
-var ArchiveFile = Framework.require('system/archive/ArchiveFile.js');
-var File = Framework.require('system/file-system/File.js');
-var Html = Framework.require('system/html/Html.js');
-var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
+import WebServerController from './../../../../system/web-server/WebServerController.js';
+import InternalServerError from './../../../../system/web-server/errors/InternalServerError.js';
+import BadRequestError from './../../../../system/web-server/errors/BadRequestError.js';
+import ForbiddenError from './../../../../system/web-server/errors/ForbiddenError.js';
+import RequestedRangeNotSatisfiableError from './../../../../system/web-server/errors/RequestedRangeNotSatisfiableError.js';
+import RequestEntityTooLargeError from './../../../../system/web-server/errors/RequestEntityTooLargeError.js';
+import UnauthorizedError from './../../../../system/web-server/errors/UnauthorizedError.js';
+import ArchiveFile from './../../../../system/archive/ArchiveFile.js';
+import File from './../../../../system/file-system/File.js';
+import Html from './../../../../system/html/Html.js';
+import HtmlDocument from './../../../../system/html/HtmlDocument.js';
 
 // Class
-var TestWebServerController = WebServerController.extend({
+class TestWebServerController extends WebServerController {
 
-	root: function*() {
+	async root() {
 		return this.data.root;
 
 		//return {
 		//	request: this.request,
 		//	response: this.response,
 		//};
-	},
+	}
 
-	cookies: function() {
+	cookies() {
 		this.response.cookies.set('testCookie1', 'testCookie1Value');
 		this.response.cookies.set('testCookie2', {
 			cookieObjectKey1: ['a', 'b', 'c'],
@@ -33,103 +33,103 @@ var TestWebServerController = WebServerController.extend({
 		//app.warn(this.response.cookies);
 
 		return 'Route with cookies.';
-	},
+	}
 
-	throwInternalServerErrorInFunction: function() {
+	throwInternalServerErrorInFunction() {
 		throw new InternalServerError('Internal Server Error thrown in function.');
-	},
+	}
 
-	throwInternalServerErrorInGenerator: function*() {
+	async throwInternalServerErrorInGenerator() {
 		throw new InternalServerError('Internal Server Error thrown in generator.');
-	},
+	}
 
-	throwBadRequestError: function*() {
+	async throwBadRequestError() {
 		throw new BadRequestError();
-	},
+	}
 
-	throwForbiddenError: function*() {
+	async throwForbiddenError() {
 		throw new ForbiddenError();
-	},
+	}
 
-	throwRequestedRangeNotSatisfiableError: function*() {
+	async throwRequestedRangeNotSatisfiableError() {
 		throw new RequestedRangeNotSatisfiableError();
-	},
+	}
 
-	throwRequestEntityTooLargeError: function*() {
+	async throwRequestEntityTooLargeError() {
 		throw new RequestEntityTooLargeError();
-	},
+	}
 
-	throwUnauthorizedError: function*() {
+	async throwUnauthorizedError() {
 		throw new UnauthorizedError();
-	},
+	}
 
-	item: function() {
+	item() {
 		return this.data;
-	},
+	}
 
-	relatedItem: function() {
+	relatedItem() {
 		return this.data;
-	},
+	}
 
-	putOnly: function() {
+	putOnly() {
 		return 'This method is only invoked on requests using the PUT method.';
-	},
+	}
 
-	levelOne: function() {
+	levelOne() {
 		return this.data;
-	},
+	}
 
-	levelOneLevelTwo: function() {
+	levelOneLevelTwo() {
 		return this.data;
-	},
+	}
 
-	levelOneLevelTwoLevelThree: function() {
+	levelOneLevelTwoLevelThree() {
 		return this.data;
-	},
+	}
 
-	contentArchivedFile: function*() {
+	async contentArchivedFile() {
 		var archiveFile = new ArchiveFile(Node.Path.join(app.framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'archives', 'archive-text.zip'));
 		//app.log('archiveFile', archiveFile);
 
-		var archivedFileSystemObjects = yield archiveFile.list();
+		var archivedFileSystemObjects = await archiveFile.list();
 		//app.log('archivedFileSystemObjects', archivedFileSystemObjects);
 
 		var archivedFileText = archivedFileSystemObjects.first();
 
 		return archivedFileText;
-	},
+	}
 
-	contentFile: function() {
+	contentFile() {
 		var file = new File(Node.Path.join(app.framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'text', 'data.txt'));
 
 		return file;
-	},
+	}
 
-	contentHtmlDocument: function() {
+	contentHtmlDocument() {
 		var htmlDocument = new HtmlDocument();
 
 		htmlDocument.body.append(Html.p('Test HTML document.'));
 
 		return htmlDocument;
-	},
+	}
 
-	contentObject: function() {
+	contentObject() {
 		return {
 			a: 1,
 			b: 2,
 			c: 3,
 		};
-	},
+	}
 
-	contentString: function() {
+	contentString() {
 		return 'Content is string.';
-	},
+	}
 
-	contentBuffer: function() {
+	contentBuffer() {
 		return new Buffer('Content is buffer.');
-	},
+	}
 
-	contentStream: function() {
+	contentStream() {
 		var stream = new Stream();
 		stream.readable = true;
 		var c = 64;
@@ -142,21 +142,21 @@ var TestWebServerController = WebServerController.extend({
 		}, 1);
 
 		return stream;
-	},
+	}
 
-	apiHelloWorld: function() {
+	apiHelloWorld() {
 		return {
 			data: {
 				message: 'Hello world.',
 			},
 		};
-	},
+	}
 
-	apiDataNumbers: function*() {
+	async apiDataNumbers() {
 		return '0123456789';
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = TestWebServerController;
+export default TestWebServerController;
