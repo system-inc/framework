@@ -85,7 +85,7 @@ class Stopwatch {
 			elapsedTimeSinceLastLap = now - this.startTime;
 		}
 
-		this.laps.push({
+		this.laps.append({
 			'note': note,
 			'time': now,
 			'elapsedTimeSinceStart': now - this.startTime,

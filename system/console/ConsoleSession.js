@@ -377,10 +377,10 @@ class ConsoleSession {
 		var availablePropertiesArray = [];
 		for(var key in context) {
 			if(Function.is(context[key])) {
-				availableFunctionsArray.push(key+'()');
+				availableFunctionsArray.append(key+'()');
 			}
 			else {
-				availablePropertiesArray.push(key);
+				availablePropertiesArray.append(key);
 			}
 		}
 		availableCommandArray = availablePropertiesArray.sort().concatenate(availableFunctionsArray.sort());
@@ -390,7 +390,7 @@ class ConsoleSession {
 		var partialMatchArray = [];
 		availableCommandArray.each(function(index, key) {
 			if(key.startsWith(commandFragment)) {
-				partialMatchArray.push(key);
+				partialMatchArray.append(key);
 			}
 		});
 		

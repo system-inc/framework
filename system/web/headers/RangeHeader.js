@@ -14,13 +14,13 @@ class RangeHeader {
 			this.unit = matches[1];
 
 			matches[2].split(',').each(function(index, range) {
-				this.ranges.push(this.parseRange(range));
+				this.ranges.append(this.parseRange(range));
 			}.bind(this));
 		}
 		// If we can't parse a range, send the entire resource
 		else {
 			this.unit = 'bytes';
-			this.ranges.push('0-');
+			this.ranges.append('0-');
 		}
 	}
 

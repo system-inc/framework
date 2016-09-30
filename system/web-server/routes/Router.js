@@ -12,7 +12,7 @@ class Router {
 
 		if(routes) {
 			routes.each(function(routeSettingsIndex, routeSettings) {
-				this.routes.push(RouteFactory.create(routeSettings));
+				this.routes.append(RouteFactory.create(routeSettings));
 			}.bind(this));
 		}
 

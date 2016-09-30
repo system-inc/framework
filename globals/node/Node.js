@@ -13,7 +13,6 @@ class Node {
 	static ChildProcess = require('child_process');
 	static Cluster = require('cluster');
 	static Cryptography = require('crypto');
-	static Domain = require('domain');
 	static Events = Events;
 	static EventEmitter = Events.EventEmitter;
 	static FileSystem = require('fs');

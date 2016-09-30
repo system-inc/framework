@@ -121,7 +121,7 @@ class Database {
 				reformedRow[key.toCamelCase()] = value;
 			});
 
-			reformedRows.push(reformedRow.sort());
+			reformedRows.append(reformedRow.sort());
 		});
 		queryResults.rows = reformedRows;
 
@@ -172,7 +172,7 @@ class Database {
 						characterSet: allTableColumnsColumn.characterSetName,
 					};
 
-					columns.push(column);
+					columns.append(column);
 				}
 			});
 
@@ -193,7 +193,7 @@ class Database {
 						indexComment: allTableIndexesIndexValue.indexComment,
 					};
 
-					indexes.push(index);
+					indexes.append(index);
 				}
 			});
 
@@ -212,7 +212,7 @@ class Database {
 					// Pull in constraint data from allTableRelationshipConstraints
 					relationship.constraint = allTableRelationshipConstraints.rows.getObjectsWithKeyValue('constraintName', allTableRelationshipsRelationship.constraintName).getObjectWithKeyValue('tableName', table.name);
 
-					relationships.push(relationship);
+					relationships.append(relationship);
 				}
 			});
 
@@ -220,7 +220,7 @@ class Database {
 			await table.loadProperties(allTablesTable, characterSet, columns, indexes, relationships);
 
 			// Add the table
-			tables.push(table);
+			tables.append(table);
 		}.bind(this));
 
 		this.tables = tables;
@@ -267,7 +267,7 @@ class Database {
 		schema.tables = [];
 		await this.tables.each(async function(index, table) {
 			var tableSchema = await table.getSchema();
-			schema.tables.push(tableSchema);
+			schema.tables.append(tableSchema);
 		}.bind(this));
 
 		return schema;

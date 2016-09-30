@@ -197,7 +197,7 @@ Object.defineProperty(Object.prototype, 'merge', {
         // Gather the objects to merge
         for(var i = 0; i < arguments.length; i++) {
             if(arguments[i]) {
-                objectsToMerge.push(arguments[i]);
+                objectsToMerge.append(arguments[i]);
             }
         }
 
@@ -228,7 +228,7 @@ Object.defineProperty(Object.prototype, 'merge', {
 
 // The difference between integrate and merge is how arrays are handled.
 // With merge, if you have a key which points to an array, merging the same key name pointing to
-// a different array will just push that different onto one array.
+// a different array will just append that different onto one array.
 // Integrate on the other hand, looks are objects in the array to be merged and merges those
 // objects with the corresponding object on the same array index.
 Object.defineProperty(Object.prototype, 'integrate', {
@@ -239,7 +239,7 @@ Object.defineProperty(Object.prototype, 'integrate', {
         // Gather the objects to merge
         for(var i = 0; i < arguments.length; i++) {
             if(arguments[i]) {
-                objectsToIntegrate.push(arguments[i]);
+                objectsToIntegrate.append(arguments[i]);
             }
         };
 
@@ -258,18 +258,18 @@ Object.defineProperty(Object.prototype, 'integrate', {
                         // If the array being integrated has a matching index to this array
                         if(objectToIntegrateValue[i]) {
                             var integratedObject = this[objectToIntegrateKey][i].integrate(objectToIntegrateValue[i]);
-                            integratedArray.push(integratedObject);
+                            integratedArray.append(integratedObject);
                         }
                         // If the array being integrated does not have a matching index, just use this array element at the current index
                         else {
-                            integratedArray.push(this[objectToIntegrateKey][i]);
+                            integratedArray.append(this[objectToIntegrateKey][i]);
                         }
                     }
 
                     // If there are more array elements in the object we are coalescing in add them
                     if(this[objectToIntegrateKey].length < objectToIntegrateValue.length) {
                         for(var i = this[objectToIntegrateKey].length; i < objectToIntegrateValue.length; i++) {
-                            integratedArray.push(objectToIntegrateValue[i]);
+                            integratedArray.append(objectToIntegrateValue[i]);
                         }
                     }
 

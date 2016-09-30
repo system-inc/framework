@@ -125,7 +125,7 @@ class Model {
 			var validationError = await property.validate();
 
 			if(validationError) {
-				validationErrors.push(validationError);
+				validationErrors.append(validationError);
 			}
 		});
 

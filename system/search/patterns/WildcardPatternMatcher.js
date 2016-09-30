@@ -63,7 +63,7 @@ WildcardPatternMatcher.readSet = function(string) {
             return set;
         }
         else if(token[0] == 'LITERAL') {
-            set.values.push(token[1]);
+            set.values.append(token[1]);
         }
         else if(token[0] == 'RANGE') {
             token = WildcardPatternMatcher.nextToken(string);
@@ -80,7 +80,7 @@ WildcardPatternMatcher.readSet = function(string) {
                 }
                 
                 for(var i = startCode; i <= endCode; i++) {
-                    set.values.push(String.fromCharCode(i));
+                    set.values.append(String.fromCharCode(i));
                 }
                 //console.log(set);
             }
@@ -113,7 +113,7 @@ WildcardPatternMatcher.readGroup = function(string) {
 
         if(token[0] == 'END_GROUP') {
             if(nestedGroups == 0) {
-                group.options.push(option);
+                group.options.append(option);
                 group.remainder = string;
                 return group;
             }
@@ -127,7 +127,7 @@ WildcardPatternMatcher.readGroup = function(string) {
 
         if(token[0] == 'GROUP_DELIMITER') {
             if(nestedGroups == 0) {
-                group.options.push(option);
+                group.options.append(option);
                 option = '';
                 continue;
             }

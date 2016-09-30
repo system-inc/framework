@@ -63,7 +63,7 @@ class Response {
 		if(acceptEncodeHeaderString && String.is(acceptEncodeHeaderString)) {
 			var acceptedEncodings = acceptEncodeHeaderString.split(',');
 			for(var i = 0; i < acceptedEncodings.length; i++) {
-				this.acceptedEncodings.push(acceptedEncodings[i].trim());
+				this.acceptedEncodings.append(acceptedEncodings[i].trim());
 			}
 
 			// Encode if we do not have a contentType (means we are probably text/html) or if we match a content type on the white list

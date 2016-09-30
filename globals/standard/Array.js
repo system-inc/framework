@@ -1,5 +1,11 @@
 // Instance methods
 
+Array.prototype.append = Array.prototype.push;
+
+Array.prototype.prepend = Array.prototype.unshift;
+
+Array.prototype.toString = Object.prototype.toString;
+
 Array.prototype.clone = function() {
 	return Array.clone(this);
 };
@@ -117,13 +123,13 @@ Array.prototype.merge = function() {
     // Gather the arrays to merge
     var arraysToMerge = [];
     for(var i = 0; i < arguments.length; i++) {
-    	arraysToMerge.push(arguments[i]);
+    	arraysToMerge.append(arguments[i]);
     };
 
     arraysToMerge.each(function(arrayToMergeIndex, arrayToMerge) {
     	arrayToMerge.each(function(arrayValueIndex, arrayValue) {
     		if(!this.contains(arrayValue)) {
-    			this.push(arrayValue);
+    			this.append(arrayValue);
     		}
     	}.bind(this));
     }.bind(this));
@@ -330,7 +336,7 @@ Array.prototype.getObjectsWithKeyValue = function(key, value) {
 	this.each(function(index, element) {
 		if(Object.is(element)) {
 			if(element[key] !== undefined && element[key] == value) {
-				objects.push(element);
+				objects.append(element);
 			}
 		}
 	});
@@ -415,12 +421,6 @@ Array.prototype.each = function(callback) {
 	}
 };
 
-Array.prototype.append = Array.prototype.push;
-
-Array.prototype.prepend = Array.prototype.unshift;
-
-Array.prototype.toString = Object.prototype.toString;
-
 Array.prototype.toObject = function() {
 	return Array.toObject(this);
 };
@@ -463,7 +463,7 @@ Array.unique = function(array) {
 
 	array.each(function(index, element) {
 		if(uniqueArray.indexOf(element) == -1) {
-			uniqueArray.push(element);
+			uniqueArray.append(element);
 		}
 	});
 

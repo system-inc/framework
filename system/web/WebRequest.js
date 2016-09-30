@@ -247,7 +247,7 @@ class WebRequest {
 				// Build the body
 				response.on('data', function(chunk) {
 					//app.log('Got chunk...', chunk.substring(0, 30));
-					chunks.push(chunk);
+					chunks.append(chunk);
 				});
 
 				// Resolve the promise when the response ends

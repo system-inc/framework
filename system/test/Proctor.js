@@ -213,7 +213,7 @@ class Proctor extends EventEmitter {
 				delete testToAddToQueue['methods'];
 
 				// Add the test to the queue
-				this.testMethodQueue.push(testToAddToQueue);
+				this.testMethodQueue.append(testToAddToQueue);
 			}.bind(this));
 		}.bind(this));
 	}
@@ -336,7 +336,7 @@ class Proctor extends EventEmitter {
 		this.currentTestMethodStopwatch.stop();
 
 		// Record the failure
-		this.failedTestMethods.push({
+		this.failedTestMethods.append({
 			'test': this.testMethods[this.currentTestMethod.name],
 			'method': this.currentTestMethod.method,
 			'error': error,

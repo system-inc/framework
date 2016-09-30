@@ -43,7 +43,7 @@ Schema.constructFromDatabaseSchema = function(databaseSchema) {
 				schemaModelProperty.key = false;
 			}
 
-			schemaModel.properties.push(schemaModelProperty);
+			schemaModel.properties.append(schemaModelProperty);
 		});
 
 		// Loop through the indexes
@@ -51,7 +51,7 @@ Schema.constructFromDatabaseSchema = function(databaseSchema) {
 			var schemaModelIndex = {};
 			schemaModelIndex.properties = [];
 			index.columns.each(function(indexColumnIndex, indexColumn) {
-				schemaModelIndex.properties.push(indexColumn.toCamelCase());
+				schemaModelIndex.properties.append(indexColumn.toCamelCase());
 			});
 			schemaModelIndex.options = {};
 			if(index.unique) {
@@ -59,7 +59,7 @@ Schema.constructFromDatabaseSchema = function(databaseSchema) {
 			}
 			schemaModelIndex.description = index.comment;
 
-			schemaModel.indexes.push(schemaModelIndex);
+			schemaModel.indexes.append(schemaModelIndex);
 		});
 
 		// Loop through this table's relationships
@@ -69,7 +69,7 @@ Schema.constructFromDatabaseSchema = function(databaseSchema) {
 			relationshipToAdd.model = relationship.referencedTableName.toCamelCase(true);
 			relationshipToAdd.property = relationship.column.toCamelCase();
 
-			schemaModel.relationships.push(relationshipToAdd);
+			schemaModel.relationships.append(relationshipToAdd);
 		});
 
 		// Loop through all relationships
@@ -82,13 +82,13 @@ Schema.constructFromDatabaseSchema = function(databaseSchema) {
 					relationshipToAdd.model = relationshipsLoopTable.name.toCamelCase(true);
 					relationshipToAdd.property = relationshipsLoopRelationship.column.toCamelCase();
 
-					schemaModel.relationships.push(relationshipToAdd);
+					schemaModel.relationships.append(relationshipToAdd);
 				}
 			});
 		});
 
 
-		schema.models.push(schemaModel);
+		schema.models.append(schemaModel);
 	});
 
 	return schema;

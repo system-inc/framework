@@ -66,7 +66,7 @@ Ffmpeg.execute = function*(input, argumentsArray) {
 	ffmpegArguments = ffmpegArguments.concat(argumentsArray);
 
 	// Always output to standard out
-	ffmpegArguments.push('pipe:1');
+	ffmpegArguments.append('pipe:1');
 
 	// Log the ffmpeg file and arguments
 	//app.log('ffmpegFile', ffmpegFile, 'ffmpegArguments', ffmpegArguments);

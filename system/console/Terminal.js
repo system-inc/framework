@@ -13,7 +13,7 @@ class Terminal {
     	// Get all of the styles from the stylesString
     	var styles = [];
     	stylesString.split(',').each(function(index, style) {
-    		styles.push(style.trim());
+    		styles.append(style.trim());
     	});
 
     	// Wrap the string in the styles

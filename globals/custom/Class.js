@@ -133,7 +133,7 @@ class Class {
 					propertyName !== 'prototype' &&
 					staticPropertyNames.indexOf(propertyName) === -1
 				) {
-					staticPropertyNames.push(propertyName);
+					staticPropertyNames.append(propertyName);
 				}
 			});
 		}
@@ -158,7 +158,7 @@ class Class {
 					propertyName !== 'constructor' &&
 					instanceMethodNames.indexOf(propertyName) === -1
 				) {
-					instanceMethodNames.push(propertyName);
+					instanceMethodNames.append(propertyName);
 				}
 			});
 		}

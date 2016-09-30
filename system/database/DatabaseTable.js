@@ -118,7 +118,7 @@ class DatabaseTable {
 			var column = new DatabaseTableColumn(row.field, this);
 			await column.loadProperties(row);
 
-			this.columns.push(column);
+			this.columns.append(column);
 		}.bind(this));
 
 		return this.columns;
@@ -134,13 +134,13 @@ class DatabaseTable {
 			// If we already have the index add the column
 			var hasIndex = this.hasIndex(row.keyName);
 			if(hasIndex) {
-				hasIndex.columns.push(row.columnName);
+				hasIndex.columns.append(row.columnName);
 			}
 			// If we don't already have the index
 			else {
 				var index = new DatabaseTableIndex(row.keyName, this);
 				await index.loadProperties(row);
-				this.indexes.push(index);
+				this.indexes.append(index);
 			}
 		}.bind(this));
 
@@ -176,7 +176,7 @@ class DatabaseTable {
 
 			await relationship.loadProperties(row, row.constraint);
 
-			this.relationships.push(relationship);
+			this.relationships.append(relationship);
 		}.bind(this));
 
 		return this.relationships;
@@ -240,7 +240,7 @@ class DatabaseTable {
 		schema.columns = [];
 		await this.columns.each(async function(index, column) {
 			var columnSchema = await column.getSchema();
-			schema.columns.push(columnSchema);
+			schema.columns.append(columnSchema);
 		}.bind(this));
 
 		// Load the indexes
@@ -250,7 +250,7 @@ class DatabaseTable {
 		schema.indexes = [];
 		await this.indexes.each(async function(indexIndex, index) {
 			var indexSchema = await index.getSchema();
-			schema.indexes.push(indexSchema);
+			schema.indexes.append(indexSchema);
 		}.bind(this));
 
 		// Load the relationships
@@ -260,7 +260,7 @@ class DatabaseTable {
 		schema.relationships = [];
 		await this.relationships.each(async function(index, relationship) {
 			var relationshipSchema = await relationship.getSchema();
-			schema.relationships.push(relationshipSchema);
+			schema.relationships.append(relationshipSchema);
 		}.bind(this));
 
 		return schema;

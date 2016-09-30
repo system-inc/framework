@@ -2,6 +2,14 @@
 
 // Instance methods
 
+String.prototype.append = function(string) {
+   return this+string;
+};
+
+String.prototype.prepend = function(string) {
+   return string+this;
+};
+
 String.prototype.empty = function() {
    return (this.length === 0 || !this.trim());
 };
@@ -191,7 +199,7 @@ String.prototype.toTitle = function() {
 			}
 	    }
 
-	    processedWords.push(word);
+	    processedWords.append(word);
 	});
 
 	string = processedWords.join(' ');
@@ -370,10 +378,10 @@ String.prototype.toStream = function() {
 	var stream = new Node.Stream.Readable();
 
 	// Add this string to the stream
-	stream.push(this.toString());
+	stream.append(this.toString());
 
 	// Indicate end of stream
-	stream.push(null);
+	stream.append(null);
 
 	return stream;
 };

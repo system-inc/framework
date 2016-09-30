@@ -99,8 +99,8 @@ class Json {
                 }
 
                 // Otherwise, accumulate the unique value and its path
-                objects.push(value);
-                paths.push(path);
+                objects.append(value);
+                paths.append(path);
 
                 // If it is an array, replicate the array
                 if(Object.prototype.toString.apply(value) === '[object Array]') {
@@ -594,7 +594,7 @@ class Json {
                        if (ch === ',') {
                            error("Missing array element");
                        } else {
-                           array.push(value());
+                           array.append(value());
                        }
                        white();
                        // If there's no comma after this value, this needs to

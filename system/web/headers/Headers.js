@@ -62,7 +62,7 @@ class Headers {
 	create(key, value) {
 		var header = new Header(key, value);
 
-		this.headers.push(header);
+		this.headers.append(header);
 
 		return header;
 	}
@@ -149,7 +149,7 @@ class Headers {
 		var array = [];
 
 		this.headers.each(function(index, header) {
-			array.push([header.key, header.value]);
+			array.append([header.key, header.value]);
 		}.bind(this));
 
 		return array;

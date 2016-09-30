@@ -79,7 +79,7 @@ class Route {
 		// Create route children if they exist
 		if(settings.children) {
 			settings.children.each(function(index, childRouteSettings) {
-				this.children.push(RouteFactory.create(childRouteSettings, this));
+				this.children.append(RouteFactory.create(childRouteSettings, this));
 			}.bind(this));
 		}
 	}
