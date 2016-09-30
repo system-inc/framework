@@ -149,6 +149,10 @@ class EventEmitter {
 		var eventListener = new EventListener(eventPattern, functionToBind, timesToRun);
 
 		// Add the event listener
+		if(this.eventListeners === undefined) {
+			console.log('eventListeners is undefined');
+			this.eventListeners = [];
+		}
 		this.eventListeners.append(eventListener);
 
 		// Check to see if the matching bound function objects is greater than the recommended

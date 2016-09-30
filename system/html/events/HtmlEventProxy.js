@@ -2,6 +2,7 @@
 import PropagatingEventEmitter from './../../../system/events/PropagatingEventEmitter.js';
 import WildcardPatternMatcher from './../../../system/search/patterns/WildcardPatternMatcher.js';
 import HtmlDocumentEvent from './html-document/HtmlDocumentEvent.js';
+import HtmlDocumentEventEmitter from './html-document/HtmlDocumentEventEmitter.js';
 import HtmlElementEvent from './html-element/HtmlElementEvent.js';
 import ClipboardEvent from './html-event/ClipboardEvent.js';
 import InputComposeEvent from './html-element/input/InputComposeEvent.js';
@@ -11,6 +12,8 @@ import InputPressEvent from './html-element/input/InputPressEvent.js';
 import InputScrollEvent from './html-element/input/InputScrollEvent.js';
 import InputSelectEvent from './html-element/input/InputSelectEvent.js';
 import FormEvent from './html-element/FormEvent.js';
+import HtmlDocument from './../HtmlDocument.js';
+import HtmlNode from './../HtmlNode.js';
 
 // Class
 class HtmlEventProxy {
@@ -326,9 +329,6 @@ class HtmlEventProxy {
 	static getDomObjectForHtmlEventEmitterAndDomEventIdentifier(htmlEventEmitter, domEventIdentifier) {
 		var domObject = null;
 
-		var HtmlDocument = Framework.require('system/html/HtmlDocument.js');
-		var HtmlNode = Framework.require('system/html/HtmlNode.js');
-
 		// Set the domObject
 		// Deal with HtmlDocument events
 		if(HtmlDocument.is(htmlEventEmitter)) {
@@ -412,7 +412,6 @@ class HtmlEventProxy {
 		var domEventIdentifiers = HtmlEventProxy.htmlEventPatternToDomEventIdentifiers(eventPattern);
 
 		// Determine which event to use for mountedOnDom
-		var HtmlDocumentEventEmitter = Framework.require('system/html/events/html-document/HtmlDocumentEventEmitter.js');
 		var mountedToDomEventIdentifier = 'htmlNode.mountedToDom';
 		if(Class.isInstance(htmlEventEmitter, HtmlDocumentEventEmitter)) {
 			mountedToDomEventIdentifier = 'htmlDocument.mountedToDom';

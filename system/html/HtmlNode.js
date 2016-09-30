@@ -1,9 +1,13 @@
 // Dependencies
 import XmlNode from './../../system/xml/XmlNode.js';
 import HtmlNodeEventEmitter from './events/html-node/HtmlNodeEventEmitter.js';
+import HtmlNodeEvent from './events/html-node/HtmlNodeEvent.js';
 
 // Class
 class HtmlNode extends XmlNode {
+
+	// HtmlNodeEventEmitter
+	eventClass = HtmlNodeEvent;
 
 	htmlDocument = null;
 
