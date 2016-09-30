@@ -4,6 +4,7 @@ libraries/electron/os-x/*
 libraries/electron/linux/*
 
 # Apps
+apps/framework/logs/*
 apps/framework-command-line/logs/*
 apps/framework-graphical/logs/*
 apps/framework-graphical/proctor/browser-windows/test-browser-window/logs/*

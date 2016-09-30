@@ -7,8 +7,10 @@ class StandardOutputStream extends StandardStream {
 	constructor() {
 		super();
 
+		var superWrite = super.write;
+
 		Node.Process.stdout.on('data', function(data) {
-			this.super.write(data);
+			superWrite.apply(this, arguments);
 		}.bind(this));
 	}
 

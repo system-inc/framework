@@ -67,9 +67,6 @@ class App extends EventEmitter {
 	}
 
 	async initialize(callback) {
-		// Make it obvious we are starting
-		this.standardStreams.output.writeLine(AsciiArt.framework.version[this.framework.version.toString()]);
-
 		// Announce starting
 		//this.log('Initializing Framework '+this.framework.version+'...');
 
@@ -78,6 +75,9 @@ class App extends EventEmitter {
 
 		// After the project settings are loaded, we will know how to configure the standard streams file log
 		await this.configureStandardStreamsFileLog();
+
+		// Make it obvious we are starting
+		this.standardStreams.output.writeLine(AsciiArt.framework.version[this.framework.version.toString()]);
 
 		// Use project settings to set the title and the identifier
 		this.setPropertiesFromAppSettings();
