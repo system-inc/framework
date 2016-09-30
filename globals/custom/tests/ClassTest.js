@@ -182,6 +182,42 @@ class ClassTest extends Test {
 		Assert.equal(specialTestParentClassInstance2.parentClassInstanceClassVariable.toString(), '2.0', 'class instance class variables are in their own memory space');
 	}
 
+	async testSuper() {
+		class Parent {
+
+			testProperty = null;
+			testAsyncProperty = null;
+
+			normalSuper() {
+				this.testProperty = 'parentNormalSuper';
+			}
+
+			async asyncSuper() {
+				this.testAsyncProperty = 'parentAsyncSuper';
+			}
+
+		}
+
+		class Child extends Parent {
+
+			normalSuper() {
+				super.normalSuper();
+			}
+
+			async asyncSuper() {
+				await super.asyncSuper();
+			}
+
+		}
+
+		var actual = new Child();
+		actual.normalSuper();
+		await actual.asyncSuper();
+
+		Assert.strictEqual(actual.testProperty, 'parentNormalSuper', 'super works on normal functions');
+		Assert.strictEqual(actual.testAsyncProperty, 'parentAsyncSuper', 'super works on async functions');
+	}
+
 	async testAsync() {
 		class SpecialTestClass {
 
