@@ -21,6 +21,7 @@ class Node {
 	static OperatingSystem = require('os');
 	static Path = Path;
 	static Process = process;
+	static Readline = require('readline');
 	static StandardIn = (process.versions.electron) ? null : process.stdin; // When running Electron, if you try to access process.stdin Node throws an exception
 	static StandardOut = process.stdout;
 	static Stream = require('stream');

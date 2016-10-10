@@ -9,7 +9,7 @@ class ModuleTest extends Test {
 		//app.log(Object.keys(app.modules));
 
 		// Console is a core module so it should already have been initialized
-		Assert.true(Object.hasKey(app.modules.testModule, 'settings'), 'TestModule has key "settings" after Module.initialize()');
+		Assert.true(Object.hasKey(app.modules.archiveModule, 'settings'), 'ArchiveModule has key "settings" after Module.initialize()');
 	}
 
 }

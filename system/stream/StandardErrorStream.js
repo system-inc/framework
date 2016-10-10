@@ -4,19 +4,14 @@ import StandardStream from './StandardStream.js';
 // Class
 class StandardErrorStream extends StandardStream {
 
+	nodeStream = Node.Process.stderr;
+
 	constructor() {
 		super();
-
-		var superWrite = super.write;
-
-		Node.Process.stderr.on('data', function(data) {
-			superWrite.apply(this, arguments);
+		
+		this.nodeStream.on('data', function(data) {
+			this.emit('stream.data', data);
 		}.bind(this));
-	}
-
-	write(data) {
-		super.write(data);
-		Node.Process.stderr.write(data);
 	}
 
 }

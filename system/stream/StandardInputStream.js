@@ -4,19 +4,14 @@ import StandardStream from './StandardStream.js';
 // Class
 class StandardInputStream extends StandardStream {
 
+	nodeStream = Node.Process.stdin;
+
 	constructor() {
 		super();
 
-		var superWrite = super.write;
-
-		Node.Process.stdin.on('data', function(data) {
-			superWrite.apply(this, arguments);
+		this.nodeStream.on('data', function(data) {
+			this.emit('stream.data', data);
 		}.bind(this));
-	}
-
-	write(data) {
-		super.write(data);
-		Node.Process.stdin.write(data);
 	}
 
 }

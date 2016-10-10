@@ -52,6 +52,21 @@ class File extends FileSystemObject {
 		return contentType;
 	}
 
+    async create(data, options) {
+        var create = null;
+
+        var fileExists = await this.exists();
+
+        if(fileExists) {
+            create = true;
+        }
+        else {
+            create = await File.create(this.file, '', options);
+        }
+
+        return create;
+    }
+
 	async open(flags) {
 		//app.log('Running file.open on', this.file, 'with flags', flags);
 		this.descriptor = await File.open(this.file, flags);
@@ -61,6 +76,7 @@ class File extends FileSystemObject {
 
     async read(options) {
         var content = await File.read(this.path, options);
+        //app.log('content', content);
 
         return content;
     }

@@ -1,7 +1,6 @@
 // Dependencies
 import Settings from './../../system/settings/Settings.js';
-//import Terminal from './../../system/console/Terminal.js';
-import Version from './../../system/version/Version.js';
+import Terminal from './../../system/interface/Terminal.js';
 
 // Class
 class Command {
@@ -107,7 +106,7 @@ class Command {
 	}
 
 	showVersion() {
-		Console.writeLine(Project.title+' '+(Project.version ? Project.version : '(unknown version)'));
+		app.standardStreams.output.writeLine(app.title+' '+(app.version ? app.version : '(unknown version)'));
 
 		Node.exit();
 	}
@@ -115,58 +114,58 @@ class Command {
 	showHelp() {
 		//Node.exit(this);
 
-		Console.writeLine(Project.title+' '+(Project.version ? Project.version : '(unknown version)'));
-		Console.writeLine();
+		app.standardStreams.output.writeLine(app.title+' '+(app.version ? app.version : '(unknown version)'));
+		app.standardStreams.output.writeLine();
 
 		if(this.usage) {
-			Console.writeLine('Usage:');
-			Console.writeLine('  '+this.usage.replace("\n", "\n  "));
-			Console.writeLine();
+			app.standardStreams.output.writeLine('Usage:');
+			app.standardStreams.output.writeLine('  '+this.usage.replace("\n", "\n  "));
+			app.standardStreams.output.writeLine();
 		}
 
-		if(Project.description) {
-			Console.writeLine(Project.description);
-			Console.writeLine();
+		if(app.description) {
+			app.standardStreams.output.writeLine(app.description);
+			app.standardStreams.output.writeLine();
 		}
 		
 		var optionsSettings = this.settings.get('options');
 		if(optionsSettings.length) {
-			Console.writeLine('Options:');
+			app.standardStreams.output.writeLine('Options:');
 			optionsSettings.each(function(optionSettingsIndex, optionSettings) {
 				var optionLine = '  --'+optionSettings.identifier;
 				if(optionSettings.aliases.length) {
 					optionLine += ' (-'+optionSettings.aliases.join(', -')+')';
 				}
 				optionLine += Terminal.style(' (default: '+optionSettings.defaultValue+')', 'gray');
-				Console.writeLine(optionLine);
+				app.standardStreams.output.writeLine(optionLine);
 
 				if(optionSettings.description) {
-					Console.writeLine('    '+optionSettings.description);
-					Console.writeLine();
+					app.standardStreams.output.writeLine('    '+optionSettings.description);
+					app.standardStreams.output.writeLine();
 				}
 			});
 		}
 
 		if(!optionsSettings.length) {
-			Console.writeLine();
+			app.standardStreams.output.writeLine();
 		}
 
 		if(this.supplementalNotes) {
-			Console.writeLine(this.supplementalNotes);
+			app.standardStreams.output.writeLine(this.supplementalNotes);
 		}
 
 		Node.exit();
 	}
 
 	showCommandOptions() {
-		Console.writeLine('Command Options:');
+		app.standardStreams.output.writeLine('Command Options:');
 
 		var optionsSettings = this.settings.get('options');
 		optionsSettings.each(function(optionSettingsIndex, optionSettings) {
-			Console.writeLine('  '+optionSettings.identifier+': '+Terminal.style(this.options[optionSettings.identifier], 'cyan'));
+			app.standardStreams.output.writeLine('  '+optionSettings.identifier+': '+Terminal.style(this.options[optionSettings.identifier], 'cyan'));
 		}.bind(this));
 
-		Console.writeLine();
+		app.standardStreams.output.writeLine();
 	}
 
 	getOptionValue(optionSettings, argumentsArray) {
@@ -178,13 +177,13 @@ class Command {
 			// Check to see if the current argument matches the current option
 			if(optionSettings.identifiers.contains(this.argumentToOptionIdentifier(argumentsArray[i]))) {
 				//app.info('optionSettings.identifier', optionSettings.identifier, 'matches', '"'+this.argumentToOptionIdentifier(argumentsArray[i])+'"');
-				//app.log('current argument', argumentsArray[i]);
-				//app.log('next argument', argumentsArray[i + 1]);
+				//app.standardStreams.output.writeLine('current argument', argumentsArray[i]);
+				//app.standardStreams.output.writeLine('next argument', argumentsArray[i + 1]);
 
 				var currentArgumentOptionSettingsFromOptionIdentifier = this.getOptionSettingsFromOptionIdentifier(argumentsArray[i]);
-				//app.log('currentArgumentOptionSettingsFromOptionIdentifier', currentArgumentOptionSettingsFromOptionIdentifier);
+				//app.standardStreams.output.writeLine('currentArgumentOptionSettingsFromOptionIdentifier', currentArgumentOptionSettingsFromOptionIdentifier);
 				var nextArgumentOptionSettingsFromNextOptionIdentifier = this.getOptionSettingsFromOptionIdentifier(argumentsArray[i + 1]);
-				//app.log('nextArgumentOptionSettingsFromNextOptionIdentifier', nextArgumentOptionSettingsFromNextOptionIdentifier);
+				//app.standardStreams.output.writeLine('nextArgumentOptionSettingsFromNextOptionIdentifier', nextArgumentOptionSettingsFromNextOptionIdentifier);
 				var nextArgumentExists = (argumentsArray[i + 1] !== undefined);
 
 				// If the current argument is an option

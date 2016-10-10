@@ -21,8 +21,8 @@ scriptDirectory=$workingDirectory/`echo $scriptInvocationPath | sed -e s/$script
 #echo "scriptDirectory $scriptDirectory"
 
 # The path to the test project from the scripts directory
-testProjectFile="$scriptDirectory../assistant/command/Project.js"
-#echo "testProjectFile $testProjectFile"
+framework="$scriptDirectory../apps/framework/Framework.js"
+#echo "framework $framework"
 
 # Run the script
-node "$testProjectFile" $@
+node "$framework" $@

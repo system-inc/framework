@@ -1,10 +1,6 @@
 // Class
 class Terminal {
 
-    static write(data) {
-        Node.StandardOut.write(data);
-    }
-
     static color(string, colorName) {
     	return Terminal.style(string, colorName);
     }
@@ -29,8 +25,8 @@ class Terminal {
     static width() {
     	var width;
 
-    	if(Node.Process.stdout.getWindowSize) {
-    		width = Node.Process.stdout.getWindowSize()[0];
+    	if(app.standardStreams.output.getWindowSize) {
+    		width = app.standardStreams.output.getWindowSize()[0];
     	}
 
     	return width;
@@ -39,29 +35,29 @@ class Terminal {
     static height() {
     	var height;
 
-    	if(Node.Process.stdout.getWindowSize) {
-    		height = Node.Process.stdout.getWindowSize()[1];
+    	if(app.standardStreams.output.getWindowSize) {
+    		height = app.standardStreams.output.getWindowSize()[1];
     	}
 
     	return height;
     }
 
     static eraseDisplay() {
-        Terminal.write('\x1b[2J\x1b[0f');
+        app.standardStreams.output.write('\x1b[2J\x1b[0f');
     }
 
     static clear = Terminal.reset = Terminal.eraseDisplay;
 
     static clearLine() {
-        Terminal.write('\x1b[2K');
+        app.standardStreams.output.write('\x1b[2K');
     }
 
     static clearLineFromCursor() {
-        Terminal.write('\x1b[1K');
+        app.standardStreams.output.write('\x1b[1K');
     }
 
     static cursorToBeginningOfLine() {
-        Terminal.write('\x1bb');
+        app.standardStreams.output.write('\x1bb');
     }
 
     static cursorUp(distance) {
@@ -70,7 +66,7 @@ class Terminal {
         }
 
     	distance = (distance === undefined ? 1 : distance);
-    	Terminal.write('\x1b['+distance+'A');
+    	app.standardStreams.output.write('\x1b['+distance+'A');
     }
 
     static cursorDown(distance) {
@@ -79,7 +75,7 @@ class Terminal {
         }
 
     	distance = (distance === undefined ? 1 : distance);
-    	Terminal.write('\x1b['+distance+'B');
+    	app.standardStreams.output.write('\x1b['+distance+'B');
     }
 
     static cursorLeft(distance) {
@@ -88,7 +84,7 @@ class Terminal {
         }
 
     	distance = (distance === undefined ? 1 : distance);
-    	Terminal.write('\x1b['+distance+'D');
+    	app.standardStreams.output.write('\x1b['+distance+'D');
     }
 
     static cursorBack = Terminal.cursorLeft;
@@ -99,29 +95,29 @@ class Terminal {
         }
 
     	distance = (distance === undefined ? 1 : distance);
-    	Terminal.write('\x1b['+distance+'C');
+    	app.standardStreams.output.write('\x1b['+distance+'C');
     }
 
     static cursorForward = Terminal.cursorRight;
 
     static nextLine(distance) {
     	distance = (distance === undefined ? 1 : distance);
-    	Terminal.write('\x1b['+distance+'E');
+    	app.standardStreams.output.write('\x1b['+distance+'E');
     }
 
     static previousLine(distance) {
     	distance = (distance === undefined ? 1 : distance);
-    	Terminal.write('\x1b['+distance+'F');
+    	app.standardStreams.output.write('\x1b['+distance+'F');
     }
 
     static scrollDown(distance) {
     	distance = (distance === undefined ? 1 : distance);
-    	Terminal.write('\x1b['+distance+'T');
+    	app.standardStreams.output.write('\x1b['+distance+'T');
     }
 
     static scrollUp(distance) {
     	distance = (distance === undefined ? 1 : distance);
-    	Terminal.write('\x1b['+distance+'S');
+    	app.standardStreams.output.write('\x1b['+distance+'S');
     }
 
     static moveCursor(x, y) {
@@ -143,11 +139,11 @@ class Terminal {
     }
 
     static moveCursorTo(x, y) {
-    	Terminal.write('\x1b[' + y + ';' + x + 'H');
+    	app.standardStreams.output.write('\x1b[' + y + ';' + x + 'H');
     }
 
     static beep() {
-    	Terminal.write('\x07');
+    	app.standardStreams.output.write('\x07');
     }
 
     static demonstrateStyles() {

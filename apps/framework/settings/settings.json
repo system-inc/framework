@@ -1,85 +1,135 @@
 {
 	title: 'Framework',
 	version: '0.1.0',
-	description: 'Framework allows you to manage your configurations, tests, and apps.',
-	//command: {
-		// Proctor runs tests and reports if they succeeded or failed.
-	//	usage: "node framework/proctor/command/Project.js (Node)\n./framework/scripts/proctor-command.sh (OS X)\nsh framework\\scripts\\proctor-command.sh (Windows)",
-	//	supplementalNotes: 'Visit https://www.system.inc/framework/documentation/testing/ to learn more about testing.',
-	//	options: [
-	//		{
-	//			identifier: 'path',
-	//			type: 'string',
-	//			defaultValue: null,
-	//			description: 'The path containing tests to run.',
-	//			aliases: [
-	//				'p',
-	//			],
-	//		},
-	//		{
-	//			identifier: 'filePattern',
-	//			type: 'string',
-	//			defaultValue: null,
-	//			description: 'A pattern used to filter which test files will be run.',
-	//			aliases: [
-	//				'f',
-	//			],
-	//		},
-	//		{
-	//			identifier: 'methodPattern',
-	//			type: 'string',
-	//			defaultValue: null,
-	//			description: 'A pattern used to filter which test class methods will be run.',
-	//			aliases: [
-	//				'm',
-	//			],
-	//		},
-	//		{
-	//			identifier: 'reporter',
-	//			type: 'string',
-	//			defaultValue: 'standard',
-	//			description: 'The test reporter to use. Currently, "standard", "dot", and "concise" are available.',
-	//			aliases: [
-	//				'r',
-	//			],
-	//		},
-	//		{
-	//			identifier: 'supervise',
-	//			type: 'boolean',
-	//			defaultValue: false,
-	//			description: 'Watch for changes and run tests when changes happen. Either "true" or "false".',
-	//			aliases: [
-	//				's',
-	//			],
-	//		},
-	//		{
-	//			identifier: 'breakOnError',
-	//			type: 'boolean',
-	//			defaultValue: false,
-	//			description: 'Stop running tests on the first error encountered. Either "true" or "false".',
-	//			aliases: [
-	//				'b',
-	//				'break',
-	//			],
-	//		},
-	//	],
-	//},
-	//// List all modules to test
+	description: 'Build your dreams.',
+	command: {
+		// Proctor 
+		usage: "node framework/apps/framework/Framework.js (Node)\n./framework/scripts/framework.sh (OS X)\nsh framework\\scripts\\framework.sh (Windows)",
+		supplementalNotes: 'Visit https://www.system.inc/framework/documentation/testing/ to learn more about testing.',
+		options: [
+		],
+		commands: [
+			{
+				identifier: 'graphicalInterface',
+				description: 'Display the Framework graphical interface powered by Electron.',
+			},
+			{
+				identifier: 'proctor',
+				description: 'Runs tests.',
+				options: [
+					{
+						identifier: 'path',
+						type: 'string',
+						defaultValue: null,
+						description: 'The path containing tests to run.',
+						aliases: [
+							'p',
+						],
+					},
+					{
+						identifier: 'filePattern',
+						type: 'string',
+						defaultValue: null,
+						description: 'A pattern used to filter which test files will be run.',
+						aliases: [
+							'f',
+						],
+					},
+					{
+						identifier: 'methodPattern',
+						type: 'string',
+						defaultValue: null,
+						description: 'A pattern used to filter which test class methods will be run.',
+						aliases: [
+							'm',
+						],
+					},
+					{
+						identifier: 'reporter',
+						type: 'string',
+						defaultValue: 'standard',
+						description: 'The test reporter to use. Currently, "standard", "dot", and "concise" are available.',
+						aliases: [
+							'r',
+						],
+					},
+					{
+						identifier: 'supervise',
+						type: 'boolean',
+						defaultValue: false,
+						description: 'Watch for changes and run tests when changes happen. Either "true" or "false".',
+						aliases: [
+							's',
+						],
+					},
+					{
+						identifier: 'breakOnError',
+						type: 'boolean',
+						defaultValue: false,
+						description: 'Stop running tests on the first error encountered. Either "true" or "false".',
+						aliases: [
+							'b',
+							'break',
+						],
+					},
+				],
+			},
+		],
+	},
+	// List all modules to test
 	modules: {
-	//	archive: {},
-	//	database: {
-	//		databases: {
-	//			frameworkTest: {
-	//				host: 'localhost',
-	//				username: 'framework_test',
-	//				password: 'framework_test',
-	//				databaseName: 'framework_test',
-	//			}
-	//		}
-	//	},
-	//	//electron: {},
-	//	ffmpeg: {},
-	//	test: {},
-	//	webServer: {},
+		archive: {},
+		database: {
+			databases: {
+				frameworkTest: {
+					host: 'localhost',
+					username: 'framework_test',
+					password: 'framework_test',
+					databaseName: 'framework_test',
+				}
+			}
+		},
+		//electron: {
+		//	mainBrowserWindow: {
+		//		windowState: {
+		//			remember: false,
+		//			defaultWindowState: {
+		//				applyOn: {
+		//					displayAdded: true,
+		//					displayRemoved: true,
+		//					displayMetricsChanged: true,
+		//				},
+		//				oneDisplay: {
+		//					display: 1,
+		//					mode: 'normal',
+		//					width: .5, // Production
+		//					//width: 1, // Development
+		//					height: .5, // Production
+		//					//height: .75, // Development
+		//					x: 'right',
+		//					y: 'bottom',
+		//				},
+		//				twoDisplays: {
+		//					display: 2,
+		//					mode: 'normal',
+		//					width: .5, // Production
+		//					//width: 1, // Development
+		//					height: .5, // Production
+		//					//height: .75, // Development
+		//					x: 'left',
+		//					y: 'bottom',
+		//				},
+		//			},
+		//		},
+		//		developerTools: {
+		//			show: true, // Development
+		//		},
+		//	},
+		//	shortcuts: {
+		//		reloadFocusedWindow: false, // Uncomment this when ready to go to production
+		//	},
+		//},
+		ffmpeg: {},
+		webServer: {},
 	},
 }

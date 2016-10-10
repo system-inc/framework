@@ -1,111 +1,100 @@
 // Dependencies
-import Log from './../../system/log/Log.js';
-import File from './../../system/file-system/File.js';
-import Directory from './../../system/file-system/Directory.js';
-import Terminal from './../../system/console/Terminal.js';
+import Interface from './Interface.js';
+import Settings from './../../system/settings/Settings.js';
+import Terminal from './../../system/interface/Terminal.js';
+import File from './../../system/file-system/file.js';
 
 // Class
-class ConsoleSession {
+class InteractiveCommandLineInterface extends Interface {
 
-	// Log
-	log = null;
-
-	// Command history
-	commandHistoryFile = null;
-	commandHistory = [];
-	currentCommandHistoryIndex = -1;
+	// History
+	historyFile = null;
+	history = [];
+	currentHistoryIndex = -1;
 	currentCommandString = '';
 	currentCommandCursorIndex = 0;
 	commandColor = 'cyan';
 
-	constructor() {
-		this.listen();
+	settings = new Settings({
+		history: {
+			enabled: true,
+			directory: null,
+			nameWithoutExtension: 'history',
+		},
+	});
+
+	constructor(settings) {
+		super();
+
+		this.settings.merge(settings);
+		//app.log(this.settings);
+
+		// Conditionally enable history
+		if(this.settings.get('history.enabled')) {
+			this.configureHistory();
+		}
+
+		// Configure the standard input stream
+		app.standardStreams.input.resume();
+		app.standardStreams.input.setEncoding('utf8');
+		app.standardStreams.input.on('stream.data', function(event) {
+			app.log('standard input stream data event', event.data);
+			this.handleStandardInputStreamData(event.data);
+		}.bind(this));
 	}
 
-	// Listen for incoming commands from standard in
-	listen() {
-		// If the Console is on a terminal
-		if(Console.onTerminal()) {
-			if(Node.StandardIn.setRawMode) {
-				Node.StandardIn.setRawMode(true); // Takes input character by character	
-			}
-			Node.StandardIn.resume();
-			Node.StandardIn.setEncoding('utf8');
-			Node.StandardIn.on('data', function(key) {
-				//console.log('key', key);
-				this.handleKey(key);
-			}.bind(this));
-		}
-	}
+	async configureHistory() {
+		var historySettings = this.settings.get('history');
+		this.historyFile = new File(Node.Path.join(historySettings.directory, historySettings.nameWithoutExtension+'.log'));
+		//app.log('Loading history from ', this.historyFile+'...');
 
-	write(message) {
-		if(this.log) {
-			this.log.write(message);
-		}
-	}
+		// Create the file
+		await this.historyFile.create();
 
-	attachLog(directory) {
-		this.log = new Log(directory, 'console');
+		// Read the file
+		var history = await this.historyFile.read();
+		//app.log('history', history);
 
-		this.write("\n"+'['+new Time().getDateTime()+'] Attached log to console session. Console activity is recorded to "'+this.log.file.path+'".'+"\n");
-	}
-
-	async loadCommandHistory(directory, fileNameWithoutExtension) {
-		//app.log('Loading history...', directory, fileNameWithoutExtension);
-
-		// Make sure the directory exists
-		var directoryExists = await Directory.exists(directory);
-		if(!directoryExists) {
-			await Directory.create(directory);
-		}
-
-		var file = Node.Path.join(directory, fileNameWithoutExtension+'.log');
-
-		var commandHistory;
-		if(File.synchronous.exists(file)) {
-			commandHistory = File.synchronous.read(file);
-		}
-		//app.log('commandHistory', commandHistory);
-
-		if(!commandHistory) {
-			//app.log('No history found.');
-			this.commandHistory = [];
-		}
-		else {
-			//app.log(commandHistory.toString());
-			commandHistory.toString().split("\n").each(function(index, string) {
+		// If there is history
+		if(history) {
+			history.toString().split("\n").reverse().each(function(index, string) {
 				if(string) {
-					this.commandHistory.prepend(string);
+					this.history.append(string);
 				}
 			}.bind(this));
 		}
+		else {
+			//app.log('No history found.');
+		}
 
-		//app.log('this.commandHistory', this.commandHistory);
+		//app.log('this.history', this.history);
 
-		this.commandHistoryFile = new File(file);
+		// Open the history file for further writing
+		await this.historyFile.open('a+');
+	}
 
-		//app.log('this.commandHistoryFile', this.commandHistoryFile);
-
-		await this.commandHistoryFile.open('a+');
+	handleStandardInputStreamData(data) {
+		//app.info('handleStandardInputStreamData', data);
+		this.handleKey(data);
 	}
 
 	handleKey(key) {
 		// Ctrl-c
 		if(key == '\u0003') {
-			Node.exit();
+			Node.exit('Exited by user.');
 		}
 		// Up
 		else if(key == '\u001b[A') {
-			//app.log('up', 'this.currentCommandHistoryIndex', this.currentCommandHistoryIndex);
+			//app.log('up', 'this.currentHistoryIndex', this.currentHistoryIndex);
 
-			if(this.currentCommandHistoryIndex < this.commandHistory.length - 1) {
-				this.currentCommandHistoryIndex++;
+			if(this.currentHistoryIndex < this.history.length - 1) {
+				this.currentHistoryIndex++;
 			}
 
-			//app.log(this.currentCommandHistoryIndex, this.commandHistory);
+			//app.log(this.currentHistoryIndex, this.history);
 
-			if(this.commandHistory[this.currentCommandHistoryIndex] !== undefined) {
-				this.currentCommandString = this.commandHistory[this.currentCommandHistoryIndex];	
+			if(this.history[this.currentHistoryIndex] !== undefined) {
+				this.currentCommandString = this.history[this.currentHistoryIndex];	
 			}
 
 			// Clear the line
@@ -121,23 +110,23 @@ class ConsoleSession {
 			this.currentCommandCursorIndex = this.currentCommandString.length;
 
 			// Write the current string (this moves the cursor right)
-			Console.writeToTerminal(this.currentCommandString, false);
+			app.standardStreams.output.write(this.currentCommandString, false);
 		}
 		// Down
 		else if(key == '\u001b[B') {
-			//app.log('down', 'this.currentCommandHistoryIndex', this.currentCommandHistoryIndex);
+			//app.log('down', 'this.currentHistoryIndex', this.currentHistoryIndex);
 
-			if(this.currentCommandHistoryIndex > -1) {
-				this.currentCommandHistoryIndex--;
+			if(this.currentHistoryIndex > -1) {
+				this.currentHistoryIndex--;
 			}
 
-			//app.log(this.currentCommandHistoryIndex, this.commandHistory);
+			//app.log(this.currentHistoryIndex, this.history);
 
-			if(this.currentCommandHistoryIndex == -1) {
+			if(this.currentHistoryIndex == -1) {
 				this.currentCommandString = '';
 			}
-			else if(this.commandHistory[this.currentCommandHistoryIndex] !== undefined) {
-				this.currentCommandString = this.commandHistory[this.currentCommandHistoryIndex];	
+			else if(this.history[this.currentHistoryIndex] !== undefined) {
+				this.currentCommandString = this.history[this.currentHistoryIndex];	
 			}
 
 			// Clear the line
@@ -153,7 +142,7 @@ class ConsoleSession {
 			this.currentCommandCursorIndex = this.currentCommandString.length;
 
 			// Write the current string (this moves the cursor right)
-			Console.writeToTerminal(this.currentCommandString, false);
+			app.standardStreams.output.write(this.currentCommandString, false);
 		}
 		// Left
 		else if(key == '\u001b[D') {
@@ -208,34 +197,34 @@ class ConsoleSession {
 		// Enter
 		else if(key == "\n" || key == "\r") {
 			if(this.currentCommandString) {
-				var shouldAddCurrentCommandToCommandHistory = null;
+				var shouldAddCurrentCommandToHistory = null;
 
 				// Add if there is nothing in the command history
-				if(this.commandHistory.length == 0) {
-					//app.log('this.commandHistory is empty, adding "'+this.currentCommandString+'"');
-					shouldAddCurrentCommandToCommandHistory = true;
+				if(this.history.length == 0) {
+					//app.log('this.history is empty, adding "'+this.currentCommandString+'"');
+					shouldAddCurrentCommandToHistory = true;
 				}
 				// Don't stack multiple of the same commands
-				else if(this.currentCommandString == this.commandHistory[0]) {
+				else if(this.currentCommandString == this.history[0]) {
 					//app.log('this.currentCommandString "'+this.currentCommandString+'" is the same as the last command entered, not adding to command history');
-					shouldAddCurrentCommandToCommandHistory = false;
+					shouldAddCurrentCommandToHistory = false;
 				}
 				else {
-					//app.log('Adding "'+this.currentCommandString+'" to this.commandHistory');
-					shouldAddCurrentCommandToCommandHistory = true;
+					//app.log('Adding "'+this.currentCommandString+'" to this.history');
+					shouldAddCurrentCommandToHistory = true;
 				}
 
 				// Write the history to disk
-				if(shouldAddCurrentCommandToCommandHistory && this.commandHistoryFile) {
-					this.commandHistory.prepend(this.currentCommandString);
-					this.commandHistoryFile.write(this.currentCommandString+"\n");
+				if(shouldAddCurrentCommandToHistory && this.historyFile) {
+					this.history.prepend(this.currentCommandString);
+					this.historyFile.write(this.currentCommandString+"\n");
 				}
 				
-				this.currentCommandHistoryIndex = -1;
+				this.currentHistoryIndex = -1;
 			}
 
 			// Log the command
-			this.write('> '+this.currentCommandString);
+			app.standardStreams.output.write('> '+this.currentCommandString);
 
 			//app.log('enter');
 			this.handleCommand(this.currentCommandString);
@@ -259,7 +248,7 @@ class ConsoleSession {
 			Terminal.cursorLeft(this.currentCommandCursorIndex + 1);
 			
 			// Write the new string, this moves the cursor right
-			Console.writeToTerminal(this.currentCommandString, false);
+			app.standardStreams.output.write(this.currentCommandString, false);
 
 			// Move back to where the cursor should be
 			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
@@ -276,7 +265,7 @@ class ConsoleSession {
 			Terminal.cursorLeft(this.currentCommandCursorIndex);
 			
 			// Write the new string, this moves the cursor right
-			Console.writeToTerminal(this.currentCommandString, false);
+			app.standardStreams.output.write(this.currentCommandString, false);
 
 			// Move back to where the cursor should be
 			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
@@ -295,7 +284,7 @@ class ConsoleSession {
 			Terminal.cursorLeft(this.currentCommandCursorIndex - 1);
 
 			// Write the current string (this moves the cursor right)
-			Console.writeToTerminal(this.currentCommandString, false);
+			app.standardStreams.output.write(this.currentCommandString, false);
 
 			// Move back to where the cursor should be
 			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
@@ -400,7 +389,7 @@ class ConsoleSession {
 			if(!command.endsWith('.')) {
 				this.currentCommandCursorIndex++;
 				this.currentCommandString += '.';
-				Console.writeToTerminal('.', false);
+				app.standardStreams.output.write('.', false);
 			}
 
 			// Nothing happens
@@ -434,7 +423,7 @@ class ConsoleSession {
 					charactersWritten++;
 					this.currentCommandCursorIndex++;
 					this.currentCommandString += currentCharacterToTest;
-					Console.writeToTerminal(currentCharacterToTest, false);
+					app.standardStreams.output.write(currentCharacterToTest, false);
 				}
 				else {
 					break;
@@ -472,18 +461,18 @@ class ConsoleSession {
 
 		if(response) {
 			// Log the command
-			this.write('> '+this.currentCommandString+'\\t');
+			app.standardStreams.output.write('> '+this.currentCommandString+'\\t');
 
-			Console.writeToTerminal("\n");
-			Console.writeToTerminal(Terminal.style("\n"+'   '+response.join("\n   ")+"\n", this.commandColor));
-			Console.writeToTerminal("\n");
+			app.standardStreams.output.write("\n");
+			app.standardStreams.output.write(Terminal.style("\n"+'   '+response.join("\n   ")+"\n", this.commandColor));
+			app.standardStreams.output.write("\n");
 		}
 
 		this.currentCommandCursorIndex = this.currentCommandString.length;
 		this.currentCommandString = command;
 		Terminal.clearLine();
 		Terminal.cursorLeft(this.currentCommandString.length + 1);
-		Console.writeToTerminal(this.currentCommandString, false);
+		app.standardStreams.output.write(this.currentCommandString, false);
 	}
 
 	handleCommand(command) {
@@ -498,7 +487,7 @@ class ConsoleSession {
 
 		var response;
 
-		Console.writeToTerminal("\n");
+		app.standardStreams.output.write("\n");
 
 		if(global[command] !== undefined) {
 			response = global[command];
@@ -522,23 +511,20 @@ class ConsoleSession {
 			}
 		}
 
-		if(Generator.is(response)) {
-			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['function '+command+'*() { ... }'], 'write'), this.commandColor)+"\n");
-		}
-		else if(Function.is(response)) {
-			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['function '+command+'() { ... }'], 'write'), this.commandColor)+"\n");	
+		if(Function.is(response)) {
+			app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, ['function '+command+'() { ... }'], 'write'), this.commandColor)+"\n");	
 		}
 		else if(Promise.is(response)) {
-			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['Promise:'+"\n"], 'write'), 'gray'));	
-			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, [response], 'write'), this.commandColor)+"\n");	
+			app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, ['Promise:'+"\n"], 'write'), 'gray'));	
+			app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, [response], 'write'), this.commandColor)+"\n");	
 
 			response.then(function() {
-				Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, ['Promise Fulfilled:'], 'write'), 'gray')+"\n");	
-				Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, arguments, 'write'), this.commandColor)+"\n");	
+				app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, ['Promise Fulfilled:'], 'write'), 'gray')+"\n");	
+				app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, arguments, 'write'), this.commandColor)+"\n");	
 			}.bind(this));
 		}
 		else if(!command.isEmpty()) {
-			Console.writeToTerminal(Terminal.style(Console.prepareMessage.call(this, [response], 'write'), this.commandColor)+"\n");	
+			app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, [response], 'write'), this.commandColor)+"\n");	
 		}
 		
 		return;
@@ -547,4 +533,4 @@ class ConsoleSession {
 }
 
 // Export
-export default ConsoleSession;
+export default InteractiveCommandLineInterface;

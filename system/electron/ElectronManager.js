@@ -42,13 +42,11 @@ var ElectronManager = Class.extend({
 
 		// Require and construct the application
 		var applicationClassFilePath = 'Application';
-		var application 
 
 		// Require and construct the main view controller
 		var viewControllerClassFilePath = 'view-controllers/'+Project.modules.electronModule.settings.get('mainBrowserWindow.viewControllerName')+'.js';
 		var ViewControllerClass = Project.require(viewControllerClassFilePath);
 		mainViewController = this.mainBrowserWindowViewController = new ViewControllerClass(this);
-
 		
 		
 		settings: new Settings({
@@ -60,9 +58,6 @@ var ElectronManager = Class.extend({
 		this.settings.set('mysettinginlocalstorage', mysettinginlocalstorage);
 
 		this.quickAccess = this.setting.get('mysettinginlocalstorage');
-
-
-
 
 		// Add default shortcuts
 		this.registerShortcuts();

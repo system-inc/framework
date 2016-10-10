@@ -4,11 +4,12 @@ import StandardInputStream from './../../system/stream/StandardInputStream.js';
 import StandardOutputStream from './../../system/stream/StandardOutputStream.js';
 import StandardErrorStream from './../../system/stream/StandardErrorStream.js';
 import FileLog from './../../system/log/FileLog.js';
+import InteractiveCommandLineInterface from './../../system/interface/InteractiveCommandLineInterface.js';
 import AsciiArt from './../../system/ascii-art/AsciiArt.js';
 import Command from './../../system/command/Command.js';
 import Module from './../../system/module/Module.js';
 import Settings from './../../system/settings/Settings.js';
-import Terminal from './../../system/console/Terminal.js';
+import Terminal from './../../system/interface/Terminal.js';
 import Version from './../../system/version/Version.js';
 
 // Class
@@ -36,10 +37,13 @@ class App extends EventEmitter {
 			directory: null, // Will set this default in constructor
 			nameWithoutExtension: 'app',
 		},
-		commandHistory: {
+		interactiveCommandLineInterface: {
 			enabled: true,
-			directory: null, // Will set this default in constructor
-			nameWithoutExtension: 'command-history',
+			history: {
+				enabled: true,
+				directory: null, // Will set this default in constructor
+				nameWithoutExtension: 'history',
+			},
 		},
 		modules: {
 			archive: {}, // Archive is a default module which is enabled for all apps
@@ -70,8 +74,10 @@ class App extends EventEmitter {
 			standardStreamsFileLog: {
 				directory: Node.Path.join(this.directory, 'logs'),
 			},
-			commandHistory: {
-				directory: Node.Path.join(this.directory, 'logs'),
+			interactiveCommandLineInterface: {
+				history: {
+					directory: Node.Path.join(this.directory, 'logs'),
+				},
 			},
 		});
 	}
@@ -87,7 +93,7 @@ class App extends EventEmitter {
 		await this.configureStandardStreamsFileLog();
 
 		// After the app settings are loaded, we will know how to configure the command history
-		await this.configureCommandHistory();
+		await this.configureInteractiveCommandLineInterface();
 
 		// Make it obvious we are starting
 		this.standardStreams.output.writeLine(AsciiArt.framework.version[this.framework.version.toString()]);
@@ -134,42 +140,31 @@ class App extends EventEmitter {
 			this.standardStreamsFileLog = new FileLog(standardStreamsFileLogSettings.directory, standardStreamsFileLogSettings.nameWithoutExtension);
 
 			// Hook up standard input to the file log
-			this.standardStreams.input.on('stream.write', function(data) {
+			this.standardStreams.input.on('stream.data', function(data) {
 				this.standardStreamsFileLog.emit('log.log', data);
 			}.bind(this));
 
 			// Hook up standard output to the file log
-			this.standardStreams.output.on('stream.write', function(data) {
+			this.standardStreams.output.on('stream.data', function(data) {
 				this.standardStreamsFileLog.emit('log.log', data);
 			}.bind(this));
 
 			// Hook up standard error to the file log
-			this.standardStreams.error.on('stream.write', function(data) {
+			this.standardStreams.error.on('stream.data', function(data) {
 				this.standardStreamsFileLog.emit('log.error', data);
 			}.bind(this));
+
+			//this.log('Logging standard stream data to', this.standardStreamsFileLog.file.path+'.');
 		}
 	}
 
-	async configureCommandHistory() {
-		var commandHistorySettings = this.settings.get('commandHistory');
-		this.log('commandHistorySettings', commandHistorySettings);
+	async configureInteractiveCommandLineInterface() {
+		var interactiveCommandLineInterfaceSettings = this.settings.get('interactiveCommandLineInterface');
+		//this.log('interactiveCommandLineInterfaceSettings', interactiveCommandLineInterfaceSettings);
 
-		if(commandHistorySettings.enabled) {
-			this.log('read in command history');
+		if(interactiveCommandLineInterfaceSettings.enabled) {
+			this.interfaces.interactiveCommandLineInterface = new InteractiveCommandLineInterface(interactiveCommandLineInterfaceSettings);
 		}
-
-		//// Create a ConsoleSession to manage logging and interaction with the console
-		//Console.session = this.consoleSession = new ConsoleSession();
-
-		//// Attach a log to the console if enabled
-		//if(this.settings.get('log.enabled')) {
-		//	Console.session.attachLog(this.settings.get('log.directory'), this.settings.get('log.nameWithoutExtension'));
-		//}
-
-		//// Load command history if enabled
-		//if(this.settings.get('commandHistory.enabled')) {
-		//	Console.session.loadCommandHistory(this.settings.get('commandHistory.directory'), this.settings.get('commandHistory.nameWithoutExtension'));
-		//}
 	}
 
 	setPropertiesFromAppSettings() {
