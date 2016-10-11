@@ -46,14 +46,15 @@ class InteractiveCommandLineInterface extends Interface {
 	async configureHistory() {
 		var historySettings = this.settings.get('history');
 		this.historyFile = new File(Node.Path.join(historySettings.directory, historySettings.nameWithoutExtension+'.log'));
-		//app.log('Loading history from ', this.historyFile+'...');
+		app.log('Loading history from ', this.historyFile+'...');
 
 		// Create the file
 		await this.historyFile.create();
 
 		// Read the file
-		var history = await this.historyFile.read();
+		//var history = await this.historyFile.read();
 		//app.log('history', history);
+		var history = '';
 
 		// If there is history
 		if(history) {
@@ -70,7 +71,7 @@ class InteractiveCommandLineInterface extends Interface {
 		//app.log('this.history', this.history);
 
 		// Open the history file for further writing
-		await this.historyFile.open('a+');
+		//await this.historyFile.open('a+');
 	}
 
 	handleStandardInputStreamData(data) {
