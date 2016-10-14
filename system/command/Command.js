@@ -1,49 +1,23 @@
 // Dependencies
-import Settings from './../../system/settings/Settings.js';
 import Terminal from './../../system/interface/Terminal.js';
 
 // Class
 class Command {
 
-	settings = new Settings({
-		usage: null,
-		supplementalNotes: null,
-
-		//requiredArguments: [],
-		//optionalArguments: [],
-
-		options: [
-			/* 
-			An option looks like:
-			{ 
-				identifier: 'path',
-				type: 'string', 
-				defaultValue: null,
-				description: 'The path.',
-				aliases: [
-					'p',
-				],
-				identifiers: [ // An array with the identifier and the aliases
-				],
-			},
-			*/
-		],
-	});
+	file = null;
+	command = null;
+	arguments = null;
 
 	usage = null;
 	supplementalNotes = null;
+	
+	options = [];
+	commands = [];
 
-	command = null;
-	file = null;
-	arguments = null;
-	options = null;
-
-	constructor(argumentsArray, settings) {
-		this.settings.merge(settings);
-
+	constructor(argumentsArray, options = {}) {
 		// Set the usage and supplemental notes
-		this.usage = this.settings.get('usage');
-		this.supplementalNotes = this.settings.get('supplementalNotes');
+		this.usage = options.getValueForKey('usage');
+		this.supplementalNotes = options.getValueForKey('supplementalNotes');
 
 		// Create an identifiers field on all options
 		var optionsSettings = this.settings.get('options');

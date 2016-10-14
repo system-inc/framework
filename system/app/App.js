@@ -102,7 +102,7 @@ class App extends EventEmitter {
 		this.setPropertiesFromAppSettings();
 
 		// Load the command
-		this.command = new Command(Node.Process.argv, this.settings.get('command'));
+		this.command = new Command(Node.Process.argv);
 
 		// Use app settings to configure the environment
 		this.configureEnvironment();

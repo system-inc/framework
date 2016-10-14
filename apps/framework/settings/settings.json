@@ -3,9 +3,9 @@
 	version: '0.1.0',
 	description: 'Build your dreams.',
 	command: {
-		// Proctor 
+		// Proctor
 		usage: "node framework/apps/framework/Framework.js (Node)\n./framework/scripts/framework.sh (OS X)\nsh framework\\scripts\\framework.sh (Windows)",
-		supplementalNotes: 'Visit https://www.system.inc/framework/documentation/testing/ to learn more about testing.',
+		supplementalNotes: 'Visit https://www.system.inc/framework/documentation/testing to learn more about testing.',
 		options: [
 		],
 		commands: [
