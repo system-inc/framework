@@ -20,12 +20,12 @@ class Command {
 		this.supplementalNotes = options.getValueForKey('supplementalNotes');
 
 		// Create an identifiers field on all options
-		var optionsSettings = this.settings.get('options');
-		optionsSettings.each(function(index, optionSettings) {
-			// Create a flat array of option identifiers
-			optionSettings.identifiers = [optionSettings.identifier].merge(optionSettings.aliases);
-		});
-		this.settings.set('options', optionsSettings);
+		//var optionsSettings = this.settings.get('options');
+		//optionsSettings.each(function(index, optionSettings) {
+		//	// Create a flat array of option identifiers
+		//	optionSettings.identifiers = [optionSettings.identifier].merge(optionSettings.aliases);
+		//});
+		//this.settings.set('options', optionsSettings);
 		//Node.exit(this);
 
 		// Parse the arguments array
@@ -52,10 +52,10 @@ class Command {
 		//Node.exit('parse', 'argumentsToProcess', argumentsToProcess);
 
 		// Loop over the options settings
-		this.settings.get('options').each(function(index, optionSettings) {
-			// Set the option value
-			this.options[optionSettings.identifier] = this.getOptionValue(optionSettings, argumentsToProcess);
-		}.bind(this));
+		//this.settings.get('options').each(function(index, optionSettings) {
+		//	// Set the option value
+		//	this.options[optionSettings.identifier] = this.getOptionValue(optionSettings, argumentsToProcess);
+		//}.bind(this));
 
 		// Version
 		if(Command.versionOptions.contains(this.argumentToOptionIdentifier(argumentsToProcess.first()))) {

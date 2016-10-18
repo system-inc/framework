@@ -24,7 +24,7 @@ class NotFoundErrorTest extends Test {
 		var firstCallSiteData = actual.stack.getCallSite(0);
 		//app.info(firstCallSiteData);
 		Assert.true(firstCallSiteData.functionName.contains('testNotFoundErrorConstruction'), 'first call site data functionName is correct');
-		Assert.equal(firstCallSiteData.fileName, 'NotFoundErrorTest.js', 'first call site data fileName is correct');
+		Assert.true(firstCallSiteData.fileName.contains('NotFoundErrorTest.js'), 'first call site data fileName is correct');
 	}
 
 }

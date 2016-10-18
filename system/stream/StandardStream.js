@@ -11,7 +11,9 @@ class StandardStream extends EventEmitter {
 	}
 
 	write(data) {
-		this.nodeStream.write(data);
+		if(this.nodeStream) {
+			this.nodeStream.write(data);
+		}
 	}
 
 	writeLine(data = '') {

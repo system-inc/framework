@@ -1,5 +1,6 @@
 // Dependencies
 import FileSystemObject from './FileSystemObject.js';
+import Directory from './Directory.js';
 import FileFormats from './FileFormats.js';
 
 // Class
@@ -56,11 +57,22 @@ class File extends FileSystemObject {
         var create = null;
 
         var fileExists = await this.exists();
+        //app.log('fileExists', fileExists, this.path);
 
         if(fileExists) {
             create = true;
         }
         else {
+            // Check to see if the directory exists
+            var directory = new Directory(this.directory);
+            var directoryExists = await directory.exists();
+            if(!directoryExists) {
+                //app.warn('does not exist this.directory', directory);
+                // Create the directory
+                await directory.create();
+            }
+
+            // Create the file
             create = await File.create(this.file, '', options);
         }
 
@@ -133,8 +145,12 @@ class File extends FileSystemObject {
     static getContentType = File.prototype.getContentType;
 
     static read(path, options) {
+        //app.log('File.read path', path, 'options', options);
+
         return new Promise(function(resolve, reject) {
             Node.FileSystem.readFile(path, options, function(error, data) {
+                //app.log('Node.FileSystem.readFile', path, 'options', options);
+
                 if(error) {
                     reject(error);
                 }

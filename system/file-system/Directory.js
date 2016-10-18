@@ -27,7 +27,7 @@ class Directory extends FileSystemObject {
 		return list;
 	}
 
-	async create(directory, mode) {
+	async create(directory = this.path, mode) {
 		//console.log('Creating directory: ', directory);
 
 		// Normalize the path for the operating system

@@ -54,10 +54,10 @@ class Settings {
 		return this.dataStore.merge(data);
 	}
 
-	async mergeFromFile(datafilePath) {
+	async mergeFromFile(dataFilePath) {
 		// Read the data from the file
-		var data = await File.readAndDecodeJson(datafilePath);
-		//console.log('Settings from', datafilePath, 'to merge:', data);
+		var data = await File.readAndDecodeJson(dataFilePath);
+		//console.log('Settings from', dataFilePath, 'to merge:', data);
 
 		return this.merge(data);
 	}
@@ -66,16 +66,18 @@ class Settings {
 		return this.dataStore.integrate(data);
 	}
 
-	async integrateFromFile(datafilePath) {
+	async integrateFromFile(dataFilePath) {
+		//app.log('integrateFromFile', dataFilePath);
+
 		try {
 			// Read the data from the file
-			var data = await File.readAndDecodeJson(datafilePath);
-			//console.log('Settings from', datafilePath, 'to integrate:', data);
+			var data = await File.readAndDecodeJson(dataFilePath);
+			//console.log('Settings from', dataFilePath, 'to integrate:', data);
 			
 			this.integrate(data);
 		}
 		catch(error) {
-			//console.error('--- no file at '+datafilePath);
+			//console.error('No file at '+dataFilePath);
 		}
 	}
 
@@ -91,11 +93,11 @@ class Settings {
 		return this.dataStore.delete(path);
 	}
 
-	static async constructFromFile(defaults, datafilePath, dataStore) {
-		//console.log('datafilePath', datafilePath);
+	static async constructFromFile(defaults, dataFilePath, dataStore) {
+		//console.log('dataFilePath', dataFilePath);
 
 		// Read the data from the file
-		var data = await File.readAndDecodeJson(datafilePath);
+		var data = await File.readAndDecodeJson(dataFilePath);
 		//console.log('data', data);
 
 		//console.log('dataStore', dataStore);

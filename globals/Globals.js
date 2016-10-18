@@ -3,10 +3,16 @@ if(!global && window) {
 	global = window;
 }
 
-// Show unhandled errors
+// Catch unhandled rejections
 process.on('unhandledRejection', function(error) {
-	console.error('Unhandled rejection:', error.stack.toString());
-	Node.exit();
+	console.error('Unhandled rejection:', error);
+	process.exit(1);
+});
+
+// Catch unhandled exceptions
+process.on('uncaughtException', function(error) {
+	console.error('Uncaught exception:', error);
+	process.exit(1);
 });
 
 // Node

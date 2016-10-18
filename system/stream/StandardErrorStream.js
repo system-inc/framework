@@ -8,10 +8,12 @@ class StandardErrorStream extends StandardStream {
 
 	constructor() {
 		super();
-		
-		this.nodeStream.on('data', function(data) {
-			this.emit('stream.data', data);
-		}.bind(this));
+
+		if(this.nodeStream.readable) {
+			this.nodeStream.on('data', function(data) {
+				this.emit('stream.data', data);
+			}.bind(this));
+		}
 	}
 
 }

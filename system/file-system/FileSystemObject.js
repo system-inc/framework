@@ -154,7 +154,7 @@ class FileSystemObject {
         var exists = null;
 
         try {
-            var stat = Node.FileSystem.statSync(path);    
+            var stat = await FileSystemObject.stat(path);
             //console.log(stat);
             exists = true;
         }
