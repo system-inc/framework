@@ -15,7 +15,7 @@ class FrameworkApp extends App {
 
 		app.log('processing command');
 		app.log('this.command', this.command);
-		//this.proctorCommand();
+		this.proctorCommand();
 	}
 
 	async graphicalInterfaceCommand() {

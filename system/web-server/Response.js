@@ -7,6 +7,7 @@ import HtmlDocument from './../../system/html/HtmlDocument.js';
 import Data from './../../system/data/Data.js';
 import File from './../../system/file-system/File.js';
 import ArchivedFile from './../../system/archive/file-system-objects/ArchivedFile.js';
+import NotFoundError from './../../system/web-server/errors/NotFoundError.js';
 
 // Class
 class Response {
