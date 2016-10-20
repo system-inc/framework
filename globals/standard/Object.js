@@ -350,6 +350,7 @@ Object.defineProperty(Object, 'hasKey', {
     enumerable: false,
     value: function(object, key) {
         return key in object;
+        //return object.hasOwnProperty(key);
     },
 });
 

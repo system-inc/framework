@@ -60,7 +60,7 @@ class DatabaseTableColumn {
 		this.comment = properties.comment;
 
 		// Load the character set if we don't have it
-		if(!properties.characterSet) {
+		if(properties.characterSet === undefined) {
 	        // Get the character set
 	        var characterSetQuery = await this.database.query('SELECT `CHARACTER_SET_NAME` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `COLUMN_NAME` = ?', [this.database.name, this.table.name, this.name]);
 	        this.characterSet = characterSetQuery.rows.first().characterSetName;
