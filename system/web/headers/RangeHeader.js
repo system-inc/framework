@@ -61,17 +61,17 @@ class RangeHeader {
 			rangeToReturn.end = range.end;
 		}
 		// End is set and start is not set
-		else if(range.end !== undefined && range.start == undefined) {
+		else if(range.end !== undefined && range.start === undefined) {
 			rangeToReturn.start = size - range.end;
 			rangeToReturn.end = size - 1;
 		}
 		// Start is set and end is not set
-		else if(range.start !== undefined && range.end == undefined) {
+		else if(range.start !== undefined && range.end === undefined) {
 			rangeToReturn.start = range.start;
 			rangeToReturn.end = size - 1;
 		}
 		// Start and end are not set
-		else if(range.start == undefined && range.end == undefined) {
+		else if(range.start === undefined && range.end === undefined) {
 			rangeToReturn.start = 0;
 			rangeToReturn.end = size - 1;
 		}

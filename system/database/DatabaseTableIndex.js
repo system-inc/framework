@@ -31,7 +31,7 @@ class DatabaseTableIndex {
 	}
 
 	async loadProperties(properties) {
-		if(properties === undefined) {
+		if(!properties) {
 			var propertiesQuery = await this.database.query('SHOW FULL COLUMNS FROM `'+this.table.name+'`');
 			properties = propertiesQuery.rows.getObjectWithKeyValue('field', this.name);
 		}

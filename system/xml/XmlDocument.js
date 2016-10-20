@@ -7,13 +7,8 @@ class XmlDocument {
 
 	children = []; // An array containing XmlNodes
 
-	toString(indent) {
-		if(indent === undefined) {
-			indent = true;
-		}
-
+	toString(indent = true) {
 		var string = '';
-
 		var declaration = '';
 
 		// If there is no declaration

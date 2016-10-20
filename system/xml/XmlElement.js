@@ -22,12 +22,12 @@ class XmlElement extends XmlNode {
 		// this.children is an array and this.content is an alias to it
 		this.content = this.children;
 
-		if(tag !== undefined) {
+		if(tag) {
 			this.tag = tag;
 		}
 
 		// If unary is passed
-		if(unary !== undefined) {
+		if(unary) {
 			this.unary = unary;
 		}
 

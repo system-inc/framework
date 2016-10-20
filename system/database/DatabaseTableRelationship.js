@@ -30,12 +30,12 @@ class DatabaseTableRelationship {
 	}
 
 	async loadProperties(properties, constraint) {
-		if(properties === undefined) {
+		if(!properties) {
 			var propertiesQuery = await this.database.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.database.name, this.table.name]);
 			properties = propertiesQuery.rows.getObjectWithKeyValue('constraintName', this.name);
 		}
 
-		if(constraint === undefined) {
+		if(!constraint) {
 			var constraintQuery = await this.database.query('SELECT * FROM `information_schema`.`REFERENTIAL_CONSTRAINTS` WHERE `CONSTRAINT_SCHEMA` = ? AND `CONSTRAINT_NAME` = ?', [this.database.name, this.name]);
 			constraint = constraintQuery.rows.getObjectWithKeyValue('constraintName', this.name);
 		}

@@ -4,18 +4,12 @@ class Time {
 	dateObject = null;
 	precision = 'milliseconds';
 
-	constructor(stringOrDate) {
-		if(stringOrDate !== undefined) {
-			if(String.is(stringOrDate)) {
-				this.dateObject = new Date(stringOrDate);
-			}
-			//else if(Class.isInstance(stringOrDate, Date)) {
-			else {
-				this.dateObject = stringOrDate;
-			}
+	constructor(stringOrDateObject = new Date()) {
+		if(String.is(stringOrDateObject)) {
+			this.dateObject = new Date(stringOrDateObject);
 		}
 		else {
-			this.dateObject = new Date();
+			this.dateObject = stringOrDateObject;
 		}
 	}
 
@@ -108,8 +102,10 @@ class Time {
 		return dayWithDate;
 	}
 
-	getDayWithDateAndTime(preposition) {
-		preposition = (preposition === undefined) ? ' ' : ' '+preposition+' ';
+	getDayWithDateAndTime(preposition = ' ') {
+		if(preposition != ' ') {
+			preposition = ' '+preposition+' ';
+		}
 
 		var dayWithDateAndTime = this.getDayWithDate();
 		dayWithDateAndTime += preposition;
@@ -120,8 +116,10 @@ class Time {
 		return dayWithDateAndTime;
 	}
 
-	getDayWithDateAndTimeWithSeconds(preposition) {
-		preposition = preposition === undefined ? ' ' : ' '+preposition+' ';
+	getDayWithDateAndTimeWithSeconds(preposition = ' ') {
+		if(preposition != ' ') {
+			preposition = ' '+preposition+' ';
+		}
 
 		var dayWithDateAndTimeWithSeconds = this.getDayWithDate();
 		dayWithDateAndTimeWithSeconds += preposition;

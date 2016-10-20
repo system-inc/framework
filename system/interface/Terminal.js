@@ -60,63 +60,48 @@ class Terminal {
         app.standardStreams.output.write('\x1bb');
     }
 
-    static cursorUp(distance) {
-        if(distance === 0) {
-            return;
-        }
-
-    	distance = (distance === undefined ? 1 : distance);
-    	app.standardStreams.output.write('\x1b['+distance+'A');
+    static cursorUp(distance = 1) {
+        if(distance) {
+            app.standardStreams.output.write('\x1b['+distance+'A');
+        }    	
     }
 
-    static cursorDown(distance) {
-        if(distance === 0) {
-            return;
+    static cursorDown(distance = 1) {
+        if(distance) {
+            app.standardStreams.output.write('\x1b['+distance+'B');
         }
-
-    	distance = (distance === undefined ? 1 : distance);
-    	app.standardStreams.output.write('\x1b['+distance+'B');
+    	
     }
 
-    static cursorLeft(distance) {
-        if(distance === 0) {
-            return;
+    static cursorLeft(distance = 1) {
+        if(distance) {
+            app.standardStreams.output.write('\x1b['+distance+'D');
         }
-
-    	distance = (distance === undefined ? 1 : distance);
-    	app.standardStreams.output.write('\x1b['+distance+'D');
     }
 
     static cursorBack = Terminal.cursorLeft;
 
-    static cursorRight(distance) {
-        if(distance === 0) {
-            return;
+    static cursorRight(distance = 1) {
+        if(distance) {
+            app.standardStreams.output.write('\x1b['+distance+'C');
         }
-
-    	distance = (distance === undefined ? 1 : distance);
-    	app.standardStreams.output.write('\x1b['+distance+'C');
     }
 
     static cursorForward = Terminal.cursorRight;
 
-    static nextLine(distance) {
-    	distance = (distance === undefined ? 1 : distance);
+    static nextLine(distance = 1) {
     	app.standardStreams.output.write('\x1b['+distance+'E');
     }
 
-    static previousLine(distance) {
-    	distance = (distance === undefined ? 1 : distance);
+    static previousLine(distance = 1) {
     	app.standardStreams.output.write('\x1b['+distance+'F');
     }
 
-    static scrollDown(distance) {
-    	distance = (distance === undefined ? 1 : distance);
+    static scrollDown(distance = 1) {
     	app.standardStreams.output.write('\x1b['+distance+'T');
     }
 
-    static scrollUp(distance) {
-    	distance = (distance === undefined ? 1 : distance);
+    static scrollUp(distance = 1) {
     	app.standardStreams.output.write('\x1b['+distance+'S');
     }
 

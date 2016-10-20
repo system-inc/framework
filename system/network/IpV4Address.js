@@ -8,7 +8,10 @@ class IpV4Address extends IpAddress {
 
 	constructor(address) {
 		super();
-		this.address = (address == undefined ? this.address : address);
+
+		if(address) {
+			this.address = address;
+		}
 	}
 
 }

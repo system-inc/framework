@@ -74,19 +74,11 @@ String.prototype.isUppercase = function() {
 	return this == this.uppercase();
 };
 
-String.prototype.trimLeft = function(characters) {
-	if(characters === undefined) {
-		characters = '\\s';
-	}
-
+String.prototype.trimLeft = function(characters = '\\s') {
 	return this.replace(new RegExp('^['+characters+']+'), '');
 };
 
-String.prototype.trimRight = function(characters) {
-	if(characters === undefined) {
-		characters = '\\s';
-	}
-
+String.prototype.trimRight = function(characters = '\\s') {
 	return this.replace(new RegExp('['+characters+']+$'), '');
 };
 
@@ -404,9 +396,7 @@ String.fromCharacterCode = String.fromCharCode;
 
 String.newline = Node.OperatingSystem.EOL;
 
-String.uniqueIdentifier = function(length) {
-	length = length !== undefined ? length : 16;
-
+String.uniqueIdentifier = function(length = 16) {
 	var uniqueIdentifier = '';
 
 	var fourHexCharacters = function() {
@@ -430,10 +420,7 @@ String.makeString = function(value) {
 	return value;
 };
 
-String.random = function(length, characters) {
-	length = length === undefined ? 32 : length;
-	characters = characters === undefined ? 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' : String.makeString(characters);
-
+String.random = function(length = 32, characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') {
 	var maxIndex = characters.length - 1;
 	var string = '';
 

@@ -341,7 +341,7 @@ class InteractiveCommandLineInterface extends Interface {
 			}
 
 			// If we got nothing, try to run the command prior to the last fragment
-			if(context === undefined) {
+			if(!context) {
 				try {
 					commandToEval = variableArray.join('.');
 					context = eval(commandToEval);
@@ -354,7 +354,7 @@ class InteractiveCommandLineInterface extends Interface {
 		}
 
 		// If we still have no context then just use global as the context
-		if(context === undefined) {
+		if(!context) {
 			context = global;
 		}
 		

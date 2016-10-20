@@ -341,7 +341,7 @@ class InputKeyEvent extends HtmlElementEvent {
 			// So we want to fire "input.key.l.command" in addition to "input.key.l.command.down"
 			if(
 				inputKeyEventWithoutIdentifier.modifierKeysDown.meta && // "command" or "windows"
-				InputKeyEvent.modifierKeys[inputKeyEventWithoutIdentifier.key] == undefined && // do not include modifier keys as they still emit key up
+				InputKeyEvent.modifierKeys[inputKeyEventWithoutIdentifier.key] === undefined && // do not include modifier keys as they still emit key up
 				eventTypeSuffix == '.down'
 			) {
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
@@ -378,7 +378,7 @@ class InputKeyEvent extends HtmlElementEvent {
 		
 		// InputKeyEvent.keyLocation
 		inputKeyEvent.keyLocation = null;
-		if(domEvent.location != undefined) {
+		if(domEvent.location !== undefined) {
 			if(domEvent.location == 0) {
 				inputKeyEvent.keyLocation = 'standard';
 			}
@@ -400,7 +400,7 @@ class InputKeyEvent extends HtmlElementEvent {
 		}
 
 		// InputKeyEvent.keyHeldDown
-		if(domEvent.repeat != undefined) {
+		if(domEvent.repeat !== undefined) {
 			inputKeyEvent.keyHeldDown = domEvent.repeat;
 		}
 

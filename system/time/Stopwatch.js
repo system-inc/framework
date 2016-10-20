@@ -49,11 +49,7 @@ class Stopwatch {
 		return this;
 	}
 
-	getHighResolutionElapsedTime(precision) {
-		if(precision === undefined) {
-			precision = this.precision;
-		}
-
+	getHighResolutionElapsedTime(precision = this.precision) {
 		var highResolutionElapsedTime = null;
 
 		// Milliseconds
@@ -72,8 +68,7 @@ class Stopwatch {
 		return highResolutionElapsedTime;
 	}
 
-	lap(note) {
-		var note = note === undefined ? null : note;
+	lap(note = null) {
 		var now = this.time.now();
 
 		var elapsedTimeSinceLastLap = null;

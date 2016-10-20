@@ -452,8 +452,6 @@ class TextFormControlView extends FormControlView {
     }
     
 	getCursorIndex() {
-        var index = 0;
-
         var index = this.getSelectionStartIndex();
 
         if(index === undefined) {

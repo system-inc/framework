@@ -19,9 +19,8 @@ class Route {
 	parent = null;
 	children = [];
 
-	constructor(settings, parent) {
-		// If we have a parent, set it
-		this.parent = (parent === undefined ? null : parent);
+	constructor(settings, parent = null) {
+		this.parent = parent;
 
 		// Inherit properties (either from settings or from the parent route)
 		this.inheritProperty('context', settings, parent);

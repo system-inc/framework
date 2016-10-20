@@ -142,7 +142,7 @@ class FileSystemObject {
 	}
 
 	async exists(path) {
-        if(path === undefined && this) {
+        if(!path && this) {
             path = this.path;
         }
         else if(path) {

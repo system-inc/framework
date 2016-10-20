@@ -52,11 +52,8 @@ Number.precision = function(number) {
 	return precision;
 };
 
-Number.round = function(number, precision) {
-	precision = (precision === undefined ? 0 : precision);
-
+Number.round = function(number, precision = 0) {
 	number = Number.toFloat(number);
-
 	number = number.toFixed(precision);
 
 	// Make 0 precision numbers integers
@@ -67,8 +64,9 @@ Number.round = function(number, precision) {
 	return number;
 };
 
-Number.addCommas = function(number) {
-	if(number === undefined) {
+Number.addCommas = function(number = null) {
+	// Return an empty string if the number is not 0
+	if(number !== 0 && !number) {
 		return '';
 	}
 
@@ -78,9 +76,7 @@ Number.addCommas = function(number) {
     return parts.join('.');
 };
 
-Number.toMoney = function(number, precision) {
-	precision = (precision === undefined ?  2 : precision);
-
+Number.toMoney = function(number, precision = 2) {
 	number = Number.toFloat(number);
 
 	var formatted;
@@ -95,11 +91,7 @@ Number.toMoney = function(number, precision) {
 };
 
 // Minimum and maximum are both inclusive
-Number.random = function(minimum, maximum, precision) {
-	minimum = minimum === undefined ? 0 : minimum;
-	maximum = maximum === undefined ? 9007199254740992 : maximum;
-	precision = precision === undefined ? 0 : precision;
-
+Number.random = function(minimum = 0, maximum = 9007199254740992, precision = 0) {
 	// toFixed digits argument must be between 0 and 20
 	if(precision > 20) {
 		precision = 20;

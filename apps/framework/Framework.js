@@ -10,6 +10,10 @@ require('babel-register')({
 		'latest',
 		'stage-0',
 	],
+	plugins: [
+		//'transform-class-properties',
+		//'transform-es2015-modules-commonjs',
+	],
 	sourceMaps: 'both',
 });
 

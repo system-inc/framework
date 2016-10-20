@@ -60,7 +60,7 @@ class DatabaseTable {
 	}
 
 	async loadProperties(properties, characterSet, columns, indexes, relationships) {
-		if(properties === undefined) {
+		if(!properties) {
 			var propertiesQuery = await this.database.query('SHOW TABLE STATUS WHERE NAME = ?', this.name);
 			properties = propertiesQuery.rows.first();
 		}
@@ -84,7 +84,7 @@ class DatabaseTable {
         this.version = new Version(properties.version);
 
         // Get the character set if necessary
-        if(characterSet === undefined) {
+        if(!characterSet) {
 	        var characterSetQuery = await this.database.query('SELECT `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`character_set_name` FROM `information_schema`.`TABLES`, `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY` WHERE `information_schema`.`COLLATION_CHARACTER_SET_APPLICABILITY`.`collation_name` = `information_schema`.`TABLES`.`table_collation` AND `information_schema`.`TABLES`.`table_schema` = ? AND `information_schema`.`TABLES`.`table_name` = ?', [this.database.name, this.name]);
 	        this.characterSet = characterSetQuery.rows.first().characterSetName;
         }
@@ -93,23 +93,23 @@ class DatabaseTable {
         }
 
         // Load the columns if passed
-    	if(columns !== undefined) {
+    	if(columns) {
     		await this.loadColumns(columns);
     	}
 
     	// Load the indexes if passed
-    	if(indexes !== undefined) {
+    	if(indexes) {
     		await this.loadIndexes(indexes);
     	}
 
     	// Load the relationships if passed
-    	if(relationships !== undefined) {
+    	if(relationships) {
     		await this.loadRelationships(relationships);
     	}
 	}
 
 	async loadColumns(columns) {
-		if(columns === undefined) {
+		if(!columns) {
 			columns = await this.database.query('SHOW FULL FIELDS FROM `'+this.name+'`');
 			columns = columns.rows;
 		}
@@ -125,7 +125,7 @@ class DatabaseTable {
 	}
 
 	async loadIndexes(indexes) {
-		if(indexes === undefined) {
+		if(!indexes) {
 			var indexes = await this.database.query('SHOW INDEXES FROM `'+this.name+'`');
 			indexes = indexes.rows;
 		}
@@ -161,7 +161,7 @@ class DatabaseTable {
 	}
 
 	async loadRelationships(relationships) {
-		if(relationships === undefined) {
+		if(!relationships) {
 			var relationships = await this.database.query('SELECT * FROM `information_schema`.`KEY_COLUMN_USAGE` WHERE `REFERENCED_TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `REFERENCED_TABLE_NAME` IS NOT NULL', [this.database.name, this.name]);
 			relationships = relationships.rows;
 

@@ -348,7 +348,7 @@ class WebServer extends Server {
 		};
 
 		// Add request data to the content if we have it
-		if(request != undefined) {
+		if(request) {
 			content.request = request.getPublicErrorData();
 		}
 

@@ -33,7 +33,7 @@ class DatabaseTableColumn {
 	}
 
 	async loadProperties(properties) {
-		if(properties === undefined) {
+		if(!properties) {
 			var propertiesQuery = await this.database.query('SHOW FULL COLUMNS FROM `'+this.table.name+'`');
 			properties = propertiesQuery.rows.getObjectWithKeyValue('field', this.name);
 		}
@@ -60,7 +60,7 @@ class DatabaseTableColumn {
 		this.comment = properties.comment;
 
 		// Load the character set if we don't have it
-		if(properties.characterSet === undefined) {
+		if(!properties.characterSet) {
 	        // Get the character set
 	        var characterSetQuery = await this.database.query('SELECT `CHARACTER_SET_NAME` FROM `information_schema`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = ? AND `COLUMN_NAME` = ?', [this.database.name, this.table.name, this.name]);
 	        this.characterSet = characterSetQuery.rows.first().characterSetName;

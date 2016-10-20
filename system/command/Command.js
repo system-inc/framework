@@ -215,7 +215,7 @@ class Command {
 	getOptionSettingsFromOptionIdentifier(optionIdentifier) {
 		//app.info('getOptionSettingsFromOptionIdentifier', 'optionIdentifier', optionIdentifier);
 
-		if(optionIdentifier === undefined) {
+		if(!optionIdentifier) {
 			return null;
 		}
 

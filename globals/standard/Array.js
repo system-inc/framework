@@ -14,11 +14,7 @@ Array.prototype.unique = function() {
 	return Array.unique(this);
 };
 
-Array.prototype.sortObjectsByKeyValue = function(keyName, direction) {
-	if(direction === undefined) {
-		direction = 'ascending';
-	}
-
+Array.prototype.sortObjectsByKeyValue = function(keyName, direction = 'ascending') {
 	// Ascending, smallest to largest (default)
 	if(direction == 'ascending') {
 		this.sort(function(a, b) {
@@ -98,9 +94,7 @@ Array.prototype.sortObjects = function(options) {
     return this;
 };
 
-Array.prototype.sortByLength = function(descending) {
-	descending = (descending === undefined ? false : descending);
-
+Array.prototype.sortByLength = function(descending = false) {
 	this.sort(function(a, b) {
 		if(descending) {
 			return b.length - a.length;
@@ -142,8 +136,7 @@ Array.prototype.merge = function() {
 // 'search' (the search term is a regular expression)
 // 'array' (the array itself contains regular expression(s) to be used to match against the search term)
 // 'either' (both 'search' and 'array' methods above will be used to find a match)
-Array.prototype.contains = function(search, caseSensitive, regularExpressionLocation) {
-	caseSensitive = (caseSensitive === undefined ? false : caseSensitive); // case sensitive is off by default
+Array.prototype.contains = function(search, caseSensitive = false, regularExpressionLocation) {
 	var contains = 0;
 
 	// If search is nothing

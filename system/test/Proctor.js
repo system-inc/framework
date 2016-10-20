@@ -42,14 +42,11 @@ class Proctor extends EventEmitter {
 
 	breakOnError = false;
 	
-	constructor(testReporterIdentifier, breakOnError) {
+	constructor(testReporterIdentifier = 'standard', breakOnError = false) {
 		super();
 
 		// Instantiate a test reporter
-		if(testReporterIdentifier === undefined) {
-			this.testReporter = new StandardTestReporter(this);
-		}
-		else if(testReporterIdentifier.lowercase() == 'standard') {
+		if(testReporterIdentifier.lowercase() == 'standard') {
 			this.testReporter = new StandardTestReporter(this);
 		}
 		else if(testReporterIdentifier.lowercase() == 'dot') {
@@ -67,9 +64,7 @@ class Proctor extends EventEmitter {
 		//app.log('this.testReporter', this.testReporter);
 
 		// Break on error
-		if(breakOnError !== undefined) {
-			this.breakOnError = breakOnError;
-		}
+		this.breakOnError = breakOnError;
 	}
 
 	async supervise() {

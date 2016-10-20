@@ -57,7 +57,7 @@ Object.defineProperty(Function, 'delay', {
 	value: function(milliseconds, callback) {
 		return new Promise(function(resolve) {
 			setTimeout(function() {
-				if(callback != undefined && Function.is(callback)) {
+				if(Function.is(callback)) {
 					resolve(callback());
 				}
 				else {

@@ -26,13 +26,8 @@ class EventEmitter {
 		return once;
 	}
 
-	async emit(eventIdentifier, data, eventOptions) {
+	async emit(eventIdentifier, data = null, eventOptions) {
 		//app.warn('EventEmitter.emit', eventIdentifier, eventOptions);
-
-		// Default data to null
-		if(data === undefined) {
-			data = null;
-		}
 
 		// Allow multiple events to be emitted by passing in an array
 		if(Array.is(eventIdentifier)) {
@@ -116,7 +111,7 @@ class EventEmitter {
 		return event;
 	}
 
-	async addEventListener(eventPattern, functionToBind, timesToRun) {
+	async addEventListener(eventPattern, functionToBind, timesToRun = null) {
 		//console.log('EventEmitter.bind', 'eventPattern', eventPattern, 'functionToBind', functionToBind, 'timesToRun', timesToRun);
 
 		// Allow multiple events to be registered by passing in an array
@@ -140,16 +135,11 @@ class EventEmitter {
 			return this;
 		}
 
-		// Default timesToRun to null
-		if(timesToRun === undefined) {
-			timesToRun = null;
-		}
-
 		// Create the event listener
 		var eventListener = new EventListener(eventPattern, functionToBind, timesToRun);
 
 		// Add the event listener
-		if(this.eventListeners === undefined) {
+		if(!this.eventListeners) {
 			//app.log('eventListeners is undefined');
 			this.eventListeners = [];
 		}
@@ -187,7 +177,7 @@ class EventEmitter {
 			  
 			if(
 				// If we are unbinding a specific function for an event pattern
-				functionToUnbind !== undefined &&
+				functionToUnbind &&
 				// and the event pattern matches
 				currentEventListener.eventPattern == eventPattern &&
 				// and the current bound function strictly matches
@@ -196,7 +186,7 @@ class EventEmitter {
 				shouldRemoveCurrentEventListener = true;
 			}
 			// If we are removing all matching event patterns because no functionToUnbind was specified
-			else if(functionToUnbind === undefined && currentEventListener.eventPattern == eventPattern) {
+			else if(!functionToUnbind && currentEventListener.eventPattern == eventPattern) {
 				shouldRemoveCurrentEventListener = true;
 			}
 

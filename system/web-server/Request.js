@@ -45,7 +45,7 @@ class Request {
 		this.nodeRequest = nodeRequest;
 
 		// Reference the associated web server
-		if(webServer != undefined) {
+		if(webServer) {
 			this.webServer = webServer;
 		}
 
