@@ -387,7 +387,7 @@ class Response {
 		var responsesLogEntry = '';
 
 		responsesLogEntry += '"'+this.id+'"';
-		responsesLogEntry += ',"'+this.time.getDateTime()+'"';
+		responsesLogEntry += ',"'+this.time.dateTime+'"';
 		responsesLogEntry += ',"'+this.statusCode+'"';
 		responsesLogEntry += ',"'+this.stopwatches.process.precision+'"';
 		responsesLogEntry += ',"'+this.stopwatches.process.getHighResolutionElapsedTime()+'"';

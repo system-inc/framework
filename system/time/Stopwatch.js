@@ -29,14 +29,14 @@ class Stopwatch {
 
 	start() {
 		this.highResolutionStartTime = Node.Process.hrtime();
-		this.startTime = this.time.now();
+		this.startTime = this.time.now;
 
 		return this;
 	}
 
 	stop() {
 		this.highResolutionStopTime = Node.Process.hrtime();
-		this.stopTime = this.time.now();
+		this.stopTime = this.time.now;
 
 		this.highResolutionElapsedTime = [
 			this.highResolutionStopTime[0] - this.highResolutionStartTime[0], // seconds
@@ -69,7 +69,7 @@ class Stopwatch {
 	}
 
 	lap(note = null) {
-		var now = this.time.now();
+		var now = this.time.now;
 
 		var elapsedTimeSinceLastLap = null;
 		var lastLap = this.laps.last();

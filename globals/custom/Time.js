@@ -17,69 +17,69 @@ class Time {
 		this.precision = precision;
 	}
 
-	now() {
+	get now() {
 		var now = null;
 
 		if(this.precision == 'milliseconds') {
-			return this.nowInMilliseconds();
+			return this.nowInMilliseconds;
 		}
 		else if(this.precision == 'microseconds') {
-			return this.nowInMicroseconds();
+			return this.nowInMicroseconds;
 		}
 		else if(this.precision == 'nanoseconds') {
-			return this.nowInNanoseconds();
+			return this.nowInNanoseconds;
 		}
 		else if(this.precision == 'seconds') {
-			return this.nowInSeconds();
+			return this.nowInSeconds;
 		}
 
 		return now;
 	}
 
-	nowInSeconds() {
-		return this.nowInMilliseconds() / 1000;
+	get nowInSeconds() {
+		return this.nowInMilliseconds / 1000;
 	}
 
-	nowInMilliseconds() {
+	get nowInMilliseconds() {
 		var now = new Date().getTime();
 
 		return now;
 	}
 
-	nowInMicroseconds() {
+	get nowInMicroseconds() {
 		var now = new Date().getTime() * 1000;
 
 		return now;
 	}
 
-	nowInNanoseconds() {
+	get nowInNanoseconds() {
 		var now = new Date().getTime() * 1000000;
 
 		return now;
 	}
 
-	getShortTime() {
+	get shortTime() {
 		var shortTime = '';
 
-		shortTime += this.getHour12Padded();
-		shortTime += ':'+this.getMinutePadded();
-		shortTime += ' '+this.getPeriod();
+		shortTime += this.hour12Padded;
+		shortTime += ':'+this.minutePadded;
+		shortTime += ' '+this.period;
 
 		return shortTime;
 	}
 
-	getLongTime() {
+	get longTime() {
 		var longTime = '';
 
-		longTime += this.getHour12Padded();
-		longTime += ':'+this.getMinutePadded();
-		longTime += ':'+this.getSecondPadded();
-		longTime += ' '+this.getPeriod();
+		longTime += this.hour12Padded;
+		longTime += ':'+this.minutePadded;
+		longTime += ':'+this.secondPadded;
+		longTime += ' '+this.period;
 
 		return longTime;
 	}
 
-	getPeriod() {
+	get period() {
 		var period = 'AM';
 
 		var hours = this.dateObject.getHours();
@@ -90,14 +90,14 @@ class Time {
         return period;
 	}
 
-	getDayWithDate() {
+	get dayWithDate() {
 		// Monday, January 1, 2014
 		var dayWithDate = '';
 
-		dayWithDate += this.getDayName()+', ';
-		dayWithDate += this.getMonthName()+' ';
-		dayWithDate += this.getDay()+', ';
-		dayWithDate += this.getYear();
+		dayWithDate += this.dayName+', ';
+		dayWithDate += this.monthName+' ';
+		dayWithDate += this.day+', ';
+		dayWithDate += this.year;
 
 		return dayWithDate;
 	}
@@ -107,11 +107,11 @@ class Time {
 			preposition = ' '+preposition+' ';
 		}
 
-		var dayWithDateAndTime = this.getDayWithDate();
+		var dayWithDateAndTime = this.dayWithDate;
 		dayWithDateAndTime += preposition;
-		dayWithDateAndTime += this.getHour12()+':';
-		dayWithDateAndTime += this.getMinutePadded()+' ';
-		dayWithDateAndTime += this.getPeriod();
+		dayWithDateAndTime += this.hour12+':';
+		dayWithDateAndTime += this.minutePadded+' ';
+		dayWithDateAndTime += this.period;
 
 		return dayWithDateAndTime;
 	}
@@ -121,49 +121,49 @@ class Time {
 			preposition = ' '+preposition+' ';
 		}
 
-		var dayWithDateAndTimeWithSeconds = this.getDayWithDate();
+		var dayWithDateAndTimeWithSeconds = this.dayWithDate;
 		dayWithDateAndTimeWithSeconds += preposition;
-		dayWithDateAndTimeWithSeconds += this.getHour12()+':';
-		dayWithDateAndTimeWithSeconds += this.getMinutePadded()+':';
-		dayWithDateAndTimeWithSeconds += this.getSecondPadded()+' ';
-		dayWithDateAndTimeWithSeconds += this.getPeriod();
+		dayWithDateAndTimeWithSeconds += this.hour12+':';
+		dayWithDateAndTimeWithSeconds += this.minutePadded+':';
+		dayWithDateAndTimeWithSeconds += this.secondPadded+' ';
+		dayWithDateAndTimeWithSeconds += this.period;
 
 		return dayWithDateAndTimeWithSeconds;
 	}
 
-	getYear() {
+	get year() {
 		return this.dateObject.getFullYear();
 	}
 
-	getMonth() {
+	get month() {
 		return this.dateObject.getMonth() + 1;
 	}
 
-	getMonthPadded() {
+	get monthPadded() {
 		return ('0'+(this.dateObject.getMonth() + 1)).slice(-2);
 	}
 
-	getMonthName() {
+	get monthName() {
 		return Time.monthNames[this.dateObject.getMonth()];
 	}
 
-	getDay() {
+	get day() {
 		return this.dateObject.getDate();
 	}
 
-	getDayPadded() {
+	get dayPadded() {
 		return ('0'+this.dateObject.getDate()).slice(-2);
 	}
 
-	getDayName() {
+	get dayName() {
 		return Time.dayNames[this.dateObject.getDay()];
 	}
 
-	getWeekDay() {
+	get weekDay() {
 		return this.dateObject.getDay() + 1;
 	}
 
-	getHour12() {
+	get hour12() {
 		var hour = this.dateObject.getHours();
 
 		if(hour > 11) {
@@ -176,83 +176,83 @@ class Time {
         return hour;
 	}
 
-	getHour12Padded() {
-        return ('0'+this.getHour12()).slice(-2);
+	get hour12Padded() {
+        return ('0'+this.hour12).slice(-2);
 	}
 
-	getHour() {
+	get hour() {
 		return this.dateObject.getHours();
 	}
 
-	getHourPadded() {
+	get hourPadded() {
 		return ('0'+(this.dateObject.getHours())).slice(-2);
 	}
 
-	getMinute() {
+	get minute() {
 		return this.dateObject.getMinutes();
 	}
 
-	getMinutePadded() {
+	get minutePadded() {
 		return ('0'+(this.dateObject.getMinutes())).slice(-2);
 	}
 
-	getSecond() {
+	get second() {
 		return this.dateObject.getSeconds();
 	}
 
-	getSecondPadded() {
+	get secondPadded() {
 		return ('0'+(this.dateObject.getSeconds())).slice(-2);
 	}
 
-	getMillisecond() {
+	get millisecond() {
 		return this.dateObject.getMilliseconds();
 	}
 
-	getMillisecondPadded() {
+	get millisecondPadded() {
 		return ('00'+(this.dateObject.getMilliseconds())).slice(-3);
 	}
 
-	getDateTime() {
-		var dateTime = this.getYear();
-		dateTime += '-'+this.getMonthPadded();
-		dateTime += '-'+this.getDayPadded();
-		dateTime += ' '+this.getHourPadded();
-		dateTime += ':'+this.getMinutePadded();
-		dateTime += ':'+this.getSecondPadded();
+	get dateTime() {
+		var dateTime = this.year;
+		dateTime += '-'+this.monthPadded;
+		dateTime += '-'+this.dayPadded;
+		dateTime += ' '+this.hourPadded;
+		dateTime += ':'+this.minutePadded;
+		dateTime += ':'+this.secondPadded;
 
 		return dateTime;
 	}
 
-	getDateTimeWithMilliseconds() {
-		var dateTime = this.getDateTime();
-		dateTime += ':'+this.getMillisecondPadded();
+	get dateTimeWithMilliseconds() {
+		var dateTime = this.dateTime;
+		dateTime += ':'+this.millisecondPadded;
 
 		return dateTime;
 	}
 
-	getDateTimeWithHour12PaddedAndPeriod() {
-		var dateTime = this.getYear();
-		dateTime += '-'+this.getMonthPadded();
-		dateTime += '-'+this.getDayPadded();
-		dateTime += ' '+this.getHour12Padded();
-		dateTime += ':'+this.getMinutePadded();
-		dateTime += ':'+this.getSecondPadded();
-		dateTime += ' '+this.getPeriod();
+	get dateTimeWithHour12PaddedAndPeriod() {
+		var dateTime = this.year;
+		dateTime += '-'+this.monthPadded;
+		dateTime += '-'+this.dayPadded;
+		dateTime += ' '+this.hour12Padded;
+		dateTime += ':'+this.minutePadded;
+		dateTime += ':'+this.secondPadded;
+		dateTime += ' '+this.period;
 
 		return dateTime;
 	}
 
 	// The number of seconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
-	getUnixTime() {
+	get unixTime() {
 		return this.nowInSeconds().toFixed(0);
 	}
 
 	// The number of milliseconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
-	getUnixTimeInMilliseconds() {
-		return this.nowInMilliseconds().toFixed(0);
+	get unixTimeInMilliseconds() {
+		return this.nowInMilliseconds.toFixed(0);
 	}
 
-	getTimePosted() {
+	get timePosted() {
         var now = new Date();
         var timePosted = '';
         var hours = this.dateObject.getHours();

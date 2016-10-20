@@ -142,7 +142,7 @@ class Request {
 	prepareLogEntry() {
 		var requestsLogEntry = '';
 		requestsLogEntry += '"'+this.id+'"';
-		requestsLogEntry += ',"'+this.time.getDateTime()+'"';
+		requestsLogEntry += ',"'+this.time.dateTime+'"';
 		requestsLogEntry += ',"'+this.ipAddress.address+'"';
 		requestsLogEntry += ',"'+this.method+'"';
 		requestsLogEntry += ',"'+this.url.url+'"';

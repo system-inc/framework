@@ -337,7 +337,7 @@ class App extends EventEmitter {
 	    // Get the location data of the first call site
 	    var callSiteData = error.stack.getCallSite(2);
 
-    	formattedLogData = '['+new Time().getDateTime()+'] ('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+formattedLogData;
+    	formattedLogData = '['+new Time().dateTime+'] ('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+formattedLogData;
 
 		return formattedLogData;
 	}
