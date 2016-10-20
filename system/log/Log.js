@@ -40,7 +40,7 @@ class Log extends EventEmitter {
 
 	async write(string) {
 		console.log(string);
-	}	
+	}
 
 	async writeLine(string) {
 		return await this.write(string+"\n");
