@@ -314,11 +314,9 @@ class WebServer extends Server {
 
 	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
 	handleError(request, response, error) {
-		//console.log('WebServer.js need to handle next line');
-		//var logEntry = Console.prepareMessage.call(this, ['WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData()], 'write');
-		var logEntry = 'WebServer.handleError() called.';
+		var logEntry = app.formatLogData('WebServer.handleError() called on request '+request.id+'. '+"\n\n"+error.name+': '+error.message+"\n"+error.stack.stackTraceToString()+"\n"+'Request:', request.getPublicErrorData());
 		if(this.settings.get('verbose')) {
-			app.error(error);
+			app.error(logEntry);
 		}
 
 		// Mark the response as handled
@@ -350,12 +348,9 @@ class WebServer extends Server {
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
 	handleInternalServerError(error, nodeResponse, request) {
-		//app.log('error', error);
-		//app.log('WebServer.js need to fix next line and use the line beneath');
-		var logEntry = 'WebServer.handleInternalServerError() called.';
-		//var logEntry = Console.prepareMessage.call(this, ['WebServer.handleInternalServerError() called. Error:', error], 'write');
+		var logEntry = app.formatLogData('WebServer.handleError() called on request '+request.id+'. '+"\n\n"+error.name+': '+error.message+"\n"+error.stack.stackTraceToString()+"\n"+'Request:', request.getPublicErrorData());
 		if(this.settings.get('verbose')) {
-			app.error(error);
+			app.error(logEntry);
 		}
 		
 		nodeResponse.writeHead(500, [['Content-Type', 'application/json']]);
