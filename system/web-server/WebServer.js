@@ -13,7 +13,41 @@ class WebServer extends Server {
 	identifier = null;
 	directory = null;
 	requests = 0;
-	settings = null; // Set this in constructor as I need to use context to set defaults
+
+	settings = new Settings({
+		directory: null,
+		verbose: true,
+		logs: {
+			general: {
+				enabled: true,
+				directory: null, // Will set this default in constructor
+				nameWithoutExtension: null, // Will set this default in constructor
+			},
+			requests: {
+				enabled: true,
+				directory: null, // Will set this default in constructor
+				nameWithoutExtension: null, // Will set this default in constructor
+			},
+			responses: {
+				enabled: true,
+				directory: null, // Will set this default in constructor
+				nameWithoutExtension: null, // Will set this default in constructor
+			},
+		},
+		protocols: {
+			http: {
+				ports: [],
+			},
+			https: {
+				keyFile: null,
+				certificateFile: null,
+			},
+		},
+		serverTimeoutInMilliseconds: 60000, // 60 seconds
+		requestTimeoutInMilliseconds: 20000, // 20 seconds
+		responseTimeoutInMilliseconds: 20000, // 20 seconds
+		maximumRequestBodySizeInBytes: 20000000, // 20 megabytes
+	});
 	
 	router = null;
 	listeners = {};
@@ -28,40 +62,28 @@ class WebServer extends Server {
 
 		this.identifier = identifier;
 
-		this.settings = new Settings({
-			directory: null,
-			verbose: true,
+		// Set the defaults that depend on logic
+		this.settings.mergeDefaults({
 			logs: {
 				general: {
-					enabled: true,
 					directory: Node.Path.join(app.directory, 'logs'),
 					nameWithoutExtension: 'web-server-'+this.identifier.toDashes(),
 				},
 				requests: {
-					enabled: true,
 					directory: Node.Path.join(app.directory, 'logs'),
 					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-requests',
 				},
 				responses: {
-					enabled: true,
 					directory: Node.Path.join(app.directory, 'logs'),
 					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-responses',
 				},
 			},
-			protocols: {
-				http: {
-					ports: [],
-				},
-				https: {
-					keyFile: null,
-					certificateFile: null,
-				},
-			},
-			serverTimeoutInMilliseconds: 60000, // 60 seconds
-			requestTimeoutInMilliseconds: 20000, // 20 seconds
-			responseTimeoutInMilliseconds: 20000, // 20 seconds
-			maximumRequestBodySizeInBytes: 20000000, // 20 megabytes
-		}, settings);
+		});
+
+		// Merge in the provided settings
+		this.settings.merge(settings);
+		//app.log('settings', settings);
+		//app.log('this.settings', this.settings);
 
 		// Set the web server directory
 		var settingsDirectory = this.settings.get('directory');
@@ -124,6 +146,7 @@ class WebServer extends Server {
 
 	async start() {
 		var protocols = this.settings.get('protocols');
+		//app.log('protocols', protocols);
 
 		// Loop through the protocols (http/https)
 		await protocols.each(async function(protocol, protocolSettings) {
@@ -292,23 +315,23 @@ class WebServer extends Server {
 	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
 	handleError(request, response, error) {
 		//console.log('WebServer.js need to handle next line');
-		//app.log('error', error);
 		//var logEntry = Console.prepareMessage.call(this, ['WebServer.handleError() called on request '+request.id+'. '+"\n"+'Error:', error, "\n"+'Request:', request.getPublicErrorData()], 'write');
 		var logEntry = 'WebServer.handleError() called.';
 		if(this.settings.get('verbose')) {
-			app.log(logEntry);
+			app.error(error);
 		}
 
 		// Mark the response as handled
 		response.handled = true;
 
 		// Set the status code
-		if(!error.code) {
+		if(!error.code || !Number.is(error.code)) {
 			response.statusCode = 500;
 		}
 		else {
 			response.statusCode = error.code;
 		}
+		//app.info('response.statusCode', response.statusCode);
 
 		// Set the content
 		response.content = Json.encode({
@@ -332,7 +355,7 @@ class WebServer extends Server {
 		var logEntry = 'WebServer.handleInternalServerError() called.';
 		//var logEntry = Console.prepareMessage.call(this, ['WebServer.handleInternalServerError() called. Error:', error], 'write');
 		if(this.settings.get('verbose')) {
-			app.log(logEntry);
+			app.error(error);
 		}
 		
 		nodeResponse.writeHead(500, [['Content-Type', 'application/json']]);

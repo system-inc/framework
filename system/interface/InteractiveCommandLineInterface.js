@@ -35,18 +35,18 @@ class InteractiveCommandLineInterface extends Interface {
 		}
 
 		// Configure the standard input stream
-		app.standardStreams.input.resume();
-		app.standardStreams.input.setEncoding('utf8');
-		app.standardStreams.input.on('stream.data', function(event) {
-			app.log('standard input stream data event', event.data);
-			this.handleStandardInputStreamData(event.data);
-		}.bind(this));
+		//app.standardStreams.input.resume();
+		//app.standardStreams.input.setEncoding('utf8');
+		//app.standardStreams.input.on('stream.data', function(event) {
+		//	app.log('standard input stream data event', event.data);
+		//	this.handleStandardInputStreamData(event.data);
+		//}.bind(this));
 	}
 
 	async configureHistory() {
 		var historySettings = this.settings.get('history');
 		this.historyFile = new File(Node.Path.join(historySettings.directory, historySettings.nameWithoutExtension+'.log'));
-		app.log('Loading history from ', this.historyFile+'...');
+		//app.log('Loading history from ', this.historyFile+'...');
 
 		// Create the file
 		await this.historyFile.create();

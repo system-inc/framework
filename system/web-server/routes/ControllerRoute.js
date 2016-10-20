@@ -23,9 +23,12 @@ class ControllerRoute extends Route {
 
 		// Try to get the controller
 		var controller = WebServerController.getControllerInstance(this.controllerName, request, response, this);
+		//app.info('got controller instance');
 
 		// If the controller was found, invoke the method for the route
 		if(controller && controller[this.controllerMethodName]) {
+			//app.log('controller', this.controllerMethodName, 'exists');
+
 			// Use a reflection technique to find the argument names of the controller method and build an arguments array to send in
 			var controllerMethodArguments = [];
 			var controllerMethodArgumentNames = controller[this.controllerMethodName].getParameters();
@@ -44,6 +47,8 @@ class ControllerRoute extends Route {
 		}
 		// Send a 404
 		else {
+			//app.log('controller', this.controllerMethodName, 'does not exist');
+
 			throw new NotFoundError(request.method+' '+request.url.path+' not found. Controller "'+this.controllerName+'" with method "'+this.controllerMethodName+'" does not exist.');
 		}
 

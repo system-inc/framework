@@ -21,12 +21,13 @@ class WebServerModule extends Module {
 	async createWebServers() {
 		// Inspect the settings to see if they want a web server
 		var webServersSettings = this.settings.get('webServers');
+		//app.log('webServersSettings', webServersSettings);
+
 		if(webServersSettings) {
 			var webServerCount = 0;
-			await webServersSettings.each(async function(webServerSettingsObjectIndex, webServerSettingsObject) {
+			await webServersSettings.each(async function(webServerSettingsDataIndex, webServerSettingsData) {
 				// Get an instance of class Settings to localize to the web server
-				var webServerSettings = new Settings(webServerSettingsObject);
-				var webServerIdentifier = webServerSettings.get('identifier');
+				var webServerIdentifier = webServerSettingsData.identifier;
 
 				// Make sure the web server has an identifier
 				if(!webServerIdentifier) {
@@ -39,7 +40,7 @@ class WebServerModule extends Module {
 				//app.log('Initializing web server...');
 
 				// Create the web server
-				this.webServers[webServerIdentifier] = new WebServer(webServerIdentifier, webServerSettings);
+				this.webServers[webServerIdentifier] = new WebServer(webServerIdentifier, webServerSettingsData);
 				
 				// Start the web server
 				await this.webServers[webServerIdentifier].start();

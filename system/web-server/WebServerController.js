@@ -15,6 +15,7 @@ class WebServerController extends ServerController {
 	}
 
 	static getControllerInstance(controllerName, request, response, route) {
+		//app.highlight('WebServerController.getControllerInstance');
 		//app.highlight(arguments);
 
 		// Set the directory containing the controllers folder
@@ -22,11 +23,13 @@ class WebServerController extends ServerController {
 		if(request.webServer) {
 			directory = request.webServer.directory;
 		}
+		//app.highlight('directory', directory);
 
 		// Load the controller class
 		var controllerPath = Node.Path.join(directory, 'controllers', controllerName+'.js');
-		//app.log('controllerPath', controllerPath);
+		//app.info('controllerPath', controllerPath);
 		var controllerClass = require(controllerPath).default;
+		//app.info('controllerClass', controllerClass);
 
 		// Instantiate the controller
 		//app.highlight(request, response);
