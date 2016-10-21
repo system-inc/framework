@@ -50,9 +50,7 @@ class InteractiveCommandLineInterface extends Interface {
 		await this.historyFile.create();
 
 		// Read the file
-		//var history = await this.historyFile.read();
-		//app.log('history', history);
-		var history = '';
+		var history = await this.historyFile.read();
 
 		// If there is history
 		if(history) {

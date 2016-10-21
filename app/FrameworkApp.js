@@ -1,9 +1,9 @@
 // Globals
-import './../../globals/Globals.js';
-import Proctor from './../../system/test/Proctor.js';
+import './../globals/Globals.js';
+import Proctor from './../system/test/Proctor.js';
 
 // Dependencies
-import App from './../../system/app/App.js';
+import App from './../system/app/App.js';
 
 // Class
 class FrameworkApp extends App {
