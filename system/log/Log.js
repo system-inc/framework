@@ -34,7 +34,15 @@ class Log extends EventEmitter {
 		this.emit('log.error', arguments);
 	}
 
-	processDataToWrite(data) {
+	processDataToWrite(passedArguments) {
+		var data = '';
+
+		passedArguments.each(function(passedArgumentIndex, passedArgument) {
+			data += passedArgument+' ';
+		});
+		
+		data = data.replaceLast(' ', '');
+
 		return data;
 	}
 

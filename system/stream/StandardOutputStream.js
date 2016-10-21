@@ -1,19 +1,11 @@
 // Dependencies
-import StandardStream from './StandardStream.js';
+import StandardWritableStream from './StandardWritableStream.js';
 
 // Class
-class StandardOutputStream extends StandardStream {
-
-	nodeStream = Node.Process.stdout;
+class StandardOutputStream extends StandardWritableStream {
 
 	constructor() {
-		super();
-
-		if(this.nodeStream.readable) {
-			this.nodeStream.on('data', function(data) {
-				this.emit('stream.data', data);
-			}.bind(this));
-		}
+		super(Node.Process.stdout);
 	}
 
 }

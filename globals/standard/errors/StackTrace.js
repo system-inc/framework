@@ -91,6 +91,8 @@ class StackTrace {
 				string += ')';
 				string += "\n";
 			}
+
+			string = string.replaceLast("\n", '');
 		}
 
 		return string;

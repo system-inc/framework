@@ -139,19 +139,14 @@ class App extends EventEmitter {
 			// Create the file log
 			this.standardStreamsFileLog = new FileLog(standardStreamsFileLogSettings.directory, standardStreamsFileLogSettings.nameWithoutExtension);
 
-			// Hook up standard input to the file log
-			this.standardStreams.input.on('stream.data', function(data) {
-				this.standardStreamsFileLog.emit('log.log', data);
-			}.bind(this));
-
 			// Hook up standard output to the file log
-			this.standardStreams.output.on('stream.data', function(data) {
-				this.standardStreamsFileLog.emit('log.log', data);
+			this.standardStreams.output.on('stream.data', function(event) {
+				this.standardStreamsFileLog.log(event.data);
 			}.bind(this));
 
 			// Hook up standard error to the file log
-			this.standardStreams.error.on('stream.data', function(data) {
-				this.standardStreamsFileLog.emit('log.error', data);
+			this.standardStreams.error.on('stream.data', function(event) {
+				this.standardStreamsFileLog.error(event.data);
 			}.bind(this));
 
 			//this.log('Logging standard stream data to', this.standardStreamsFileLog.file.path+'.');
@@ -285,6 +280,24 @@ class App extends EventEmitter {
 	}
 
 	formatLogData() {
+		return this.formatLogDataWithMetaDataPrefix(...arguments);
+	}
+
+	formatLogDataWithMetaDataPrefix() {
+		var formattedLogData = this.formatLogDataWithoutMetaDataPrefix(...arguments);
+
+		// Create a new error
+		var error = new Error('Error manually created to get stack trace.');
+
+	    // Get the location data of the first call site
+	    var callSiteData = error.stack.getCallSite(3);
+
+    	formattedLogData = '['+new Time().dateTime+'] ('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+formattedLogData;
+
+		return formattedLogData;
+	}
+
+	formatLogDataWithoutMetaDataPrefix() {
 		var formattedLogData = '';
 
 		arguments.each(function(argumentKey, argument) {
@@ -330,14 +343,6 @@ class App extends EventEmitter {
 
 		// Remove the last trailing space
 		formattedLogData = formattedLogData.replaceLast(' ', '');
-
-		// Create a new error
-		var error = new Error('Error manually created to get stack trace.');
-
-	    // Get the location data of the first call site
-	    var callSiteData = error.stack.getCallSite(2);
-
-    	formattedLogData = '['+new Time().dateTime+'] ('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+formattedLogData;
 
 		return formattedLogData;
 	}

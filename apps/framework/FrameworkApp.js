@@ -13,13 +13,11 @@ class FrameworkApp extends App {
 	async initialize() {
 		await super.initialize(...arguments);
 
-		app.log('processing command');
 		app.log('this.command', this.command);
-		this.proctorCommand();
+		//this.proctorCommand();
 	}
 
 	async graphicalInterfaceCommand() {
-
 	}
 
 	async proctorCommand() {

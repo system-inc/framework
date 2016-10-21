@@ -34,13 +34,11 @@ class InteractiveCommandLineInterface extends Interface {
 			this.configureHistory();
 		}
 
-		// Configure the standard input stream
-		//app.standardStreams.input.resume();
-		//app.standardStreams.input.setEncoding('utf8');
-		//app.standardStreams.input.on('stream.data', function(event) {
-		//	app.log('standard input stream data event', event.data);
-		//	this.handleStandardInputStreamData(event.data);
-		//}.bind(this));
+		// Capture the standard stream input data
+		app.standardStreams.input.on('stream.data', function(event) {
+			//app.log('standard input stream data event', event.data);
+			this.handleStandardInputStreamData(event.data);
+		}.bind(this));
 	}
 
 	async configureHistory() {
@@ -71,7 +69,7 @@ class InteractiveCommandLineInterface extends Interface {
 		//app.log('this.history', this.history);
 
 		// Open the history file for further writing
-		//await this.historyFile.open('a+');
+		await this.historyFile.open('a+');
 	}
 
 	handleStandardInputStreamData(data) {
@@ -111,7 +109,7 @@ class InteractiveCommandLineInterface extends Interface {
 			this.currentCommandCursorIndex = this.currentCommandString.length;
 
 			// Write the current string (this moves the cursor right)
-			app.standardStreams.output.write(this.currentCommandString, false);
+			app.standardStreams.output.write(this.currentCommandString);
 		}
 		// Down
 		else if(key == '\u001b[B') {
@@ -143,7 +141,7 @@ class InteractiveCommandLineInterface extends Interface {
 			this.currentCommandCursorIndex = this.currentCommandString.length;
 
 			// Write the current string (this moves the cursor right)
-			app.standardStreams.output.write(this.currentCommandString, false);
+			app.standardStreams.output.write(this.currentCommandString);
 		}
 		// Left
 		else if(key == '\u001b[D') {
@@ -225,7 +223,7 @@ class InteractiveCommandLineInterface extends Interface {
 			}
 
 			// Log the command
-			app.standardStreams.output.write('> '+this.currentCommandString);
+			//app.standardStreams.output.write('> '+this.currentCommandString);
 
 			//app.log('enter');
 			this.handleCommand(this.currentCommandString);
@@ -249,7 +247,7 @@ class InteractiveCommandLineInterface extends Interface {
 			Terminal.cursorLeft(this.currentCommandCursorIndex + 1);
 			
 			// Write the new string, this moves the cursor right
-			app.standardStreams.output.write(this.currentCommandString, false);
+			app.standardStreams.output.write(this.currentCommandString);
 
 			// Move back to where the cursor should be
 			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
@@ -266,7 +264,7 @@ class InteractiveCommandLineInterface extends Interface {
 			Terminal.cursorLeft(this.currentCommandCursorIndex);
 			
 			// Write the new string, this moves the cursor right
-			app.standardStreams.output.write(this.currentCommandString, false);
+			app.standardStreams.output.write(this.currentCommandString);
 
 			// Move back to where the cursor should be
 			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
@@ -285,7 +283,7 @@ class InteractiveCommandLineInterface extends Interface {
 			Terminal.cursorLeft(this.currentCommandCursorIndex - 1);
 
 			// Write the current string (this moves the cursor right)
-			app.standardStreams.output.write(this.currentCommandString, false);
+			app.standardStreams.output.write(this.currentCommandString);
 
 			// Move back to where the cursor should be
 			Terminal.cursorLeft(this.currentCommandString.length - this.currentCommandCursorIndex);
@@ -362,17 +360,25 @@ class InteractiveCommandLineInterface extends Interface {
 		var commandMatch = (context[commandFragment] !== undefined);
 
 		// Get all of the available commands for the context
+		var keys = Object.getOwnPropertyNames(context);
 		var availableCommandArray = [];
 		var availableFunctionsArray = [];
 		var availablePropertiesArray = [];
-		for(var key in context) {
-			if(Function.is(context[key])) {
-				availableFunctionsArray.append(key+'()');
+		keys.each(function(keyIndex, key) {
+			// Ignore deprecated keys
+			if(
+				context === global &&
+				key != 'GLOBAL' &&
+				key != 'root'
+			) {
+				if(Function.is(context[key])) {
+					availableFunctionsArray.append(key+'()');
+				}
+				else {
+					availablePropertiesArray.append(key);
+				}
 			}
-			else {
-				availablePropertiesArray.append(key);
-			}
-		}
+		});
 		availableCommandArray = availablePropertiesArray.sort().concatenate(availableFunctionsArray.sort());
 		//app.log(availableCommandArray);
 
@@ -462,7 +468,7 @@ class InteractiveCommandLineInterface extends Interface {
 
 		if(response) {
 			// Log the command
-			app.standardStreams.output.write('> '+this.currentCommandString+'\\t');
+			//app.standardStreams.output.write('> '+this.currentCommandString+'\\t');
 
 			app.standardStreams.output.write("\n");
 			app.standardStreams.output.write(Terminal.style("\n"+'   '+response.join("\n   ")+"\n", this.commandColor));
@@ -473,7 +479,7 @@ class InteractiveCommandLineInterface extends Interface {
 		this.currentCommandString = command;
 		Terminal.clearLine();
 		Terminal.cursorLeft(this.currentCommandString.length + 1);
-		app.standardStreams.output.write(this.currentCommandString, false);
+		app.standardStreams.output.write(this.currentCommandString);
 	}
 
 	handleCommand(command) {
@@ -512,23 +518,30 @@ class InteractiveCommandLineInterface extends Interface {
 			}
 		}
 
+		// Create and write the response string
+		var responseString = '';
+
 		if(Function.is(response)) {
-			app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, ['function '+command+'() { ... }'], 'write'), this.commandColor)+"\n");	
+			responseString = 'function '+command+'() { ... }';
+			responseString = Terminal.style(responseString, this.commandColor);
+			app.standardStreams.output.writeLine(responseString);
 		}
 		else if(Promise.is(response)) {
-			app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, ['Promise:'+"\n"], 'write'), 'gray'));	
-			app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, [response], 'write'), this.commandColor)+"\n");	
+			responseString = Terminal.style('Resolving promise...', 'gray');
+			app.standardStreams.output.write(responseString);
 
-			response.then(function() {
-				app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, ['Promise Fulfilled:'], 'write'), 'gray')+"\n");	
-				app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, arguments, 'write'), this.commandColor)+"\n");	
+			response.then(function(resolvedValue) {
+				var promiseResponseString = Terminal.style(' resolved:', 'gray');
+				promiseResponseString += "\n";
+				promiseResponseString += Terminal.style(app.formatLogDataWithoutMetaDataPrefix(resolvedValue), this.commandColor);
+				app.standardStreams.output.writeLine(promiseResponseString);
 			}.bind(this));
 		}
 		else if(!command.isEmpty()) {
-			app.standardStreams.output.write(Terminal.style(app.formatLogData.call(this, [response], 'write'), this.commandColor)+"\n");	
+			responseString = app.formatLogDataWithoutMetaDataPrefix(response);
+			responseString = Terminal.style(responseString, this.commandColor);
+			app.standardStreams.output.writeLine(responseString);
 		}
-		
-		return;
 	}
 
 }
