@@ -276,6 +276,9 @@ class InteractiveCommandLineInterface extends Interface {
 			this.currentCommandString = this.currentCommandString.insert(this.currentCommandCursorIndex, key);
 			this.currentCommandCursorIndex += key.length;
 
+			// Just write out the line instead of doing all of the stuff below
+			//app.standardStreams.output.write(key);
+
 			// Clear the line
 			Terminal.clearLine();
 
@@ -365,7 +368,7 @@ class InteractiveCommandLineInterface extends Interface {
 		var availableFunctionsArray = [];
 		var availablePropertiesArray = [];
 		keys.each(function(keyIndex, key) {
-			// Ignore deprecated keys
+			// Ignore deprecated global keys
 			if(
 				context === global &&
 				key != 'GLOBAL' &&
