@@ -15,9 +15,15 @@ class Command {
 	commands = [];
 
 	constructor(argumentsArray, options = {}) {
+		app.log('argumentsArray', argumentsArray, options);
+
 		// Set the usage and supplemental notes
 		this.usage = options.getValueForKey('usage');
 		this.supplementalNotes = options.getValueForKey('supplementalNotes');
+
+		options ... subCommand options ... subCommand options ...
+		read all options up to the first sub command
+		when you encounter a subcommand, read all options until you encounter the next subcommand
 
 		// Create an identifiers field on all options
 		//var optionsSettings = this.settings.get('options');
@@ -30,8 +36,6 @@ class Command {
 
 		// Parse the arguments array
 		this.parse(argumentsArray);
-
-		//Node.exit(this);
 	}
 
 	parse(argumentsArray) {
