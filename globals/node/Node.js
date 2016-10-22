@@ -31,7 +31,6 @@ class Node {
 
 	static exit() {
 		if(arguments.length) {
-			//Console.writeLine(Console.prepareMessage.call(this, arguments, 'error'));
 			if(app.log) {
 				app.log(...arguments);
 			}

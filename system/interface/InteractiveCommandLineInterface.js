@@ -78,7 +78,7 @@ class InteractiveCommandLineInterface extends Interface {
 	handleKey(key) {
 		// Ctrl-c
 		if(key == '\u0003') {
-			Node.exit('Exited by user.');
+			Node.exit('Exiting by user request...');
 		}
 		// Up
 		else if(key == '\u001b[A') {

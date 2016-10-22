@@ -14,7 +14,7 @@ class FrameworkApp extends App {
 		await super.initialize(...arguments);
 
 		//app.log('this.command', this.command);
-		//this.proctorCommand();
+		this.proctorCommand();
 	}
 
 	async graphicalInterfaceCommand() {
