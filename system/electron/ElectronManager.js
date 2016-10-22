@@ -25,8 +25,8 @@ var ElectronManager = Class.extend({
 		// Set the main browser window
 		this.mainBrowserWindow = Electron.remote.getCurrentWindow();
 
-		// Set the Project title
-		this.mainBrowserWindow.setTitle(Project.title);
+		// Set the app title
+		this.mainBrowserWindow.setTitle(app.title);
 
 		// Initialize the window state
 		this.initializeWindowState();
@@ -44,8 +44,8 @@ var ElectronManager = Class.extend({
 		var applicationClassFilePath = 'Application';
 
 		// Require and construct the main view controller
-		var viewControllerClassFilePath = 'view-controllers/'+Project.modules.electronModule.settings.get('mainBrowserWindow.viewControllerName')+'.js';
-		var ViewControllerClass = Project.require(viewControllerClassFilePath);
+		var viewControllerClassFilePath = 'view-controllers/'+app.modules.electronModule.settings.get('mainBrowserWindow.viewControllerName')+'.js';
+		var ViewControllerClass = app.require(viewControllerClassFilePath);
 		mainViewController = this.mainBrowserWindowViewController = new ViewControllerClass(this);
 		
 		
@@ -63,7 +63,7 @@ var ElectronManager = Class.extend({
 		this.registerShortcuts();
 
 		// Conditionally show the main browser window
-		var windowStateSettings = Project.modules.electronModule.settings.get('mainBrowserWindow.windowState');
+		var windowStateSettings = app.modules.electronModule.settings.get('mainBrowserWindow.windowState');
 		if(windowStateSettings.show) {
 			this.mainBrowserWindow.show();
 		}
@@ -71,7 +71,7 @@ var ElectronManager = Class.extend({
 
 	initializeDeveloperTools: function() {
 		// Handle developer tools settings
-		var developerToolsSettings = Project.modules.electronModule.settings.get('mainBrowserWindow.developerTools');
+		var developerToolsSettings = app.modules.electronModule.settings.get('mainBrowserWindow.developerTools');
 
 		// Show the developer tools
 		if(developerToolsSettings.show) {
@@ -82,7 +82,7 @@ var ElectronManager = Class.extend({
 
 	initializeWindowState: function() {
 		// Get the window state settings
-		var windowStateSettings = Project.modules.electronModule.settings.get('mainBrowserWindow.windowState');
+		var windowStateSettings = app.modules.electronModule.settings.get('mainBrowserWindow.windowState');
 
 		// Create a window state for the main browser window
 		this.mainBrowserWindowState = new BrowserWindowState('main', this.mainBrowserWindow, windowStateSettings);
@@ -91,7 +91,7 @@ var ElectronManager = Class.extend({
 	registerShortcuts: function() {
 		// If the main browser window has an HtmlDocument
 		if(this.mainBrowserWindowViewController.viewContainer) {
-			var shortcutSettings = Project.modules.electronModule.settings.get('shortcuts');
+			var shortcutSettings = app.modules.electronModule.settings.get('shortcuts');
 
 			//console.log('This next line is for testing input.key events.');
 			//this.mainBrowserWindowViewController.viewContainer.on('input.*', function(event) {});
@@ -197,10 +197,10 @@ var ElectronManager = Class.extend({
 		if(process.platform == 'darwin') {
 			template = [
 				{
-					label: Project.title,
+					label: app.title,
 					submenu: [
 						{
-							label: 'About '+Project.title,
+							label: 'About '+app.title,
 							selector: 'orderFrontStandardAboutPanel:'
 						},
 						{
@@ -214,7 +214,7 @@ var ElectronManager = Class.extend({
 							type: 'separator'
 						},
 						{
-							label: 'Hide '+Project.title,
+							label: 'Hide '+app.title,
 							accelerator: 'Command+H',
 							selector: 'hide:'
 						},
@@ -528,7 +528,7 @@ ElectronManager.keyPress = function(key, modifiers) {
 };
 
 ElectronManager.copyUsingKeyboard = function*() {
-	if(Project.onWindows()) {
+	if(app.onWindows()) {
 		yield ElectronManager.keyDown('c', ['control']);
 	}
 	else {
@@ -539,7 +539,7 @@ ElectronManager.copyUsingKeyboard = function*() {
 }.toPromise();
 
 ElectronManager.cutUsingKeyboard = function*() {
-	if(Project.onWindows()) {
+	if(app.onWindows()) {
 		yield ElectronManager.keyDown('x', ['control']);
 	}
 	else {
@@ -550,7 +550,7 @@ ElectronManager.cutUsingKeyboard = function*() {
 }.toPromise();
 
 ElectronManager.pasteUsingKeyboard = function*() {
-	if(Project.onWindows()) {
+	if(app.onWindows()) {
 		yield ElectronManager.keyDown('v', ['control']);
 	}
 	else {

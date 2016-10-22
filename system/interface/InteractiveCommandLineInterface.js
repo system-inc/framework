@@ -295,7 +295,7 @@ class InteractiveCommandLineInterface extends Interface {
 		command = command.trim();
 
 		// The thing we are going to print out
-		var response;
+		var response = null;
 
 		// Get the current context
 		var variableArray = command.split('.');
@@ -326,6 +326,7 @@ class InteractiveCommandLineInterface extends Interface {
 
 			// Try to eval the statement and get an object back to get context
 			var commandToEval = command;
+			app.log('commandToEval', commandToEval);
 			if(commandToEval.endsWith('.')) {
 				commandToEval = commandToEval.replaceLast('.', '');
 			}
@@ -333,7 +334,7 @@ class InteractiveCommandLineInterface extends Interface {
 			// Try to run the command as is (without a trailing period)
 			try {
 				context = eval(commandToEval);
-				//app.log('got context!', command, commandToEval);
+				app.log('got context!', command, commandToEval);
 			}
 			catch(error) {
 				context = undefined;
@@ -344,7 +345,7 @@ class InteractiveCommandLineInterface extends Interface {
 				try {
 					commandToEval = variableArray.join('.');
 					context = eval(commandToEval);
-					//app.log('got context!', command, commandToEval);
+					app.log('got context!', command, commandToEval);
 				}
 				catch(error) {
 					context = undefined;
@@ -362,16 +363,22 @@ class InteractiveCommandLineInterface extends Interface {
 
 		// Get all of the available commands for the context
 		var keys = Object.getOwnPropertyNames(context);
+		//app.log('keys', keys);
+
 		var availableCommandArray = [];
 		var availableFunctionsArray = [];
 		var availablePropertiesArray = [];
 		keys.each(function(keyIndex, key) {
 			// Ignore deprecated global keys
 			if(
-				context === global &&
-				key != 'GLOBAL' &&
-				key != 'root'
+				context === global && (
+					key == 'GLOBAL' ||
+					key == 'root'
+				)
 			) {
+				// Do nothing
+			}
+			else {
 				if(Function.is(context[key])) {
 					availableFunctionsArray.append(key+'()');
 				}

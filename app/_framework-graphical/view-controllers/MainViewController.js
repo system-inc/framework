@@ -11,7 +11,7 @@ var SingleLineTextFormFieldView = Framework.require('system/web-interface/views/
 var SingleLineTextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
 var TableView = Framework.require('system/web-interface/views/tables/TableView.js');
 var ButtonView = Framework.require('system/web-interface/views/buttons/ButtonView.js');
-var TestBrowserWindowPool = Project.require('proctor/browser-windows/TestBrowserWindowPool.js');
+var TestBrowserWindowPool = require('./proctor/browser-windows/TestBrowserWindowPool.js');
 
 // Class
 var MainViewController = ViewController.extend({

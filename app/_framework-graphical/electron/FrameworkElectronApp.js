@@ -29,7 +29,7 @@ ElectronApplication.run = function() {
 		ElectronApplication.mainBrowserWindow.show(); // Comment out for production
 
 		// Load the main browser window content
-		ElectronApplication.mainBrowserWindow.loadURL('file://'+__dirname+'/Project.html');
+		ElectronApplication.mainBrowserWindow.loadURL('file://'+__dirname+'/ElectronApp.html');
 		//ElectronApplication.mainBrowserWindow.loadURL('https://kangax.github.io/compat-table/es6/');
 
 		// When the window is closed

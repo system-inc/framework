@@ -42,12 +42,11 @@ class Json {
     static indent(object, replacer, indentation = 4) {
         var indentedJson = Json.encode(object, replacer, indentation);
 
-        // Replace escaped new line characters with real new line characters and indentation
-        if(indentedJson) {
-            indentedJson = indentedJson.replace(/\\n/g, "\n    ");
-        }
-
         return indentedJson;
+    }
+
+    static escape(jsonString) {
+
     }
 
     /*

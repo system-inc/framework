@@ -76,7 +76,7 @@ class Proctor extends EventEmitter {
 			method: null, // Will implement this at some point, right now I can't figure out a good way to do
 		};
 		
-		// Watch the project and framework directories
+		// Watch the app and framework directories
 		var watchedFileSystemObjects = await FileSystemObject.watch([app.directory, app.framework.directory], function(fileSystemObject, currentStatus, previousStatus) {
 			//app.log(fileSystemObject.path, 'updated.');
 

@@ -7,7 +7,7 @@ class Router {
 
 	routes = [];
 
-	loadRoutes(routes, project) {
+	loadRoutes(routes) {
 		//app.log('Loading routes...');
 
 		if(routes) {

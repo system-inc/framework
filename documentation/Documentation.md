@@ -24,7 +24,7 @@ Libraries
 
 Modules
 
-  Used to configure project settings.
+  Used to configure app-specific settings.
 
 Packages
   
