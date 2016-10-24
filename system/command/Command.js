@@ -142,8 +142,7 @@ class Command {
 				}
 			}
 
-			app.info('command', this);
-			//throw Error('got this far, need to finish');
+			//app.info('command', this);
 			
 
 			//// Version

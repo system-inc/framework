@@ -12,14 +12,14 @@ class CommandTest extends Test {
 			description: 'Visit https://www.system.org/framework to learn more about Framework.',
 			subcommands: {
 				graphicalInterface: {
-					usage: 'node app/Framework.js graphicalInterface',
+					usage: 'node app graphicalInterface',
 					description: 'Display the Framework graphical interface powered by Electron.',
 					aliases: [
 						'gi',
 					],
 				},
 				proctor: {
-					usage: 'node app/Framework.js proctor',
+					usage: 'node app proctor',
 					description: 'Run and benchmark tests.',
 					aliases: [
 						'test',
