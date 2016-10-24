@@ -4,7 +4,17 @@ class DataStore {
 	data = {};
 
 	get(path) {
-		return this.data.getValueByPath(path);
+		var value = null;
+
+		// Calling get() with no path will return data
+		if(path === undefined) {
+			value = this.data;
+		}
+		else {
+			value = this.data.getValueByPath(path);
+		}
+
+		return value;
 	}
 
 	set(path, value) {

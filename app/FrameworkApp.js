@@ -12,9 +12,8 @@ class FrameworkApp extends App {
 
 	async initialize() {
 		await super.initialize(...arguments);
-
-		app.log('this.command', this.command);
-		//this.proctorCommand();
+		
+		this.proctorCommand();
 	}
 
 	async graphicalInterfaceCommand() {
@@ -45,7 +44,7 @@ class FrameworkApp extends App {
 			var methodPattern = this.command.options.methodPattern;
 			
 			//path = Node.Path.join(app.framework.directory, 'globals');
-			//filePattern = '';
+			filePattern = 'Command';
 			//methodPattern = '';			
 			//app.log('path', path, 'filePattern', filePattern, 'methodPattern', methodPattern);
 			

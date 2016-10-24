@@ -1,84 +1,166 @@
 // Dependencies
 import Terminal from './../../system/interface/Terminal.js';
+import Settings from './../../system/settings/Settings.js';
 
 // Class
 class Command {
 
+	// The configuration for the command
+	settings = new Settings({
+		usage: null,
+		description: null,
+		options: {},
+		subcommands: {},
+	});
+
+	// The JavaScript file Node is executing
 	file = null;
+
+	// The Node executable file
 	command = null;
-	arguments = null;
 
-	usage = null;
-	supplementalNotes = null;
-	
-	options = [];
-	commands = [];
+	// The options and commands are populated when we parse the string arguments array
+	options = {};
+	subcommands = {};
 
-	constructor(argumentsArray, options = {}) {
-		app.log('argumentsArray', argumentsArray, options);
+	constructor(settings, argumentsArray) {
+		this.settings.merge(settings);
 
-		// Set the usage and supplemental notes
-		this.usage = options.getValueForKey('usage');
-		this.supplementalNotes = options.getValueForKey('supplementalNotes');
+		// We will loop through all of the settings and reform them as well as set the default values for the options for the root command
+		var settings = this.settings.get();
 
-		options ... subCommand options ... subCommand options ...
-		read all options up to the first sub command
-		when you encounter a subcommand, read all options until you encounter the next subcommand
+		// Loop through all of the options
+		settings.options.each(function(optionKey, option) {
+			// Reform the options settings
+			this.reformOptionSettings(optionKey, option);
+			
+			// Set default values for the options for the root command
+			this.options[optionKey] = null;
+			this.setDefaultValueForOption(option, this.options, optionKey);
+		}.bind(this));
 
-		// Create an identifiers field on all options
-		//var optionsSettings = this.settings.get('options');
-		//optionsSettings.each(function(index, optionSettings) {
-		//	// Create a flat array of option identifiers
-		//	optionSettings.identifiers = [optionSettings.identifier].merge(optionSettings.aliases);
-		//});
-		//this.settings.set('options', optionsSettings);
-		//Node.exit(this);
+		// Loop through all of the commands
+		settings.subcommands.each(function(subcommandKey, subcommand) {
+			// Reform the subcommand settings
+			this.reformSubcommandSettings(subcommand, subcommandKey);
+		}.bind(this));
 
 		// Parse the arguments array
 		this.parse(argumentsArray);
 	}
 
-	parse(argumentsArray) {
-		//Node.exit('parse', argumentsArray);
+	reformOptionSettings(optionSettings, optionSettingsKey) {
+		optionSettings.identifier = optionSettingsKey;
 
+		if(!optionSettings.aliases) {
+			optionSettings.aliases = [];
+		}
+		optionSettings.aliases.prepend(optionSettingsKey);
+	}
+
+	setDefaultValuesForCommandOptions(optionsSettings, optionsNode) {
+		optionsSettings.each(function(optionIdentifier, optionSettings) {
+			optionsNode[optionIdentifier] = null;
+			this.setDefaultValueForOption(optionSettings, optionsNode, optionIdentifier);
+		}.bind(this));
+	}
+
+	setDefaultValueForOption(optionSettings, optionsNode, optionKey) {
+		var defaultValue = null;
+
+		if(optionSettings.defaultValue !== undefined) {
+			defaultValue = optionSettings.defaultValue;
+		}
+
+		optionsNode[optionKey] = defaultValue;
+	}
+
+	reformSubcommandSettings(subcommandSettings, subcommandSettingsKey) {
+		subcommandSettings.identifier = subcommandSettingsKey;
+
+		if(!subcommandSettings.subcommands) {
+			subcommandSettings.subcommands = {};
+		}
+		subcommandSettings.subcommands.each(function(subSubcommandSettingsKey, subSubcommandSettings) {
+			this.reformSubcommandSettings(subSubcommandSettings, subSubcommandSettingsKey);
+		}.bind(this));
+
+		if(!subcommandSettings.options) {
+			subcommandSettings.options = {};
+		}
+		subcommandSettings.options.each(function(optionKey, option) {
+			this.reformOptionSettings(option, optionKey);
+		}.bind(this));
+
+		if(!subcommandSettings.aliases) {
+			subcommandSettings.aliases = [];
+		}
+		subcommandSettings.aliases.prepend(subcommandSettingsKey);
+	}
+
+	parse(argumentsArray) {
 		// Make sure we are working with an array
 		if(String.is(argumentsArray)) {
 			argumentsArray = argumentsArray.split(' ');
 		}
-		//Node.exit('parse', argumentsArray);
 
-		this.command = argumentsArray[0];
-		this.file = argumentsArray[1];
-		this.arguments = {};
-		this.options = {};
+		// If we have an arguments array
+		if(Array.is(argumentsArray)) {
+			//app.info('argumentsArray', argumentsArray);
 
-		var argumentsToProcess = argumentsArray.slice(2);
-		//Node.exit('parse', 'argumentsToProcess', argumentsToProcess);
+			// The JavaScript file Node is executing
+			this.file = argumentsArray[1];
 
-		// Loop over the options settings
-		//this.settings.get('options').each(function(index, optionSettings) {
-		//	// Set the option value
-		//	this.options[optionSettings.identifier] = this.getOptionValue(optionSettings, argumentsToProcess);
-		//}.bind(this));
+			// The Node executable file
+			this.command = argumentsArray[0];
 
-		// Version
-		if(Command.versionOptions.contains(this.argumentToOptionIdentifier(argumentsToProcess.first()))) {
-			this.showVersion();
-		}
-		// Help
-		else if(Command.helpOptions.contains(this.argumentToOptionIdentifier(argumentsToProcess.first()))) {
-			this.showHelp();
-		}
+			// The rest of the command arguments
+			var argumentsToProcess = argumentsArray.slice(2);
 
-		// Show command options
-		argumentsArray.each(function(argumentIndex, argumentValue) {
-			if(this.argumentToOptionIdentifier(argumentValue) == 'showCommandOptions') {
-				this.showCommandOptions();
-				return false; // break
+			var currentCommandSettings = this.settings.get();
+
+			// Loop through the arguments to process
+			for(var i = 0; i < argumentsToProcess.length; i++) {
+				var currentArgument = argumentsToProcess[i];
+
+				// Check if the argument is a command
+				var possibleSubcommandSettings = currentCommandSettings.subcommands[currentArgument];
+				if(possibleSubcommandSettings) {
+					// Set the subcommand
+					this.subcommands[possibleSubcommandSettings.identifier] = {
+						options: {},
+					};
+
+					// Set the defaults for the subcommand options
+					this.setDefaultValuesForCommandOptions(possibleSubcommandSettings.options, this.subcommands[possibleSubcommandSettings.identifier].options);
+
+					
+
+					// Read in the next arguments to pull in the options
+				}
 			}
-		}.bind(this));
 
-		//Node.exit(this);
+			app.info('command', this);
+			throw Error('got this far, need to finish');
+			
+
+			//// Version
+			//if(Command.versionOptions.contains(this.argumentToOptionIdentifier(argumentsToProcess.first()))) {
+			//	this.showVersion();
+			//}
+			//// Help
+			//else if(Command.helpOptions.contains(this.argumentToOptionIdentifier(argumentsToProcess.first()))) {
+			//	this.showHelp();
+			//}
+
+			//// Show command options
+			//argumentsArray.each(function(argumentIndex, argumentValue) {
+			//	if(this.argumentToOptionIdentifier(argumentValue) == 'showCommandOptions') {
+			//		this.showCommandOptions();
+			//		return false; // break
+			//	}
+			//}.bind(this));
+		}
 
 		return this;
 	}
@@ -128,8 +210,8 @@ class Command {
 			app.standardStreams.output.writeLine();
 		}
 
-		if(this.supplementalNotes) {
-			app.standardStreams.output.writeLine(this.supplementalNotes);
+		if(this.description) {
+			app.standardStreams.output.writeLine(this.description);
 		}
 
 		Node.exit();
