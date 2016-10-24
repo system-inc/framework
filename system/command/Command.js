@@ -120,10 +120,10 @@ class Command {
 			var currentCommandSettings = this.settings.get();
 
 			// Loop through the arguments to process
-			for(var i = 0; i < argumentsToProcess.length; i++) {
-				var currentArgument = argumentsToProcess[i];
+			for(var currentArgumentIndex = 0; currentArgumentIndex < argumentsToProcess.length; currentArgumentIndex++) {
+				var currentArgument = argumentsToProcess[currentArgumentIndex];
 
-				// Check if the argument is a command
+				// Check if the current argument is a subcommand
 				var possibleSubcommandSettings = currentCommandSettings.subcommands[currentArgument];
 				if(possibleSubcommandSettings) {
 					// Set the subcommand
@@ -134,14 +134,16 @@ class Command {
 					// Set the defaults for the subcommand options
 					this.setDefaultValuesForCommandOptions(possibleSubcommandSettings.options, this.subcommands[possibleSubcommandSettings.identifier].options);
 
-					
+					// Read in the options for the current subcommand
+					currentArgumentIndex = this.parseSubcommandOptions(possibleSubcommandSettings.options, this.subcommands[possibleSubcommandSettings.identifier].options, currentArgumentIndex + 1, argumentsToProcess);
 
-					// Read in the next arguments to pull in the options
+					// Move on to the next iteration of the loop
+					continue;
 				}
 			}
 
 			app.info('command', this);
-			throw Error('got this far, need to finish');
+			//throw Error('got this far, need to finish');
 			
 
 			//// Version
@@ -163,6 +165,72 @@ class Command {
 		}
 
 		return this;
+	}
+
+	parseSubcommandOptions(subcommandOptionsSettings, optionsNode, currentArgumentIndex, argumentsToProcess) {
+		// Get the current argument
+		var currentArgument = argumentsToProcess[currentArgumentIndex];
+
+		// If the current argument is an option identifier
+		if(this.argumentIsOptionAlias(currentArgument, subcommandOptionsSettings)) {
+
+			// Move to the next argument
+			currentArgumentIndex++;
+			var nextArgument = argumentsToProcess[currentArgumentIndex];
+
+			// If the next argument does not exist
+			// If the next argument is an option alias
+			if(this.argumentIsOptionAlias(nextArgument, subcommandOptionsSettings)) {
+
+			}
+			// If the next argument is a subcommand or subsubcommand
+			//else if() {
+
+			//}
+			// If the next argument is the value for the option
+			//else if() {
+
+			//}
+
+			// 
+			//for(currentArgumentIndex; currentArgumentIndex < argumentsToProcess.length; currentArgumentIndex++) {
+			//	currentArgument = argumentsToProcess[currentArgumentIndex];
+			//	app.log('currentArgument', currentArgument);
+			//}
+		}
+
+		return currentArgumentIndex;
+	}
+
+	argumentIsOptionAlias(argument, optionsSettings) {
+		var argumentIsOptionAlias = false;
+		
+		// All option identifiers start with a hyphen
+		if(this.argumentIsPossibleOptionAlias(argument)) {
+			// Get rid of all hyphens to get a possible alias
+			var possibleOptionAlias = argument.replace('-', '');
+
+			// Run through all of the option aliases to see if we have a match
+			optionsSettings.each(function(optionKey, optionSettings) {
+				if(optionSettings.aliases.contains(possibleOptionAlias)) {
+					app.log('possibleOptionAlias', possibleOptionAlias, 'is an option alias for', optionKey);
+					argumentIsOptionAlias = true;
+					return false; // break
+				}
+			});
+		}
+
+		return argumentIsOptionAlias;
+	}
+
+	argumentIsPossibleOptionAlias(argument) {
+		var argumentIsPossibleOptionAlias = false;
+
+		if(argument.startsWith('-')) {
+			argumentIsPossibleOptionAlias = true;
+		}
+
+		return argumentIsPossibleOptionAlias;
 	}
 
 	showVersion() {

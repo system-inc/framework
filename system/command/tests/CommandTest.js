@@ -14,6 +14,9 @@ class CommandTest extends Test {
 				graphicalInterface: {
 					usage: 'node app/Framework.js graphicalInterface',
 					description: 'Display the Framework graphical interface powered by Electron.',
+					aliases: [
+						'gi',
+					],
 				},
 				proctor: {
 					usage: 'node app/Framework.js proctor',
