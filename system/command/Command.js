@@ -251,7 +251,7 @@ class Command {
 	argumentIsPossibleOptionAlias(argument) {
 		var argumentIsPossibleOptionAlias = false;
 
-		if(argument.startsWith('-')) {
+		if(argument && argument.startsWith('-')) {
 			argumentIsPossibleOptionAlias = true;
 		}
 
