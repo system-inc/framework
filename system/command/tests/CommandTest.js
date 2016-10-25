@@ -83,6 +83,12 @@ class CommandTest extends Test {
 
 		var actual = new Command(commandSettings, commandString);
 		//app.info(actual);
+		Assert.strictEqual(actual.subcommands.proctor.options.path, null, 'proctor command path option is set correctly');
+		Assert.strictEqual(actual.subcommands.proctor.options.filePattern, 'command', 'proctor command filePattern option is set correctly');
+		Assert.strictEqual(actual.subcommands.proctor.options.methodPattern, 'method', 'proctor command methodPattern option is set correctly');
+		Assert.strictEqual(actual.subcommands.proctor.options.reporter, 'dot', 'proctor command reporter option is set correctly');
+		Assert.strictEqual(actual.subcommands.proctor.options.supervise, false, 'proctor command supervise option is set correctly');
+		Assert.strictEqual(actual.subcommands.proctor.options.breakOnError, true, 'proctor command breakOnError option is set correctly');
 
 		// Do assertions
 

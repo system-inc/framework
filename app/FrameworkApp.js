@@ -13,7 +13,9 @@ class FrameworkApp extends App {
 	async initialize() {
 		await super.initialize(...arguments);
 		
-		this.proctorCommand();
+		if(this.command.subcommands.proctor) {
+			this.proctorCommand();
+		}
 	}
 
 	async graphicalInterfaceCommand() {
@@ -21,30 +23,30 @@ class FrameworkApp extends App {
 
 	async proctorCommand() {
 		// Create a Proctor to oversee all of the tests as they run
-		this.proctor = new Proctor(this.command.options.reporter, this.command.options.breakOnError);
+		this.proctor = new Proctor(this.command.subcommands.proctor.options.reporter, this.command.subcommands.proctor.options.breakOnError);
 		//app.log('Proctor created', this.proctor);
 		//return; // Debug
 
 		// If test supervising is enabled
-		if(this.command.options.supervise) {
+		if(this.command.subcommands.proctor.options.supervise) {
 			this.proctor.supervise();
 		}
 		// Get and run the tests
 		else {
 			// If there is no path set the path to the framework directory
-			if(!this.command.options.path) {
-				this.command.options.path = app.framework.directory;
+			if(!this.command.subcommands.proctor.options.path) {
+				this.command.subcommands.proctor.options.path = app.framework.directory;
 			}
 
-			//this.proctor.getAndRunTests(this.command.options.path, this.command.options.filePattern, this.command.options.methodPattern);
+			//this.proctor.getAndRunTests(this.command.subcommands.proctor.options.path, this.command.subcommands.proctor.options.filePattern, this.command.subcommands.proctor.options.methodPattern);
 
 			// Debug
-			var path = this.command.options.path;
-			var filePattern = this.command.options.filePattern;
-			var methodPattern = this.command.options.methodPattern;
+			var path = this.command.subcommands.proctor.options.path;
+			var filePattern = this.command.subcommands.proctor.options.filePattern;
+			var methodPattern = this.command.subcommands.proctor.options.methodPattern;
 			
 			//path = Node.Path.join(app.framework.directory, 'globals');
-			filePattern = 'Command';
+			//filePattern = 'Command';
 			//methodPattern = '';			
 			//app.log('path', path, 'filePattern', filePattern, 'methodPattern', methodPattern);
 			

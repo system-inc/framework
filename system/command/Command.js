@@ -122,6 +122,7 @@ class Command {
 			// Loop through the arguments to process
 			for(var currentArgumentIndex = 0; currentArgumentIndex < argumentsToProcess.length; currentArgumentIndex++) {
 				var currentArgument = argumentsToProcess[currentArgumentIndex];
+				//app.log('currentArgument', currentArgument);
 
 				// Check if the current argument is a subcommand
 				var possibleSubcommandSettings = currentCommandSettings.subcommands[currentArgument];
@@ -169,40 +170,65 @@ class Command {
 	parseSubcommandOptions(subcommandOptionsSettings, optionsNode, currentArgumentIndex, argumentsToProcess) {
 		// Get the current argument
 		var currentArgument = argumentsToProcess[currentArgumentIndex];
+		//app.log('currentArgument', currentArgument);
 
-		// If the current argument is an option identifier
-		if(this.argumentIsOptionAlias(currentArgument, subcommandOptionsSettings)) {
+		// Check to see if the current argument is an option alias
+		var optionIdentifier = this.optionAliasToOptionIdentifier(currentArgument, subcommandOptionsSettings);
 
+		// If the current argument is an option alias
+		if(optionIdentifier) {
 			// Move to the next argument
 			currentArgumentIndex++;
-			var nextArgument = argumentsToProcess[currentArgumentIndex];
+			
+			// If the next argument exists
+			if(currentArgumentIndex < argumentsToProcess.length) {
+				// Get the next argument
+				var nextArgument = argumentsToProcess[currentArgumentIndex];
 
-			// If the next argument does not exist
-			// If the next argument is an option alias
-			if(this.argumentIsOptionAlias(nextArgument, subcommandOptionsSettings)) {
+				// If the next argument is an option alias
+				if(this.optionAliasToOptionIdentifier(nextArgument, subcommandOptionsSettings)) {
+					// If the next argument is another option alias, check if the current option is a boolean type option
+					var currentArgumentOptionSettings = subcommandOptionsSettings[optionIdentifier];
+					//app.log('currentArgumentOptionSettings', currentArgumentOptionSettings);
 
+					// Option aliases provided without values have the value set to true
+					if(currentArgumentOptionSettings.type == 'boolean') {
+						//app.log('bool!', currentArgumentOptionSettings);
+						optionsNode[optionIdentifier] = true;
+					}
+
+					// Move to the next argument
+					currentArgumentIndex = this.parseSubcommandOptions(subcommandOptionsSettings, optionsNode, currentArgumentIndex, argumentsToProcess);
+				}
+				// If the next argument is a subcommand or subsubcommand
+				else if(this.argumentIsSubcommandAlias(nextArgument)) {
+					// Do nothing
+				}
+				// If the argument is not an option alias or a subcommand, the argument must be the value for the option
+				else {
+					//app.log('nextArgument', nextArgument, 'is option value');
+					optionsNode[optionIdentifier] = nextArgument;
+
+					// Move to the next next argument if it exists
+					var nextNextArgumentIndex = currentArgumentIndex + 1;
+					if(nextNextArgumentIndex < argumentsToProcess.length) {
+						currentArgumentIndex = this.parseSubcommandOptions(subcommandOptionsSettings, optionsNode, nextNextArgumentIndex, argumentsToProcess);	
+					}
+				}
 			}
-			// If the next argument is a subcommand or subsubcommand
-			//else if() {
-
-			//}
-			// If the next argument is the value for the option
-			//else if() {
-
-			//}
-
-			// 
-			//for(currentArgumentIndex; currentArgumentIndex < argumentsToProcess.length; currentArgumentIndex++) {
-			//	currentArgument = argumentsToProcess[currentArgumentIndex];
-			//	app.log('currentArgument', currentArgument);
-			//}
 		}
 
 		return currentArgumentIndex;
 	}
 
-	argumentIsOptionAlias(argument, optionsSettings) {
-		var argumentIsOptionAlias = false;
+	argumentIsSubcommandAlias(argument) {
+		var argumentIsSubcommandAlias = false;
+
+		return argumentIsSubcommandAlias;
+	}
+
+	optionAliasToOptionIdentifier(argument, optionsSettings) {
+		var optionAliasToOptionIdentifier = false;
 		
 		// All option identifiers start with a hyphen
 		if(this.argumentIsPossibleOptionAlias(argument)) {
@@ -212,14 +238,14 @@ class Command {
 			// Run through all of the option aliases to see if we have a match
 			optionsSettings.each(function(optionKey, optionSettings) {
 				if(optionSettings.aliases.contains(possibleOptionAlias)) {
-					app.log('possibleOptionAlias', possibleOptionAlias, 'is an option alias for', optionKey);
-					argumentIsOptionAlias = true;
+					//app.log('possibleOptionAlias', possibleOptionAlias, 'is an option alias for', optionKey);
+					optionAliasToOptionIdentifier = optionKey;
 					return false; // break
 				}
 			});
 		}
 
-		return argumentIsOptionAlias;
+		return optionAliasToOptionIdentifier;
 	}
 
 	argumentIsPossibleOptionAlias(argument) {
