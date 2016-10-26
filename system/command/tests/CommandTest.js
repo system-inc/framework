@@ -8,7 +8,7 @@ class CommandTest extends Test {
 
 	async testCommand() {
 		var commandSettings = {
-			usage: 'node app/Framework.js',
+			usage: 'node app',
 			description: 'Visit https://www.system.org/framework to learn more about Framework.',
 			subcommands: {
 				graphicalInterface: {
@@ -92,7 +92,7 @@ class CommandTest extends Test {
 
 		// Do assertions
 
-		// test showing help for a specific command, e.g., node app/Framework.js proctor --help
+		// test showing help for a specific command, e.g., node app proctor --help
 
 		// Another test
 		//commandString = '-option1 option1Argument1 --option2 subCommand1 -subCommandOption1 subCommandOption1Argument --subCommandOption2';		

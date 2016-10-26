@@ -3,7 +3,7 @@
 	version: '0.1.0',
 	description: 'Build your dreams.',
 	command: {
-		usage: 'node app/Framework.js',
+		usage: 'node app',
 		description: 'Visit https://www.system.org/framework to learn more about Framework.',
 		subcommands: {
 			graphicalInterface: {

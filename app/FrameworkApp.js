@@ -16,6 +16,9 @@ class FrameworkApp extends App {
 		if(this.command.subcommands.proctor) {
 			this.proctorCommand();
 		}
+		else {
+			this.command.showHelp();
+		}
 	}
 
 	async graphicalInterfaceCommand() {
