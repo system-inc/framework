@@ -348,7 +348,14 @@ class WebServer extends Server {
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
 	handleInternalServerError(error, nodeResponse, request) {
-		var logEntry = app.formatLogData('WebServer.handleError() called on request '+request.id+'. '+"\n\n"+error.name+': '+error.message+"\n"+error.stack.stackTraceToString()+"\n"+'Request:', request.getPublicErrorData());
+		var requestId = '<unknown request ID>';
+		var requestPublicErrorData = '<unknown request public error data>';
+		if(request && request.id) {
+			requestId = request.id;
+			requestPublicErrorData = request.getPublicErrorData();
+		}
+
+		var logEntry = app.formatLogData('WebServer.handleError() called on request '+requestId+'. '+"\n\n"+error.name+': '+error.message+"\n"+error.stack.stackTraceToString()+"\n"+'Request:', requestPublicErrorData);
 		if(this.settings.get('verbose')) {
 			app.error(logEntry);
 		}
