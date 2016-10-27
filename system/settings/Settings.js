@@ -17,7 +17,7 @@ class Settings {
 		this.setDefaults(defaults);
 
 		// Set the initial data for the data store
-		this.dataStore.merge(data);
+		this.merge(data);
 	}
 
 	setDefaults(defaults) {
@@ -50,8 +50,15 @@ class Settings {
 		this.dataStore.merge(data);
 	}
 
-	merge(data) {
-		return this.dataStore.merge(data);
+	merge(settingsOrData) {
+		var dataToMerge = settingsOrData;
+
+		// Handle if settingsOrData is an instance of Settings
+		if(Settings.is(settingsOrData)) {
+			dataToMerge = settingsOrData.getData();
+		}
+
+		return this.dataStore.merge(dataToMerge);
 	}
 
 	async mergeFromFile(dataFilePath) {
@@ -106,6 +113,10 @@ class Settings {
 		var settings = new Settings(defaults, data, dataStore);
 
 		return settings;
+	}
+
+	static is = function(value) {
+		return Class.isInstance(value, Settings);
 	}
 
 }
