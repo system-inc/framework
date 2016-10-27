@@ -11,10 +11,14 @@ Object.defineProperty(Function.prototype, 'getParameters', {
 		}
 		// Use regular expressions to get parameter names from a function
 		else {
-			parameters = this.toString()
-				.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/)|(\s))/mg,'')
-				.match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1]
-				.split(/,/);
+			//console.log(this.toString());
+			parameters = this.toString();
+			parameters = parameters.match(/\(.*?\)/mg)[0];
+			parameters = parameters.replace('(', '');
+			parameters = parameters.replace(')', '');
+			parameters = parameters.replace(' ', '');
+			parameters = parameters.split(',');
+			//console.log('parameters', parameters);
 		}
 
 		return parameters;

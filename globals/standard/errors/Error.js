@@ -18,7 +18,9 @@ Error.prototype.toString = function() {
 // Static methods
 
 Error.is = function(value) {
-	return value instanceof Error;
+	var is = value instanceof Error;
+
+	return is;
 };
 
 Error.prepareStackTrace = function(error, callSites) {
