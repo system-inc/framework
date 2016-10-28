@@ -149,7 +149,8 @@ class Command {
 				var currentArgument = argumentsToProcess[currentArgumentIndex];
 				//app.log('currentArgument', currentArgument, 'currentArgumentIndex', currentArgumentIndex);
 
-				var possibleSubcommandSettings = currentCommandSettings.subcommands[currentArgument];
+				var possibleSubcommandIdentifier = this.subcommandAliasToSubcommandIdentifier(currentArgument, currentCommandSettings.subcommands);
+				var possibleSubcommandSettings = currentCommandSettings.subcommands[possibleSubcommandIdentifier];
 				//app.log('possibleSubcommandSettings', possibleSubcommandSettings);
 
 				// If the current argument is a subcommand
@@ -303,6 +304,21 @@ class Command {
 		return optionAliasToOptionIdentifier;
 	}
 
+	subcommandAliasToSubcommandIdentifier(argument, subcommandsSettings) {
+		var subcommandAliasToSubcommandIdentifier = false;
+		
+		// Run through all of the option aliases to see if we have a match
+		subcommandsSettings.each(function(subcommandKey, subcommandSettings) {
+			if(subcommandSettings.aliases.contains(argument)) {
+				//app.log('argument', argument, 'is an option alias for', subcommandKey);
+				subcommandAliasToSubcommandIdentifier = subcommandKey;
+				return false; // break
+			}
+		});
+
+		return subcommandAliasToSubcommandIdentifier;
+	}
+
 	argumentIsPossibleOptionAlias(argument) {
 		var argumentIsPossibleOptionAlias = false;
 
@@ -342,13 +358,13 @@ class Command {
 			app.standardStreams.output.writeLine();
 		}
 		
-		function showOptionHelp(optionsSettings, indentationSpaces = 0) {
+		function showOptionHelp(optionsSettings, commandIdentifier = '', indentationSpaces = 0) {
 			var indentation = ' '.repeat(indentationSpaces);
 
 			if(optionsSettings.getKeys().length) {
-				app.standardStreams.output.writeLine(indentation+Terminal.style('Options', 'underline')+"\n");
+				app.standardStreams.output.writeLine(indentation+Terminal.style(commandIdentifier+'Options', 'underline')+"\n");
 				optionsSettings.each(function(optionSettingsIndex, optionSettings) {
-					var line = indentation+'  --'+optionSettings.identifier;
+					var line = indentation+'--'+optionSettings.identifier;
 					if(optionSettings.aliases.length > 1) {
 						line += ' (-'+optionSettings.aliases.slice(1).join(', -')+')';
 					}
@@ -356,7 +372,7 @@ class Command {
 					app.standardStreams.output.writeLine(line);
 
 					if(optionSettings.description) {
-						app.standardStreams.output.writeLine(indentation+'  '+optionSettings.description);
+						app.standardStreams.output.writeLine(indentation+optionSettings.description);
 						app.standardStreams.output.writeLine();
 					}
 				});
@@ -373,7 +389,7 @@ class Command {
 		if(subcommandsSettings.getKeys().length) {
 			app.standardStreams.output.writeLine(Terminal.style('Subcommands', 'underline')+"\n");
 			subcommandsSettings.each(function(subcommandSettingsIndex, subcommandSettings) {
-				var line = '  '+subcommandSettings.identifier;
+				var line = Terminal.style(subcommandSettings.identifier, 'bold');
 				if(subcommandSettings.aliases.length > 1) {
 					line += ' ('+subcommandSettings.aliases.slice(1).join(', ')+')';
 				}
@@ -381,13 +397,13 @@ class Command {
 				app.standardStreams.output.writeLine(line);
 
 				if(subcommandSettings.description) {
-					app.standardStreams.output.writeLine('    '+subcommandSettings.description);
+					app.standardStreams.output.writeLine(subcommandSettings.description);
 					app.standardStreams.output.writeLine();
 				}
 
 				// Subcommand options
 				if(subcommandSettings.options.getKeys().length) {
-					showOptionHelp(subcommandSettings.options, 6);
+					showOptionHelp(subcommandSettings.options, subcommandSettings.identifier+' ', 2);
 				}
 			});
 		}
