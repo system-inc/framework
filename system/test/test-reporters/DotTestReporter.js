@@ -7,6 +7,8 @@ import AssertionError from './../errors/AssertionError.js';
 class DotTestReporter extends TestReporter {
 
 	startedRunningTests(data) {
+		super.startedRunningTests(data);
+		
 		app.standardStreams.output.write("\n");
 	}
 

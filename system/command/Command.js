@@ -375,7 +375,7 @@ class Command {
 			subcommandsSettings.each(function(subcommandSettingsIndex, subcommandSettings) {
 				var line = '  '+subcommandSettings.identifier;
 				if(subcommandSettings.aliases.length > 1) {
-					line += ' (-'+subcommandSettings.aliases.slice(1).join(', -')+')';
+					line += ' ('+subcommandSettings.aliases.slice(1).join(', ')+')';
 				}
 				//line += Terminal.style(' (default: '+subcommandSettings.defaultValue+')', 'gray');
 				app.standardStreams.output.writeLine(line);

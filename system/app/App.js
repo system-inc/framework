@@ -96,7 +96,7 @@ class App extends EventEmitter {
 		await this.configureInteractiveCommandLineInterface();
 
 		// Make it obvious we are starting
-		this.standardStreams.output.writeLine(AsciiArt.framework.version[this.framework.version.toString()]);
+		//this.standardStreams.output.writeLine(AsciiArt.framework.version[this.framework.version.toString()]);
 
 		// Use app settings to set the title and the identifier
 		this.setPropertiesFromAppSettings();
@@ -111,7 +111,7 @@ class App extends EventEmitter {
 		await this.requireAndInitializeAppModules();
 
 		//this.log('Framework initialization complete.');
-		this.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
+		//this.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
 		//this.log('Modules: '+Module.modules.initialized.join(', '));
 
 		// Run the callback (which may be a generator)
