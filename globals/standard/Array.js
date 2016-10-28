@@ -418,6 +418,19 @@ Array.prototype.toObject = function() {
 	return Array.toObject(this);
 };
 
+Array.prototype.toConjunctionString = function(coordinatingConjunction, wrap = '') {
+	var conjunctionString = wrap+this.join(wrap+', '+wrap);
+
+	if(this.length > 2) {
+		conjunctionString = conjunctionString.replaceLast(', ', ', '+coordinatingConjunction+' ');	
+	}
+	else {
+		conjunctionString = conjunctionString.replaceLast(', ', ' '+coordinatingConjunction+' ');
+	}
+
+	return conjunctionString+wrap;
+};
+
 // Static methods
 
 Array.is = function(value) {

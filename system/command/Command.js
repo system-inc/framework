@@ -273,10 +273,8 @@ class Command {
 
 			var recommendedCommandAliases = this.getRecommendedCommandAliases(currentArgument);
 			if(recommendedCommandAliases.length) {
-				invalidCommandString += ' Did you mean "';
-				invalidCommandString += recommendedCommandAliases.join('" or "');
-				invalidCommandString += '"?';
-			}			
+				invalidCommandString += ' Did you mean '+recommendedCommandAliases.toConjunctionString('or', '"')+'?';
+			}
 			
 			app.standardStreams.output.writeLine(Terminal.style(invalidCommandString, 'red'));
 			Node.exit();
