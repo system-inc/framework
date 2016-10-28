@@ -16,12 +16,10 @@ class FrameworkApp extends App {
 		
 		// Proctor
 		if(this.command.subcommands.proctor) {
-			//Node.exit('proctorCommand');
 			this.proctorCommand();
 		}
 		// Graphical interface
 		else if(this.command.subcommands.graphicalInterface) {
-			//Node.exit('graphicalInterfaceCommand');
 			this.graphicalInterfaceCommand();
 		}
 		// Show help by default
@@ -33,7 +31,9 @@ class FrameworkApp extends App {
 
 	async graphicalInterfaceCommand() {
 		app.log('Loading graphical interface...');
-		var electronChildProcess = Node.ChildProcess.spawn('electron', [], {});
+		var electronChildProcess = Node.spawnChildProcess('electron', ['--js-flags="--harmony-async-await"', 'app'], {
+			//cwd: app.framework.directory,
+		});
 
 		electronChildProcess.stdout.on('data', function(data) {
 			//app.standardStreams.output.write('Electron: '+data.toString());

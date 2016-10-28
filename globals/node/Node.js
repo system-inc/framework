@@ -8,9 +8,13 @@ Path.separator = Path.sep;
 // Class
 class Node {
 
+	static childProcesses = [];
+
 	static Assert = require('assert');
 	static Buffer = Buffer;
+	
 	static ChildProcess = require('child_process');
+
 	static Cluster = require('cluster');
 	static Cryptography = require('crypto');
 	static Events = Events;
@@ -22,12 +26,21 @@ class Node {
 	static Path = Path;
 	static Process = process;
 	static Readline = require('readline');
-	static StandardIn = (process.versions.electron) ? null : process.stdin; // When running Electron, if you try to access process.stdin Node throws an exception
+	//static StandardIn = (process.versions.electron) ? null : process.stdin; // When running Electron, if you try to access process.stdin Node throws an exception
+	static StandardIn = process.stdin;
 	static StandardOut = process.stdout;
 	static Stream = require('stream');
 	static Url = require('url');
 	static Utility = require('util');
 	static Zlib = require('zlib');
+
+	static spawnChildProcess() {
+		var childProcess = Node.ChildProcess.spawn(...arguments);
+
+		Node.childProcesses.append(childProcess);
+
+		return childProcess;
+	}
 
 	static exit() {
 		if(arguments.length) {
@@ -43,6 +56,32 @@ class Node {
 	}
 
 }
+
+// Catch unhandled rejections
+Node.Process.on('unhandledRejection', function(error) {
+	console.error('Unhandled rejection:', error);
+	Node.exit();
+});
+
+// Catch unhandled exceptions
+Node.Process.on('uncaughtException', function(error) {
+	console.error('Uncaught exception:', error);
+	Node.exit();
+});
+
+// Catch ctrl-c
+Node.Process.on('SIGINT', Node.exit);
+
+// Catch kill
+Node.Process.on('SIGTERM', Node.exit);
+
+// Catch exit
+Node.Process.on('exit', function() {
+	console.log('Killing', Node.childProcesses.length, 'child process...');
+	Node.childProcesses.forEach(function(childProcess) {
+		childProcess.kill();
+	});
+});
 
 // Global
 global.Node = Node;

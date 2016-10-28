@@ -3,18 +3,6 @@ if(!global && window) {
 	global = window;
 }
 
-// Catch unhandled rejections
-process.on('unhandledRejection', function(error) {
-	console.error('Unhandled rejection:', error);
-	process.exit(1);
-});
-
-// Catch unhandled exceptions
-process.on('uncaughtException', function(error) {
-	console.error('Uncaught exception:', error);
-	process.exit(1);
-});
-
 // Node
 import './node/Node.js';
 import './node/Buffer.js';
