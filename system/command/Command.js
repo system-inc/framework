@@ -235,6 +235,16 @@ class Command {
 				}
 				// If the argument is not an option alias or a subcommand, the argument must be the value for the option
 				else {
+					//app.log('nextArgument', nextArgument, 'is not an option alias for a subcommand alias');
+
+					// Validate option values
+					if(
+						currentArgumentOptionSettings.type == 'boolean' &&
+						(nextArgument != 'true' || nextArgument != 'false')
+					) {
+						app.standardStreams.output.writeLine(Terminal.style('Invalid value "'+nextArgument+'" for option "'+optionIdentifier+'".', 'red'));
+						Node.exit();
+					}
 					//app.log('nextArgument', nextArgument, 'is option value');
 					optionsNode[optionIdentifier] = nextArgument;
 
@@ -242,6 +252,10 @@ class Command {
 					var nextNextArgumentIndex = nextArgumentIndex + 1;
 					if(nextNextArgumentIndex < argumentsToProcess.length) {
 						currentArgumentIndex = this.parseOptions(optionsSettings, optionsNode, nextNextArgumentIndex, argumentsToProcess);
+					}
+					// If the next next argument doesn't exist, we are finished
+					else {
+						currentArgumentIndex = nextNextArgumentIndex;
 					}
 				}
 			}
@@ -253,8 +267,39 @@ class Command {
 				}
 			}
 		}
+		// If the current argument is not an option
+		else if(currentArgument !== undefined) {
+			var invalidCommandString = 'Invalid command "'+currentArgument+'".';
+
+			var recommendedCommandAliases = this.getRecommendedCommandAliases(currentArgument);
+			if(recommendedCommandAliases.length) {
+				invalidCommandString += ' Did you mean "';
+				invalidCommandString += recommendedCommandAliases.join('" or "');
+				invalidCommandString += '"?';
+			}			
+			
+			app.standardStreams.output.writeLine(Terminal.style(invalidCommandString, 'red'));
+			Node.exit();
+		}
 
 		return currentArgumentIndex;
+	}
+
+	getRecommendedCommandAliases(suppliedCommand) {
+		var subcommandsSettings = this.settings.get('subcommands');
+
+		var recommendedCommandAliases = [];
+
+		subcommandsSettings.each(function(subcommandIdentifier, subcommandSettings) {
+			subcommandSettings.aliases.each(function(subcommandAliasIndex, subcommandAlias) {
+				//app.log(suppliedCommand, subcommandAlias, String.distance(suppliedCommand, subcommandAlias));
+				if(String.distance(suppliedCommand, subcommandAlias) < 5) {
+					recommendedCommandAliases.append(subcommandAlias);
+				}
+			});
+		});
+
+		return recommendedCommandAliases;
 	}
 
 	argumentIsSubcommandAlias(argument, subcommandsSettings) {
@@ -366,7 +411,7 @@ class Command {
 					app.standardStreams.output.writeLine(line);
 
 					if(optionSettings.description) {
-						app.standardStreams.output.writeLine(indentation+optionSettings.description);
+						app.standardStreams.output.writeLine(indentation+Terminal.style(optionSettings.description, 'italic'));
 						app.standardStreams.output.writeLine();
 					}
 				});
@@ -393,7 +438,7 @@ class Command {
 				app.standardStreams.output.writeLine();
 
 				if(subcommandSettings.description) {
-					app.standardStreams.output.writeLine('  '+subcommandSettings.description);
+					app.standardStreams.output.writeLine('  '+Terminal.style(subcommandSettings.description, 'italic'));
 					app.standardStreams.output.writeLine();
 				}
 

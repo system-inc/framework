@@ -22,6 +22,10 @@ class FrameworkApp extends App {
 		else if(this.command.subcommands.graphicalInterface) {
 			this.graphicalInterfaceCommand();
 		}
+		// Interactive command line interface
+		else if(this.command.subcommands.interactiveCommandLineInterface) {
+			// Do nothing
+		}
 		// Show help by default
 		else {
 			this.standardStreams.output.writeLine("\n"+AsciiArt.framework.version[this.framework.version.toString()]+"\n");

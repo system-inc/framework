@@ -11,6 +11,13 @@
 					'gi',
 				],
 			},
+			interactiveCommandLineInterface: {
+				description: 'Display the interactive command line interface.',
+				aliases: [
+					'icli',
+					'repl',
+				],
+			},
 			proctor: {
 				description: 'Run and benchmark tests.',
 				aliases: [
