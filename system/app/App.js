@@ -16,6 +16,7 @@ import Version from './../../system/version/Version.js';
 class App extends EventEmitter {
 
 	title = 'App Title';
+	headline = null;
 	description = null;
 	
 	identifier = null;
@@ -179,6 +180,12 @@ class App extends EventEmitter {
 		}
 		else {
 			this.identifier = this.title.toCamelCase();
+		}
+
+		// Set the headline
+		var headlineFromSettings = this.settings.get('headline');
+		if(headlineFromSettings) {
+			this.headline = headlineFromSettings;
 		}
 
 		// Set the description

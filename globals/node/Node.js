@@ -77,10 +77,12 @@ Node.Process.on('SIGTERM', Node.exit);
 
 // Catch exit
 Node.Process.on('exit', function() {
-	console.log('Killing', Node.childProcesses.length, 'child process...');
-	Node.childProcesses.forEach(function(childProcess) {
-		childProcess.kill();
-	});
+	if(Node.childProcesses.length) {
+		console.log('Killing', Node.childProcesses.length, 'child process'+(Node.childProcesses.length > 1 ? 'es' : '')+'...');
+		Node.childProcesses.forEach(function(childProcess) {
+			childProcess.kill();
+		});
+	}
 });
 
 // Global

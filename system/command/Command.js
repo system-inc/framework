@@ -7,7 +7,6 @@ class Command {
 
 	// The configuration for the command
 	settings = new Settings({
-		usage: null,
 		description: null,
 		options: {
 			version: {
@@ -338,23 +337,18 @@ class Command {
 	showHelp() {
 		//Node.exit(this);
 
-		app.standardStreams.output.writeLine(Terminal.style(app.title+' '+(app.version ? app.version : '(unknown version)'), 'bold'));
-		app.standardStreams.output.writeLine();
+		var title = app.title+' '+(app.version ? app.version : '(unknown version)');
 
-		if(app.description) {
-			app.standardStreams.output.writeLine(app.description);
-			app.standardStreams.output.writeLine();
+		if(app.headline) {
+			title += ' - '+app.headline;
 		}
+
+		app.standardStreams.output.writeLine(Terminal.style(title, 'bold'));
+		app.standardStreams.output.writeLine();
 
 		var description = this.settings.get('description');
 		if(description) {
 			app.standardStreams.output.writeLine(description.replace("\n", "\n  "));
-			app.standardStreams.output.writeLine();
-		}
-
-		var usage = this.settings.get('usage');
-		if(usage) {
-			app.standardStreams.output.writeLine(Terminal.style('Usage: '+usage.replace("\n", "\n  "), 'bold'));
 			app.standardStreams.output.writeLine();
 		}
 		
@@ -390,14 +384,16 @@ class Command {
 			app.standardStreams.output.writeLine(Terminal.style('Subcommands', 'underline')+"\n");
 			subcommandsSettings.each(function(subcommandSettingsIndex, subcommandSettings) {
 				var line = Terminal.style(subcommandSettings.identifier, 'bold');
+
 				if(subcommandSettings.aliases.length > 1) {
 					line += ' ('+subcommandSettings.aliases.slice(1).join(', ')+')';
 				}
 				//line += Terminal.style(' (default: '+subcommandSettings.defaultValue+')', 'gray');
 				app.standardStreams.output.writeLine(line);
+				app.standardStreams.output.writeLine();
 
 				if(subcommandSettings.description) {
-					app.standardStreams.output.writeLine(subcommandSettings.description);
+					app.standardStreams.output.writeLine('  '+subcommandSettings.description);
 					app.standardStreams.output.writeLine();
 				}
 

@@ -1,20 +1,17 @@
 {
 	title: 'Framework',
 	version: '0.1.0',
-	description: 'Build your dreams.',
+	headline: 'Build your dreams.',
 	command: {
-		usage: 'node app',
 		description: 'Visit https://www.system.org/framework to learn more about Framework.',
 		subcommands: {
 			graphicalInterface: {
-				usage: 'node app graphicalInterface',
 				description: 'Display the Framework graphical interface powered by Electron.',
 				aliases: [
 					'gi',
 				],
 			},
 			proctor: {
-				usage: 'node app proctor',
 				description: 'Run and benchmark tests.',
 				aliases: [
 					'test',
