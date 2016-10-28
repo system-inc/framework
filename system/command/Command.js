@@ -147,9 +147,10 @@ class Command {
 			// Loop through the arguments to process
 			for(var currentArgumentIndex = 0; currentArgumentIndex < argumentsToProcess.length; currentArgumentIndex++) {
 				var currentArgument = argumentsToProcess[currentArgumentIndex];
-				//app.log('currentArgument', currentArgument);
+				//app.log('currentArgument', currentArgument, 'currentArgumentIndex', currentArgumentIndex);
 
 				var possibleSubcommandSettings = currentCommandSettings.subcommands[currentArgument];
+				//app.log('possibleSubcommandSettings', possibleSubcommandSettings);
 
 				// If the current argument is a subcommand
 				if(possibleSubcommandSettings) {
@@ -169,6 +170,8 @@ class Command {
 					// Read in the options
 					currentArgumentIndex = this.parseOptions(currentCommandSettings.options, this.options, currentArgumentIndex, argumentsToProcess);
 				}
+
+				//app.log('currentArgumentIndex', currentArgumentIndex, 'argumentsToProcess.length', argumentsToProcess.length);
 			}
 
 			//app.info('command', this);
@@ -193,39 +196,42 @@ class Command {
 	parseOptions(optionsSettings, optionsNode, currentArgumentIndex, argumentsToProcess) {
 		// Get the current argument
 		var currentArgument = argumentsToProcess[currentArgumentIndex];
-		//app.log('currentArgument', currentArgument);
+		//app.log('parseOptions currentArgument', currentArgument);
 
 		// Check to see if the current argument is an option alias
 		var optionIdentifier = this.optionAliasToOptionIdentifier(currentArgument, optionsSettings);
-		//app.log('optionIdentifier', optionIdentifier);
+		//app.log('parseOptions optionIdentifier', optionIdentifier);
 
 		// If the current argument is an option alias
 		if(optionIdentifier) {
 			var currentArgumentOptionSettings = optionsSettings[optionIdentifier];
 			//app.log('currentArgumentOptionSettings', currentArgumentOptionSettings);
 
-			// Move to the next argument
-			currentArgumentIndex++;
-			
+			var nextArgumentIndex = currentArgumentIndex + 1;
+
 			// If the next argument exists
-			if(currentArgumentIndex < argumentsToProcess.length) {
+			if(nextArgumentIndex < argumentsToProcess.length) {
 				// Get the next argument
-				var nextArgument = argumentsToProcess[currentArgumentIndex];
+				var nextArgument = argumentsToProcess[nextArgumentIndex];
 
 				// If the next argument is an option alias
 				if(this.optionAliasToOptionIdentifier(nextArgument, optionsSettings)) {
 					// Option aliases provided without values have the value set to true
 					if(currentArgumentOptionSettings.type == 'boolean') {
-						//app.log('bool!', currentArgumentOptionSettings);
 						optionsNode[optionIdentifier] = true;
 					}
 
 					// Move to the next argument
-					currentArgumentIndex = this.parseOptions(optionsSettings, optionsNode, currentArgumentIndex, argumentsToProcess);
+					currentArgumentIndex = this.parseOptions(optionsSettings, optionsNode, nextArgumentIndex, argumentsToProcess);
 				}
 				// If the next argument is a subcommand or subsubcommand
 				else if(this.argumentIsSubcommandAlias(nextArgument)) {
-					// Do nothing
+					//app.log('next argument "'+nextArgument+'" is a subcommand alias');
+
+					// Option aliases provided without values have the value set to true
+					if(currentArgumentOptionSettings.type == 'boolean') {
+						optionsNode[optionIdentifier] = true;
+					}
 				}
 				// If the argument is not an option alias or a subcommand, the argument must be the value for the option
 				else {
@@ -233,9 +239,9 @@ class Command {
 					optionsNode[optionIdentifier] = nextArgument;
 
 					// Move to the next next argument if it exists
-					var nextNextArgumentIndex = currentArgumentIndex + 1;
+					var nextNextArgumentIndex = nextArgumentIndex + 1;
 					if(nextNextArgumentIndex < argumentsToProcess.length) {
-						currentArgumentIndex = this.parseOptions(optionsSettings, optionsNode, nextNextArgumentIndex, argumentsToProcess);	
+						currentArgumentIndex = this.parseOptions(optionsSettings, optionsNode, nextNextArgumentIndex, argumentsToProcess);
 					}
 				}
 			}
@@ -251,8 +257,27 @@ class Command {
 		return currentArgumentIndex;
 	}
 
-	argumentIsSubcommandAlias(argument) {
+	argumentIsSubcommandAlias(argument, subcommandsSettings) {
+		//app.log('argument', argument);
+
+		if(!subcommandsSettings) {
+			subcommandsSettings = this.settings.get('subcommands');
+		}
+
 		var argumentIsSubcommandAlias = false;
+
+		subcommandsSettings.each(function(index, subcommandSettings) {
+			if(subcommandSettings.aliases.contains(argument)) {
+				argumentIsSubcommandAlias = true;
+			}
+			else {
+				argumentIsSubcommandAlias = this.argumentIsSubcommandAlias(argument, subcommandSettings.subcommands);	
+			}
+
+			if(argumentIsSubcommandAlias) {
+				return false; // break;
+			}
+		}.bind(this));
 
 		return argumentIsSubcommandAlias;
 	}
@@ -297,7 +322,7 @@ class Command {
 	showHelp() {
 		//Node.exit(this);
 
-		app.standardStreams.output.writeLine(app.title+' '+(app.version ? app.version : '(unknown version)'));
+		app.standardStreams.output.writeLine(Terminal.style(app.title+' '+(app.version ? app.version : '(unknown version)'), 'bold'));
 		app.standardStreams.output.writeLine();
 
 		if(app.description) {
@@ -313,16 +338,15 @@ class Command {
 
 		var usage = this.settings.get('usage');
 		if(usage) {
-			app.standardStreams.output.writeLine('Usage:');
-			app.standardStreams.output.writeLine('  '+usage.replace("\n", "\n  "));
+			app.standardStreams.output.writeLine(Terminal.style('Usage: '+usage.replace("\n", "\n  "), 'bold'));
 			app.standardStreams.output.writeLine();
 		}
 		
 		function showOptionHelp(optionsSettings, indentationSpaces = 0) {
 			var indentation = ' '.repeat(indentationSpaces);
 
-			if(Object.keys(optionsSettings).length) {
-				app.standardStreams.output.writeLine(indentation+'Options:');
+			if(optionsSettings.getKeys().length) {
+				app.standardStreams.output.writeLine(indentation+Terminal.style('Options', 'underline')+"\n");
 				optionsSettings.each(function(optionSettingsIndex, optionSettings) {
 					var line = indentation+'  --'+optionSettings.identifier;
 					if(optionSettings.aliases.length > 1) {
@@ -346,8 +370,8 @@ class Command {
 		showOptionHelp(optionsSettings);
 
 		var subcommandsSettings = this.settings.get('subcommands');
-		if(Object.keys(subcommandsSettings).length) {
-			app.standardStreams.output.writeLine('Subcommands:');
+		if(subcommandsSettings.getKeys().length) {
+			app.standardStreams.output.writeLine(Terminal.style('Subcommands', 'underline')+"\n");
 			subcommandsSettings.each(function(subcommandSettingsIndex, subcommandSettings) {
 				var line = '  '+subcommandSettings.identifier;
 				if(subcommandSettings.aliases.length > 1) {
@@ -362,7 +386,7 @@ class Command {
 				}
 
 				// Subcommand options
-				if(Object.keys(subcommandSettings.options).length) {
+				if(subcommandSettings.options.getKeys().length) {
 					showOptionHelp(subcommandSettings.options, 6);
 				}
 			});
@@ -375,10 +399,43 @@ class Command {
 	}
 
 	showDebugCommand() {
-		app.standardStreams.output.writeLine('Options:');
-		app.standardStreams.output.writeLine(Json.indent(this.options));
-		app.standardStreams.output.writeLine('Subcommands:');
-		app.standardStreams.output.writeLine(Json.indent(this.subcommands));
+		var debugCommand = "\n"+'============================================='+"\n\n";
+		debugCommand += Terminal.style('Command Configuration', 'bold');
+		debugCommand += "\n\n";
+		var indentationSpaces = 0;
+
+		function addOptionsDebugCommandString(debugCommand, options, indentationSpaces = 0) {
+			var indentation = ' '.repeat(indentationSpaces);
+
+			if(options.getKeys().length) {
+				debugCommand += indentation+Terminal.style('Options', 'underline')+"\n\n";
+				options.each(function(key, value) {
+					debugCommand += indentation+'  '+key+': '+Terminal.style(value, 'bold')+"\n";
+				});
+			}
+
+			return debugCommand;
+		}
+
+		debugCommand = addOptionsDebugCommandString(debugCommand, this.options);
+
+		if(this.options.getKeys().length && this.subcommands.getKeys().length) {
+			debugCommand += "\n";
+		}
+
+		if(this.subcommands.getKeys().length) {
+			debugCommand += Terminal.style('Subcommands', 'underline')+"\n";
+			this.subcommands.each(function(key, value) {
+				debugCommand += "\n"+'  '+Terminal.style(key, 'bold')+"\n\n";
+				debugCommand = addOptionsDebugCommandString(debugCommand, value.options, indentationSpaces + 4);
+			});
+		}
+
+		debugCommand += "\n"+'============================================='+"\n";
+
+		debugCommand = Terminal.style(debugCommand, 'yellow');
+
+		app.standardStreams.output.writeLine(debugCommand);
 	}
 
 }

@@ -306,6 +306,9 @@ class App extends EventEmitter {
 			if(formattedLogDataForArgument === undefined) {
 				formattedLogDataForArgument = 'undefined';
 			}
+			else if(formattedLogDataForArgument === 0) {
+				formattedLogDataForArgument = '0';
+			}
 			else if(formattedLogDataForArgument === true) {
 				formattedLogDataForArgument = 'true';
 			}
@@ -316,7 +319,7 @@ class App extends EventEmitter {
 				formattedLogDataForArgument = 'null';
 			}
 			// Functions
-			if(Function.is(argument)) {
+			else if(Function.is(formattedLogDataForArgument)) {
 				formattedLogDataForArgument = Node.Utility.inspect(argument, {
 					'showHidden': true,
 					'depth': 2,

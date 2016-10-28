@@ -14,7 +14,12 @@ class FrameworkApp extends App {
 		await super.initialize(...arguments);
 		
 		if(this.command.subcommands.proctor) {
+			//Node.exit('proctorCommand');
 			this.proctorCommand();
+		}
+		else if(this.command.subcommands.graphicalInterface) {
+			//Node.exit('graphicalInterfaceCommand');
+			this.graphicalInterfaceCommand();
 		}
 		else {
 			this.command.showHelp();
@@ -22,6 +27,8 @@ class FrameworkApp extends App {
 	}
 
 	async graphicalInterfaceCommand() {
+		app.log('Loading graphical interface...');
+		throw new Error('not implemented');
 	}
 
 	async proctorCommand() {

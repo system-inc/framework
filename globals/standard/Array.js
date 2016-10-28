@@ -146,7 +146,7 @@ Array.prototype.contains = function(search, caseSensitive = false, regularExpres
 	// If not using a regular expression and not case sensitive
 	else if(!regularExpressionLocation && !caseSensitive) {
 		for(var i = 0; i < this.length; i++) {
-			if(String.is(this[i]) && search.toLowerCase() == this[i].toLowerCase()) {
+			if(String.is(this[i]) && search.lowercase() == this[i].lowercase()) {
 				contains++;
 			}
 		}

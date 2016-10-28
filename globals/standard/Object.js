@@ -1,5 +1,12 @@
 // Instance methods
 
+Object.defineProperty(Object.prototype, 'getKeys', {
+    enumerable: false,
+    value: function() {
+        return Object.keys(this);
+    }
+});
+
 Object.defineProperty(Object.prototype, 'isEmpty', {
     enumerable: false,
     value: function() {
