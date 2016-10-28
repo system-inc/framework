@@ -40,6 +40,9 @@ class Proctor extends EventEmitter {
 
 	shouldRunCurrentTestClass = false;
 
+	path = null;
+	filePattern = null;
+	methodPattern = null;
 	breakOnError = false;
 	
 	constructor(testReporterIdentifier = 'standard', breakOnError = false) {
@@ -115,8 +118,18 @@ class Proctor extends EventEmitter {
 	}
 
 	async getAndRunTests(path, filePattern, methodPattern) {
+		this.path = Proctor.resolvePath(path);
+
+		if(filePattern) {
+			this.filePattern = filePattern.lowercase();
+		}
+		
+		if(methodPattern) {
+			this.methodPattern = methodPattern.lowercase();	
+		}
+
 		//app.log('getAndRunTests', ...arguments);
-		var tests = await Proctor.getTests(path, filePattern, methodPattern);
+		var tests = await Proctor.getTests(this.path, this.filePattern, this.methodPattern);
 		//app.log('getAndRunTests', path, filePattern, methodPattern, tests);
 
 		this.addTests(tests);

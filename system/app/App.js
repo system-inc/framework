@@ -5,7 +5,6 @@ import StandardOutputStream from './../../system/stream/StandardOutputStream.js'
 import StandardErrorStream from './../../system/stream/StandardErrorStream.js';
 import FileLog from './../../system/log/FileLog.js';
 import InteractiveCommandLineInterface from './../../system/interface/InteractiveCommandLineInterface.js';
-import AsciiArt from './../../system/ascii-art/AsciiArt.js';
 import Command from './../../system/command/Command.js';
 import Module from './../../system/module/Module.js';
 import Settings from './../../system/settings/Settings.js';
@@ -95,9 +94,6 @@ class App extends EventEmitter {
 
 		// After the app settings are loaded, we will know how to configure the command history
 		await this.configureInteractiveCommandLineInterface();
-
-		// Make it obvious we are starting
-		//this.standardStreams.output.writeLine(AsciiArt.framework.version[this.framework.version.toString()]);
 
 		// Use app settings to set the title and the identifier
 		this.setPropertiesFromAppSettings();

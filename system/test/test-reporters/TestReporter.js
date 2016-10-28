@@ -72,7 +72,22 @@ class TestReporter {
 		// Clear the terminal
 		//Terminal.clear();
 
-		// Tell the user what we are doing
+		//app.standardStreams.output.writeLine('Proctor');
+
+		app.standardStreams.output.writeLine("\n"+'Tests found in: '+this.proctor.path);
+		
+		if(this.proctor.filePattern) {
+			app.standardStreams.output.writeLine('Filtered file paths matching: '+this.proctor.filePattern);
+		}
+		
+		if(this.proctor.methodPattern) {
+			app.standardStreams.output.writeLine('Filtered methods matching: '+this.proctor.methodPattern);
+		}
+		
+		if(this.proctor.breakOnError) {
+			app.standardStreams.output.writeLine('Will stop running tests on the first error.');
+		}
+
 		app.standardStreams.output.writeLine("\n"+'Running '+data.testMethodCount+' '+(data.testMethodCount == 1 ? 'test' : 'tests')+' in '+data.testCount+' test '+(data.testCount == 1 ? 'class' : 'classes')+'...');
 	}
 
