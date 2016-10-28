@@ -305,6 +305,12 @@ class Command {
 			app.standardStreams.output.writeLine();
 		}
 
+		var description = this.settings.get('description');
+		if(description) {
+			app.standardStreams.output.writeLine(description.replace("\n", "\n  "));
+			app.standardStreams.output.writeLine();
+		}
+
 		var usage = this.settings.get('usage');
 		if(usage) {
 			app.standardStreams.output.writeLine('Usage:');
@@ -312,31 +318,56 @@ class Command {
 			app.standardStreams.output.writeLine();
 		}
 		
-		var optionsSettings = this.settings.get('options');
-		if(Object.keys(optionsSettings).length) {
-			app.standardStreams.output.writeLine('Options:');
-			optionsSettings.each(function(optionSettingsIndex, optionSettings) {
-				var optionLine = '  --'+optionSettings.identifier;
-				if(optionSettings.aliases.length > 1) {
-					optionLine += ' (-'+optionSettings.aliases.slice(1).join(', -')+')';
-				}
-				optionLine += Terminal.style(' (default: '+optionSettings.defaultValue+')', 'gray');
-				app.standardStreams.output.writeLine(optionLine);
+		function showOptionHelp(optionsSettings, indentationSpaces = 0) {
+			var indentation = ' '.repeat(indentationSpaces);
 
-				if(optionSettings.description) {
-					app.standardStreams.output.writeLine('    '+optionSettings.description);
+			if(Object.keys(optionsSettings).length) {
+				app.standardStreams.output.writeLine(indentation+'Options:');
+				optionsSettings.each(function(optionSettingsIndex, optionSettings) {
+					var line = indentation+'  --'+optionSettings.identifier;
+					if(optionSettings.aliases.length > 1) {
+						line += ' (-'+optionSettings.aliases.slice(1).join(', -')+')';
+					}
+					line += Terminal.style(' (default: '+optionSettings.defaultValue+')', 'gray');
+					app.standardStreams.output.writeLine(line);
+
+					if(optionSettings.description) {
+						app.standardStreams.output.writeLine(indentation+'  '+optionSettings.description);
+						app.standardStreams.output.writeLine();
+					}
+				});
+			}
+			else {
+				app.standardStreams.output.writeLine();
+			}
+		}
+
+		var optionsSettings = this.settings.get('options');
+		showOptionHelp(optionsSettings);
+
+		var subcommandsSettings = this.settings.get('subcommands');
+		if(Object.keys(subcommandsSettings).length) {
+			app.standardStreams.output.writeLine('Subcommands:');
+			subcommandsSettings.each(function(subcommandSettingsIndex, subcommandSettings) {
+				var line = '  '+subcommandSettings.identifier;
+				if(subcommandSettings.aliases.length > 1) {
+					line += ' (-'+subcommandSettings.aliases.slice(1).join(', -')+')';
+				}
+				//line += Terminal.style(' (default: '+subcommandSettings.defaultValue+')', 'gray');
+				app.standardStreams.output.writeLine(line);
+
+				if(subcommandSettings.description) {
+					app.standardStreams.output.writeLine('    '+subcommandSettings.description);
 					app.standardStreams.output.writeLine();
+				}
+
+				// Subcommand options
+				if(Object.keys(subcommandSettings.options).length) {
+					showOptionHelp(subcommandSettings.options, 6);
 				}
 			});
 		}
 		else {
-			app.standardStreams.output.writeLine();
-		}
-
-		var description = this.settings.get('description');
-		if(description) {
-			app.standardStreams.output.writeLine('Description:');
-			app.standardStreams.output.writeLine('  '+description.replace("\n", "\n  "));
 			app.standardStreams.output.writeLine();
 		}
 
