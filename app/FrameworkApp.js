@@ -35,7 +35,7 @@ class FrameworkApp extends App {
 
 	async graphicalInterfaceCommand() {
 		app.log('Loading graphical interface...');
-		var electronChildProcess = Node.spawnChildProcess('electron', ['--js-flags="--harmony-async-await"', 'app'], {
+		var electronChildProcess = Node.spawnChildProcess('electron', ['--js-flags="--harmony-async-await"', 'app/electron.js'], {
 			//cwd: app.framework.directory,
 		});
 
