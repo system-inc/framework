@@ -380,6 +380,26 @@ class App extends EventEmitter {
 		await Module.initialize(modulesForApp);
 	}
 
+	inTerminalContext() {
+		var inTerminalContext = false;
+
+		if(Node.Process.stdout.isTTY) {
+			inTerminalContext = true;
+		}
+
+		return inTerminalContext;
+	}
+
+	inElectronContext() {
+		var inElectronContext = false;
+
+		if(Node.Process.versions && Node.Process.versions.electron) {
+			inElectronContext = true;
+		}
+
+		return inElectronContext;
+	}
+
 }
 
 // Export

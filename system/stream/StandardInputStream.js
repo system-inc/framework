@@ -23,8 +23,16 @@ class StandardInputStream extends StandardStream {
 	}
 
 	setRawMode(enabled) {
+		var set = false;
+
 		// Raw mode takes input character by character rather than line by line
-		this.nodeStream.setRawMode(enabled);
+
+		if(this.nodeStream.setRawMode) {
+			this.nodeStream.setRawMode(enabled);
+			set = true;
+		}
+
+		return set;
 	}
 
 }

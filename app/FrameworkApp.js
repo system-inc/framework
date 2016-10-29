@@ -14,28 +14,38 @@ class FrameworkApp extends App {
 	async initialize() {
 		await super.initialize(...arguments);
 		
-		// Proctor
-		if(this.command.subcommands.proctor) {
-			this.proctorCommand();
+		// If in the Electron context
+		if(app.inElectronContext()) {
+			this.initializeGraphicalInterfaceInElectron();
 		}
-		// Graphical interface
+		// Proctor command
+		else if(this.command.subcommands.proctor) {
+			this.processCommandProctor();
+		}
+		// Graphical interface command
 		else if(this.command.subcommands.graphicalInterface) {
-			this.graphicalInterfaceCommand();
+			this.processCommandGraphicalInterface();
 		}
-		// Interactive command line interface
+		// Interactive command line interface command
 		else if(this.command.subcommands.interactiveCommandLineInterface) {
 			// Do nothing
 		}
 		// Show help by default
 		else {
+			// Fun with ASCII art
 			this.standardStreams.output.writeLine("\n"+AsciiArt.framework.version[this.framework.version.toString()]+"\n");
 			this.command.showHelp();
 		}
 	}
 
-	async graphicalInterfaceCommand() {
+	initializeGraphicalInterfaceInElectron() {
+		console.log('initializeGraphicalInterfaceInElectron');
+	}
+
+	async processCommandGraphicalInterface() {
 		app.log('Loading graphical interface...');
-		var electronChildProcess = Node.spawnChildProcess('electron', ['--js-flags="--harmony-async-await"', 'app/electron.js'], {
+		var electronChildProcess = Node.spawnChildProcess('C:\\Program Files\\Node.js\\node_modules\\electron\\dist\\electron.exe', ['--js-flags="--harmony"', 'app/FrameworkElectronApp.js'], {
+		//var electronChildProcess = Node.spawnChildProcess('electron', ['--js-flags="--harmony"', 'app/electron.js'], {
 			//cwd: app.framework.directory,
 		});
 
@@ -55,7 +65,7 @@ class FrameworkApp extends App {
 		});
 	}
 
-	async proctorCommand() {
+	async processCommandProctor() {
 		// Create a Proctor to oversee all of the tests as they run
 		this.proctor = new Proctor(this.command.subcommands.proctor.options.reporter, this.command.subcommands.proctor.options.breakOnError);
 		//app.log('Proctor created', this.proctor);

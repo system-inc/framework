@@ -52,7 +52,7 @@ class Node {
 			}
 		}
 
-		Node.Process.exit(1);
+		Node.Process.exit(1);	
 	}
 
 }

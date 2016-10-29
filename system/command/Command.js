@@ -242,8 +242,7 @@ class Command {
 						currentArgumentOptionSettings.type == 'boolean' &&
 						(nextArgument != 'true' || nextArgument != 'false')
 					) {
-						app.standardStreams.output.writeLine(Terminal.style('Invalid value "'+nextArgument+'" for option "'+optionIdentifier+'".', 'red'));
-						Node.exit();
+						this.exit(Terminal.style('Invalid value "'+nextArgument+'" for option "'+optionIdentifier+'".', 'red'));
 					}
 					//app.log('nextArgument', nextArgument, 'is option value');
 					optionsNode[optionIdentifier] = nextArgument;
@@ -276,8 +275,7 @@ class Command {
 				invalidCommandString += ' Did you mean '+recommendedCommandAliases.toConjunctionString('or', '"')+'?';
 			}
 			
-			app.standardStreams.output.writeLine(Terminal.style(invalidCommandString, 'red'));
-			Node.exit();
+			this.exit(Terminal.style(invalidCommandString, 'red'));
 		}
 
 		return currentArgumentIndex;
@@ -374,11 +372,11 @@ class Command {
 	showVersion() {
 		app.standardStreams.output.writeLine(app.title+' '+(app.version ? app.version : '(unknown version)'));
 
-		Node.exit();
+		this.exit();
 	}
 
 	showHelp() {
-		//Node.exit(this);
+		//this.exit(this);
 
 		var title = app.title+' '+(app.version ? app.version : '(unknown version)');
 
@@ -450,7 +448,7 @@ class Command {
 			app.standardStreams.output.writeLine();
 		}
 
-		Node.exit();
+		this.exit();
 	}
 
 	showDebugCommand() {
@@ -491,6 +489,17 @@ class Command {
 		debugCommand = Terminal.style(debugCommand, 'yellow');
 
 		app.standardStreams.output.writeLine(debugCommand);
+	}
+
+	exit(message) {
+		// Only exit if the app is in a terminal context
+		if(app.inTerminalContext()) {
+			if(message) {
+				app.standardStreams.output.writeLine(message);
+			}
+
+			this.exit();
+		}
 	}
 
 }

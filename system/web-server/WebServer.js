@@ -337,13 +337,13 @@ class WebServer extends Server {
 			request: request.getPublicErrorData(),
 		});
 
-		// Forcefully send the response (this will send the response even if response.send() has already been triggered)
-		response.send(true);
-
 		// Conditionally log the failed request to the general log
 		if(this.logs.general) {
 			this.logs.general.write(logEntry+"\n");
 		}
+
+		// Forcefully send the response
+		response.send(true);
 	}
 
 	// Handles errors that occur before nodeResponse is wrapped in a Framework response object
@@ -380,13 +380,13 @@ class WebServer extends Server {
 		// Encode the content
 		content = Json.encode(content);
 
-		// Send the content and end the response
-		nodeResponse.end(content);
-
 		// Conditionally log the failed request to the general log
 		if(this.logs.general) {
 			this.logs.general.write(logEntry+"\n");
 		}
+
+		// Send the content and end the response
+		nodeResponse.end(content);
 	}
 
 }

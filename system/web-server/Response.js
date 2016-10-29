@@ -183,19 +183,27 @@ class Response {
 			this.headers.set('Connection', 'close');
 		}
 
-		// Send the headers
-		this.sendHeaders();
-
-		if(doNotSendContent) {
-			//app.log('not sending content');
-			this.nodeResponse.end(function() {
-				this.sent();
-			}.bind(this));
+		// If the Node response has already been sent
+		if(this.nodeResponse.headersSent) {
+			app.error('Headers already sent, need to understand why...');
+			this.sent();
 		}
-		// Send the content
+		// If the Node response has not been sent
 		else {
-			this.sendContent();
-		}
+			// Send the headers
+			this.sendHeaders();
+
+			if(doNotSendContent) {
+				//app.log('not sending content');
+				this.nodeResponse.end(function() {
+					this.sent();
+				}.bind(this));
+			}
+			// Send the content
+			else {
+				this.sendContent();
+			}
+		}		
 	}
 
 	sendHeaders() {
