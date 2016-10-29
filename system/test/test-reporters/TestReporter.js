@@ -74,14 +74,14 @@ class TestReporter {
 
 		//app.standardStreams.output.writeLine('Proctor');
 
-		app.standardStreams.output.writeLine("\n"+'Tests found in: '+this.proctor.path);
+		app.standardStreams.output.writeLine("\n"+'Finding tests in: '+this.proctor.path);
 		
 		if(this.proctor.filePattern) {
-			app.standardStreams.output.writeLine('Filtered file paths matching: '+this.proctor.filePattern);
+			app.standardStreams.output.writeLine('Filtering file paths matching: '+this.proctor.filePattern);
 		}
 		
 		if(this.proctor.methodPattern) {
-			app.standardStreams.output.writeLine('Filtered methods matching: '+this.proctor.methodPattern);
+			app.standardStreams.output.writeLine('Filtering methods matching: '+this.proctor.methodPattern);
 		}
 		
 		if(this.proctor.breakOnError) {
