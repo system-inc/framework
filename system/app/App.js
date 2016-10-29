@@ -154,7 +154,7 @@ class App extends EventEmitter {
 		var interactiveCommandLineInterfaceSettings = this.settings.get('interactiveCommandLineInterface');
 		//this.log('interactiveCommandLineInterfaceSettings', interactiveCommandLineInterfaceSettings);
 
-		if(interactiveCommandLineInterfaceSettings.enabled) {
+		if(this.inTerminalContext() && interactiveCommandLineInterfaceSettings.enabled) {
 			this.interfaces.interactiveCommandLineInterface = new InteractiveCommandLineInterface(interactiveCommandLineInterfaceSettings);
 		}
 	}

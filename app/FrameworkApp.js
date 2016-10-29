@@ -39,7 +39,7 @@ class FrameworkApp extends App {
 	}
 
 	initializeGraphicalInterfaceInElectron() {
-		console.log('initializeGraphicalInterfaceInElectron');
+		console.error('need to create a graphical interface (dom window) which will house our htmldocument');
 	}
 
 	async processCommandGraphicalInterface() {
