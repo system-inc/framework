@@ -181,20 +181,45 @@ class File extends FileSystemObject {
         });
     }
 
+    // usage:
+    // write(fd, buffer, offset, length[, position], callback);
+    // or
+    // write(fd, string[, position[, encoding]], callback);
     static write(fileDescriptor, buffer, offset, length, position) {
-        return new Promise(function(resolve, reject) {
-            Node.FileSystem.write(fileDescriptor, buffer, offset, length, position, function(error, written, buffer) {
-                if(error) {
-                    reject(error);
-                }
-                else {
-                    resolve({
-                        'written': written,
-                        'buffer': buffer,
-                    });
-                }
+        if(String.is(buffer)) {
+            var string = buffer;
+            var position = offset;
+            var encoding = length;
+
+            return new Promise(function(resolve, reject) {
+                Node.FileSystem.write(fileDescriptor, string, position, encoding, function(error, written, buffer) {
+                    if(error) {
+                        reject(error);
+                    }
+                    else {
+                        resolve({
+                            'written': written,
+                            'buffer': buffer,
+                        });
+                    }
+                });
             });
-        });
+        }
+        else {
+            return new Promise(function(resolve, reject) {
+                Node.FileSystem.write(fileDescriptor, buffer, offset, length, position, function(error, written, buffer) {
+                    if(error) {
+                        reject(error);
+                    }
+                    else {
+                        resolve({
+                            'written': written,
+                            'buffer': buffer,
+                        });
+                    }
+                });
+            });
+        }
     }
 
     static create(file, data, options) {

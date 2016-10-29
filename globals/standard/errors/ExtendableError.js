@@ -1,4 +1,5 @@
 // Class
+//class ExtendableError {
 class ExtendableError extends Error {
 
 	constructor(message) {
@@ -14,6 +15,8 @@ class ExtendableError extends Error {
 	}
 	
 }
+
+//ExtendableError.prototype = Error.prototype;
 
 // Export
 export default ExtendableError;
