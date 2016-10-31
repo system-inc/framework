@@ -13,6 +13,23 @@ class FrameworkApp extends App {
 
 	async initialize() {
 		await super.initialize(...arguments);
+
+		console.log(`
+			All apps will have a commandLineInterface
+			Not all apps will have an interactiveCommandLineInterface
+			Not all apps will have a graphicalInterface, will need a graphicalInterfaceManager to manage them as they may have several top level interfaces
+				both the Electron.BrowserWindow and the document.window will be represented by an abstract GraphicalInterface
+				graphical interfaces have an identifier
+
+			app.interfaces.commandLine = CommandLineInterface
+			app.interfaces.interactiveCommandLine = InteractiveCommandLineInterface
+			app.interfaces.textual = TextualInterface
+			app.interfaces.graphical = {
+				id: GraphicalInterface
+			}
+			app.interfaces.graphicalInterfaceManager
+
+		`)
 		
 		// If in the Electron context
 		if(app.inElectronContext()) {
@@ -44,6 +61,11 @@ class FrameworkApp extends App {
 
 	async processCommandGraphicalInterface() {
 		app.log('Loading graphical interface...');
+
+		var electronExecutablePath = require.resolve('electron');
+		app.log('electronExecutablePath', electronExecutablePath);
+		Node.exit();
+
 		var electronChildProcess = Node.spawnChildProcess('C:\\Program Files\\Node.js\\node_modules\\electron\\dist\\electron.exe', ['--js-flags="--harmony"', 'app/FrameworkElectronApp.js'], {
 		//var electronChildProcess = Node.spawnChildProcess('electron', ['--js-flags="--harmony"', 'app/electron.js'], {
 			//cwd: app.framework.directory,
