@@ -4,6 +4,9 @@ import Settings from './../../system/settings/Settings.js';
 
 // Class
 class GraphicalInterfaceManager {
+
+	
+
 }
 
 // Export
