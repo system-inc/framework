@@ -1,6 +1,7 @@
 // Globals
 import './../globals/Globals.js';
 import AsciiArt from './../system/ascii-art/AsciiArt.js';
+import Directory from './../system/file-system/Directory.js';
 import Proctor from './../system/test/Proctor.js';
 
 // Dependencies
@@ -64,17 +65,46 @@ class FrameworkApp extends App {
 		app.interfaces.graphicalInterfaceManager = new GraphicalInterfaceManager();
 	}
 
+	// TODO: Move this to an ElectronManager class helper function
+	async getPathToElectronExecutable() {
+		var pathToElectronExecutable = null;
+
+		// Get the electron
+		var nodeModuleLookupPaths = Node.Module._resolveLookupPaths('electron')[1];
+		var pathToElectronModule = null;
+		//app.log('nodeModuleLookupPaths', nodeModuleLookupPaths);
+
+		await nodeModuleLookupPaths.each(async function(index, lookupPath) {
+			var reformedLookupPath = lookupPath;
+			//app.log('reformedLookupPath', reformedLookupPath);
+			if(reformedLookupPath.endsWith('node')) {
+				reformedLookupPath = reformedLookupPath.replaceLast('node', 'node_modules');
+			}
+
+			reformedLookupPath = Node.Path.join(reformedLookupPath, 'electron');
+
+			if(await Directory.exists(reformedLookupPath)) {
+				pathToElectronModule = reformedLookupPath;
+				return false; // break
+			}
+		});
+
+		//app.info('pathToElectronModule', pathToElectronModule);
+
+		if(pathToElectronModule) {
+			pathToElectronExecutable = require(pathToElectronModule);
+			//app.log('pathToElectronExecutable', pathToElectronExecutable);
+		}
+
+		return pathToElectronExecutable;
+	}
+
 	async processCommandGraphicalInterface() {
 		app.log('Loading graphical interface...');
 
-		var electronPathScriptPath = require.resolve('electron');
-		app.log('electronPathScriptPath', electronPathScriptPath);
-		var electronExecutablePath = require(electronPathScriptPath);
-		app.log('electronExecutablePath', electronExecutablePath);
-		//Node.exit();
+		var pathToElectronExecutable = await this.getPathToElectronExecutable();		
 
-		//var electronChildProcess = Node.spawnChildProcess('C:\\Program Files\\Node.js\\node_modules\\electron\\dist\\electron.exe', ['--js-flags="--harmony"', 'app/FrameworkElectronApp.js'], {
-		var electronChildProcess = Node.spawnChildProcess(electronExecutablePath, ['--js-flags="--harmony"', 'app/FrameworkElectronApp.js'], {
+		var electronChildProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags="--harmony"', 'app/FrameworkElectronApp.js'], {
 			cwd: app.framework.directory,
 		});
 

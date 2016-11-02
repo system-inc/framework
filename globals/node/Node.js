@@ -22,6 +22,7 @@ class Node {
 	static FileSystem = require('fs');
 	static Http = require('http');
 	static Https = require('https');
+	static Module = require('module');
 	static OperatingSystem = require('os');
 	static Path = Path;
 	static Process = process;
@@ -33,6 +34,19 @@ class Node {
 	static Url = require('url');
 	static Utility = require('util');
 	static Zlib = require('zlib');
+
+	static execute(command, options = {}) {
+		return new Promise(function(resolve, reject) {
+			Node.ChildProcess.exec(command, options, function(error, standardOut, standardError) {
+				if(error) {
+					reject(error);	
+				}
+				else {
+					resolve(standardOut);
+				}
+			});
+		});
+	}
 
 	static spawnChildProcess() {
 		var childProcess = Node.ChildProcess.spawn(...arguments);
