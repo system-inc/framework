@@ -1,8 +1,8 @@
 // Dependencies
-import Interface from './Interface.js';
-import Settings from './../../system/settings/Settings.js';
-import Terminal from './../../system/interface/Terminal.js';
-import File from './../../system/file-system/File.js';
+import Interface from './../../../system/interface/Interface.js';
+import Settings from './../../../system/settings/Settings.js';
+import Terminal from './../../../system/interface/Terminal.js';
+import File from './../../../system/file-system/File.js';
 
 // Class
 class InteractiveCommandLineInterface extends Interface {
@@ -27,7 +27,7 @@ class InteractiveCommandLineInterface extends Interface {
 		super();
 
 		this.settings.merge(settings);
-		//app.log(this.settings);
+		//app.info(this.settings);
 
 		// Conditionally enable history
 		if(this.settings.get('history.enabled')) {

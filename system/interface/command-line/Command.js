@@ -1,6 +1,6 @@
 // Dependencies
-import Terminal from './../../system/interface/Terminal.js';
-import Settings from './../../system/settings/Settings.js';
+import Terminal from './../../../system/interface/Terminal.js';
+import Settings from './../../../system/settings/Settings.js';
 
 // Class
 class Command {
@@ -8,33 +8,7 @@ class Command {
 	// The configuration for the command
 	settings = new Settings({
 		description: null,
-		options: {
-			version: {
-				type: 'boolean',
-				defaultValue: false,
-				description: 'Show the version of the app.',
-				aliases: [
-					'v',
-				],
-			},
-			help: {
-				type: 'boolean',
-				defaultValue: false,
-				description: 'Show help.',
-				aliases: [
-					'h',
-					'?',
-				],
-			},
-			debugCommand: {
-				type: 'boolean',
-				defaultValue: false,
-				description: 'Show the command configuration.',
-				aliases: [
-					'dc',
-				],
-			},
-		},
+		options: {},
 		subcommands: {},
 	});
 
@@ -498,7 +472,7 @@ class Command {
 				app.standardStreams.output.writeLine(message);
 			}
 
-			this.exit();
+			Node.exit();
 		}
 	}
 

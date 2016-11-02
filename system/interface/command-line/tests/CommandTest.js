@@ -1,18 +1,19 @@
 // Dependencies
-import Test from './../../../system/test/Test.js';
-import Assert from './../../../system/test/Assert.js';
-import Command from './../../../system/command/Command.js';
+import Test from './../../../../system/test/Test.js';
+import Assert from './../../../../system/test/Assert.js';
+import Command from './../Command.js';
 
 // Class
 class CommandTest extends Test {
 
 	async testCommand() {
-		var commandSettings = app.settings.get('command');
+		var commandSettings = app.settings.get('interfaces.commandLine.command');
 
 		var commandString = 'nodeExecutableFile javaScriptFile proctor -r dot -b -f command -m method';
 
 		var actual = new Command(commandSettings, commandString);
 		//app.info(actual);
+
 		Assert.strictEqual(actual.subcommands.proctor.options.path, null, 'proctor command path option is set correctly');
 		Assert.strictEqual(actual.subcommands.proctor.options.filePattern, 'command', 'proctor command filePattern option is set correctly');
 		Assert.strictEqual(actual.subcommands.proctor.options.methodPattern, 'method', 'proctor command methodPattern option is set correctly');
@@ -20,12 +21,10 @@ class CommandTest extends Test {
 		Assert.strictEqual(actual.subcommands.proctor.options.supervise, false, 'proctor command supervise option is set correctly');
 		Assert.strictEqual(actual.subcommands.proctor.options.breakOnError, true, 'proctor command breakOnError option is set correctly');
 
-		// Do assertions
+		// TODO: test showing help for a specific command, e.g., node app proctor --help
 
-		// test showing help for a specific command, e.g., node app proctor --help
-
-		// Another test
-		//commandString = '-option1 option1Argument1 --option2 subCommand1 -subCommandOption1 subCommandOption1Argument --subCommandOption2';		
+		// TODOL Another test with sub sub commands
+		//commandString = '-option1 option1Argument1 --option2 subCommand1 -subCommandOption1 subCommandOption1Argument --subCommandOption2 subSubCommand1';		
 	}
 
 }

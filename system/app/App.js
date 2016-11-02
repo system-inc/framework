@@ -4,8 +4,8 @@ import StandardInputStream from './../../system/stream/StandardInputStream.js';
 import StandardOutputStream from './../../system/stream/StandardOutputStream.js';
 import StandardErrorStream from './../../system/stream/StandardErrorStream.js';
 import FileLog from './../../system/log/FileLog.js';
-import InteractiveCommandLineInterface from './../../system/interface/InteractiveCommandLineInterface.js';
-import Command from './../../system/command/Command.js';
+import CommandLineInterface from './../../system/interface/command-line/CommandLineInterface.js';
+import InteractiveCommandLineInterface from './../../system/interface/interactive-command-line/InteractiveCommandLineInterface.js';
 import Module from './../../system/module/Module.js';
 import Settings from './../../system/settings/Settings.js';
 import Terminal from './../../system/interface/Terminal.js';
@@ -37,12 +37,47 @@ class App extends EventEmitter {
 			directory: null, // Will set this default in constructor
 			nameWithoutExtension: 'app',
 		},
-		interactiveCommandLineInterface: {
-			enabled: true,
-			history: {
+		interfaces: {
+			commandLine: {
+				command: {
+					description: null,
+					options: {
+						version: {
+							type: 'boolean',
+							defaultValue: false,
+							description: 'Show the version of the app.',
+							aliases: [
+								'v',
+							],
+						},
+						help: {
+							type: 'boolean',
+							defaultValue: false,
+							description: 'Show help.',
+							aliases: [
+								'h',
+								'?',
+							],
+						},
+						debugCommand: {
+							type: 'boolean',
+							defaultValue: false,
+							description: 'Show the command configuration.',
+							aliases: [
+								'dc',
+							],
+						},
+					},
+					subcommands: {},
+				},
+			},
+			interactiveCommandLine: {
 				enabled: true,
-				directory: null, // Will set this default in constructor
-				nameWithoutExtension: 'history',
+				history: {
+					enabled: true,
+					directory: null, // Will set this default in constructor
+					nameWithoutExtension: 'history',
+				},
 			},
 		},
 		modules: {
@@ -52,11 +87,14 @@ class App extends EventEmitter {
 
 	environment = null;
 
-	command = null;
-
 	modules = {};
 
-	interfaces = {};
+	interfaces = {
+		commandLine: null,
+		//interactiveCommandLine: null, // Will initialize if necessary
+		//textual: null, // Will initialize if necessary
+		//graphical: null, // Will initialize if necessary
+	};
 
 	framework = {
 		version: new Version('0.1.0'),
@@ -74,9 +112,11 @@ class App extends EventEmitter {
 			standardStreamsFileLog: {
 				directory: Node.Path.join(this.directory, 'logs'),
 			},
-			interactiveCommandLineInterface: {
-				history: {
-					directory: Node.Path.join(this.directory, 'logs'),
+			interfaces: {
+				interactiveCommandLine: {
+					history: {
+						directory: Node.Path.join(this.directory, 'logs'),
+					},
 				},
 			},
 		});
@@ -89,20 +129,20 @@ class App extends EventEmitter {
 		// Load the app settings
 		await this.loadAppSettings();
 
-		// After the app settings are loaded, we will know how to configure the standard streams file log
-		await this.configureStandardStreamsFileLog();
-
-		// After the app settings are loaded, we will know how to configure the command history
-		await this.configureInteractiveCommandLineInterface();
-
 		// Use app settings to set the title and the identifier
 		this.setPropertiesFromAppSettings();
 
-		// Load the command
-		this.command = new Command(this.settings.get('command'), Node.Process.argv);
-
 		// Use app settings to configure the environment
 		this.configureEnvironment();
+
+		// After the app settings are loaded, we will know how to configure the standard streams file log
+		await this.configureStandardStreamsFileLog();
+
+		// Configure the command line interface
+		await this.configureCommandLineInterface();
+
+		// Configure the interactive command line interface
+		await this.configureInteractiveCommandLineInterface();
 
 		// Load all of the modules for the App indicated in the app settings
 		await this.requireAndInitializeAppModules();
@@ -150,12 +190,19 @@ class App extends EventEmitter {
 		}
 	}
 
+	async configureCommandLineInterface() {
+		var commandLineInterfaceSettings = this.settings.get('interfaces.commandLine');
+		//this.info('commandLineInterfaceSettings', commandLineInterfaceSettings);
+
+		this.interfaces.commandLine = new CommandLineInterface(commandLineInterfaceSettings);
+	}
+
 	async configureInteractiveCommandLineInterface() {
-		var interactiveCommandLineInterfaceSettings = this.settings.get('interactiveCommandLineInterface');
-		//this.log('interactiveCommandLineInterfaceSettings', interactiveCommandLineInterfaceSettings);
+		var interactiveCommandLineInterfaceSettings = this.settings.get('interfaces.interactiveCommandLine');
+		//this.info('interactiveCommandLineInterfaceSettings', interactiveCommandLineInterfaceSettings);
 
 		if(this.inTerminalContext() && interactiveCommandLineInterfaceSettings.enabled) {
-			this.interfaces.interactiveCommandLineInterface = new InteractiveCommandLineInterface(interactiveCommandLineInterfaceSettings);
+			this.interfaces.interactiveCommandLine = new InteractiveCommandLineInterface(interactiveCommandLineInterfaceSettings);
 		}
 	}
 
