@@ -5,6 +5,8 @@ import GraphicalInterfaceHistory from './GraphicalInterfaceHistory.js';
 // Class
 class GraphicalInterface extends Interface {
 
+	identifier = null;
+
 	display = null;
 
 	parent = null;
@@ -81,6 +83,11 @@ class GraphicalInterface extends Interface {
 			},
 		},
 	};
+
+	constructor(identifier) {
+		super();
+		this.identifier = identifier;
+	}
 
 }
 

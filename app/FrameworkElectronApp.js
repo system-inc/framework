@@ -62,6 +62,8 @@ class FrameworkElectronApp {
 	createMainBrowserWindow() {
 		console.log('FrameworkElectronApp createMainBrowserWindow');
 
+		Electron.app.test = 'hi';
+
 		// 7.0.0: This should all be configured using app settings
 		// Create the browser window
 		this.mainBrowserWindow = new Electron.BrowserWindow({

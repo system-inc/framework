@@ -1,3 +1,6 @@
+require('app-module-path').addPath(__dirname);
+require('app-module-path').addPath(require('path').join(__dirname, '../'));
+
 // Disable the Babel cache for debugging
 //process.env.BABEL_DISABLE_CACHE = 1;
 
@@ -17,4 +20,4 @@ require('babel-register')({
 	sourceMaps: 'both',
 });
 
-require('./FrameworkApp.js');
+require('FrameworkApp.js');

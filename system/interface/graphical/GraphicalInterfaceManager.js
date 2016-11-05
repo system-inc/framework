@@ -1,14 +1,14 @@
-// Dependencies
-import GraphicalInterface from './GraphicalInterface.js';
-import Settings from './../../system/settings/Settings.js';
-
 // Class
 class GraphicalInterfaceManager {
 
-	graphicalInterfaces = null;
+	interfaces = null;
 
-	constructor(graphicalInterfaces = {}) {
-		this.graphicalInterfaces = graphicalInterfaces;
+	constructor() {
+		this.interfaces = app.interfaces.graphical;
+	}
+
+	add(graphicalInterface) {
+		this.interfaces[graphicalInterface.identifier] = graphicalInterface;
 	}
 
 }

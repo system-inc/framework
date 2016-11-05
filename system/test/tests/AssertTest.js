@@ -1,8 +1,8 @@
 // Dependencies
 import Test from './../Test.js';
 import Assert from './../Assert.js';
-import NotFoundError from './../../../system/web-server/errors/NotFoundError.js';
-import InternalServerError from './../../../system/web-server/errors/InternalServerError.js';
+import NotFoundError from './../../../system/server/web/errors/NotFoundError.js';
+import InternalServerError from './../../../system/server/web/errors/InternalServerError.js';
 
 // Class
 class AssertTest extends Test {

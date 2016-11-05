@@ -7,7 +7,7 @@ libraries/electron/linux/*
 app/logs/*
 
 # Test Web Server
-system/web-server/tests/logs/*
+system/server/web/tests/logs/*
 
 # NPM
 npm-debug.log

@@ -1,6 +1,8 @@
 // Globals
 import './../globals/Globals.js';
 import AsciiArt from './../system/ascii-art/AsciiArt.js';
+import GraphicalInterfaceManager from './../system/interface/graphical/GraphicalInterfaceManager.js';
+import ElectronGraphicalInterface from './../system/interface/graphical/electron/ElectronGraphicalInterface.js';
 import ElectronManager from './../system/interface/graphical/electron/ElectronManager.js';
 import Proctor from './../system/test/Proctor.js';
 
@@ -15,7 +17,7 @@ class FrameworkApp extends App {
 		
 		// If in the Electron context
 		if(app.inElectronContext()) {
-			this.initializeGraphicalInterfaceInElectron();
+			this.inElectronMainBrowserWindow();
 		}
 		// Proctor command
 		else if(this.interfaces.commandLine.command.subcommands.proctor) {
@@ -37,30 +39,22 @@ class FrameworkApp extends App {
 		}
 	}
 
-	initializeGraphicalInterfaceInElectron() {
-		console.warn('Resolve this entire comment:');
-
-		// Create the GraphicalInterfaceManager
-		app.interfaces.graphicalInterfaceManager = new ElectronGraphicalInterfaceManager(app.interfaces.graphical);
-
-		// Create the FrameworkElectronGraphicalInterface
-		var frameworkElectronGraphicalInterface = new FrameworkElectronGraphicalInterface();
-
-		// Add the FrameworkElectronGraphicalInterface to the GraphicalInterfaceManager
-		app.interfaces.graphicalInterfaceManager.add(frameworkElectronGraphicalInterface);
-
-		// Show the FrameworkElectronGraphicalInterface
-		frameworkElectronGraphicalInterface.show();
-	}
-
 	async processCommandGraphicalInterface() {
 		app.log('Loading graphical interface...');
 
-		var pathToElectronExecutable = await ElectronManager.getPathToElectronExecutable();		
+		var pathToElectronExecutable = await ElectronManager.getPathToElectronExecutable();
 
-		var electronChildProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags="--harmony"', 'app/FrameworkElectronApp.js'], {
-			cwd: app.framework.directory,
-		});
+		app.error(`
+			see if it is possible to add lookup paths for require
+then I can switch all calls to require('system/') without any ../ garbage
+		`);
+
+		app.error(`
+			The process I am in now just exists to start the electron process,
+		 	I need to pass all standard streams to the child process now and forget about the main process as it is now worthless
+	 	`);
+
+		var electronChildProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags="--harmony"', 'app/FrameworkElectronApp.js']);
 
 		electronChildProcess.stdout.on('data', function(data) {
 			//app.standardStreams.output.write('Electron: '+data.toString());
@@ -76,6 +70,41 @@ class FrameworkApp extends App {
 			app.standardStreams.output.writeLine('Electron exited with code '+code+'.');
 			Node.exit();
 		});
+	}
+
+	// The application process
+	inElectron() {
+		// TODO: everything in FrameworkElectronApp.js should go here and be reconciled with what is below
+
+		// Create the GraphicalInterfaceManager
+		app.interfaces.graphicalInterfaceManager = new GraphicalInterfaceManager();
+
+		// Create an ElectronGraphicalInterface
+		var electronGraphicalInterface = new ElectronGraphicalInterface('framework');
+
+		// Add the ElectronGraphicalInterface to the GraphicalInterfaceManager
+		app.interfaces.graphicalInterfaceManager.add(electronGraphicalInterface);
+
+		// Show the ElectronGraphicalInterface
+		electronGraphicalInterface.show();
+	}
+
+	// The main renderer process
+	inElectronMainBrowserWindow() {
+		console.log('resolve comments below');
+
+		// We are inside of an Electron.BrowserWindow at this point
+
+		// We need to initialize a GraphicalInterface here
+
+		// The app process which created us has a GraphicalInterfaceManager as well as a graphicalInterface which represents us
+		// Do we need to get a reference to this same graphicalInterface?
+
+		// How heavy is communication over remote? how does remote work?
+		//app.interfaces = electron.remote.app.app;
+
+		// For now, I will just create a new one until I can figure it out
+		app.interfaces.graphicalInterfaceManager
 	}
 
 	async processCommandProctor() {

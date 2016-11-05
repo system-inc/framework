@@ -1,7 +1,7 @@
 // Dependencies
 import Module from './../../system/module/Module.js';
 import Version from './../../system/version/Version.js';
-import WebServer from './../../system/web-server/WebServer.js';
+import WebServer from './../../system/server/web/WebServer.js';
 import Settings from './../../system/settings/Settings.js';
 
 // Class
