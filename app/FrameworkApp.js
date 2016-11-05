@@ -40,29 +40,17 @@ class FrameworkApp extends App {
 	initializeGraphicalInterfaceInElectron() {
 		console.warn('Resolve this entire comment:');
 
-		/*
-			Not all apps will have a graphicalInterface, will need a graphicalInterfaceManager to manage them as they may have several top level interfaces
-				both the Electron.BrowserWindow and the document.window will be represented by an abstract GraphicalInterface graphical interfaces have an identifier
+		// Create the GraphicalInterfaceManager
+		app.interfaces.graphicalInterfaceManager = new ElectronGraphicalInterfaceManager(app.interfaces.graphical);
 
-				app.interfaces.graphical = {
-					id: GraphicalInterface
-				}
-				app.interfaces.graphicalInterfaceManager
+		// Create the FrameworkElectronGraphicalInterface
+		var frameworkElectronGraphicalInterface = new FrameworkElectronGraphicalInterface();
 
+		// Add the FrameworkElectronGraphicalInterface to the GraphicalInterfaceManager
+		app.interfaces.graphicalInterfaceManager.add(frameworkElectronGraphicalInterface);
 
-			App
-				Sub Process
-					Electron
-						ElectronApp - Graphical Interface Manager
-							Graphical Interface (Electron.BrowserWindow/window)
-
-			How does ElectronApp talk to App
-			How does GraphicalInterface talk to ElectronApp and to App?
-
-			need to create a graphical interface (dom window) which will house our htmldocument
-		*/
-
-		app.interfaces.graphicalInterfaceManager = new GraphicalInterfaceManager();
+		// Show the FrameworkElectronGraphicalInterface
+		frameworkElectronGraphicalInterface.show();
 	}
 
 	async processCommandGraphicalInterface() {

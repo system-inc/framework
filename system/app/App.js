@@ -201,6 +201,7 @@ class App extends EventEmitter {
 		var interactiveCommandLineInterfaceSettings = this.settings.get('interfaces.interactiveCommandLine');
 		//this.info('interactiveCommandLineInterfaceSettings', interactiveCommandLineInterfaceSettings);
 
+		// Enable the interactive command line interface by default if in terminal context
 		if(this.inTerminalContext() && interactiveCommandLineInterfaceSettings.enabled) {
 			this.interfaces.interactiveCommandLine = new InteractiveCommandLineInterface(interactiveCommandLineInterfaceSettings);
 		}
