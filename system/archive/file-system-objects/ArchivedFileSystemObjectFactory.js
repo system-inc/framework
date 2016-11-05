@@ -1,6 +1,6 @@
 // Dependencies
-//import ArchivedDirectory from './../../../system/archive/file-system-objects/ArchivedDirectory.js';
-//import ArchivedFile from './../../../system/archive/file-system-objects/ArchivedFile.js';
+//import ArchivedDirectory from 'system/archive/file-system-objects/ArchivedDirectory.js';
+//import ArchivedFile from 'system/archive/file-system-objects/ArchivedFile.js';
 
 // Class
 class ArchivedFileSystemObjectFactory {

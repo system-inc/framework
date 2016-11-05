@@ -1,6 +1,6 @@
 // Dependencies
-var FormFieldView = Framework.require('system/web-interface/views/forms/fields/FormFieldView.js');
-var OptionFormControlView = Framework.require('system/web-interface/views/forms/controls/options/OptionFormControlView.js');
+var FormFieldView = Framework.require('system/interface/graphical/web/views/forms/fields/FormFieldView.js');
+var OptionFormControlView = Framework.require('system/interface/graphical/web/views/forms/controls/options/OptionFormControlView.js');
 
 // Class
 var OptionFormFieldView = FormFieldView.extend({

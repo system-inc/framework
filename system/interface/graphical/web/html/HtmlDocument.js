@@ -1,6 +1,6 @@
 // Dependencies
-import XmlDocument from './../../../../../system/xml/XmlDocument.js';
-import Url from './../../../../../system/web/Url.js';
+import XmlDocument from 'system/xml/XmlDocument.js';
+import Url from 'system/web/Url.js';
 import Html from './Html.js';
 import HtmlDocumentEventEmitter from './events/html-document/HtmlDocumentEventEmitter.js';
 

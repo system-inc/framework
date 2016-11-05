@@ -1,6 +1,6 @@
 // Dependencies
-var TextFormFieldView = Framework.require('system/web-interface/views/forms/fields/text/TextFormFieldView.js');
-var MultipleLineTextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/multiple-line/MultipleLineTextFormControlView.js');
+var TextFormFieldView = Framework.require('system/interface/graphical/web/views/forms/fields/text/TextFormFieldView.js');
+var MultipleLineTextFormControlView = Framework.require('system/interface/graphical/web/views/forms/controls/text/multiple-line/MultipleLineTextFormControlView.js');
 
 // Class
 var MultipleLineTextFormFieldView = TextFormFieldView.extend({

@@ -1,7 +1,7 @@
 // Dependencies
-import Module from './../../system/module/Module.js';
-import Version from './../../system/version/Version.js';
-import DatabaseManager from './../../system/database/DatabaseManager.js';
+import Module from 'system/module/Module.js';
+import Version from 'system/version/Version.js';
+import DatabaseManager from 'system/database/DatabaseManager.js';
 
 // Class
 class DatabaseModule extends Module {

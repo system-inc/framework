@@ -1,8 +1,8 @@
 // Dependencies
-import View from './../../../../system/web-interface/views/View.js';
-import Settings from './../../../../system/settings/Settings.js';
-import FormFieldView from './../../../../system/web-interface/views/forms/fields/FormFieldView.js';
-import ButtonView from './../../../../system/web-interface/views/buttons/ButtonView.js';
+import View from 'system/interface/graphical/web/views/View.js';
+import Settings from 'system/settings/Settings.js';
+import FormFieldView from 'system/interface/graphical/web/views/forms/fields/FormFieldView.js';
+import ButtonView from 'system/interface/graphical/web/views/buttons/ButtonView.js';
 
 // Class
 class FormView extends View {

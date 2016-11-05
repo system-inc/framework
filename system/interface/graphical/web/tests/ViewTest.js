@@ -1,12 +1,12 @@
 // Dependencies
-import Test from './../../../system/test/Test.js';
-import Assert from './../../../system/test/Assert.js';
-import View from './../../../system/web-interface/views/View.js';
-import HtmlElement from './../../../system/interface/graphical/web/html/HtmlElement.js';
-import HtmlNode from './../../../system/interface/graphical/web/html/HtmlNode.js';
-import XmlElement from './../../../system/xml/XmlElement.js';
-import XmlNode from './../../../system/xml/XmlNode.js';
-import EventEmitter from './../../../system/events/EventEmitter.js';
+import Test from 'system/test/Test.js';
+import Assert from 'system/test/Assert.js';
+import View from 'system/interface/graphical/web/views/View.js';
+import HtmlElement from 'system/interface/graphical/web/html/HtmlElement.js';
+import HtmlNode from 'system/interface/graphical/web/html/HtmlNode.js';
+import XmlElement from 'system/xml/XmlElement.js';
+import XmlNode from 'system/xml/XmlNode.js';
+import EventEmitter from 'system/events/EventEmitter.js';
 
 // Class
 class ViewTest extends Test {

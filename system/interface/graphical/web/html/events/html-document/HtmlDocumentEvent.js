@@ -1,6 +1,6 @@
 // Dependencies
 import HtmlEvent from './../html-event/HtmlEvent.js';
-import Url from './../../../../../../../system/web/Url.js';
+import Url from 'system/web/Url.js';
 
 // Class
 class HtmlDocumentEvent extends HtmlEvent {

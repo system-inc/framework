@@ -1,6 +1,6 @@
 // Dependencies
-import Settings from './../../../system/settings/Settings.js';
-//import ViewContainer from './../../../system/web-interface/view-containers/ViewContainer.js';
+import Settings from 'system/settings/Settings.js';
+//import ViewContainer from 'system/interface/graphical/web/view-containers/ViewContainer.js';
 
 // Class
 class ViewController {

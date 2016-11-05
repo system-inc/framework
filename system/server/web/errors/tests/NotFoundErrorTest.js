@@ -1,8 +1,8 @@
 // Dependencies
-import Test from './../../../../system/test/Test.js';
-import Assert from './../../../../system/test/Assert.js';
-import HttpError from './../../../../system/server/web/errors/HttpError.js';
-import NotFoundError from './../../../../system/server/web/errors/NotFoundError.js';
+import Test from 'system/test/Test.js';
+import Assert from 'system/test/Assert.js';
+import HttpError from 'system/server/web/errors/HttpError.js';
+import NotFoundError from 'system/server/web/errors/NotFoundError.js';
 
 // Class
 class NotFoundErrorTest extends Test {

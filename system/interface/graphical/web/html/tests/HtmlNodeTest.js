@@ -1,11 +1,11 @@
 // Dependencies
-import ElectronTest from './../../../system/electron/tests/ElectronTest.js';
-import Assert from './../../../system/test/Assert.js';
-import HtmlNode from './../../../system/interface/graphical/web/html/HtmlNode.js';
-import XmlNode from './../../../system/xml/XmlNode.js';
-import EventEmitter from './../../../system/events/EventEmitter.js';
-import HtmlDocument from './../../../system/interface/graphical/web/html/HtmlDocument.js';
-import Html from './../../../system/interface/graphical/web/html/Html.js';
+import ElectronTest from 'system/electron/tests/ElectronTest.js';
+import Assert from 'system/test/Assert.js';
+import HtmlNode from 'system/interface/graphical/web/html/HtmlNode.js';
+import XmlNode from 'system/xml/XmlNode.js';
+import EventEmitter from 'system/events/EventEmitter.js';
+import HtmlDocument from 'system/interface/graphical/web/html/HtmlDocument.js';
+import Html from 'system/interface/graphical/web/html/Html.js';
 
 // Class
 class HtmlNodeTest extends ElectronTest {

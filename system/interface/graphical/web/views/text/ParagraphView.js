@@ -1,5 +1,5 @@
 // Dependencies
-var View = Framework.require('system/web-interface/views/View.js');
+var View = Framework.require('system/interface/graphical/web/views/View.js');
 
 // Class
 var ParagraphView = View.extend({

@@ -1,8 +1,8 @@
 // Dependencies
 import Log from './Log.js';
-import File from './../../system/file-system/File.js';
-import Directory from './../../system/file-system/Directory.js';
-import Terminal from './../../system/interface/Terminal.js';
+import File from 'system/file-system/File.js';
+import Directory from 'system/file-system/Directory.js';
+import Terminal from 'system/interface/Terminal.js';
 
 // Class
 class FileLog extends Log {

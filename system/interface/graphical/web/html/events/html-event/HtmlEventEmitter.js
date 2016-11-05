@@ -1,5 +1,5 @@
 // Dependencies
-import PropagatingEventEmitter from './../../../../../../../system/events/PropagatingEventEmitter.js';
+import PropagatingEventEmitter from 'system/events/PropagatingEventEmitter.js';
 import HtmlEvent from './HtmlEvent.js';
 
 // Class

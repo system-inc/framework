@@ -1,6 +1,6 @@
 // Dependencies
-import Terminal from './../../../system/interface/Terminal.js';
-import Settings from './../../../system/settings/Settings.js';
+import Terminal from 'system/interface/Terminal.js';
+import Settings from 'system/settings/Settings.js';
 
 // Class
 class Command {

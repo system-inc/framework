@@ -1,7 +1,7 @@
 // Dependencies
-import Test from './../../../system/test/Test.js';
-import Assert from './../../../system/test/Assert.js';
-import Version from './../../../system/version/Version.js';
+import Test from 'system/test/Test.js';
+import Assert from 'system/test/Assert.js';
+import Version from 'system/version/Version.js';
 
 // Class
 class ObjectTest extends Test {

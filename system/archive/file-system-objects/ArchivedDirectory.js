@@ -1,6 +1,6 @@
 // Dependencies
 import ArchivedFileSystemObject from './ArchivedFileSystemObject.js';
-import Directory from './../../../system/file-system/Directory.js';
+import Directory from 'system/file-system/Directory.js';
 
 // Class
 class ArchivedDirectory extends ArchivedFileSystemObject {

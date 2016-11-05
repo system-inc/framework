@@ -1,6 +1,6 @@
 // Dependencies
-import HtmlElement from './../../../system/interface/graphical/web/html/HtmlElement.js';
-import Settings from './../../../system/settings/Settings.js';
+import HtmlElement from 'system/interface/graphical/web/html/HtmlElement.js';
+import Settings from 'system/settings/Settings.js';
 
 // Class
 class View extends HtmlElement {

@@ -1,6 +1,6 @@
 // Dependencies
-import TextFormFieldView from './../../../../../../../system/web-interface/views/forms/fields/text/TextFormFieldView.js';
-import SingleLineTextFormControlView from './../../../../../../../system/web-interface/views/forms/controls/text/single-line/SingleLineTextFormControlView.js';
+import TextFormFieldView from 'system/interface/graphical/web/views/forms/fields/text/TextFormFieldView.js';
+import SingleLineTextFormControlView from 'system/interface/graphical/web/views/forms/controls/text/single-line/SingleLineTextFormControlView.js';
 
 // Class
 class SingleLineTextFormFieldView extends TextFormFieldView {

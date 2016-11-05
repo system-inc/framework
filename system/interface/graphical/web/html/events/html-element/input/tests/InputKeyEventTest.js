@@ -1,10 +1,10 @@
 // Dependencies
-import ElectronTest from './../../../../../../system/electron/tests/ElectronTest.js';
-import Assert from './../../../../../../system/test/Assert.js';
-import HtmlDocument from './../../../../../../system/interface/graphical/web/html/HtmlDocument.js';
-import Html from './../../../../../../system/interface/graphical/web/html/Html.js';
-import InputKeyEvent from './../../../../../../system/interface/graphical/web/html/events/html-element/input/InputKeyEvent.js';
-import WildcardPatternMatcher from './../../../../../../system/search/patterns/WildcardPatternMatcher.js';
+import ElectronTest from 'system/electron/tests/ElectronTest.js';
+import Assert from 'system/test/Assert.js';
+import HtmlDocument from 'system/interface/graphical/web/html/HtmlDocument.js';
+import Html from 'system/interface/graphical/web/html/Html.js';
+import InputKeyEvent from 'system/interface/graphical/web/html/events/html-element/input/InputKeyEvent.js';
+import WildcardPatternMatcher from 'system/search/patterns/WildcardPatternMatcher.js';
 var ElectronManager = null;
 
 // Class

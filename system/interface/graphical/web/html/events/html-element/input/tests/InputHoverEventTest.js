@@ -1,13 +1,13 @@
 // Dependencies
-import ElectronTest from './../../../../../../system/electron/tests/ElectronTest.js';
-import Assert from './../../../../../../system/test/Assert.js';
-import HtmlDocument from './../../../../../../system/interface/graphical/web/html/HtmlDocument.js';
-import Html from './../../../../../../system/interface/graphical/web/html/Html.js';
-import HtmlEvent from './../../../../../../system/interface/graphical/web/html/events/html-event/HtmlEvent.js';
-import HtmlNodeEvent from './../../../../../../system/interface/graphical/web/html/events/html-node/HtmlNodeEvent.js';
-import HtmlElementEvent from './../../../../../../system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
-import InputPressEvent from './../../../../../../system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
-import InputHoverEvent from './../../../../../../system/interface/graphical/web/html/events/html-element/input/InputHoverEvent.js';
+import ElectronTest from 'system/electron/tests/ElectronTest.js';
+import Assert from 'system/test/Assert.js';
+import HtmlDocument from 'system/interface/graphical/web/html/HtmlDocument.js';
+import Html from 'system/interface/graphical/web/html/Html.js';
+import HtmlEvent from 'system/interface/graphical/web/html/events/html-event/HtmlEvent.js';
+import HtmlNodeEvent from 'system/interface/graphical/web/html/events/html-node/HtmlNodeEvent.js';
+import HtmlElementEvent from 'system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
+import InputPressEvent from 'system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
+import InputHoverEvent from 'system/interface/graphical/web/html/events/html-element/input/InputHoverEvent.js';
 var ElectronManager = null;
 
 // Class

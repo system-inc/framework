@@ -1,15 +1,15 @@
 // Dependencies
-import EventEmitter from './../../system/events/EventEmitter.js';
+import EventEmitter from 'system/events/EventEmitter.js';
 import Test from './Test.js';
-import Stopwatch from './../../system/time/Stopwatch.js';
-import Terminal from './../../system/interface/Terminal.js';
+import Stopwatch from 'system/time/Stopwatch.js';
+import Terminal from 'system/interface/Terminal.js';
 import StandardTestReporter from './test-reporters/StandardTestReporter.js';
 import DotTestReporter from './test-reporters/DotTestReporter.js';
 import ConciseTestReporter from './test-reporters/ConciseTestReporter.js';
 import ElectronTestReporter from './test-reporters/ElectronTestReporter.js';
-import FileSystemObject from './../../system/file-system/FileSystemObject.js';
-import FileSystemObjectFactory from './../../system/file-system/FileSystemObjectFactory.js';
-import AsciiArt from './../../system/ascii-art/AsciiArt.js';
+import FileSystemObject from 'system/file-system/FileSystemObject.js';
+import FileSystemObjectFactory from 'system/file-system/FileSystemObjectFactory.js';
+import AsciiArt from 'system/ascii-art/AsciiArt.js';
 
 // Class
 class Proctor extends EventEmitter {

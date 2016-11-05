@@ -1,7 +1,7 @@
 // Dependencies
-import Module from './../../system/module/Module.js';
-import Version from './../../system/version/Version.js';
-import ElectronManager from './../../system/electron/ElectronManager.js';
+import Module from 'system/module/Module.js';
+import Version from 'system/version/Version.js';
+import ElectronManager from 'system/electron/ElectronManager.js';
 
 // Class
 class ElectronModule extends Module {

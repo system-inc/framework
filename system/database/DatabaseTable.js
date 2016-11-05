@@ -2,7 +2,7 @@
 import DatabaseTableColumn from './DatabaseTableColumn.js';
 import DatabaseTableIndex from './DatabaseTableIndex.js';
 import DatabaseTableRelationship from './DatabaseTableRelationship.js';
-import Version from './../../system/version/Version.js';
+import Version from 'system/version/Version.js';
 
 // Class
 class DatabaseTable {

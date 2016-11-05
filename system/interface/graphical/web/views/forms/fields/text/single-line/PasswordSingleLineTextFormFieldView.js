@@ -1,6 +1,6 @@
 // Dependencies
-var TextFormFieldView = Framework.require('system/web-interface/views/forms/fields/text/TextFormFieldView.js');
-var PasswordSingleLineTextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/single-line/PasswordSingleLineTextFormControlView.js');
+var TextFormFieldView = Framework.require('system/interface/graphical/web/views/forms/fields/text/TextFormFieldView.js');
+var PasswordSingleLineTextFormControlView = Framework.require('system/interface/graphical/web/views/forms/controls/text/single-line/PasswordSingleLineTextFormControlView.js');
 
 // Class
 var PasswordSingleLineTextFormFieldView = TextFormFieldView.extend({

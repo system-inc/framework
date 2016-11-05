@@ -1,5 +1,5 @@
 // Dependencies
-import View from './../../../../system/web-interface/views/View.js';
+import View from 'system/interface/graphical/web/views/View.js';
 
 // Class
 class ImageView extends View {

@@ -1,5 +1,5 @@
 // Dependencies
-import File from './../../system/file-system/File.js';
+import File from 'system/file-system/File.js';
 import SevenZip from './libraries/7-zip/SevenZip.js';
 import ArchivedFileSystemObjectFactory from './file-system-objects/ArchivedFileSystemObjectFactory.js';
 

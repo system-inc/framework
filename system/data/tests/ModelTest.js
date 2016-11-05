@@ -1,8 +1,8 @@
 // Dependencies
-import Test from './../../../system/test/Test.js';
-import Assert from './../../../system/test/Assert.js';
-import ModelClassManager from './../../../system/data/ModelClassManager.js';
-import DatabaseTest from './../../../system/database/tests/DatabaseTest.js';
+import Test from 'system/test/Test.js';
+import Assert from 'system/test/Assert.js';
+import ModelClassManager from 'system/data/ModelClassManager.js';
+import DatabaseTest from 'system/database/tests/DatabaseTest.js';
 
 // Class
 class ModelTest extends Test {

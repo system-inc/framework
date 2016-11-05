@@ -1,5 +1,5 @@
 // Dependencies
-import Directory from './../../../../system/file-system/Directory.js';
+import Directory from 'system/file-system/Directory.js';
 
 // Class
 class ElectronManager {

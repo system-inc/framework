@@ -1,8 +1,8 @@
 // Dependencies
-import Interface from './../../../system/interface/Interface.js';
-import Settings from './../../../system/settings/Settings.js';
-import Terminal from './../../../system/interface/Terminal.js';
-import File from './../../../system/file-system/File.js';
+import Interface from 'system/interface/Interface.js';
+import Settings from 'system/settings/Settings.js';
+import Terminal from 'system/interface/Terminal.js';
+import File from 'system/file-system/File.js';
 
 // Class
 class InteractiveCommandLineInterface extends Interface {

@@ -1,6 +1,6 @@
 // Dependencies
 import HtmlNode from './HtmlNode.js';
-import XmlElement from './../../../../../system/xml/XmlElement.js';
+import XmlElement from 'system/xml/XmlElement.js';
 import HtmlElementEventEmitter from './events/html-element/HtmlElementEventEmitter.js';
 
 // Class

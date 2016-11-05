@@ -1,6 +1,6 @@
 // Dependencies
 import Route from './Route.js';
-import File from './../../../../system/file-system/File.js';
+import File from 'system/file-system/File.js';
 
 // Class
 class FileRoute extends Route {

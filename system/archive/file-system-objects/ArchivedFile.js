@@ -1,6 +1,6 @@
 // Dependencies
 import ArchivedFileSystemObject from './ArchivedFileSystemObject.js';
-import File from './../../../system/file-system/File.js';
+import File from 'system/file-system/File.js';
 
 // Class
 class ArchivedFile extends ArchivedFileSystemObject {

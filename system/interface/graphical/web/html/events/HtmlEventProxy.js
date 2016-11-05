@@ -1,6 +1,6 @@
 // Dependencies
-import PropagatingEventEmitter from './../../../system/events/PropagatingEventEmitter.js';
-import WildcardPatternMatcher from './../../../system/search/patterns/WildcardPatternMatcher.js';
+import PropagatingEventEmitter from 'system/events/PropagatingEventEmitter.js';
+import WildcardPatternMatcher from 'system/search/patterns/WildcardPatternMatcher.js';
 import HtmlDocumentEvent from './html-document/HtmlDocumentEvent.js';
 import HtmlDocumentEventEmitter from './html-document/HtmlDocumentEventEmitter.js';
 import HtmlElementEvent from './html-element/HtmlElementEvent.js';

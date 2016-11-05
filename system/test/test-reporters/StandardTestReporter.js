@@ -1,7 +1,7 @@
 // Dependencies
 import TestReporter from './TestReporter.js';
 import ConciseTestReporter from './ConciseTestReporter.js';
-import Terminal from './../../../system/interface/Terminal.js';
+import Terminal from 'system/interface/Terminal.js';
 import AssertionError from './../errors/AssertionError.js';
 
 // Class

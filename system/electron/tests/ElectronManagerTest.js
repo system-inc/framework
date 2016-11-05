@@ -1,7 +1,7 @@
 // Dependencies
-import Test from './../../../system/test/Test.js';
-import Assert from './../../../system/test/Assert.js';
-import ElectronTest from './../../../system/electron/tests/ElectronTest.js';
+import Test from 'system/test/Test.js';
+import Assert from 'system/test/Assert.js';
+import ElectronTest from 'system/electron/tests/ElectronTest.js';
 
 // Class
 class ElectronManagerTest extends ElectronTest {

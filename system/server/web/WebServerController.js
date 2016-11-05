@@ -1,5 +1,5 @@
 // Dependencies
-import ServerController from './../../../system/server/ServerController.js';
+import ServerController from 'system/server/ServerController.js';
 
 // Class
 class WebServerController extends ServerController {

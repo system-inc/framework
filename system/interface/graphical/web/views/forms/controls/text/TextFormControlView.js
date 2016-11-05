@@ -1,5 +1,5 @@
 // Dependencies
-import FormControlView from './../../../../../../system/web-interface/views/forms/controls/FormControlView.js';
+import FormControlView from 'system/interface/graphical/web/views/forms/controls/FormControlView.js';
 
 // Class
 class TextFormControlView extends FormControlView {

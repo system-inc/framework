@@ -1,6 +1,6 @@
 // Dependencies
-var View = Framework.require('system/web-interface/views/View.js');
-var ListItemView = Framework.require('system/web-interface/views/lists/ListItemView.js');
+var View = Framework.require('system/interface/graphical/web/views/View.js');
+var ListItemView = Framework.require('system/interface/graphical/web/views/lists/ListItemView.js');
 
 // Class
 var ListView = View.extend({

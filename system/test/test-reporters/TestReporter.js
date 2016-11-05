@@ -1,5 +1,5 @@
 // Dependencies
-import Terminal from './../../../system/interface/Terminal.js';
+import Terminal from 'system/interface/Terminal.js';
 import Assert from './../Assert.js';
 import AssertionError from './../errors/AssertionError.js';
 

@@ -1,5 +1,5 @@
 // Dependencies
-import TextFormControlView from './../../../../../../../system/web-interface/views/forms/controls/text/TextFormControlView.js';
+import TextFormControlView from 'system/interface/graphical/web/views/forms/controls/text/TextFormControlView.js';
 
 // Class
 class SingleLineTextFormControlView extends TextFormControlView {

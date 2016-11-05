@@ -1,16 +1,16 @@
 // Dependencies
 var Electron = Node.require('electron');
 var Proctor = Framework.require('system/test/Proctor.js');
-var ViewController = Framework.require('system/web-interface/view-controllers/ViewController.js');
-var HeaderView = Framework.require('system/web-interface/views/text/HeaderView.js');
-var ParagraphView = Framework.require('system/web-interface/views/text/ParagraphView.js');
-var TextView = Framework.require('system/web-interface/views/text/TextView.js');
-var FormView = Framework.require('system/web-interface/views/forms/FormView.js');
-var OptionFormFieldView = Framework.require('system/web-interface/views/forms/fields/options/OptionFormFieldView.js');
-var SingleLineTextFormFieldView = Framework.require('system/web-interface/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js');
-var SingleLineTextFormControlView = Framework.require('system/web-interface/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
-var TableView = Framework.require('system/web-interface/views/tables/TableView.js');
-var ButtonView = Framework.require('system/web-interface/views/buttons/ButtonView.js');
+var ViewController = Framework.require('system/interface/graphical/web/view-controllers/ViewController.js');
+var HeaderView = Framework.require('system/interface/graphical/web/views/text/HeaderView.js');
+var ParagraphView = Framework.require('system/interface/graphical/web/views/text/ParagraphView.js');
+var TextView = Framework.require('system/interface/graphical/web/views/text/TextView.js');
+var FormView = Framework.require('system/interface/graphical/web/views/forms/FormView.js');
+var OptionFormFieldView = Framework.require('system/interface/graphical/web/views/forms/fields/options/OptionFormFieldView.js');
+var SingleLineTextFormFieldView = Framework.require('system/interface/graphical/web/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js');
+var SingleLineTextFormControlView = Framework.require('system/interface/graphical/web/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
+var TableView = Framework.require('system/interface/graphical/web/views/tables/TableView.js');
+var ButtonView = Framework.require('system/interface/graphical/web/views/buttons/ButtonView.js');
 var TestBrowserWindowPool = require('./proctor/browser-windows/TestBrowserWindowPool.js');
 
 // Class
@@ -52,8 +52,8 @@ var MainViewController = ViewController.extend({
     createViewContainer: function() {
         super.createViewContainer();
 
-        this.viewContainer.addStyleSheet('../../system/web-interface/themes/reset/style-sheets/reset.css');
-        this.viewContainer.addStyleSheet('../../system/web-interface/themes/framework/style-sheets/framework.css');
+        this.viewContainer.addStyleSheet('../../system/interface/graphical/web/themes/reset/style-sheets/reset.css');
+        this.viewContainer.addStyleSheet('../../system/interface/graphical/web/themes/framework/style-sheets/framework.css');
         this.viewContainer.addStyleSheet('views/style-sheets/style-sheet.css');
     },
 

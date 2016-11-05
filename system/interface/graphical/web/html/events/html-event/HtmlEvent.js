@@ -1,5 +1,5 @@
 // Dependencies
-import PropagatingEvent from './../../../../../../../system/events/PropagatingEvent.js';
+import PropagatingEvent from 'system/events/PropagatingEvent.js';
 
 // Class
 class HtmlEvent extends PropagatingEvent {

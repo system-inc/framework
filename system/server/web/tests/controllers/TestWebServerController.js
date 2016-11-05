@@ -1,15 +1,15 @@
 // Dependencies
-import WebServerController from './../../../../system/server/web/WebServerController.js';
-import InternalServerError from './../../../../system/server/web/errors/InternalServerError.js';
-import BadRequestError from './../../../../system/server/web/errors/BadRequestError.js';
-import ForbiddenError from './../../../../system/server/web/errors/ForbiddenError.js';
-import RequestedRangeNotSatisfiableError from './../../../../system/server/web/errors/RequestedRangeNotSatisfiableError.js';
-import RequestEntityTooLargeError from './../../../../system/server/web/errors/RequestEntityTooLargeError.js';
-import UnauthorizedError from './../../../../system/server/web/errors/UnauthorizedError.js';
-import ArchiveFile from './../../../../system/archive/ArchiveFile.js';
-import File from './../../../../system/file-system/File.js';
-import Html from './../../../../system/interface/graphical/web/html/Html.js';
-import HtmlDocument from './../../../../system/interface/graphical/web/html/HtmlDocument.js';
+import WebServerController from 'system/server/web/WebServerController.js';
+import InternalServerError from 'system/server/web/errors/InternalServerError.js';
+import BadRequestError from 'system/server/web/errors/BadRequestError.js';
+import ForbiddenError from 'system/server/web/errors/ForbiddenError.js';
+import RequestedRangeNotSatisfiableError from 'system/server/web/errors/RequestedRangeNotSatisfiableError.js';
+import RequestEntityTooLargeError from 'system/server/web/errors/RequestEntityTooLargeError.js';
+import UnauthorizedError from 'system/server/web/errors/UnauthorizedError.js';
+import ArchiveFile from 'system/archive/ArchiveFile.js';
+import File from 'system/file-system/File.js';
+import Html from 'system/interface/graphical/web/html/Html.js';
+import HtmlDocument from 'system/interface/graphical/web/html/HtmlDocument.js';
 
 // Class
 class TestWebServerController extends WebServerController {
@@ -88,7 +88,7 @@ class TestWebServerController extends WebServerController {
 	}
 
 	async contentArchivedFile() {
-		var archiveFile = new ArchiveFile(Node.Path.join(app.framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'archives', 'archive-text.zip'));
+		var archiveFile = new ArchiveFile(Node.Path.join(app.framework.directory, 'system', 'server', 'web', 'tests', 'views', 'files', 'archives', 'archive-text.zip'));
 		//app.log('archiveFile', archiveFile);
 
 		var archivedFileSystemObjects = await archiveFile.list();
@@ -100,7 +100,7 @@ class TestWebServerController extends WebServerController {
 	}
 
 	contentFile() {
-		var file = new File(Node.Path.join(app.framework.directory, 'system', 'web-server', 'tests', 'views', 'files', 'text', 'data.txt'));
+		var file = new File(Node.Path.join(app.framework.directory, 'system', 'server', 'web', 'tests', 'views', 'files', 'text', 'data.txt'));
 
 		return file;
 	}

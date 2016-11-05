@@ -1,9 +1,9 @@
 // Dependencies
-import ElectronTest from './../../../../../../system/electron/tests/ElectronTest.js';
-import Assert from './../../../../../../system/test/Assert.js';
-import HtmlDocument from './../../../../../../system/interface/graphical/web/html/HtmlDocument.js';
-import Html from './../../../../../../system/interface/graphical/web/html/Html.js';
-import InputPressEvent from './../../../../../../system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
+import ElectronTest from 'system/electron/tests/ElectronTest.js';
+import Assert from 'system/test/Assert.js';
+import HtmlDocument from 'system/interface/graphical/web/html/HtmlDocument.js';
+import Html from 'system/interface/graphical/web/html/Html.js';
+import InputPressEvent from 'system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
 var ElectronManager = null;
 
 // Class

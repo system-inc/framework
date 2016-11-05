@@ -1,13 +1,13 @@
 // Dependencies
-import Headers from './../../../system/web/headers/Headers.js';
-import Cookies from './../../../system/web/headers/Cookies.js';
-import RangeHeader from './../../../system/web/headers/RangeHeader.js';
-import Stopwatch from './../../../system/time/Stopwatch.js';
-import HtmlDocument from './../../../system/interface/graphical/web/html/HtmlDocument.js';
-import Data from './../../../system/data/Data.js';
-import File from './../../../system/file-system/File.js';
-import ArchivedFile from './../../../system/archive/file-system-objects/ArchivedFile.js';
-import NotFoundError from './../../../system/server/web/errors/NotFoundError.js';
+import Headers from 'system/web/headers/Headers.js';
+import Cookies from 'system/web/headers/Cookies.js';
+import RangeHeader from 'system/web/headers/RangeHeader.js';
+import Stopwatch from 'system/time/Stopwatch.js';
+import HtmlDocument from 'system/interface/graphical/web/html/HtmlDocument.js';
+import Data from 'system/data/Data.js';
+import File from 'system/file-system/File.js';
+import ArchivedFile from 'system/archive/file-system-objects/ArchivedFile.js';
+import NotFoundError from 'system/server/web/errors/NotFoundError.js';
 
 // Class
 class Response {

@@ -1,5 +1,5 @@
 // Dependencies
-import EventEmitter from './../../system/events/EventEmitter.js';
+import EventEmitter from 'system/events/EventEmitter.js';
 
 // Class
 class StandardStream extends EventEmitter {

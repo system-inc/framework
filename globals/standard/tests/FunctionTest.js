@@ -1,7 +1,7 @@
 // Dependencies
-import Test from './../../../system/test/Test.js';
-import Assert from './../../../system/test/Assert.js';
-import Stopwatch from './../../../system/time/Stopwatch.js';
+import Test from 'system/test/Test.js';
+import Assert from 'system/test/Assert.js';
+import Stopwatch from 'system/time/Stopwatch.js';
 
 // Class
 class FunctionTest extends Test {

@@ -1,7 +1,7 @@
 // Dependencies
-import Server from './../../../system/server/Server.js';
-import Settings from './../../../system/settings/Settings.js';
-import FileLog from './../../../system/log/FileLog.js';
+import Server from 'system/server/Server.js';
+import Settings from 'system/settings/Settings.js';
+import FileLog from 'system/log/FileLog.js';
 import Router from './routes/Router.js';
 import Request from './Request.js';
 import Response from './Response.js';
