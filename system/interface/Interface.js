@@ -1,10 +1,8 @@
 // Dependencies
-import EventEmitter from 'system/events/EventEmitter.js';
+import PropagatingEventEmitter from 'system/events/PropagatingEventEmitter.js';
 
 // Class
-class Interface extends EventEmitter {
-
-	settings = null;
+class Interface extends PropagatingEventEmitter {
 
 }
 

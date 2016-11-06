@@ -4,6 +4,8 @@
 // Dependencies
 var Electron = require('electron');
 
+global.app = 'app global test';
+
 // 7.0.0: This will be app.directory, won't even need this variable
 var appScriptFilePath = require('path').join(__dirname, 'index.js');
 
@@ -16,17 +18,31 @@ class FrameworkElectronApp {
 		this.testBrowserWindows = {};
 
 		Electron.app.commandLine.appendSwitch('--js-flags', '--harmony');
+
 		this.listen();
 	}
 
 	listen() {
+		console.log('Listening...');
+
+		// Capture the standard stream input data
+		process.stdin.on('data', function(data) {
+			console.log('Standard input data:', data);
+
+			// Ctrl-c
+			if(data == '\u0003') {
+				console.log('Exiting by user request...');
+				process.exit();
+			}
+		}.bind(this));
+
 		// When the app is ready, create the main browser window
 		Electron.app.on('ready', this.createMainBrowserWindow.bind(this));
 
 		// When the app is activated from the macOS dock
 		Electron.app.on('activate', function () {
 			// The expected behavior is to create a new window
-			if(mainBrowserWindow === null) {
+			if(this.mainBrowserWindow === null) {
 				this.createMainBrowserWindow();
 			}
 		}.bind(this));

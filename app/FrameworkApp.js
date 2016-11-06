@@ -1,8 +1,6 @@
 // Globals
 import './../globals/Globals.js';
 import AsciiArt from 'system/ascii-art/AsciiArt.js';
-import GraphicalInterfaceManager from 'system/interface/graphical/GraphicalInterfaceManager.js';
-import ElectronGraphicalInterface from 'system/interface/graphical/electron/ElectronGraphicalInterface.js';
 import ElectronManager from 'system/interface/graphical/electron/ElectronManager.js';
 import Proctor from 'system/test/Proctor.js';
 
@@ -42,51 +40,57 @@ class FrameworkApp extends App {
 	async processCommandGraphicalInterface() {
 		app.log('Loading graphical interface...');
 
+		// Get the path to the Electron executable
 		var pathToElectronExecutable = await ElectronManager.getPathToElectronExecutable();
 
-		app.error(`
-			see if it is possible to add lookup paths for require
-then I can switch all calls to require('system/') without any ../ garbage
-		`);
+		// Run Electron as a child process
+		var electronChildProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags="--harmony"', 'app/FrameworkElectronApp.js'], {});
 
-		app.error(`
-			The process I am in now just exists to start the electron process,
-		 	I need to pass all standard streams to the child process now and forget about the main process as it is now worthless
-	 	`);
+		// The main parent process I am in now exists to just to as a bridge for standard streams to the child process
 
-		var electronChildProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags="--harmony"', 'app/FrameworkElectronApp.js']);
+		// So, I stop remove all listeners from the main process standard input stream
+		Node.Process.stdin.removeAllListeners();
 
+		// And send all standard input to the child process
+		Node.Process.stdin.on('data', function(data) {
+			electronChildProcess.stdin.write(data);
+		});
+
+		// Standard out from the child process is bridged to the main process
 		electronChildProcess.stdout.on('data', function(data) {
-			//app.standardStreams.output.write('Electron: '+data.toString());
-			app.standardStreams.output.write(data);
+			app.standardStreams.output.write('(Electron Child Process) '+data.toString());
+			//app.standardStreams.output.write(data);
 		});
 
+		// Standard error from the child process is bridged to the main process
 		electronChildProcess.stderr.on('data', function(data) {
-			//app.standardStreams.error.write('Electron: '+data.toString());
-			app.standardStreams.error.write(data);
+			app.standardStreams.error.write('(Electron Child Process) '+data.toString());
+			//app.standardStreams.error.write(data);
 		});
 
+		// Kill the parent process when the child process exits
 		electronChildProcess.on('close', function(code) {
 			app.standardStreams.output.writeLine('Electron exited with code '+code+'.');
 			Node.exit();
 		});
 	}
 
-	// The application process
+	// The Electron process
 	inElectron() {
+		// TODO: this will never be called until node 7 is in electron
 		// TODO: everything in FrameworkElectronApp.js should go here and be reconciled with what is below
 
 		// Create the GraphicalInterfaceManager
-		app.interfaces.graphicalInterfaceManager = new GraphicalInterfaceManager();
+		//app.interfaces.graphicalInterfaceManager = new GraphicalInterfaceManager();
 
 		// Create an ElectronGraphicalInterface
-		var electronGraphicalInterface = new ElectronGraphicalInterface('framework');
+		//var electronGraphicalInterface = new ElectronGraphicalInterface('framework');
 
 		// Add the ElectronGraphicalInterface to the GraphicalInterfaceManager
-		app.interfaces.graphicalInterfaceManager.add(electronGraphicalInterface);
+		//app.interfaces.graphicalInterfaceManager.add(electronGraphicalInterface);
 
 		// Show the ElectronGraphicalInterface
-		electronGraphicalInterface.show();
+		//electronGraphicalInterface.show();
 	}
 
 	// The main renderer process
@@ -104,7 +108,39 @@ then I can switch all calls to require('system/') without any ../ garbage
 		//app.interfaces = electron.remote.app.app;
 
 		// For now, I will just create a new one until I can figure it out
-		app.interfaces.graphicalInterfaceManager
+
+		//var Electron = require('electron');
+		//app.interfaces.graphicalInterfaceManager = Electron.remote.app.interfaces.graphicalInterfaceManager;
+
+		// TODO: Replace global app with the main Electron process app property?
+		//global.app = Electron.remote.getGlobal('app');
+
+		/*
+
+			Step 1 - Get a reference to app
+				There should only be one app, so we should probably rely on the app global from the main process:
+				global.app = Electron.remote.getGlobal('app');
+
+			Step 2 - Get a reference to the graphicalInterface that represents the renderer process
+				var currentGraphicalInterface = app.interfaces.graphicalInterface.getCurrentGraphicalInterface();
+					this is similar to Electron.remote.getCurrentWindow();
+
+			Step 3 - Initialize the graphical interface
+
+			app
+				interfaces
+					graphical interface (this abstracts ElectronBrowserWindow, domwindow, and htmldocument)
+						view controller
+	
+				var viewController = new ViewController();
+				currentGraphicalInterface.initialize(viewController);
+		*/
+
+		app.interfaces.graphicalInterfaceManager = new GraphicalInterfaceManager();
+		var graphicalInterface = new WebGraphicalInterface();
+		app.interfaces.graphicalInterfaceManager.add(graphicalInterface);
+
+
 	}
 
 	async processCommandProctor() {

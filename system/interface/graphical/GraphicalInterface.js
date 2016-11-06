@@ -5,6 +5,11 @@ import GraphicalInterfaceHistory from './GraphicalInterfaceHistory.js';
 // Class
 class GraphicalInterface extends Interface {
 
+	// TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
+
+	viewController = null;
+	view = null;
+
 	identifier = null;
 
 	display = null;
@@ -87,6 +92,12 @@ class GraphicalInterface extends Interface {
 	constructor(identifier) {
 		super();
 		this.identifier = identifier;
+	}
+
+	intialize(viewController) {
+		this.viewController = viewController;
+		this.viewController.initialize();
+		this.view = this.viewController.view;
 	}
 
 }

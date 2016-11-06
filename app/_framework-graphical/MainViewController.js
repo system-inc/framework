@@ -1,16 +1,16 @@
 // Dependencies
 var Electron = Node.require('electron');
 var Proctor = Framework.require('system/test/Proctor.js');
-var ViewController = Framework.require('system/interface/graphical/web/view-controllers/ViewController.js');
-var HeaderView = Framework.require('system/interface/graphical/web/views/text/HeaderView.js');
-var ParagraphView = Framework.require('system/interface/graphical/web/views/text/ParagraphView.js');
-var TextView = Framework.require('system/interface/graphical/web/views/text/TextView.js');
-var FormView = Framework.require('system/interface/graphical/web/views/forms/FormView.js');
-var OptionFormFieldView = Framework.require('system/interface/graphical/web/views/forms/fields/options/OptionFormFieldView.js');
-var SingleLineTextFormFieldView = Framework.require('system/interface/graphical/web/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js');
-var SingleLineTextFormControlView = Framework.require('system/interface/graphical/web/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
-var TableView = Framework.require('system/interface/graphical/web/views/tables/TableView.js');
-var ButtonView = Framework.require('system/interface/graphical/web/views/buttons/ButtonView.js');
+var ViewController = Framework.require('system/interface/graphical/view-controllers/ViewController.js');
+var HeaderView = Framework.require('system/interface/graphical/views/text/HeaderView.js');
+var ParagraphView = Framework.require('system/interface/graphical/views/text/ParagraphView.js');
+var TextView = Framework.require('system/interface/graphical/views/text/TextView.js');
+var FormView = Framework.require('system/interface/graphical/views/forms/FormView.js');
+var OptionFormFieldView = Framework.require('system/interface/graphical/views/forms/fields/options/OptionFormFieldView.js');
+var SingleLineTextFormFieldView = Framework.require('system/interface/graphical/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js');
+var SingleLineTextFormControlView = Framework.require('system/interface/graphical/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
+var TableView = Framework.require('system/interface/graphical/views/tables/TableView.js');
+var ButtonView = Framework.require('system/interface/graphical/views/buttons/ButtonView.js');
 var TestBrowserWindowPool = require('./proctor/browser-windows/TestBrowserWindowPool.js');
 
 // Class
