@@ -1,5 +1,5 @@
 // Dependencies
-import EventEmitter from 'system/events/EventEmitter.js';
+import EventEmitter from 'system/event/EventEmitter.js';
 import Test from './Test.js';
 import Stopwatch from 'system/time/Stopwatch.js';
 import Terminal from 'system/interface/Terminal.js';

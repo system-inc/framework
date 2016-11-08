@@ -1,5 +1,5 @@
 // Dependencies
-import EventEmitter from 'system/events/EventEmitter.js';
+import EventEmitter from 'system/event/EventEmitter.js';
 import StandardInputStream from 'system/stream/StandardInputStream.js';
 import StandardOutputStream from 'system/stream/StandardOutputStream.js';
 import StandardErrorStream from 'system/stream/StandardErrorStream.js';

@@ -6,7 +6,7 @@ import HtmlElement from 'system/interface/graphical/web/html/HtmlElement.js';
 import HtmlNode from 'system/interface/graphical/web/html/HtmlNode.js';
 import XmlElement from 'system/xml/XmlElement.js';
 import XmlNode from 'system/xml/XmlNode.js';
-import EventEmitter from 'system/events/EventEmitter.js';
+import EventEmitter from 'system/event/EventEmitter.js';
 
 // Class
 class ViewTest extends Test {

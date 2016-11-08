@@ -1,5 +1,5 @@
 // Dependencies
-import EventEmitter from 'system/events/EventEmitter.js';
+import EventEmitter from 'system/event/EventEmitter.js';
 
 // Class
 class Log extends EventEmitter {

@@ -1,5 +1,5 @@
 // Dependencies
-var EventEmitter = Framework.require('system/events/EventEmitter.js');
+var EventEmitter = Framework.require('system/event/EventEmitter.js');
 
 // Class
 var Menu = EventEmitter.extend({
