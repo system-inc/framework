@@ -7,9 +7,7 @@ import WildcardPatternMatcher from 'system/search/patterns/WildcardPatternMatche
 class EventEmitter {
 
 	eventClass = Event;
-
 	eventListeners = [];
-
 	recommendedMaximumEventListenersPerEventIdentifier = null;
 
 	async on(eventPattern, functionToBind, timesToRun) {

@@ -1,50 +1,37 @@
 // Dependencies
 import PropagatingEventEmitter from 'system/event/PropagatingEventEmitter.js';
+import ViewEvent from 'system/interface/graphical/views/events/ViewEvent.js';
+import ViewDimensions from 'system/interface/graphical/views/ViewDimensions.js';
+import ViewPosition from 'system/interface/graphical/views/ViewPosition.js';
 
 // Class
 class View extends PropagatingEventEmitter {
 
-	adapter = null;
+	// EventEmitter
+	eventClass = ViewEvent;
+
 	graphicalInterface = null;
+	adapter = null;
+	
 	subviews = {};
+	
+	attributes = {};
 
-	// todo: stuff from event emitter
-	// todo: stuff from htmleventemitter
-	// todo: stuff from htmlelement
-	// todo: stuff from htmlnode
-
-
-	parent = null;
-	child = null;
-
-
+	dimensions = new ViewDimensions();
+	position = {
+		relativeToGraphicalInterface: new ViewPosition(),
+		relativeToGraphicalInterfaceViewport: new ViewPosition(),
+		relativeToDisplay: new ViewPosition(),
+		relativeToAllDisplays: new ViewPosition(),
+		relativeToPreviousAllDisplayRelativePosition: new ViewPosition(),
+		relativeToRelativeAncestor: new ViewPosition(),
+	};
 
 	constructor() {
 		super();
 
-		this.adapter = app.interfaces.graphicalInterfaceManager.getViewAdapter(this);
-	}
-
-	// All web elements use a div tag unless otherwise specified
-	constructor(options, settings, tag = 'div') {
-		// Every View is an HtmlElement
-		super(tag, options);
-
-		this.settings.merge(settings);
-
-		// Set the viewContainer alias
 		this.graphicalInterface = app.interfaces.graphicalInterfaceManager.getCurrentGraphicalInterface();
-
-		// Emit htmlNode.mountedToDom events as view.initialized
-		this.on('htmlNode.mountedToDom', function(event) {
-			// May need to set the alias again here
-			this.viewContainer = this.htmlDocument;
-
-			this.emit('view.initialized', event);
-		}.bind(this));
-	}
-
-	createSubviews() {
+		this.viewAdapter = app.interfaces.graphicalInterfaceManager.getViewAdapter(this);
 	}
 
 }
