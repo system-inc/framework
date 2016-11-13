@@ -1,5 +1,5 @@
 // Class
-class ViewPosition {
+class Position {
 
 	x = null;
 	y = null;
@@ -61,4 +61,4 @@ class ViewPosition {
 }
 
 // Export
-export default ViewPosition;
+export default Position;

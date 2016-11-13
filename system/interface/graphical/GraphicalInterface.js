@@ -1,103 +1,48 @@
 // Dependencies
-import Interface from './../Interface.js';
-import GraphicalInterfaceHistory from './GraphicalInterfaceHistory.js';
+import Interface from 'system/interface/Interface.js';
+import GraphicalInterfaceHistory from 'system/interface/graphical/GraphicalInterfaceHistory.js';
+import Dimensions from 'system/interface/graphical/Dimensions.js';
+import Position from 'system/interface/graphical/Position.js';
 
 // Class
 class GraphicalInterface extends Interface {
 
-	// TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
-
-	viewController = null;
-	view = null;
+	adapter = null;
 
 	identifier = null;
 
-	display = null;
-
-	parent = null;
-	child = null;
-
 	title = null;
 	icon = null;
+
+	viewController = null;
+
+	display = null;
 
 	history = new GraphicalInterfaceHistory();
 
 	closed = null;
 	fullscreen = null;
 
-	dimensions = {
-		width: null,
-		height: null,
-		minimumWidth: null,
-		minimumHeight: null,
-		maximumWidth: null,
-		maximumHeight: null,
-	};
+	dimensions = new Dimensions();
 
 	position = {
-		relativeToScreen: {
-			x: null,
-			y: null,
-			coordinates: {
-				topLeft: {
-					x: null,
-					y: null,
-				},
-				topCenter: {
-					x: null,
-					y: null,
-				},
-				topRight: {
-					x: null,
-					y: null,
-				},
-
-				leftCenter: {
-					x: null,
-					y: null,
-				},
-
-				rightCenter: {
-					x: null,
-					y: null,
-				},
-
-				bottomLeft: {
-					x: null,
-					y: null,
-				},
-				bottomCenter: {
-					x: null,
-					y: null,
-				},
-				bottomRight: {
-					x: null,
-					y: null,
-				},
-
-				center: {
-					x: null,
-					y: null,
-				},
-			},
-			edges: {
-				top: null,
-				right: null,
-				bottom: null,
-				left: null,
-			},
-		},
+		relativeToDisplay: new Position(),
+		relativeToAllDisplays: new Position(),
 	};
 
-	constructor(identifier) {
+	// TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
+
+	constructor(identifier = String.uniqueIdentifier()) {
 		super();
+
 		this.identifier = identifier;
+		app.log('this.identifier', this.identifier);
 	}
 
-	intialize(viewController) {
+	initialize(viewController) {
 		this.viewController = viewController;
+		this.viewController.graphicalInterface = this;
 		this.viewController.initialize();
-		this.view = this.viewController.view;
 	}
 
 }

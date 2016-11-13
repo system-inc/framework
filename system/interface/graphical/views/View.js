@@ -1,8 +1,8 @@
 // Dependencies
 import PropagatingEventEmitter from 'system/event/PropagatingEventEmitter.js';
 import ViewEvent from 'system/interface/graphical/views/events/ViewEvent.js';
-import ViewDimensions from 'system/interface/graphical/views/ViewDimensions.js';
-import ViewPosition from 'system/interface/graphical/views/ViewPosition.js';
+import Dimensions from 'system/interface/graphical/Dimensions.js';
+import Position from 'system/interface/graphical/Position.js';
 
 // Class
 class View extends PropagatingEventEmitter {
@@ -10,28 +10,35 @@ class View extends PropagatingEventEmitter {
 	// EventEmitter
 	eventClass = ViewEvent;
 
-	graphicalInterface = null;
 	adapter = null;
+
+	identifier = null;
+
+	content = null;
 	
 	subviews = {};
 	
 	attributes = {};
 
-	dimensions = new ViewDimensions();
+	dimensions = new Dimensions();
+
 	position = {
-		relativeToGraphicalInterface: new ViewPosition(),
-		relativeToGraphicalInterfaceViewport: new ViewPosition(),
-		relativeToDisplay: new ViewPosition(),
-		relativeToAllDisplays: new ViewPosition(),
-		relativeToPreviousAllDisplayRelativePosition: new ViewPosition(),
-		relativeToRelativeAncestor: new ViewPosition(),
+		relativeToGraphicalInterface: new Position(),
+		relativeToGraphicalInterfaceViewport: new Position(),
+		relativeToDisplay: new Position(),
+		relativeToAllDisplays: new Position(),
+		relativeToPreviousAllDisplayRelativePosition: new Position(),
+		relativeToRelativeAncestor: new Position(),
 	};
 
-	constructor() {
+	constructor(content) {
 		super();
 
-		this.graphicalInterface = app.interfaces.graphicalInterfaceManager.getCurrentGraphicalInterface();
-		this.viewAdapter = app.interfaces.graphicalInterfaceManager.getViewAdapter(this);
+		if(content) {
+			this.content = content;
+		}
+
+		this.viewAdapter = app.interfaces.graphicalInterfaceManager.getViewAdapter();
 	}
 
 }

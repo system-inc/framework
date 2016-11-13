@@ -2,6 +2,9 @@
 import './../globals/Globals.js';
 import AsciiArt from 'system/ascii-art/AsciiArt.js';
 import ElectronManager from 'system/interface/graphical/electron/ElectronManager.js';
+import ElectronGraphicalInterfaceManager from 'system/interface/graphical/managers/ElectronGraphicalInterfaceManager.js';
+import GraphicalInterface from 'system/interface/graphical/GraphicalInterface.js';
+import FrameworkViewController from 'interface/FrameworkViewController.js';
 import Proctor from 'system/test/Proctor.js';
 
 // Dependencies
@@ -136,11 +139,13 @@ class FrameworkApp extends App {
 				currentGraphicalInterface.initialize(viewController);
 		*/
 
-		app.interfaces.graphicalInterfaceManager = new GraphicalInterfaceManager();
-		var graphicalInterface = new WebGraphicalInterface();
-		app.interfaces.graphicalInterfaceManager.add(graphicalInterface);
+		// Create an ElectronGraphicalInterfaceManager
+		app.interfaces.graphicalInterfaceManager = new ElectronGraphicalInterfaceManager();
 
+		// Have the graphical interface manager create a graphical interface and use the FrameworkViewController
+		var graphicalInterface = app.interfaces.graphicalInterfaceManager.create();
 
+		graphicalInterface.initialize(new FrameworkViewController(graphicalInterface));
 	}
 
 	async processCommandProctor() {

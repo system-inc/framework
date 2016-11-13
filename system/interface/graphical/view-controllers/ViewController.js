@@ -1,19 +1,15 @@
 // Dependencies
-import Settings from 'system/settings/Settings.js';
+import PropagatingEventEmitter from 'system/event/PropagatingEventEmitter.js';
 
 // Class
 class ViewController {
-
-	settings = new Settings();
 
 	graphicalInterface = null;
 	view = null;
 	subviews = {};
 
-	constructor(settings) {
-		this.settings.merge(settings);
-
-		this.graphicalInterface = app.interfaces.graphicalInterfaceManager.getCurrentGraphicalInterface();
+	constructor(graphicalInterface) {
+		this.graphicalInterface = graphicalInterface;
 		this.createView();
 		this.createSubviews();
 	}
@@ -25,11 +21,11 @@ class ViewController {
 	}
 
 	initialize() {
-		this.graphicalInterface.on('graphicalInterface.initialized', function() {
-			this.initialize();
-		}.bind(this));
+		//this.graphicalInterface.on('graphicalInterface.initialized', function() {
+		//	this.initialize();
+		//}.bind(this));
 
-		this.graphicalInterface.initialize();
+		//this.graphicalInterface.initialize();
 	}
 
 }
