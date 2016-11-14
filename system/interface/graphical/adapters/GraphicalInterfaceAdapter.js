@@ -3,6 +3,12 @@
 // Class
 class GraphicalInterfaceAdapter {
 
+	graphicalInterface = null;
+
+	constructor(graphicalInterface) {
+		this.graphicalInterface = graphicalInterface;
+	}
+
 }
 
 // Export

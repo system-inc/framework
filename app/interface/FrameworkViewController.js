@@ -6,6 +6,7 @@ import View from 'system/interface/graphical/views/View.js';
 class FrameworkViewController extends ViewController {
 
 	createView() {
+		console.log('making view');
 		this.view = new View('hi');
 	}
 

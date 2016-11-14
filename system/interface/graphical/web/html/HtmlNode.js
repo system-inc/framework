@@ -9,6 +9,12 @@ class HtmlNode extends XmlNode {
 	// HtmlNodeEventEmitter
 	eventClass = HtmlNodeEvent;
 
+	// HtmlEvent
+	eventListenersOnDomObject = {};
+
+	// PropagatingEventEmitter
+	eventListeners = [];
+
 	htmlDocument = null;
 
 	domNode = null;
@@ -406,7 +412,7 @@ class HtmlNode extends XmlNode {
 		};
 	}
 
-	click() {
+	press() {
 		if(this.domNode) {
 			this.domNode.click();
 		}

@@ -1,11 +1,21 @@
 // Dependencies
 import XmlDocument from 'system/xml/XmlDocument.js';
 import Url from 'system/web/Url.js';
-import Html from './Html.js';
-import HtmlDocumentEventEmitter from './events/html-document/HtmlDocumentEventEmitter.js';
+import Html from 'system/interface/graphical/web/html/Html.js';
+import HtmlDocumentEventEmitter from 'system/interface/graphical/web/html/events/html-document/HtmlDocumentEventEmitter.js';
+import HtmlDocumentEvent from 'system/interface/graphical/web/html/events/html-document/HtmlDocumentEvent.js';
 
 // Class
 class HtmlDocument extends XmlDocument {
+
+	// HtmlDocumentEventEmitter
+	eventClass = HtmlDocumentEvent;
+
+	// HtmlEventEmitter
+	eventListenersOnDomObject = {};
+
+	// PropagatingEventEmitter
+	eventListeners = [];
 
 	type = 'html';
 

@@ -15,8 +15,8 @@ class GraphicalInterfaceManager {
 		this.interfaces = app.interfaces.graphical;
 	}
 
-	create() {
-		var graphicalInterface = new GraphicalInterface();
+	create(viewController) {
+		var graphicalInterface = new GraphicalInterface(viewController);
 
 		return this.add(graphicalInterface);
 	}
@@ -27,7 +27,11 @@ class GraphicalInterfaceManager {
 		return graphicalInterface;
 	}
 
-	getViewAdapter() {
+	getGraphicalInterfaceAdapter(graphicalInterface) {
+		throw new Error('This method must be implemented by a child class of GraphicalInterfaceManager.');
+	}
+
+	getViewAdapter(view) {
 		throw new Error('This method must be implemented by a child class of GraphicalInterfaceManager.');
 	}
 

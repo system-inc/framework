@@ -139,13 +139,11 @@ class FrameworkApp extends App {
 				currentGraphicalInterface.initialize(viewController);
 		*/
 
-		// Create an ElectronGraphicalInterfaceManager
+		// Create a graphical interface manager, in this case, ElectronGraphicalInterfaceManager
 		app.interfaces.graphicalInterfaceManager = new ElectronGraphicalInterfaceManager();
 
-		// Have the graphical interface manager create a graphical interface and use the FrameworkViewController
-		var graphicalInterface = app.interfaces.graphicalInterfaceManager.create();
-
-		graphicalInterface.initialize(new FrameworkViewController(graphicalInterface));
+		// Have the graphical interface manager create a graphical interface with a view controller
+		app.interfaces.graphicalInterfaceManager.create(new FrameworkViewController());
 	}
 
 	async processCommandProctor() {

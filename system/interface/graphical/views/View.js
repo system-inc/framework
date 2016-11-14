@@ -17,6 +17,8 @@ class View extends PropagatingEventEmitter {
 	content = null;
 	
 	subviews = {};
+
+	viewReferences = {};
 	
 	attributes = {};
 
@@ -34,11 +36,20 @@ class View extends PropagatingEventEmitter {
 	constructor(content) {
 		super();
 
-		if(content) {
+		// Get the adapter from the graphical interface manager
+		this.adapter = app.interfaces.graphicalInterfaceManager.getViewAdapter(this);
+
+		// Set the content
+		if(content !== undefined) {
 			this.content = content;
 		}
 
-		this.viewAdapter = app.interfaces.graphicalInterfaceManager.getViewAdapter();
+		// Create subviews
+		this.createSubviews();
+	}
+
+	createSubviews() {
+		// This method will be implemented by child classes
 	}
 
 }

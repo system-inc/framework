@@ -7,14 +7,15 @@ class Dimensions {
 	visible = {
 		width: null,
 		height: null,
-		minimum: {
-			width: null,
-			height: null,
-		},
-		maximum: {
-			width: null,
-			height: null,
-		},
+	};
+
+	minimum = {
+		width: null,
+		height: null,
+	};
+	maximum = {
+		width: null,
+		height: null,
 	};
 
 }

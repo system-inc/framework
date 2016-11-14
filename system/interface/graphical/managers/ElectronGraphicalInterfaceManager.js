@@ -1,12 +1,17 @@
 // Dependencies
 import GraphicalInterfaceManager from 'system/interface/graphical/managers/GraphicalInterfaceManager.js';
-import HtmlElementViewAdapter from 'system/interface/graphical/views/adapters/HtmlElementViewAdapter.js';
+import ElectronGraphicalInterfaceAdapter from 'system/interface/graphical/adapters/electron/ElectronGraphicalInterfaceAdapter.js';
+import WebViewAdapter from 'system/interface/graphical/views/adapters/web/WebViewAdapter.js';
 
 // Class
 class ElectronGraphicalInterfaceManager extends GraphicalInterfaceManager {
 
-	getViewAdapter() {
-		return new HtmlElementViewAdapter();
+	getGraphicalInterfaceAdapter(graphicalInterface) {
+		return new ElectronGraphicalInterfaceAdapter(graphicalInterface);
+	}
+
+	getViewAdapter(view) {
+		return new WebViewAdapter(view);
 	}
 
 }
