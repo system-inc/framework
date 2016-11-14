@@ -6,11 +6,11 @@ import WebViewAdapter from 'system/interface/graphical/views/adapters/web/WebVie
 // Class
 class ElectronGraphicalInterfaceManager extends GraphicalInterfaceManager {
 
-	getGraphicalInterfaceAdapter(graphicalInterface) {
+	createGraphicalInterfaceAdapter(graphicalInterface) {
 		return new ElectronGraphicalInterfaceAdapter(graphicalInterface);
 	}
 
-	getViewAdapter(view) {
+	createViewAdapter(view) {
 		return new WebViewAdapter(view);
 	}
 

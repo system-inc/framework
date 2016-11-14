@@ -27,11 +27,11 @@ class GraphicalInterfaceManager {
 		return graphicalInterface;
 	}
 
-	getGraphicalInterfaceAdapter(graphicalInterface) {
+	createGraphicalInterfaceAdapter(graphicalInterface) {
 		throw new Error('This method must be implemented by a child class of GraphicalInterfaceManager.');
 	}
 
-	getViewAdapter(view) {
+	createViewAdapter(view) {
 		throw new Error('This method must be implemented by a child class of GraphicalInterfaceManager.');
 	}
 

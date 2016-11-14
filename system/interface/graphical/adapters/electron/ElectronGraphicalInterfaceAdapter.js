@@ -15,9 +15,23 @@ class ElectronGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		this.htmlDocument = new HtmlDocument();
 	}
 
+	listen() {
+		this.htmlDocument.on('htmlNode.domUpdateExecuted', function(event) {
+			this.view.emit('view.rendered', event);
+		}.bind(this));
+
+		this.htmlDocument.on('htmlNode.mountedToDom', function(event) {
+			this.view.emit('view.initialized', event);
+		}.bind(this));
+	}
+
 	initialize() {
 		app.log('mounting htmldocument to dom');
-		this.htmlDocumen.mountToDom();
+
+		// Connect the graphical interface to the view controller's view
+		this.htmlDocument.body.append(this.graphicalInterface.viewController.view.adapter.webView);
+		
+		this.htmlDocument.mountToDom();
 	}
 
 }

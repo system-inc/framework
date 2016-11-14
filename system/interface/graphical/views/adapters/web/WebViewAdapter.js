@@ -14,6 +14,20 @@ class WebViewAdapter extends ViewAdapter {
 		this.webView = new HtmlElement('div', this.view.content);
 	}
 
+	listen() {
+		this.webView.on('htmlNode.domUpdateExecuted', function(event) {
+			this.view.emit('view.rendered', event);
+		}.bind(this));
+
+		this.webView.on('htmlNode.mountedToDom', function(event) {
+			this.view.emit('view.initialized', event);
+		}.bind(this));
+	}
+
+	append(view) {
+		this.webView.append(view.adapter.webView);
+	}
+
 }
 
 // Export

@@ -1,6 +1,7 @@
 // Dependencies
 import PropagatingEventEmitter from 'system/event/PropagatingEventEmitter.js';
 import ViewEvent from 'system/interface/graphical/views/events/ViewEvent.js';
+import Settings from 'system/settings/Settings.js';
 import Dimensions from 'system/interface/graphical/Dimensions.js';
 import Position from 'system/interface/graphical/Position.js';
 
@@ -11,6 +12,11 @@ class View extends PropagatingEventEmitter {
 	eventClass = ViewEvent;
 
 	adapter = null;
+	adapterSettings = new Settings({
+		web: {
+			tag: 'div',
+		},
+	});
 
 	identifier = null;
 
@@ -36,9 +42,6 @@ class View extends PropagatingEventEmitter {
 	constructor(content) {
 		super();
 
-		// Get the adapter from the graphical interface manager
-		this.adapter = app.interfaces.graphicalInterfaceManager.getViewAdapter(this);
-
 		// Set the content
 		if(content !== undefined) {
 			this.content = content;
@@ -46,10 +49,17 @@ class View extends PropagatingEventEmitter {
 
 		// Create subviews
 		this.createSubviews();
+
+		// Create the adapter from the graphical interface manager
+		this.adapter = app.interfaces.graphicalInterfaceManager.createViewAdapter(this);
 	}
 
 	createSubviews() {
 		// This method will be implemented by child classes
+	}
+
+	append() {
+		this.adapter.append(...arguments);
 	}
 
 }

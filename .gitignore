@@ -1,6 +1,6 @@
 # Libaries
 libraries/electron/windows/*
-libraries/electron/os-x/*
+libraries/electron/macos/*
 libraries/electron/linux/*
 
 # Apps

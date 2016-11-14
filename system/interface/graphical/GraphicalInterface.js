@@ -31,6 +31,18 @@ class GraphicalInterface extends Interface {
 		relativeToAllDisplays: new Position(),
 	};
 
+	backgroundColor = null;
+	useContentDimensions = null;
+
+	resizable = null;
+	movable = null;
+	minimizable = null;
+	maximizable = null;
+	fullscreenable = null;
+	closable = null;
+	focusable = null;
+	alwaysOnTop = null;
+
 	// TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
 
 	constructor(viewController, identifier = String.uniqueIdentifier()) {
@@ -52,7 +64,15 @@ class GraphicalInterface extends Interface {
 		//app.log('this.identifier', this.identifier);
 
 		// Set the adapter from the graphical interface manager
-		this.adapter = app.interfaces.graphicalInterfaceManager.getGraphicalInterfaceAdapter();
+		this.adapter = app.interfaces.graphicalInterfaceManager.createGraphicalInterfaceAdapter(this);
+
+		// Initialize the graphical interface
+		this.initialize();
+	}
+
+	initialize() {
+		// Initialize the adapter
+		this.adapter.initialize();
 	}
 
 }

@@ -7,7 +7,11 @@ class FrameworkViewController extends ViewController {
 
 	createView() {
 		console.log('making view');
-		this.view = new View('hi');
+		this.view = new View('hello!');
+
+		var button = new View('button');
+
+		this.view.append(button);
 	}
 
 }
