@@ -4,6 +4,7 @@ import ViewEvent from 'system/interface/graphical/views/events/ViewEvent.js';
 import Settings from 'system/settings/Settings.js';
 import Dimensions from 'system/interface/graphical/Dimensions.js';
 import Position from 'system/interface/graphical/Position.js';
+import TextView from 'system/interface/graphical/views/text/TextView.js';
 
 // Class
 class View extends PropagatingEventEmitter {
@@ -12,21 +13,12 @@ class View extends PropagatingEventEmitter {
 	eventClass = ViewEvent;
 
 	adapter = null;
-	adapterSettings = new Settings({
-		web: {
-			tag: 'div',
-		},
-	});
 
 	identifier = null;
 
-	content = null;
-	
-	subviews = {};
-
-	viewReferences = {};
-	
 	attributes = {};
+
+	children = [];
 
 	dimensions = new Dimensions();
 
@@ -39,27 +31,43 @@ class View extends PropagatingEventEmitter {
 		relativeToRelativeAncestor: new Position(),
 	};
 
-	constructor(content) {
+	constructor() {
+		// PropagatingEventEmitter
 		super();
+	}
 
-		// Set the content
-		if(content !== undefined) {
-			this.content = content;
-		}
-
-		// Create subviews
-		this.createSubviews();
-
+	initialize() {
 		// Create the adapter from the graphical interface manager
 		this.adapter = app.interfaces.graphicalInterfaceManager.createViewAdapter(this);
+
+		this.children.each(function(index, childView) {
+			childView.initialize();
+			this.adapter.append(childView);
+		}.bind(this));
 	}
 
-	createSubviews() {
-		// This method will be implemented by child classes
+	append(childView) {
+		this.children.append(childView);
 	}
 
-	append() {
-		this.adapter.append(...arguments);
+	getWebViewAdapterSettings() {
+		return {
+			tag: 'div',
+		};
+	}
+
+	getIOsViewAdapterSettings() {
+		return {
+		};
+	}
+
+	getAndroidViewAdapterSettings() {
+		return {
+		};
+	}
+
+	static is(value) {
+		return Class.isInstance(value, View);
 	}
 
 }

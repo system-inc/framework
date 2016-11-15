@@ -15,7 +15,10 @@ class ViewController extends PropagatingEventEmitter {
 		this.establishGraphicalInterface();
 
 		// Create the view for the view controller
-		this.createView();
+		this.view = this.createView();
+
+		// Initialize the view
+		this.view.initialize();
 	}
 
 	establishGraphicalInterface(graphicalInterface) {
@@ -45,6 +48,8 @@ class ViewController extends PropagatingEventEmitter {
 
 	createView() {
 		// This is the view for the view controller
+
+		return null;
 	}
 
 	static is(value) {

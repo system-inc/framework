@@ -1,12 +1,26 @@
 // Dependencies
-var View = Framework.require('system/interface/graphical/views/View.js');
+import View from 'system/interface/graphical/views/View.js';
 
 // Class
-var TextView = View.extend({
+class TextView extends View {
 
-	tag: 'span',
+	text = null;
+	layout = 'block'; // 'block' or 'inline'
 
-});
+	constructor(text) {
+		// View
+		super();
+
+		this.text = text;
+	}
+
+	getWebViewAdapterSettings() {
+		return {
+			tag: this.layout == 'block' ? 'p' : 'span',
+		};
+	}
+
+}
 
 // Export
-module.exports = TextView;
+export default TextView;

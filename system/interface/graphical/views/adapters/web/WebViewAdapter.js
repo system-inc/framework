@@ -1,5 +1,7 @@
 // Dependencies
 import ViewAdapter from 'system/interface/graphical/views/adapters/ViewAdapter.js';
+import TextView from 'system/interface/graphical/views/text/TextView.js';
+import HtmlNode from 'system/interface/graphical/web/html/HtmlNode.js';
 import HtmlElement from 'system/interface/graphical/web/html/HtmlElement.js';
 
 // Class
@@ -10,8 +12,19 @@ class WebViewAdapter extends ViewAdapter {
 	constructor(view) {
 		super(view);
 
-		app.log('creating HtmlElement for view', this.view);
-		this.webView = new HtmlElement('div', this.view.content);
+		// Conditions for an HtmlNode instead of an HtmlElement
+		if(
+			TextView.is(this.view) && // It is a TextView
+			this.view.layout == 'inline' && // That has an inline layout
+			this.view.children.length == 0 // That has no children
+		) {
+			this.webView = new HtmlNode(this.view.text);
+		}
+		// Otherwise, use an HtmlElement
+		else {
+			var tag = this.view.getWebViewAdapterSettings().tag;
+			this.webView = new HtmlElement(tag, this.view.text);
+		}
 	}
 
 	listen() {
@@ -24,8 +37,8 @@ class WebViewAdapter extends ViewAdapter {
 		}.bind(this));
 	}
 
-	append(view) {
-		this.webView.append(view.adapter.webView);
+	append(childView) {
+		this.webView.append(childView.adapter.webView);
 	}
 
 }

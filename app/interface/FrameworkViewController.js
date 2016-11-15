@@ -1,17 +1,19 @@
 // Dependencies
 import ViewController from 'system/interface/graphical/view-controllers/ViewController.js';
 import View from 'system/interface/graphical/views/View.js';
+import HeadingView from 'system/interface/graphical/views/text/HeadingView.js';
+import TextView from 'system/interface/graphical/views/text/TextView.js';
 
 // Class
 class FrameworkViewController extends ViewController {
 
 	createView() {
-		console.log('making view');
-		this.view = new View('hello!');
+		var view = new View();
 
-		var button = new View('button');
+		view.append(new HeadingView(app.title+' '+app.version, 3));
+		view.append(new TextView(app.description));
 
-		this.view.append(button);
+		return view;
 	}
 
 }
