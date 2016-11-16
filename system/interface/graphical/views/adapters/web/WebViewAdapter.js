@@ -17,6 +17,7 @@ class WebViewAdapter extends ViewAdapter {
 			TextView.is(this.view) && // It is a TextView
 			this.view.layout == 'inline' && // That has an inline layout
 			this.view.children.length == 0 // That has no children
+			// TODO: and it has no style
 		) {
 			this.webView = new HtmlNode(this.view.text);
 		}
