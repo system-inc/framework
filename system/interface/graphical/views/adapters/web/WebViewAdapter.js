@@ -42,6 +42,10 @@ class WebViewAdapter extends ViewAdapter {
 		this.webView.append(childView.adapter.webView);
 	}
 
+	addClass() {
+		this.webView.addClass(...arguments);
+	}
+
 }
 
 // Export

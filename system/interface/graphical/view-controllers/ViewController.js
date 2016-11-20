@@ -6,7 +6,7 @@ class ViewController extends PropagatingEventEmitter {
 
 	graphicalInterface = null;
 	view = null;
-	viewReferences = {};
+	children = [];
 
 	constructor() {
 		super();
@@ -50,6 +50,12 @@ class ViewController extends PropagatingEventEmitter {
 		// This is the view for the view controller
 
 		return null;
+	}
+
+	append(viewController) {
+		this.children.append(viewController);
+
+		return viewController;
 	}
 
 	static is(value) {

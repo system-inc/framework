@@ -11,6 +11,14 @@ class ViewAdapter {
 		throw new Error('This method must be implemted by a child class.');
 	}
 
+	prepend() {
+		throw new Error('This method must be implemted by a child class.');
+	}
+
+	addClass() {
+		throw new Error('This method must be implemted by a child class.');
+	}
+
 }
 
 // Export

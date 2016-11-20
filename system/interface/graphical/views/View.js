@@ -50,6 +50,10 @@ class View extends PropagatingEventEmitter {
 		this.children.append(childView);
 	}
 
+	addClass() {
+		this.adapter.addClass(...arguments);
+	}
+
 	getWebViewAdapterSettings() {
 		return {
 			tag: 'div',
