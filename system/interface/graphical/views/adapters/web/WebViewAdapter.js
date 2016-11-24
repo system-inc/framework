@@ -28,7 +28,16 @@ class WebViewAdapter extends ViewAdapter {
 		}
 	}
 
+	synchronizeWithView() {
+		console.log('synchronizeWithView');
+		this.view.identifier = this.webView.nodeIdentifier;
+		this.webView.attributes = this.view.attributes;
+		this.webView.updateDom();
+	}
+
 	listen() {
+		console.log('listening');
+
 		this.webView.on('htmlNode.domUpdateExecuted', function(event) {
 			this.view.emit('view.rendered', event);
 		}.bind(this));
@@ -39,11 +48,39 @@ class WebViewAdapter extends ViewAdapter {
 	}
 
 	append(childView) {
-		this.webView.append(childView.adapter.webView);
+		return this.webView.append(childView.adapter.webView);
+	}
+
+	prepend(childView) {
+		return this.webView.prepend(childView.adapter.webView);
 	}
 
 	addClass() {
-		this.webView.addClass(...arguments);
+		return this.webView.addClass(...arguments);
+	}
+
+	show() {
+		return this.webView.show(...arguments);
+	}
+
+	hide() {
+		return this.webView.hide(...arguments);
+	}
+
+	focus() {
+		return this.webView.focus(...arguments);
+	}
+
+	select() {
+		return this.webView.select(...arguments);
+	}
+
+	getSelectionText() {
+		return this.webView.getSelectionText(...arguments);
+	}
+
+	press() {
+		return this.webView.press(...arguments);
 	}
 
 }

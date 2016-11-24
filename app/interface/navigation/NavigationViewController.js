@@ -6,8 +6,10 @@ import NavigationView from 'interface/navigation/NavigationView.js';
 // Class
 class NavigationViewController extends ViewController {
 
-	createView() {
-		return new NavigationView();
+	constructor() {
+		super();
+
+		this.view = new NavigationView();
 	}
 
 }

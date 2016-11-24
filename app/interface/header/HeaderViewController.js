@@ -6,8 +6,10 @@ import HeaderView from 'interface/header/HeaderView.js';
 // Class
 class HeaderViewController extends ViewController {
 
-	createView() {
-		return new HeaderView();
+	constructor() {
+		super();
+
+		this.view = new HeaderView();
 	}
 
 }

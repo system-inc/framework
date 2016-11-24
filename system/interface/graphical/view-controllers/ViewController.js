@@ -9,50 +9,24 @@ class ViewController extends PropagatingEventEmitter {
 	children = [];
 
 	constructor() {
+		// PropagatingEventEmitter
 		super();
+	}
 
-		// Try and establish the graphical interface
-		this.establishGraphicalInterface();
-
-		// Create the view for the view controller
-		this.view = this.createView();
-
-		// Initialize the view
+	initialize(graphicalInterface) {
+		this.graphicalInterface = graphicalInterface;
 		this.view.initialize();
 	}
 
-	establishGraphicalInterface(graphicalInterface) {
-		// Use a passed graphical interface
-		if(graphicalInterface !== undefined) {
-			this.graphicalInterface = graphicalInterface;
-		}
-		// Check ancestors for a graphical interface to inherit
-		else if(!this.graphicalInterface && this.parent) {
-			var currentParent = this.parent;
-			while(currentParent != null) {
-				if(currentParent.graphicalInterface) {
-					this.graphicalInterface = currentParent.graphicalInterface;
-					break;
-				}
-				else if(currentParent.parent) {
-					currentParent = currentParent.parent;
-				}
-				else {
-					currentParent = null; // break
-				}
-			}
-		}
+	descendFromParent(parentViewController) {
+		this.parent = parentViewController;
+		this.graphicalInterface = this.parent.graphicalInterface;
 
-		return this.graphicalInterface;
-	}
-
-	createView() {
-		// This is the view for the view controller
-
-		return null;
+		return this;
 	}
 
 	append(viewController) {
+		viewController.descendFromParent(this);
 		this.children.append(viewController);
 
 		return viewController;

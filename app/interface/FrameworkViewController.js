@@ -12,18 +12,22 @@ class FrameworkViewController extends ViewController {
 	headerViewController = null;
 	navigationViewController = null;
 
-	createView() {
-		var view = new View();
+	constructor() {
+		super();
+
+		// Configure the GraphicalInterface
+		// TODO: figure out an abstract way to do this: this.graphicalInterface.styles.add('framework.css');
+
+		this.view = new View();
+		this.view.addClass('framework');
 
 		// Header
 		this.headerViewController = this.append(new HeaderViewController());
-		view.append(this.headerViewController.view);
+		this.view.append(this.headerViewController.view);
 
 		// Navigation
 		this.navigationViewController = this.append(new NavigationViewController());
-		view.append(this.navigationViewController.view);
-
-		return view;
+		this.view.append(this.navigationViewController.view);
 	}
 
 }

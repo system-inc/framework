@@ -2,7 +2,7 @@
 import './../globals/Globals.js';
 import AsciiArt from 'system/ascii-art/AsciiArt.js';
 import ElectronManager from 'system/interface/graphical/electron/ElectronManager.js';
-import ElectronGraphicalInterfaceManager from 'system/interface/graphical/managers/ElectronGraphicalInterfaceManager.js';
+import ElectronGraphicalInterfaceManager from 'system/interface/graphical/managers/electron/ElectronGraphicalInterfaceManager.js';
 import GraphicalInterface from 'system/interface/graphical/GraphicalInterface.js';
 import FrameworkViewController from 'interface/FrameworkViewController.js';
 import Proctor from 'system/test/Proctor.js';

@@ -6,11 +6,11 @@ import TextView from 'system/interface/graphical/views/text/TextView.js';
 // Class
 class HeaderView extends View {
 
-	initialize() {
-		super.initialize();
+	constructor() {
+		super();
 
-		this.append(new HeadingView('Framework'));
 		this.addClass('header');
+		this.append(new HeadingView('Framework'));
 	}
 
 }

@@ -6,8 +6,8 @@ import TextView from 'system/interface/graphical/views/text/TextView.js';
 // Class
 class NavigationView extends View {
 
-	initialize() {
-		super.initialize();
+	constructor() {
+		super();
 
 		this.addClass('navigation');
 		this.append(new HeadingView('Current Item', 2));

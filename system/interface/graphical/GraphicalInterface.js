@@ -47,17 +47,11 @@ class GraphicalInterface extends Interface {
 
 	constructor(viewController, identifier = String.uniqueIdentifier()) {
 		if(viewController === undefined || !ViewController.is(viewController)) {
-			throw new Error('Must pass ViewController as first argument to GraphicalInterface constructor.');
+			throw new Error('Must pass instance of ViewController as first argument to GraphicalInterface constructor.');
 		}
 
 		// Interface is a PropagatingEventEmitter
 		super();
-
-		// Set the view controller
-		this.viewController = viewController;
-
-		// Establish the view controller's graphical interface
-		this.viewController.establishGraphicalInterface(this);
 
 		// Set the identifier
 		this.identifier = identifier;
@@ -66,13 +60,18 @@ class GraphicalInterface extends Interface {
 		// Set the adapter from the graphical interface manager
 		this.adapter = app.interfaces.graphicalInterfaceManager.createGraphicalInterfaceAdapter(this);
 
-		// Initialize the graphical interface
-		this.initialize();
-	}
+		// Set the view controller
+		this.viewController = viewController;
 
-	initialize() {
+		// Initialize the view controller with a reference to this GraphicalInterface
+		this.viewController.initialize(this);
+		
 		// Initialize the adapter
 		this.adapter.initialize();
+	}
+
+	synchronizeWithAdapter() {
+
 	}
 
 }
