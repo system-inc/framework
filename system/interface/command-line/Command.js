@@ -109,7 +109,7 @@ class Command {
 
 		// If we have an arguments array
 		if(Array.is(argumentsArray)) {
-			app.info('argumentsArray', argumentsArray);
+			//app.info('argumentsArray', argumentsArray);
 
 			// The JavaScript file Node is executing
 			this.executable = argumentsArray[0];
