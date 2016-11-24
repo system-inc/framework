@@ -3,6 +3,7 @@ import EventEmitter from 'system/event/EventEmitter.js';
 import StandardInputStream from 'system/stream/StandardInputStream.js';
 import StandardOutputStream from 'system/stream/StandardOutputStream.js';
 import StandardErrorStream from 'system/stream/StandardErrorStream.js';
+import Directory from 'system/file-system/Directory.js';
 import FileLog from 'system/log/FileLog.js';
 import CommandLineInterface from 'system/interface/command-line/CommandLineInterface.js';
 import InteractiveCommandLineInterface from 'system/interface/interactive-command-line/InteractiveCommandLineInterface.js';
@@ -98,14 +99,14 @@ class App extends EventEmitter {
 
 	framework = {
 		version: new Version('0.1.0'),
-		directory: Node.Path.join(__dirname, '../', '../'),
+		directory: new Directory(Node.Path.join(__dirname, '../', '../')),
 	};
 
 	constructor(appDirectory) {
 		super();
 
 		// Set the app directory
-		this.directory = Node.Path.normalize(appDirectory);
+		this.directory = new Directory(appDirectory);
 
 		// Set the default file log directory
 		this.settings.mergeDefaults({

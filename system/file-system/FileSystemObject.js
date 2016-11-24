@@ -174,6 +174,10 @@ class FileSystemObject {
         return watch;
 	}
 
+    toString() {
+        return this.path;
+    }
+
     static is(value) {
         return value instanceof FileSystemObject;
     }
@@ -182,7 +186,7 @@ class FileSystemObject {
 
     static async stat(path) {
         var stat = await new Promise(function(resolve, reject) {
-            Node.FileSystem.stat(path, function(error, stats) {
+            Node.FileSystem.stat(path.toString(), function(error, stats) {
                 if(error) {
                     reject(error);
                 }
@@ -197,7 +201,7 @@ class FileSystemObject {
 
     static async listFileNames(path) {
         var fileNamesList = await new Promise(function(resolve, reject) {
-            Node.FileSystem.readdir(path, function(error, files) {
+            Node.FileSystem.readdir(path.toString(), function(error, files) {
                 if(error) {
                     reject(error);
                 }

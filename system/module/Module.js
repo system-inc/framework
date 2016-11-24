@@ -62,6 +62,7 @@ class Module {
 				}
 				catch(error) {
 					app.error('Failed to load '+moduleTitle+' from '+modulePath+'.', "\n\n", error);
+					throw error;
 					Node.exit();
 				}
 			}

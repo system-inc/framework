@@ -18,7 +18,7 @@ class FileLog extends Log {
 	constructor(directory, nameWithoutExtension) {
 		super();
 
-		this.directory = directory;
+		this.directory = new Directory(directory);
 		this.nameWithoutExtension = nameWithoutExtension;
 		this.file = new File(Node.Path.join(this.directory, this.nameWithoutExtension+'.log'));
 	}

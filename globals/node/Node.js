@@ -5,6 +5,32 @@ var Events = require('events');
 var Path = require('path');
 Path.separator = Path.sep;
 
+Path.argumentsToStringArguments = function(passedArguments) {
+	var stringArguments = [];
+	for(var i = 0; i < passedArguments.length; i++) {
+		stringArguments.push(passedArguments[i].toString());
+	}
+	return stringArguments;
+};
+
+// Make Path.join accept objects which can be toString()'d (e.g., Directory objects)
+var standardJoin = Path.join;
+Path.join = function() {
+	return standardJoin.apply(this, Path.argumentsToStringArguments(arguments));
+};
+
+// Make Path.isAbsolute accept objects which can be toString()'d (e.g., Directory objects)
+var standardIsAbsolute = Path.isAbsolute;
+Path.isAbsolute = function() {
+	return standardIsAbsolute.apply(this, Path.argumentsToStringArguments(arguments));
+};
+
+// Make Path.isAbsolute accept objects which can be toString()'d (e.g., Directory objects)
+var standardNormalize = Path.normalize;
+Path.normalize = function() {
+	return standardNormalize.apply(this, Path.argumentsToStringArguments(arguments));
+};
+
 // Class
 class Node {
 
