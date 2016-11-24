@@ -12,11 +12,14 @@ class Command {
 		subcommands: {},
 	});
 
-	// The JavaScript file Node is executing
-	file = null;
+	// Command arguments
+	arguments = null;
 
-	// The Node executable file
-	command = null;
+	// The executable (node, electron, etc.)
+	executable = null;
+
+	// The script (a .js file)
+	script = null;
 
 	// The options and commands are populated when we parse the string arguments array
 	options = {};
@@ -43,8 +46,10 @@ class Command {
 			this.reformSubcommandSettings(subcommand, subcommandKey);
 		}.bind(this));
 
+		this.arguments = argumentsArray;
+
 		// Parse the arguments array
-		this.parse(argumentsArray);
+		this.parse(this.arguments);
 	}
 
 	reformOptionSettings(optionSettings, optionSettingsKey) {
@@ -104,16 +109,23 @@ class Command {
 
 		// If we have an arguments array
 		if(Array.is(argumentsArray)) {
-			//app.info('argumentsArray', argumentsArray);
+			app.info('argumentsArray', argumentsArray);
 
 			// The JavaScript file Node is executing
-			this.file = argumentsArray[1];
-
-			// The Node executable file
-			this.command = argumentsArray[0];
+			this.executable = argumentsArray[0];
 
 			// The rest of the command arguments
-			var argumentsToProcess = argumentsArray.slice(2);
+			var argumentsToProcess = argumentsArray;
+
+			// If we are in a terminal context, the second argument will be the script we are interpreting and we should start processing at the third argument
+			if(app.inTerminalContext()) {
+				this.script = argumentsArray[1];
+				argumentsToProcess = argumentsToProcess.slice(2);
+			}
+			// If we are not in a terminal context (e.g., we are in Electron), then start processing arguments at the second argument
+			else {
+				argumentsToProcess = argumentsToProcess.slice(1);
+			}
 
 			var currentCommandSettings = this.settings.get();
 
