@@ -4,8 +4,8 @@ import Settings from 'system/settings/Settings.js';
 // Class
 class Module {
 
-	// The name of the module
-	name = null;
+	// The title of the module
+	title = null;
 
 	// The version of the module
 	version = null;
@@ -20,9 +20,9 @@ class Module {
 	// Track module initialization status
 	isInitialized = false;
 
-	constructor(moduleName) {
-		//app.log('Constructing', moduleName);
-		this.name = moduleName;
+	constructor(moduleTitle) {
+		//app.log('Constructing', moduleTitle);
+		this.title = moduleTitle;
 
 		// Load the modules this module depends on
 		Module.require(this.dependencies);
@@ -36,60 +36,60 @@ class Module {
 		this.settings = new Settings(this.defaultSettings, settings);
 	}
 
-	static async require(moduleNames) {
-		//app.log('moduleNames', moduleNames);
+	static async require(moduleTitles) {
+		//app.log('moduleTitles', moduleTitles);
 
 		// Load each module
-		await moduleNames.toArray().each(async function(moduleNameIndex, moduleName) {
-			var modulePropertyName = moduleName.lowercaseFirstCharacter();
+		await moduleTitles.toArray().each(async function(moduleTitleIndex, moduleTitle) {
+			var modulePropertyTitle = moduleTitle.lowercaseFirstCharacter();
 
 			// Only require modules once
-			if(app.modules[modulePropertyName]) {
-				//console.log('Already called Module.require for '+moduleName+'.');
+			if(app.modules[modulePropertyTitle]) {
+				//console.log('Already called Module.require for '+moduleTitle+'.');
 			}
 			// Require the module
 			else {
 				// Require the module
-				var modulePath = Node.Path.join(app.framework.directory, 'modules', moduleName.replaceLast('Module', '').toDashes(), moduleName+'.js');
+				var modulePath = Node.Path.join(app.framework.directory, 'modules', moduleTitle.replaceLast('Module', '').toDashes(), moduleTitle+'.js');
 				//console.log('modulePath', modulePath);	
 
 				try {
 					var moduleClass = require(modulePath).default;
 					//console.log('moduleClass', moduleClass);
-					var moduleInstance = new (moduleClass)(moduleName);
+					var moduleInstance = new (moduleClass)(moduleTitle);
 
-					app.modules[modulePropertyName] = moduleInstance;	
+					app.modules[modulePropertyTitle] = moduleInstance;	
 				}
 				catch(error) {
-					app.error('Failed to load '+moduleName+' from '+modulePath+'.', "\n\n", error);
+					app.error('Failed to load '+moduleTitle+' from '+modulePath+'.', "\n\n", error);
 					Node.exit();
 				}
 			}
 		});
 	}
 
-	static async initialize(moduleNames) {
-		//app.log('moduleNames', moduleNames);
+	static async initialize(moduleTitles) {
+		//app.log('moduleTitles', moduleTitles);
 
 		// Initializing is necessary to do separate of .require because module code may be interdependent and require other code to be required first
-		var moduleNamesArray = moduleNames.toArray();
+		var moduleTitlesArray = moduleTitles.toArray();
 
-		await moduleNamesArray.each(async function(moduleNameIndex, moduleName) {
-			//app.log('Module.initialize moduleName', moduleName);
+		await moduleTitlesArray.each(async function(moduleTitleIndex, moduleTitle) {
+			//app.log('Module.initialize moduleTitle', moduleTitle);
 
-			var modulePropertyName = moduleName.lowercaseFirstCharacter();
+			var modulePropertyTitle = moduleTitle.lowercaseFirstCharacter();
 
-			var moduleInstance = app.modules[modulePropertyName];
+			var moduleInstance = app.modules[modulePropertyTitle];
 
 			// Only initialize modules once
 			if(moduleInstance.isInitialized) {
-				//app.info('Already called Module.initialize for '+moduleName+'.'); // Can comment this out, just leaving this here to see when it triggers
+				//app.info('Already called Module.initialize for '+moduleTitle+'.'); // Can comment this out, just leaving this here to see when it triggers
 			}
 			else {
-				//app.log('Initializing', moduleName, 'module...');
-				var settings = app.settings.get('modules.'+moduleName.replaceLast('Module', '').lowercaseFirstCharacter());
+				//app.log('Initializing', moduleTitle, 'module...');
+				var settings = app.settings.get('modules.'+moduleTitle.replaceLast('Module', '').lowercaseFirstCharacter());
 				
-				//app.log('initializing', moduleName+'Module');
+				//app.log('initializing', moduleTitle+'Module');
 				//app.log(moduleInstance, settings);
 
 				await moduleInstance.initialize(settings);
@@ -97,7 +97,7 @@ class Module {
 				// Mark the instance as being initialized
 				moduleInstance.isInitialized = true;
 
-				//app.log('Initialized', moduleName+'Module');
+				//app.log('Initialized', moduleTitle+'Module');
 			}
 		});
 	}

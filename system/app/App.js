@@ -412,14 +412,14 @@ class App extends EventEmitter {
 		//this.log('settings', this.settings);
 
 		// Load the modules
-		this.settings.get('modules').each(function(moduleName, moduleSettings) {
-			moduleName = moduleName.uppercaseFirstCharacter()+'Module';
+		this.settings.get('modules').each(function(moduleTitle, moduleSettings) {
+			moduleTitle = moduleTitle.uppercaseFirstCharacter()+'Module';
 
-			//this.log('Loading "'+moduleName+'" module...');
-			Module.require(moduleName);
+			//this.log('Loading "'+moduleTitle+'" module...');
+			Module.require(moduleTitle);
 
-			// Store the module name for initialization later
-			modulesForApp.append(moduleName);
+			// Store the module title for initialization later
+			modulesForApp.append(moduleTitle);
 		}.bind(this));
 
 		//this.log('modulesForApp', modulesForApp);
