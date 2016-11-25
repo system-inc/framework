@@ -449,6 +449,8 @@ class App extends EventEmitter {
 		return inElectronContext;
 	}
 
+	exit = Node.exit;
+
 }
 
 // Export

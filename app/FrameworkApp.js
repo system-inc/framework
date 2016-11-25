@@ -15,6 +15,8 @@ class FrameworkApp extends App {
 
 	async initialize() {
 		await super.initialize(...arguments);
+
+		app.log('hi!'); app.exit();
 		
 		// If in the Electron context
 		if(app.inElectronContext()) {

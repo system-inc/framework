@@ -9,14 +9,24 @@ class ElectronManager {
 
 		// Get the electron
 		var nodeModuleLookupPaths = Node.Module._resolveLookupPaths('electron')[1];
-		var pathToElectronModule = null;
+		
+		// Add the node exec path
+		//app.log('process.execPath', process.execPath);
+		nodeModuleLookupPaths.append(process.execPath);
+
 		//app.log('nodeModuleLookupPaths', nodeModuleLookupPaths);
+
+		var pathToElectronModule = null;
 
 		await nodeModuleLookupPaths.each(async function(index, lookupPath) {
 			var reformedLookupPath = lookupPath;
 			//app.log('reformedLookupPath', reformedLookupPath);
+
 			if(reformedLookupPath.endsWith('node')) {
 				reformedLookupPath = reformedLookupPath.replaceLast('node', 'node_modules');
+			}
+			else if(reformedLookupPath.endsWith('node.exe')) {
+				reformedLookupPath = reformedLookupPath.replaceLast('node.exe', 'node_modules');
 			}
 
 			reformedLookupPath = Node.Path.join(reformedLookupPath, 'electron');

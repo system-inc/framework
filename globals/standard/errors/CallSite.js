@@ -49,7 +49,10 @@ class CallSite {
 
 		this.file = this.standardCallSiteWithSourceMapApplied.getFileName();
 		if(this.file) {
-			this.fileName = this.file.substr(this.file.lastIndexOf(Node.Path.separator) + 1, this.file.length);
+			//console.log('this.file', this.file);
+			//console.log('Node.Path.separator', Node.Path.separator);
+			//console.log('this.file.lastIndexOf(Node.Path.separator)', this.file.lastIndexOf(Node.Path.separator));
+			this.fileName = this.file.substr(this.file.lastIndexOf('/') + 1, this.file.length);
 		}
 		this.lineNumber = this.standardCallSiteWithSourceMapApplied.getLineNumber();
 		this.columnNumber = this.standardCallSiteWithSourceMapApplied.getColumnNumber();

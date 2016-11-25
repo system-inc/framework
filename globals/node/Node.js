@@ -74,6 +74,8 @@ class Node {
 	}
 
 	static spawnChildProcess() {
+		//console.log('spawnChildProcess arguments', arguments);
+
 		var childProcess = Node.ChildProcess.spawn(...arguments);
 
 		Node.childProcesses.append(childProcess);
