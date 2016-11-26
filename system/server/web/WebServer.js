@@ -117,7 +117,7 @@ class WebServer extends Server {
 		// Load the routes into the router
 		this.router = new Router();
 		this.router.loadRoutes(this.settings.get('router.routes'));
-		//app.info('this.router', this.router); Node.exit();
+		//app.info('this.router', this.router); app.exit();
 	}
 
 	resolveHttpsProtocolFiles() {

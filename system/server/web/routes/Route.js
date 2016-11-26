@@ -215,7 +215,7 @@ class Route {
 			collectedData[captureGroupName] = this.capturedData[count];
 			count++;
 		}.bind(this));
-		//Node.exit(collectedData);
+		//app.exit(collectedData);
 
 		// Merge what we have so far with the route data
 		collectedData = this.data.clone().merge(collectedData);

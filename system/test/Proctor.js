@@ -467,7 +467,7 @@ class Proctor extends EventEmitter {
 		// Exit the process if we are on a terminal and not in Electron
 		if(!Node.Process.versions.electron) {
 			Function.delay(250, function() {
-				Node.exit();
+				app.exit();
 			});
 		}
 	}
@@ -768,7 +768,7 @@ class Proctor extends EventEmitter {
 		// Resolve the path
 		path = Proctor.resolvePath(path);
 		//app.log(path);
-		//Node.exit(path);
+		//app.exit(path);
 
 		// If patterns are set and are strings, lowercase them for later matching
 		if(filePattern && String.is(filePattern)) {
@@ -882,7 +882,7 @@ class Proctor extends EventEmitter {
 						}
 						catch(error) {
 							app.log('Caught an error while loading test.', testClassName, error.stack.toString());
-							Node.exit();
+							app.exit();
 						}
 					}
 					else {

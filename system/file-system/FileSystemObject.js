@@ -219,7 +219,7 @@ class FileSystemObject {
 
         var list = [];
         var fileNames = await FileSystemObject.listFileNames(path);
-        //Node.exit('fileNames', fileNames);
+        //app.exit('fileNames', fileNames);
 
         // Dependencies
         //import FileSystemObjectFactory from './FileSystemObjectFactory.js';
@@ -252,7 +252,7 @@ class FileSystemObject {
             }
         });
 
-        //Node.exit('list', list);
+        //app.exit('list', list);
 
         return list;
     }

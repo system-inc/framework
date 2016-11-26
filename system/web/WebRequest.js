@@ -195,8 +195,8 @@ class WebRequest {
 
 				// Header debugging
 				//app.warn(webResponse.headers);
-				//Node.exit(response.rawHeaders);
-				//Node.exit(response.headers);
+				//app.exit(response.rawHeaders);
+				//app.exit(response.headers);
 
 				// Set the cookies from the headers
 				webResponse.cookies = webResponse.headers.getCookies();

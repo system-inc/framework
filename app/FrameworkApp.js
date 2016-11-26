@@ -16,7 +16,7 @@ class FrameworkApp extends App {
 	async initialize() {
 		await super.initialize(...arguments);
 
-		app.log('hi!'); app.exit();
+		//app.log('hi!'); app.exit();
 		
 		// If in the Electron context
 		if(app.inElectronContext()) {
@@ -76,7 +76,7 @@ class FrameworkApp extends App {
 		// Kill the parent process when the child process exits
 		electronChildProcess.on('close', function(code) {
 			app.standardStreams.output.writeLine('Electron exited with code '+code+'.');
-			Node.exit();
+			app.exit();
 		});
 	}
 

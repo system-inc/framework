@@ -36,7 +36,7 @@ class DatabaseTableIndex {
 			properties = propertiesQuery.rows.getObjectWithKeyValue('field', this.name);
 		}
 
-		//Node.exit(properties);
+		//app.exit(properties);
 				
 		this.unique = (properties.nonUnique === 0);
 		this.type = properties.indexType;

@@ -484,7 +484,7 @@ class Command {
 				app.standardStreams.output.writeLine(message);
 			}
 
-			Node.exit();
+			app.exit();
 		}
 	}
 

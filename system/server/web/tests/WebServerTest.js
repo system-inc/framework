@@ -21,7 +21,7 @@ class WebServerTest extends Test {
 		this.port = webServerSettings.modules.webServer.webServers[0].protocols.http.ports[0];
 
 		this.baseUrl = new Url(this.protocol+'://'+this.host+':'+this.port);
-		//Node.exit(this.baseUrl);
+		//app.exit(this.baseUrl);
 
 		// Turn off verbose
 		webServerSettings.modules.webServer.webServers[0].verbose = false;

@@ -11,7 +11,7 @@ class DatabaseModule extends Module {
 	databaseManager = null;
 
 	async initialize(settings) {
-		//Node.exit('DatabaseModule initialize', settings);
+		//app.exit('DatabaseModule initialize', settings);
 		await super.initialize(...arguments);
 
 		this.databaseManager = new DatabaseManager();
