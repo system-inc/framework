@@ -1,6 +1,6 @@
 // Dependencies
-var Url = Framework.require('system/web/Url.js');
-var WebRequest = Framework.require('system/web/WebRequest.js');
+var Url = Framework.require('framework/system/web/Url.js');
+var WebRequest = Framework.require('framework/system/web/WebRequest.js');
 
 // Class
 var WebApi = Class.extend({

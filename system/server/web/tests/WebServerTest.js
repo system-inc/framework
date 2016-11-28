@@ -1,10 +1,10 @@
 // Dependencies
-import Test from 'system/test/Test.js';
-import Assert from 'system/test/Assert.js';
-import File from 'system/file-system/File.js';
-import WebServer from 'system/server/web/WebServer.js';
-import WebRequest from 'system/web/WebRequest.js';
-import Url from 'system/web/Url.js';
+import Test from 'framework/system/test/Test.js';
+import Assert from 'framework/system/test/Assert.js';
+import File from 'framework/system/file-system/File.js';
+import WebServer from 'framework/system/server/web/WebServer.js';
+import WebRequest from 'framework/system/web/WebRequest.js';
+import Url from 'framework/system/web/Url.js';
 
 // Class
 class WebServerTest extends Test {

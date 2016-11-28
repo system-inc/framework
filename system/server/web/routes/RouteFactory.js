@@ -1,7 +1,7 @@
-import RedirectRoute from './RedirectRoute.js';
-import FileRoute from './FileRoute.js';
-import ProxyRoute from './ProxyRoute.js';
-import ControllerRoute from './ControllerRoute.js';
+import RedirectRoute from 'framework/system/server/web/routes/RedirectRoute.js';
+import FileRoute from 'framework/system/server/web/routes/FileRoute.js';
+import ProxyRoute from 'framework/system/server/web/routes/ProxyRoute.js';
+import ControllerRoute from 'framework/system/server/web/routes/ControllerRoute.js';
 
 // Class
 class RouteFactory {

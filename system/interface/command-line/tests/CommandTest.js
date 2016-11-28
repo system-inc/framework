@@ -1,7 +1,7 @@
 // Dependencies
-import Test from 'system/test/Test.js';
-import Assert from 'system/test/Assert.js';
-import Command from './../Command.js';
+import Test from 'framework/system/test/Test.js';
+import Assert from 'framework/system/test/Assert.js';
+import Command from 'framework/system/interface/command-line/Command.js';
 
 // Class
 class CommandTest extends Test {

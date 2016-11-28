@@ -1,5 +1,5 @@
 // Dependencies
-import Cryptography from 'system/cryptography/Cryptography.js';
+import Cryptography from 'framework/system/cryptography/Cryptography.js';
 
 // Instance methods
 

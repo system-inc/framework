@@ -1,7 +1,7 @@
 // Dependencies
-import FileSystemObject from './FileSystemObject.js';
-import Directory from './Directory.js';
-import FileFormats from './FileFormats.js';
+import FileSystemObject from 'framework/system/file-system/FileSystemObject.js';
+import Directory from 'framework/system/file-system/Directory.js';
+import FileFormats from 'framework/system/file-system/FileFormats.js';
 
 // Class
 class File extends FileSystemObject {

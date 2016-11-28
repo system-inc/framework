@@ -1,5 +1,5 @@
 // Dependencies
-var View = Framework.require('system/interface/graphical/views/View.js');
+var View = Framework.require('framework/system/interface/graphical/views/View.js');
 
 // Class
 var LinkView = View.extend({

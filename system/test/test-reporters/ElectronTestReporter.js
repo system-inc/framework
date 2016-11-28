@@ -1,6 +1,6 @@
 // Dependencies
-import TestReporter from './TestReporter.js';
-import AssertionError from './../errors/AssertionError.js';
+import TestReporter from 'framework/system/test/test-reporters/TestReporter.js';
+import AssertionError from 'framework/system/test/errors/AssertionError.js';
 
 // Class
 class ElectronTestReporter extends TestReporter {

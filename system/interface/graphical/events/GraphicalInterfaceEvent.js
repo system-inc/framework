@@ -1,5 +1,5 @@
 // Dependencies
-import Event from 'system/event/Event.js';
+import Event from 'framework/system/event/Event.js';
 
 // Class
 class GraphicalInterfaceEvent extends Event {

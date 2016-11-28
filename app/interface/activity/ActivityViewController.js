@@ -1,8 +1,8 @@
 // Dependencies
-import ViewController from 'system/interface/graphical/view-controllers/ViewController.js';
-import View from 'system/interface/graphical/views/View.js';
-import HeadingView from 'system/interface/graphical/views/text/HeadingView.js';
-import TextView from 'system/interface/graphical/views/text/TextView.js';
+import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
+import View from 'framework/system/interface/graphical/views/View.js';
+import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
+import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
 class ActivityViewController extends ViewController {

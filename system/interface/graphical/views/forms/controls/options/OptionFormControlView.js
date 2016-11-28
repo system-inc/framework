@@ -1,5 +1,5 @@
 // Dependencies
-var FormControlView = Framework.require('system/interface/graphical/views/forms/controls/FormControlView.js');
+var FormControlView = Framework.require('framework/system/interface/graphical/views/forms/controls/FormControlView.js');
 
 // Class
 var OptionFormControlView = FormControlView.extend({

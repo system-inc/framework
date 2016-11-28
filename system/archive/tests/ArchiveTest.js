@@ -1,7 +1,7 @@
 // Dependencies
-import Test from 'system/test/Test.js';
-import Assert from 'system/test/Assert.js';
-import ArchiveFile from 'system/archive/ArchiveFile.js';
+import Test from 'framework/system/test/Test.js';
+import Assert from 'framework/system/test/Assert.js';
+import ArchiveFile from 'framework/system/archive/ArchiveFile.js';
 
 // Class
 class ArchiveTest extends Test {

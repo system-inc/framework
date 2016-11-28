@@ -1,5 +1,5 @@
 // Dependencies
-import RouteFactory from './RouteFactory.js';
+import RouteFactory from 'framework/system/server/web/routes/RouteFactory.js';
 
 // Class
 class Route {

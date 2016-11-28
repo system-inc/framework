@@ -1,9 +1,9 @@
 // Dependencies
-import XmlDocument from 'system/xml/XmlDocument.js';
-import Url from 'system/web/Url.js';
-import Html from 'system/interface/graphical/web/html/Html.js';
-import HtmlDocumentEventEmitter from 'system/interface/graphical/web/html/events/html-document/HtmlDocumentEventEmitter.js';
-import HtmlDocumentEvent from 'system/interface/graphical/web/html/events/html-document/HtmlDocumentEvent.js';
+import XmlDocument from 'framework/system/xml/XmlDocument.js';
+import Url from 'framework/system/web/Url.js';
+import Html from 'framework/system/interface/graphical/web/html/Html.js';
+import HtmlDocumentEventEmitter from 'framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEventEmitter.js';
+import HtmlDocumentEvent from 'framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEvent.js';
 
 // Class
 class HtmlDocument extends XmlDocument {

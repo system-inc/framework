@@ -1,6 +1,6 @@
 // Dependencies
-import FileSystemObject from 'system/file-system/FileSystemObject.js';
-import SevenZip from './../libraries/7-zip/SevenZip.js';
+import FileSystemObject from 'framework/system/file-system/FileSystemObject.js';
+import SevenZip from 'framework/system/archive/libraries/7-zip/SevenZip.js';
 
 // Class
 class ArchivedFileSystemObject {

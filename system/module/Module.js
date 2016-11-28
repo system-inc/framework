@@ -1,5 +1,5 @@
 // Dependencies
-import Settings from 'system/settings/Settings.js';
+import Settings from 'framework/system/settings/Settings.js';
 
 // Class
 class Module {

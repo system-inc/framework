@@ -1,8 +1,8 @@
 // Dependencies
-import Test from 'system/test/Test.js';
-import Assert from 'system/test/Assert.js';
-import Html from 'system/interface/graphical/web/html/Html.js';
-import HtmlElement from 'system/interface/graphical/web/html/HtmlElement.js';
+import Test from 'framework/system/test/Test.js';
+import Assert from 'framework/system/test/Assert.js';
+import Html from 'framework/system/interface/graphical/web/html/Html.js';
+import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlElement.js';
 
 // Class
 class HtmlTest extends Test {

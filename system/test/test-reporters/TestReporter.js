@@ -1,7 +1,7 @@
 // Dependencies
-import Terminal from 'system/interface/Terminal.js';
-import Assert from './../Assert.js';
-import AssertionError from './../errors/AssertionError.js';
+import Terminal from 'framework/system/interface/Terminal.js';
+import Assert from 'framework/system/test/Assert.js';
+import AssertionError from 'framework/system/test/errors/AssertionError.js';
 
 // Class
 class TestReporter {

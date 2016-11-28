@@ -1,5 +1,5 @@
 // Dependencies
-var Reusable = Framework.require('system/pool/Reusable.js');
+var Reusable = Framework.require('framework/system/pool/Reusable.js');
 var Electron = Node.require('electron');
 
 // Class

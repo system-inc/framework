@@ -1,5 +1,5 @@
 // Dependencies
-import Cookie from './Cookie.js';
+import Cookie from 'framework/system/web/headers/Cookie.js';
 
 // Class
 class Cookies {

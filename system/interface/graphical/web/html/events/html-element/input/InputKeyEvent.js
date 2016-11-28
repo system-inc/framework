@@ -1,5 +1,5 @@
 // Dependencies
-import HtmlElementEvent from './../HtmlElementEvent.js';
+import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
 
 // Class
 class InputKeyEvent extends HtmlElementEvent {

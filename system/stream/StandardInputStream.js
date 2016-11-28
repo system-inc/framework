@@ -1,5 +1,5 @@
 // Dependencies
-import StandardStream from './StandardStream.js';
+import StandardStream from 'framework/system/stream/StandardStream.js';
 
 // Class
 class StandardInputStream extends StandardStream {

@@ -1,6 +1,6 @@
 // Dependencies
-import Module from 'system/module/Module.js';
-import Version from 'system/version/Version.js';
+import Module from 'framework/system/module/Module.js';
+import Version from 'framework/system/version/Version.js';
 
 // Class
 class ArchiveModule extends Module {

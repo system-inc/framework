@@ -1,15 +1,15 @@
 // Dependencies
-import Headers from 'system/web/headers/Headers.js';
-import Cookies from 'system/web/headers/Cookies.js';
-import Url from 'system/web/Url.js';
-import IpAddressFactory from 'system/network/IpAddressFactory.js';
-import Browser from 'system/web/Browser.js';
-import Device from 'system/hardware/Device.js';
-import OperatingSystem from 'system/operating-system/OperatingSystem.js';
-import Geolocation from 'system/geolocation/Geolocation.js';
-import Country from 'system/geolocation/Country.js';
-import Version from 'system/version/Version.js';
-import RequestEntityTooLargeError from './errors/RequestEntityTooLargeError.js';
+import Headers from 'framework/system/web/headers/Headers.js';
+import Cookies from 'framework/system/web/headers/Cookies.js';
+import Url from 'framework/system/web/Url.js';
+import IpAddressFactory from 'framework/system/network/IpAddressFactory.js';
+import Browser from 'framework/system/web/Browser.js';
+import Device from 'framework/system/hardware/Device.js';
+import OperatingSystem from 'framework/system/operating-system/OperatingSystem.js';
+import Geolocation from 'framework/system/geolocation/Geolocation.js';
+import Country from 'framework/system/geolocation/Country.js';
+import Version from 'framework/system/version/Version.js';
+import RequestEntityTooLargeError from 'framework/system/server/web/errors/RequestEntityTooLargeError.js';
 
 // Class
 class Request {

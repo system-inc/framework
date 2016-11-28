@@ -1,5 +1,5 @@
 // Dependencies
-import HttpError from './HttpError.js';
+import HttpError from 'framework/system/server/web/errors/HttpError.js';
 
 // Class
 class RequestedRangeNotSatisfiableError extends HttpError {

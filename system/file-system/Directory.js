@@ -1,5 +1,5 @@
 // Dependencies
-import FileSystemObject from './FileSystemObject.js';
+import FileSystemObject from 'framework/system/file-system/FileSystemObject.js';
 
 // Class
 class Directory extends FileSystemObject {

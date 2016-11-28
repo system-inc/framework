@@ -1,16 +1,16 @@
 // Dependencies
-import EventEmitter from 'system/event/EventEmitter.js';
-import StandardInputStream from 'system/stream/StandardInputStream.js';
-import StandardOutputStream from 'system/stream/StandardOutputStream.js';
-import StandardErrorStream from 'system/stream/StandardErrorStream.js';
-import Directory from 'system/file-system/Directory.js';
-import FileLog from 'system/log/FileLog.js';
-import CommandLineInterface from 'system/interface/command-line/CommandLineInterface.js';
-import InteractiveCommandLineInterface from 'system/interface/interactive-command-line/InteractiveCommandLineInterface.js';
-import Module from 'system/module/Module.js';
-import Settings from 'system/settings/Settings.js';
-import Terminal from 'system/interface/Terminal.js';
-import Version from 'system/version/Version.js';
+import EventEmitter from 'framework/system/event/EventEmitter.js';
+import StandardInputStream from 'framework/system/stream/StandardInputStream.js';
+import StandardOutputStream from 'framework/system/stream/StandardOutputStream.js';
+import StandardErrorStream from 'framework/system/stream/StandardErrorStream.js';
+import Directory from 'framework/system/file-system/Directory.js';
+import FileLog from 'framework/system/log/FileLog.js';
+import CommandLineInterface from 'framework/system/interface/command-line/CommandLineInterface.js';
+import InteractiveCommandLineInterface from 'framework/system/interface/interactive-command-line/InteractiveCommandLineInterface.js';
+import Module from 'framework/system/module/Module.js';
+import Settings from 'framework/system/settings/Settings.js';
+import Terminal from 'framework/system/interface/Terminal.js';
+import Version from 'framework/system/version/Version.js';
 
 // Class
 class App extends EventEmitter {

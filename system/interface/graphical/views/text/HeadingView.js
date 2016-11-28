@@ -1,5 +1,5 @@
 // Dependencies
-import TextView from 'system/interface/graphical/views/text/TextView.js';
+import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
 class HeadingView extends TextView {

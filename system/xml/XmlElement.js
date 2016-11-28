@@ -1,5 +1,5 @@
 // Dependencies
-import XmlNode from './XmlNode.js';
+import XmlNode from 'framework/system/xml/XmlNode.js';
 
 // Class
 class XmlElement extends XmlNode {

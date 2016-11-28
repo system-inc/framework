@@ -1,9 +1,9 @@
 // Dependencies
-import Interface from 'system/interface/Interface.js';
-import GraphicalInterfaceHistory from 'system/interface/graphical/GraphicalInterfaceHistory.js';
-import Dimensions from 'system/interface/graphical/Dimensions.js';
-import Position from 'system/interface/graphical/Position.js';
-import ViewController from 'system/interface/graphical/view-controllers/ViewController.js';
+import Interface from 'framework/system/interface/Interface.js';
+import GraphicalInterfaceHistory from 'framework/system/interface/graphical/GraphicalInterfaceHistory.js';
+import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
+import Position from 'framework/system/interface/graphical/Position.js';
+import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 
 // Class
 class GraphicalInterface extends Interface {

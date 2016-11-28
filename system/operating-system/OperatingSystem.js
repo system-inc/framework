@@ -1,5 +1,5 @@
 // Dependencies
-import Version from 'system/version/Version.js';
+import Version from 'framework/system/version/Version.js';
 
 // Class
 class OperatingSystem {

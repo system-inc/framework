@@ -1,5 +1,5 @@
 // Dependencies
-var ListView = Framework.require('system/interface/graphical/views/lists/ListView.js');
+var ListView = Framework.require('framework/system/interface/graphical/views/lists/ListView.js');
 
 // Class
 var UnorderedListView = ListView.extend({

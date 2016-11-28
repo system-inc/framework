@@ -1,19 +1,19 @@
 // Dependencies
-import PropagatingEventEmitter from 'system/event/PropagatingEventEmitter.js';
-import WildcardPatternMatcher from 'system/search/patterns/WildcardPatternMatcher.js';
-import HtmlDocumentEvent from './html-document/HtmlDocumentEvent.js';
-import HtmlDocumentEventEmitter from './html-document/HtmlDocumentEventEmitter.js';
-import HtmlElementEvent from './html-element/HtmlElementEvent.js';
-import ClipboardEvent from './html-event/ClipboardEvent.js';
-import InputComposeEvent from './html-element/input/InputComposeEvent.js';
-import InputHoverEvent from './html-element/input/InputHoverEvent.js';
-import InputKeyEvent from './html-element/input/InputKeyEvent.js';
-import InputPressEvent from './html-element/input/InputPressEvent.js';
-import InputScrollEvent from './html-element/input/InputScrollEvent.js';
-import InputSelectEvent from './html-element/input/InputSelectEvent.js';
-import FormEvent from './html-element/FormEvent.js';
-import HtmlDocument from './../HtmlDocument.js';
-import HtmlNode from './../HtmlNode.js';
+import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
+import WildcardPatternMatcher from 'framework/system/search/patterns/WildcardPatternMatcher.js';
+import HtmlDocumentEvent from 'framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEvent.js';
+import HtmlDocumentEventEmitter from 'framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEventEmitter.js';
+import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
+import ClipboardEvent from 'framework/system/interface/graphical/web/html/events/html-event/ClipboardEvent.js';
+import InputComposeEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputComposeEvent.js';
+import InputHoverEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputHoverEvent.js';
+import InputKeyEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputKeyEvent.js';
+import InputPressEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
+import InputScrollEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputScrollEvent.js';
+import InputSelectEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputSelectEvent.js';
+import FormEvent from 'framework/system/interface/graphical/web/html/events/html-element/FormEvent.js';
+import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
+import HtmlNode from 'framework/system/interface/graphical/web/html/HtmlNode.js';
 
 // Class
 class HtmlEventProxy {

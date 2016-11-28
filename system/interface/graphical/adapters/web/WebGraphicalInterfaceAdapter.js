@@ -1,6 +1,6 @@
 // Dependencies
-import GraphicalInterfaceAdapter from 'system/interface/graphical/adapters/GraphicalInterfaceAdapter.js';
-import HtmlDocument from 'system/interface/graphical/web/html/HtmlDocument.js';
+import GraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/GraphicalInterfaceAdapter.js';
+import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 
 // Class
 class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {

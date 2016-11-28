@@ -1,7 +1,7 @@
 // Dependencies
-import File from 'system/file-system/File.js';
-import SevenZip from './libraries/7-zip/SevenZip.js';
-import ArchivedFileSystemObjectFactory from './file-system-objects/ArchivedFileSystemObjectFactory.js';
+import File from 'framework/system/file-system/File.js';
+import SevenZip from 'framework/system/archive//libraries/7-zip/SevenZip.js';
+import ArchivedFileSystemObjectFactory from 'framework/system/archive/file-system-objects/ArchivedFileSystemObjectFactory.js';
 
 // Class
 class ArchiveFile extends File {

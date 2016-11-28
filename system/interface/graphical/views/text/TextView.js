@@ -1,5 +1,5 @@
 // Dependencies
-import View from 'system/interface/graphical/views/View.js';
+import View from 'framework/system/interface/graphical/views/View.js';
 
 // Class
 class TextView extends View {

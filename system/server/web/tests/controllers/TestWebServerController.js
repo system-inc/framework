@@ -1,15 +1,15 @@
 // Dependencies
-import WebServerController from 'system/server/web/WebServerController.js';
-import InternalServerError from 'system/server/web/errors/InternalServerError.js';
-import BadRequestError from 'system/server/web/errors/BadRequestError.js';
-import ForbiddenError from 'system/server/web/errors/ForbiddenError.js';
-import RequestedRangeNotSatisfiableError from 'system/server/web/errors/RequestedRangeNotSatisfiableError.js';
-import RequestEntityTooLargeError from 'system/server/web/errors/RequestEntityTooLargeError.js';
-import UnauthorizedError from 'system/server/web/errors/UnauthorizedError.js';
-import ArchiveFile from 'system/archive/ArchiveFile.js';
-import File from 'system/file-system/File.js';
-import Html from 'system/interface/graphical/web/html/Html.js';
-import HtmlDocument from 'system/interface/graphical/web/html/HtmlDocument.js';
+import WebServerController from 'framework/system/server/web/WebServerController.js';
+import InternalServerError from 'framework/system/server/web/errors/InternalServerError.js';
+import BadRequestError from 'framework/system/server/web/errors/BadRequestError.js';
+import ForbiddenError from 'framework/system/server/web/errors/ForbiddenError.js';
+import RequestedRangeNotSatisfiableError from 'framework/system/server/web/errors/RequestedRangeNotSatisfiableError.js';
+import RequestEntityTooLargeError from 'framework/system/server/web/errors/RequestEntityTooLargeError.js';
+import UnauthorizedError from 'framework/system/server/web/errors/UnauthorizedError.js';
+import ArchiveFile from 'framework/system/archive/ArchiveFile.js';
+import File from 'framework/system/file-system/File.js';
+import Html from 'framework/system/interface/graphical/web/html/Html.js';
+import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 
 // Class
 class TestWebServerController extends WebServerController {

@@ -1,6 +1,6 @@
 // Dependencies
-var SchemaModel = Framework.require('system/data/SchemaModel.js');
-var SchemaModelProperty = Framework.require('system/data/SchemaModelProperty.js');
+var SchemaModel = Framework.require('framework/system/data/SchemaModel.js');
+var SchemaModelProperty = Framework.require('framework/system/data/SchemaModelProperty.js');
 
 // Class
 var Schema = Class.extend({

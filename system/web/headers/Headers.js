@@ -1,7 +1,7 @@
 // Dependencies
-import Header from './Header.js';
-import Cookies from './Cookies.js';
-import Cookie from './Cookie.js';
+import Header from 'framework/system/web/headers/Header.js';
+import Cookies from 'framework/system/web/headers/Cookies.js';
+import Cookie from 'framework/system/web/headers/Cookie.js';
 
 // Class
 class Headers {

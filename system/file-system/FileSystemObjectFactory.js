@@ -1,7 +1,7 @@
 // Dependencies
-import FileSystemObject from './FileSystemObject.js';
-import File from './File.js';
-import Directory from './Directory.js';
+import FileSystemObject from 'framework/system/file-system/FileSystemObject.js';
+import File from 'framework/system/file-system/File.js';
+import Directory from 'framework/system/file-system/Directory.js';
 
 // Class
 class FileSystemObjectFactory {

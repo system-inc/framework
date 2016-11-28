@@ -1,6 +1,6 @@
 // Dependencies
-import RouteFactory from './RouteFactory.js';
-import NotFoundError from './../errors/NotFoundError.js';
+import RouteFactory from 'framework/system/server/web/routes/RouteFactory.js';
+import NotFoundError from 'framework/system/server/web/errors/NotFoundError.js';
 
 // Class
 class Router {

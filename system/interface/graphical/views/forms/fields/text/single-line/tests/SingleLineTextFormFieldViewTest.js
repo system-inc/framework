@@ -1,9 +1,9 @@
 // Dependencies
-import ElectronTest from 'system/electron/tests/ElectronTest.js';
-import Assert from 'system/test/Assert.js';
-import ViewController from 'system/interface/graphical/view-controllers/ViewController.js';
-import FormView from 'system/interface/graphical/views/forms/FormView.js';
-import SingleLineTextFormFieldView from 'system/interface/graphical/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js';
+import ElectronTest from 'framework/system/electron/tests/ElectronTest.js';
+import Assert from 'framework/system/test/Assert.js';
+import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
+import FormView from 'framework/system/interface/graphical/views/forms/FormView.js';
+import SingleLineTextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js';
 var ElectronManager = null;
 
 // Class
@@ -11,7 +11,7 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
 
 	async before() {
         // Initialize the ElectronManager here as to not throw an exception when electron is not present
-        ElectronManager = require('system/electron/ElectronManager.js');
+        ElectronManager = require('framework/system/electron/ElectronManager.js');
     }
 
 	async testEnterSubmits() {

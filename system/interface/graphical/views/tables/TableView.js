@@ -1,6 +1,6 @@
 // Dependencies
-var View = Framework.require('system/interface/graphical/views/View.js');
-var Html = Framework.require('system/interface/graphical/web/html/Html.js');
+var View = Framework.require('framework/system/interface/graphical/views/View.js');
+var Html = Framework.require('framework/system/interface/graphical/web/html/Html.js');
 
 // Class
 var TableView = View.extend({

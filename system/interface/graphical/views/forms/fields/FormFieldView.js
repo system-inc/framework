@@ -1,8 +1,8 @@
 // Dependencies
-import View from 'system/interface/graphical/views/View.js';
-import Html from 'system/interface/graphical/web/html/Html.js';
-import HtmlElement from 'system/interface/graphical/web/html/HtmlElement.js';
-import FormControlView from 'system/interface/graphical/views/forms/controls/FormControlView.js';
+import View from 'framework/system/interface/graphical/views/View.js';
+import Html from 'framework/system/interface/graphical/web/html/Html.js';
+import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlElement.js';
+import FormControlView from 'framework/system/interface/graphical/views/forms/controls/FormControlView.js';
 
 // Class
 class FormFieldView extends View {

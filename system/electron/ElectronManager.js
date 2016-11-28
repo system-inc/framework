@@ -1,6 +1,6 @@
 // Dependencies
 var Electron = Node.require('electron');
-var BrowserWindowState = Framework.require('system/electron/BrowserWindowState.js');
+var BrowserWindowState = Framework.require('framework/system/electron/BrowserWindowState.js');
 
 // Class
 var ElectronManager = Class.extend({
@@ -35,7 +35,7 @@ var ElectronManager = Class.extend({
 		this.initializeDeveloperTools();
 
 		// Testing
-		//var Proctor = Framework.require('system/test/Proctor.js');
+		//var Proctor = Framework.require('framework/system/test/Proctor.js');
 		//var proctor = new Proctor('electron');
 		//proctor.getAndRunTests();
 		//return;

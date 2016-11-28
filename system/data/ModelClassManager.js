@@ -1,6 +1,6 @@
 // Dependencies
-import Model from 'system/data/Model.js';
-import ModelProperty from 'system/data/ModelProperty.js';
+import Model from 'framework/system/data/Model.js';
+import ModelProperty from 'framework/system/data/ModelProperty.js';
 
 // Class
 class ModelClassManager {

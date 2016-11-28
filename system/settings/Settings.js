@@ -1,6 +1,6 @@
 // Dependencies
-import File from 'system/file-system/File.js';
-import DataStore from 'system/data/DataStore.js';
+import File from 'framework/system/file-system/File.js';
+import DataStore from 'framework/system/data/DataStore.js';
 
 // Class
 class Settings {

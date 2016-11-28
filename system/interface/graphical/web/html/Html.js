@@ -1,5 +1,5 @@
 // Dependencies
-import HtmlElement from './HtmlElement.js';
+import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlElement.js';
 
 // Class
 class Html {

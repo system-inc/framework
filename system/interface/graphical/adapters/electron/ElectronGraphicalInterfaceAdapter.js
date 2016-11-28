@@ -1,5 +1,5 @@
 // Dependencies
-import WebGraphicalInterfaceAdapter from 'system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
+import WebGraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
 
 // Class
 class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {

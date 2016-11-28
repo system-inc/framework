@@ -1,6 +1,6 @@
 // Dependencies
-import EventEmitter from './EventEmitter.js';
-import PropagatingEvent from './PropagatingEvent.js';
+import EventEmitter from 'framework/system/event/EventEmitter.js';
+import PropagatingEvent from 'framework/system/event/PropagatingEvent.js';
 
 // Class
 class PropagatingEventEmitter extends EventEmitter {

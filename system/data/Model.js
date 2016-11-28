@@ -1,5 +1,5 @@
 // Dependencies
-import ModelProperty from './ModelProperty.js';
+import ModelProperty from 'framework/system/data/ModelProperty.js';
 
 // Class
 class Model {

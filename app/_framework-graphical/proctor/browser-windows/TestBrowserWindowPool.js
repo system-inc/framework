@@ -1,5 +1,5 @@
 // Dependencies
-var Pool = Framework.require('system/pool/Pool.js');
+var Pool = Framework.require('framework/system/pool/Pool.js');
 var TestBrowserWindow = Framework.require('assistant/desktop/proctor/browser-windows/TestBrowserWindow.js');
 
 // Class

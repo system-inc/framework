@@ -1,14 +1,14 @@
 // Globals
-import './../globals/Globals.js';
-import AsciiArt from 'system/ascii-art/AsciiArt.js';
-import ElectronManager from 'system/interface/graphical/electron/ElectronManager.js';
-import ElectronGraphicalInterfaceManager from 'system/interface/graphical/managers/electron/ElectronGraphicalInterfaceManager.js';
-import GraphicalInterface from 'system/interface/graphical/GraphicalInterface.js';
+import 'framework/globals/Globals.js';
+import AsciiArt from 'framework/system/ascii-art/AsciiArt.js';
+import ElectronManager from 'framework/system/interface/graphical/electron/ElectronManager.js';
+import ElectronGraphicalInterfaceManager from 'framework/system/interface/graphical/managers/electron/ElectronGraphicalInterfaceManager.js';
+import GraphicalInterface from 'framework/system/interface/graphical/GraphicalInterface.js';
 import FrameworkViewController from 'interface/FrameworkViewController.js';
-import Proctor from 'system/test/Proctor.js';
+import Proctor from 'framework/system/test/Proctor.js';
 
 // Dependencies
-import App from 'system/app/App.js';
+import App from 'framework/system/app/App.js';
 
 // Class
 class FrameworkApp extends App {

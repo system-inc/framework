@@ -1,5 +1,5 @@
 // Dependencies
-import InputPressEvent from './InputPressEvent.js';
+import InputPressEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
 
 // Class
 class InputHoverEvent extends InputPressEvent {

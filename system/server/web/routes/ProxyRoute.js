@@ -1,7 +1,7 @@
 // Dependencies
-import Route from './Route.js';
-import Url from 'system/web/Url.js';
-import WebRequest from 'system/web/WebRequest.js';
+import Route from 'framework/system/server/web/routes/Route.js';
+import Url from 'framework/system/web/Url.js';
+import WebRequest from 'framework/system/web/WebRequest.js';
 
 // Class
 class ProxyRoute extends Route {

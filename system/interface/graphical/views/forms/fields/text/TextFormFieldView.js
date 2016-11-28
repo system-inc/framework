@@ -1,5 +1,5 @@
 // Dependencies
-import FormFieldView from 'system/interface/graphical/views/forms/fields/FormFieldView.js';
+import FormFieldView from 'framework/system/interface/graphical/views/forms/fields/FormFieldView.js';
 
 // Class
 class TextFormFieldView extends FormFieldView {

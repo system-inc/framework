@@ -1,7 +1,7 @@
 // Dependencies
-import Route from './Route.js';
-import InternalServerError from './../errors/InternalServerError.js';
-import Url from 'system/web/Url.js';
+import Route from 'framework/system/server/web/routes/Route.js';
+import InternalServerError from 'framework/system/server/web/errors/InternalServerError.js';
+import Url from 'framework/system/web/Url.js';
 
 // Class
 class RedirectRoute extends Route {

@@ -1,6 +1,6 @@
 // Dependencies
-import HtmlEventEmitter from './../html-event/HtmlEventEmitter.js';
-import HtmlDocumentEvent from './HtmlDocumentEvent.js';
+import HtmlEventEmitter from 'framework/system/interface/graphical/web/html/events/html-event/HtmlEventEmitter.js';
+import HtmlDocumentEvent from 'framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEvent.js';
 
 // Class
 class HtmlDocumentEventEmitter extends HtmlEventEmitter {

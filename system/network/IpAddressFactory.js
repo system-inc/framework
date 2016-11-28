@@ -1,5 +1,5 @@
-import IpV4Address from './IpV4Address.js';
-import IpV6Address from './IpV6Address.js';
+import IpV4Address from 'framework/system/network/IpV4Address.js';
+import IpV6Address from 'framework/system/network/IpV6Address.js';
 
 // Class
 class IpAddressFactory {

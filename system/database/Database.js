@@ -1,9 +1,9 @@
 // Dependencies
-import Settings from 'system/settings/Settings.js';
+import Settings from 'framework/system/settings/Settings.js';
 import MySql from 'mysql';
-import MySqlAdapter from 'system/database/adapters/MySqlAdapter.js';
-import DatabaseTable from 'system/database/DatabaseTable.js';
-import Stopwatch from 'system/time/Stopwatch.js';
+import MySqlAdapter from 'framework/system/database/adapters/MySqlAdapter.js';
+import DatabaseTable from 'framework/system/database/DatabaseTable.js';
+import Stopwatch from 'framework/system/time/Stopwatch.js';
 
 // Class
 class Database {

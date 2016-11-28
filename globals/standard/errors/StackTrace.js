@@ -1,5 +1,5 @@
 // Dependencies
-import CallSite from './CallSite.js';
+import CallSite from 'framework/globals/standard/errors/CallSite.js';
 
 // Class
 class StackTrace {

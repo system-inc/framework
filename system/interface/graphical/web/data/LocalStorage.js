@@ -1,5 +1,5 @@
 // Dependencies
-var DataStore = Framework.require('system/data/DataStore.js');
+var DataStore = Framework.require('framework/system/data/DataStore.js');
 
 // Class
 var LocalStorage = DataStore.extend({

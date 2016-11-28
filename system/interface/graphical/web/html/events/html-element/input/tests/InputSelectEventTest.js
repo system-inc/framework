@@ -1,9 +1,9 @@
 // Dependencies
-import ElectronTest from 'system/electron/tests/ElectronTest.js';
-import Assert from 'system/test/Assert.js';
-import HtmlDocument from 'system/interface/graphical/web/html/HtmlDocument.js';
-import Html from 'system/interface/graphical/web/html/Html.js';
-import InputSelectEvent from 'system/interface/graphical/web/html/events/html-element/input/InputSelectEvent.js';
+import ElectronTest from 'framework/system/electron/tests/ElectronTest.js';
+import Assert from 'framework/system/test/Assert.js';
+import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
+import Html from 'framework/system/interface/graphical/web/html/Html.js';
+import InputSelectEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputSelectEvent.js';
 var ElectronManager = null;
 
 // Class
@@ -11,7 +11,7 @@ class InputSelectEventTest extends ElectronTest {
 
 	async before() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
-		ElectronManager = Framework.require('system/electron/ElectronManager.js');
+		ElectronManager = Framework.require('framework/system/electron/ElectronManager.js');
 	}
 
 	async testInputSelectEvent() {

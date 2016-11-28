@@ -1,5 +1,5 @@
 // Dependencies
-import HtmlElementEvent from './../html-element/HtmlElementEvent.js';
+import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
 
 // Class
 class FormEvent extends HtmlElementEvent{

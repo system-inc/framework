@@ -1,5 +1,5 @@
 // Dependencies
-import StackTrace from './StackTrace.js';
+import StackTrace from 'framework/globals/standard/errors/StackTrace.js';
 
 // Instance methods
 

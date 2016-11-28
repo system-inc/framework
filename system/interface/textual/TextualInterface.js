@@ -1,7 +1,7 @@
 // Dependencies
-import Interface from './Interface.js';
-import Settings from 'system/settings/Settings.js';
-import Terminal from 'system/interface/Terminal.js';
+import Interface from 'framework/system/interface/Interface.js';
+import Terminal from 'framework/system/interface/Terminal.js';
+import Settings from 'framework/system/settings/Settings.js';
 
 // Class
 class TextualInterface extends Interface {

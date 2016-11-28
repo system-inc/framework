@@ -1,8 +1,8 @@
 // Dependencies
-import Test from 'system/test/Test.js';
-import Assert from 'system/test/Assert.js';
-import Version from 'system/version/Version.js';
-import Settings from 'system/settings/Settings.js';
+import Test from 'framework/system/test/Test.js';
+import Assert from 'framework/system/test/Assert.js';
+import Version from 'framework/system/version/Version.js';
+import Settings from 'framework/system/settings/Settings.js';
 
 // Class
 class ClassTest extends Test {

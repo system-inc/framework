@@ -1,10 +1,10 @@
 // Dependencies
-import ElectronTest from 'system/electron/tests/ElectronTest.js';
-import Assert from 'system/test/Assert.js';
-import HtmlDocument from 'system/interface/graphical/web/html/HtmlDocument.js';
-import Html from 'system/interface/graphical/web/html/Html.js';
-import InputKeyEvent from 'system/interface/graphical/web/html/events/html-element/input/InputKeyEvent.js';
-import WildcardPatternMatcher from 'system/search/patterns/WildcardPatternMatcher.js';
+import ElectronTest from 'framework/system/electron/tests/ElectronTest.js';
+import Assert from 'framework/system/test/Assert.js';
+import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
+import Html from 'framework/system/interface/graphical/web/html/Html.js';
+import InputKeyEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputKeyEvent.js';
+import WildcardPatternMatcher from 'framework/system/search/patterns/WildcardPatternMatcher.js';
 var ElectronManager = null;
 
 // Class
@@ -12,7 +12,7 @@ class InputKeyEventTest extends ElectronTest {
 
 	async before() {
 		// Initialize the ElectronManager here as to not throw an exception when electron is not present
-		ElectronManager = Framework.require('system/electron/ElectronManager.js');
+		ElectronManager = Framework.require('framework/system/electron/ElectronManager.js');
 	}
 
 	async testAllInputKeyEvents() {

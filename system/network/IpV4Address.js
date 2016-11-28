@@ -1,5 +1,5 @@
 // Dependencies
-import IpAddress from './IpAddress.js';
+import IpAddress from 'framework/system/network/IpAddress.js';
 
 // Class
 class IpV4Address extends IpAddress {

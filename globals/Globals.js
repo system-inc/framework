@@ -4,24 +4,24 @@ if(!global && window) {
 }
 
 // Node
-import './node/Node.js';
-import './node/Buffer.js';
-import './node/Stream.js';
+import 'framework/globals/node/Node.js';
+import 'framework/globals/node/Buffer.js';
+import 'framework/globals/node/Stream.js';
 
 // Standard
-import './standard/Array.js';
-import './standard/Boolean.js';
-import './standard/errors/Error.js';
-import './standard/Function.js';
-import './standard/Number.js';
-import './standard/Object.js';
-import './standard/Promise.js';
-import './standard/RegularExpression.js';
-import './standard/String.js';
+import 'framework/globals/standard/Array.js';
+import 'framework/globals/standard/Boolean.js';
+import 'framework/globals/standard/errors/Error.js';
+import 'framework/globals/standard/Function.js';
+import 'framework/globals/standard/Number.js';
+import 'framework/globals/standard/Object.js';
+import 'framework/globals/standard/Promise.js';
+import 'framework/globals/standard/RegularExpression.js';
+import 'framework/globals/standard/String.js';
 
 // Custom
-import './custom/Class.js';
-import './custom/Json.js';
-import './custom/Primitive.js';
-import './custom/Time.js';
-import './custom/Transpiler.js';
+import 'framework/globals/custom/Class.js';
+import 'framework/globals/custom/Json.js';
+import 'framework/globals/custom/Primitive.js';
+import 'framework/globals/custom/Time.js';
+import 'framework/globals/custom/Transpiler.js';

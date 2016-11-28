@@ -1,6 +1,6 @@
 // Dependencies
-var TextFormFieldView = Framework.require('system/interface/graphical/views/forms/fields/text/TextFormFieldView.js');
-var EmailSingleLineTextFormControlView = Framework.require('system/interface/graphical/views/forms/controls/text/single-line/EmailSingleLineTextFormControlView.js');
+var TextFormFieldView = Framework.require('framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js');
+var EmailSingleLineTextFormControlView = Framework.require('framework/system/interface/graphical/views/forms/controls/text/single-line/EmailSingleLineTextFormControlView.js');
 
 // Class
 var EmailSingleLineTextFormFieldView = TextFormFieldView.extend({

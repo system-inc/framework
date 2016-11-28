@@ -1,5 +1,5 @@
 // Dependencies
-import Database from './Database.js';
+import Database from 'framework/system/database/Database.js';
 
 // Class
 class DatabaseManager {

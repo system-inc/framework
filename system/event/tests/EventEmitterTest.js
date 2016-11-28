@@ -1,8 +1,8 @@
 // Dependencies
-import Test from 'system/test/Test.js';
-import Assert from 'system/test/Assert.js';
-import EventEmitter from 'system/event/EventEmitter.js';
-import Event from 'system/event/Event.js';
+import Test from 'framework/system/test/Test.js';
+import Assert from 'framework/system/test/Assert.js';
+import EventEmitter from 'framework/system/event/EventEmitter.js';
+import Event from 'framework/system/event/Event.js';
 
 // Class
 class EventEmitterTest extends Test {

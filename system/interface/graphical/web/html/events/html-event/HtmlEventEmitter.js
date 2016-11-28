@@ -1,6 +1,6 @@
 // Dependencies
-import PropagatingEventEmitter from 'system/event/PropagatingEventEmitter.js';
-import HtmlEvent from './HtmlEvent.js';
+import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
+import HtmlEvent from 'framework/system/interface/graphical/web/html/events/html-event/HtmlEvent.js';
 
 // Class
 class HtmlEventEmitter extends PropagatingEventEmitter {
@@ -9,28 +9,28 @@ class HtmlEventEmitter extends PropagatingEventEmitter {
 	eventListenersOnDomObject = {};
 
 	addEventListener(eventPattern, functionToBind, timesToRun) {
-		var HtmlEventProxy = require('./../HtmlEventProxy.js').default;
+		var HtmlEventProxy = require('framework/system/interface/graphical/web/html/events/HtmlEventProxy.js').default;
 
 		// All events are routed through the HtmlEventProxy
 		return HtmlEventProxy.addEventListener(eventPattern, functionToBind, timesToRun, this);
 	}
 
 	removeEventListener(eventPattern, functionToUnbind) {
-		var HtmlEventProxy = require('./../HtmlEventProxy.js').default;
+		var HtmlEventProxy = require('framework/system/interface/graphical/web/html/events/HtmlEventProxy.js').default;
 
 		// Route this call through HtmlEventProxy
 		return HtmlEventProxy.removeEventListener(eventPattern, functionToUnbind, this);
 	}
 
 	removeAllEventListeners() {
-		var HtmlEventProxy = require('./../HtmlEventProxy.js').default;
+		var HtmlEventProxy = require('framework/system/interface/graphical/web/html/events/HtmlEventProxy.js').default;
 
 		// Route this call through HtmlEventProxy
 		return HtmlEventProxy.removeAllEventListeners(this);
 	}
 
 	static is(value) {
-		var HtmlEventProxy = require('./../HtmlEventProxy.js').default;
+		var HtmlEventProxy = require('framework/system/interface/graphical/web/html/events/HtmlEventProxy.js').default;
 
 		return Class.isInstance(value, HtmlEventEmitter);
 	}

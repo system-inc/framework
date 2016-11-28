@@ -222,10 +222,10 @@ class FileSystemObject {
         //app.exit('fileNames', fileNames);
 
         // Dependencies
-        //import FileSystemObjectFactory from './FileSystemObjectFactory.js';
-        //var FileSystemObjectFactory = await System.import('./FileSystemObjectFactory.js');
-        var FileSystemObjectFactory = require('./FileSystemObjectFactory.js').default;
-        var Directory = require('./Directory.js').default;
+        //import FileSystemObjectFactory from 'framework/system/file-system/FileSystemObjectFactory.js';
+        //var FileSystemObjectFactory = await System.import('system/file-system/FileSystemObjectFactory.js');
+        var FileSystemObjectFactory = require('framework/system/file-system/FileSystemObjectFactory.js').default;
+        var Directory = require('framework/system/file-system/Directory.js').default;
 
         // Make sure we have the full path
         await fileNames.each(async function(index, fileName) {

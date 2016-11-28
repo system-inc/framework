@@ -1,8 +1,8 @@
 // Dependencies
-import ViewAdapter from 'system/interface/graphical/views/adapters/ViewAdapter.js';
-import TextView from 'system/interface/graphical/views/text/TextView.js';
-import HtmlNode from 'system/interface/graphical/web/html/HtmlNode.js';
-import HtmlElement from 'system/interface/graphical/web/html/HtmlElement.js';
+import ViewAdapter from 'framework/system/interface/graphical/views/adapters/ViewAdapter.js';
+import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import HtmlNode from 'framework/system/interface/graphical/web/html/HtmlNode.js';
+import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlElement.js';
 
 // Class
 class WebViewAdapter extends ViewAdapter {

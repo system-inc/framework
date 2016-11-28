@@ -1,5 +1,5 @@
 // Dependencies
-import GraphicalInterface from 'system/interface/graphical/GraphicalInterface.js';
+import GraphicalInterface from 'framework/system/interface/graphical/GraphicalInterface.js';
 
 // Class
 class GraphicalInterfaceManager {

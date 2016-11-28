@@ -1,5 +1,5 @@
 // Dependencies
-import PropagatingEventEmitter from 'system/event/PropagatingEventEmitter.js';
+import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
 
 // Class
 class ViewController extends PropagatingEventEmitter {

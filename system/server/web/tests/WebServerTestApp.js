@@ -1,8 +1,8 @@
 // Globals
-import 'globals/Globals.js';
+import 'framework/globals/Globals.js';
 
 // Dependencies
-import App from 'system/app/App.js';
+import App from 'framework/system/app/App.js';
 
 // Class
 class WebServerTestApp extends App {
