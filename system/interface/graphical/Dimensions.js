@@ -13,6 +13,7 @@ class Dimensions {
 		width: null,
 		height: null,
 	};
+	
 	maximum = {
 		width: null,
 		height: null,

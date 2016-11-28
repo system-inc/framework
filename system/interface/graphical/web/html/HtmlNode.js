@@ -2,6 +2,8 @@
 import XmlNode from 'framework/system/xml/XmlNode.js';
 import HtmlNodeEventEmitter from 'framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEventEmitter.js';
 import HtmlNodeEvent from 'framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEvent.js';
+import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
+import Position from 'framework/system/interface/graphical/Position.js';
 
 // Class
 class HtmlNode extends XmlNode {
@@ -24,80 +26,13 @@ class HtmlNode extends XmlNode {
 	nodeIdentifier = null // Used to uniquely identify HtmlNodes for tree comparisons againt the DOM
 	nodeIdentifierCounter = 0; // Used to ensure unique identifiers
 
-	dimensions = {
-		width: null,
-		height: null,
-		visible: {
-			width: null,
-			height: null,
-		},
-	};
+	get dimensions() {
+		return this.calculateDimensionAndPosition().dimensions;
+	}
 
-	position = {
-		relativeToRelativeAncestor: {
-			x: null, // scrollLeft
-			y: null, // scrollTop
-		},
-
-		relativeToDocumentViewport: {
-			x: null,
-			y: null,
-
-			coordinates: {
-				topLeft: {
-					x: null,
-					y: null,
-				},
-				topCenter: {
-					x: null,
-					y: null,
-				},
-				topRight: {
-					x: null,
-					y: null,
-				},
-
-				leftCenter: {
-					x: null,
-					y: null,
-				},
-
-				rightCenter: {
-					x: null,
-					y: null,
-				},
-
-				bottomLeft: {
-					x: null,
-					y: null,
-				},
-				bottomCenter: {
-					x: null,
-					y: null,
-				},
-				bottomRight: {
-					x: null,
-					y: null,
-				},
-
-				center: {
-					x: null,
-					y: null,
-				},
-			},
-
-			edges: {
-				top: null,
-				right: null,
-				bottom: null,
-				left: null,
-			},						
-		},
-
-		//relativeToDocument
-		//relativeToGlobal
-		//relativeToPreviousGlobalRelativePosition
-	};
+	get position() {
+		return this.calculateDimensionAndPosition().position;
+	}
 
 	constructor(content, parent, type) {
 		super(...arguments);
@@ -345,71 +280,37 @@ class HtmlNode extends XmlNode {
         return selectionText;
     }
 
-	getDimensions() {
-		this.getDimensionAndPositionFromDomNode();
+	calculateDimensionAndPosition() {
+		var dimensionsAndPosition = {
+			dimensions: new Dimensions(),
+			position: {
+				relativeToRelativeAncestor: new Position(),
+				relativeToDocumentViewport: new Position(),
+				relativeToDocument: new Position(),
+				relativeToGlobal: new Position(),
+				relativeToPreviousGlobalRelativePosition: new Position(),
+			},
+		};
 
-		return this.dimensions;
-	}
-
-	getPosition() {
-		this.getDimensionAndPositionFromDomNode();
-
-		return this.position;
-	}
-
-	getDimensionAndPositionFromDomNode() {
 		if(this.domNode) {
 			var boundingClientRect = this.domNode.getBoundingClientRect();
 
 			// Dimensions
-			this.dimensions.width = boundingClientRect.width;
-			this.dimensions.height = boundingClientRect.height;
+			dimensionsAndPosition.dimensions.width = boundingClientRect.width;
+			dimensionsAndPosition.dimensions.height = boundingClientRect.height;
 
 			// Position - relativeToRelativeAncestor
 			this.position.relativeToRelativeAncestor.x = this.domNode.scrollTop;
 			this.position.relativeToRelativeAncestor.y = this.domNode.scrollLeft;
+			this.position.relativeToDocumentViewport.calculateCoordinatesAndEdges(dimensionsAndPosition.dimensions.width, dimensionsAndPosition.dimensions.height);
 
 			// Position - relativeToDocumentViewport
 			this.position.relativeToDocumentViewport.x = boundingClientRect.left;
 			this.position.relativeToDocumentViewport.y = boundingClientRect.top;
-
-			this.position.relativeToDocumentViewport.coordinates.topLeft.x = boundingClientRect.left;
-			this.position.relativeToDocumentViewport.coordinates.topLeft.y = boundingClientRect.top;
-						
-			this.position.relativeToDocumentViewport.coordinates.topCenter.x = boundingClientRect.width / 2;
-			this.position.relativeToDocumentViewport.coordinates.topCenter.y = boundingClientRect.top;
-						
-			this.position.relativeToDocumentViewport.coordinates.topRight.x = boundingClientRect.right;
-			this.position.relativeToDocumentViewport.coordinates.topRight.y = boundingClientRect.top;
-
-			this.position.relativeToDocumentViewport.coordinates.leftCenter.x = boundingClientRect.left;
-			this.position.relativeToDocumentViewport.coordinates.leftCenter.y = boundingClientRect.height / 2;
-
-			this.position.relativeToDocumentViewport.coordinates.rightCenter.x = boundingClientRect.right;
-			this.position.relativeToDocumentViewport.coordinates.rightCenter.y = boundingClientRect.height / 2;
-
-			this.position.relativeToDocumentViewport.coordinates.bottomLeft.x = boundingClientRect.left;
-			this.position.relativeToDocumentViewport.coordinates.bottomLeft.y = boundingClientRect.bottom;
-						
-			this.position.relativeToDocumentViewport.coordinates.bottomCenter.x = boundingClientRect.width / 2;
-			this.position.relativeToDocumentViewport.coordinates.bottomCenter.y = boundingClientRect.bottom;
-						
-			this.position.relativeToDocumentViewport.coordinates.bottomRight.x = boundingClientRect.right;
-			this.position.relativeToDocumentViewport.coordinates.bottomRight.y = boundingClientRect.bottom;
-
-			this.position.relativeToDocumentViewport.coordinates.center.x = boundingClientRect.width / 2;
-			this.position.relativeToDocumentViewport.coordinates.center.y = boundingClientRect.height / 2;
-
-			this.position.relativeToDocumentViewport.edges = boundingClientRect.top;
-			this.position.relativeToDocumentViewport.edges = boundingClientRect.right;
-			this.position.relativeToDocumentViewport.edges = boundingClientRect.bottom;
-			this.position.relativeToDocumentViewport.edges = boundingClientRect.left;
+			this.position.relativeToDocumentViewport.calculateCoordinatesAndEdges(boundingClientRect.width, boundingClientRect.height);
 		}
 
-		return {
-			dimensions: this.dimensions,
-			position: this.position,
-		};
+		return dimensionsAndPosition;
 	}
 
 	press() {
