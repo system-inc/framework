@@ -1,30 +1,30 @@
 // Dependencies
-var EventEmitter = Framework.require('framework/system/event/EventEmitter.js');
+import EventEmitter from 'framework/system/event/EventEmitter.js';
 
 // Class
-var Menu = EventEmitter.extend({
+class Menu extends EventEmitter {
 
-	electronMenu: null,
+	electronMenu = null;
 
-	construct: function() {
+	constructor() {
 		this.create();
-	},
+	}
 
-	create: function() {
+	create() {
 		throw new Error('Subclasses must implement Menu.createMenu().');
-	},
+	}
 
-	update: function() {
+	update() {
 		// TODO: https://github.com/atom/electron/issues/528
 		// Update just calls this.create() as Electron needs to recreate the entire menu to update menu labels
 		this.create.apply(this, arguments);
-	},
+	}
 
-	show: function() {
+	show() {
 		this.electronMenu.popup();
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = Menu;
+export default Menu;
