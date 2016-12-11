@@ -33,6 +33,14 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		}.bind(this));
 	}
 
+	addScript() {
+		this.htmlDocument.addScript(...arguments);
+	}
+
+	addStyleSheet() {
+		this.htmlDocument.addStyleSheet(...arguments);
+	}
+
 }
 
 // Export

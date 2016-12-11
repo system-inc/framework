@@ -1,3 +1,5 @@
+// Move this GraphicalInterfaceState?
+
 // Dependencies
 var Electron = Node.require('electron');
 

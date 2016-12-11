@@ -11,6 +11,9 @@ class ViewController extends PropagatingEventEmitter {
 	constructor() {
 		// PropagatingEventEmitter
 		super();
+
+		// Don't do this as this is wasted work if the subclass of ViewController uses a custom view
+		//this.view = new View();
 	}
 
 	initialize(graphicalInterface) {
@@ -26,8 +29,17 @@ class ViewController extends PropagatingEventEmitter {
 	}
 
 	append(viewController) {
+		// Set the view controller's parent
 		viewController.descendFromParent(this);
+
+		// Add the view controller as a child
 		this.children.append(viewController);
+
+		// Append the view controller's view into the view heirarchy
+		if(this.view === null) {
+			throw new Error('The ViewController\'s view does not exist. Classes of type ViewController must assign their view property to a class of type View in their constructors.');
+		}
+		this.view.append(viewController.view);
 
 		return viewController;
 	}

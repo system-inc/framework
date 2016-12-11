@@ -1,5 +1,5 @@
 // Dependencies
-import ElectronTest from 'framework/system/electron/tests/ElectronTest.js';
+import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
 import Assert from 'framework/system/test/Assert.js';
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 import FormView from 'framework/system/interface/graphical/views/forms/FormView.js';

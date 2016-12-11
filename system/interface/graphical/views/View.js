@@ -6,7 +6,6 @@ import ViewEvent from 'framework/system/interface/graphical/views/events/ViewEve
 import Settings from 'framework/system/settings/Settings.js';
 import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
 import Position from 'framework/system/interface/graphical/Position.js';
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
 class View extends PropagatingEventEmitter {

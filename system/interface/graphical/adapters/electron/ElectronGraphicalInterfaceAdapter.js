@@ -163,77 +163,77 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		});
 	}
 
-	keyPress(key, modifiers) {
-		// Get the current web contents
-		var webContents = this.electronBrowserWindow.webContents;
+	//keyPress(key, modifiers) {
+	//	// Get the current web contents
+	//	var webContents = this.electronBrowserWindow.webContents;
 
-		// Default modifiers to an empty array
-		if(!modifiers) {
-			modifiers = []; // shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
-		}
+	//	// Default modifiers to an empty array
+	//	if(!modifiers) {
+	//		modifiers = []; // shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
+	//	}
 
-		return new Promise(function(resolve, reject) {
-			//app.warn('ElectronManager.keyPress', key, modifiers);
+	//	return new Promise(function(resolve, reject) {
+	//		//app.warn('ElectronManager.keyPress', key, modifiers);
 
-			webContents.sendInputEvent({
-				type: 'char',
-				keyCode: key,
-				modifiers: modifiers,
-			});
+	//		webContents.sendInputEvent({
+	//			type: 'char',
+	//			keyCode: key,
+	//			modifiers: modifiers,
+	//		});
 
-			Function.delay(50, function() {
-				resolve(true);
-			});
-		});
-	}
+	//		Function.delay(50, function() {
+	//			resolve(true);
+	//		});
+	//	});
+	//}
 
-	copyUsingKeyboard*() {
-		if(app.onWindows()) {
-			yield ElectronManager.keyDown('c', ['control']);
-		}
-		else {
-			// TODO: Does not work on macOS
-			app.warn('ElectronManager.copyUsingKeyboard does not work on macOS.');
-			yield ElectronManager.keyDown('c', ['meta']);
-		}
-	}.toPromise();
+	//copyUsingKeyboard*() {
+	//	if(app.onWindows()) {
+	//		yield ElectronManager.keyDown('c', ['control']);
+	//	}
+	//	else {
+	//		// TODO: Does not work on macOS
+	//		app.warn('ElectronManager.copyUsingKeyboard does not work on macOS.');
+	//		yield ElectronManager.keyDown('c', ['meta']);
+	//	}
+	//}.toPromise();
 
-	cutUsingKeyboard*() {
-		if(app.onWindows()) {
-			yield ElectronManager.keyDown('x', ['control']);
-		}
-		else {
-			// TODO: Does not work on macOS
-			app.warn('ElectronManager.cutUsingKeyboard does not work on macOS.');
-			yield ElectronManager.keyDown('x', ['meta']);
-		}
-	}.toPromise();
+	//cutUsingKeyboard*() {
+	//	if(app.onWindows()) {
+	//		yield ElectronManager.keyDown('x', ['control']);
+	//	}
+	//	else {
+	//		// TODO: Does not work on macOS
+	//		app.warn('ElectronManager.cutUsingKeyboard does not work on macOS.');
+	//		yield ElectronManager.keyDown('x', ['meta']);
+	//	}
+	//}.toPromise();
 
-	pasteUsingKeyboard*() {
-		if(app.onWindows()) {
-			yield ElectronManager.keyDown('v', ['control']);
-		}
-		else {
-			// TODO: Does not work on macOS
-			app.warn('ElectronManager.pasteUsingKeyboard does not work on macOS.');
-			yield ElectronManager.keyDown('v', ['meta']);
-		}
-	}.toPromise();
+	//pasteUsingKeyboard*() {
+	//	if(app.onWindows()) {
+	//		yield ElectronManager.keyDown('v', ['control']);
+	//	}
+	//	else {
+	//		// TODO: Does not work on macOS
+	//		app.warn('ElectronManager.pasteUsingKeyboard does not work on macOS.');
+	//		yield ElectronManager.keyDown('v', ['meta']);
+	//	}
+	//}.toPromise();
 
-	getBrowserWindowBounds() {
-		var bounds = Electron.remote.getCurrentWindow().getBounds();
+	//getBrowserWindowBounds() {
+	//	var bounds = Electron.remote.getCurrentWindow().getBounds();
 
-		return bounds;
-	}
+	//	return bounds;
+	//}
 
-	setBrowserWindowBounds(width, height, x, y) {
-		Electron.remote.getCurrentWindow().setBounds({
-			width: width,
-			height: height,
-			x: x,
-			y: y,
-		});
-	}
+	//setBrowserWindowBounds(width, height, x, y) {
+	//	Electron.remote.getCurrentWindow().setBounds({
+	//		width: width,
+	//		height: height,
+	//		x: x,
+	//		y: y,
+	//	});
+	//}
 
 }
 

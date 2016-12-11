@@ -2,9 +2,9 @@
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 import HeaderViewController from 'interface/header/HeaderViewController.js';
 import NavigationViewController from 'interface/navigation/NavigationViewController.js';
-import View from 'framework/system/interface/graphical/views/View.js';
 import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
 import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import View from 'framework/system/interface/graphical/views/View.js';
 
 // Class
 class FrameworkViewController extends ViewController {
@@ -15,19 +15,22 @@ class FrameworkViewController extends ViewController {
 	constructor() {
 		super();
 
-		// Configure the GraphicalInterface
-		// TODO: figure out an abstract way to do this: this.graphicalInterface.styles.add('framework.css');
-
+		// Create and configure the view
 		this.view = new View();
 		this.view.addClass('framework');
 
 		// Header
 		this.headerViewController = this.append(new HeaderViewController());
-		this.view.append(this.headerViewController.view);
 
 		// Navigation
 		this.navigationViewController = this.append(new NavigationViewController());
-		this.view.append(this.navigationViewController.view);
+	}
+
+	initialize() {
+		super.initialize(...arguments);
+
+		console.error('this is not working as expected - it doesnt appear to be pulling it into the DOM');
+		this.graphicalInterface.adapter.addStyleSheet('interface/style-sheets/framework.css');
 	}
 
 }

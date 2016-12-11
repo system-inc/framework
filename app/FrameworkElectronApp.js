@@ -1,5 +1,5 @@
 //TODO: 7.0.0 means when Node 7.0.0 comes out in Electron
-// 7.0.0: This can all move to FrameworkApp.initializeGraphicalInterfaceInElectron or probably ElectronManager or something
+// 7.0.0: All of this code will move to FrameworkApp.initializeGraphicalInterfaceInElectron or probably ElectronManager or something
 
 // Dependencies
 var Electron = require('electron');
