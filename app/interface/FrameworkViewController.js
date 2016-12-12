@@ -1,10 +1,9 @@
 // Dependencies
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import HeaderViewController from 'interface/header/HeaderViewController.js';
-import NavigationViewController from 'interface/navigation/NavigationViewController.js';
-import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 import View from 'framework/system/interface/graphical/views/View.js';
+import HeaderViewController from 'interface/layout/header/HeaderViewController.js';
+import AreaViewController from 'interface/layout/area/AreaViewController.js';
+
 
 // Class
 class FrameworkViewController extends ViewController {
@@ -19,11 +18,11 @@ class FrameworkViewController extends ViewController {
 		this.view = new View();
 		this.view.addClass('framework');
 
-		// Header
+		// Add the HeaderViewController
 		this.headerViewController = this.append(new HeaderViewController());
 
-		// Navigation
-		this.navigationViewController = this.append(new NavigationViewController());
+		// Add the AreaViewController
+		this.navigationViewController = this.append(new AreaViewController());
 	}
 
 	initialize() {

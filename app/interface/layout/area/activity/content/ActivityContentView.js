@@ -4,16 +4,17 @@ import HeadingView from 'framework/system/interface/graphical/views/text/Heading
 import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
-class HeaderView extends View {
+class NavigationView extends View {
 
 	constructor() {
 		super();
 
-		this.addClass('header');
-		this.append(new HeadingView('Framework'));
+		this.addClass('navigation');
+		this.append(new HeadingView('Current Item', 2));
+		this.append(new TextView('Proctor'));
 	}
 
 }
 
 // Export
-export default HeaderView;
+export default NavigationView;
