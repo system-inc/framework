@@ -1,17 +1,17 @@
 // Dependencies
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import AreaView from 'interface/layout/area/AreaView.js';
+import BodyView from 'interface/layout/body/BodyView.js';
 
 // Class
-class AreaViewController extends ViewController {
+class BodyViewController extends ViewController {
 
 	constructor() {
 		super();
 
-		this.view = new AreaView();
+		this.view = new BodyView();
 	}
 
 }
 
 // Export
-export default AreaViewController;
+export default BodyViewController;
