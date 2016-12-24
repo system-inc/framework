@@ -1,20 +1,24 @@
 // Dependencies
 import View from 'framework/system/interface/graphical/views/View.js';
-import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
 import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
-class NavigationView extends View {
+class ActivityContentView extends View {
 
 	constructor() {
 		super();
 
-		this.addClass('navigation');
-		this.append(new HeadingView('Current Item', 2));
-		this.append(new TextView('Proctor'));
+		this.setStyle({
+			flex: '1',
+			//background: 'red',
+			overflow: 'scroll',
+		});
+
+		//this.append(new TextView('ActivityContentView'+(String.random(10)+' ').repeat(500)));
+		this.append(new TextView('Tests'));
 	}
 
 }
 
 // Export
-export default NavigationView;
+export default ActivityContentView;

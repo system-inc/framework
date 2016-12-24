@@ -1,18 +1,18 @@
 // Dependencies
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 import View from 'framework/system/interface/graphical/views/View.js';
-import HeaderView from 'interface/header/HeaderView.js';
+import ActivityHeaderView from 'interface/area/activity/header/ActivityHeaderView.js';
 
 // Class
-class HeaderViewController extends ViewController {
+class ActivityHeaderViewController extends ViewController {
 
 	constructor() {
 		super();
 
-		this.view = new HeaderView();
+		this.view = new ActivityHeaderView();
 	}
 
 }
 
 // Export
-export default HeaderViewController;
+export default ActivityHeaderViewController;

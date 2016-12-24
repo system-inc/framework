@@ -8,7 +8,13 @@ class BodyNavigationView extends View {
 	constructor() {
 		super();
 
-		this.append(new TextView('BodyNavigationView'));
+		this.setStyle({
+			flex: '0 0 260px',
+			order: '-1',
+			display: 'flex',
+			flexDirection: 'column',
+			borderRight: '1px solid #CCC',
+		});
 	}
 
 }

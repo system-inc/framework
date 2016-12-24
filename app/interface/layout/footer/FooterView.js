@@ -8,7 +8,10 @@ class FooterView extends View {
 	constructor() {
 		super();
 
-		this.append(new TextView('FooterView'));
+		this.setStyle({
+			flex: '0 1 32px',
+			borderTop: '1px solid #CCC',
+		});
 	}
 
 }

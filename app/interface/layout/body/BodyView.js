@@ -8,7 +8,14 @@ class BodyView extends View {
 	constructor() {
 		super();
 
-		this.append(new TextView('BodyView'));
+		this.setStyle({
+			display: 'flex',
+			flexDirection: 'row',
+			flex: '1',
+			overflow: 'hidden',
+		});
+
+		//this.append(new TextView('BodyView'));
 	}
 
 }

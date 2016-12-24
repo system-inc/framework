@@ -8,6 +8,11 @@ global.app = 'app global test';
 
 // 7.0.0: This will be app.directory, won't even need this variable
 var appScriptFilePath = require('path').join(__dirname, 'index.js');
+var appHtmlFilePath = require('url').format({
+	protocol: 'file',
+	pathname: require('path').join(__dirname, 'index.html'),
+	slashes: true,
+});
 
 // Class
 class FrameworkElectronApp {
@@ -83,22 +88,26 @@ class FrameworkElectronApp {
 		// 7.0.0: This should all be configured using app settings
 		// Create the browser window
 		this.mainBrowserWindow = new Electron.BrowserWindow({
+			url: appHtmlFilePath,
 			width: 800,
 			height: 600,
 			webPreferences: {
 				// Load FrameworkApp through the preload mechanism
-				preload: appScriptFilePath,
+				//preload: appScriptFilePath,
 			},
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
 			show: true, // Do not show the main browser window as we want to wait until it is resized before showing it
 		});
 
+		// Load an empty page, we use the webPreferences preload open to load FrameworkApp
+		console.error('Start electron issue on creating a browser window without an html file: Can\'t just use preload script, must specifiy loadurl, cant use about blank, must have an actual html file if I want css files to work probably for relative pathing');
+		//this.mainBrowserWindow.loadURL('about:blank');
+		//console.log('appHtmlFilePath', appHtmlFilePath);
+		this.mainBrowserWindow.loadURL(appHtmlFilePath);
+
 		// Debugging - comment out the lines below when ready for release
 		this.mainBrowserWindow.webContents.openDevTools(); // Comment out for production
 		this.mainBrowserWindow.show(); // Comment out for production
-
-		// Load an empty page, we use the webPreferences preload open to load FrameworkApp
-		this.mainBrowserWindow.loadURL('about:blank');
 		
 		// When the window is closed
 		this.mainBrowserWindow.on('closed', function () {

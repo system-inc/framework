@@ -7,8 +7,13 @@ class AreaNavigationView extends View {
 
 	constructor() {
 		super();
+
+		this.setStyle({
+			flex: '0 0 48px',
+			borderBottom: '1px solid #CCC',
+		});
 		
-		this.append(new TextView('AreaNavigationView'));
+		this.append(new TextView('Testing'));
 	}
 
 }

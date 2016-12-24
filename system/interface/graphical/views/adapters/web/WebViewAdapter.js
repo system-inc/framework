@@ -59,6 +59,10 @@ class WebViewAdapter extends ViewAdapter {
 		return this.webView.addClass(...arguments);
 	}
 
+	setStyle() {
+		return this.webView.setStyle(...arguments);
+	}
+
 	show() {
 		return this.webView.show(...arguments);
 	}

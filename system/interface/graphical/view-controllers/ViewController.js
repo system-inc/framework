@@ -18,7 +18,13 @@ class ViewController extends PropagatingEventEmitter {
 
 	initialize(graphicalInterface) {
 		this.graphicalInterface = graphicalInterface;
-		this.view.initialize();
+
+		if(this.view) {
+			this.view.initialize();	
+		}
+		else {
+			app.warn('View does not exist for ViewController.');
+		}
 	}
 
 	descendFromParent(parentViewController) {

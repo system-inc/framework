@@ -290,11 +290,17 @@ class HtmlElement extends HtmlNode {
 		}
 		else {
 			propertyOrObject.each(function(property, value) {
+				// Convert "borderBottom" to "border-bottom"
+				property = property.toDashes();
 				this.attributes.style[property] = value;
 			}.bind(this));
 		}
 		
-		this.updateDom();
+		// setStyle may be invoked from an implementing class without an updateDom method
+		// which allows it to conveniently manage a style attribute object
+		if(this.updateDom) {
+			this.updateDom();	
+		}
 
 		return this;
 	}

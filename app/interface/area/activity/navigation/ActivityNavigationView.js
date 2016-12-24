@@ -8,7 +8,13 @@ class ActivityNavigationView extends View {
 	constructor() {
 		super();
 
-		this.append(new TextView('ActivityNavigationView'));
+		this.setStyle({
+			flex: '1',
+			//background: 'blue',
+			overflow: 'scroll',
+		});
+
+		this.append(new TextView('Tests'));
 	}
 
 }

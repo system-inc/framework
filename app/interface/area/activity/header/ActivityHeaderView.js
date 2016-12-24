@@ -1,19 +1,23 @@
 // Dependencies
 import View from 'framework/system/interface/graphical/views/View.js';
-import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
 import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
-class HeaderView extends View {
+class ActivityHeaderView extends View {
 
 	constructor() {
 		super();
 
-		this.addClass('header');
-		this.append(new HeadingView('Framework'));
+		this.setStyle({
+			flex: '0 0 48px',
+			//height: '48px',
+			borderBottom: '1px solid #CCC',
+		});
+
+		this.append(new TextView('Tests'));
 	}
 
 }
 
 // Export
-export default HeaderView;
+export default ActivityHeaderView;

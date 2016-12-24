@@ -35,6 +35,10 @@ class View extends PropagatingEventEmitter {
 	constructor() {
 		// PropagatingEventEmitter
 		super();
+
+		// Add a class to every view
+		var classString = this.constructor.name.replaceLast('View', '').toCamelCase();
+		this.addClass(classString);
 	}
 
 	initialize() {
@@ -112,6 +116,14 @@ class View extends PropagatingEventEmitter {
 
 	removeClass() {
 		HtmlElement.prototype.removeClass.apply(this, arguments);
+
+		this.render();
+
+		return this;
+	}
+
+	setStyle() {
+		HtmlElement.prototype.setStyle.apply(this, arguments);
 
 		this.render();
 

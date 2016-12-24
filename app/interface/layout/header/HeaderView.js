@@ -8,7 +8,12 @@ class HeaderView extends View {
 	constructor() {
 		super();
 
-		this.append(new HeadingView('HeaderView'));
+		this.setStyle({
+			flex: '0 1 48px',
+			borderBottom: '1px solid #CCC',
+		});
+
+		this.append(new HeadingView('Framework'));
 	}
 
 }

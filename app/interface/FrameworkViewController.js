@@ -15,7 +15,8 @@ import ActivityNavigationViewController from 'interface/area/activity/navigation
 
 // Body - Content
 import BodyContentViewController from 'interface/layout/body/content/BodyContentViewController.js';
-import AreaViewController from 'interface/area/AreaViewController.js';
+import ActivityHeaderViewController from 'interface/area/activity/header/ActivityHeaderViewController.js';
+import ActivityContentViewController from 'interface/area/activity/content/ActivityContentViewController.js';
 
 // Footer
 import FooterViewController from 'interface/layout/footer/FooterViewController.js';
@@ -37,7 +38,8 @@ class FrameworkViewController extends ViewController {
 
 	// Body - Content
 	bodyContentViewController = null;
-	areaViewController = null;
+	activityHeaderViewController = null;
+	activityContentViewController = null;
 
 	// Footer
 	footerViewController = null;
@@ -48,7 +50,12 @@ class FrameworkViewController extends ViewController {
 
 		// Create and configure the view
 		this.view = new View();
-		this.view.addClass('framework');
+		this.view.setStyle({
+			display: 'flex',
+			height: '100%',
+			flexDirection: 'column',
+		});
+		//this.view.addClass('framework');
 
 		// Header
 		this.headerViewController = this.append(new HeaderViewController());
@@ -57,24 +64,34 @@ class FrameworkViewController extends ViewController {
 		this.bodyViewController = this.append(new BodyViewController());
 
 		// Body - Navigation
-		this.bodyNavigationViewController = this.bodyViewController(new BodyNavigationViewController());
+		this.bodyNavigationViewController = this.bodyViewController.append(new BodyNavigationViewController());
 		this.areaNavigationViewController = this.bodyNavigationViewController.append(new AreaNavigationViewController());
-		this.activityNavigationViewController = this.bodyNavigationViewController.append(new activityNavigationViewController());
+		this.activityNavigationViewController = this.bodyNavigationViewController.append(new ActivityNavigationViewController());
 
 		// Body - Content
 		this.bodyContentViewController = this.bodyViewController.append(new BodyContentViewController());
-		this.areaViewController = this.bodyContentViewController.append(new AreaViewController);
+		this.activityHeaderViewController = this.bodyContentViewController.append(new ActivityHeaderViewController());
+		this.activityContentViewController = this.bodyContentViewController.append(new ActivityContentViewController());
 
 		// Footer
 		this.footerViewController = this.append(new FooterViewController());
-		this.consoleViewController = this.footerViewController.append(new ConsoleViewController);
+		this.consoleViewController = this.footerViewController.append(new ConsoleViewController());
 	}
 
 	initialize() {
 		super.initialize(...arguments);
 
-		console.error('this is not working as expected - it doesnt appear to be pulling it into the DOM');
-		this.graphicalInterface.adapter.addStyleSheet('interface/style-sheets/framework.css');
+		this.graphicalInterface.adapter.htmlDocument.view.setStyle({
+			height: '100%',
+		});
+		
+		this.graphicalInterface.adapter.htmlDocument.body.setStyle({
+			height: '100%',
+		});
+
+		//this.graphicalInterface.adapter.addStyleSheet('interface/style-sheets/framework.css');
+		this.graphicalInterface.adapter.addStyleSheet(Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'reset', 'style-sheets', 'reset.css'));
+		this.graphicalInterface.adapter.addStyleSheet(Node.Path.join(app.directory, 'interface', 'style-sheets', 'framework.css'));
 	}
 
 }

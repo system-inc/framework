@@ -15,10 +15,15 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 	}
 
 	initialize() {
-		app.log('mounting htmldocument to dom');
+		app.log('Mounting HtmlDocument to DOM');
 
-		// Connect the graphical interface to the view controller's view
-		this.htmlDocument.body.append(this.graphicalInterface.viewController.view.adapter.webView);
+		// Connect the graphical interface to the ViewController's view
+		if(this.graphicalInterface.viewController.view) {
+			this.htmlDocument.body.append(this.graphicalInterface.viewController.view.adapter.webView);	
+		}
+		else {
+			app.warn('View does not exist for ViewController.');
+		}
 		
 		this.htmlDocument.mountToDom();
 	}

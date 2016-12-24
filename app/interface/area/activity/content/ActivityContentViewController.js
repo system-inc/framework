@@ -1,18 +1,18 @@
 // Dependencies
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 import View from 'framework/system/interface/graphical/views/View.js';
-import NavigationView from 'interface/navigation/NavigationView.js';
+import ActivityContentView from 'interface/area/activity/content/ActivityContentView.js';
 
 // Class
-class NavigationViewController extends ViewController {
+class ActivityContentViewController extends ViewController {
 
 	constructor() {
 		super();
 
-		this.view = new NavigationView();
+		this.view = new ActivityContentView();
 	}
 
 }
 
 // Export
-export default NavigationViewController;
+export default ActivityContentViewController;

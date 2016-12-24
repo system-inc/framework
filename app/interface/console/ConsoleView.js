@@ -8,7 +8,7 @@ class ConsoleView extends View {
 	constructor() {
 		super();
 
-		this.append(new TextView('ConsoleView'));
+		this.append(new TextView('Console'));
 	}
 
 }

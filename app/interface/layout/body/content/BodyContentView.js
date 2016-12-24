@@ -8,7 +8,11 @@ class BodyContentView extends View {
 	constructor() {
 		super();
 
-		this.append(new TextView('BodyContentView'));
+		this.setStyle({
+			flex: '1',
+			display: 'flex',
+			flexDirection: 'column',
+		});
 	}
 
 }
