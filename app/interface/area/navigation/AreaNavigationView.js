@@ -1,6 +1,6 @@
 // Dependencies
 import View from 'framework/system/interface/graphical/views/View.js';
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
 
 // Class
 class AreaNavigationView extends View {
@@ -9,11 +9,21 @@ class AreaNavigationView extends View {
 		super();
 
 		this.setStyle({
-			flex: '0 0 48px',
+			flex: '0 0 64px',
+			display: 'flex',
+			alignItems: 'center',
 			borderBottom: '1px solid #CCC',
 		});
+
+		var heading = new HeadingView('Testing', 2);
+
+		heading.setStyle({
+			fontSize: '1.5em',
+			fontWeight: '300',
+			marginLeft: '.75rem',
+		});
 		
-		this.append(new TextView('Testing'));
+		this.append(heading);
 	}
 
 }

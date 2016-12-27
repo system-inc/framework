@@ -10,10 +10,18 @@ class HeaderView extends View {
 
 		this.setStyle({
 			flex: '0 1 48px',
+			display: 'flex',
+			alignItems: 'center',
 			borderBottom: '1px solid #CCC',
 		});
 
-		this.append(new HeadingView('Framework'));
+		var heading = new HeadingView('Framework');
+		heading.setStyle({
+			fontSize: '1.25em',
+			fontWeight: '100',
+			marginLeft: '.75rem',
+		});		
+		this.append(heading);
 	}
 
 }
