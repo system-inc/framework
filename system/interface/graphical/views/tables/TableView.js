@@ -1,30 +1,25 @@
 // Dependencies
-var View = Framework.require('framework/system/interface/graphical/views/View.js');
-var Html = Framework.require('framework/system/interface/graphical/web/html/Html.js');
+import View from 'framework/system/interface/graphical/views/View.js';
+import TableCellView from 'framework/system/interface/graphical/views/tables/TableCellView.js';
+import TableHeadingCellView from 'framework/system/interface/graphical/views/tables/TableHeadingCellView.js';
+import TableHeadingView from 'framework/system/interface/graphical/views/tables/TableHeadingView.js';
+import TableRowView from 'framework/system/interface/graphical/views/tables/TableRowView.js';
 
 // Class
-var TableView = View.extend({
+class TableView extends View {
 
-	tag: 'table',
+	columns = [];
+	rows = [];
 
-	columns: [],
-	rows: [],
-
-	construct: function(settings) {
-		super(...arguments);
-		this.settings.setDefaults({
-		});
-	},
-
-	setColumns: function(columns) {
+	setColumns(columns) {
 		this.columns = columns;
 
-		var tableHeading = Html.thead();
+		var tableHeading = new TableHeadingView();
 
-		var tableHeadingRow = Html.tr();
+		var tableHeadingRow = new TableRowView();
 
 		this.columns.each(function(columnIndex, column) {
-			var tableHeadingRowColumn = Html.th(column);
+			var tableHeadingRowColumn = new TableHeadingCellView(column);
 			tableHeadingRow.append(tableHeadingRowColumn);
 		});
 
@@ -33,11 +28,11 @@ var TableView = View.extend({
 		this.append(tableHeading);
 
 		return this;
-	},
+	}
 
-	addRow: function() {
+	addRow() {
 		var row = [];
-		var tableRow = Html.tr();
+		var tableRow = new TableRowView();
 
 		// Loop through the total column count
 		for(var i = 0; i < this.columns.length; i++) {
@@ -49,7 +44,7 @@ var TableView = View.extend({
 			}
 
 			row.append(currentArgument);
-			var tableColumn = Html.td(currentArgument);
+			var tableColumn = new TableCellView(currentArgument);
 			tableRow.append(tableColumn);
 		}
 
@@ -57,9 +52,9 @@ var TableView = View.extend({
 		this.append(tableRow);
 
 		return this;
-	},
+	}
 
-	getData: function() {
+	getData() {
 		var data = [];
 
 		this.rows.each(function(rowIndex, row) {
@@ -96,9 +91,15 @@ var TableView = View.extend({
 		}.bind(this));
 
 		return data;
-	},
+	}
 
-});
+	getWebViewAdapterSettings() {
+		return {
+			tag: 'table',
+		};
+	}
+
+}
 
 // Export
-module.exports = TableView;
+export default TableView;

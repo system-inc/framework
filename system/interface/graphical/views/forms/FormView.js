@@ -7,38 +7,32 @@ import ButtonView from 'framework/system/interface/graphical/views/buttons/Butto
 // Class
 class FormView extends View {
 
-	tag = 'form';
-
 	settings = new Settings({
 		submitButtonView: {
 			content: 'Submit',
 		},
 	});
 
-	subviews = {
-		submitButtonContainerView: null,
-		submitButtonView: null,
-	};
+	constructor(settings) {
+		super();
 
-	createSubviews() {
-		this.createSubmitButtonContainerView();
-	}
+		this.settings.merge(settings);
+		//console.info('this.settings', this.settings);
 
-	createSubmitButtonContainerView() {
 		// Create the container
-		this.subviews.submitButtonContainerView = new View();
+		var submitButtonContainerView = new View();
 
 		// Create the button
-		this.subviews.submitButtonView = new ButtonView(this.settings.get('submitButtonView.content'));
-        this.subviews.submitButtonView.on('input.press', function(event) {
+		var submitButtonView = new ButtonView(this.settings.get('submitButtonView.content'));
+        submitButtonView.on('input.press', function(event) {
         	this.submit();
         }.bind(this));
 
         // Add the button to the container
-        this.subviews.submitButtonContainerView.append(this.subviews.submitButtonView);
+        submitButtonContainerView.append(submitButtonView);
 
         // Add the container to the view
-        this.append(this.subviews.submitButtonContainerView);
+        this.append(submitButtonContainerView);
 	}
 
 	addFormFieldView(formFieldView) {
@@ -101,6 +95,12 @@ class FormView extends View {
 		if(firstChild) {
 			firstChild.focus();
 		}
+	}
+
+	getWebViewAdapterSettings() {
+		return {
+			tag: 'form',
+		};
 	}
 
 }

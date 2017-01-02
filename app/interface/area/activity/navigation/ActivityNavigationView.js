@@ -12,6 +12,9 @@ class ActivityNavigationView extends View {
 			flex: '1',
 			//background: 'blue',
 			overflow: 'scroll',
+			paddingTop: '.75rem',
+			paddingLeft: '.75rem',
+			paddingRight: '.75rem',
 		});
 
 		this.append(new TextView('Tests'));

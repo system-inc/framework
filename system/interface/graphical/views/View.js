@@ -38,7 +38,9 @@ class View extends PropagatingEventEmitter {
 
 		// Add a class to every view
 		var classString = this.constructor.name.replaceLast('View', '').toCamelCase();
-		this.addClass(classString);
+		if(classString != '') {
+			this.addClass(classString);	
+		}
 	}
 
 	initialize() {
@@ -61,12 +63,13 @@ class View extends PropagatingEventEmitter {
 
 		// If the adapter exists
 		if(this.adapter) {
-			console.log('adapter exists, view has been initialized, starting to sync');
-
+			console.log('adapter exists, view has been initialized, starting to sync', this);
 			this.adapter.synchronizeWithView();
+
+			console.error('need to make sure children are initialized');
 		}
 		else {
-			console.log('skipping synchronizeWithAdapter(), waiting for view.initialize');
+			console.log('skipping synchronizeWithAdapter(), waiting for view.initialize', this);
 		}
 	}
 
@@ -83,7 +86,13 @@ class View extends PropagatingEventEmitter {
 	}
 
 	append(childView) {
-		this.children.append(childView);
+		if(!View.is(childView)) {
+			//childView = new View();
+			this.text = childView;
+		}
+		else {
+			this.children.append(childView);
+		}
 
 		this.render();
 

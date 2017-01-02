@@ -8,6 +8,12 @@ class ConsoleView extends View {
 	constructor() {
 		super();
 
+		this.setStyle({
+			//flex: 'auto auto auto',
+			display: 'flex',
+			alignItems: 'center',
+		});
+
 		this.append(new TextView('Console'));
 	}
 

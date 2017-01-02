@@ -17,7 +17,6 @@ class HeaderView extends View {
 
 		var heading = new HeadingView('Framework');
 		heading.setStyle({
-			fontSize: '1.25em',
 			fontWeight: '100',
 			marginLeft: '.75rem',
 		});		

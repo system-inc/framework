@@ -9,7 +9,8 @@ class FooterView extends View {
 		super();
 
 		this.setStyle({
-			flex: '0 1 32px',
+			display: 'flex',
+			flex: '0 1 28px',
 			borderTop: '1px solid #CCC',
 		});
 	}

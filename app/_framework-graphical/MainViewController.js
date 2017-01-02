@@ -3,7 +3,7 @@ var Electron = Node.require('electron');
 var Proctor = Framework.require('framework/system/test/Proctor.js');
 var ViewController = Framework.require('framework/system/interface/graphical/view-controllers/ViewController.js');
 var HeaderView = Framework.require('framework/system/interface/graphical/views/text/HeaderView.js');
-var ParagraphView = Framework.require('framework/system/interface/graphical/views/text/ParagraphView.js');
+var TextView = Framework.require('framework/system/interface/graphical/views/text/TextView.js');
 var TextView = Framework.require('framework/system/interface/graphical/views/text/TextView.js');
 var FormView = Framework.require('framework/system/interface/graphical/views/forms/FormView.js');
 var OptionFormFieldView = Framework.require('framework/system/interface/graphical/views/forms/fields/options/OptionFormFieldView.js');
@@ -82,7 +82,7 @@ var MainViewController = ViewController.extend({
             this.runTestMethods();
         }.bind(this));
 
-        var summary = new ParagraphView(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
+        var summary = new TextView(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
         this.subviews.testsFormView.append(summary);
         
         // Table for the tests

@@ -13,14 +13,15 @@ class AreaNavigationView extends View {
 			display: 'flex',
 			alignItems: 'center',
 			borderBottom: '1px solid #CCC',
+			paddingLeft: '.75rem',
+			paddingRight: '.75rem',
 		});
 
 		var heading = new HeadingView('Testing', 2);
 
 		heading.setStyle({
-			fontSize: '1.5em',
+			fontSize: '1.25em',
 			fontWeight: '300',
-			marginLeft: '.75rem',
 		});
 		
 		this.append(heading);

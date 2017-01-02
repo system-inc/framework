@@ -9,12 +9,18 @@ class ActivityHeaderView extends View {
 		super();
 
 		this.setStyle({
-			flex: '0 0 48px',
-			//height: '48px',
+			flex: '0 0 64px',
+			display: 'flex',
+			alignItems: 'center',
 			borderBottom: '1px solid #CCC',
+			paddingLeft: '.75rem',
+			paddingRight: '.75rem',
 		});
 
-		this.append(new TextView('Tests'));
+		var textView = new TextView('Tests');
+		textView.setStyle({			
+		});
+		this.append(textView);
 	}
 
 }

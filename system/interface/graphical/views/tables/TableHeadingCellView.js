@@ -2,15 +2,15 @@
 import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
-class ButtonView extends TextView {
+class TableHeadingCellView extends TextView {
 
 	getWebViewAdapterSettings() {
 		return {
-			tag: 'a',
+			tag: 'th',
 		};
 	}
 
 }
 
 // Export
-export default ButtonView;
+export default TableHeadingCellView;
