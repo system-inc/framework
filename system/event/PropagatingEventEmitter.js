@@ -7,6 +7,7 @@ class PropagatingEventEmitter extends EventEmitter {
 
 	eventClass = PropagatingEvent;
 	parent = null;
+	children = [];
 
 	async emit(eventIdentifier, data, eventOptions) {
 		//app.log('PropagatingEventEmitter emit', this.tag, eventIdentifier);
@@ -145,6 +146,11 @@ class PropagatingEventEmitter extends EventEmitter {
 		}
 
 		return propagatingEvent;
+	}
+
+	append(child) {
+		// Establish a relationship between the child and parent
+		child.parent = this;
 	}
 
 	static is(value) {

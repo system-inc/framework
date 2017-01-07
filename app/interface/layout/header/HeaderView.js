@@ -12,13 +12,17 @@ class HeaderView extends View {
 			flex: '0 1 48px',
 			display: 'flex',
 			alignItems: 'center',
-			borderBottom: '1px solid #CCC',
+			//borderBottom: '1px solid #CCC',
+			background: '#666',
+			color: '#FFF',
+			paddingLeft: '.75rem',
+			paddingRight: '.75rem',
 		});
 
 		var heading = new HeadingView('Framework');
 		heading.setStyle({
 			fontWeight: '100',
-			marginLeft: '.75rem',
+			margin: 0,
 		});		
 		this.append(heading);
 	}

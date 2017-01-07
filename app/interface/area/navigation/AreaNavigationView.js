@@ -15,15 +15,16 @@ class AreaNavigationView extends View {
 			borderBottom: '1px solid #CCC',
 			paddingLeft: '.75rem',
 			paddingRight: '.75rem',
+			color: '#333',
+			background: '#F9F9F9',
 		});
 
 		var heading = new HeadingView('Testing', 2);
-
 		heading.setStyle({
 			fontSize: '1.25em',
 			fontWeight: '300',
+			margin: 0,
 		});
-		
 		this.append(heading);
 	}
 

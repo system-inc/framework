@@ -7,11 +7,18 @@ class TextView extends View {
 	text = null;
 	layout = 'block'; // 'block' or 'inline'
 
-	constructor(text) {
+	constructor(childViewOrText) {
 		// View
 		super();
 
-		this.text = text;
+		if(childViewOrText) {
+			if(View.is(childViewOrText)) {
+				this.append(childViewOrText);
+			}
+			else {
+				this.text = childViewOrText;		
+			}
+		}
 	}
 
 	getWebViewAdapterSettings() {

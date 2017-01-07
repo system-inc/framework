@@ -43,33 +43,42 @@ class View extends PropagatingEventEmitter {
 		}
 	}
 
+	// Create an adapter for the view
 	initialize() {
-		console.log('initialize()');
+		//console.log('initialize()');
 
+		// Create the adapter for the view
 		this.adapter = app.interfaces.graphicalInterfaceManager.createViewAdapter(this);
-		console.log('Created adapter', this.adapter.webView.tag);
+		//console.log('Created adapter', this.adapter.webView.tag);
 
-		this.synchronizeWithAdapter();
+		// Synchronize the adapter with the view
+		this.adapter.synchronizeWithView();
 
-		// Initialize all child views
+		// If there is a parent view with an adapter
+		if(this.parent !== null && this.parent.adapter !== null) {
+			// Add the adapter to the parent view adapter
+			//console.info('adding view to parent adapter');
+			this.parent.adapter.append(this);
+		}
+
+		// Make sure all of the children are initialized
 		this.children.each(function(childViewIndex, childView) {
 			childView.initialize();
-			this.adapter.append(childView);
 		}.bind(this));
+
+		return this;
 	}
 
 	synchronizeWithAdapter() {
-		console.log('synchronizeWithAdapter()');
+		//console.log('synchronizeWithAdapter()');
 
 		// If the adapter exists
-		if(this.adapter) {
-			console.log('adapter exists, view has been initialized, starting to sync', this);
+		if(this.adapter !== null) {
+			//console.log('adapter exists, view has been initialized, starting to sync', this);
 			this.adapter.synchronizeWithView();
-
-			console.error('need to make sure children are initialized');
 		}
 		else {
-			console.log('skipping synchronizeWithAdapter(), waiting for view.initialize', this);
+			//console.log('skipping synchronizeWithAdapter(), waiting for view.initialize', this);
 		}
 	}
 
@@ -78,22 +87,31 @@ class View extends PropagatingEventEmitter {
 	}
 
 	prepend(childView) {
-		this.children.prepend(childView);
-
-		this.render();
-
-		return this;
+		return this.addChild(childView, 'prepend');
 	}
 
 	append(childView) {
+		return this.addChild(childView, 'append');
+	}
+
+	addChild(childView, arrayMethod = 'append') {
+		// Set the child's parent (PropagatingEventEmitter.append)
+		super.append(childView);
+
+		// If the view is not a view, set it as text of this view
 		if(!View.is(childView)) {
 			//childView = new View();
 			this.text = childView;
 		}
+		// If the view is a view, add it to the children array with the specified array method (append, prepend)
 		else {
-			this.children.append(childView);
+			this.children[arrayMethod](childView);
 		}
 
+		// Initialize the child view
+		childView.initialize();
+
+		// Render the view now that it has been changed
 		this.render();
 
 		return this;

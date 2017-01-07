@@ -1,6 +1,6 @@
 // Dependencies
 import View from 'framework/system/interface/graphical/views/View.js';
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
 
 // Class
 class ActivityHeaderView extends View {
@@ -17,10 +17,13 @@ class ActivityHeaderView extends View {
 			paddingRight: '.75rem',
 		});
 
-		var textView = new TextView('Tests');
-		textView.setStyle({			
+		var heading = new HeadingView('Tests', 2);
+		heading.setStyle({
+			fontSize: '1.25em',
+			fontWeight: '300',
+			margin: 0,
 		});
-		this.append(textView);
+		this.append(heading);
 	}
 
 }

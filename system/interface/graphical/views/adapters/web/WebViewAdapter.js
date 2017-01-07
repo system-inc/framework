@@ -26,25 +26,34 @@ class WebViewAdapter extends ViewAdapter {
 			var tag = this.view.getWebViewAdapterSettings().tag;
 			this.webView = new HtmlElement(tag, this.view.text);
 		}
+
+		//console.log('adapter created');
+		this.listen();
 	}
 
 	synchronizeWithView() {
-		console.log('synchronizeWithView');
+		//console.log('synchronizeWithView');
 		this.view.identifier = this.webView.nodeIdentifier;
 		this.webView.attributes = this.view.attributes;
 		this.webView.updateDom();
 	}
 
 	listen() {
-		console.log('listening');
+		//console.log('listening');
 
-		this.webView.on('htmlNode.domUpdateExecuted', function(event) {
-			this.view.emit('view.rendered', event);
-		}.bind(this));
+		//this.webView.on('htmlNode.domUpdateExecuted', function(event) {
+		//	this.view.emit('view.rendered', event);
+		//}.bind(this));
 
-		this.webView.on('htmlNode.mountedToDom', function(event) {
-			this.view.emit('view.initialized', event);
-		}.bind(this));
+		//this.webView.on('htmlNode.mountedToDom', function(event) {
+		//	this.view.emit('view.initialized', event);
+		//}.bind(this));
+
+		// Forward all events to the view
+		console.error('this will register the web view for every possible event type on the dom, need to proxy events not listen for them');
+		//this.webView.on('*', function(event) {
+		//	this.view.emit(event.identifier, event);
+		//}.bind(this));
 	}
 
 	append(childView) {

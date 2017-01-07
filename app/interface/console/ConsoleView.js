@@ -14,7 +14,11 @@ class ConsoleView extends View {
 			alignItems: 'center',
 		});
 
-		this.append(new TextView('Console'));
+		var text = new TextView('Console');
+		text.setStyle({
+			margin: 0,
+		});
+		this.append(text);
 	}
 
 }

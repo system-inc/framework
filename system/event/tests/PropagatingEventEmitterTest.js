@@ -12,8 +12,8 @@ class PropagatingEventEmitterTest extends Test {
 		var propagatingEventEmitter1 = new PropagatingEventEmitter();
 		var propagatingEventEmitter2 = new PropagatingEventEmitter();
 		var propagatingEventEmitter3 = new PropagatingEventEmitter();
-		propagatingEventEmitter3.parent = propagatingEventEmitter2;
-		propagatingEventEmitter2.parent = propagatingEventEmitter1;
+		propagatingEventEmitter1.append(propagatingEventEmitter2);
+		propagatingEventEmitter2.append(propagatingEventEmitter3);
 
 		// A variable to store events
 		var propagatingEventEmitter1StoredEvent = null;
@@ -81,8 +81,8 @@ class PropagatingEventEmitterTest extends Test {
 		var propagatingEventEmitter1 = new PropagatingEventEmitter();
 		var propagatingEventEmitter2 = new PropagatingEventEmitter();
 		var propagatingEventEmitter3 = new PropagatingEventEmitter();
-		propagatingEventEmitter3.parent = propagatingEventEmitter2;
-		propagatingEventEmitter2.parent = propagatingEventEmitter1;
+		propagatingEventEmitter1.append(propagatingEventEmitter2);
+		propagatingEventEmitter2.append(propagatingEventEmitter3);
 
 		// A variable to store events
 		var propagatingEventEmitter1StoredEvent = null;
@@ -119,8 +119,8 @@ class PropagatingEventEmitterTest extends Test {
 		var propagatingEventEmitter1 = new PropagatingEventEmitter();
 		var propagatingEventEmitter2 = new PropagatingEventEmitter();
 		var propagatingEventEmitter3 = new PropagatingEventEmitter();
-		propagatingEventEmitter3.parent = propagatingEventEmitter2;
-		propagatingEventEmitter2.parent = propagatingEventEmitter1;
+		propagatingEventEmitter1.append(propagatingEventEmitter2);
+		propagatingEventEmitter2.append(propagatingEventEmitter3);
 
 		// A variable to store events
 		var propagatingEventEmitter1StoredEvent = null;
@@ -168,7 +168,7 @@ class PropagatingEventEmitterTest extends Test {
 		propagatingEventEmitterChild.name = 'propagatingEventEmitterChild';
 		var propagatingEventEmitterParent = new PropagatingEventEmitter();
 		propagatingEventEmitterParent.name = 'propagatingEventEmitterParent';
-		propagatingEventEmitterChild.parent = propagatingEventEmitterParent;
+		propagatingEventEmitterParent.append(propagatingEventEmitterChild);
 
 		// Variable used to store references for emitted events
 		var storedEventForPropagatingEventEmitterChild = null;
@@ -207,9 +207,9 @@ class PropagatingEventEmitterTest extends Test {
 		// Create the hierarchy
 		var propagatingEventEmitter3 = new PropagatingEventEmitter();
 		var propagatingEventEmitter2 = new PropagatingEventEmitter();
-		propagatingEventEmitter3.parent = propagatingEventEmitter2;
+		propagatingEventEmitter2.append(propagatingEventEmitter3);
 		var propagatingEventEmitter1 = new PropagatingEventEmitter();
-		propagatingEventEmitter2.parent = propagatingEventEmitter1;
+		propagatingEventEmitter1.append(propagatingEventEmitter2);
 
 		// A variable to store events
 		var propagatingEventEmitter1StoredEvent = null;

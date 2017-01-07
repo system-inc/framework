@@ -1,9 +1,11 @@
 // Dependencies
 import View from 'framework/system/interface/graphical/views/View.js';
 import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
 
 import Proctor from 'framework/system/test/Proctor.js';
 import FormView from 'framework/system/interface/graphical/views/forms/FormView.js';
+import ButtonView from 'framework/system/interface/graphical/views/buttons/ButtonView.js';
 import TableView from 'framework/system/interface/graphical/views/tables/TableView.js';
 
 // Class
@@ -14,15 +16,9 @@ class ActivityContentView extends View {
 
 		this.setStyle({
 			flex: '1',
-			//background: 'red',
 			overflow: 'scroll',
-			paddingTop: '.75rem',
-			paddingLeft: '.75rem',
-			paddingRight: '.75rem',
+			padding: '.75rem',
 		});
-
-		//this.append(new TextView('ActivityContentView'+(String.random(10)+' ').repeat(500)));
-		this.append(new TextView('Tests'));
 
 		this.appendTestsFormView();
 	}
@@ -45,31 +41,32 @@ class ActivityContentView extends View {
         //    this.runTestMethods();
         //}.bind(this));
 
-        //var summary = new TextView(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
-        //testsFormView.append(summary);
+        var summary = new TextView(tests.methods.length+' test methods in '+tests.classes.length+' tests');
+        testsFormView.append(summary);
         
         // Table for the tests
-        //var tableView = new TableView();
-        //tableView.setColumns(['Class', 'Method', 'Status', '']);
+        var tableView = new TableView();
+        tableView.setColumns(['Class', 'Method', 'Status', '']);
         
-        //this.tests.methods.each(function(testMethodIndex, testMethod) {
-        //    testMethod.runButton = new ButtonView('Run');
-        //    testMethod.runButton.on('input.press', function(event) {
-        //        this.runTestMethod(testMethod);
-        //    }.bind(this));
+        tests.methods.each(function(testMethodIndex, testMethod) {
+            testMethod.runButton = new ButtonView('Run');
+            testMethod.runButton.on('input.press', function(event) {
+                console.info('run test', testMethod);
+                //this.runTestMethod(testMethod);
+            }.bind(this));
 
-        //    testMethod.statusSpan = Html.span('Not Started');
+            testMethod.statusView = new TextView('Not Started');
 
-        //    tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusSpan, testMethod.runButton);
-        //}.bind(this));
+            tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusView, testMethod.runButton);
+        }.bind(this));
 
-        //testsFormView.append(tableView);
+        testsFormView.append(tableView);
 
         //app.log(tableView.getData());
 
-        console.warn('append start');
+        //console.warn('append start');
         this.append(testsFormView);
-        console.warn('append end');
+        //console.warn('append end');
     }
 
 }
