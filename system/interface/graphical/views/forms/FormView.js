@@ -25,6 +25,7 @@ class FormView extends View {
 		// Create the button
 		var submitButtonView = new ButtonView(this.settings.get('submitButtonView.content'));
         submitButtonView.on('input.press', function(event) {
+        	console.log('submitButtonView input.press');
         	this.submit();
         }.bind(this));
 

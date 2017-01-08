@@ -36,19 +36,20 @@ class View extends PropagatingEventEmitter {
 		// PropagatingEventEmitter
 		super();
 
+		// Create the adapter for the view
+		this.adapter = app.interfaces.graphicalInterfaceManager.createViewAdapter(this);
+		//console.log('Created adapter', this.adapter.webView.tag);
+
 		// Add a class to every view
 		var classString = this.constructor.name.replaceLast('View', '').toCamelCase();
 		if(classString !== '') {
 			this.addClass(classString);	
 		}
-
-		// Create the adapter for the view
-		this.adapter = app.interfaces.graphicalInterfaceManager.createViewAdapter(this);
-		//console.log('Created adapter', this.adapter.webView.tag);
 	}
 
 	initialize() {
-		return this.adapter.initialize(...arguments);
+		// Initialize the adapter
+		this.adapter.initialize(...arguments);
 	}
 
 	render() {
@@ -56,14 +57,22 @@ class View extends PropagatingEventEmitter {
 	}
 
 	addEventListener() {
+		// TODO: Fix this
+		console.warn('this will add the event listener onto the adaptedview but never on the view', this, arguments);
+		super.addEventListener(arguments);
+
 		return this.adapter.addEventListener(...arguments);
 	}
 
 	removeEventListener() {
+		super.removeEventListener(arguments);
+
 		return this.adapter.removeEventListener(...arguments);
 	}
 
 	removeAllEventListeners() {
+		super.removeAllEventListeners(arguments);
+
 		return this.adapter.removeAllEventListeners(...arguments);
 	}
 
@@ -79,22 +88,11 @@ class View extends PropagatingEventEmitter {
 		// Set the child's parent (PropagatingEventEmitter.append)
 		super.append(childView);
 
-		// If the view is not a view, set it as text of this view
-		if(!View.is(childView)) {
-			//childView = new View();
-			this.text = childView;
-		}
-		// If the view is a view, add it to the children array with the specified array method (append, prepend)
-		else {
-			this.children[arrayMethod](childView);
-		}
+		// Add the child view to the children array with the specified array method (append, prepend)
+		this.children[arrayMethod](childView);
 
-		// Initialize the child view
-		childView.initialize();
-
-		// Render the view now that it has been changed
-		// This shouldn't be necessary since the append on the adapted view should trigger a render
-		//this.render();
+		// Run the same method on the adapter
+		this.adapter[arrayMethod](childView);
 
 		return this;
 	}
@@ -118,7 +116,8 @@ class View extends PropagatingEventEmitter {
 	addClass() {
 		HtmlElement.prototype.addClass.apply(this, arguments);
 
-		this.render();
+		// No need to call this.render as HtmlElement.prototype.addClass calls this.setAttribute which calls this.render
+		//this.render();
 
 		return this;
 	}
@@ -126,7 +125,8 @@ class View extends PropagatingEventEmitter {
 	removeClass() {
 		HtmlElement.prototype.removeClass.apply(this, arguments);
 
-		this.render();
+		// No need to call this.render as HtmlElement.prototype.removeClass calls this.setAttribute which calls this.render
+		//this.render();
 
 		return this;
 	}
@@ -134,7 +134,8 @@ class View extends PropagatingEventEmitter {
 	setStyle() {
 		HtmlElement.prototype.setStyle.apply(this, arguments);
 
-		this.render();
+		// No need to call this.render as HtmlElement.prototype.setStyle calls this.setAttribute which calls this.render
+		//this.render();
 
 		return this;
 	}

@@ -4,39 +4,33 @@ class ViewAdapter {
 	view = null;
 	adaptedView = null;
 
-	preInitializationMethodCallQueue = [];
+	preInitializationMethodCalls = [];
 
 	constructor(view) {
 		this.view = view;
 	}
 
 	initialize() {
-		this.adaptedView = this.createAdaptedView();
-
-		// Hook the adapted view's emit method
-		console.log('this looks super sketchy, need to rethink this');
-		this.adaptedView.emit = this.view.emit;
-
-		preInitializationMethodCallQueue.each(function(methodCallIndex, methodCall) {
-			this.adaptedView[methodCall.method](...methodCall.arguments);
-		}.bind(this));
-
 		//console.log('initialize()');
 
-		// Synchronize the adapter with the view
-		this.adapter.synchronizeWithView();
-
-		// If there is a parent view with an adapter
-		if(this.parent !== null && this.parent.adapter !== null) {
-			// Add the adapter to the parent view adapter
-			//console.info('adding view to parent adapter');
-			this.parent.adapter.append(this.adapter.adaptedView);
+		// Create the view
+		if(this.adaptedView === null) {
+			this.adaptedView = this.createAdaptedView();	
+			//console.info('created this.adaptedView', this.adaptedView);
+		}
+		else {
+			throw new Error('Adapted view already created, this should never happen?');
 		}
 
-		// Make sure all of the children are initialized
-		this.children.each(function(childViewIndex, childView) {
-			childView.initialize();
+		// Hook the adapted view's emit method
+		//console.log('this looks super sketchy, need to rethink this');
+		//this.adaptedView.emit = this.view.emit;
+
+		// Run any queued up method calls now that we have an adapted view
+		this.preInitializationMethodCalls.each(function(methodCallIndex, methodCall) {
+			this.executeAdaptedViewMethod(methodCall.method, methodCall.storedArguments);
 		}.bind(this));
+		this.preInitializationMethodCalls = [];
 
 		return this;
 	}
@@ -46,16 +40,29 @@ class ViewAdapter {
 	}
 
 	// All methods calls for adapted views are sent here to be queued up for when the adapted view is created
-	executeMethod(method, arguments) {
+	executeAdaptedViewMethod(method, storedArguments) {
 		// If the adapted view exists, we can just call the method on it
 		if(this.adaptedView) {
-			this.adaptedView[method](...arguments);
+			// Handle adding children
+			if(method === 'addChild') {
+				method = storedArguments[1];
+				var childView = storedArguments[0];
+				if(childView.adapter.adaptedView === null) {
+					childView.initialize();
+				}
+				storedArguments = [childView.adapter.adaptedView];
+			}
+
+			//console.info('executeAdaptedViewMethod - immediately ', method, storedArguments);
+			this.adaptedView[method](...storedArguments);
 		}
 		// If the adapted view does not exist, we queue up the methods to call on it
 		else {
-			this.preInitializationMethodCallQueue.append({
+			//console.info('executeAdaptedViewMethod - later', method, storedArguments);
+
+			this.preInitializationMethodCalls.append({
 				method: method,
-				arguments: arguments,
+				storedArguments: storedArguments,
 			});
 		}
 
@@ -63,64 +70,71 @@ class ViewAdapter {
 	}
 
 	render() {
-		this.view.identifier = this.adaptedView.nodeIdentifier;
-		this.adaptedView.attributes = this.view.attributes;
+		throw new Error('render() method must be implemented.');
 	}
 
 	// EventEmitter
 
 	addEventListener() {
-		return this.executeMethod('addEventListener', arguments);
+		return this.executeAdaptedViewMethod('addEventListener', arguments);
 	}
 
 	removeEventListener() {
-		return this.executeMethod('removeEventListener', arguments);
+		return this.executeAdaptedViewMethod('removeEventListener', arguments);
 	}
 
 	removeAllEventListeners() {
-		return this.executeMethod('removeAllEventListeners', arguments);
+		return this.executeAdaptedViewMethod('removeAllEventListeners', arguments);
 	}
 
 	// HtmlElement
 
-	append() {
-		return this.executeMethod('append', arguments);
+	prepend(childView) {
+		return this.addChild(childView, 'prepend');
 	}
 
-	prepend() {
-		return this.executeMethod('prepend', arguments);
+	append(childView) {
+		return this.addChild(childView, 'append');
+	}
+
+	//setAttribute() {
+	//	return this.executeAdaptedViewMethod('setAttribute', arguments);
+	//}
+
+	addChild(childView, arrayMethod = 'append') {
+		return this.executeAdaptedViewMethod('addChild', arguments);
 	}
 
 	addClass() {
-		return this.executeMethod('addClass', arguments);
+		return this.executeAdaptedViewMethod('addClass', arguments);
 	}
 
 	setStyle() {
-		return this.executeMethod('setStyle', arguments);
+		return this.executeAdaptedViewMethod('setStyle', arguments);
 	}
 
 	show() {
-		return this.executeMethod('show', arguments);
+		return this.executeAdaptedViewMethod('show', arguments);
 	}
 
 	hide() {
-		return this.executeMethod('hide', arguments);
+		return this.executeAdaptedViewMethod('hide', arguments);
 	}
 
 	focus() {
-		return this.executeMethod('focus', arguments);
+		return this.executeAdaptedViewMethod('focus', arguments);
 	}
 
 	select() {
-		return this.executeMethod('select', arguments);
+		return this.executeAdaptedViewMethod('select', arguments);
 	}
 
 	getSelectionText() {
-		return this.executeMethod('getSelectionText', arguments);
+		return this.executeAdaptedViewMethod('getSelectionText', arguments);
 	}
 
 	press() {
-		return this.executeMethod('press', arguments);
+		return this.executeAdaptedViewMethod('press', arguments);
 	}
 
 }

@@ -16,7 +16,7 @@ class TextView extends View {
 				this.append(childViewOrText);
 			}
 			else {
-				this.text = childViewOrText;		
+				this.text = childViewOrText;
 			}
 		}
 	}
@@ -25,6 +25,10 @@ class TextView extends View {
 		return {
 			tag: this.layout == 'block' ? 'p' : 'span',
 		};
+	}
+
+	static is(value) {
+		return Class.isInstance(value, TextView);
 	}
 
 }

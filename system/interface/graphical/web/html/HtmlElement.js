@@ -295,12 +295,9 @@ class HtmlElement extends HtmlNode {
 				this.attributes.style[property] = value;
 			}.bind(this));
 		}
-		
-		// setStyle may be invoked from an implementing class without an updateDom method
-		// which allows it to conveniently manage a style attribute object
-		if(this.updateDom) {
-			this.updateDom();	
-		}
+
+		// This will trigger updateDom
+		this.setAttribute('style', this.attributes.style);
 
 		return this;
 	}
@@ -386,6 +383,8 @@ class HtmlElement extends HtmlNode {
 	}
 
 	static makeHtmlNode(value, parent, type) {
+		//console.warn('makeHtmlNode', ...arguments);
+
 		var alreadyIsHtmlNode = HtmlNode.is(value);
 
 		// If the value is currently not of type HtmlNode (it must be a string), turn it into an HtmlNode

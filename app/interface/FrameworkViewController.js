@@ -2,6 +2,8 @@
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 import View from 'framework/system/interface/graphical/views/View.js';
 
+import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+
 // Header
 import HeaderViewController from 'interface/layout/header/HeaderViewController.js';
 
@@ -55,7 +57,7 @@ class FrameworkViewController extends ViewController {
 			height: '100%',
 			flexDirection: 'column',
 		});
-		//this.view.addClass('framework');
+		this.view.addClass('framework');
 
 		// Header
 		this.headerViewController = this.append(new HeaderViewController());

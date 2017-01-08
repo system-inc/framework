@@ -14,8 +14,6 @@ class BodyView extends View {
 			flex: '1',
 			overflow: 'hidden',
 		});
-
-		//this.append(new TextView('BodyView'));
 	}
 
 }

@@ -37,9 +37,10 @@ class ActivityContentView extends View {
         });
         console.log(testsFormView);
 
-        //this.subviews.testsFormView.on('form.submit', function(event) {
-        //    this.runTestMethods();
-        //}.bind(this));
+        testsFormView.on('form.submit', function(event) {
+            console.info('run test methods');
+            //this.runTestMethods();
+        }.bind(this));
 
         var summary = new TextView(tests.methods.length+' test methods in '+tests.classes.length+' tests');
         testsFormView.append(summary);
@@ -55,9 +56,9 @@ class ActivityContentView extends View {
                 //this.runTestMethod(testMethod);
             }.bind(this));
 
-            testMethod.statusView = new TextView('Not Started');
+            testMethod.statusText = 'Not Started';
 
-            tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusView, testMethod.runButton);
+            tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusText, testMethod.runButton);
         }.bind(this));
 
         testsFormView.append(tableView);
