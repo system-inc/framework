@@ -11,7 +11,7 @@ class HtmlEvent extends PropagatingEvent {
 		//Console.standardInfo('HtmlEvent.stop()', this);
 
 		if(this.domEvent) {
-			app.log('this.domEvent is set and', this.domEvent.stopImmediatePropagation);
+			//app.log('this.domEvent is set and', this.domEvent.stopImmediatePropagation);
 			this.domEvent.stopImmediatePropagation();
 		}
 

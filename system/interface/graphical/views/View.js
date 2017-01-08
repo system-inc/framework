@@ -57,21 +57,21 @@ class View extends PropagatingEventEmitter {
 	}
 
 	addEventListener() {
-		// TODO: Fix this
-		console.warn('this will add the event listener onto the adaptedview but never on the view', this, arguments);
-		super.addEventListener(arguments);
+		//console.log('addEventListener', arguments, this);
+
+		super.addEventListener(...arguments);
 
 		return this.adapter.addEventListener(...arguments);
 	}
 
 	removeEventListener() {
-		super.removeEventListener(arguments);
+		super.removeEventListener(...arguments);
 
 		return this.adapter.removeEventListener(...arguments);
 	}
 
 	removeAllEventListeners() {
-		super.removeAllEventListeners(arguments);
+		super.removeAllEventListeners(...arguments);
 
 		return this.adapter.removeAllEventListeners(...arguments);
 	}

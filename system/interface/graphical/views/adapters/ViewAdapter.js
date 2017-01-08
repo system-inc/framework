@@ -17,6 +17,18 @@ class ViewAdapter {
 		if(this.adaptedView === null) {
 			this.adaptedView = this.createAdaptedView();	
 			//console.info('created this.adaptedView', this.adaptedView);
+
+			// Hook the adapted view's emit function
+			var standardAdaptedViewEmit = this.adaptedView.emit;
+			this.adaptedView.emit = async function(eventIdentifier, data, eventOptions) {
+				//console.warn('emit', arguments);
+
+				// We also emit the event on the view
+				await this.view.emit.apply(this.view, arguments);
+
+				// Emit the event on the adapted view as normal
+				return await standardAdaptedViewEmit.apply(this.adaptedView, arguments);
+			}.bind(this);
 		}
 		else {
 			throw new Error('Adapted view already created, this should never happen?');
@@ -73,10 +85,20 @@ class ViewAdapter {
 		throw new Error('render() method must be implemented.');
 	}
 
-	// EventEmitter
+	// PropagatingEventEmitter
 
-	addEventListener() {
-		return this.executeAdaptedViewMethod('addEventListener', arguments);
+	addEventListener(eventPattern, functionToBind, timesToRun = null) {
+		// The bound function on the adapted view will do nothing, instead the hook for the adapted view will trigger the function on the View itself
+		functionToBind = function(event) {
+			//console.log('no op for adapted view, instead the function will be called on the View itself');
+			//event.stop();
+		};
+
+		return this.executeAdaptedViewMethod('addEventListener', [
+			eventPattern,
+			functionToBind,
+			timesToRun,
+		]);
 	}
 
 	removeEventListener() {
