@@ -7,11 +7,7 @@ import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlEleme
 // Class
 class WebViewAdapter extends ViewAdapter {
 
-	webView = null;
-
-	constructor(view) {
-		super(view);
-
+	createAdaptedView() {
 		// Conditions for an HtmlNode instead of an HtmlElement
 		if(
 			TextView.is(this.view) && // It is a TextView
@@ -19,84 +15,23 @@ class WebViewAdapter extends ViewAdapter {
 			this.view.children.length == 0 // That has no children
 			// TODO: and it has no style
 		) {
-			this.webView = new HtmlNode(this.view.text);
+			this.adaptedView = new HtmlNode(this.view.text);
 		}
 		// Otherwise, use an HtmlElement
 		else {
 			var tag = this.view.getWebViewAdapterSettings().tag;
-			this.webView = new HtmlElement(tag, this.view.text);
+			this.adaptedView = new HtmlElement(tag, this.view.text);
 		}
 
-		//console.log('adapter created');
-		this.listen();
+		console.warn('need to hook into adaptedView\'s emit function to catch everything it emits and reemit from the View');
 	}
 
-	synchronizeWithView() {
-		//console.log('synchronizeWithView');
-		this.view.identifier = this.webView.nodeIdentifier;
-		this.webView.attributes = this.view.attributes;
-		this.webView.updateDom();
-	}
-
-	listen() {
-		//console.log('listening');
-
-		//this.webView.on('htmlNode.domUpdateExecuted', function(event) {
-		//	this.view.emit('view.rendered', event);
-		//}.bind(this));
-
-		//this.webView.on('htmlNode.mountedToDom', function(event) {
-		//	this.view.emit('view.initialized', event);
-		//}.bind(this));
-
-		// Forward all events to the view
-		console.error('this will register the web view for every possible event type on the dom, need to proxy events not listen for them');
-		//this.webView.on('*', function(event) {
-		//	this.view.emit(event.identifier, event);
-		//}.bind(this));
-	}
-
-	append(childView) {
-		return this.webView.append(childView.adapter.webView);
-	}
-
-	prepend(childView) {
-		return this.webView.prepend(childView.adapter.webView);
-	}
-
-	addClass() {
-		return this.webView.addClass(...arguments);
-	}
-
-	setStyle() {
-		return this.webView.setStyle(...arguments);
-	}
-
-	show() {
-		return this.webView.show(...arguments);
-	}
-
-	hide() {
-		return this.webView.hide(...arguments);
-	}
-
-	focus() {
-		return this.webView.focus(...arguments);
-	}
-
-	select() {
-		return this.webView.select(...arguments);
-	}
-
-	getSelectionText() {
-		return this.webView.getSelectionText(...arguments);
-	}
-
-	press() {
-		return this.webView.press(...arguments);
+	render() {
+		super.render();
+		this.adaptedView.updateDom();
 	}
 
 }
 
 // Export
-export default WebViewAdapter;
+export default adaptedViewAdapter;

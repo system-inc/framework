@@ -38,52 +38,33 @@ class View extends PropagatingEventEmitter {
 
 		// Add a class to every view
 		var classString = this.constructor.name.replaceLast('View', '').toCamelCase();
-		if(classString != '') {
+		if(classString !== '') {
 			this.addClass(classString);	
 		}
-	}
-
-	// Create an adapter for the view
-	initialize() {
-		//console.log('initialize()');
 
 		// Create the adapter for the view
 		this.adapter = app.interfaces.graphicalInterfaceManager.createViewAdapter(this);
 		//console.log('Created adapter', this.adapter.webView.tag);
-
-		// Synchronize the adapter with the view
-		this.adapter.synchronizeWithView();
-
-		// If there is a parent view with an adapter
-		if(this.parent !== null && this.parent.adapter !== null) {
-			// Add the adapter to the parent view adapter
-			//console.info('adding view to parent adapter');
-			this.parent.adapter.append(this);
-		}
-
-		// Make sure all of the children are initialized
-		this.children.each(function(childViewIndex, childView) {
-			childView.initialize();
-		}.bind(this));
-
-		return this;
 	}
 
-	synchronizeWithAdapter() {
-		//console.log('synchronizeWithAdapter()');
-
-		// If the adapter exists
-		if(this.adapter !== null) {
-			//console.log('adapter exists, view has been initialized, starting to sync', this);
-			this.adapter.synchronizeWithView();
-		}
-		else {
-			//console.log('skipping synchronizeWithAdapter(), waiting for view.initialize', this);
-		}
+	initialize() {
+		return this.adapter.initialize(...arguments);
 	}
 
 	render() {
-		this.synchronizeWithAdapter();
+		this.adapter.render();
+	}
+
+	addEventListener() {
+		return this.adapter.addEventListener(...arguments);
+	}
+
+	removeEventListener() {
+		return this.adapter.removeEventListener(...arguments);
+	}
+
+	removeAllEventListeners() {
+		return this.adapter.removeAllEventListeners(...arguments);
 	}
 
 	prepend(childView) {
@@ -112,7 +93,8 @@ class View extends PropagatingEventEmitter {
 		childView.initialize();
 
 		// Render the view now that it has been changed
-		this.render();
+		// This shouldn't be necessary since the append on the adapted view should trigger a render
+		//this.render();
 
 		return this;
 	}

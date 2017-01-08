@@ -7,7 +7,6 @@ class PropagatingEventEmitter extends EventEmitter {
 
 	eventClass = PropagatingEvent;
 	parent = null;
-	children = [];
 
 	async emit(eventIdentifier, data, eventOptions) {
 		//app.log('PropagatingEventEmitter emit', this.tag, eventIdentifier);
