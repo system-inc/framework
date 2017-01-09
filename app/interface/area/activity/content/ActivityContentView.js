@@ -17,16 +17,18 @@ class ActivityContentView extends View {
 		this.setStyle({
 			flex: '1',
 			overflow: 'scroll',
-			padding: '.75rem',
+			padding: '1rem',
+            fontSize: '.8em',
 		});
 
-		this.appendTestsFormView();
+		//this.appendTestsFormView();
 	}
 
 	async appendTestsFormView() {
         // Get all possible tests: Proctor.getTests(path, filePattern, methodPattern)
         //var tests = await Proctor.getTests();
-        var tests = await Proctor.getTests(null, 'SingleLine');
+        //var tests = await Proctor.getTests(null, 'SingleLine');
+        var tests = await Proctor.getTests(null, 'String');
         console.log('tests', tests);
 
         // Create a FormView
@@ -35,7 +37,6 @@ class ActivityContentView extends View {
                 content: 'Run Tests',
             },
         });
-        console.log(testsFormView);
 
         testsFormView.on('form.submit', function(event) {
             console.info('run test methods');
@@ -49,25 +50,24 @@ class ActivityContentView extends View {
         var tableView = new TableView();
         tableView.setColumns(['Class', 'Method', 'Status', '']);
         
+        // Add each test
         tests.methods.each(function(testMethodIndex, testMethod) {
+            testMethod.statusText = 'Not Started';
+
             testMethod.runButton = new ButtonView('Run');
             testMethod.runButton.on('input.press', function(event) {
                 console.info('run test', testMethod);
                 //this.runTestMethod(testMethod);
             }.bind(this));
 
-            testMethod.statusText = 'Not Started';
-
             tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusText, testMethod.runButton);
         }.bind(this));
 
         testsFormView.append(tableView);
 
-        //app.log(tableView.getData());
+        //console.log('tableView.getData', tableView.getData());
 
-        //console.warn('append start');
         this.append(testsFormView);
-        //console.warn('append end');
     }
 
 }

@@ -10,12 +10,12 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 	constructor(graphicalInterface, identifier) {
 		super(graphicalInterface);
 
-		app.log('creating HtmlDocument');
+		//app.log('creating HtmlDocument');
 		this.htmlDocument = new HtmlDocument();
 	}
 
 	initialize() {
-		app.log('Mounting HtmlDocument to DOM');
+		//app.log('Mounting HtmlDocument to DOM');
 
 		// Connect the graphical interface to the ViewController's view
 		if(this.graphicalInterface.viewController.view) {

@@ -13,8 +13,7 @@ class ActivityHeaderView extends View {
 			display: 'flex',
 			alignItems: 'center',
 			borderBottom: '1px solid #CCC',
-			paddingLeft: '.75rem',
-			paddingRight: '.75rem',
+			padding: '0 1rem',
 		});
 
 		var heading = new HeadingView('Tests', 2);

@@ -40,11 +40,41 @@ class View extends PropagatingEventEmitter {
 		this.adapter = app.interfaces.graphicalInterfaceManager.createViewAdapter(this);
 		//console.log('Created adapter', this.adapter.webView.tag);
 
-		// Add a class to every view
-		var classString = this.constructor.name.replaceLast('View', '').toCamelCase();
-		if(classString !== '') {
-			this.addClass(classString);	
-		}
+		// Add the default classes
+		this.addDefaultClasses();
+	}
+
+	addDefaultClasses() {
+		//console.info('super.constructor.name', super.constructor.name);
+		//console.info('this.constructor.name', this.constructor.name);
+		console.log(this);
+
+		var classConstructorName = this.constructor.name;
+		var classString = classConstructorName;
+		var currentSuperClass = this.constructor.prototype;
+		console.log('currentSuperClass', currentSuperClass);
+		
+		//while(currentSuperClass) {
+		//	console.log('loop');
+		//	var currentSuperClassName = currentSuperClass.constructor.name;
+		//	console.log('currentSuperClassName', currentSuperClassName);
+
+		//	if(currentSuperClassName == classConstructorName || currentSuperClassName == 'View') {
+		//		break;
+		//	}
+		//	else {
+		//		classString = classString+' '+currentSuperClassName;
+		//	}
+
+		//	currentSuperClass = currentSuperClass.constructor.prototype;
+		//}
+
+		//console.log('--- classString', classString);
+
+		//var classString = this.constructor.name.replaceLast('View', '').toCamelCase();
+		//if(classString !== '') {
+		//	this.addClass(classString);	
+		//}
 	}
 
 	initialize() {
@@ -155,6 +185,8 @@ class View extends PropagatingEventEmitter {
 	getAttribute = XmlElement.prototype.getAttribute;
 
 	setAttribute(attributeName, attributeValue) {
+		//console.info('setAttribute(attributeName, attributeValue)', ...arguments);
+
 		XmlElement.prototype.setAttribute.apply(this, arguments);
 
 		this.render();

@@ -1,16 +1,16 @@
 // Dependencies
-var ListView = Framework.require('framework/system/interface/graphical/views/lists/ListView.js');
+import ListView from 'framework/system/interface/graphical/views/lists/ListView.js';
 
 // Class
-var OrderedListView = ListView.extend({
+class OrderedListView extends ListView {
 
-	tag: 'ol',
+	getWebViewAdapterSettings() {
+		return {
+			tag: 'ol',
+		};
+	}
 
-	attributes: {
-		class: 'list ordered',
-	},
-
-});
+}
 
 // Export
-module.exports = OrderedListView;
+export default OrderedListView;

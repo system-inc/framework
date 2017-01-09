@@ -1,22 +1,24 @@
 // Dependencies
-var View = Framework.require('framework/system/interface/graphical/views/View.js');
+import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
-var LinkView = View.extend({
+class LinkView extends TextView {
 
-	attributes: {
-		class: 'link',
-	},
+	constructor(childViewOrText, destination) {
+		super(childViewOrText);
 
-	construct: function(settings, tag = 'a') {
-		super(null, settings, tag);
-
-		if(settings && settings.url) {
-			this.setAttribute('href', settings.url);
+		if(destination) {
+			this.setAttribute('href', destination);
 		}
-	},
+	}
 
-});
+	getWebViewAdapterSettings() {
+		return {
+			tag: 'a',
+		};
+	}
+
+}
 
 // Export
-module.exports = LinkView;
+export default LinkView;

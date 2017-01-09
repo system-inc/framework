@@ -1,20 +1,19 @@
 // Dependencies
-var ListView = Framework.require('framework/system/interface/graphical/views/lists/ListView.js');
-var LinkListItemView = Framework.require('framework/system/interface/graphical/views/lists/LinkListItemView.js');
+import ListView from 'framework/system/interface/graphical/views/lists/ListView.js';
+import LinkListItemView from 'framework/system/interface/graphical/views/lists/LinkListItemView.js';
 
 // Class
-var LinkListView = ListView.extend({
+class LinkListView extends ListView {
 
-	tag: 'ul',
+	addItem(linkContent, linkDestination, linkListItemViewOptions) {
+		var linkListItemView = new LinkListItemView(linkContent, linkDestination, linkListItemViewOptions);
 
-	addItem: function(linkContent, linkUrl, linkListItemViewSettings) {
-		var linkListItemView = new LinkListItemView(linkContent, linkUrl, linkListItemViewSettings);
 		this.append(linkListItemView);
 
 		return linkListItemView;
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = LinkListView;
+export default LinkListView;

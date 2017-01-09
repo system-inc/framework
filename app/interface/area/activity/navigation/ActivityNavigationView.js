@@ -1,6 +1,6 @@
 // Dependencies
 import View from 'framework/system/interface/graphical/views/View.js';
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import LinkListView from 'framework/system/interface/graphical/views/lists/LinkListView.js';
 
 // Class
 class ActivityNavigationView extends View {
@@ -12,12 +12,20 @@ class ActivityNavigationView extends View {
 			flex: '1',
 			//background: 'blue',
 			overflow: 'scroll',
-			padding: '.75rem',
+			padding: '.5rem 0',
 			color: '#333',
 			background: '#F9F9F9',
 		});
 
-		this.append(new TextView('Tests'));
+		var linkListView = new LinkListView();
+		linkListView.setStyle({
+			//fontSize: '.9em',
+		});
+		linkListView.addItem('Tests');
+		linkListView.addItem('Coverage');
+		linkListView.addItem('History');
+		linkListView.addItem('Regressions');
+		this.append(linkListView);
 	}
 
 }

@@ -1,16 +1,16 @@
 // Dependencies
-var View = Framework.require('framework/system/interface/graphical/views/View.js');
+import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
-var ListItemView = View.extend({
+class ListItemView extends TextView {
 
-	tag: 'li',
+	getWebViewAdapterSettings() {
+		return {
+			tag: 'li',
+		};
+	}
 
-	attributes: {
-		class: 'item',
-	},
-
-});
+}
 
 // Export
-module.exports = ListItemView;
+export default ListItemView;

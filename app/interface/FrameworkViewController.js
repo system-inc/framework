@@ -93,7 +93,8 @@ class FrameworkViewController extends ViewController {
 
 		//this.graphicalInterface.adapter.addStyleSheet('interface/style-sheets/framework.css');
 		this.graphicalInterface.adapter.addStyleSheet(Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'reset', 'style-sheets', 'reset.css'));
-		this.graphicalInterface.adapter.addStyleSheet(Node.Path.join(app.directory, 'interface', 'style-sheets', 'framework.css'));
+		this.graphicalInterface.adapter.addStyleSheet(Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'framework', 'style-sheets', 'framework.css'));
+		this.graphicalInterface.adapter.addStyleSheet(Node.Path.join(app.directory, 'interface', 'style-sheets', 'app.css'));
 	}
 
 }

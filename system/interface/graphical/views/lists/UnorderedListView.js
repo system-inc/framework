@@ -1,16 +1,16 @@
 // Dependencies
-var ListView = Framework.require('framework/system/interface/graphical/views/lists/ListView.js');
+import ListView from 'framework/system/interface/graphical/views/lists/ListView.js';
 
 // Class
-var UnorderedListView = ListView.extend({
+class UnorderedListView extends ListView {
 
-	tag: 'ul',
+	getWebViewAdapterSettings() {
+		return {
+			tag: 'ul',
+		};
+	}
 
-	attributes: {
-		class: 'list unordered',
-	},
-
-});
+}
 
 // Export
-module.exports = UnorderedListView;
+export default UnorderedListView;

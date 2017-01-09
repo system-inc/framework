@@ -82,7 +82,7 @@ class ViewAdapter {
 	}
 
 	render() {
-		throw new Error('render() method must be implemented.');
+		return this.executeAdaptedViewMethod('render', arguments);
 	}
 
 	// PropagatingEventEmitter
@@ -119,9 +119,9 @@ class ViewAdapter {
 		return this.addChild(childView, 'append');
 	}
 
-	//setAttribute() {
-	//	return this.executeAdaptedViewMethod('setAttribute', arguments);
-	//}
+	setAttribute() {
+		return this.executeAdaptedViewMethod('setAttribute', arguments);
+	}
 
 	addChild(childView, arrayMethod = 'append') {
 		return this.executeAdaptedViewMethod('addChild', arguments);
@@ -129,6 +129,10 @@ class ViewAdapter {
 
 	addClass() {
 		return this.executeAdaptedViewMethod('addClass', arguments);
+	}
+
+	removeClass() {
+		return this.executeAdaptedViewMethod('removeClass', arguments);
 	}
 
 	setStyle() {

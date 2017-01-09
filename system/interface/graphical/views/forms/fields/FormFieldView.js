@@ -1,7 +1,6 @@
 // Dependencies
 import View from 'framework/system/interface/graphical/views/View.js';
-import Html from 'framework/system/interface/graphical/web/html/Html.js';
-import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlElement.js';
+import Settings from 'framework/system/settings/Settings.js';
 import FormControlView from 'framework/system/interface/graphical/views/forms/controls/FormControlView.js';
 
 // Class
@@ -10,6 +9,8 @@ class FormFieldView extends View {
 	attributes = {
 		class: 'field',
 	};
+
+	settings = new Settings();
 
 	identifier = null;
 

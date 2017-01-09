@@ -1,8 +1,11 @@
 // Dependencies
 import View from 'framework/system/interface/graphical/views/View.js';
+import Settings from 'framework/system/settings/Settings.js';
 
 // Class
 class FormControlView extends View {
+
+	settings = new Settings();
 
 	attributes = {
 		class: 'control',
@@ -41,8 +44,9 @@ class FormControlView extends View {
 
 	// Two-way data binding: if the user changes the value on the DOM, the FormControlView is updated to reflect the new value
 	valueChangedOnDom() {
-		//app.log('Value changed on DOM, updating FormControlView');
-		this.value = this.domNode.value;
+		//console.info('Value changed on DOM, updating FormControlView');
+		console.warn('need to update dom node');
+		//this.value = this.domNode.value;
 
 		return this.value;
 	}

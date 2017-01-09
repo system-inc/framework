@@ -38,16 +38,6 @@ class WebViewAdapter extends ViewAdapter {
 		return adaptedView;
 	}
 
-	render() {
-		if(this.adaptedView) {
-			console.info('WebViewAdapter.render', this.view.adapter.adaptedView.tag, this.view);
-			this.adaptedView.updateDom();	
-		}
-		else {
-			//console.info('WebViewAdapter.render - skipped', this.view);
-		}
-	}
-
 }
 
 // Export

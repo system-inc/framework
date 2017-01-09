@@ -1,79 +1,89 @@
 body {
-	font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
-p, h1, h2, h3, h4, h5, h6, table, form, form .field {
-	margin-bottom: .5em;
+h1, h2, h3, h4, h5, h6, p, table, form, form .field {
+	margin: 1em 0;
+}
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child, p:first-child {
+	margin-top: 0;
+}
+h1, h2, h3, h4, h5, h6, thead {
+	font-weight: 500;
 }
 
-h1 {
-	font-size: 2em;
-	font-weight: bold;
-}
-h2 {
-	font-size: 1.75em;
-	font-weight: bold;
-}
-h3 {
-	font-size: 1.5em;
-	font-weight: bold;
-}
-h4 {
-	font-size: 1.25em;
-	font-weight: bold;
-}
-h5 {
-	font-size: 1em;
-	font-weight: bold;
-}
-h6 {
-	font-size: .8em;
-	font-weight: bold;
+a:hover {
+	color: rgba(0, 0, 0, .5);
 }
 
 table {
-	border: 1px solid rgba(34, 36, 38, 0.15);
-	border-radius: .25em;
+	width: 100%;
 	border-collapse: separate;
+	border-spacing: 0;
+	table-layout: fixed;	
 }
-	thead {
-		font-weight: bold;
-		background: #EFEFEF;
+	thead tr:hover {
+		background: transparent;
 	}
-		th {
-			padding: .9em .75em;
-		}
-	tr {
-		
+	tr:hover {
+		background: rgba(0, 0, 0, 0.05);
 	}
-		td, th {
-			border-bottom: 1px solid rgba(34, 36, 38, 0.15);
-			border-left: 1px solid rgba(34, 36, 38, 0.15);
-		}
-		td {
-			padding: .75em;
-		}
-		table tr td:first-child, table tr th:first-child {
-		    border-left: none;
-		}
-		table tr:last-child td {
-		    border-bottom: none;
-		}	
+	th {
+		border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+	}
+	td {
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	}
+	th, td {
+		padding: .5em .5em .5em 1em;
+		white-space: nowrap;
+		overflow: scroll;
+		text-overflow: ellipsis;
+	}
+	th:first-child, td:first-child {
+		padding-left: 0;
+	}
+	th:hover, td:hover {
+  		text-overflow: clip;
+	}
 
 .button {
+	/*background: rgba(0, 0, 0, 0.15);*/
+	/*padding: .4em .7em;*/
+	border-radius: .15em;
 	display: inline-block;
-	border-radius: .25em;
-	background: #EFEFEF;
-	padding: .75em 1.5em;
+	font-weight: 600;
 }
 	.button:hover {
-		background: #DDD;
+		background: rgba(0, 0, 0, 0.2);
+	}
+	.button:active {
+		background: rgba(0, 0, 0, 0.25);
 	}
 
-.list .item {
+.icon.caret:after {
+	content: '';
+	display: inline-block;
+	width: 0;
+    height: 0;
+    border-width: .3em 0 .3em .3em;
+    border-style: solid;
+    border-color: #333;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    margin: 0 0 .05em .5em;
+    transform: rotate(90deg);
+}
+
+.listView.horizontal
+
+.linkList {
+}
+.linkListItem a {
+	padding: .5rem 1rem;
 	display: block;
 }
-.list.horizontal .item {
-	display: inline;
-	margin-right: .5em;
-}
+	.linkListItem a:hover {
+		color: #333;
+		background: rgba(0, 0, 0, 0.05);
+	}

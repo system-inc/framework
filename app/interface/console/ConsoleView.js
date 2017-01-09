@@ -12,11 +12,13 @@ class ConsoleView extends View {
 			//flex: 'auto auto auto',
 			display: 'flex',
 			alignItems: 'center',
+			fontSize: '.8em',
 		});
 
 		var text = new TextView('Console');
 		text.setStyle({
 			margin: 0,
+			paddingLeft: '.25rem',
 		});
 		this.append(text);
 	}

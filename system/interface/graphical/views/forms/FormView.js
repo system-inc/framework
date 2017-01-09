@@ -9,6 +9,7 @@ class FormView extends View {
 
 	settings = new Settings({
 		submitButtonView: {
+			enabled: true,
 			content: 'Submit',
 		},
 	});
@@ -19,21 +20,23 @@ class FormView extends View {
 		this.settings.merge(settings);
 		//console.info('this.settings', this.settings);
 
-		// Create the container
-		var submitButtonContainerView = new View();
-
 		// Create the button
-		var submitButtonView = new ButtonView(this.settings.get('submitButtonView.content'));
-        submitButtonView.on('input.press', function(event) {
-        	//console.log('submitButtonView input.press');
-        	this.submit();
-        }.bind(this));
+		if(this.settings.get('submitButtonView.enabled')) {
+			// Create the container
+			var submitButtonContainerView = new View();
 
-        // Add the button to the container
-        submitButtonContainerView.append(submitButtonView);
+			var submitButtonView = new ButtonView(this.settings.get('submitButtonView.content'));
+	        submitButtonView.on('input.press', function(event) {
+	        	//console.log('submitButtonView input.press');
+	        	this.submit();
+	        }.bind(this));
 
-        // Add the container to the view
-        this.append(submitButtonContainerView);
+	        // Add the button to the container
+	        submitButtonContainerView.append(submitButtonView);
+
+	        // Add the container to the view
+	        this.append(submitButtonContainerView);
+		}
 	}
 
 	addFormFieldView(formFieldView) {

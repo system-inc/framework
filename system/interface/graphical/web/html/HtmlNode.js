@@ -83,6 +83,11 @@ class HtmlNode extends XmlNode {
 		}
 	}
 
+	// Alias for updateDom, used by ViewAdapter
+	render() {
+		return this.updateDom(...arguments);
+	}
+
 	executeDomUpdate() {
 		//app.log('HtmlNode executeDomUpdate', this.tag);
 

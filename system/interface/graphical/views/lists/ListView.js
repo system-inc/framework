@@ -1,33 +1,34 @@
 // Dependencies
-var View = Framework.require('framework/system/interface/graphical/views/View.js');
-var ListItemView = Framework.require('framework/system/interface/graphical/views/lists/ListItemView.js');
+import View from 'framework/system/interface/graphical/views/View.js';
+import ListItemView from 'framework/system/interface/graphical/views/lists/ListItemView.js';
 
 // Class
-var ListView = View.extend({
+class ListView extends View {
 
-	tag: 'ul',
-
-	attributes: {
-		class: 'list',
-	},
-
-	addItem: function(listItemViewSettings) {
-		var listItemView = new ListItemView(listItemViewSettings);
+	addItem(listItemViewOptions) {
+		var listItemView = new ListItemView(listItemViewOptions);
+		
 		this.append(listItemView);
 
 		return listItemView;
-	},
+	}
 
-	setDirection: function(direction) {
+	setDirection(direction) {
 		if(direction == 'horizontal') {
 			this.addClass('horizontal');
 		}
 		else {
 			this.removeClass('horizontal');
 		}
-	},
+	}
 
-});
+	getWebViewAdapterSettings() {
+		return {
+			tag: 'ul',
+		};
+	}
+
+}
 
 // Export
-module.exports = ListView;
+export default ListView;
