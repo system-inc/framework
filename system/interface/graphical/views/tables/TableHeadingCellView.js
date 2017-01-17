@@ -1,8 +1,8 @@
 // Dependencies
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import TableCellView from 'framework/system/interface/graphical/views/tables/TableCellView.js';
 
 // Class
-class TableHeadingCellView extends TextView {
+class TableHeadingCellView extends TableCellView {
 
 	getWebViewAdapterSettings() {
 		return {

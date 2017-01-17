@@ -21,7 +21,7 @@ class ActivityContentView extends View {
             fontSize: '.8em',
 		});
 
-		//this.appendTestsFormView();
+		this.appendTestsFormView();
 	}
 
 	async appendTestsFormView() {

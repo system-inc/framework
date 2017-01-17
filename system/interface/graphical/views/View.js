@@ -45,36 +45,21 @@ class View extends PropagatingEventEmitter {
 	}
 
 	addDefaultClasses() {
-		//console.info('super.constructor.name', super.constructor.name);
-		//console.info('this.constructor.name', this.constructor.name);
-		console.log(this);
+		// Get the class hierarchy (current class name and super class names up to View)
+		var classHierarchy = Class.getClassHierarchyFromInstance(this, 'View');
 
-		var classConstructorName = this.constructor.name;
-		var classString = classConstructorName;
-		var currentSuperClass = this.constructor.prototype;
-		console.log('currentSuperClass', currentSuperClass);
-		
-		//while(currentSuperClass) {
-		//	console.log('loop');
-		//	var currentSuperClassName = currentSuperClass.constructor.name;
-		//	console.log('currentSuperClassName', currentSuperClassName);
+		// If there are classes up to View
+		if(classHierarchy.length) {
+			var classString = '';
 
-		//	if(currentSuperClassName == classConstructorName || currentSuperClassName == 'View') {
-		//		break;
-		//	}
-		//	else {
-		//		classString = classString+' '+currentSuperClassName;
-		//	}
+			classHierarchy.each(function(index, className) {
+				classString += className.replaceLast('View', '').toCamelCase()+' ';
+			});
+			
+			classString = classString.replaceLast(' ', '');
 
-		//	currentSuperClass = currentSuperClass.constructor.prototype;
-		//}
-
-		//console.log('--- classString', classString);
-
-		//var classString = this.constructor.name.replaceLast('View', '').toCamelCase();
-		//if(classString !== '') {
-		//	this.addClass(classString);	
-		//}
+			this.addClass(classString);
+		}
 	}
 
 	initialize() {

@@ -57,7 +57,7 @@ class HeaderView extends View {
 			},
 		});
 		searchFormView.setStyle({
-			margin: '0 0 0 .5em',
+			margin: '0 0 0 auto',
 		});
 		var singleLineTextFormFieldView = new SingleLineTextFormFieldView();
 		singleLineTextFormFieldView.formControlView.setStyle({

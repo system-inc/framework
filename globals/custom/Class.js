@@ -105,6 +105,28 @@ class Class {
 		return clone;
 	}
 
+	static getClassHierarchyFromInstance(instance, classNameToBreakOn) {
+		var classHierarchyFromInstance = [];
+
+		var currentClass = instance;
+		var currentClassName = null;
+
+		while(true) {
+			currentClass = Object.getPrototypeOf(currentClass);
+			currentClassName = currentClass.constructor.name;
+
+			// Conditions to break the loop
+			if(currentClassName === classNameToBreakOn || currentClassName === 'Object') {
+				break;
+			}
+			else {
+				classHierarchyFromInstance.append(currentClassName);	
+			}
+		}
+
+		return classHierarchyFromInstance;
+	}
+
 	static getClassNameFromInstance(instance) {
 		var className = null;
 
