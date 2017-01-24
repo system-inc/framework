@@ -1,10 +1,10 @@
 // Dependencies
-var ModelAdapter = Framework.require('framework/system/data/model-adapters/ModelAdapter.js');
+import ModelAdapter from 'framework/system/data/model-adapters/ModelAdapter.js';
 
 // Class
-var ApiModelAdapter = ModelAdapter.extend({
+class ApiModelAdapter extends ModelAdapter {
 
-});
+}
 
 // Export
-module.exports = ApiModelAdapter;
+export default ApiModelAdapter;

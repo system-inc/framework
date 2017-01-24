@@ -1,7 +1,7 @@
 // Class
-var ModelAdapter = Class.extend({
+class ModelAdapter {
 
-});
+}
 
 // Export
-module.exports = ModelAdapter;
+export default ModelAdapter;

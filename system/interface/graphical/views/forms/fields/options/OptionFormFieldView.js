@@ -1,15 +1,11 @@
 // Dependencies
-var FormFieldView = Framework.require('framework/system/interface/graphical/views/forms/fields/FormFieldView.js');
-var OptionFormControlView = Framework.require('framework/system/interface/graphical/views/forms/controls/options/OptionFormControlView.js');
+import FormFieldView from 'framework/system/interface/graphical/views/forms/fields/FormFieldView.js';
+import OptionFormControlView from 'framework/system/interface/graphical/views/forms/controls/options/OptionFormControlView.js';
 
 // Class
-var OptionFormFieldView = FormFieldView.extend({
+class OptionFormFieldView extends FormFieldView {
 
-	attributes: {
-		class: 'field option',
-	},
-
-	construct: function(identifier, settings) {
+	constructor(identifier, settings) {
 		// TOOD: Broken
 		// Call super after setting this.formControlView
 		super(...arguments);
@@ -19,9 +15,9 @@ var OptionFormFieldView = FormFieldView.extend({
 		
 		// Append the form control
 		this.append(this.formControlView);
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = OptionFormFieldView;
+export default OptionFormFieldView;

@@ -22,9 +22,9 @@ class ActivityNavigationView extends View {
 			//fontSize: '.9em',
 		});
 		linkListView.addItem('Tests');
-		linkListView.addItem('Coverage');
-		linkListView.addItem('History');
-		linkListView.addItem('Regressions');
+		//linkListView.addItem('Coverage');
+		//linkListView.addItem('History');
+		//linkListView.addItem('Regressions');
 		this.append(linkListView);
 	}
 

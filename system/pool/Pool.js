@@ -1,24 +1,25 @@
-var EventEmitter = Framework.require('framework/system/event/EventEmitter.js');
+// Dependencies
+import EventEmitter from 'framework/system/event/EventEmitter.js';
 
 // Class
-var Pool = EventEmitter.extend({
+class Pool extends EventEmitter {
 
-	reusableClass: null,
+	reusableClass = null;
 
-	availableReusables: {},
-	busyReusables: {},
+	availableReusables = {};
+	busyReusables = {};
 
-	size: 0,
-	minimumSize: 0,
-	maximumSize: 10,
+	size = 0;
+	minimumSize = 0;
+	maximumSize = 10;
 
-	waitingForAvailableReusableCount: 0,
+	waitingForAvailableReusableCount = 0;
 
-	createReusablesAsNecessary: true,
+	createReusablesAsNecessary = true;
 
-	timeInMillisecondsToWaitToRetireAvailableReusables: null,
+	timeInMillisecondsToWaitToRetireAvailableReusables = null;
 
-	construct: function(reusableClass) {
+	constructor(reusableClass) {
 		if(!this.reusableClass && !reusableClass) {
 			throw new Error('Pool must be constructed with a specified subclass of type "Reusable".');
 		}
@@ -33,9 +34,9 @@ var Pool = EventEmitter.extend({
 				this.createReusable();
 			}
 		}
-	},
+	}
 
-	createReusable: function() {
+	createReusable() {
 		// Increment the size
 		this.size++;
 
@@ -46,9 +47,9 @@ var Pool = EventEmitter.extend({
 		this.busyReusables[reusable.uniqueIdentifier] = reusable;
 
 		return reusable;
-	},
+	}
 
-	getReusable: function() {
+	getReusable() {
 		this.waitingForAvailableReusableCount++;
 
 		return new Promise(function(resolve, reject) {
@@ -82,9 +83,9 @@ var Pool = EventEmitter.extend({
 				}.bind(this));
 			}
 		}.bind(this));
-	},
+	}
 
-	getReusableByUniqueIdentifier: function(uniqueIdentifier) {
+	getReusableByUniqueIdentifier(uniqueIdentifier) {
 		var reusable = null;
 
 		if(this.availableReusables[uniqueIdentifier]) {
@@ -95,9 +96,9 @@ var Pool = EventEmitter.extend({
 		}
 
 		return reusable;
-	},
+	}
 
-	takeAvailableReusable: function(reusable) {
+	takeAvailableReusable(reusable) {
 		//Console.standardLog('taking available reusable', reusable);
 
 		// Remove the reusable from the available list
@@ -112,9 +113,9 @@ var Pool = EventEmitter.extend({
 		this.waitingForAvailableReusableCount--;
 		
 		return reusable;
-	},
+	}
 
-	releaseReusable: function(reusable) {
+	releaseReusable(reusable) {
 		// Remove the reusable from the busy list
 		delete this.busyReusables[reusable.uniqueIdentifier];
 
@@ -128,9 +129,9 @@ var Pool = EventEmitter.extend({
 		this.emit('pool.availableReusable', reusable);
 
 		return reusable;
-	},
+	}
 
-	retireReusable: function(reusable) {
+	retireReusable(reusable) {
 		// Remove the reusable from the the available reusables
 		if(reusable.available) {
 			delete this.availableReusables[reusable.uniqueIdentifier];
@@ -149,9 +150,9 @@ var Pool = EventEmitter.extend({
 		if((this.size < this.minimumSize) || (this.waitingForAvailableReusableCount > 0)) {
 			this.createReusable();
 		}
-	},
+	}
 
-	shouldRetireReusable: function() {
+	shouldRetireReusable() {
 		var shouldRetireReusable = true;
 
 		// If retiring the reusable would make the pool less than the minimum size
@@ -160,13 +161,13 @@ var Pool = EventEmitter.extend({
 		}
 
 		return shouldRetireReusable;
-	},
+	}
 
-	retireReusableByUniqueIdentifier: function(uniqueIdentifier) {
+	retireReusableByUniqueIdentifier(uniqueIdentifier) {
 		this.retireReusable(this.getReusableByUniqueIdentifier(uniqueIdentifier));
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = Pool;
+export default Pool;

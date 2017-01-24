@@ -1,10 +1,10 @@
 // Dependencies
-var ModelAdapter = Framework.require('framework/system/data/model-adapters/ModelAdapter.js');
+import ModelAdapter from 'framework/system/data/model-adapters/ModelAdapter.js';
 
 // Class
-var DatabaseModelAdapter = ModelAdapter.extend({
+class DatabaseModelAdapter extends ModelAdapter {
 
-});
+}
 
 // Export
-module.exports = DatabaseModelAdapter;
+export default DatabaseModelAdapter;

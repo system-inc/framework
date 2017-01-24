@@ -1,9 +1,9 @@
 // Class
-var ModelList = Class.extend({
+class ModelList {
 
-	models: [],
+	models = [];
 
-});
+}
 
 // Export
-module.exports = ModelList;
+export default ModelList;

@@ -1,7 +1,7 @@
 // Class
-var Keyboard = Class.extend({
+class Keyboard {
 	
-});
+}
 
 // Export
-module.exports = Keyboard;
+export default Keyboard;

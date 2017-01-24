@@ -1,12 +1,12 @@
 // Dependencies
-var DataStore = Framework.require('framework/system/data/DataStore.js');
+import DataStore from 'framework/system/data/DataStore.js';
 
 // Class
-var LocalStorage = DataStore.extend({
+class LocalStorage extends DataStore {
 
-	rootPath: null,
+	rootPath = null;
 
-	construct: function(rootPath) {
+	constructor(rootPath) {
 		if(rootPath) {
 			this.rootPath = rootPath;
 		}
@@ -14,9 +14,9 @@ var LocalStorage = DataStore.extend({
 		// We do not use the data object, we rely entirely on local storage
 		// TODO: At some point in the future we can use this data object as a caching layer in front of local storage
 		this.data = null;
-	},
+	}
 
-	get: function(path) {
+	get(path) {
 		//app.log('LocalStorage.prototype.get path', path);
 
 		if(this.rootPath) {
@@ -28,9 +28,9 @@ var LocalStorage = DataStore.extend({
 		//app.log('path', path, 'value', value);
 		
 		return value;
-	},
+	}
 
-	set: function(path, value) {
+	set(path, value) {
 		if(this.rootPath) {
 			path = this.rootPath+'.'+path;
 		}
@@ -38,9 +38,9 @@ var LocalStorage = DataStore.extend({
 		LocalStorage.setValueByPath(path, value);
 
 		return this;
-	},
+	}
 
-	delete: function(path) {
+	delete(path) {
 		if(this.rootPath) {
 			path = this.rootPath+'.'+path;
 		}
@@ -48,13 +48,13 @@ var LocalStorage = DataStore.extend({
 		LocalStorage.deleteValueByPath(path);
 
 		return this;
-	},
+	}
 
-	getData: function() {
+	getData() {
 		return LocalStorage.get(this.rootPath);
-	},
+	}
 
-	setData: function(data) {
+	setData(data) {
 		//app.log('LocalStorage.prototype.setData', data);
 
 		// If there is a root path
@@ -80,273 +80,271 @@ var LocalStorage = DataStore.extend({
 		}
 
 		return data;
-	},
+	}
 
-	empty: function() {
+	empty() {
 		localStorage.clear();
 
 		return {};
-	},
+	}
 
-	merge: function(data) {
+	merge(data) {
 		//app.log('LocalStorage.prototype.merge', data);
 
 		return LocalStorage.merge(data, this.rootPath);
-	},
+	}
 
-	integrate: function(data) {
+	integrate(data) {
 		return LocalStorage.integrate(data, this.rootPath);
-	},
-
-});
-
-// Static methods
-
-LocalStorage.get = function(key) {
-	//app.log('LocalStorage.get', arguments);
-
-	var value = null;
-
-	// If a key is provided
-	if(key) {
-		value = LocalStorage.reformGetValue(localStorage.getItem(key));
 	}
-	// If there is no key, get everything
-	else {
-		// Check to see if there is anything in local storage
-		var localStorageLength = localStorage.length;
 
-		// If there is something, we will setup an object to return
-		if(localStorageLength) {
-			value = {};
+	static get(key) {
+		//app.log('LocalStorage.get', arguments);
+
+		var value = null;
+
+		// If a key is provided
+		if(key) {
+			value = LocalStorage.reformGetValue(localStorage.getItem(key));
 		}
+		// If there is no key, get everything
+		else {
+			// Check to see if there is anything in local storage
+			var localStorageLength = localStorage.length;
 
-		for(var i = 0; i < localStorageLength; ++i) {
-			var key = localStorage.key(i);
-			value[key] = LocalStorage.reformGetValue(localStorage.getItem(key));
+			// If there is something, we will setup an object to return
+			if(localStorageLength) {
+				value = {};
+			}
+
+			for(var i = 0; i < localStorageLength; ++i) {
+				var key = localStorage.key(i);
+				value[key] = LocalStorage.reformGetValue(localStorage.getItem(key));
+			}
+		}	
+
+		return value;
+	}
+
+	static getValueByPath(path) {
+		//app.log('LocalStorage.getValueByPath', arguments);
+
+		var value = null;
+
+		var keys = path.split('.');
+		var firstKey = keys.first();
+		//app.log('firstKey', firstKey);
+
+		var object = LocalStorage.get(firstKey);
+		//app.log('object', object);
+
+		// If the path is a single key
+		if(keys.length == 1) {
+			// Set the value using the only key
+			value = LocalStorage.get(firstKey);
 		}
-	}	
+		// If there is more than one key in the path
+		else {
+			// Get the value at the first key in the path
+			var currentValue = LocalStorage.get(firstKey);
 
-	return value;
-};
+			// If the current value is not an object, it needs to be an object as we have nested keys
+			if(!Object.is(currentValue)) {
+				currentValue = {};
+			}
 
-LocalStorage.getValueByPath = function(path) {
-	//app.log('LocalStorage.getValueByPath', arguments);
-
-	var value = null;
-
-	var keys = path.split('.');
-	var firstKey = keys.first();
-	//app.log('firstKey', firstKey);
-
-	var object = LocalStorage.get(firstKey);
-	//app.log('object', object);
-
-	// If the path is a single key
-	if(keys.length == 1) {
-		// Set the value using the only key
-		value = LocalStorage.get(firstKey);
-	}
-	// If there is more than one key in the path
-	else {
-		// Get the value at the first key in the path
-		var currentValue = LocalStorage.get(firstKey);
-
-		// If the current value is not an object, it needs to be an object as we have nested keys
-		if(!Object.is(currentValue)) {
-			currentValue = {};
-		}
-
-		// Remove the first key from the keys array
-		keys.shift();
-
-		// Set the value by path on our object
-		value = currentValue.getValueByPath(keys.join('.'));
-	}
-
-    return value;
-};
-
-LocalStorage.reformGetValue = function(getValue) {
-	//app.log('LocalStorage.reformGetValue', arguments);
-
-	// Handle Primitive strings
-	if(getValue == 'true') {
-		getValue = true;
-	}
-	else if(getValue == 'false') {
-		getValue = false;
-	}
-	else if(getValue == 'null') {
-		getValue = null;
-	}
-	else if(getValue == 'undefined') {
-		getValue = undefined;
-	}
-	// Handle JSON objects
-	else if(Json.is(getValue)) {
-		getValue = Json.decode(getValue);
-	}
-
-	return getValue;
-};
-
-LocalStorage.set = function(key, value) {
-	//app.log('LocalStorage.set', arguments);
-
-	//app.log('LocalStorage.set', key, value)
-	return localStorage.setItem(key, LocalStorage.reformSetValue(value));
-};
-
-LocalStorage.reformSetValue = function(setValue) {
-	//app.log('LocalStorage.reformSetValue', arguments);
-
-	// Encode non-primitives
-	if(!Primitive.is(setValue)) {
-		setValue = Json.encode(setValue);
-	}
-
-	return setValue;
-};
-
-LocalStorage.setValueByPath = function(path, value) {
-	//app.log('LocalStorage.setValueByPath', arguments);
-
-	var keys = path.split('.');
-	var firstKey = keys.first();
-
-	// If the path is a single key
-	if(keys.length == 1) {
-		// Set the value using the only key
-		LocalStorage.set(firstKey, value);
-	}
-	// If there is more than one key in the path
-	else {
-		// Get the value at the first key in the path
-		var currentValue = LocalStorage.get(firstKey);
-
-		// If the current value is not an object, it needs to be an object as we have nested keys
-		if(!Object.is(currentValue)) {
-			currentValue = {};
-		}
-
-		// Remove the first key from the keys array
-		keys.shift();
-
-		// Set the value by path on our object
-		currentValue.setValueByPath(keys.join('.'), value);
-
-		// Write the object back to local storage
-		LocalStorage.set(firstKey, currentValue);
-	}
-
-    return value;
-};
-
-LocalStorage.delete = function(key) {
-	//app.log('LocalStorage.delete', arguments);
-
-	return localStorage.removeItem(key);
-};
-
-LocalStorage.deleteValueByPath = function(path) {
-	//app.log('LocalStorage.deleteValueByPath', arguments);
-
-	var keys = path.split('.');
-	var firstKey = keys.first();
-
-	// If the path is a single key
-	if(keys.length == 1) {
-		// Delete the value using the only key
-		LocalStorage.delete(firstKey);
-	}
-	// If there is more than one key in the path
-	else {
-		// Get the value at the first key in the path
-		var currentValue = LocalStorage.get(firstKey);
-
-		// If the current value is an object
-		if(Object.is(currentValue)) {
 			// Remove the first key from the keys array
 			keys.shift();
 
-			// Delete the value by path on our object
-			currentValue.deleteValueByPath(keys.join('.'));
+			// Set the value by path on our object
+			value = currentValue.getValueByPath(keys.join('.'));
+		}
+
+	    return value;
+	}
+
+	static reformGetValue(getValue) {
+		//app.log('LocalStorage.reformGetValue', arguments);
+
+		// Handle Primitive strings
+		if(getValue == 'true') {
+			getValue = true;
+		}
+		else if(getValue == 'false') {
+			getValue = false;
+		}
+		else if(getValue == 'null') {
+			getValue = null;
+		}
+		else if(getValue == 'undefined') {
+			getValue = undefined;
+		}
+		// Handle JSON objects
+		else if(Json.is(getValue)) {
+			getValue = Json.decode(getValue);
+		}
+
+		return getValue;
+	}
+
+	static set(key, value) {
+		//app.log('LocalStorage.set', arguments);
+
+		//app.log('LocalStorage.set', key, value)
+		return localStorage.setItem(key, LocalStorage.reformSetValue(value));
+	}
+
+	static reformSetValue(setValue) {
+		//app.log('LocalStorage.reformSetValue', arguments);
+
+		// Encode non-primitives
+		if(!Primitive.is(setValue)) {
+			setValue = Json.encode(setValue);
+		}
+
+		return setValue;
+	}
+
+	static setValueByPath(path, value) {
+		//app.log('LocalStorage.setValueByPath', arguments);
+
+		var keys = path.split('.');
+		var firstKey = keys.first();
+
+		// If the path is a single key
+		if(keys.length == 1) {
+			// Set the value using the only key
+			LocalStorage.set(firstKey, value);
+		}
+		// If there is more than one key in the path
+		else {
+			// Get the value at the first key in the path
+			var currentValue = LocalStorage.get(firstKey);
+
+			// If the current value is not an object, it needs to be an object as we have nested keys
+			if(!Object.is(currentValue)) {
+				currentValue = {};
+			}
+
+			// Remove the first key from the keys array
+			keys.shift();
+
+			// Set the value by path on our object
+			currentValue.setValueByPath(keys.join('.'), value);
 
 			// Write the object back to local storage
 			LocalStorage.set(firstKey, currentValue);
 		}
+
+	    return value;
 	}
 
-    return true;
-};
+	static delete(key) {
+		//app.log('LocalStorage.delete', arguments);
 
-LocalStorage.empty = function() {
-	app.log('LocalStorage.empty', arguments);
-
-	return localStorage.clear();
-};
-
-LocalStorage.merge = function(data, key) {
-	//app.log('LocalStorage.merge', data, key);
-
-	// Read the current value of all of local storage or the key if it is set
-	var currentValue = LocalStorage.get(key);
-	//app.log('currentValue', currentValue);
-
-	// Make sure we are working with an object
-	if(!Object.is(currentValue)) {
-		currentValue = {};
+		return localStorage.removeItem(key);
 	}
 
-	// Merge the data on top of the current value
-	currentValue.merge(data);
+	static deleteValueByPath(path) {
+		//app.log('LocalStorage.deleteValueByPath', arguments);
 
-	// If a key is provided
-	if(key) {
-		// Write the value out to the key
-		LocalStorage.set(key, currentValue);
-	}
-	// If no key is provided
-	else {
-		// Loop through the current values root keys and set them in local storage
-		currentValue.each(function(rootPath, value) {
-			LocalStorage.set(rootPath, value);
-		});
-	}
+		var keys = path.split('.');
+		var firstKey = keys.first();
 
-	return currentValue;
-};
+		// If the path is a single key
+		if(keys.length == 1) {
+			// Delete the value using the only key
+			LocalStorage.delete(firstKey);
+		}
+		// If there is more than one key in the path
+		else {
+			// Get the value at the first key in the path
+			var currentValue = LocalStorage.get(firstKey);
 
-LocalStorage.integrate = function(data, key) {
-	//app.log('LocalStorage.integrate', arguments);
+			// If the current value is an object
+			if(Object.is(currentValue)) {
+				// Remove the first key from the keys array
+				keys.shift();
 
-	// Read the current value of all of local storage or the key if it is set
-	var currentValue = LocalStorage.get(key);
+				// Delete the value by path on our object
+				currentValue.deleteValueByPath(keys.join('.'));
 
-	// Make sure we are working with an object
-	if(!Object.is(currentValue)) {
-		currentValue = {};
-	}
+				// Write the object back to local storage
+				LocalStorage.set(firstKey, currentValue);
+			}
+		}
 
-	// Integrate the data on top of the current value
-	currentValue.integrate(data);
-
-	// If a key is provided
-	if(key) {
-		// Write the value out to the key
-		LocalStorage.set(key, currentValue);
-	}
-	// If no key is provided
-	else {
-		// Loop through the current values root keys and set them in local storage
-		currentValue.each(function(rootPath, value) {
-			LocalStorage.set(rootPath, value);
-		});
+	    return true;
 	}
 
-	return currentValue;
-};
+	static empty() {
+		app.log('LocalStorage.empty', arguments);
+
+		return localStorage.clear();
+	}
+
+	static merge(data, key) {
+		//app.log('LocalStorage.merge', data, key);
+
+		// Read the current value of all of local storage or the key if it is set
+		var currentValue = LocalStorage.get(key);
+		//app.log('currentValue', currentValue);
+
+		// Make sure we are working with an object
+		if(!Object.is(currentValue)) {
+			currentValue = {};
+		}
+
+		// Merge the data on top of the current value
+		currentValue.merge(data);
+
+		// If a key is provided
+		if(key) {
+			// Write the value out to the key
+			LocalStorage.set(key, currentValue);
+		}
+		// If no key is provided
+		else {
+			// Loop through the current values root keys and set them in local storage
+			currentValue.each(function(rootPath, value) {
+				LocalStorage.set(rootPath, value);
+			});
+		}
+
+		return currentValue;
+	}
+
+	static integrate(data, key) {
+		//app.log('LocalStorage.integrate', arguments);
+
+		// Read the current value of all of local storage or the key if it is set
+		var currentValue = LocalStorage.get(key);
+
+		// Make sure we are working with an object
+		if(!Object.is(currentValue)) {
+			currentValue = {};
+		}
+
+		// Integrate the data on top of the current value
+		currentValue.integrate(data);
+
+		// If a key is provided
+		if(key) {
+			// Write the value out to the key
+			LocalStorage.set(key, currentValue);
+		}
+		// If no key is provided
+		else {
+			// Loop through the current values root keys and set them in local storage
+			currentValue.each(function(rootPath, value) {
+				LocalStorage.set(rootPath, value);
+			});
+		}
+
+		return currentValue;
+	}
+
+}
 
 // Export
-module.exports = LocalStorage;
+export default LocalStorage;

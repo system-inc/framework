@@ -1,17 +1,20 @@
 // Dependencies
-var FormControlView = Framework.require('framework/system/interface/graphical/views/forms/controls/FormControlView.js');
+import FormControlView from 'framework/system/interface/graphical/views/forms/controls/FormControlView.js';
 
 // Class
-var OptionFormControlView = FormControlView.extend({
-
-    tag: 'input',
+class OptionFormControlView extends FormControlView {
 
     attributes: {
         type: 'checkbox',
-        class: 'control option',
-    },
+    }
 
-});
+    getWebViewAdapterSettings() {
+        return {
+            tag: 'input',
+        };
+    }
+
+}
 
 // Export
-module.exports = OptionFormControlView;
+export default OptionFormControlView;

@@ -1,17 +1,16 @@
 // Dependencies
-var View = Framework.require('framework/system/interface/graphical/views/View.js');
+import View from 'framework/system/interface/graphical/views/View.js';
 
 // Class
-var NotificationView = View.extend({
+class NotificationView extends View {
 
-	attributes: {
-		class: 'notification',
+	attributes = {
 		style: {
 			display: 'none',
 		},
-	},
+	};
 
-	show: function(content, options) {
+	show(content, options) {
 		this.setContent(content);
 
 		if(options && options.duration) {
@@ -21,9 +20,9 @@ var NotificationView = View.extend({
 		}
 
 		super.show();
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = NotificationView;
+export default NotificationView;

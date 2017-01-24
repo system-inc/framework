@@ -19,10 +19,14 @@ import ActivityNavigationViewController from 'interface/area/activity/navigation
 import BodyContentViewController from 'interface/layout/body/content/BodyContentViewController.js';
 import ActivityHeaderViewController from 'interface/area/activity/header/ActivityHeaderViewController.js';
 import ActivityContentViewController from 'interface/area/activity/content/ActivityContentViewController.js';
+import ActivityConsoleViewController from 'interface/area/activity/console/ActivityConsoleViewController.js';
 
 // Footer
 import FooterViewController from 'interface/layout/footer/FooterViewController.js';
 import ConsoleViewController from 'interface/console/ConsoleViewController.js';
+
+// Activities
+import TestsActivityContentViewController from 'interface/areas/testing/activities/tests/TestsActivityContentViewController.js';
 
 // Class
 class FrameworkViewController extends ViewController {
@@ -42,6 +46,7 @@ class FrameworkViewController extends ViewController {
 	bodyContentViewController = null;
 	activityHeaderViewController = null;
 	activityContentViewController = null;
+	activityConsoleViewController = null;
 
 	// Footer
 	footerViewController = null;
@@ -74,10 +79,14 @@ class FrameworkViewController extends ViewController {
 		this.bodyContentViewController = this.bodyViewController.append(new BodyContentViewController());
 		this.activityHeaderViewController = this.bodyContentViewController.append(new ActivityHeaderViewController());
 		this.activityContentViewController = this.bodyContentViewController.append(new ActivityContentViewController());
+		//this.activityConsoleViewController = this.bodyViewController.append(new ActivityConsoleViewController());
+
+		// Activities
+		this.activityContentViewController.append(new TestsActivityContentViewController());
 
 		// Footer
-		this.footerViewController = this.append(new FooterViewController());
-		this.consoleViewController = this.footerViewController.append(new ConsoleViewController());
+		//this.footerViewController = this.append(new FooterViewController());
+		//this.consoleViewController = this.footerViewController.append(new ConsoleViewController());
 	}
 
 	initialize() {

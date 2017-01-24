@@ -1,15 +1,11 @@
 // Dependencies
-var TextFormFieldView = Framework.require('framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js');
-var MultipleLineTextFormControlView = Framework.require('framework/system/interface/graphical/views/forms/controls/text/multiple-line/MultipleLineTextFormControlView.js');
+import TextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
+import MultipleLineTextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/multiple-line/MultipleLineTextFormControlView.js';
 
 // Class
-var MultipleLineTextFormFieldView = TextFormFieldView.extend({
+class MultipleLineTextFormFieldView extends TextFormFieldView {
 
-	attributes: {
-		class: 'field text multipleLine',
-	},
-
-	construct: function(identifier, settings) {
+	constructor(identifier, settings) {
 		super(...arguments);
 
 		// Create the form control
@@ -17,9 +13,9 @@ var MultipleLineTextFormFieldView = TextFormFieldView.extend({
 
 		// Append the form control
 		this.append(this.textFormControlView);
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = MultipleLineTextFormFieldView;
+export default MultipleLineTextFormFieldView;

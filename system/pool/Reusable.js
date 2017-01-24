@@ -1,16 +1,16 @@
 // Class
-var Reusable = Class.extend({
+class Reusable {
 	
-	pool: null,
+	pool = null;
 
-	uniqueIdentifier: null,
+	uniqueIdentifier = null;
 
-	available: false,
+	available = false;
 
-	timeInMillisecondsToWaitToRetireWhenAvailable: null,
-	scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable: null,
+	timeInMillisecondsToWaitToRetireWhenAvailable = null;
+	scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable = null;
 
-	construct: function(pool) {
+	constructor(pool) {
 		// Keep a reference to the pool
 		this.pool = pool;
 
@@ -22,43 +22,43 @@ var Reusable = Class.extend({
 
 		// Intialize
 		this.initialize();
-	},
+	}
 
-	initialize: function() {
+	initialize() {
 		this.release();
-	},
+	}
 
-	taken: function() {
-		//Console.standardInfo('Reusable taken');
+	taken() {
+		//console.info('Reusable taken');
 
 		// Cancel any currently scheduled retirement
 		this.cancelScheduledRetirement();
 
 		// Mark the reusuable as unavailable
 		this.available = false;
-	},
+	}
 
-	release: function() {
+	release() {
 		this.pool.releaseReusable(this);
-	},
+	}
 
-	released: function() {
+	released() {
 		// Mark the reusable as available
 		this.available = true;
 
 		// Schedule retirement
 		this.scheduleRetirement();
-	},
+	}
 
-	retire: function() {
+	retire() {
 		// Cancel any currently scheduled retirement
 		this.cancelScheduledRetirement();
 
 		//app.log('Retiring!');
 		this.pool.retireReusable(this);
-	},
+	}
 
-	scheduleRetirement: function() {
+	scheduleRetirement() {
 		if(this.timeInMillisecondsToWaitToRetireWhenAvailable) {
 			//app.log('Scheduling retirement after', this.timeInMillisecondsToWaitToRetireWhenAvailable, 'milliseconds');
 
@@ -77,9 +77,9 @@ var Reusable = Class.extend({
 				}
 			}.bind(this));	
 		}
-	},
+	}
 
-	cancelScheduledRetirement: function() {
+	cancelScheduledRetirement() {
 		//app.log('Reusable cancelScheduledRetirement');
 
 		if(this.scheduledFunctionForTimeInMillisecondsToWaitToRetireWhenAvailable) {
@@ -90,9 +90,9 @@ var Reusable = Class.extend({
 		else {
 			//app.log('No scheduled retirement function to cancel');
 		}
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = Reusable;
+export default Reusable;

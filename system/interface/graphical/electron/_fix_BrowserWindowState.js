@@ -1,26 +1,26 @@
 // Move this GraphicalInterfaceState?
 
 // Dependencies
-var Electron = Node.require('electron');
+import Electron from 'electron';
 
 // Class
-var BrowserWindowState = Class.extend({
+class BrowserWindowState {
 
-	identifier: null,
-	browserWindow: null,
-	settings: null,
+	identifier = null;
+	browserWindow = null;
+	settings = null;
 
-	mode: null, // maximized, minimized, normal
+	mode = null; // maximized, minimized, normal
 
-	display: null, // The display to show on
+	display = null; // The display to show on
 
-	x: null,
-	y: null,
+	x = null;
+	y = null;
 
-	height: null,
-	width: null,
+	height = null;
+	width = null;
 
-	construct: function(identifier, browserWindow, settings) {
+	constructor(identifier, browserWindow, settings) {
 		this.identifier = identifier;
 		this.browserWindow = browserWindow;
 		this.settings = settings;
@@ -37,9 +37,9 @@ var BrowserWindowState = Class.extend({
 
 		// Conditionally apply defaults on screen events
 		this.listenToScreenEvents();
-	},
+	}
 
-	load: function(browserWindowState) {
+	load(browserWindowState) {
 		if(!browserWindowState) {
 			browserWindowState = this.get();
 		}
@@ -49,9 +49,9 @@ var BrowserWindowState = Class.extend({
 		this.y = browserWindowState.y;
 		this.height = browserWindowState.height;
 		this.width = browserWindowState.width;
-	},
+	}
 
-	get: function() {
+	get() {
 		var browserWindowState = {};
 
 		// Mode
@@ -78,9 +78,9 @@ var BrowserWindowState = Class.extend({
 		browserWindowState.y = bounds.y;
 
 		return browserWindowState;
-	},
+	}
 
-	apply: function() {
+	apply() {
 		//app.log(this.mode);
 
 		if(this.mode == 'maximized') {
@@ -111,9 +111,9 @@ var BrowserWindowState = Class.extend({
 			x: this.x,
 			y: this.y,
 		});
-	},
+	}
 
-	applyDefault: function() {
+	applyDefault() {
 		var displays = Electron.screen.getAllDisplays();
 		var defaultSettingsForDisplayCount = null;
 
@@ -203,9 +203,9 @@ var BrowserWindowState = Class.extend({
 		//this.y = 100;
 
 		this.apply();
-	},
+	}
 
-	applyFromLocalStorage: function() {
+	applyFromLocalStorage() {
 		var browserWindowStateFromLocalStorage = this.getFromLocalStorage();
 
 		// If browserWindowState is available
@@ -216,30 +216,30 @@ var BrowserWindowState = Class.extend({
 		else {
 			this.applyDefault();
 		}
-	},
+	}
 
-	getFromLocalStorage: function() {
+	getFromLocalStorage() {
 		// Try local storage to see if browserWindowState is set
 		var browserWindowStateFromLocalStorage = LocalStorage.get(this.identifier+'BrowserWindowState');
 		//app.log('browserWindowStateFromLocalStorage', browserWindowStateFromLocalStorage);
 
 		return browserWindowStateFromLocalStorage;
-	},
+	}
 
-	saveToLocalStorage: function() {
+	saveToLocalStorage() {
 		//app.log('saveToLocalStorage', Json.encode(this.toObject()));
 		LocalStorage.set(this.identifier+'BrowserWindowState', this.toObject());
-	},
+	}
 
-	saveToLocalStorageOnClose: function() {
+	saveToLocalStorageOnClose() {
 		// Save window state to local storage
 		document.htmlDocument.on('htmlDocument.unload.before', function(event) {
 			this.load();
 			this.saveToLocalStorage();
 		}.bind(this));
-	},
+	}
 
-	listenToScreenEvents: function() {
+	listenToScreenEvents() {
 		// Display added
 		if(this.settings.defaultWindowState.applyOn.displayAdded) {
 			Electron.screen.on('display-added', function(event, newDisplay) {
@@ -263,9 +263,9 @@ var BrowserWindowState = Class.extend({
 				this.applyDefault();
 			}.bind(this));
 		}
-	},
+	}
 
-	toObject: function() {
+	toObject() {
 		return {
 			mode: this.mode,
 			display: this.display,
@@ -274,9 +274,9 @@ var BrowserWindowState = Class.extend({
 			height: this.height,
 			width: this.width,
 		};
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = BrowserWindowState;
+export default BrowserWindowState;

@@ -1,15 +1,14 @@
 // Dependencies
-var SingleLineTextFormControlView = Framework.require('framework/system/interface/graphical/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
+import SingleLineTextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/single-line/SingleLineTextFormControlView.js';
 
 // Class
-var PasswordSingleLineTextFormControlView = SingleLineTextFormControlView.extend({
+class PasswordSingleLineTextFormControlView extends SingleLineTextFormControlView {
 
-    attributes: {
+    attributes = {
         type: 'password',
-        class: 'control text singleLine password',
-    },
+    };
 
-});
+}
 
 // Export
-module.exports = PasswordSingleLineTextFormControlView;
+export default PasswordSingleLineTextFormControlView;

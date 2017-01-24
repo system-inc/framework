@@ -1,14 +1,14 @@
 // Dependencies
-var ViewController = Framework.require('framework/system/interface/graphical/view-controllers/ViewController.js');
-var Proctor = Framework.require('framework/system/test/Proctor.js');
-var Electron = Node.require('electron');
+import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
+import Proctor from 'framework/system/test/Proctor.js';
+import Electron from 'electron';
 
 // Class
-var MainViewController = ViewController.extend({
+class MainViewController extends ViewController {
 
-    electronManager: null,
+    electronManager = null;
 
-	construct: function(electronManager) {
+	constructor(electronManager) {
         this.electronManager = electronManager;
 
         // Set the testBrowserWindowUniqueIdentifier - must use window. as we do not have an HtmlDocument object
@@ -75,9 +75,9 @@ var MainViewController = ViewController.extend({
             status: 'readyForCommand',
             testBrowserWindowUniqueIdentifier: testBrowserWindowUniqueIdentifier,
         });
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = MainViewController;
+export default MainViewController;

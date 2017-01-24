@@ -1,15 +1,11 @@
 // Dependencies
-var TextFormFieldView = Framework.require('framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js');
-var EmailSingleLineTextFormControlView = Framework.require('framework/system/interface/graphical/views/forms/controls/text/single-line/EmailSingleLineTextFormControlView.js');
+import TextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
+import EmailSingleLineTextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/single-line/EmailSingleLineTextFormControlView.js';
 
 // Class
-var EmailSingleLineTextFormFieldView = TextFormFieldView.extend({
+class EmailSingleLineTextFormFieldView extends TextFormFieldView {
 
-	attributes: {
-		class: 'field text singleLine email',
-	},
-
-	construct: function(identifier, settings) {
+	constructor(identifier, settings) {
 		super(...arguments);
 
 		// Create the form control
@@ -17,9 +13,9 @@ var EmailSingleLineTextFormFieldView = TextFormFieldView.extend({
 
 		// Append the form control
 		this.append(this.textFormControlView);
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = EmailSingleLineTextFormFieldView;
+export default EmailSingleLineTextFormFieldView;

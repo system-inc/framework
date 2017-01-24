@@ -1,17 +1,16 @@
 // Class
-var SchemaModel = Class.extend({
+class SchemaModel {
 
-	name: null,
-	description: '',
-	properties: [],
-	indexes: [],
-	relationships: [],
+	name = null;
+	description = '';
+	properties = [];
+	indexes = [];
+	relationships = [];
 
-	toModel: function() {
+	toModel() {
+	}
 
-	},
-
-});
+}
 
 // Exports
-module.exports = SchemaModel;
+export default SchemaModel;

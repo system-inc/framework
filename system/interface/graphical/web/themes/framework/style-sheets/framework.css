@@ -87,3 +87,34 @@ table {
 		color: #333;
 		background: rgba(0, 0, 0, 0.05);
 	}
+
+.icon.close {
+  color: #000;
+  position: absolute;
+  margin-top: 0;
+  margin-left: 0;
+  width: 21px;
+  height: 21px;
+}
+	.icon.close:before {
+	  content: '';
+	  position: absolute;
+	  top: 10px;
+	  width: 21px;
+	  height: 1px;
+	  background-color: currentColor;
+	  -webkit-transform: rotate(-45deg);
+	          transform: rotate(-45deg);
+	}
+	.icon.close:after {
+	  content: '';
+	  position: absolute;
+	  top: 10px;
+	  width: 21px;
+	  height: 1px;
+	  background-color: currentColor;
+	  -webkit-transform: rotate(45deg);
+	          transform: rotate(45deg);
+	}
+
+

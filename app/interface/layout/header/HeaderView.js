@@ -40,15 +40,20 @@ class HeaderView extends View {
 			margin: 0,
 			color: '#FFF',
 		});
-		this.append(appHeading);
+		//this.append(appHeading);
 
 		// Activity bookmarks
 		var activityBookmarksLinkListView = new LinkListView();
+		activityBookmarksLinkListView.setStyle({
+			display: 'flex',
+			margin: '0 0 0 .75rem',
+		});
 		activityBookmarksLinkListView.setDirection('horizontal');
 		activityBookmarksLinkListView.addItem('1');
 		activityBookmarksLinkListView.addItem('2');
 		activityBookmarksLinkListView.addItem('3');
-		this.append(activityBookmarksLinkListView);
+		activityBookmarksLinkListView.addItem('+');
+		//this.append(activityBookmarksLinkListView);
 
 		// Search form
 		var searchFormView = new FormView({
@@ -66,7 +71,7 @@ class HeaderView extends View {
 			padding: '.25em',
 		});
 		searchFormView.addFormFieldView(singleLineTextFormFieldView);
-		this.append(searchFormView);
+		//this.append(searchFormView);
 
 		// Settings
 		var settingsLinkView = new LinkView();
@@ -77,7 +82,7 @@ class HeaderView extends View {
 			background: '#FFF',
 			margin: '0 0 0 .5em',
 		});
-		this.append(settingsLinkView);
+		//this.append(settingsLinkView);
 
 		// User
 		var userLink = new LinkView();
@@ -88,7 +93,7 @@ class HeaderView extends View {
 			background: '#FFF',
 			margin: '0 0 0 .5em',
 		});
-		this.append(userLink);
+		//this.append(userLink);
 	}
 
 }

@@ -1,16 +1,10 @@
 // Dependencies
-var TextFormControlView = Framework.require('framework/system/interface/graphical/views/forms/controls/text/TextFormControlView.js');
+import TextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/TextFormControlView.js';
 
 // Class
-var MultipleLineTextFormControlView = TextFormControlView.extend({
+class MultipleLineTextFormControlView extends TextFormControlView {
 
-    tag: 'textarea',
-
-    attributes: {
-        class: 'control text multipleLine',
-    },
-
-    construct: function(settings) {
+    constructor(settings) {
         super(settings);
 
         this.settings.setDefaults({
@@ -22,17 +16,23 @@ var MultipleLineTextFormControlView = TextFormControlView.extend({
 			//app.log('Enabling word wrap.');
 			this.enableWordWrap();
 		}
-    },
+    }
 
-    enableWordWrap: function() {
+    enableWordWrap() {
     	this.setAttribute('wrap', 'soft');
-    },
+    }
 
-    disableWordWrap: function() {
+    disableWordWrap() {
     	this.setAttribute('wrap', 'off');
-    },
+    }
 
-});
+    getWebViewAdapterSettings() {
+        return {
+            tag: 'textarea',
+        };
+    }
+
+}
 
 // Export
-module.exports = MultipleLineTextFormControlView;
+export default MultipleLineTextFormControlView;

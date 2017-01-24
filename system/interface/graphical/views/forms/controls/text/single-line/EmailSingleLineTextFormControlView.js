@@ -1,15 +1,14 @@
 // Dependencies
-var SingleLineTextFormControlView = Framework.require('framework/system/interface/graphical/views/forms/controls/text/single-line/SingleLineTextFormControlView.js');
+import SingleLineTextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/single-line/SingleLineTextFormControlView.js';
 
 // Class
-var EmailSingleLineTextFormControlView = SingleLineTextFormControlView.extend({
+class EmailSingleLineTextFormControlView extends SingleLineTextFormControlView {
 
-    attributes: {
+    attributes = {
         type: 'email',
-        class: 'control text singleLine email',
-    },
+    };
 
-});
+}
 
 // Export
-module.exports = EmailSingleLineTextFormControlView;
+export default EmailSingleLineTextFormControlView;

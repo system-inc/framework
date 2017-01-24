@@ -1,21 +1,21 @@
 // Dependencies
-var Url = Framework.require('framework/system/web/Url.js');
-var WebRequest = Framework.require('framework/system/web/WebRequest.js');
+import Url from 'framework/system/web/Url.js';
+import WebRequest from 'framework/system/web/WebRequest.js';
 
 // Class
-var WebApi = Class.extend({
+class WebApi {
 
-    protocol: 'https', // https or http
-    host: null,
-    port: 80,
-    path: null,
-    url: null,
+    protocol = 'https;, // https or http
+    host = null;
+    port = 80;
+    path = null;
+    url = null;
 
-    construct: function() {
+    constructor() {
         this.url = new Url(this.protocol+'://'+this.host+'/'+this.path);
-    },
+    }
 
-    request: function*(method, path, data, options) {
+    async request(method, path, data, options) {
         //app.log(method, path, data);
 
         // Build the URL
@@ -32,13 +32,13 @@ var WebApi = Class.extend({
         // Make the request
         var webRequest = new WebRequest(url, options);
         //app.log('webRequest:', webRequest);
-        var webRequestResponse = yield webRequest.execute();
+        var webRequestResponse = await webRequest.execute();
         //app.log('webRequestResponse:', webRequestResponse);
 
         return webRequestResponse;
-    },
+    }
     
-});
+}
 
 // Export
-module.exports = WebApi;
+export default WebApi;

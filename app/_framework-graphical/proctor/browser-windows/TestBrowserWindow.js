@@ -1,14 +1,14 @@
 // Dependencies
-var Reusable = Framework.require('framework/system/pool/Reusable.js');
-var Electron = Node.require('electron');
+import Reusable from 'framework/system/pool/Reusable.js';
+import Electron from 'electron';
 
 // Class
-var TestBrowserWindow = Reusable.extend({
+class TestBrowserWindow extends Reusable {
 
-	status: null,
-	testMethod: null,
+	status = null;
+	testMethod = null;
 
-	initialize: function() {
+	initialize() {
 		// Set the initial status
 		this.status = 'waitingForApplicationToCreateTestBrowserWindow';
 
@@ -17,9 +17,9 @@ var TestBrowserWindow = Reusable.extend({
 
         // Do not call super() as we are not available until the application creates a test browser window
         // MainBrowserWindow.handleTestBrowserWindowReport will call release() on this when it is ready
-	},
+	}
 
-	runTestMethod: function(testMethod) {
+	runTestMethod(testMethod) {
 		//Console.standardLog('runTestMethod', testMethod);
 
 		this.testMethod = testMethod;
@@ -33,26 +33,26 @@ var TestBrowserWindow = Reusable.extend({
             testClassName: this.testMethod.class.name,
             testMethodName: this.testMethod.name,
         });
-	},
+	}
 
-	openDeveloperTools: function() {
+	openDeveloperTools() {
 		//Console.standardWarn('openDeveloperTools');
 		Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', this.uniqueIdentifier, 'openDeveloperTools', {});
-	},
+	}
 
-	show: function() {
+	show() {
 		//Console.standardWarn('TestBrowserWindow show');
 		Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', this.uniqueIdentifier, 'show', {});
-	},
+	}
 
-	retire: function() {
+	retire() {
 		//Console.standardWarn('TestBrowserWindow retire');
 		Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', this.uniqueIdentifier, 'close', {});
 
 		super.retire();
-	},
+	}
 	
-});
+}
 
 // Export
-module.exports = TestBrowserWindow;
+export default TestBrowserWindow;

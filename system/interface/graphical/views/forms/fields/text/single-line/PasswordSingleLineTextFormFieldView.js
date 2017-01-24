@@ -1,15 +1,11 @@
 // Dependencies
-var TextFormFieldView = Framework.require('framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js');
-var PasswordSingleLineTextFormControlView = Framework.require('framework/system/interface/graphical/views/forms/controls/text/single-line/PasswordSingleLineTextFormControlView.js');
+import TextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
+import PasswordSingleLineTextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/single-line/PasswordSingleLineTextFormControlView.js';
 
 // Class
-var PasswordSingleLineTextFormFieldView = TextFormFieldView.extend({
+class PasswordSingleLineTextFormFieldView extends TextFormFieldView {
 
-	attributes: {
-		class: 'field text singleLine password',
-	},
-
-	construct: function(identifier, settings) {
+	constructor(identifier, settings) {
 		super(...arguments);
 
 		// Create the form control
@@ -17,9 +13,9 @@ var PasswordSingleLineTextFormFieldView = TextFormFieldView.extend({
 
 		// Append the form control
 		this.append(this.textFormControlView);
-	},
+	}
 
-});
+}
 
 // Export
-module.exports = PasswordSingleLineTextFormFieldView;
+export default PasswordSingleLineTextFormFieldView;
