@@ -10,6 +10,8 @@ import FormView from 'framework/system/interface/graphical/views/forms/FormView.
 import ButtonView from 'framework/system/interface/graphical/views/buttons/ButtonView.js';
 import TableView from 'framework/system/interface/graphical/views/tables/TableView.js';
 
+import TestBrowserWindowPool from 'interface/areas/testing/activities/tests/TestBrowserWindowPool.js';
+
 // Class
 class TestsActivityViewController extends ViewController {
 
@@ -17,7 +19,7 @@ class TestsActivityViewController extends ViewController {
 	testsFormView = null;
 	
     testBrowserWindows = {};
-    testBrowserWindowPool = null;
+    testBrowserWindowPool = new TestBrowserWindowPool();
 
     previousTestMethodIndex = null;
     currentTestMethodIndex = null;
@@ -30,9 +32,6 @@ class TestsActivityViewController extends ViewController {
 
         // Form
 		this.createTestsFormView();
-
-        // Test browser window pool
-        this.testBrowserWindowPool = new TestBrowserWindowPool();
 
         // Listen to reports from Application
         //Electron.ipcRenderer.on('Application.report', function() {

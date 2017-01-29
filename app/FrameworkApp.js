@@ -47,13 +47,17 @@ class FrameworkApp extends App {
 
 		// Get the path to the Electron executable
 		var pathToElectronExecutable = await ElectronManager.getPathToElectronExecutable();
+		console.log('pathToElectronExecutable', pathToElectronExecutable);
 
 		// Run Electron as a child process
 		var electronChildProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags="--harmony"', 'app/FrameworkElectronApp.js'], {});
+		//var electronChildProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags="--harmony"', 'app/index.js', 'gi'], {});
+		//var electronChildProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags="--harmony"', 'app/index.js'], {});
+		//var electronChildProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags=--harmony'], {});
 
 		// The main parent process I am in now exists to just to as a bridge for standard streams to the child process
 
-		// So, I stop remove all listeners from the main process standard input stream
+		// So, I remove all listeners from the main process standard input stream
 		Node.Process.stdin.removeAllListeners();
 
 		// And send all standard input to the child process
