@@ -1,4 +1,6 @@
 // Dependencies
+import Electron from 'electron';
+
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 import View from 'framework/system/interface/graphical/views/View.js';
 
@@ -33,16 +35,20 @@ class TestsActivityViewController extends ViewController {
         // Form
 		this.createTestsFormView();
 
-        // Listen to reports from Application
-        //Electron.ipcRenderer.on('Application.report', function() {
-        //    this.handleApplicationReport.apply(this, arguments);
-        //}.bind(this));
+        this.listen();
+	}
+
+    listen() {
+        // Listen to reports from FrameworkApp
+        Electron.ipcRenderer.on('frameworkApp.report', function() {
+            this.handleFrameworkAppReport(...arguments);
+        }.bind(this));
 
         // Listen for reports from testBrowserWindows
-        //Electron.ipcRenderer.on('testBrowserWindow.report', function() {
-        //    this.handleTestBrowserWindowReport.apply(this, arguments);
-        //}.bind(this));
-	}
+        Electron.ipcRenderer.on('testBrowserWindow.report', function() {
+            this.handleTestBrowserWindowReport(...arguments);
+        }.bind(this));
+    }
 
 	async getTests() {
 		// Get all possible tests: Proctor.getTests(path, filePattern, methodPattern)
@@ -147,8 +153,8 @@ class TestsActivityViewController extends ViewController {
         return runNextTestMethodResult;
     }
 
-    handleApplicationReport(event, data) {
-        console.log('handleApplicationReport', data);
+    handleFrameworkAppReport(event, data) {
+        console.log('handleFrameworkAppReport', data);
 
         var status = data.status;
 

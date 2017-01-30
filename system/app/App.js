@@ -203,7 +203,8 @@ class App extends EventEmitter {
 		//this.info('interactiveCommandLineInterfaceSettings', interactiveCommandLineInterfaceSettings);
 
 		// Enable the interactive command line interface by default if in terminal context
-		if(this.inTerminalContext() && interactiveCommandLineInterfaceSettings.enabled) {
+		if(interactiveCommandLineInterfaceSettings.enabled && this.inTerminalContext()) {
+			//console.log('creating InteractiveCommandLineInterface');
 			this.interfaces.interactiveCommandLine = new InteractiveCommandLineInterface(interactiveCommandLineInterfaceSettings);
 		}
 	}
@@ -432,7 +433,7 @@ class App extends EventEmitter {
 	inTerminalContext() {
 		var inTerminalContext = false;
 
-		if(Node.Process.stdout.isTTY) {
+		if(Node.Process.stdout.isTTY || this.inElectronMainProcess()) {
 			inTerminalContext = true;
 		}
 
@@ -447,6 +448,26 @@ class App extends EventEmitter {
 		}
 
 		return inElectronContext;
+	}
+
+	inElectronMainProcess() {
+		var inElectronMainProcess = false;
+
+		if(this.inElectronContext() && Node.Process.type !== 'renderer') {
+			inElectronMainProcess = true;
+		}
+
+		return inElectronMainProcess;
+	}
+
+	inElectronRendererProcess() {
+		var inElectronRendererProcess = false;
+
+		if(this.inElectronContext() && Node.Process.type === 'renderer') {
+			inElectronRendererProcess = true;
+		}
+
+		return inElectronRendererProcess;
 	}
 
 	exit = Node.exit;

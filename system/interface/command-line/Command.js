@@ -111,6 +111,16 @@ class Command {
 		if(Array.is(argumentsArray)) {
 			//app.info('argumentsArray', argumentsArray);
 
+			// Remove Electron options 
+			if(app.inElectronContext()) {
+				let currentArgument = argumentsArray.get(1);
+				while(currentArgument && currentArgument.startsWith('--')) {
+					argumentsArray.delete(1);
+					currentArgument = argumentsArray.get(1);
+					//app.info('argumentsArray', argumentsArray);
+				}
+			}
+
 			// The JavaScript file Node is executing
 			this.executable = argumentsArray[0];
 
