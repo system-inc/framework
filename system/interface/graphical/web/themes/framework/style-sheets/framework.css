@@ -37,7 +37,8 @@ table {
 	th, td {
 		padding: .5em .5em .5em 1em;
 		white-space: nowrap;
-		overflow: scroll;
+		/*overflow: scroll;*/
+		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 	th:first-child, td:first-child {

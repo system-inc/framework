@@ -3,8 +3,6 @@ import 'framework/globals/Globals.js';
 import AsciiArt from 'framework/system/ascii-art/AsciiArt.js';
 import ElectronManager from 'framework/system/interface/graphical/electron/ElectronManager.js';
 import ElectronGraphicalInterfaceManager from 'framework/system/interface/graphical/managers/electron/ElectronGraphicalInterfaceManager.js';
-import GraphicalInterface from 'framework/system/interface/graphical/GraphicalInterface.js';
-import FrameworkViewController from 'interface/FrameworkViewController.js';
 import Proctor from 'framework/system/test/Proctor.js';
 
 // Dependencies
@@ -316,6 +314,8 @@ class FrameworkApp extends App {
 
 		// Create a graphical interface manager, in this case, ElectronGraphicalInterfaceManager
 		app.interfaces.graphicalInterfaceManager = new ElectronGraphicalInterfaceManager();
+
+		var FrameworkViewController = require('interface/FrameworkViewController.js').default;
 
 		// Have the graphical interface manager create a graphical interface with a view controller
 		app.interfaces.graphicalInterfaceManager.create(new FrameworkViewController());
