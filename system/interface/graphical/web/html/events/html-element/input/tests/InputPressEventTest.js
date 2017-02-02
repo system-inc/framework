@@ -30,7 +30,7 @@ class InputPressEventTest extends ElectronTest {
 		// Add an event listener to the div to capture the event when triggered
 		try {
 			htmlElement.on('click', function(event) {
-				//Console.standardInfo(event.identifier, event);
+				//console.info(event.identifier, event);
 				capturedEvent = event;
 			});
 		}
@@ -71,7 +71,7 @@ class InputPressEventTest extends ElectronTest {
 		// Add an event listener to the div to capture the event when triggered
 		//htmlElement.on('input.press.*', function(event) {
 		htmlElement.on('input.press', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEvent = event;
 		});
 
@@ -150,27 +150,27 @@ class InputPressEventTest extends ElectronTest {
 		//htmlElement.on('input.press.*', function(event) {
 		// Should never trigger since it should just be input.press
 		htmlElement.on('input.press.primary', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedPrimaryEvent = event;
 		});
 
 		htmlElement.on('input.press.secondary', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedSecondaryEvent = event;
 		});
 
 		htmlElement.on('input.press.tertiary', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedTertiaryEvent = event;
 		});
 
 		htmlElement.on('input.press.quarternary', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedQuarternaryEvent = event;
 		});
 
 		htmlElement.on('input.press.quinary', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedQuinaryEvent = event;
 		});
 
@@ -218,7 +218,7 @@ class InputPressEventTest extends ElectronTest {
 		// Add an event listener to the div to capture the event when triggered
 		//htmlElement.on('*', function(event) {
 		htmlElement.on('input.press.double', function(event) {
-			Console.standardWarn(event.identifier, event);
+			console.warn(event.identifier, event);
 			capturedEvent = event;
 		});
 
@@ -272,13 +272,13 @@ class InputPressEventTest extends ElectronTest {
 		var childCapturedEventCount = 0;
 
 		grandparentElement.on('input.press', function(event) {
-			Console.standardInfo('grandparentElement', event.identifier, event);
+			console.info('grandparentElement', event.identifier, event);
 			grandparentCapturedEventCount++;
 			grandparentCapturedEvent = event;
 		});
 
 		parentElement.on('input.press', function(event) {
-			Console.standardInfo('parentElement', event.identifier, event);
+			console.info('parentElement', event.identifier, event);
 			parentCapturedEventCount++;
 			parentCapturedEvent = event;
 
@@ -287,7 +287,7 @@ class InputPressEventTest extends ElectronTest {
 		});
 
 		childElement.on('input.press', function(event) {
-			Console.standardInfo('childElement', event.identifier, event);
+			console.info('childElement', event.identifier, event);
 			childCapturedEventCount++;
 			childCapturedEvent = event;
 		});

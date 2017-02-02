@@ -9,7 +9,7 @@ class FormEvent extends HtmlElementEvent{
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		//Console.standardLog('FormEvent.createEventsFromDomEvent', domEvent.type, arguments);
+		//console.log('FormEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 		var events = [];
 
@@ -32,7 +32,7 @@ class FormEvent extends HtmlElementEvent{
 		// Add the event
 		events.append(formEventWithoutIdentifier);
 
-		//Console.standardLog('events', events);
+		//console.log('events', events);
 
 		return events;
 	}

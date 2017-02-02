@@ -59,17 +59,17 @@ class InputKeyEventTest extends ElectronTest {
 		var textAreaElement = Html.textarea();
 
 		textAreaElement.on('input.key.*', function(event) {
-			//Console.standardWarn(event.identifier, event);
+			//console.warn(event.identifier, event);
 			var selector = '#'+event.identifier.replace('.', '-');
-			//Console.standardInfo('selector', selector);
+			//console.info('selector', selector);
 			var htmlNode = htmlDocument.find(selector);
 
 			if(htmlNode) {
-				//Console.standardLog('htmlNode', htmlNode);
+				//console.log('htmlNode', htmlNode);
 				htmlNode.addClass('passed');
 			}
 			else {
-				Console.standardError('could not find htmlNode for ', selector);
+				console.error('could not find htmlNode for ', selector);
 			}			
 		});
 		htmlDocument.body.append(textAreaElement);
@@ -185,7 +185,7 @@ class InputKeyEventTest extends ElectronTest {
 
 		//htmlElement.on('input.key.*', function(event) {
 		htmlElement.on('input.key.a', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEvent = event;
 		});
 
@@ -259,67 +259,67 @@ class InputKeyEventTest extends ElectronTest {
 		//htmlElement.on('input.*', function(event) {
 		//htmlElement.on('input.key.*', function(event) {
 		htmlElement.on('input.key.up', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyUp = event;
 			capturedEventKeyboardKeyUpCount++;
 		});
 		htmlElement.on('input.key.down', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyDown = event;
 			capturedEventKeyboardKeyDownCount++;
 		});
 		htmlElement.on('input.key.left', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyLeft = event;
 			capturedEventKeyboardKeyLeftCount++;
 		});
 		htmlElement.on('input.key.right', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyRight = event;
 			capturedEventKeyboardKeyRightCount++;
 		});
 		htmlElement.on('input.key.enter', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyEnter = event;
 			capturedEventKeyboardKeyEnterCount++;
 		});
 		htmlElement.on('input.key.backspace', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyBackspace = event;
 			capturedEventKeyboardKeyBackspaceCount++;
 		});
 		htmlElement.on('input.key.space', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeySpace = event;
 			capturedEventKeyboardKeySpaceCount++;
 		});
 		htmlElement.on('input.key.alt', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyAlt = event;
 			capturedEventKeyboardKeyAltCount++;
 		});
 		htmlElement.on('input.key.control', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyControl = event;
 			capturedEventKeyboardKeyControlCount++;
 		});
 		htmlElement.on('input.key.(command|windows)', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyMeta = event;
 			capturedEventKeyboardKeyMetaCount++;
 		});
 		htmlElement.on('input.key.shift', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyShift = event;
 			capturedEventKeyboardKeyShiftCount++;
 		});
 		htmlElement.on('input.key.delete', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyDelete = event;
 			capturedEventKeyboardKeyDeleteCount++;
 		});
 		htmlElement.on('input.key.insert', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventKeyboardKeyInsert = event;
 			capturedEventKeyboardKeyInsertCount++;
 		});

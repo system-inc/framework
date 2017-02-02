@@ -24,7 +24,7 @@ class FormEventTest extends ElectronTest {
     	var capturedDomUpdatesExecutedEvent = null;
 
         htmlDocument.on('htmlDocument.*', function(event) {
-            Console.standardWarn(event.identifier, event);
+            console.warn(event.identifier, event);
 
             if(event.identifier == 'htmlDocument.mountedToDom') {
                 capturedMountedToDomEvent = event;
@@ -75,7 +75,7 @@ class FormEventTest extends ElectronTest {
         var capturedEventHtmlDocumentUrlFragmentChange = null;
 
         htmlDocument.on('htmlDocument.url.fragment.change', function(event) {
-            Console.standardWarn(event.identifier, event);
+            console.warn(event.identifier, event);
             capturedEventHtmlDocumentUrlFragmentChange = event;
         });
 
@@ -112,7 +112,7 @@ class FormEventTest extends ElectronTest {
         var capturedEventHtmlDocumentUnloadBefore = null;
 
         htmlDocument.on('htmlDocument.unload.before', function(event) {
-            Console.standardWarn(event.identifier, event);
+            console.warn(event.identifier, event);
             capturedEventHtmlDocumentUnloadBefore = event;
             return undefined;
         });
@@ -145,7 +145,7 @@ class FormEventTest extends ElectronTest {
         var capturedEventHtmlDocumentScrollRight = null;
 
         htmlDocument.on('htmlDocument.resize', function(event) {
-            Console.standardWarn(event.identifier, event);
+            console.warn(event.identifier, event);
             capturedEventHtmlDocumentResize = event;
         });
 
@@ -155,7 +155,7 @@ class FormEventTest extends ElectronTest {
         // Resize the document
         // TODO: can't test this functionality with a hidden browser window
         //var bounds = ElectronManager.getBrowserWindowBounds();
-        //Console.standardInfo('bounds', bounds);
+        //console.info('bounds', bounds);
         //ElectronManager.setBrowserWindowBounds(bounds.width, bounds.height, bounds.x + 1, bounds.y);
         //Assert.true(Class.isInstance(capturedEventHtmlDocumentResize, HtmlDocumentEvent), '"htmlDocument.resize" events are instances of HtmlDocumentEvent');
 
@@ -190,7 +190,7 @@ class FormEventTest extends ElectronTest {
 
         // Add an event listener to the textarea to capture the event when triggered
         htmlDocument.on('htmlDocument.scroll.*', function(event) {
-            Console.standardInfo(event.identifier, event);
+            console.info(event.identifier, event);
 
             if(event.identifier == 'htmlDocument.scroll') {
                 capturedHtmlDocumentScrollEvent = event;

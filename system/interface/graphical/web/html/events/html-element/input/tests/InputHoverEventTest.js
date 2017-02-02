@@ -43,7 +43,7 @@ class InputHoverEventTest extends ElectronTest {
 
 		// Add an event listener to the div to capture the event when triggered
 		htmlElement.on('input.hover.*', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 
 			if(event.identifier == 'input.hover') {
 				capturedEventInputHover = event;
@@ -66,7 +66,7 @@ class InputHoverEventTest extends ElectronTest {
         htmlDocument.mountToDom();
 
         var htmlElementPosition = htmlElement.getPosition();
-        Console.standardInfo('htmlElementPosition', htmlElementPosition);
+        console.info('htmlElementPosition', htmlElementPosition);
 
         // Simulate moving the mouse over
         await ElectronManager.sendInputEventMouse('mouseMove', htmlElementPosition.relativeToDocumentViewport.coordinates.center.x, htmlElementPosition.relativeToDocumentViewport.coordinates.center.y);

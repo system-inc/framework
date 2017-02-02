@@ -21,6 +21,26 @@ class TextView extends View {
 		}
 	}
 
+	setContent(childViewOrText) {
+		// Empty the current content
+		this.empty();
+
+		if(childViewOrText) {
+			// If the content is a view
+			if(View.is(childViewOrText)) {
+				// Append the new content
+				this.append(childViewOrText);
+			}
+			// If the content is text
+			else {
+				this.text = childViewOrText;
+				this.adapter.setContent(childViewOrText);
+			}
+		}
+
+		return this;
+	}
+
 	getWebViewAdapterSettings() {
 		return {
 			tag: this.layout == 'block' ? 'p' : 'span',

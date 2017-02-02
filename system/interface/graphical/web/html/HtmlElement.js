@@ -350,7 +350,7 @@ class HtmlElement extends HtmlNode {
     find(selector) {
 		var result = null;
 		var domNode = this.domNode.querySelector(selector);
-		//Console.standardInfo(domNodes);
+		//console.info(domNodes);
 
 		if(domNode && domNode.htmlNode) {
 			result = domNode.htmlNode;
@@ -389,7 +389,7 @@ class HtmlElement extends HtmlNode {
 
 		// If the value is currently not of type HtmlNode (it must be a string), turn it into an HtmlNode
 		if(!alreadyIsHtmlNode) {
-			//Console.standardLog(value);
+			//console.log(value);
 
 			if(value.contains('<')) {
 				app.warn('HTML strings are not supported (I should implement), use View or HtmlElement or HtmlNode.', value);

@@ -126,6 +126,8 @@ class View extends PropagatingEventEmitter {
 
 		// Append the new content
 		this.append(childView);
+
+		return this;
 	}
 
 	addClass() {

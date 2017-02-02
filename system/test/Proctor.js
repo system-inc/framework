@@ -139,7 +139,7 @@ class Proctor extends EventEmitter {
 
 	async getAndRunTestMethod(testClassFilePath, testClassName, testMethodName) {
 		var tests = await Proctor.getTestMethod(testClassFilePath, testClassName, testMethodName);
-		Console.standardLog('getAndRunTestMethod', testClassFilePath, testClassName, testMethodName);
+		console.log('getAndRunTestMethod', testClassFilePath, testClassName, testMethodName);
 
 		this.addTests(tests);
 

@@ -9,7 +9,7 @@ class InputHoverEvent extends InputPressEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		//Console.standardLog('InputHoverEvent.createEventsFromDomEvent', domEvent.type, arguments);
+		//console.log('InputHoverEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 		var events = [];
 
@@ -46,7 +46,7 @@ class InputHoverEvent extends InputPressEvent {
 			events.append(InputHoverEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.'+inputHoverEventWithoutIdentifier.direction));
 		}
 
-		//Console.standardLog('events', events);
+		//console.log('events', events);
 
 		return events;
 	}

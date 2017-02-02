@@ -10,7 +10,7 @@ class HtmlDocumentEvent extends HtmlEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		//Console.standardLog('HtmlDocumentEvent.createEventsFromDomEvent', domEvent.type, arguments);
+		//console.log('HtmlDocumentEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 		var events = [];
 
@@ -65,7 +65,7 @@ class HtmlDocumentEvent extends HtmlEvent {
 		// Add the event
 		events.append(htmlDocumentEventWithoutIdentifier);
 
-		//Console.standardWarn('HtmlDocumentEvent.createEventsFromDomEvent events', events);
+		//console.warn('HtmlDocumentEvent.createEventsFromDomEvent events', events);
 
 		return events;
 	}

@@ -27,7 +27,7 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
         //var capturedEventFormSubmit = null;
         //formView.on('form.submit', function(event) {
         //    event.stop();
-        //    Console.standardInfo(event.identifier, event);
+        //    console.info(event.identifier, event);
         //    capturedEventFormSubmit = event;
         //});
 
@@ -76,11 +76,11 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
      //   var capturedEventFormSubmit = null;
 
      //   singleLineTextFormFieldView.formControlView.on('input.press', function(event) {
-     //       Console.standardInfo(event.identifier, event);
+     //       console.info(event.identifier, event);
      //   });
 
      //   formView.on('form.submit', function(event) {
-     //       Console.standardInfo(event.identifier, event);
+     //       console.info(event.identifier, event);
      //       capturedEventFormSubmit = event;
      //   });
 

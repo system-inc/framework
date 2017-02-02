@@ -9,7 +9,7 @@ class HtmlElementEvent extends HtmlNodeEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		Console.standardLog('HtmlElementEvent.createEventsFromDomEvent', domEvent.type, arguments);
+		console.log('HtmlElementEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 		var events = [];
 
@@ -51,7 +51,7 @@ class HtmlElementEvent extends HtmlNodeEvent {
 
 		// If scrolling
 		if(eventIdentifier == 'htmlElement.scroll' || eventIdentifier == 'htmlDocument.scroll') {
-			//Console.standardInfo('emitter.position', emitter.position);
+			//console.info('emitter.position', emitter.position);
 
 			// Identify the scrolling element
 			var scrollingElement = null;
@@ -89,7 +89,7 @@ class HtmlElementEvent extends HtmlNodeEvent {
 			emitter.position.relativeToRelativeAncestor.y = scrollingElement.scrollTop;
 		}
 
-		//Console.standardLog('events', events);
+		//console.log('events', events);
 
 		return events;
 	}

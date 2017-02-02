@@ -34,12 +34,12 @@ class InputSelectEventTest extends ElectronTest {
 		var capturedEventInputSelect = null;
 
 		//pElement.on('input.select.*', function(event) {
-		//	Console.standardInfo(event.identifier, event);
+		//	console.info(event.identifier, event);
 		//});
 
 		// Add an event listener to the textarea to capture the event when triggered
 		textAreaElement.on('input.select.*', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 
 			if(event.identifier == 'input.select.start') {
 				capturedEventInputSelectStart = event;

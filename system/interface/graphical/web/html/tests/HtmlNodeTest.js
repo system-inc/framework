@@ -30,9 +30,9 @@ class HtmlNodeTest extends ElectronTest {
         htmlDocument.mountToDom();
 
         // Select text
-        //Console.standardLog(p2);
+        //console.log(p2);
         p2.select();
-        //Console.standardLog('p2.getSelectionText()', p2.getSelectionText());
+        //console.log('p2.getSelectionText()', p2.getSelectionText());
 
         Assert.strictEqual(p1.getSelectionText(), null, 'If no text is selected null is returned');
         Assert.strictEqual(p2.getSelectionText(), 'This is line 2.', 'getSelectionText returns a string matching the selected text');

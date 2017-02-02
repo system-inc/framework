@@ -73,7 +73,7 @@ class InputPressEvent extends HtmlElementEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		//Console.standardLog('InputPressEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
+		//console.log('InputPressEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
 
 		var events = [];
 
@@ -126,7 +126,7 @@ class InputPressEvent extends HtmlElementEvent {
 			events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
 		}
 
-		//Console.standardLog('InputPressEvent.createEventsFromDomEvent events', events);
+		//console.log('InputPressEvent.createEventsFromDomEvent events', events);
 
 		return events;
 	}
@@ -168,7 +168,7 @@ class InputPressEvent extends HtmlElementEvent {
 				}
 			});
 		}
-		//Console.standardWarn(domEvent.buttons, inputPressEvent.buttonsDown);
+		//console.warn(domEvent.buttons, inputPressEvent.buttonsDown);
 
 		// Remap buttons to make sense
 		if(domEvent.button == 0) { // domEvent.button 0: Main button pressed, usually the left button or the un-initialized state	

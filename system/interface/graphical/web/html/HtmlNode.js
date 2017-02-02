@@ -144,7 +144,7 @@ class HtmlNode extends XmlNode {
 
 		var domFragment = this.createDomNode();
 
-		//Console.standardLog('this.parent.domNode', this.parent.domNode);
+		//console.log('this.parent.domNode', this.parent.domNode);
 
 		// Append the child DOM node to this node's DOM node
 		var appendedNode = this.parent.domNode.appendChild(domFragment);
@@ -152,7 +152,7 @@ class HtmlNode extends XmlNode {
 		// Have the child reference the newly created DOM node
 		this.domNode = this.parent.domNode.lastChild;
 
-		//Console.standardLog('this.domNode', this.domNode);
+		//console.log('this.domNode', this.domNode);
 
 		this.mountedToDom();
 	}
@@ -204,7 +204,7 @@ class HtmlNode extends XmlNode {
 		var selection = this.htmlDocument.getSelection();
         var range = this.htmlDocument.domDocument.createRange();
         range.selectNodeContents(this.domNode);
-        //Console.standardLog(selection, range);
+        //console.log(selection, range);
         selection.removeAllRanges();
         selection.addRange(range);
 	}
@@ -217,7 +217,7 @@ class HtmlNode extends XmlNode {
 
 		// If the node is part of the selection
 		if(selection.containsNode(this.domNode, true)) {
-			//Console.standardLog('selection contains node', selection);
+			//console.log('selection contains node', selection);
 
 			// Determine the direction of the selection
 			var documentPositionOfAnchorNodeToFocusNode = selection.anchorNode.compareDocumentPosition(selection.focusNode);

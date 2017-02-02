@@ -163,7 +163,7 @@ class EventEmitter {
 	}
 
 	async removeEventListener(eventPattern, functionToUnbind) {
-		//Console.standardLog('removeEventListener', eventPattern, functionToUnbind);
+		//console.log('removeEventListener', eventPattern, functionToUnbind);
 
 		var removedEventListeners = [];
 
@@ -194,7 +194,7 @@ class EventEmitter {
 			}
 		}
 
-		//Console.standardLog('removedEventListeners', removedEventListeners);
+		//console.log('removedEventListeners', removedEventListeners);
 
 		// Do this await at the end of the function
 		// All EventEmitters emit 'eventEmitter.removedEventListener' when an event listener is removed

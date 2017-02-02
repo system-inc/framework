@@ -11,7 +11,7 @@ class ClipboardEvent extends HtmlElementEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		Console.standardLog('ClipboardEvent.createEventsFromDomEvent', domEvent.type, arguments);
+		console.log('ClipboardEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 		var events = [];
 
@@ -37,7 +37,7 @@ class ClipboardEvent extends HtmlElementEvent {
 		// Add the event
 		events.append(clipboardEventWithoutIdentifier);
 
-		//Console.standardLog('events', events);
+		//console.log('events', events);
 
 		return events;
 	}

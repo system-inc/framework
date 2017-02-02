@@ -32,7 +32,7 @@ class TableView extends View {
 
 	addRow() {
 		var row = [];
-		var tableRow = new TableRowView();
+		var tableRowView = new TableRowView();
 
 		// Loop through the total column count
 		for(var i = 0; i < this.columns.length; i++) {
@@ -44,14 +44,14 @@ class TableView extends View {
 			}
 
 			row.append(currentArgument);
-			var tableColumn = new TableCellView(currentArgument);
-			tableRow.append(tableColumn);
+			var tableColumnCellView = new TableCellView(currentArgument);
+			tableRowView.append(tableColumnCellView);
 		}
 
 		this.rows.append(row);
-		this.append(tableRow);
+		this.append(tableRowView);
 
-		return this;
+		return tableRowView;
 	}
 
 	getData() {

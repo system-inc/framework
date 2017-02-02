@@ -80,7 +80,7 @@ class Pool extends EventEmitter {
 
 				// Register to get the next available reusable
 				this.once('pool.availableReusable', function(event) {
-					Console.standardLog('pool.availableReusable event', event);
+					console.log('pool.availableReusable event', event);
 
 					// We must stop the event otherwise others waiting for available reusables will receive the event
 					event.stop();
@@ -106,7 +106,7 @@ class Pool extends EventEmitter {
 	}
 
 	takeAvailableReusable(reusable) {
-		//Console.standardLog('taking available reusable', reusable);
+		//console.log('taking available reusable', reusable);
 
 		// Remove the reusable from the available list
 		delete this.availableReusables[reusable.uniqueIdentifier];

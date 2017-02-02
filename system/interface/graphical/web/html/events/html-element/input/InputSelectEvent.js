@@ -12,7 +12,7 @@ class InputSelectEvent extends HtmlElementEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		//Console.standardLog('InputSelectEvent.createEventsFromDomEvent', domEvent.type, arguments);
+		//console.log('InputSelectEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 		var events = [];
 
@@ -38,7 +38,7 @@ class InputSelectEvent extends HtmlElementEvent {
 		// Add the event
 		events.append(inputSelectEventWithoutIdentifier);
 
-		//Console.standardLog('events', events);
+		//console.log('events', events);
 
 		return events;
 	}

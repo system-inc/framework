@@ -111,6 +111,10 @@ class ViewAdapter {
 
 	// HtmlElement
 
+	empty() {
+		return this.executeAdaptedViewMethod('empty', arguments);	
+	}
+
 	prepend(childView) {
 		return this.addChild(childView, 'prepend');
 	}
@@ -125,6 +129,10 @@ class ViewAdapter {
 
 	addChild(childView, arrayMethod = 'append') {
 		return this.executeAdaptedViewMethod('addChild', arguments);
+	}
+
+	setContent() {
+		return this.executeAdaptedViewMethod('setContent', arguments);	
 	}
 
 	addClass() {

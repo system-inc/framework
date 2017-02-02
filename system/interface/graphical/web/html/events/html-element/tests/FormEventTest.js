@@ -42,7 +42,7 @@ class FormEventTest extends ElectronTest {
 
 		// Add an event listener to the textarea to capture the event when triggered
 		formElement.on('form.*', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 
 			if(event.identifier == 'form.control.change') {
 				capturedFormControlChangeEventCount++;

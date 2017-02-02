@@ -90,7 +90,7 @@ class TestsActivityViewController extends ViewController {
             }.bind(this));
 
             // Add the row
-            tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusText, testMethod.runButton);
+            testMethod.tableRowView = tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusText, testMethod.runButton);
         }.bind(this));
 
         // Submit event listener
@@ -173,8 +173,11 @@ class TestsActivityViewController extends ViewController {
         console.log('handleTestBrowserWindowReport', data);
 
         var status = data.status;
+        console.log('status', status);
         var testBrowserWindowUniqueIdentifier = data.testBrowserWindowUniqueIdentifier;
+        console.log('testBrowserWindowUniqueIdentifier', testBrowserWindowUniqueIdentifier);
         var testBrowserWindow = this.testBrowserWindowPool.getReusableByUniqueIdentifier(testBrowserWindowUniqueIdentifier);
+        console.log('testBrowserWindow', testBrowserWindow);
 
         // The testBrowserWindow is created and ready for commands
         if(status == 'readyForCommand') {
@@ -189,10 +192,11 @@ class TestsActivityViewController extends ViewController {
         //    testBrowserWindow.testMethod.statusSpan.setContent('startedRunningTest');
         //}
         else if(status == 'Proctor.startedRunningTestMethod') {
-            testBrowserWindow.testMethod.statusSpan.setContent('Running...');
+            console.info('testBrowserWindow.testMethod', testBrowserWindow.testMethod);
+            testBrowserWindow.testMethod.tableRowView.getColumnCellView('Status').setContent('Running...');
         }
         else if(status == 'Proctor.finishedRunningTestMethod') {
-            testBrowserWindow.testMethod.statusSpan.setContent(data.data.status.toTitle());
+            testBrowserWindow.testMethod.tableRowView.getColumnCellView('Status').setContent(data.data.status.toTitle());
         }
         //else if(status == 'Proctor.finishedRunningTest') {
         //    testBrowserWindow.testMethod.statusSpan.setContent('finishedRunningTest');

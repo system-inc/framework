@@ -23,7 +23,7 @@ class InputScrollEvent extends InputPressEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		//Console.standardLog('InputScrollEvent.createEventsFromDomEvent', domEvent.type, arguments);
+		//console.log('InputScrollEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 		var events = [];
 
@@ -46,7 +46,7 @@ class InputScrollEvent extends InputPressEvent {
 			events.append(InputScrollEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.'+inputScrollEventWithoutIdentifier.direction));
 		}
 
-		//Console.standardLog('events', events);
+		//console.log('events', events);
 
 		return events;
 	}

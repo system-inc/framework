@@ -33,12 +33,12 @@ class ClipboardEventTest extends ElectronTest {
 
 		// Testing
 		textAreaElement.on('input.key.*', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 		});
 
 		// Add an event listener to the textarea to capture the event when triggered
 		textAreaElement.on('clipboard.*', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 
 			if(event.identifier == 'clipboard.copy') {
 				capturedClipboardCopyEvent = event;

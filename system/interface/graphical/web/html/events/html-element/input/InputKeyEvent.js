@@ -207,7 +207,7 @@ class InputKeyEvent extends HtmlElementEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter, eventPattern) {
-		//Console.standardLog('InputKeyEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
+		//console.log('InputKeyEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
 		//app.log('--- start '+domEvent.type);
 
 		var events = [];
@@ -253,7 +253,7 @@ class InputKeyEvent extends HtmlElementEvent {
 		if(eventTypeSuffix == '.up') {
 			// Keys that do not normally emit press events for which we need to manually emit one
 			if(InputKeyEvent.keysThatEmitKeyUpDomEventsButNotKeyPress[inputKeyEventWithoutIdentifier.key]) {
-				//Console.standardError(eventIdentifier);
+				//console.error(eventIdentifier);
 				eventIdentifier = 'input.key.'+inputKeyEventWithoutIdentifier.key;
 				//app.log(eventIdentifier);
 				events.append(InputKeyEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));
@@ -359,8 +359,8 @@ class InputKeyEvent extends HtmlElementEvent {
 		//events.each(function(index, event) {
 		//	eventIdentifiers.append(event.identifier);
 		//});
-		//Console.standardInfo(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
-		//Console.standardInfo('InputKeyEvent.createEventsFromDomEvent events', events);
+		//console.info(eventIdentifiers.join(' & '), '---', 'InputKeyEvent.createEventsFromDomEvent events', events);
+		//console.info('InputKeyEvent.createEventsFromDomEvent events', events);
 
 		//app.log('--- end '+domEvent.type);
 
@@ -450,7 +450,7 @@ class InputKeyEvent extends HtmlElementEvent {
 			key = 'space';
 		}
 		else if(!key || (key.length == 1 && !key.match(/\w/))) {
-			//Console.standardLog('no key', domEvent);
+			//console.log('no key', domEvent);
 
 			if(domEvent.charCode) {
 				key = String.fromCharacterCode(domEvent.charCode);
@@ -502,7 +502,7 @@ class InputKeyEvent extends HtmlElementEvent {
 		//app.log('key', key, 'key is truthy', (key ? true : false));
 
 		if(!key) {
-			Console.standardError('no key for domEvent', domEvent);
+			console.error('no key for domEvent', domEvent);
 		}
 
 		// Set the key

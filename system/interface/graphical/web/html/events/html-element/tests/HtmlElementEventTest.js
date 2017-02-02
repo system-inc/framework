@@ -31,7 +31,7 @@ class HtmlElementEventTest extends ElectronTest {
 
 		// Add an event listener to the textarea to capture the event when triggered
 		textAreaElement.on('htmlElement.*', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 
 			if(event.identifier == 'htmlElement.focus') {
 				capturedHtmlElementFocusEvent = event;
@@ -95,7 +95,7 @@ class HtmlElementEventTest extends ElectronTest {
 
 		// Add an event listener to the textarea to capture the event when triggered
 		scrollableDivElement.on('htmlElement.scroll.*', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 
 			if(event.identifier == 'htmlElement.scroll') {
 				capturedHtmlElementScrollEvent = event;
@@ -200,7 +200,7 @@ class HtmlElementEventTest extends ElectronTest {
 
         // Add an event listener to the textarea to capture the event when triggered
         imgElement.on('htmlElement.load', function(event) {
-            Console.standardInfo(event.identifier, event);
+            console.info(event.identifier, event);
 
             if(event.identifier == 'htmlElement.load') {
                 capturedHtmlElementLoadEvent = event;
@@ -232,7 +232,7 @@ class HtmlElementEventTest extends ElectronTest {
 
         // Add an event listener to the textarea to capture the event when triggered
         imgElement.on('htmlElement.error', function(event) {
-            Console.standardInfo(event.identifier, event);
+            console.info(event.identifier, event);
 
             if(event.identifier == 'htmlElement.error') {
                 capturedHtmlElementErrorEvent = event;

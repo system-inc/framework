@@ -43,7 +43,7 @@ class InputScrollEventTest extends ElectronTest {
 
 		// Add an event listener to the div to capture the event when triggered
 		htmlElement.on('input.scroll.*', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 
 			if(event.identifier == 'input.scroll') {
 				capturedEventInputScroll = event;

@@ -9,7 +9,7 @@ class InputComposeEvent extends HtmlElementEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		Console.standardLog('InputComposeEvent.createEventsFromDomEvent', domEvent.type, arguments);
+		console.log('InputComposeEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 		var events = [];
 
@@ -35,7 +35,7 @@ class InputComposeEvent extends HtmlElementEvent {
 		// Add the event
 		events.append(inputComposeEventWithoutIdentifier);
 
-		//Console.standardLog('events', events);
+		//console.log('events', events);
 
 		return events;
 	}

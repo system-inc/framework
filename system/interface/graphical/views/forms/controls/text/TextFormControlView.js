@@ -57,7 +57,7 @@ class TextFormControlView extends FormControlView {
     }
 
     handleInputKeyTabDown(event) {
-        //Console.standardLog('handleInputKeyTabDown', event);
+        //console.log('handleInputKeyTabDown', event);
 
         var eventReturnValue = true;
 

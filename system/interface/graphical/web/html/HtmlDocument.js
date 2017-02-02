@@ -308,7 +308,7 @@ class HtmlDocument extends XmlDocument {
 	find(selector) {
 		var result = null;
 		var domNode = this.domDocument.querySelector(selector);
-		//Console.standardInfo(domNodes);
+		//console.info(domNodes);
 
 		if(domNode && domNode.htmlNode) {
 			result = domNode.htmlNode;

@@ -33,14 +33,14 @@ class HtmlEventTest extends ElectronTest {
 
         // Add one event listener
         var boundFunction1 = function(event) {
-        	Console.standardInfo(event.identifier, event);
+        	console.info(event.identifier, event);
         	capturedEventCount++;
         };
         divElement.on('input.press', boundFunction1);
 
         // Add a second event listener
         var boundFunction2 = function(event) {
-        	Console.standardInfo(event.identifier, event);
+        	console.info(event.identifier, event);
         	capturedEventCount++;
         };
         divElement.on('input.press', boundFunction2);
@@ -78,7 +78,7 @@ class HtmlEventTest extends ElectronTest {
         Assert.strictEqual(capturedEventCount, 3, 'events do not emit after listener removed');
 
         // Make sure the element does not have any event listeners on the DOM object
-        Console.standardWarn('divElement.eventListenersOnDomObject', divElement.eventListenersOnDomObject);
+        console.warn('divElement.eventListenersOnDomObject', divElement.eventListenersOnDomObject);
         Assert.strictEqual(divElement.eventListenersOnDomObject['click'], undefined, 'the DOM event listeners have been removed');
 
         // Call this function one more time just to try and break things
@@ -106,19 +106,19 @@ class HtmlEventTest extends ElectronTest {
 
 		// Add one event listener
 		divElement.on('input.press', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventCount++;
 		});
 
 		// Add a second event listener
 		divElement.on('input.press', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventCount++;
 		});
 
 		// Add one more event listener that also binds to click but that is different
 		divElement.on('input.press.tertiary', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventCount++;
 		});		
 
@@ -136,7 +136,7 @@ class HtmlEventTest extends ElectronTest {
         // Remove all input.press event listeners
         divElement.removeEventListener('input.press');
 
-        Console.standardWarn('divElement.eventListenersOnDomObject', divElement.eventListenersOnDomObject);
+        console.warn('divElement.eventListenersOnDomObject', divElement.eventListenersOnDomObject);
         Assert.strictEqual(divElement.eventListenersOnDomObject['click'].count, 1, 'the DOM event listeners have been removed');
 
         // Call this function one more time just to try and break things
@@ -152,7 +152,7 @@ class HtmlEventTest extends ElectronTest {
         divElement.removeEventListener('input.press.tertiary');
 
         // Make sure the element does not have any event listeners on the DOM object
-        Console.standardWarn('divElement.eventListenersOnDomObject', divElement.eventListenersOnDomObject);
+        console.warn('divElement.eventListenersOnDomObject', divElement.eventListenersOnDomObject);
         Assert.strictEqual(divElement.eventListenersOnDomObject['click'], undefined, 'the DOM event listeners have been removed');
 
 		//throw new Error('Throwing error to display browser window.');
@@ -177,13 +177,13 @@ class HtmlEventTest extends ElectronTest {
 
 		// Add one event listener
 		divElement.on('input.press', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventCount++;
 		});
 
 		// Add a second event listener
 		divElement.on('input.press', function(event) {
-			Console.standardInfo(event.identifier, event);
+			console.info(event.identifier, event);
 			capturedEventCount++;
 		});
 
@@ -199,7 +199,7 @@ class HtmlEventTest extends ElectronTest {
         divElement.removeAllEventListeners();
 
         // Make sure the element does not have any event listeners on the DOM object
-        Console.standardWarn('divElement.eventListenersOnDomObject', divElement.eventListenersOnDomObject);
+        console.warn('divElement.eventListenersOnDomObject', divElement.eventListenersOnDomObject);
         Assert.strictEqual(divElement.eventListenersOnDomObject['click'], undefined, 'the DOM event listeners have been removed');
 
         // Click again

@@ -12,8 +12,8 @@ var Electron = null;
 // Class
 class FrameworkApp extends App {
 
-	electronMainBrowserWindow = null;
-	electronTestBrowserWindows = {};
+	mainBrowserWindow = null;
+	testBrowserWindows = {};
 
 	async initialize() {
 		await super.initialize(...arguments);
@@ -32,12 +32,19 @@ class FrameworkApp extends App {
 			Electron.app.commandLine.appendSwitch('--js-flags', '--harmony');
 
 			//app.log('app.inElectronMainProcess');
-			this.electronMainProcess();
+			this.contextIsElectronMainProcess();
 		}
 		// If in the Electron renderer process
 		else if(this.inElectronRendererProcess()) {
-			//app.log('app.inElectronRendererProcess');
-			this.electronRendererProcess();
+			app.log('app.inElectronRendererProcess', 'window.location.hash', window.location.hash);
+			
+			if(window.location.hash.startsWith('#testBrowserWindow-')) {
+				console.log('IN electron test browser window!');
+				this.contextIsTestBrowserWindowRendererProcess();
+			}
+			else {
+				this.contextIsElectronRendererProcess();	
+			}
 		}
 		// Proctor command
 		else if(this.interfaces.commandLine.command.subcommands.proctor) {
@@ -101,7 +108,9 @@ class FrameworkApp extends App {
 		//console.log('pathToElectronExecutable', pathToElectronExecutable);
 
 		// Run Electron as a child process
+		console.error('When I open index.js i get stdio but must specify js flags async-await. I should be doing the thing on the line below but it breaks stdio');
 		var childProcessElectronMainProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags=--harmony-async-await', 'app/index.js', 'gi'], {});
+		//var childProcessElectronMainProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags=--harmony', 'app/index.html', 'gi'], {});
 
 		// The parent process I am in now exists to just to as a bridge for standard streams to the child process which is the Electron main process
 
@@ -133,13 +142,13 @@ class FrameworkApp extends App {
 	}
 
 	// Electron main process
-	electronMainProcess() {
+	contextIsElectronMainProcess() {
 		//console.log('inElectronMainProcess');
 
 		// When the app is activated from the macOS dock
 		Electron.app.on('activate', function () {
 			// The expected behavior is to create a new window
-			if(this.electronMainBrowserWindow === null) {
+			if(this.mainBrowserWindow === null) {
 				this.createElectronMainBrowserWindow();
 			}
 		}.bind(this));
@@ -154,121 +163,31 @@ class FrameworkApp extends App {
 		// Create the main browser window
 		this.createElectronMainBrowserWindow();
 
-		// electronMainBrowserWindow can tell electronMainProcess to create electronTestBrowserWindows
-		Electron.ipcMain.on('electronMainBrowserWindow.createElectronTestBrowserWindow', function(event, testBrowserWindowUniqueIdentifier, testClassName, testMethodName) {
-			this.createElectronTestBrowserWindow(testBrowserWindowUniqueIdentifier, testClassName, testMethodName);
+		// mainBrowserWindow can tell electronMainProcess to create testBrowserWindows
+		Electron.ipcMain.on('mainBrowserWindow.createTestBrowserWindow', function(event, testBrowserWindowUniqueIdentifier, testClassName, testMethodName) {
+			//app.log('mainBrowserWindow.createTestBrowserWindow', event, testBrowserWindowUniqueIdentifier, testClassName, testMethodName);
+			this.createTestBrowserWindow(testBrowserWindowUniqueIdentifier, testClassName, testMethodName);
 		}.bind(this));
 
-		// electronMainBrowserWindow can tell electronMainProcess to destroy electronTestBrowserWindows
-		Electron.ipcMain.on('electronMainBrowserWindow.destroyTestBrowserWindow', function(event, testBrowserWindowUniqueIdentifier) {
+		// mainBrowserWindow can tell electronMainProcess to destroy testBrowserWindows
+		Electron.ipcMain.on('mainBrowserWindow.destroyTestBrowserWindow', function(event, testBrowserWindowUniqueIdentifier) {
 			this.destroyTestBrowserWindow(testBrowserWindowUniqueIdentifier);
 		}.bind(this));
 
-		// electronMainBrowserWindow can tell electronMainProcess to command electronTestBrowserWindows
-		Electron.ipcMain.on('electronMainBrowserWindow.commandTestBrowserWindow', function(event, testBrowserWindowUniqueIdentifier, command, data) {
+		// mainBrowserWindow can tell electronMainProcess to command testBrowserWindows
+		Electron.ipcMain.on('mainBrowserWindow.commandTestBrowserWindow', function(event, testBrowserWindowUniqueIdentifier, command, data) {
 			this.commandTestBrowserWindow(testBrowserWindowUniqueIdentifier, command, data);
 		}.bind(this));
 
-		// electronTestBrowserWindows can tell electronMainProcess to report to the electronMainBrowserWindow
-		Electron.ipcMain.on('electronTestBrowserWindow.report', function(event, testBrowserWindowUniqueIdentifier, data) {
-			this.electronMainBrowserWindow.send('electronTestBrowserWindow.report', testBrowserWindowUniqueIdentifier, data);
+		// testBrowserWindows can tell electronMainProcess to report to the mainBrowserWindow
+		Electron.ipcMain.on('testBrowserWindow.report', function(event, testBrowserWindowUniqueIdentifier, data) {
+			console.log('testBrowserWindow.report', ...arguments);
+			this.mainBrowserWindow.send('testBrowserWindow.report', testBrowserWindowUniqueIdentifier, data);
 		}.bind(this));
-	}
-
-	createElectronMainBrowserWindow() {
-		//console.log('FrameworkApp createElectronMainBrowserWindow');
-
-		// TODO: This should all be configured using app settings
-		// Create the browser window
-		this.electronMainBrowserWindow = new Electron.BrowserWindow({
-			//url: app.directory.toString(),
-			width: 800,
-			height: 600,
-			webPreferences: {
-				// Load FrameworkApp through the preload mechanism
-				//preload: Node.Path.join(app.directory, 'index.js'),
-			},
-			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
-			show: true, // Do not show the main browser window as we want to wait until it is resized before showing it
-		});
-
-		// Load an empty page, we use the webPreferences preload open to load FrameworkApp
-		console.error('Start electron issue on creating a browser window without an html file: Can\'t just use preload script, must specifiy loadurl, cant use about blank, must have an actual html file if I want css files to work probably for relative pathing');
-		//this.electronMainBrowserWindow.loadURL('about:blank');
-		var appHtmlFilePath = require('url').format({
-			protocol: 'file',
-			pathname: require('path').join(__dirname, 'index.html'),
-			slashes: true,
-		});
-		this.electronMainBrowserWindow.loadURL(appHtmlFilePath);
-
-		// Debugging - comment out the lines below when ready for release
-		this.electronMainBrowserWindow.webContents.openDevTools(); // Comment out for production
-		this.electronMainBrowserWindow.show(); // Comment out for production
-		
-		// When the window is closed
-		this.electronMainBrowserWindow.on('closed', function () {
-			// Dereference the window object, usually you would store windows in an array if your app supports multi windows, this is the time when you should delete the corresponding element
-			this.electronMainBrowserWindow = null
-
-			// Quit when the electronMainBrowserWindow is closed
-			Electron.app.quit();
-		}.bind(this));
-	}
-
-	createElectronTestBrowserWindow(testBrowserWindowUniqueIdentifier) {
-	    var testBrowserWindow = this.electronTestBrowserWindows[testBrowserWindowUniqueIdentifier] = new Electron.BrowserWindow({
-	        title: testBrowserWindowUniqueIdentifier,
-	        show: false,
-	    });
-
-	    // Show developer tools on failure
-	    // TODO: Don't show dev tools always
-	    //testBrowserWindow.openDevTools();
-
-	    // Load the test method container page, passing in the testBrowserWindowUniqueIdentifier as the hash
-		var testBrowserWindowUrl = require('url').format({
-			protocol: 'file',
-			pathname: __dirname+'/proctor/browser-windows/test-browser-window/TestBrowserWindow.html',
-			slashes: true,
-			hash: testBrowserWindowUniqueIdentifier,
-		});
-	    testBrowserWindow.loadURL(testBrowserWindowUrl);
-
-	    // Clean up when the testBrowserWindow closes
-	    testBrowserWindow.on('closed', function(event) {
-	    	this.testBrowserWindowClosed(testBrowserWindowUniqueIdentifier);
-	    }.bind(this));
-	}
-
-	destroyTestBrowserWindow(testBrowserWindowUniqueIdentifier) {
-		this.electronTestBrowserWindows[testBrowserWindowUniqueIdentifier].destroy();
-	}
-
-	testBrowserWindowClosed(testBrowserWindowUniqueIdentifier) {
-		//console.log('Deleting reference to testBrowserWindow', testBrowserWindowUniqueIdentifier);
-
-		// Remove the reference from this.electronTestBrowserWindows
-		delete this.electronTestBrowserWindows[testBrowserWindowUniqueIdentifier];
-
-		// Notify the electronMainbrowserWindow if it is still active
-		if(this.electronMainBrowserWindow) {
-			this.electronMainBrowserWindow.send('electronTestBrowserWindow.report', {
-				status: 'testBrowserWindowClosed',
-				testBrowserWindowUniqueIdentifier: testBrowserWindowUniqueIdentifier,
-			});
-		}
-	}
-
-	commandTestBrowserWindow(testBrowserWindowUniqueIdentifier, command, data) {
-		// If the test browser window exists
-		if(this.electronTestBrowserWindows[testBrowserWindowUniqueIdentifier]) {
-			this.electronTestBrowserWindows[testBrowserWindowUniqueIdentifier].send('electronMainBrowserWindow.commandTestBrowserWindow', command, data);	
-		}
 	}
 
 	// Electron renderer process
-	electronRendererProcess() {
+	contextIsElectronRendererProcess() {
 		console.log('inElectronRendererProcess');
 
 		console.log('resolve comments below');
@@ -319,6 +238,167 @@ class FrameworkApp extends App {
 
 		// Have the graphical interface manager create a graphical interface with a view controller
 		app.interfaces.graphicalInterfaceManager.create(new FrameworkViewController());
+	}
+
+	createElectronMainBrowserWindow() {
+		//console.log('FrameworkApp createElectronMainBrowserWindow');
+
+		// TODO: This should all be configured using app settings
+		// Create the browser window
+		this.mainBrowserWindow = new Electron.BrowserWindow({
+			//url: app.directory.toString(),
+			width: 800,
+			height: 600,
+			webPreferences: {
+				// Load FrameworkApp through the preload mechanism
+				//preload: Node.Path.join(app.directory, 'index.js'),
+			},
+			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
+			//show: true, // Do not show the main browser window as we want to wait until it is resized before showing it
+		});
+
+		// Load an empty page, we use the webPreferences preload open to load FrameworkApp
+		console.error('Start electron issue on creating a browser window without an html file: Can\'t just use preload script, must specifiy loadurl, cant use about blank, must have an actual html file if I want css files to work probably for relative pathing');
+		//this.mainBrowserWindow.loadURL('about:blank');
+		var appHtmlFilePath = require('url').format({
+			protocol: 'file',
+			pathname: Node.Path.join(app.directory, 'index.html'),
+			slashes: true,
+		});
+		this.mainBrowserWindow.loadURL(appHtmlFilePath);
+
+		// Debugging - comment out the lines below when ready for release
+		this.mainBrowserWindow.webContents.openDevTools(); // Comment out for production
+		this.mainBrowserWindow.show(); // Comment out for production
+		
+		// When the window is closed
+		this.mainBrowserWindow.on('closed', function () {
+			// Dereference the window object, usually you would store windows in an array if your app supports multi windows, this is the time when you should delete the corresponding element
+			this.mainBrowserWindow = null
+
+			// Quit when the mainBrowserWindow is closed
+			Electron.app.quit();
+		}.bind(this));
+	}
+
+	createTestBrowserWindow(testBrowserWindowUniqueIdentifier) {
+		app.log('createTestBrowserWindow', testBrowserWindowUniqueIdentifier);
+
+	    var testBrowserWindow = this.testBrowserWindows[testBrowserWindowUniqueIdentifier] = new Electron.BrowserWindow({
+	        title: testBrowserWindowUniqueIdentifier,
+	        //show: false,
+	    });
+
+	    // Show developer tools on failure
+	    // TODO: Don't show dev tools always
+	    testBrowserWindow.openDevTools();
+
+	    // Load the test method container page, passing in the testBrowserWindowUniqueIdentifier as the hash
+		var testBrowserWindowUrl = require('url').format({
+			protocol: 'file',
+			pathname: Node.Path.join(app.directory, 'index.html'),
+			slashes: true,
+			hash: 'testBrowserWindow-'+testBrowserWindowUniqueIdentifier,
+		});
+	    testBrowserWindow.loadURL(testBrowserWindowUrl);
+
+	    // Clean up when the testBrowserWindow closes
+	    testBrowserWindow.on('closed', function(event) {
+	    	this.testBrowserWindowClosed(testBrowserWindowUniqueIdentifier);
+	    }.bind(this));
+	}
+
+	contextIsTestBrowserWindowRendererProcess() {
+        // Set the testBrowserWindowUniqueIdentifier - must use window. as we do not have an HtmlDocument object
+        var testBrowserWindowUniqueIdentifier = window.location.hash.replace('#testBrowserWindow-', '');
+        app.log('testBrowserWindowUniqueIdentifier', testBrowserWindowUniqueIdentifier);
+
+        // Handle commands from the mainBrowserWindow
+        Electron.ipcRenderer.on('mainBrowserWindow.commandTestBrowserWindow', function(eventFromIpcMain, command, data) {
+            //console.log(command, data);
+
+            // runTestMethod
+            if(command == 'runTestMethod') {
+                var testClassFilePath = data.testClassFilePath;
+                var testClassName = data.testClassName;
+                var testMethodName = data.testMethodName;
+
+                // Set the page title - must use document. as we do not have an HtmlDocument object
+                document.title = testClassName+'.'+testMethodName+' \u2022 Proctor \u2022 Assistant \u2022 Framework';
+
+                var proctor = new Proctor('electron', true);
+
+                var proctorEvents = [
+                    //'Proctor.startedRunningTests',
+                    //'Proctor.startedRunningTest',
+                    'Proctor.startedRunningTestMethod',
+                    'Proctor.finishedRunningTestMethod',
+                    //'Proctor.finishedRunningTest',
+                    'Proctor.finishedRunningTests',
+                ];
+
+                proctorEvents.each(function(proctorEventIndex, proctorEvent) {
+                    proctor.on(proctorEvent, function(event) {
+                        Electron.ipcRenderer.send('testBrowserWindow.report', {
+                            status: proctorEvent,
+                            data: event.data,
+                            testBrowserWindowUniqueIdentifier: testBrowserWindowUniqueIdentifier,
+                        });
+                    });
+                });
+
+                //app.log('Testing below');
+                proctor.getAndRunTestMethod(testClassFilePath, testClassName, testMethodName);
+            }
+            // close
+            else if(command == 'close') {
+                Electron.remote.getCurrentWindow().close();
+            }
+            // reset
+            else if(command == 'reset') {
+                document.location.reload(true);
+            }
+            // openDeveloperTools
+            else if(command == 'openDeveloperTools') {
+                Electron.remote.getCurrentWindow().openDevTools();
+            }
+            // show
+            else if(command == 'show') {
+                Electron.remote.getCurrentWindow().show();
+            }
+        });
+
+        // Report we are ready
+        Electron.ipcRenderer.send('testBrowserWindow.report', {
+            status: 'readyForCommand',
+            testBrowserWindowUniqueIdentifier: testBrowserWindowUniqueIdentifier,
+        });
+	}
+
+	destroyTestBrowserWindow(testBrowserWindowUniqueIdentifier) {
+		this.testBrowserWindows[testBrowserWindowUniqueIdentifier].destroy();
+	}
+
+	testBrowserWindowClosed(testBrowserWindowUniqueIdentifier) {
+		//console.log('Deleting reference to testBrowserWindow', testBrowserWindowUniqueIdentifier);
+
+		// Remove the reference from this.testBrowserWindows
+		delete this.testBrowserWindows[testBrowserWindowUniqueIdentifier];
+
+		// Notify the electronMainbrowserWindow if it is still active
+		if(this.mainBrowserWindow) {
+			this.mainBrowserWindow.send('testBrowserWindow.report', {
+				status: 'testBrowserWindowClosed',
+				testBrowserWindowUniqueIdentifier: testBrowserWindowUniqueIdentifier,
+			});
+		}
+	}
+
+	commandTestBrowserWindow(testBrowserWindowUniqueIdentifier, command, data) {
+		// If the test browser window exists
+		if(this.testBrowserWindows[testBrowserWindowUniqueIdentifier]) {
+			this.testBrowserWindows[testBrowserWindowUniqueIdentifier].send('mainBrowserWindow.commandTestBrowserWindow', command, data);	
+		}
 	}
 
 }
