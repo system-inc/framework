@@ -36,14 +36,14 @@ class FrameworkApp extends App {
 		}
 		// If in the Electron renderer process
 		else if(this.inElectronRendererProcess()) {
-			app.log('app.inElectronRendererProcess', 'window.location.hash', window.location.hash);
+			//app.log('app.inElectronRendererProcess', 'window.location.hash', window.location.hash);
 			
 			if(window.location.hash.startsWith('#testBrowserWindow-')) {
-				console.log('IN electron test browser window!');
+				//console.log('IN electron test browser window!');
 				this.contextIsTestBrowserWindowRendererProcess();
 			}
 			else {
-				this.contextIsElectronRendererProcess();	
+				this.contextIsMainBrowserWindowRendererProcess();	
 			}
 		}
 		// Proctor command
@@ -181,14 +181,14 @@ class FrameworkApp extends App {
 
 		// testBrowserWindows can tell electronMainProcess to report to the mainBrowserWindow
 		Electron.ipcMain.on('testBrowserWindow.report', function(event, testBrowserWindowUniqueIdentifier, data) {
-			console.log('testBrowserWindow.report', ...arguments);
+			//console.log('testBrowserWindow.report', ...arguments);
 			this.mainBrowserWindow.send('testBrowserWindow.report', testBrowserWindowUniqueIdentifier, data);
 		}.bind(this));
 	}
 
 	// Electron renderer process
-	contextIsElectronRendererProcess() {
-		console.log('inElectronRendererProcess');
+	contextIsMainBrowserWindowRendererProcess() {
+		//console.log('inElectronRendererProcess');
 
 		console.log('resolve comments below');
 
@@ -282,7 +282,7 @@ class FrameworkApp extends App {
 	}
 
 	createTestBrowserWindow(testBrowserWindowUniqueIdentifier) {
-		app.log('createTestBrowserWindow', testBrowserWindowUniqueIdentifier);
+		//app.log('createTestBrowserWindow', testBrowserWindowUniqueIdentifier);
 
 	    var testBrowserWindow = this.testBrowserWindows[testBrowserWindowUniqueIdentifier] = new Electron.BrowserWindow({
 	        title: testBrowserWindowUniqueIdentifier,
@@ -311,7 +311,7 @@ class FrameworkApp extends App {
 	contextIsTestBrowserWindowRendererProcess() {
         // Set the testBrowserWindowUniqueIdentifier - must use window. as we do not have an HtmlDocument object
         var testBrowserWindowUniqueIdentifier = window.location.hash.replace('#testBrowserWindow-', '');
-        app.log('testBrowserWindowUniqueIdentifier', testBrowserWindowUniqueIdentifier);
+        //app.log('testBrowserWindowUniqueIdentifier', testBrowserWindowUniqueIdentifier);
 
         // Handle commands from the mainBrowserWindow
         Electron.ipcRenderer.on('mainBrowserWindow.commandTestBrowserWindow', function(eventFromIpcMain, command, data) {
@@ -324,7 +324,7 @@ class FrameworkApp extends App {
                 var testMethodName = data.testMethodName;
 
                 // Set the page title - must use document. as we do not have an HtmlDocument object
-                document.title = testClassName+'.'+testMethodName+' \u2022 Proctor \u2022 Assistant \u2022 Framework';
+                document.title = testClassName+'.'+testMethodName+' \u2022 Tests \u2022 Testing \u2022 Framework';
 
                 var proctor = new Proctor('electron', true);
 

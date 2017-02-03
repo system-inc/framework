@@ -13,7 +13,7 @@ class TestBrowserWindow extends Reusable {
 		this.status = 'waitingForFrameworkAppToCreateTestBrowserWindow';
 
         // Send a message to the main process to create a testBrowserWindow
-        console.info('Sending mainBrowserWindow.createTestBrowserWindow');
+        //console.info('Sending mainBrowserWindow.createTestBrowserWindow');
         Electron.ipcRenderer.send('mainBrowserWindow.createTestBrowserWindow', this.uniqueIdentifier);
 
         // Do not call super() as we are not available until the application creates a test browser window

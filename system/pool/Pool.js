@@ -39,14 +39,14 @@ class Pool extends EventEmitter {
 	}
 
 	createReusable() {
-		console.log('Pool.createReusable()');
+		//console.log('Pool.createReusable()');
 
 		// Increment the size
 		this.size++;
 
 		// Construct the new reusable
 		var reusable = new this.reusableClass(this);
-		console.log('reusable', reusable);
+		//console.log('reusable', reusable);
 		
 		// Set the new reusable by unique identifier in the busy reusables object
 		this.busyReusables[reusable.uniqueIdentifier] = reusable;
@@ -55,7 +55,7 @@ class Pool extends EventEmitter {
 	}
 
 	getReusable() {
-		console.log('Pool.getReusable()');
+		//console.log('Pool.getReusable()');
 
 		this.waitingForAvailableReusableCount++;
 
@@ -68,11 +68,11 @@ class Pool extends EventEmitter {
 			}
 			// If we don't have any free reusables
 			else {
-				app.log('Waiting for reusable...');
+				//app.log('Waiting for reusable...');
 
 				// If we can start the process of creating a new reusable
 				if(this.size < this.maximumSize) {
-					app.log(this.size, 'is less than', this.maximumSize, 'creating new reusable...');
+					//app.log(this.size, 'is less than', this.maximumSize, 'creating new reusable...');
 
 					// Create a new reusable
 					this.createReusable();
@@ -80,7 +80,7 @@ class Pool extends EventEmitter {
 
 				// Register to get the next available reusable
 				this.once('pool.availableReusable', function(event) {
-					console.log('pool.availableReusable event', event);
+					//console.log('pool.availableReusable event', event);
 
 					// We must stop the event otherwise others waiting for available reusables will receive the event
 					event.stop();
@@ -123,7 +123,7 @@ class Pool extends EventEmitter {
 	}
 
 	releaseReusable(reusable) {
-		console.log('Pool.releaseReusable', reusable);
+		//console.log('Pool.releaseReusable', reusable);
 
 		// Remove the reusable from the busy list
 		delete this.busyReusables[reusable.uniqueIdentifier];

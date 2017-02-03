@@ -53,15 +53,15 @@ class TestsActivityViewController extends ViewController {
 	async getTests() {
 		// Get all possible tests: Proctor.getTests(path, filePattern, methodPattern)
         //var tests = await Proctor.getTests();
-        //var tests = await Proctor.getTests(null, 'SingleLine');
-        var tests = await Proctor.getTests(null, 'String');
-        console.log('tests', tests);
+        var tests = await Proctor.getTests(null, 'SingleLine');
+        //var tests = await Proctor.getTests(null, 'String');
+        //console.log('tests', tests);
 
         return tests;
 	}
 
 	async createTestsFormView() {
-        var tests = await this.getTests();
+        this.tests = await this.getTests();
 
         // Form
         var testsFormView = new FormView({
@@ -71,7 +71,7 @@ class TestsActivityViewController extends ViewController {
         });
 
         // Summary
-        var summary = new TextView(tests.methods.length+' test methods in '+tests.classes.length+' tests');
+        var summary = new TextView(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
         testsFormView.append(summary);
         
         // Table
@@ -79,7 +79,7 @@ class TestsActivityViewController extends ViewController {
         tableView.setColumns(['Class', 'Method', 'Status', '']);
         
         // Add each test
-        tests.methods.each(function(testMethodIndex, testMethod) {
+        this.tests.methods.each(function(testMethodIndex, testMethod) {
             // Status
             testMethod.statusText = 'Not Started';
 
@@ -106,7 +106,7 @@ class TestsActivityViewController extends ViewController {
     }
 
     async runTestMethod(testMethod) {
-        console.info('run test', testMethod);
+        //console.info('run test', testMethod);
 
          // Get a test browser window from the pool
         var testBrowserWindow = await this.testBrowserWindowPool.getReusable();
@@ -154,7 +154,7 @@ class TestsActivityViewController extends ViewController {
     }
 
     handleFrameworkAppReport(event, data) {
-        console.log('handleFrameworkAppReport', data);
+        //console.log('handleFrameworkAppReport', data);
 
         var status = data.status;
 
@@ -170,14 +170,14 @@ class TestsActivityViewController extends ViewController {
     }
 
     handleTestBrowserWindowReport(event, data) {
-        console.log('handleTestBrowserWindowReport', data);
+        //console.log('handleTestBrowserWindowReport', data);
 
         var status = data.status;
-        console.log('status', status);
+        //console.log('status', status);
         var testBrowserWindowUniqueIdentifier = data.testBrowserWindowUniqueIdentifier;
-        console.log('testBrowserWindowUniqueIdentifier', testBrowserWindowUniqueIdentifier);
+        //console.log('testBrowserWindowUniqueIdentifier', testBrowserWindowUniqueIdentifier);
         var testBrowserWindow = this.testBrowserWindowPool.getReusableByUniqueIdentifier(testBrowserWindowUniqueIdentifier);
-        console.log('testBrowserWindow', testBrowserWindow);
+        //console.log('testBrowserWindow', testBrowserWindow);
 
         // The testBrowserWindow is created and ready for commands
         if(status == 'readyForCommand') {

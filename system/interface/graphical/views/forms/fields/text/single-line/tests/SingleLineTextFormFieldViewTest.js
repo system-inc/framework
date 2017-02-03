@@ -15,49 +15,49 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
     }
 
 	async testEnterSubmits() {
-        throw new Error('Throwing error to display browser window.');
+        //throw new Error('Throwing error to display browser window.');
         
-        //// Create a new ViewController
-        //var viewController = new ViewController();
+        // Create a new ViewController
+        var viewController = new ViewController();
 
-        //// Create the form
-        //var formView = new FormView();
+        // Create the form
+        var formView = new FormView();
 
-        //// Capture the submit event
-        //var capturedEventFormSubmit = null;
-        //formView.on('form.submit', function(event) {
-        //    event.stop();
-        //    console.info(event.identifier, event);
-        //    capturedEventFormSubmit = event;
-        //});
+        // Capture the submit event
+        var capturedEventFormSubmit = null;
+        formView.on('form.submit', function(event) {
+            event.stop();
+            console.info(event.identifier, event);
+            capturedEventFormSubmit = event;
+        });
 
-        //// Create the single line text form field view
-        //var singleLineTextFormFieldView = new SingleLineTextFormFieldView('singleLineText', {
-        //    label: 'Pressing enter on this input should submit it:',
-        //    enterSubmits: true, // Enter submits
-        //});
-        //formView.addFormFieldView(singleLineTextFormFieldView);
+        // Create the single line text form field view
+        var singleLineTextFormFieldView = new SingleLineTextFormFieldView('singleLineText', {
+            label: 'Pressing enter on this input should submit it:',
+            enterSubmits: true, // Enter submits
+        });
+        formView.addFormFieldView(singleLineTextFormFieldView);
 
-        //// Add the form to the view controller's view
-        //viewController.view.append(formView);
+        // Add the form to the view controller's view
+        viewController.view.append(formView);
 
-        //viewController.initialize();
+        viewController.initialize();
 
-        //throw new Error('Throwing error to display browser window.');
+        throw new Error('Throwing error to display browser window.');
 
-        //// Click the input field
-        //yield ElectronManager.clickView(singleLineTextFormFieldView.formControlView);
+        // Click the input field
+        await ElectronManager.clickView(singleLineTextFormFieldView.formControlView);
 
-        //// Type something into the field
-        //yield ElectronManager.pressKey('A');
+        // Type something into the field
+        await ElectronManager.pressKey('A');
 
-        //// Press enter
-        //yield ElectronManager.pressKey('Enter');
+        // Press enter
+        await ElectronManager.pressKey('Enter');
 
-        //// Make sure the form submitted event occured
-        //Assert.true(Class.isInstance(capturedEventFormSubmit, ViewEvent), '"form.submit" events emit on "input.key.enter"');
+        // Make sure the form submitted event occured
+        Assert.true(Class.isInstance(capturedEventFormSubmit, ViewEvent), '"form.submit" events emit on "input.key.enter"');
 
-        //throw new Error('Throwing error to display browser window.');
+        throw new Error('Throwing error to display browser window.');
 
 
 
@@ -88,13 +88,13 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
      //   htmlDocument.mountToDom();
 
      //   // Click the input field
-     //   yield ElectronManager.clickHtmlElement(singleLineTextFormFieldView.formControlView);
+     //   await ElectronManager.clickHtmlElement(singleLineTextFormFieldView.formControlView);
 
      //   // Type something into the field
-     //   yield ElectronManager.pressKey('A');
+     //   await ElectronManager.pressKey('A');
 
      //   // Press enter
-     //   yield ElectronManager.pressKey('Enter');
+     //   await ElectronManager.pressKey('Enter');
 
      //   // Make sure the form submitted event occured
      //   Assert.true(Class.isInstance(capturedEventFormSubmit, HtmlEvent), '"form.submit" events emit on "input.key.enter"');
