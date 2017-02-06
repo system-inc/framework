@@ -304,6 +304,7 @@ class FrameworkApp extends App {
 
 	    // Clean up when the testBrowserWindow closes
 	    testBrowserWindow.on('closed', function(event) {
+	    	//console.log('closed!');
 	    	this.testBrowserWindowClosed(testBrowserWindowUniqueIdentifier);
 	    }.bind(this));
 	}
@@ -339,6 +340,16 @@ class FrameworkApp extends App {
 
                 proctorEvents.each(function(proctorEventIndex, proctorEvent) {
                     proctor.on(proctorEvent, function(event) {
+                    	//console.log(event);
+
+                    	// Log errors
+                    	if(event.identifier === 'Proctor.finishedRunningTestMethod') {
+	                    	var error = event.getValueByPath('data.failedTestMethods.0.error');
+	                    	if(error) {
+	                    		console.error(error.toString());
+	                    	}
+                    	}
+
                         Electron.ipcRenderer.send('testBrowserWindow.report', {
                             status: proctorEvent,
                             data: event.data,
@@ -383,7 +394,9 @@ class FrameworkApp extends App {
 		//console.log('Deleting reference to testBrowserWindow', testBrowserWindowUniqueIdentifier);
 
 		// Remove the reference from this.testBrowserWindows
-		delete this.testBrowserWindows[testBrowserWindowUniqueIdentifier];
+		if(this.testBrowserWindows[testBrowserWindowUniqueIdentifier]) {
+			delete this.testBrowserWindows[testBrowserWindowUniqueIdentifier];
+		}
 
 		// Notify the electronMainbrowserWindow if it is still active
 		if(this.mainBrowserWindow) {

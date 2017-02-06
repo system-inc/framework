@@ -1,27 +1,22 @@
 // Dependencies
 import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
 import Assert from 'framework/system/test/Assert.js';
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 import FormView from 'framework/system/interface/graphical/views/forms/FormView.js';
 import SingleLineTextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js';
-var ElectronManager = null;
 
 // Class
 class SingleLineTextFormFieldViewTest extends ElectronTest {
 
-	async before() {
-        // Initialize the ElectronManager here as to not throw an exception when electron is not present
-        ElectronManager = require('framework/system/electron/ElectronManager.js');
-    }
-
 	async testEnterSubmits() {
+        //console.log('testEnterSubmits');
         //throw new Error('Throwing error to display browser window.');
-        
-        // Create a new ViewController
+
+        // Create a view controller
         var viewController = new ViewController();
 
         // Create the form
         var formView = new FormView();
+        console.info('formView', formView);
 
         // Capture the submit event
         var capturedEventFormSubmit = null;
@@ -37,69 +32,26 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
             enterSubmits: true, // Enter submits
         });
         formView.addFormFieldView(singleLineTextFormFieldView);
+        console.info('singleLineTextFormFieldView', singleLineTextFormFieldView);
+
+        // Have the graphical interface manager create a graphical interface with a view controller
+        app.interfaces.graphicalInterfaceManager.create(viewController);
 
         // Add the form to the view controller's view
         viewController.view.append(formView);
-
         viewController.initialize();
 
-        throw new Error('Throwing error to display browser window.');
-
         // Click the input field
-        await ElectronManager.clickView(singleLineTextFormFieldView.formControlView);
+        //await ElectronManager.clickView(singleLineTextFormFieldView.formControlView);
 
         // Type something into the field
-        await ElectronManager.pressKey('A');
+        //await ElectronManager.pressKey('A');
 
         // Press enter
-        await ElectronManager.pressKey('Enter');
+        //await ElectronManager.pressKey('Enter');
 
         // Make sure the form submitted event occured
-        Assert.true(Class.isInstance(capturedEventFormSubmit, ViewEvent), '"form.submit" events emit on "input.key.enter"');
-
-        throw new Error('Throwing error to display browser window.');
-
-
-
-    	//// Create an HtmlDocument
-     //   var htmlDocument = new HtmlDocument();
-
-     //   // Create the form
-     //   var formView = new FormView();
-     //   var singleLineTextFormFieldView = new SingleLineTextFormFieldView('singleLineText', {
-     //       label: 'Pressing enter on this input should submit it:',
-     //       enterSubmits: true,
-     //   });
-     //   formView.addFormFieldView(singleLineTextFormFieldView);
-     //   htmlDocument.body.append(formView);
-
-     //   var capturedEventFormSubmit = null;
-
-     //   singleLineTextFormFieldView.formControlView.on('input.press', function(event) {
-     //       console.info(event.identifier, event);
-     //   });
-
-     //   formView.on('form.submit', function(event) {
-     //       console.info(event.identifier, event);
-     //       capturedEventFormSubmit = event;
-     //   });
-
-     //   // Mount the HtmlDocument to the DOM
-     //   htmlDocument.mountToDom();
-
-     //   // Click the input field
-     //   await ElectronManager.clickHtmlElement(singleLineTextFormFieldView.formControlView);
-
-     //   // Type something into the field
-     //   await ElectronManager.pressKey('A');
-
-     //   // Press enter
-     //   await ElectronManager.pressKey('Enter');
-
-     //   // Make sure the form submitted event occured
-     //   Assert.true(Class.isInstance(capturedEventFormSubmit, HtmlEvent), '"form.submit" events emit on "input.key.enter"');
-
-    	////throw new Error('Throwing error to display browser window.');
+        //Assert.true(Class.isInstance(capturedEventFormSubmit, ViewEvent), '"form.submit" events emit on "input.key.enter"');
 	}
 
 }

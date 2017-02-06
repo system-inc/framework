@@ -39,11 +39,6 @@ class TestsActivityViewController extends ViewController {
 	}
 
     listen() {
-        // Listen to reports from FrameworkApp
-        Electron.ipcRenderer.on('frameworkApp.report', function() {
-            this.handleFrameworkAppReport(...arguments);
-        }.bind(this));
-
         // Listen for reports from testBrowserWindows
         Electron.ipcRenderer.on('testBrowserWindow.report', function() {
             this.handleTestBrowserWindowReport(...arguments);
@@ -110,7 +105,7 @@ class TestsActivityViewController extends ViewController {
 
          // Get a test browser window from the pool
         var testBrowserWindow = await this.testBrowserWindowPool.getReusable();
-        console.log('runTestMethod testBrowserWindow', testBrowserWindow.uniqueIdentifier, testBrowserWindow);
+        //console.log('runTestMethod testBrowserWindow', testBrowserWindow.uniqueIdentifier, testBrowserWindow);
 
         // Run the test method in the test browser window
         testBrowserWindow.runTestMethod(testMethod);
@@ -153,22 +148,6 @@ class TestsActivityViewController extends ViewController {
         return runNextTestMethodResult;
     }
 
-    handleFrameworkAppReport(event, data) {
-        //console.log('handleFrameworkAppReport', data);
-
-        var status = data.status;
-
-        // A test browser window has been closed
-        if(status == 'testBrowserWindowClosed') {
-            var testBrowserWindowUniqueIdentifier = data.testBrowserWindowUniqueIdentifier;
-            var testBrowserWindow = this.testBrowserWindowPool.getReusableByUniqueIdentifier(testBrowserWindowUniqueIdentifier);
-            if(testBrowserWindow) {
-                testBrowserWindow.status = 'closed';
-                testBrowserWindow.retire();
-            }
-        }
-    }
-
     handleTestBrowserWindowReport(event, data) {
         //console.log('handleTestBrowserWindowReport', data);
 
@@ -185,6 +164,14 @@ class TestsActivityViewController extends ViewController {
             testBrowserWindow.release();
             //console.log(testBrowserWindow);
         }
+        // The testBrowserWindow has been closed
+        else if(status == 'testBrowserWindowClosed') {
+            //console.log('testBrowserWindowClosed');
+            if(testBrowserWindow) {
+                testBrowserWindow.status = 'closed';
+                testBrowserWindow.retire();
+            }
+        }
         //else if(status == 'Proctor.startedRunningTests') {
         //    testBrowserWindow.testMethod.statusSpan.setContent('startedRunningTests');
         //}
@@ -192,7 +179,7 @@ class TestsActivityViewController extends ViewController {
         //    testBrowserWindow.testMethod.statusSpan.setContent('startedRunningTest');
         //}
         else if(status == 'Proctor.startedRunningTestMethod') {
-            console.info('testBrowserWindow.testMethod', testBrowserWindow.testMethod);
+            //console.info('testBrowserWindow.testMethod', testBrowserWindow.testMethod);
             testBrowserWindow.testMethod.tableRowView.getColumnCellView('Status').setContent('Running...');
         }
         else if(status == 'Proctor.finishedRunningTestMethod') {

@@ -139,7 +139,7 @@ class Proctor extends EventEmitter {
 
 	async getAndRunTestMethod(testClassFilePath, testClassName, testMethodName) {
 		var tests = await Proctor.getTestMethod(testClassFilePath, testClassName, testMethodName);
-		console.log('getAndRunTestMethod', testClassFilePath, testClassName, testMethodName);
+		//console.log('getAndRunTestMethod', testClassFilePath, testClassName, testMethodName);
 
 		this.addTests(tests);
 
@@ -322,8 +322,14 @@ class Proctor extends EventEmitter {
 			this.passCurrentTestMethod();
 		}
 		catch(error) {
-			//app.warn('Caught error', error);
+			//console.error('Caught error', error);
 			this.failCurrentTestMethod(error);
+
+			// Throw the error if in a browser window
+			if(app.inElectronRendererProcess()) {
+				throw error;
+			}
+			
 		}
 	}
 
