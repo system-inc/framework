@@ -1,8 +1,6 @@
 // Globals
 import 'framework/globals/Globals.js';
 import AsciiArt from 'framework/system/ascii-art/AsciiArt.js';
-import ElectronManager from 'framework/system/interface/graphical/electron/ElectronManager.js';
-import ElectronGraphicalInterfaceManager from 'framework/system/interface/graphical/managers/electron/ElectronGraphicalInterfaceManager.js';
 import Proctor from 'framework/system/test/Proctor.js';
 
 // Dependencies
@@ -102,6 +100,7 @@ class FrameworkApp extends App {
 
 	async processCommandGraphicalInterface() {
 		//app.log('Loading graphical interface...');
+		var ElectronManager = require('framework/system/interface/graphical/electron/ElectronManager.js').default;
 
 		// Get the path to the Electron executable
 		var pathToElectronExecutable = await ElectronManager.getPathToElectronExecutable();
@@ -232,6 +231,7 @@ class FrameworkApp extends App {
 		*/
 
 		// Create a graphical interface manager, in this case, ElectronGraphicalInterfaceManager
+		var ElectronGraphicalInterfaceManager = require('framework/system/interface/graphical/managers/electron/ElectronGraphicalInterfaceManager.js').default;
 		app.interfaces.graphicalInterfaceManager = new ElectronGraphicalInterfaceManager();
 
 		var FrameworkViewController = require('interface/FrameworkViewController.js').default;
