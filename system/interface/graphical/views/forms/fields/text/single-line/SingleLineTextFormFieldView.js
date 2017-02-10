@@ -13,15 +13,15 @@ class SingleLineTextFormFieldView extends TextFormFieldView {
 
 		// Handle enterSubmits enabled
 		if(this.settings.get('enterSubmits')) {
-			console.log('enterSubmits');
+			//console.log('enterSubmits');
 
 			this.formControlView.on('input.key.enter', function(event) {
-				console.info('enterSubmits input.key.enter', event);
+				//console.info('enterSubmits input.key.enter', event);
 				event.preventDefault(); // Do not let the form navigate on enter key
 				//event.stop();
 				this.parent.submit();
 				//this.emit('form.submit', event);
-				console.info(this);
+				//console.info(this);
 			}.bind(this));
 		}
 		// enterSubmits disabled

@@ -9,7 +9,7 @@ class PropagatingEventEmitter extends EventEmitter {
 	parent = null;
 
 	async emit(eventIdentifier, data, eventOptions) {
-		//app.log('PropagatingEventEmitter emit', this.tag, eventIdentifier);
+		//console.warn('PropagatingEventEmitter emit', eventIdentifier);
 
 		var propagatingEvent = null;
 
@@ -112,22 +112,27 @@ class PropagatingEventEmitter extends EventEmitter {
 		if(propagatingEvent) {
 			// Don't bubble if the event is stopped
 			if(propagatingEvent.stopped) {
+				//console.info(eventIdentifier, 'making shouldBubble false', 'Don\'t bubble if the event is stopped');
 				shouldBubble = false;
 			}
 			// Don't bubble if the event propagation is stopped
 			else if(propagatingEvent.propagationStopped) {
+				//console.info(eventIdentifier, 'making shouldBubble false', 'Don\'t bubble if the event propagation is stopped');
 				shouldBubble = false;
 			}
 			// Don't bubble if the event is not a PropagatingEvent
 			else if(!PropagatingEvent.is(propagatingEvent)) {
+				//console.info(eventIdentifier, 'making shouldBubble false', 'Don\'t bubble if the event is not a PropagatingEvent');
 				shouldBubble = false;
 			}
 			// Don't bubble if the event is not registered for the "bubbling" phase
 			else if(propagatingEvent.registeredPhases[PropagatingEvent.phases.bubbling] == false) {
+				//console.info(eventIdentifier, 'making shouldBubble false', 'Don\'t bubble if the event is not registered for the "bubbling" phase');
 				shouldBubble = false;
 			}
 			// Don't bubble if the event is in the "capturing" phase
 			else if(propagatingEvent.currentPhase == PropagatingEvent.phases.capturing) {
+				//console.info(eventIdentifier, 'making shouldBubble false', 'Don\'t bubble if the event is in the "capturing" phase');
 				//app.info('not bubbling because we are capturing')
 				shouldBubble = false;
 			}
@@ -140,6 +145,8 @@ class PropagatingEventEmitter extends EventEmitter {
 				// We must be the target emitter, so we pass "this" into createEvent
 				propagatingEvent = this.createEvent(this, eventIdentifier, data, eventOptions);
 			}
+
+			//console.warn('shouldBubble and has parent', eventIdentifier);
 
 			propagatingEvent = await this.parent.emit(eventIdentifier, propagatingEvent);
 		}

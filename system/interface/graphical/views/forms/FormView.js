@@ -51,7 +51,7 @@ class FormView extends View {
 
 		this.children.each(function(childIndex, child) {
 			if(Class.isInstance(child, FormFieldView)) {
-				console.info('child', child);
+				//console.info('child', child);
 				data[child.identifier] = child.getData();
 			}
 		}.bind(this));

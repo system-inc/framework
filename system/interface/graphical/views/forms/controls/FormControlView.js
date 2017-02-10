@@ -25,7 +25,8 @@ class FormControlView extends View {
 	}
 
 	setValue(value) {
-		this.value = this.domNode.value = value;
+		//console.info('setValue', this, value);
+		this.value = this.adapter.adaptedView.domNode.value = value;
 
 		return this.value;
 	}
@@ -41,8 +42,7 @@ class FormControlView extends View {
 	// Two-way data binding: if the user changes the value on the DOM, the FormControlView is updated to reflect the new value
 	valueChangedOnDom() {
 		//console.info('Value changed on DOM, updating FormControlView');
-		console.error('need to update dom node');
-		//this.value = this.domNode.value;
+		this.value = this.adapter.adaptedView.domNode.value;
 
 		return this.value;
 	}
