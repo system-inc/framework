@@ -171,6 +171,16 @@ class ViewAdapter {
 		return this.executeAdaptedViewMethod('press', arguments);
 	}
 
+	// HtmlNode
+
+	get dimensions() {
+		return this.adaptedView.dimensions;
+	}
+
+	get position() {
+		return this.adaptedView.position;
+	}
+
 }
 
 // Export

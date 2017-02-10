@@ -21,16 +21,13 @@ class View extends PropagatingEventEmitter {
 
 	children = [];
 
-	dimensions = new Dimensions();
+	get dimensions() {
+		return this.adapter.dimensions;
+	}
 
-	position = {
-		relativeToGraphicalInterface: new Position(),
-		relativeToGraphicalInterfaceViewport: new Position(),
-		relativeToDisplay: new Position(),
-		relativeToAllDisplays: new Position(),
-		relativeToPreviousAllDisplayRelativePosition: new Position(),
-		relativeToRelativeAncestor: new Position(),
-	};
+	get position() {
+		return this.adapter.position;
+	}
 
 	constructor() {
 		// PropagatingEventEmitter

@@ -7,10 +7,6 @@ class FormControlView extends View {
 
 	settings = new Settings();
 
-	attributes = {
-		class: 'control',
-	};
-
 	value = null;
 	originalValue = null;
 
@@ -45,7 +41,7 @@ class FormControlView extends View {
 	// Two-way data binding: if the user changes the value on the DOM, the FormControlView is updated to reflect the new value
 	valueChangedOnDom() {
 		//console.info('Value changed on DOM, updating FormControlView');
-		console.warn('need to update dom node');
+		console.error('need to update dom node');
 		//this.value = this.domNode.value;
 
 		return this.value;

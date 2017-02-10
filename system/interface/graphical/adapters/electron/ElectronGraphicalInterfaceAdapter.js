@@ -1,5 +1,6 @@
 // Dependencies
 import WebGraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
+import Electron from 'electron';
 
 // Class
 class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
@@ -9,8 +10,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	constructor(graphicalInterface, identifier) {
 		super(graphicalInterface);
 
-		// TODO: Do something with the electronBrowserWindow
-		//this.electronBrowserWindow = 
+		// Set the Electron browser window
+		this.electronBrowserWindow = Electron.remote.getCurrentWindow();
 	}
 
 	async sendInputEventMouse(type, x, y, button, globalX, globalY, movementX, movementY, clickCount) {
@@ -65,17 +66,18 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	async clickView(view, button, clickCount, modifiers) {
-		var viewPosition = view.getPosition();
-		//app.warn('viewPosition', viewPosition);
+		var viewPosition = view.position.relativeToGraphicalInterfaceViewport;
+		//var viewPosition = view.position;
+		//console.info('viewPosition', viewPosition);
 
-		return await this.click(Number.round(viewPosition.relativeToGraphicalInterfaceViewport.x), Number.round(viewPosition.relativeToGraphicalInterfaceViewport.y), button, clickCount, modifiers);
+		return await this.click(Number.round(viewPosition.x), Number.round(viewPosition.y), button, clickCount, modifiers);
 	}
 
 	async doubleClickView(view, button, clickCount, modifiers) {
-		var viewPosition = view.getPosition();
-		//app.warn('viewPosition', viewPosition);
+		var viewPosition = view.position.relativeToGraphicalInterfaceViewport;
+		console.info('viewPosition', viewPosition);
 
-		return await this.click(Number.round(viewPosition.relativeToGraphicalInterfaceViewport.x), Number.round(viewPosition.relativeToGraphicalInterfaceViewport.y), button, 2, modifiers);
+		return await this.click(Number.round(viewPosition.x), Number.round(viewPosition.y), button, 2, modifiers);
 	}
 
 	// modifiers: shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
@@ -114,7 +116,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 	// modifiers: shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
 	async pressKey(key, modifiers = []) {
-		//app.warn('ElectronManager.pressKey', key);
+		//console.info('ElectronGraphicalInterfaceAdapter.pressKey', key);
+
 		await this.keyDown(key, modifiers);
 		await this.keyUp(key, modifiers);
 		await this.keyPress(key, modifiers);
@@ -123,9 +126,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	async keyDown(key, modifiers = []) {
-		//app.warn('ElectronManager.keyDown', key, modifiers);
+		//console.info('ElectronGraphicalInterfaceAdapter.keyDown', key, modifiers);
 
-		// Need to send all three events
 		this.electronBrowserWindow.webContents.sendInputEvent({
 			type: 'keyDown',
 			keyCode: key,
@@ -139,86 +141,66 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		return true;
 	}
 
-	keyUp(key, modifiers) {
-		// Get the current web contents
-		var webContents = this.electronBrowserWindow.webContents;
+	async keyUp(key, modifiers = []) {
+		//console.info('ElectronGraphicalInterfaceAdapter.keyUp', key, modifiers);
 
-		// Default modifiers to an empty array
-		if(!modifiers) {
-			modifiers = []; // shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
-		}
-
-		return new Promise(function(resolve, reject) {
-			//app.warn('ElectronManager.keyUp', key, modifiers);
-
-			webContents.sendInputEvent({
-				type: 'keyUp',
-				keyCode: key,
-				modifiers: modifiers,
-			});
-
-			Function.delay(50, function() {
-				resolve(true);
-			});
+		this.electronBrowserWindow.webContents.sendInputEvent({
+			type: 'keyUp',
+			keyCode: key,
+			modifiers: modifiers,
 		});
+
+		await Function.delay(50);
+
+		return true;
 	}
 
-	//keyPress(key, modifiers) {
-	//	// Get the current web contents
-	//	var webContents = this.electronBrowserWindow.webContents;
+	async keyPress(key, modifiers = []) {
+		//console.info('ElectronGraphicalInterfaceAdapter.keyPress', key, modifiers);
 
-	//	// Default modifiers to an empty array
-	//	if(!modifiers) {
-	//		modifiers = []; // shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
-	//	}
+		this.electronBrowserWindow.webContents.sendInputEvent({
+			type: 'char',
+			keyCode: key,
+			modifiers: modifiers,
+		});
 
-	//	return new Promise(function(resolve, reject) {
-	//		//app.warn('ElectronManager.keyPress', key, modifiers);
+		await Function.delay(50);
 
-	//		webContents.sendInputEvent({
-	//			type: 'char',
-	//			keyCode: key,
-	//			modifiers: modifiers,
-	//		});
+		return true;
+	}
 
-	//		Function.delay(50, function() {
-	//			resolve(true);
-	//		});
-	//	});
-	//}
-
-	//copyUsingKeyboard*() {
+	//async copyUsingKeyboard() {
 	//	if(app.onWindows()) {
-	//		yield ElectronManager.keyDown('c', ['control']);
+	//		yield ElectronGraphicalInterfaceAdapter.keyDown('c', ['control']);
 	//	}
 	//	else {
 	//		// TODO: Does not work on macOS
-	//		app.warn('ElectronManager.copyUsingKeyboard does not work on macOS.');
+	//		console.info('ElectronManager.copyUsingKeyboard does not work on macOS.');
 	//		yield ElectronManager.keyDown('c', ['meta']);
 	//	}
-	//}.toPromise();
+	//}
 
-	//cutUsingKeyboard*() {
+	//async cutUsingKeyboard() {
 	//	if(app.onWindows()) {
 	//		yield ElectronManager.keyDown('x', ['control']);
 	//	}
 	//	else {
 	//		// TODO: Does not work on macOS
-	//		app.warn('ElectronManager.cutUsingKeyboard does not work on macOS.');
+	//		console.info('ElectronManager.cutUsingKeyboard does not work on macOS.');
 	//		yield ElectronManager.keyDown('x', ['meta']);
 	//	}
-	//}.toPromise();
+	//}
 
-	//pasteUsingKeyboard*() {
+	//async pasteUsingKeyboard() {
 	//	if(app.onWindows()) {
 	//		yield ElectronManager.keyDown('v', ['control']);
 	//	}
 	//	else {
 	//		// TODO: Does not work on macOS
-	//		app.warn('ElectronManager.pasteUsingKeyboard does not work on macOS.');
+	//		console.info('ElectronManager.pasteUsingKeyboard does not work on macOS.');
 	//		yield ElectronManager.keyDown('v', ['meta']);
 	//	}
-	//}.toPromise();
+	//}
 
 	//getBrowserWindowBounds() {
 	//	var bounds = Electron.remote.getCurrentWindow().getBounds();

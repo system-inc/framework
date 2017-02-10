@@ -2,33 +2,28 @@
 import View from 'framework/system/interface/graphical/views/View.js';
 import Settings from 'framework/system/settings/Settings.js';
 import FormControlView from 'framework/system/interface/graphical/views/forms/controls/FormControlView.js';
+import FormLabelView from 'framework/system/interface/graphical/views/forms/labels/FormLabelView.js';
 
 // Class
 class FormFieldView extends View {
 
-	attributes = {
-		class: 'field',
-	};
+	settings = new Settings({
+		label: null,
+		validation: {
+			required: false,
+		},
+	});
 
-	settings = new Settings();
-
-	identifier = null;
-
-	labelView = null;
+	formLabelView = null;
 
 	formControlView = null;
 
 	constructor(identifier, settings) {
 		// Call the View constructor
-		super(...arguments);
+		super();
 
-		// Set default settings
-		this.settings.setDefaults({
-			label: null,
-			validation: {
-				required: false,
-			},
-		});
+		// Merge in the settings
+		this.settings.merge(settings);
 
 		// Set the identifier, this will tie data for the form to the identifier as a key
 		this.identifier = identifier;
@@ -46,21 +41,19 @@ class FormFieldView extends View {
 
 	addLabel() {
 		// Create the label
-		this.labelView = Html.label({
-			content: this.settings.get('label'),
-		});
+		this.formLabelView = new FormLabelView(this.settings.get('label'), this);
 
 		if(this.formControlView) {
 			var formControlViewId = this.formControlView.getAttribute('id');
 			if(formControlViewId) {
-				this.labelView.setAttribute('for', formControlViewId);
+				this.formLabelView.setAttribute('for', formControlViewId);
 			}
 		}
 
 		// Append the label
-		this.append(this.labelView);
+		this.append(this.formLabelView);
 
-		return this.labelView;
+		return this.formLabelView;
 	}
 
 	getValidationErrors() {

@@ -1,8 +1,10 @@
 // Dependencies
 import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import FormView from 'framework/system/interface/graphical/views/forms/FormView.js';
 import SingleLineTextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js';
+import ViewEvent from 'framework/system/interface/graphical/views/events/ViewEvent.js';
 
 // Class
 class SingleLineTextFormFieldViewTest extends ElectronTest {
@@ -10,9 +12,6 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
 	async testEnterSubmits() {
         //console.log('testEnterSubmits');
         //throw new Error('Throwing error to display browser window.');
-
-        // Create a view controller
-        var viewController = new ViewController();
 
         // Create the form
         var formView = new FormView();
@@ -22,7 +21,7 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
         var capturedEventFormSubmit = null;
         formView.on('form.submit', function(event) {
             event.stop();
-            console.info(event.identifier, event);
+            console.info('captured!', event.identifier, event);
             capturedEventFormSubmit = event;
         });
 
@@ -33,25 +32,27 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
         });
         formView.addFormFieldView(singleLineTextFormFieldView);
         console.info('singleLineTextFormFieldView', singleLineTextFormFieldView);
+        //singleLineTextFormFieldView.on('form.submit', function(event) {
+        //    console.info('captured on single line!', event.identifier, event);
+        //    formView.emit('form.submit');
+        //});
 
-        // Have the graphical interface manager create a graphical interface with a view controller
-        app.interfaces.graphicalInterfaceManager.create(viewController);
-
-        // Add the form to the view controller's view
-        viewController.view.append(formView);
-        viewController.initialize();
+        // Render the view
+        this.render(formView);
 
         // Click the input field
-        //await ElectronManager.clickView(singleLineTextFormFieldView.formControlView);
+        await this.graphicalInterface.adapter.clickView(singleLineTextFormFieldView.formControlView);
 
         // Type something into the field
-        //await ElectronManager.pressKey('A');
+        await this.graphicalInterface.adapter.pressKey('A');
 
         // Press enter
-        //await ElectronManager.pressKey('Enter');
+        await this.graphicalInterface.adapter.pressKey('\u000d');
 
         // Make sure the form submitted event occured
-        //Assert.true(Class.isInstance(capturedEventFormSubmit, ViewEvent), '"form.submit" events emit on "input.key.enter"');
+        Assert.true(Class.isInstance(capturedEventFormSubmit, ViewEvent), '"form.submit" events emit on "input.key.enter"');
+
+        throw new Error('Throwing error to display browser window.');
 	}
 
 }

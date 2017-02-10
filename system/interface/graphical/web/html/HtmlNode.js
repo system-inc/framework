@@ -289,30 +289,45 @@ class HtmlNode extends XmlNode {
 		var dimensionsAndPosition = {
 			dimensions: new Dimensions(),
 			position: {
-				relativeToRelativeAncestor: new Position(),
-				relativeToDocumentViewport: new Position(),
 				relativeToDocument: new Position(),
-				relativeToGlobal: new Position(),
-				relativeToPreviousGlobalRelativePosition: new Position(),
+				relativeToDocumentViewport: new Position(),
+				relativeToDisplay: new Position(),
+				relativeToAllDisplays: new Position(),
+				relativeToPreviousAllDisplaysRelativePosition: new Position(),
+				relativeToRelativeAncestor: new Position(),
 			},
 		};
+		//return dimensionsAndPosition;
 
 		if(this.domNode) {
 			var boundingClientRect = this.domNode.getBoundingClientRect();
+			//console.info('boundingClientRect', boundingClientRect);
 
 			// Dimensions
 			dimensionsAndPosition.dimensions.width = boundingClientRect.width;
 			dimensionsAndPosition.dimensions.height = boundingClientRect.height;
 
-			// Position - relativeToRelativeAncestor
-			this.position.relativeToRelativeAncestor.x = this.domNode.scrollTop;
-			this.position.relativeToRelativeAncestor.y = this.domNode.scrollLeft;
-			this.position.relativeToDocumentViewport.calculateCoordinatesAndEdges(dimensionsAndPosition.dimensions.width, dimensionsAndPosition.dimensions.height);
-
+			// Position - relativeToDocument
+			// TODO
+			
 			// Position - relativeToDocumentViewport
-			this.position.relativeToDocumentViewport.x = boundingClientRect.left;
-			this.position.relativeToDocumentViewport.y = boundingClientRect.top;
-			this.position.relativeToDocumentViewport.calculateCoordinatesAndEdges(boundingClientRect.width, boundingClientRect.height);
+			dimensionsAndPosition.position.relativeToDocumentViewport.x = boundingClientRect.left;
+			dimensionsAndPosition.position.relativeToDocumentViewport.y = boundingClientRect.top;
+			dimensionsAndPosition.position.relativeToDocumentViewport.calculateCoordinatesAndEdges(boundingClientRect.width, boundingClientRect.height);
+
+			// Position - relativeToDisplay
+			// TODO
+
+			// Position - relativeToAllDisplays
+			// TODO
+
+			// Position - relativeToPreviousAllDisplaysRelativePosition
+			// TODO
+
+			// Position - relativeToRelativeAncestor
+			dimensionsAndPosition.position.relativeToRelativeAncestor.x = this.domNode.scrollTop;
+			dimensionsAndPosition.position.relativeToRelativeAncestor.y = this.domNode.scrollLeft;
+			dimensionsAndPosition.position.relativeToDocumentViewport.calculateCoordinatesAndEdges(dimensionsAndPosition.dimensions.width, dimensionsAndPosition.dimensions.height);
 		}
 
 		return dimensionsAndPosition;

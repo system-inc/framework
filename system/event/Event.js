@@ -39,6 +39,7 @@ class Event {
 
 	// Prevents other listeners of the same event from being called, and the event will not propagate (also known as stopImmediatePropagation)
 	stop() {
+		//this.preventDefault(); // Also prevent default?
 		this.stopped = true;
 	}
 

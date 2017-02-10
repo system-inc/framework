@@ -5,21 +5,32 @@ import SingleLineTextFormControlView from 'framework/system/interface/graphical/
 // Class
 class SingleLineTextFormFieldView extends TextFormFieldView {
 
-	attributes = {
-		class: 'field text singleLine',
-	};
-
 	constructor(identifier, settings) {
 		super(...arguments);
 
 		// Create the form control, SingleLineTextFormControlView
 		this.formControlView = new SingleLineTextFormControlView();
 
-		// Handle enterSubmits
+		// Handle enterSubmits enabled
 		if(this.settings.get('enterSubmits')) {
+			console.log('enterSubmits');
+
 			this.formControlView.on('input.key.enter', function(event) {
-				event.preventDefault();
-				this.emit('form.submit');
+				console.info('enterSubmits input.key.enter', event);
+				event.preventDefault(); // Do not let the form navigate on enter key
+				//event.stop();
+				this.parent.submit();
+				//this.emit('form.submit', event);
+				console.info(this);
+			}.bind(this));
+		}
+		// enterSubmits disabled
+		else {
+			//console.log('no enterSubmits');
+
+			this.formControlView.on('input.key.enter', function(event) {
+				//console.log('no enterSubmits input.key.enter', event);
+				event.preventDefault(); // Do not let the form navigate on enter key
 			}.bind(this));
 		}
 

@@ -4,10 +4,6 @@ import FormFieldView from 'framework/system/interface/graphical/views/forms/fiel
 // Class
 class TextFormFieldView extends FormFieldView {
 
-	attributes = {
-		class: 'field text',
-	}
-
 }
 
 // Export
