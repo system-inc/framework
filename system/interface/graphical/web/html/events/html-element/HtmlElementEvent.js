@@ -9,7 +9,7 @@ class HtmlElementEvent extends HtmlNodeEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		console.log('HtmlElementEvent.createEventsFromDomEvent', domEvent.type, arguments);
+		//console.log('HtmlElementEvent.createEventsFromDomEvent', domEvent.type, arguments);
 
 		var events = [];
 
@@ -62,31 +62,53 @@ class HtmlElementEvent extends HtmlNodeEvent {
 				scrollingElement = emitter.domDocument.scrollingElement;
 			}
 
+			// Get the cached position
+			var previousPosition = null;
+
+			// If the cached position does not exist, assume an x and y of 0
+			if(emitter.cachedPosition === null) {
+				previousPosition = {
+					x: 0,
+					y: 0,
+				};
+			}
+			// Use the cached position
+			else {
+				previousPosition = emitter.cachedPosition.relativeToRelativeAncestor;
+			}
+
+			// Update the cached position for the next time
+			emitter.position;
+
+			//console.info('previousPosition', previousPosition);
+			//console.info('scrollingElement.scrollTop', scrollingElement.scrollTop);
+			//console.info('scrollingElement.scrollLeft', scrollingElement.scrollLeft);
+
 			// Check if the scroll is up or down and fire additional events
 
 			// Scrolling up
-			if(emitter.position.relativeToRelativeAncestor.y > scrollingElement.scrollTop) {
+			if(previousPosition.y > scrollingElement.scrollTop) {
+				//console.log('scroll up');
 				events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.up'));
 			}
 			// Scrolling down
-			else if(emitter.position.relativeToRelativeAncestor.y < scrollingElement.scrollTop) {
+			else if(previousPosition.y < scrollingElement.scrollTop) {
+				//console.log('scroll down');
 				events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.down'));
 			}
 			
 			// Scrolling horizontally can happen at the same time as vertically, so we use another if statement instead of an else if
 
 			// Scrolling left
-			if(emitter.position.relativeToRelativeAncestor.x > scrollingElement.scrollLeft) {
+			if(previousPosition.x > scrollingElement.scrollLeft) {
+				//console.log('scroll left');
 				events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.left'));
 			}
 			// Scrolling right
-			else if(emitter.position.relativeToRelativeAncestor.x < scrollingElement.scrollLeft) {
+			else if(previousPosition.x < scrollingElement.scrollLeft) {
+				//console.log('scroll right');
 				events.append(HtmlElementEvent.createFromDomEvent(domEvent, emitter, eventIdentifier+'.right'));
 			}
-			
-			// Update the position relative to the relative ancestor
-			emitter.position.relativeToRelativeAncestor.x = scrollingElement.scrollLeft;
-			emitter.position.relativeToRelativeAncestor.y = scrollingElement.scrollTop;
 		}
 
 		//console.log('events', events);

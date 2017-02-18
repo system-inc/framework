@@ -371,12 +371,14 @@ class HtmlEventProxy {
 		};
 
 		if(map[eventPattern]) {
-			throw new Error('Event listener not bound for "'+eventPattern+'". You must use '+map[eventPattern]+' instead of "'+eventPattern+'".');
-			//app.error('Event listener not bound for "'+eventPattern+'". You must use', map[eventPattern], 'instead of "'+eventPattern+'".');
+			console.warn('Event listener not bound for "'+eventPattern+'". You must use', map[eventPattern], 'instead of "'+eventPattern+'".');
+			//throw new Error('Event listener not bound for "'+eventPattern+'". You must use '+map[eventPattern]+' instead of "'+eventPattern+'".');
 		}
 	}
 
 	static addEventListener(eventPattern, functionToBind, timesToRun, htmlEventEmitter) {
+		//console.info('addEventListener eventPattern', eventPattern);
+
 		// Allow multiple events to be registered by passing in an array
 		if(Array.is(eventPattern)) {
 			eventPattern.each(function(currentEventPatternIndex, currentEventPattern) {
@@ -499,7 +501,7 @@ class HtmlEventProxy {
 				'htmlDocument.domUpdatesExecuted',
 			];
 			if(!common.contains(eventPattern)) {
-				app.log('No domEventIdentifier found for "'+eventPattern+'", the eventPattern must not be for a standard event.');
+				console.log('No domEventIdentifier found for "'+eventPattern+'", the eventPattern must not be for a standard event.');
 			}
 		}
 

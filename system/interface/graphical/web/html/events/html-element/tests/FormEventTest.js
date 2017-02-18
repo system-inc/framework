@@ -1,18 +1,13 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 import Html from 'framework/system/interface/graphical/web/html/Html.js';
 import FormEvent from 'framework/system/interface/graphical/web/html/events/html-element/FormEvent.js';
-var ElectronManager = null;
 
 // Class
-class FormEventTest extends ElectronTest {
-
-	async before() {
-		// Initialize the ElectronManager here as to not throw an exception when electron is not present
-		ElectronManager = Framework.require('framework/system/electron/ElectronManager.js');
-	}
+class FormEventTest extends ElectronHtmlTest {
 
 	async testFormEvent() {
 		// Create an HtmlDocument
@@ -57,16 +52,16 @@ class FormEventTest extends ElectronTest {
         htmlDocument.mountToDom();
 
         // Click into the input
-		await ElectronManager.clickHtmlElement(inputElement);
+		await this.inputPressHtmlNode(inputElement);
 
 		// Type a key
-		await ElectronManager.pressKey('A');
+		await this.inputKeyPress('A');
 
 		// Click the body to blur off of the inputElement which will cause the change event to be emitted
-		await ElectronManager.clickHtmlElement(htmlDocument.body);
+		await this.inputPressHtmlNode(htmlDocument.body);
 
 		// Click the submit button
-		await ElectronManager.clickHtmlElement(submitButton);
+		await this.inputPressHtmlNode(submitButton);
 
 		// form.control.change should have fired
 		Assert.true(Class.isInstance(capturedFormControlChangeEvent, FormEvent), '"form.control.change" events are instances of FormEvent');

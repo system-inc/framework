@@ -21,7 +21,7 @@ class TestsActivityViewController extends ViewController {
 	testsFormView = null;
 	
     testBrowserWindows = {};
-    testBrowserWindowPool = new TestBrowserWindowPool();
+    testBrowserWindowPool = new TestBrowserWindowPool().initialize();
 
     previousTestMethodIndex = null;
     currentTestMethodIndex = null;
@@ -47,11 +47,12 @@ class TestsActivityViewController extends ViewController {
 
 	async getTests() {
 		// Get all possible tests: Proctor.getTests(path, filePattern, methodPattern)
-        //var tests = await Proctor.getTests();
+        var tests = await Proctor.getTests();
+        //var tests = await Proctor.getTests(null, 'Database');
         //var tests = await Proctor.getTests(null, 'SingleLine');
         //var tests = await Proctor.getTests(null, 'String');
         //var tests = await Proctor.getTests(null, 'interface');
-        var tests = await Proctor.getTests(null, 'Html');
+        //var tests = await Proctor.getTests(null, 'Html');
         //var tests = await Proctor.getTests(null, 'Input');
         //console.log('tests', tests);
 
@@ -71,24 +72,33 @@ class TestsActivityViewController extends ViewController {
         // Summary
         var summary = new TextView(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
         testsFormView.append(summary);
+
+        var status = new TextView('Pool status');
+        testsFormView.append(status);
         
         // Table
         var tableView = new TableView();
-        tableView.setColumns(['Class', 'Method', 'Status', '']);
+        tableView.setColumns(['Class', 'Method', 'Status', '', '']);
         
         // Add each test
         this.tests.methods.each(function(testMethodIndex, testMethod) {
             // Status
             testMethod.statusText = 'Not Started';
 
-            // Button
+            // Show
+            testMethod.showButton = new ButtonView('Show');
+            testMethod.showButton.on('input.press', function(event) {
+                this.runTestMethod(testMethod, true);
+            }.bind(this));
+
+            // Run
             testMethod.runButton = new ButtonView('Run');
             testMethod.runButton.on('input.press', function(event) {
                 this.runTestMethod(testMethod);
             }.bind(this));
 
             // Add the row
-            testMethod.tableRowView = tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusText, testMethod.runButton);
+            testMethod.tableRowView = tableView.addRow(testMethod.class.name, testMethod.name, testMethod.statusText, testMethod.showButton, testMethod.runButton);
         }.bind(this));
 
         // Submit event listener
@@ -103,12 +113,21 @@ class TestsActivityViewController extends ViewController {
         this.view.append(testsFormView);
     }
 
-    async runTestMethod(testMethod) {
+    async runTestMethod(testMethod, show = false) {
         //console.info('run test', testMethod);
+
+        testMethod.tableRowView.getColumnCellView('Status').setContent('Initializing...');
 
          // Get a test browser window from the pool
         var testBrowserWindow = await this.testBrowserWindowPool.getReusable();
         //console.log('runTestMethod testBrowserWindow', testBrowserWindow.uniqueIdentifier, testBrowserWindow);
+
+        // Show the browser window immediately with developer tools open and do not reset when finished running tests
+        if(show) {
+            testBrowserWindow.show();
+            testBrowserWindow.openDeveloperTools();
+            testBrowserWindow.resetWhenFinishedRunningTests = false;
+        }
 
         // Run the test method in the test browser window
         testBrowserWindow.runTestMethod(testMethod);
@@ -192,10 +211,15 @@ class TestsActivityViewController extends ViewController {
         //    testBrowserWindow.testMethod.statusSpan.setContent('finishedRunningTest');
         //}
         else if(status == 'Proctor.finishedRunningTests') {
-            //testBrowserWindow.testMethod.statusSpan.setContent('finishedRunningTests');
+            //testBrowserWindow.testMethod.tableRowView.getColumnCellView('Status').setContent('Finished running tests...');
 
             if(testBrowserWindow.testMethod.callback) {
                 testBrowserWindow.testMethod.callback.apply(this);
+            }
+
+            // If a test was skipped
+            if(data.data.skippedTestMethods.length) {
+                testBrowserWindow.testMethod.tableRowView.getColumnCellView('Status').setContent('Skipped');
             }
 
             // If a test failed
@@ -205,8 +229,8 @@ class TestsActivityViewController extends ViewController {
                 testBrowserWindow.openDeveloperTools();
                 testBrowserWindow.show();
             }
-            // If no tests failed
-            else {
+            // If no tests failed and we want to reset when finished running tests
+            else if(testBrowserWindow.resetWhenFinishedRunningTests) {
                 // Command the testBrowserWindow to close
                 //Electron.ipcRenderer.send('mainBrowserWindow.commandTestBrowserWindow', testBrowserWindowUniqueIdentifier, 'close', {});
 

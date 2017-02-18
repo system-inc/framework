@@ -45,7 +45,7 @@ class HtmlDocumentEvent extends HtmlEvent {
 		else if(domEvent.type == 'resize') {
 			eventIdentifier = 'htmlDocument.resize';
 
-			emitter.getDimensionAndPositionFromDomDocument();
+			emitter.calculateDimensionsAndPosition();
 		}
 		else if(domEvent.type == 'webkitfullscreenchange') {
 			if(emitter.domDocument.webkitIsFullScreen) {

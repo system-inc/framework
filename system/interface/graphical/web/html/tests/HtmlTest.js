@@ -1,11 +1,12 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import Html from 'framework/system/interface/graphical/web/html/Html.js';
 import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlElement.js';
 
 // Class
-class HtmlTest extends Test {
+class HtmlTest extends ElectronHtmlTest {
 
 	async testHtml() {
 		var actual = Html.p();

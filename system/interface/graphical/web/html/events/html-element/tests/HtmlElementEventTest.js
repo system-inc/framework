@@ -1,18 +1,13 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 import Html from 'framework/system/interface/graphical/web/html/Html.js';
 import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
-var ElectronManager = null;
 
 // Class
-class HtmlElementEventTest extends ElectronTest {
-
-	async before() {
-		// Initialize the ElectronManager here as to not throw an exception when electron is not present
-		ElectronManager = Framework.require('framework/system/electron/ElectronManager.js');
-	}
+class HtmlElementEventTest extends ElectronHtmlTest {
 
 	async testHtmlElementEventFocus() {
 		// Create an HtmlDocument
@@ -45,10 +40,10 @@ class HtmlElementEventTest extends ElectronTest {
         htmlDocument.mountToDom();
 
         // Click into the textArea
-		await ElectronManager.clickHtmlElement(textAreaElement);
+		await this.inputPressHtmlNode(textAreaElement);
 
 		// Click out of the textArea
-		await ElectronManager.clickHtmlElement(htmlDocument.body);
+		await this.inputPressHtmlNode(htmlDocument.body);
 
 		Assert.true(Class.isInstance(capturedHtmlElementFocusEvent, HtmlElementEvent), '"htmlElement.focus" events are instances of HtmlElementEvent');
 		Assert.true(Class.isInstance(capturedHtmlElementBlurEvent, HtmlElementEvent), '"htmlElement.blur" events are instances of HtmlElementEvent');

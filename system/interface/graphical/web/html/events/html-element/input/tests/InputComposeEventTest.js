@@ -1,20 +1,15 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 import Html from 'framework/system/interface/graphical/web/html/Html.js';
-import CompositionEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputComposeEvent.js';
-var ElectronManager = null;
+import InputComposeEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputComposeEvent.js';
 
 // Class
-class InputComposeEventTest extends ElectronTest {
+class InputComposeEventTest extends ElectronHtmlTest {
 
-	async before() {
-		// Initialize the ElectronManager here as to not throw an exception when electron is not present
-		ElectronManager = Framework.require('framework/system/electron/ElectronManager.js');
-	}
-
-	async testCompositionEvent() {
+	async testInputComposeEvent() {
 		// Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
@@ -54,16 +49,18 @@ class InputComposeEventTest extends ElectronTest {
 		// Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
+        console.info('this', this);
+
         // Click into the text area
-        await ElectronManager.doubleClickHtmlElement(textAreaElement);
+        await this.inputPressHtmlNode(textAreaElement);
 
         // Start composing
 		// How to trigger a input.compose event? This doesn't do it
-        await ElectronManager.pressKey('a');
+        await this.inputKeyPress('A');
 
-		//Assert.true(Class.isInstance(capturedCompositionStartEvent, CompositionEvent), '"input.compose.start" events are instances of CompositionEvent');
-		//Assert.true(Class.isInstance(capturedCompositionUpdateEvent, CompositionEvent), '"input.compose.update" events are instances of CompositionEvent');
-		//Assert.true(Class.isInstance(capturedCompositionEndEvent, CompositionEvent), '"input.compose.end" events are instances of CompositionEvent');
+		//Assert.true(Class.isInstance(capturedCompositionStartEvent, InputComposeEvent), '"input.compose.start" events are instances of InputComposeEvent');
+		//Assert.true(Class.isInstance(capturedCompositionUpdateEvent, InputComposeEvent), '"input.compose.update" events are instances of InputComposeEvent');
+		//Assert.true(Class.isInstance(capturedCompositionEndEvent, InputComposeEvent), '"input.compose.end" events are instances of InputComposeEvent');
 
 		//throw new Error('Throwing error to display browser window.');
 	}

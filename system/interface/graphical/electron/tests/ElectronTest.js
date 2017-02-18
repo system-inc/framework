@@ -1,39 +1,23 @@
 // Dependencies
 import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
 
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
+import ElectronGraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/electron/ElectronGraphicalInterfaceAdapter.js';
 
 // Class
 class ElectronTest extends Test {
-
-	graphicalInterface = null;
-	viewController = null;
-
-	constructor() {
-		super();
-
-		this.viewController = new ViewController();
-	}
-
-	render(view) {
-		if(view !== undefined) {
-			this.viewController.view = view;
-		}
-
-		// Have the graphical interface manager create a graphical interface with a view controller
-        this.graphicalInterface = app.interfaces.graphicalInterfaceManager.create(this.viewController);
-	}
 
 	async shouldRun() {
 		return app.inElectronContext();
 	}
 
-	async before() {
-		var ElectronGraphicalInterfaceManager = require('framework/system/interface/graphical/managers/electron/ElectronGraphicalInterfaceManager.js').default;
+	inputKeyDown = ElectronGraphicalInterfaceAdapter.prototype.inputKeyDown;
+	inputKeyUp = ElectronGraphicalInterfaceAdapter.prototype.inputKeyUp;
+	inputKeyPress = ElectronGraphicalInterfaceAdapter.prototype.inputKeyPress;
+	inputKeyPressByCombination = ElectronGraphicalInterfaceAdapter.prototype.inputKeyPressByCombination;
 
-		app.interfaces.graphicalInterfaceManager = new ElectronGraphicalInterfaceManager();
-	}
+	inputHover = ElectronGraphicalInterfaceAdapter.prototype.inputHover;
+
+	inputScroll = ElectronGraphicalInterfaceAdapter.prototype.inputScroll;
 
 	// This is an abstract class, do not add any tests here
 

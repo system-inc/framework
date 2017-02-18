@@ -1,22 +1,13 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 import Html from 'framework/system/interface/graphical/web/html/Html.js';
-import HtmlEvent from 'framework/system/interface/graphical/web/html/events/html-event/HtmlEvent.js';
-import HtmlNodeEvent from 'framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEvent.js';
-import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
-import InputPressEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
 import InputHoverEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputHoverEvent.js';
-var ElectronManager = null;
 
 // Class
-class InputHoverEventTest extends ElectronTest {
-
-	async before() {
-		// Initialize the ElectronManager here as to not throw an exception when electron is not present
-		ElectronManager = Framework.require('framework/system/electron/ElectronManager.js');
-	}
+class InputHoverEventTest extends ElectronHtmlTest {
 
 	async testInputHoverEvent() {
 		// Create an HtmlDocument
@@ -65,14 +56,11 @@ class InputHoverEventTest extends ElectronTest {
 		// Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
-        var htmlElementPosition = htmlElement.getPosition();
-        console.info('htmlElementPosition', htmlElementPosition);
-
         // Simulate moving the mouse over
-        await ElectronManager.sendInputEventMouse('mouseMove', htmlElementPosition.relativeToDocumentViewport.coordinates.center.x, htmlElementPosition.relativeToDocumentViewport.coordinates.center.y);
+        await this.inputHoverHtmlNode(htmlElement);
 
         // Simulate moving the mouse out
-        await ElectronManager.sendInputEventMouse('mouseMove', 0, 0);
+        await this.inputHoverHtmlNode(htmlDocument.body);
         
 		Assert.true(capturedEventInputHover, '"input.hover" events are emitted');
 		Assert.true(capturedEventInputHoverIn, '"input.hover.in" events are emitted');

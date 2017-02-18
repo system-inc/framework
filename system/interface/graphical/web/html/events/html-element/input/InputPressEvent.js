@@ -73,7 +73,7 @@ class InputPressEvent extends HtmlElementEvent {
 	}
 
 	static createEventsFromDomEvent(domEvent, emitter) {
-		//console.log('InputPressEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
+		//console.info('InputPressEvent.createEventsFromDomEvent arguments', domEvent.type, arguments);
 
 		var events = [];
 
@@ -110,7 +110,7 @@ class InputPressEvent extends HtmlElementEvent {
 			events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));	
 		}
 
-		// input.press.secondary.click events are fired on mouseup
+		// input.press.secondary.click events have to be manually fired on mouseup
 		if(inputPressEventWithoutIdentifier.button == 2 && domEvent.type == 'mouseup') {
 			events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, 'input.press.secondary'));
 
@@ -120,7 +120,17 @@ class InputPressEvent extends HtmlElementEvent {
 			}
 		}
 
-		// Conditionally fire another event for pressCount (this covers everything but mouse button 2)
+		// input.press.tertiary.click events have to be manually fired on mouseup
+		if(inputPressEventWithoutIdentifier.button == 3 && domEvent.type == 'mouseup') {
+			events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, 'input.press.tertiary'));
+
+			// Fire pressCount events for mouse 2
+			if(pressCountMap[inputPressEventWithoutIdentifier.pressCount]) {
+				events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, 'input.press.tertiary.'+pressCountMap[inputPressEventWithoutIdentifier.pressCount]));
+			}
+		}
+
+		// Conditionally fire another event for pressCount (this covers everything but mouse button 2 and 3)
 		if(domEvent.type == 'click' && pressCountMap[inputPressEventWithoutIdentifier.pressCount]) {
 			eventIdentifier = eventIdentifier+'.'+pressCountMap[inputPressEventWithoutIdentifier.pressCount];
 			events.append(InputPressEvent.createFromDomEvent(domEvent, emitter, eventIdentifier));

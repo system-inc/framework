@@ -286,12 +286,12 @@ class FrameworkApp extends App {
 
 	    var testBrowserWindow = this.testBrowserWindows[testBrowserWindowUniqueIdentifier] = new Electron.BrowserWindow({
 	        title: testBrowserWindowUniqueIdentifier,
-	        //show: false,
+	        show: false,
 	    });
 
 	    // Show developer tools on failure
 	    // TODO: Don't show dev tools always
-	    testBrowserWindow.openDevTools();
+	    //testBrowserWindow.openDevTools();
 
 	    // Load the test method container page, passing in the testBrowserWindowUniqueIdentifier as the hash
 		var testBrowserWindowUrl = require('url').format({
@@ -344,7 +344,7 @@ class FrameworkApp extends App {
 
                     	// Log errors
                     	if(event.identifier === 'Proctor.finishedRunningTestMethod') {
-	                    	var error = event.getValueByPath('data.failedTestMethods.0.error');
+                    		var error = event.getValueByPath('data.failedTestMethods.0.error');
 	                    	if(error) {
 	                    		console.error(error.toString());
 	                    	}
@@ -359,6 +359,7 @@ class FrameworkApp extends App {
                 });
 
                 //app.log('Testing below');
+                //console.log('hi!');
                 proctor.getAndRunTestMethod(testClassFilePath, testClassName, testMethodName);
             }
             // close

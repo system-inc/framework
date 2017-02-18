@@ -1,5 +1,5 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
+import ElectronGraphicalInterfaceTest from 'framework/system/interface/graphical/electron/tests/ElectronGraphicalInterfaceTest.js';
 import Assert from 'framework/system/test/Assert.js';
 
 import FormView from 'framework/system/interface/graphical/views/forms/FormView.js';
@@ -7,7 +7,7 @@ import SingleLineTextFormFieldView from 'framework/system/interface/graphical/vi
 import ViewEvent from 'framework/system/interface/graphical/views/events/ViewEvent.js';
 
 // Class
-class SingleLineTextFormFieldViewTest extends ElectronTest {
+class SingleLineTextFormFieldViewTest extends ElectronGraphicalInterfaceTest {
 
 	async testEnterSubmits() {
         //console.log('testEnterSubmits');
@@ -37,13 +37,13 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
         this.render(formView);
 
         // Click the input field
-        await this.graphicalInterface.adapter.clickView(singleLineTextFormFieldView.formControlView);
+        await this.inputPressView(singleLineTextFormFieldView.formControlView);
 
         // Type something into the field
-        await this.graphicalInterface.adapter.pressKey('A');
+        await this.inputKeyPress('A');
 
         // Press enter
-        await this.graphicalInterface.adapter.pressKey('\u000d');
+        await this.inputKeyPress('\u000d');
 
         // Make sure the form submitted event occured
         Assert.true(Class.isInstance(capturedEventFormSubmit, ViewEvent), '"form.submit" events emit on "input.key.enter"');
@@ -75,13 +75,13 @@ class SingleLineTextFormFieldViewTest extends ElectronTest {
         this.render(formView);
 
         // Click the input field
-        await this.graphicalInterface.adapter.clickView(singleLineTextFormFieldView.formControlView);
+        await this.inputPressView(singleLineTextFormFieldView.formControlView);
 
         // Type something into the field
-        await this.graphicalInterface.adapter.pressKey('A');
+        await this.inputKeyPress('A');
 
         // Press enter
-        await this.graphicalInterface.adapter.pressKey('\u000d');
+        await this.inputKeyPress('\u000d');
 
         // Make sure the form submitted event occured
         //Assert.true(Class.isInstance(capturedEventFormSubmit, ViewEvent), '"form.submit" events emit on "input.key.enter"');

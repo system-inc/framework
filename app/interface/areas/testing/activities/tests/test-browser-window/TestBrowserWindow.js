@@ -8,6 +8,8 @@ class TestBrowserWindow extends Reusable {
 	status = null;
 	testMethod = null;
 
+	resetWhenFinishedRunningTests = true;
+
 	initialize() {
 		// Set the initial status
 		this.status = 'waitingForFrameworkAppToCreateTestBrowserWindow';

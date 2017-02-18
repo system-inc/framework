@@ -1,19 +1,14 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 import Html from 'framework/system/interface/graphical/web/html/Html.js';
 import InputKeyEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputKeyEvent.js';
 import WildcardPatternMatcher from 'framework/system/search/patterns/WildcardPatternMatcher.js';
-var ElectronManager = null;
 
 // Class
-class InputKeyEventTest extends ElectronTest {
-
-	async before() {
-		// Initialize the ElectronManager here as to not throw an exception when electron is not present
-		ElectronManager = Framework.require('framework/system/electron/ElectronManager.js');
-	}
+class InputKeyEventTest extends ElectronHtmlTest {
 
 	async testAllInputKeyEvents() {
 		// Create an HtmlDocument
@@ -70,7 +65,7 @@ class InputKeyEventTest extends ElectronTest {
 			}
 			else {
 				console.error('could not find htmlNode for ', selector);
-			}			
+			}
 		});
 		htmlDocument.body.append(textAreaElement);
 
@@ -159,10 +154,12 @@ class InputKeyEventTest extends ElectronTest {
 			});
         });
 
+        await this.inputKeyPress('^');
+
 		// Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
-        throw new Error('Throwing error to display browser window.');
+        //throw new Error('Throwing error to display browser window.');
 	}
 
 	async testInputKeyEvent() {
@@ -193,10 +190,10 @@ class InputKeyEventTest extends ElectronTest {
         htmlDocument.mountToDom();
 
         // Click into the text area
-		await ElectronManager.clickHtmlElement(htmlElement);
+		await this.inputPressHtmlNode(htmlElement);
 
 		// Type a key
-		await ElectronManager.pressKey('a');
+		await this.inputKeyPress('a');
 		Assert.true(Class.isInstance(capturedEvent, InputKeyEvent), '"input.key.a" events triggered by key presses are instances of InputKeyEvent');
 
 		Assert.strictEqual(capturedEvent.modifierKeysDown.alt, false, 'modifierKeysDown.alt property is correctly set');
@@ -328,47 +325,49 @@ class InputKeyEventTest extends ElectronTest {
         htmlDocument.mountToDom();
 
         // Click into the text area
-		await ElectronManager.clickHtmlElement(htmlElement);
+		await this.inputPressHtmlNode(htmlElement);
 
-		await ElectronManager.keyDown('Up');
-		await ElectronManager.keyUp('Up');
+		//await this.inputKeyDown('Up');
+		//await this.inputKeyUp('Up');
+		await this.inputKeyPress('Up');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyUp, InputKeyEvent), '"input.key.up" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Down');
+		await this.inputKeyPress('Down');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyDown, InputKeyEvent), '"input.key.down" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Left');
+		await this.inputKeyPress('Left');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyLeft, InputKeyEvent), '"input.key.left" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Right');
+		await this.inputKeyPress('Right');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyRight, InputKeyEvent), '"input.key.right" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Enter');
+		await this.inputKeyPress('Enter');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyEnter, InputKeyEvent), '"input.key.enter" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyDown('Backspace');
-		await ElectronManager.keyUp('Backspace');
+		await this.inputKeyDown('Backspace');
+		await this.inputKeyUp('Backspace');
+		//await this.inputKeyPress('Backspace');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyBackspace, InputKeyEvent), '"input.key.backspace" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Space');
+		await this.inputKeyPress('Space');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeySpace, InputKeyEvent), '"input.key.space" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Alt');
+		await this.inputKeyPress('Alt');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyAlt, InputKeyEvent), '"input.key.alt" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Control');
+		await this.inputKeyPress('Control');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyControl, InputKeyEvent), '"input.key.control" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Meta');
+		await this.inputKeyPress('Meta');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyMeta, InputKeyEvent), '"input.key.meta" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Shift');
+		await this.inputKeyPress('Shift');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyShift, InputKeyEvent), '"input.key.shift" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Delete');
+		await this.inputKeyPress('Delete');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyDelete, InputKeyEvent), '"input.key.delete" events are instances of InputKeyEvent');
 
-		await ElectronManager.keyPress('Insert');
+		await this.inputKeyPress('Insert');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyInsert, InputKeyEvent), '"input.key.insert" events are instances of InputKeyEvent');
 
 		// Check counts

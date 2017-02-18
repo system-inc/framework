@@ -5,14 +5,11 @@ import TestBrowserWindow from 'interface/areas/testing/activities/tests/test-bro
 // Class
 class TestBrowserWindowPool extends Pool {
 
-	minimumSize = 1;
-	maximumSize = 4;
+	reusableClass = TestBrowserWindow;
+	minimumSize = 4;
+	maximumSize = 8;
 	createReusablesAsNecessary = false;
-	timeInMillisecondsToWaitToRetireAvailableReusables = 1 * 1000;
-
-	constructor() {
-		super(TestBrowserWindow);
-	}
+	timeInMillisecondsToWaitToRetireAvailableReusables = 1000 * .25;
 
 }
 

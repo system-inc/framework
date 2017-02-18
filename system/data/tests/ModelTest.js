@@ -1,6 +1,7 @@
 // Dependencies
 import Test from 'framework/system/test/Test.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import ModelClassManager from 'framework/system/data/ModelClassManager.js';
 import DatabaseTest from 'framework/system/database/tests/DatabaseTest.js';
 

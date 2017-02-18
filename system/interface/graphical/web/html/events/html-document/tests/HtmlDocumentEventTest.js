@@ -1,20 +1,14 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
 
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 import Html from 'framework/system/interface/graphical/web/html/Html.js';
 import HtmlDocumentEvent from 'framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEvent.js';
 import HtmlEvent from 'framework/system/interface/graphical/web/html/events/html-event/HtmlEvent.js';
-var ElectronManager = null;
 
 // Class
-class FormEventTest extends ElectronTest {
-
-	async before() {
-    	// Initialize the ElectronManager here as to not throw an exception when electron is not present
-    	ElectronManager = Framework.require('framework/system/electron/ElectronManager.js');
-	}
+class HtmlDocumentEventTest extends ElectronHtmlTest {
 
 	async testHtmlDocumentEventCustomDomEvents() {
     	// Create an HtmlDocument
@@ -27,10 +21,10 @@ class FormEventTest extends ElectronTest {
         htmlDocument.on('htmlDocument.*', function(event) {
             console.warn(event.identifier, event);
 
-            if(event.identifier == 'htmlDocument.mountedToDom') {
+            if(event.identifier === 'htmlDocument.mountedToDom') {
                 capturedMountedToDomEvent = event;
             }
-            else if(event.identifier == 'htmlDocument.domUpdatesExecuted') {
+            else if(event.identifier === 'htmlDocument.domUpdatesExecuted') {
                 capturedDomUpdatesExecutedEvent = event;
             }
         });
@@ -84,14 +78,18 @@ class FormEventTest extends ElectronTest {
         htmlDocument.mountToDom();
 
         // Click the link to change the fragment
-        aElement.click();
-        await Function.delay(50); // Give some time for the event to emit
+        aElement.press();
+
+        // Give some time for the event to emit
+        await Function.delay(50);
 
         Assert.strictEqual(capturedEventHtmlDocumentUrlFragmentChange.data, htmlDocument.url, 'htmlDocument.url.fragment.change events emit correctly');
 
         // Need to go back to the original URL as Assistant app needs to use the fragment to identify the browser window
-        aElementForStartingFragment.click();
-        await Function.delay(50); // Give some time for the event to emit
+        aElementForStartingFragment.press();
+        
+        // Give some time for the event to emit
+        await Function.delay(50);
 
         //throw new Error('Throwing error to display browser window.');
     }
@@ -213,9 +211,13 @@ class FormEventTest extends ElectronTest {
         // Mount the HtmlDocument to the DOM
         htmlDocument.mountToDom();
 
+        //return;
+
         // Scroll down
         htmlDocument.domDocument.scrollingElement.scrollTop = 100;
-        await Function.delay(50); // Give some time for the scroll event to emit
+        
+        // Give some time for the scroll event to emit
+        await Function.delay(50);
 
         Assert.true(Class.isInstance(capturedHtmlDocumentScrollDownEvent, HtmlEvent), '"htmlDocument.scroll.down" events are instances of HtmlEvent');
 
@@ -235,7 +237,9 @@ class FormEventTest extends ElectronTest {
 
         // Scroll up
         htmlDocument.domDocument.scrollingElement.scrollTop = 0;
-        await Function.delay(50); // Give some time for the scroll event to emit
+        
+        // Give some time for the scroll event to emit
+        await Function.delay(50);
 
         Assert.true(Class.isInstance(capturedHtmlDocumentScrollUpEvent, HtmlEvent), '"htmlDocument.scroll.up" events are instances of HtmlEvent');
 
@@ -252,7 +256,9 @@ class FormEventTest extends ElectronTest {
 
         // Scroll right
         htmlDocument.domDocument.scrollingElement.scrollLeft = 100;
-        await Function.delay(50); // Give some time for the scroll event to emit
+        
+        // Give some time for the scroll event to emit
+        await Function.delay(50);
 
         Assert.true(Class.isInstance(capturedHtmlDocumentScrollRightEvent, HtmlEvent), '"htmlDocument.scroll.right" events are instances of HtmlEvent');
 
@@ -269,7 +275,9 @@ class FormEventTest extends ElectronTest {
 
         // Scroll left
         htmlDocument.domDocument.scrollingElement.scrollLeft = 0;
-        await Function.delay(50); // Give some time for the scroll event to emit
+        
+        // Give some time for the scroll event to emit
+        await Function.delay(50);
 
         Assert.true(Class.isInstance(capturedHtmlDocumentScrollLeftEvent, HtmlEvent), '"htmlDocument.scroll.left" events are instances of HtmlEvent');
 
@@ -284,4 +292,4 @@ class FormEventTest extends ElectronTest {
 }
 
 // Export
-export default FormEventTest;
+export default HtmlDocumentEventTest;

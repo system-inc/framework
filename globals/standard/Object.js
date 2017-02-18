@@ -57,6 +57,10 @@ Object.defineProperty(Object.prototype, 'getValueByPath', {
             // If the key exists assign it
             if(current[keys[i]] !== undefined) {
                 current = current[keys[i]];
+
+                if(current === null) {
+                    break;
+                }
             }
             // If the key does not exist, exit the loop
             else {

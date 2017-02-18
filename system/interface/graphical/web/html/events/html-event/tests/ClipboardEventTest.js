@@ -1,18 +1,13 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 import Html from 'framework/system/interface/graphical/web/html/Html.js';
 import ClipboardEvent from 'framework/system/interface/graphical/web/html/events/html-event/ClipboardEvent.js';
-var ElectronManager = null;
 
 // Class
-class ClipboardEventTest extends ElectronTest {
-
-	async before() {
-		// Initialize the ElectronManager here as to not throw an exception when electron is not present
-		ElectronManager = Framework.require('framework/system/electron/ElectronManager.js');
-	}
+class ClipboardEventTest extends ElectronHtmlTest {
 
 	async testClipboardEvent() {
 		// Create an HtmlDocument
@@ -55,7 +50,7 @@ class ClipboardEventTest extends ElectronTest {
         htmlDocument.mountToDom();
 
         // Double click into the text area twice to select some text
-        await ElectronManager.doubleClickHtmlElement(textAreaElement);
+        await this.inputPressDoubleHtmlNode(textAreaElement);
 
         // This only works on Windows right now
 		//await ElectronManager.copyUsingKeyboard();

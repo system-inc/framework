@@ -327,6 +327,7 @@ class Proctor extends EventEmitter {
 
 			// Throw the error if in a browser window
 			if(app.inElectronRendererProcess()) {
+				//console.error(error);
 				throw error;
 			}
 			
@@ -414,14 +415,27 @@ class Proctor extends EventEmitter {
 		this.currentTestClassInstance = this.testClassInstances[this.currentTestMethod.name];
 
 		// Check to see if we should run the test
-		this.shouldRunCurrentTestClass = await this.currentTestClassInstance.shouldRun();
+		try {
+			this.shouldRunCurrentTestClass = await this.currentTestClassInstance.shouldRun();
+		}
+		catch(error) {
+			//console.error('failed when calling shouldRun', error.toString());
+		}
 
 		// Time all of the tests in the class
 		this.currentTestClassInstanceStopwatch = new Stopwatch();
 
 		if(this.shouldRunCurrentTestClass) {
 			// Run .before on the test class
-			await this.currentTestClassInstance.before();
+			try {
+				await this.currentTestClassInstance.before();	
+			}
+			catch(error) {
+				console.error(error.toString());
+			}
+		}
+		else {
+			//console.info('skipping test');
 		}
 	}
 
@@ -740,6 +754,18 @@ class Proctor extends EventEmitter {
 			'onrejectionhandled',
 			'ondeviceorientationabsolute',
 			'createImageBitmap',
+
+			'onpointerup',
+			'onpointerover',
+			'onpointerout',
+			'onpointermove',
+			'onpointerleave',
+			'onpointerenter',
+			'onpointerdown',
+			'onpointercancel',
+			'customElements',
+			'onauxclick',
+			'external',
 		],
 		leaked: [],
 	};

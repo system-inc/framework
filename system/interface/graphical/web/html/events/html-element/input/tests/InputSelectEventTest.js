@@ -1,18 +1,13 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 import Html from 'framework/system/interface/graphical/web/html/Html.js';
 import InputSelectEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputSelectEvent.js';
-var ElectronManager = null;
 
 // Class
-class InputSelectEventTest extends ElectronTest {
-
-	async before() {
-		// Initialize the ElectronManager here as to not throw an exception when electron is not present
-		ElectronManager = Framework.require('framework/system/electron/ElectronManager.js');
-	}
+class InputSelectEventTest extends ElectronHtmlTest {
 
 	async testInputSelectEvent() {
 		// Create an HtmlDocument
@@ -56,7 +51,7 @@ class InputSelectEventTest extends ElectronTest {
         htmlDocument.mountToDom();
 
         // Double click into the text area twice to select some text
-        await ElectronManager.doubleClickHtmlElement(textAreaElement);
+        await this.inputPressDoubleHtmlNode(textAreaElement);
 		
 		Assert.true(Class.isInstance(capturedEventInputSelect, InputSelectEvent), '"input.select" events are instances of InputSelectEvent');
 

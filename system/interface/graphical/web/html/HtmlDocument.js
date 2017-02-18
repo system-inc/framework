@@ -37,12 +37,22 @@ class HtmlDocument extends XmlDocument {
 
 	url = null;
 
+	cachedDimensions = null;
 	get dimensions() {
-		return this.calculateDimensionAndPosition().dimensions;
+		var dimensions = this.calculateDimensionsAndPosition().dimensions;
+
+		this.cachedDimensions = dimensions;
+
+		return dimensions;
 	}
 
+	cachedPosition = null;
 	get position() {
-		return this.calculateDimensionAndPosition().position;
+		var position = this.calculateDimensionsAndPosition().position;
+
+		this.cachedPosition = position;
+
+		return position;
 	}
 
 	constructor(declaration) {
@@ -272,15 +282,16 @@ class HtmlDocument extends XmlDocument {
         return text;
 	}
 
-	calculateDimensionAndPosition() {
+	calculateDimensionsAndPosition() {
 		var dimensionsAndPosition = {
 			dimensions: new Dimensions(),
 			position: {
-				relativeToRelativeAncestor: new Position(),
-				relativeToDocumentViewport: new Position(),
 				relativeToDocument: new Position(),
-				relativeToGlobal: new Position(),
+				relativeToDocumentViewport: new Position(),
+				relativeToDisplay: new Position(),
+				relativeToAllDisplays: new Position(),
 				relativeToPreviousGlobalRelativePosition: new Position(),
+				relativeToRelativeAncestor: new Position(),
 			},
 		};
 
@@ -292,8 +303,8 @@ class HtmlDocument extends XmlDocument {
 			dimensionsAndPosition.dimensions.visible.height = this.domDocument.documentElement.clientHeight;
 
 			// Position - relativeToRelativeAncestor
-			dimensionsAndPosition.position.relativeToRelativeAncestor.x = this.domDocument.scrollingElement.scrollTop;
-			dimensionsAndPosition.position.relativeToRelativeAncestor.y = this.domDocument.scrollingElement.scrollLeft;
+			dimensionsAndPosition.position.relativeToRelativeAncestor.x = this.domDocument.scrollingElement.scrollLeft;
+			dimensionsAndPosition.position.relativeToRelativeAncestor.y = this.domDocument.scrollingElement.scrollTop;
 			dimensionsAndPosition.position.relativeToRelativeAncestor.calculateCoordinatesAndEdges(dimensionsAndPosition.dimensions.width, dimensionsAndPosition.dimensions.height);
 
 			// Position - relativeToDocumentViewport

@@ -26,12 +26,22 @@ class HtmlNode extends XmlNode {
 	nodeIdentifier = null // Used to uniquely identify HtmlNodes for tree comparisons againt the DOM
 	nodeIdentifierCounter = 0; // Used to ensure unique identifiers
 
+	cachedDimensions = null;
 	get dimensions() {
-		return this.calculateDimensionAndPosition().dimensions;
+		var dimensions = this.calculateDimensionsAndPosition().dimensions;
+		
+		this.cachedDimensions = dimensions;
+
+		return dimensions;
 	}
 
+	cachedPosition = null;
 	get position() {
-		return this.calculateDimensionAndPosition().position;
+		var position = this.calculateDimensionsAndPosition().position;
+
+		this.cachedPosition = position;
+
+		return position;
 	}
 
 	constructor(content, parent, type) {
@@ -285,7 +295,7 @@ class HtmlNode extends XmlNode {
         return selectionText;
     }
 
-	calculateDimensionAndPosition() {
+	calculateDimensionsAndPosition() {
 		var dimensionsAndPosition = {
 			dimensions: new Dimensions(),
 			position: {
@@ -325,8 +335,8 @@ class HtmlNode extends XmlNode {
 			// TODO
 
 			// Position - relativeToRelativeAncestor
-			dimensionsAndPosition.position.relativeToRelativeAncestor.x = this.domNode.scrollTop;
-			dimensionsAndPosition.position.relativeToRelativeAncestor.y = this.domNode.scrollLeft;
+			dimensionsAndPosition.position.relativeToRelativeAncestor.x = this.domNode.scrollLeft;
+			dimensionsAndPosition.position.relativeToRelativeAncestor.y = this.domNode.scrollTop;
 			dimensionsAndPosition.position.relativeToDocumentViewport.calculateCoordinatesAndEdges(dimensionsAndPosition.dimensions.width, dimensionsAndPosition.dimensions.height);
 		}
 

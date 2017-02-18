@@ -11,9 +11,10 @@ class DatabaseTest extends Test {
 
 		var frameworkTestDatabase = app.modules.databaseModule.databaseManager.get('frameworkTest');
 		var testQueryResults = await frameworkTestDatabase.query('SELECT 1 + 1 as `solution`');
-		//app.info(testQueryResults);
+		//console.warn(testQueryResults.toString());
 
 		if(Error.is(testQueryResults)) {
+			//console.warn('should not run');
 			shouldRun = false;
 		}
 

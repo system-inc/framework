@@ -20,7 +20,7 @@ table {
 	width: 100%;
 	border-collapse: separate;
 	border-spacing: 0;
-	table-layout: fixed;	
+	table-layout: fixed;
 }
 	thead tr:hover {
 		background: transparent;

@@ -1,12 +1,13 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlElement.js';
 import EventEmitter from 'framework/system/event/EventEmitter.js';
 
 // Class
-class HtmlDocumentTest extends Test {
+class HtmlDocumentTest extends ElectronHtmlTest {
 
 	async testHtmlDocument() {
 		Assert.true(Class.doesImplement(HtmlDocument, EventEmitter), 'HtmlDocument class implements EventEmitter');

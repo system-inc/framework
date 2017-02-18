@@ -19,14 +19,10 @@ class Pool extends EventEmitter {
 
 	timeInMillisecondsToWaitToRetireAvailableReusables = null;
 
-	constructor(reusableClass) {
-		super();
-
-		if(!this.reusableClass && !reusableClass) {
-			throw new Error('Pool must be constructed with a specified subclass of type "Reusable".');
-		}
-		else if(reusableClass) {
-			this.reusableClass = reusableClass;
+	// Pool must always be initialized
+	initialize() {
+		if(!this.reusableClass) {
+			throw new Error('Pool must have a reusable class of type Reusable.');
 		}
 
 		if(!this.createReusablesAsNecessary) {
@@ -36,6 +32,8 @@ class Pool extends EventEmitter {
 				this.createReusable();
 			}
 		}
+
+		return this;
 	}
 
 	createReusable() {

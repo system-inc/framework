@@ -1,6 +1,7 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
+import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
+
 import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlElement.js';
 import HtmlNode from 'framework/system/interface/graphical/web/html/HtmlNode.js';
 import XmlElement from 'framework/system/xml/XmlElement.js';
@@ -8,7 +9,7 @@ import XmlNode from 'framework/system/xml/XmlNode.js';
 import EventEmitter from 'framework/system/event/EventEmitter.js';
 
 // Class
-class HtmlElementTest extends Test {
+class HtmlElementTest extends ElectronHtmlTest {
 
 	async testHtmlElement() {
 		//app.info(HtmlElement);
