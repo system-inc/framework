@@ -9,10 +9,6 @@ class SingleLineTextFormControlView extends TextFormControlView {
         class: 'control text singleLine',
     };
 
-    constructor(options, settings) {
-    	super(...arguments);
-    }
-
     getWebViewAdapterSettings() {
 		return {
 			tag: 'input',

@@ -178,6 +178,54 @@ class ElectronManager {
 	//	}
 	//}
 
+	//static async copyUsingKeyboard() {
+	//	if(app.onWindows()) {
+	//		yield ElectronGraphicalInterfaceAdapter.keyDown('c', ['control']);
+	//	}
+	//	else {
+	//		// TODO: Does not work on macOS
+	//		console.info('ElectronManager.copyUsingKeyboard does not work on macOS.');
+	//		yield ElectronManager.keyDown('c', ['meta']);
+	//	}
+	//}
+
+	//static async cutUsingKeyboard() {
+	//	if(app.onWindows()) {
+	//		yield ElectronManager.keyDown('x', ['control']);
+	//	}
+	//	else {
+	//		// TODO: Does not work on macOS
+	//		console.info('ElectronManager.cutUsingKeyboard does not work on macOS.');
+	//		yield ElectronManager.keyDown('x', ['meta']);
+	//	}
+	//}
+
+	//static async pasteUsingKeyboard() {
+	//	if(app.onWindows()) {
+	//		yield ElectronManager.keyDown('v', ['control']);
+	//	}
+	//	else {
+	//		// TODO: Does not work on macOS
+	//		console.info('ElectronManager.pasteUsingKeyboard does not work on macOS.');
+	//		yield ElectronManager.keyDown('v', ['meta']);
+	//	}
+	//}
+
+	//static getBrowserWindowBounds() {
+	//	var bounds = Electron.remote.getCurrentWindow().getBounds();
+
+	//	return bounds;
+	//}
+
+	//static setBrowserWindowBounds(width, height, x, y) {
+	//	Electron.remote.getCurrentWindow().setBounds({
+	//		width: width,
+	//		height: height,
+	//		x: x,
+	//		y: y,
+	//	});
+	//}
+
 	static async getPathToElectronExecutable() {
 		var pathToElectronExecutable = null;
 
@@ -357,54 +405,6 @@ class ElectronManager {
 
 		return true;
 	}
-
-	//static async copyUsingKeyboard() {
-	//	if(app.onWindows()) {
-	//		yield ElectronGraphicalInterfaceAdapter.keyDown('c', ['control']);
-	//	}
-	//	else {
-	//		// TODO: Does not work on macOS
-	//		console.info('ElectronManager.copyUsingKeyboard does not work on macOS.');
-	//		yield ElectronManager.keyDown('c', ['meta']);
-	//	}
-	//}
-
-	//static async cutUsingKeyboard() {
-	//	if(app.onWindows()) {
-	//		yield ElectronManager.keyDown('x', ['control']);
-	//	}
-	//	else {
-	//		// TODO: Does not work on macOS
-	//		console.info('ElectronManager.cutUsingKeyboard does not work on macOS.');
-	//		yield ElectronManager.keyDown('x', ['meta']);
-	//	}
-	//}
-
-	//static async pasteUsingKeyboard() {
-	//	if(app.onWindows()) {
-	//		yield ElectronManager.keyDown('v', ['control']);
-	//	}
-	//	else {
-	//		// TODO: Does not work on macOS
-	//		console.info('ElectronManager.pasteUsingKeyboard does not work on macOS.');
-	//		yield ElectronManager.keyDown('v', ['meta']);
-	//	}
-	//}
-
-	//static getBrowserWindowBounds() {
-	//	var bounds = Electron.remote.getCurrentWindow().getBounds();
-
-	//	return bounds;
-	//}
-
-	//static setBrowserWindowBounds(width, height, x, y) {
-	//	Electron.remote.getCurrentWindow().setBounds({
-	//		width: width,
-	//		height: height,
-	//		x: x,
-	//		y: y,
-	//	});
-	//}
 
 }
 

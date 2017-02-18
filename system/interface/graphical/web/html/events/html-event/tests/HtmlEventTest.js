@@ -5,13 +5,12 @@ import Assert from 'framework/system/test/Assert.js';
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
 import Html from 'framework/system/interface/graphical/web/html/Html.js';
 import HtmlEvent from 'framework/system/interface/graphical/web/html/events/html-event/HtmlEvent.js';
-var ElectronManager = null;
 
 // Class
 class HtmlEventTest extends ElectronHtmlTest {
 
 	async testRemoveEventListener() {
-		// Create an HtmlDocument
+        // Create an HtmlDocument
         var htmlDocument = new HtmlDocument();
 
 		// Create a text area with some text        

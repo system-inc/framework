@@ -4,10 +4,6 @@ import FormControlView from 'framework/system/interface/graphical/views/forms/co
 // Class
 class TextFormControlView extends FormControlView {
 
-    attributes = {
-        class: 'control text',
-    }
-
     constructor(settings) {
         super(settings);
 

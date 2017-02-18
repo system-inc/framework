@@ -62,27 +62,6 @@ class WebViewAdapter extends ViewAdapter {
 		return position;
 	}
 
-	//get dimensions() {
-	//	var webViewDimensions = this.adaptedView.dimensions;
-	//	var dimensions = webViewDimensions;
-		
-	//	return dimensions;
-	//}
-
-	//get position() {
-	//	var webViewPosition = this.adaptedView.position;
-	//	var position = webViewPosition;
-
-	//	//relativeToGraphicalInterface: new Position(),
-	//	//relativeToGraphicalInterfaceViewport: new Position(),
-	//	//relativeToDisplay: new Position(),
-	//	//relativeToAllDisplays: new Position(),
-	//	//relativeToPreviousAllDisplaysRelativePosition: new Position(),
-	//	//relativeToRelativeAncestor: new Position(),
-
-	//	return position;
-	//}
-
 }
 
 // Export
