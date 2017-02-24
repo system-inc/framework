@@ -1,7 +1,6 @@
 body {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
-
 h1, h2, h3, h4, h5, h6, p, table, form, form .field {
 	margin: 1em 0;
 }
@@ -47,6 +46,10 @@ table {
 	th:hover, td:hover {
   		text-overflow: clip;
 	}
+
+input[type="text"] {
+    border: 1px solid #CCC;
+}
 
 .button {
 	/*background: rgba(0, 0, 0, 0.15);*/

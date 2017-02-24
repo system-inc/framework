@@ -4,7 +4,6 @@ import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmit
 // Class
 class ViewController extends PropagatingEventEmitter {
 
-	graphicalInterface = null;
 	view = null;
 	children = [];
 
@@ -16,9 +15,7 @@ class ViewController extends PropagatingEventEmitter {
 		//this.view = new View();
 	}
 
-	initialize(graphicalInterface) {
-		this.graphicalInterface = graphicalInterface;
-
+	initialize() {
 		if(this.view) {
 			this.view.initialize();	
 		}

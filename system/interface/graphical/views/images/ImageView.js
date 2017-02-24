@@ -4,14 +4,20 @@ import View from 'framework/system/interface/graphical/views/View.js';
 // Class
 class ImageView extends View {
 
-	constructor(url, alternateText, settings, tag = 'img') {
-		super(null, settings, tag);
+	constructor(url, alternateText = null) {
+		super();
 
 		this.setAttribute('src', url);
 
 		if(alternateText) {
-			this.setAttribute('alt', alternateText);	
+			this.setAttribute('alt', alternateText);
 		}
+	}
+
+	getWebViewAdapterSettings() {
+		return {
+			tag: 'img',
+		};
 	}
 
 }

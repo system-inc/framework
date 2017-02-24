@@ -73,8 +73,8 @@ class GraphicalInterface extends Interface {
 		// Set the view controller
 		this.viewController = viewController;
 
-		// Initialize the view controller with a reference to this GraphicalInterface
-		this.viewController.initialize(this);
+		// Initialize the view controller
+		this.viewController.initialize();
 		
 		// Initialize the adapter
 		this.adapter.initialize();
