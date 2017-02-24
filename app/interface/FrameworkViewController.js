@@ -93,20 +93,20 @@ class FrameworkViewController extends ViewController {
 		super.initialize(...arguments);
 
 		// Must set <html> height to 100%
-		this.graphicalInterface.adapter.htmlDocument.view.setStyle({
+		app.interfaces.graphical.adapter.htmlDocument.view.setStyle({
 			height: '100%',
 		});
 		
 		// Must set <body> height to 100%
-		this.graphicalInterface.adapter.htmlDocument.body.setStyle({
+		app.interfaces.graphical.adapter.htmlDocument.body.setStyle({
 			height: '100%',
 		});
 
 		// Add style sheets to the html document
-		//this.graphicalInterface.adapter.addStyleSheet('interface/style-sheets/framework.css');
-		this.graphicalInterface.adapter.addStyleSheet(Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'reset', 'style-sheets', 'reset.css'));
-		this.graphicalInterface.adapter.addStyleSheet(Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'framework', 'style-sheets', 'framework.css'));
-		this.graphicalInterface.adapter.addStyleSheet(Node.Path.join(app.directory, 'interface', 'style-sheets', 'app.css'));
+		//app.interfaces.graphical.adapter.addStyleSheet('interface/style-sheets/framework.css');
+		app.interfaces.graphical.adapter.addStyleSheet(Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'reset', 'style-sheets', 'reset.css'));
+		app.interfaces.graphical.adapter.addStyleSheet(Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'framework', 'style-sheets', 'framework.css'));
+		app.interfaces.graphical.adapter.addStyleSheet(Node.Path.join(app.directory, 'interface', 'style-sheets', 'app.css'));
 	}
 
 }
