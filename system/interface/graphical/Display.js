@@ -5,10 +5,12 @@ import Position from 'framework/system/interface/graphical/Position.js';
 // Class
 class Display {
 
+	identifier = null;
+
 	dimensions = new Dimensions();
 	
 	position = {
-		relativeToAllDisplays: new Position();
+		relativeToAllDisplays: new Position(),
 	};
 
 }

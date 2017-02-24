@@ -7,7 +7,7 @@ import ElectronGraphicalInterfaceAdapter from 'framework/system/interface/graphi
 class ElectronTest extends Test {
 
 	async shouldRun() {
-		return app.inElectronContext();
+		return app.inGraphicalInterfaceContext();
 	}
 
 	inputKeyDown = ElectronGraphicalInterfaceAdapter.prototype.inputKeyDown;

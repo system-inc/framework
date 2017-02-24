@@ -104,13 +104,6 @@ Node.Process.on('unhandledRejection', function(error) {
 	Node.exit();
 });
 
-if(Node.Process.type === 'renderer') {
-	window.addEventListener('unhandledrejection', function(error, promise) {
-		console.error('Unhandled rejection:', error);
-		Node.exit();	
-	});
-}
-
 // Catch unhandled exceptions
 Node.Process.on('uncaughtException', function(error) {
 	console.error('Uncaught exception:', error);

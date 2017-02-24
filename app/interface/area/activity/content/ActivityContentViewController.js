@@ -12,7 +12,7 @@ class ActivityContentViewController extends ViewController {
 
 		this.view.setStyle({
 			flex: '1',
-			overflow: 'scroll',
+			overflow: 'auto',
 			padding: '1rem',
             fontSize: '.8em',
 		});

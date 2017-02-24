@@ -111,18 +111,18 @@ class Command {
 		if(Array.is(argumentsArray)) {
 			//app.info('argumentsArray', argumentsArray);
 
-			// Remove Electron options 
-			if(app.inElectronContext()) {
+			// The JavaScript file Node is executing
+			this.executable = argumentsArray[0];
+
+			// If the executable isn't node, strip out any switches (for example, when running Electron a ton of switches are added)
+			if(!this.executable.endsWith('node')) {
 				let currentArgument = argumentsArray.get(1);
 				while(currentArgument && currentArgument.startsWith('--')) {
 					argumentsArray.delete(1);
 					currentArgument = argumentsArray.get(1);
-					//app.info('argumentsArray', argumentsArray);
 				}
+				//app.info('updated argumentsArray', argumentsArray);
 			}
-
-			// The JavaScript file Node is executing
-			this.executable = argumentsArray[0];
 
 			// The rest of the command arguments
 			var argumentsToProcess = argumentsArray;
@@ -443,8 +443,6 @@ class Command {
 		else {
 			app.standardStreams.output.writeLine();
 		}
-
-		this.exit();
 	}
 
 	showDebugCommand() {

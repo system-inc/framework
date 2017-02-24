@@ -15,19 +15,13 @@ class ElectronGraphicalInterfaceTest extends ElectronTest {
 		this.viewController = new ViewController();
 	}
 
-	async before() {
-		var ElectronGraphicalInterfaceManager = require('framework/system/interface/graphical/managers/electron/ElectronGraphicalInterfaceManager.js').default;
-
-		app.interfaces.graphicalInterfaceManager = new ElectronGraphicalInterfaceManager();
-	}
-
 	render(view) {
 		if(view !== undefined) {
 			this.viewController.view = view;
 		}
 
 		// Have the graphical interface manager create a graphical interface with a view controller
-        app.interfaces.graphicalInterfaceManager.create(this.viewController);
+		app.interfaces.graphicalInterfaceManager.getCurrentGraphicalInterface().initialize(this.viewController);
 	}
 
 	inputPressView = ElectronGraphicalInterfaceAdapter.prototype.inputPressView;

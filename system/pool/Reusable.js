@@ -3,7 +3,7 @@ class Reusable {
 	
 	pool = null;
 
-	uniqueIdentifier = null;
+	identifier = null;
 
 	available = false;
 
@@ -18,14 +18,14 @@ class Reusable {
 		this.timeInMillisecondsToWaitToRetireWhenAvailable = this.pool.timeInMillisecondsToWaitToRetireAvailableReusables;
 
 		// Create a unique identifier
-		this.uniqueIdentifier = String.uniqueIdentifier();
+		this.identifier = String.uniqueIdentifier();
 
 		// Intialize
 		this.initialize();
 	}
 
-	initialize() {
-		this.release();
+	async initialize() {
+		await this.release();
 	}
 
 	taken() {

@@ -16,9 +16,14 @@ class CommandLineInterface extends Interface {
 		this.initializeCommand();
 	}
 
-	initializeCommand() {
+	initializeCommand(processArguments = null) {
 		var commandSettings = this.settings.get('command');
-		this.command = new Command(commandSettings, Node.Process.argv);
+
+		if(!processArguments) {
+			processArguments = Node.Process.argv;
+		}
+
+		this.command = new Command(commandSettings, processArguments);
 	}
 
 }

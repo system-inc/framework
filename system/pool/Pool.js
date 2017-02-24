@@ -47,7 +47,7 @@ class Pool extends EventEmitter {
 		//console.log('reusable', reusable);
 		
 		// Set the new reusable by unique identifier in the busy reusables object
-		this.busyReusables[reusable.uniqueIdentifier] = reusable;
+		this.busyReusables[reusable.identifier] = reusable;
 
 		return reusable;
 	}
@@ -90,14 +90,14 @@ class Pool extends EventEmitter {
 		}.bind(this));
 	}
 
-	getReusableByUniqueIdentifier(uniqueIdentifier) {
+	getReusableByIdentifier(identifier) {
 		var reusable = null;
 
-		if(this.availableReusables[uniqueIdentifier]) {
-			reusable = this.availableReusables[uniqueIdentifier];
+		if(this.availableReusables[identifier]) {
+			reusable = this.availableReusables[identifier];
 		}
-		else if(this.busyReusables[uniqueIdentifier]) {
-			reusable = this.busyReusables[uniqueIdentifier];
+		else if(this.busyReusables[identifier]) {
+			reusable = this.busyReusables[identifier];
 		}
 
 		return reusable;
@@ -107,13 +107,13 @@ class Pool extends EventEmitter {
 		//console.log('taking available reusable', reusable);
 
 		// Remove the reusable from the available list
-		delete this.availableReusables[reusable.uniqueIdentifier];
+		delete this.availableReusables[reusable.identifier];
 
 		// Mark the reusable as taken
 		reusable.taken();
 
 		// Add the reusable to the busy list
-		this.busyReusables[reusable.uniqueIdentifier] = reusable;
+		this.busyReusables[reusable.identifier] = reusable;
 
 		this.waitingForAvailableReusableCount--;
 		
@@ -124,13 +124,13 @@ class Pool extends EventEmitter {
 		//console.log('Pool.releaseReusable', reusable);
 
 		// Remove the reusable from the busy list
-		delete this.busyReusables[reusable.uniqueIdentifier];
+		delete this.busyReusables[reusable.identifier];
 
 		// Mark the usuable as available
 		reusable.released();
 
 		// Add the reusable to the available list
-		this.availableReusables[reusable.uniqueIdentifier] = reusable;
+		this.availableReusables[reusable.identifier] = reusable;
 
 		// Emit an event letting any listeners know we have a free reusable
 		this.emit('pool.availableReusable', reusable);
@@ -141,11 +141,11 @@ class Pool extends EventEmitter {
 	retireReusable(reusable) {
 		// Remove the reusable from the the available reusables
 		if(reusable.available) {
-			delete this.availableReusables[reusable.uniqueIdentifier];
+			delete this.availableReusables[reusable.identifier];
 		}
 		// Or remove the reusable from the busy reusables
 		else {
-			delete this.busyReusables[reusable.uniqueIdentifier];
+			delete this.busyReusables[reusable.identifier];
 		}
 
 		// Don't do this, leave the reusable around in case the implementer wants to do something with it after it is retired
@@ -170,8 +170,8 @@ class Pool extends EventEmitter {
 		return shouldRetireReusable;
 	}
 
-	retireReusableByUniqueIdentifier(uniqueIdentifier) {
-		this.retireReusable(this.getReusableByUniqueIdentifier(uniqueIdentifier));
+	retireReusableByIdentifier(identifier) {
+		this.retireReusable(this.getReusableByIdentifier(identifier));
 	}
 	
 }

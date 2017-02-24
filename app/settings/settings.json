@@ -82,10 +82,33 @@
 				},
 			},
 		},
+		graphical: {
+			defaults: {
+				width: .5,
+				height: 1,
+				x: 0, // left
+				y: 0, // top
+				
+				oneDisplay: {
+					display: 1,
+					mode: 'normal',
+					width: .5,
+					height: 1,
+					x: 0, // left
+					y: 0, // top
+				},
+				twoDisplays: {
+					display: 1,
+					mode: 'normal',
+					width: .5,
+					height: 1,
+					x: 'left',
+					y: 'top',
+				},
+			},
+		},
 	},
-	// List all modules to test
 	modules: {
-		archive: {},
 		database: {
 			databases: {
 				frameworkTest: {
@@ -96,47 +119,8 @@
 				}
 			}
 		},
-		//electron: {
-		//	mainBrowserWindow: {
-		//		windowState: {
-		//			remember: false,
-		//			defaultWindowState: {
-		//				applyOn: {
-		//					displayAdded: true,
-		//					displayRemoved: true,
-		//					displayMetricsChanged: true,
-		//				},
-		//				oneDisplay: {
-		//					display: 1,
-		//					mode: 'normal',
-		//					width: .5, // Production
-		//					//width: 1, // Development
-		//					height: .5, // Production
-		//					//height: .75, // Development
-		//					x: 'right',
-		//					y: 'bottom',
-		//				},
-		//				twoDisplays: {
-		//					display: 2,
-		//					mode: 'normal',
-		//					width: .5, // Production
-		//					//width: 1, // Development
-		//					height: .5, // Production
-		//					//height: .75, // Development
-		//					x: 'left',
-		//					y: 'bottom',
-		//				},
-		//			},
-		//		},
-		//		developerTools: {
-		//			show: true, // Development
-		//		},
-		//	},
-		//	shortcuts: {
-		//		reloadFocusedWindow: false, // Uncomment this when ready to go to production
-		//	},
-		//},
-		ffmpeg: {},
-		webServer: {},
+		electron: {
+			automaticallyStartElectronIfNotInElectronContext: false, // We will manually start Electron
+		},
 	},
 }

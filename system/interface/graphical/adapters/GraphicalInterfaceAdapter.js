@@ -1,5 +1,3 @@
-// Dependencies
-
 // Class
 class GraphicalInterfaceAdapter {
 
@@ -10,7 +8,11 @@ class GraphicalInterfaceAdapter {
 	}
 
 	initialize() {
-		throw new Error('This method must be implemted by a child class.');
+		throw new Error('This method must be implemented by a child class.');
+	}
+
+	newGraphicalInterface(graphicalInterface) {
+		throw new Error('This method must be implemented by a child class.');
 	}
 
 }

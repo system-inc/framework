@@ -76,7 +76,9 @@ table {
     transform: rotate(90deg);
 }
 
-.listView.horizontal
+.list.horizontal .listItem {
+	display: inline;
+}
 
 .linkList {
 }

@@ -21,6 +21,11 @@ class Url {
 			return;
 		}
 
+		// If the string is a file path
+		if(string.startsWith('/')) {
+			string = 'file://'+string;
+		}
+
 		var nodeUrl = Node.Url.parse(string, true);
 
 		// Fix Node's URL parser

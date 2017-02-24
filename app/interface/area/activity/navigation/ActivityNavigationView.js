@@ -10,6 +10,7 @@ class ActivityNavigationView extends View {
 
 		this.setStyle({
 			flex: '1',
+			overflow: 'auto',
 			//background: 'blue',
 			padding: '.5rem 0',
 			color: '#333',

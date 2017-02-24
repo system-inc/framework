@@ -1,12 +1,6 @@
 // Dependencies
 import EventEmitter from 'framework/system/event/EventEmitter.js';
-import StandardInputStream from 'framework/system/stream/StandardInputStream.js';
-import StandardOutputStream from 'framework/system/stream/StandardOutputStream.js';
-import StandardErrorStream from 'framework/system/stream/StandardErrorStream.js';
 import Directory from 'framework/system/file-system/Directory.js';
-import FileLog from 'framework/system/log/FileLog.js';
-import CommandLineInterface from 'framework/system/interface/command-line/CommandLineInterface.js';
-import InteractiveCommandLineInterface from 'framework/system/interface/interactive-command-line/InteractiveCommandLineInterface.js';
 import Module from 'framework/system/module/Module.js';
 import Settings from 'framework/system/settings/Settings.js';
 import Terminal from 'framework/system/interface/Terminal.js';
@@ -25,11 +19,28 @@ class App extends EventEmitter {
 	directory = null;
 
 	standardStreams = {
-		input: new StandardInputStream(),
-		output: new StandardOutputStream(),
-		error: new StandardErrorStream(),
+		input: null,
+		output: null,
+		error: null,
 	};
+
 	standardStreamsFileLog = null;
+
+	environment = null;
+
+	modules = {};
+
+	interfaces = {
+		commandLine: null,
+		//interactiveCommandLine: null, // Will initialize if necessary
+		//textual: null, // Will initialize if necessary
+		//graphical: null, // Will initialize if necessary
+	};
+
+	framework = {
+		version: new Version('0.1.0'),
+		directory: new Directory(Node.Path.join(__dirname, '../', '../')),
+	};
 
 	settings = new Settings({
 		environment: 'development',
@@ -80,27 +91,60 @@ class App extends EventEmitter {
 					nameWithoutExtension: 'history',
 				},
 			},
+			graphical: {
+				// The default settings graphical interfaces
+				defaults: {
+					// GraphicalInterfaceManager events that trigger the default settings to be applied
+					applyOn: [
+						'display.added',
+						'display.removed',
+						'display.changed',
+					],
+
+					// Default settings for any number of displays, overridden by "oneDisplay", "twoDisplays", "threeDisplays", etc. keys 
+					mode: 'normal', // minimized, normal, maximized, full screen
+					width: .5,
+					height: .5,
+					x: .5, // .5 = center
+					y: .5, // .5 = center
+
+					// Default settings for the GraphicalInterface if there is just one display
+					oneDisplay: {
+						display: 1, // The display the graphical interface will appear on
+						mode: 'normal',
+						width: .5,
+						height: .5,
+						x: 'center', // left == 0 and 0 == left
+						y: 'center', // top == 0 and 0 == top
+					},
+
+					// Default settings for the GraphicalInterface if there are two displays
+					twoDisplays: {
+						display: 1, // The display the graphical interface will appear on
+						mode: 'normal',
+						width: .5,
+						height: .5,
+						x: 'center',
+						y: 'center',
+					},
+				},
+
+				// Should user changes to the settings be saved? If so, they will be used instead of the default settings
+				// If there are multiple displays, the user's settings will be saved for that display count
+				// Example #1:
+				// Say the defaults for one monitor say to show the window in the top right of the first window and there are two monitors
+				// and the user drags it to the second monitor, we will save that the user wants it on the second display
+				//
+				// Example #2:
+				// If there are two monitors and by default we put it on the second monitor in the bottom left corner and the user drags
+				// it to the first monitor we remember that for the next time they open the app
+				saveUserChanges: true,
+			},
 		},
 		modules: {
 			archive: {}, // Archive is a default module which is enabled for all apps
 		},
 	});
-
-	environment = null;
-
-	modules = {};
-
-	interfaces = {
-		commandLine: null,
-		//interactiveCommandLine: null, // Will initialize if necessary
-		//textual: null, // Will initialize if necessary
-		//graphical: null, // Will initialize if necessary
-	};
-
-	framework = {
-		version: new Version('0.1.0'),
-		directory: new Directory(Node.Path.join(__dirname, '../', '../')),
-	};
 
 	constructor(appDirectory) {
 		super();
@@ -136,7 +180,10 @@ class App extends EventEmitter {
 		// Use app settings to configure the environment
 		this.configureEnvironment();
 
-		// After the app settings are loaded, we will know how to configure the standard streams file log
+		// Configure the standard streams
+		await this.configureStandardStreams();
+
+		// Configure the standard streams file log
 		await this.configureStandardStreamsFileLog();
 
 		// Configure the command line interface
@@ -147,6 +194,9 @@ class App extends EventEmitter {
 
 		// Load all of the modules for the App indicated in the app settings
 		await this.requireAndInitializeAppModules();
+
+		// Configure the graphical interface
+		await this.configureGraphicalInterface();
 
 		//this.log('Framework initialization complete.');
 		//this.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
@@ -169,11 +219,23 @@ class App extends EventEmitter {
 		//this.log('app.settings', this.settings);
 	}
 
+	async configureStandardStreams() {
+		var StandardInputStream = require('framework/system/stream/StandardInputStream.js').default;
+		var StandardOutputStream = require('framework/system/stream/StandardOutputStream.js').default;
+		var StandardErrorStream = require('framework/system/stream/StandardErrorStream.js').default;
+
+		app.standardStreams.input = new StandardInputStream();
+		app.standardStreams.output = new StandardOutputStream();
+		app.standardStreams.error = new StandardErrorStream();
+	}
+
 	async configureStandardStreamsFileLog() {
 		var standardStreamsFileLogSettings = this.settings.get('standardStreamsFileLog');
 		//this.log('standardStreamsFileLogSettings', standardStreamsFileLogSettings);
 
 		if(standardStreamsFileLogSettings.enabled) {
+			var FileLog = require('framework/system/log/FileLog.js').default;
+
 			// Create the file log
 			this.standardStreamsFileLog = new FileLog(standardStreamsFileLogSettings.directory, standardStreamsFileLogSettings.nameWithoutExtension);
 
@@ -192,9 +254,12 @@ class App extends EventEmitter {
 	}
 
 	async configureCommandLineInterface() {
+		// TODO: Make this work with standard web pages, load an empty command
+
 		var commandLineInterfaceSettings = this.settings.get('interfaces.commandLine');
 		//this.info('commandLineInterfaceSettings', commandLineInterfaceSettings);
 
+		var CommandLineInterface = require('framework/system/interface/command-line/CommandLineInterface.js').default;
 		this.interfaces.commandLine = new CommandLineInterface(commandLineInterfaceSettings);
 	}
 
@@ -204,8 +269,18 @@ class App extends EventEmitter {
 
 		// Enable the interactive command line interface by default if in terminal context
 		if(interactiveCommandLineInterfaceSettings.enabled && this.inTerminalContext()) {
+			var InteractiveCommandLineInterface = require('framework/system/interface/interactive-command-line/InteractiveCommandLineInterface.js').default;
+
 			//console.log('creating InteractiveCommandLineInterface');
 			this.interfaces.interactiveCommandLine = new InteractiveCommandLineInterface(interactiveCommandLineInterfaceSettings);
+		}
+	}
+
+	async configureGraphicalInterface() {
+		if(this.inGraphicalInterfaceContext()) {
+			// Create the current graphical interface
+			var GraphicalInterface = require('framework/system/interface/graphical/GraphicalInterface.js').default;
+			this.interfaces.graphical = new GraphicalInterface();
 		}
 	}
 
@@ -278,7 +353,8 @@ class App extends EventEmitter {
 	}
 
 	developerToolsAvailable() {
-		return (process && process.versions && process.versions.electron);
+		//return (process && process.versions && process.versions.electron);
+		return this.inGraphicalInterfaceContext();
 	}
 
 	log() {
@@ -433,41 +509,33 @@ class App extends EventEmitter {
 	inTerminalContext() {
 		var inTerminalContext = false;
 
-		if(Node.Process.stdout.isTTY || this.inElectronMainProcess()) {
+		// If you are not in a graphical interface you are in a terminal
+		//if((Node.Process.stdout.isTTY || Node.Process.stdout.writable) && !this.inGraphicalInterfaceContext()) {
+		if(!this.inGraphicalInterfaceContext()) {
 			inTerminalContext = true;
 		}
 
 		return inTerminalContext;
 	}
 
-	inElectronContext() {
-		var inElectronContext = false;
+	inGraphicalInterfaceContext() {
+		var inGraphicalInterfaceContext = false;
 
-		if(Node.Process.versions && Node.Process.versions.electron) {
-			inElectronContext = true;
+		if(this.inWebContext()) {
+			inGraphicalInterfaceContext = true;
 		}
 
-		return inElectronContext;
+		return inGraphicalInterfaceContext;
 	}
 
-	inElectronMainProcess() {
-		var inElectronMainProcess = false;
+	inWebContext() {
+		var inWebContext = false;
 
-		if(this.inElectronContext() && Node.Process.type !== 'renderer') {
-			inElectronMainProcess = true;
+		if(typeof window !== 'undefined') {
+			inWebContext = true;
 		}
 
-		return inElectronMainProcess;
-	}
-
-	inElectronRendererProcess() {
-		var inElectronRendererProcess = false;
-
-		if(this.inElectronContext() && Node.Process.type === 'renderer') {
-			inElectronRendererProcess = true;
-		}
-
-		return inElectronRendererProcess;
+		return inWebContext;
 	}
 
 	exit = Node.exit;
