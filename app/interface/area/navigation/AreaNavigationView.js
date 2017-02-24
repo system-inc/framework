@@ -13,6 +13,7 @@ class AreaNavigationView extends View {
 			flex: '0 0 64px',
 			display: 'flex',
 			alignItems: 'center',
+			boxSizing: 'content-box',
 			borderBottom: '1px solid #CCC',
 			padding: '0 1rem',
 			color: '#333',

@@ -13,6 +13,7 @@ class BodyNavigationView extends View {
 			order: '-1',
 			display: 'flex',
 			flexDirection: 'column',
+			boxSizing: 'content-box',
 			borderRight: '1px solid #CCC',
 		});
 	}

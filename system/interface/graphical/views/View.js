@@ -106,7 +106,7 @@ class View extends PropagatingEventEmitter {
 		// Run the same method on the adapter
 		this.adapter[arrayMethod](childView);
 
-		return this;
+		return childView;
 	}
 
 	empty() {
