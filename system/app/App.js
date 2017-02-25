@@ -278,9 +278,14 @@ class App extends EventEmitter {
 
 	async configureGraphicalInterface() {
 		if(this.inGraphicalInterfaceContext()) {
+			//console.log('inGraphicalInterfaceContext', true);
+
 			// Create the current graphical interface
 			var GraphicalInterface = require('framework/system/interface/graphical/GraphicalInterface.js').default;
 			this.interfaces.graphical = new GraphicalInterface();
+		}
+		else {
+			//console.log('inGraphicalInterfaceContext', false);
 		}
 	}
 

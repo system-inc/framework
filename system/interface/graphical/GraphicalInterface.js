@@ -25,6 +25,8 @@ class GraphicalInterface extends Interface {
 	display = null;
 	displays = {};
 
+	state = null;
+
 	history = new GraphicalInterfaceHistory();
 
 	closed = null;
@@ -58,14 +60,14 @@ class GraphicalInterface extends Interface {
 		// Create the adapter for the graphical interface
 		this.adapter = this.createGraphicalInterfaceAdapter();
 
+		// Initialize the state
+		this.initializeState();
+
 		// Create a graphical interface manager
 		this.manager = new GraphicalInterfaceManager();
-
-		// Initialize the displays
-		this.initializeDisplays();
 	}
 
-	initialize(viewController) {
+	async initialize(viewController) {
 		if(viewController === undefined || !ViewController.is(viewController)) {
 			throw new Error('Must pass instance of ViewController as first argument to GraphicalInterface constructor.');
 		}
@@ -74,10 +76,10 @@ class GraphicalInterface extends Interface {
 		this.viewController = viewController;
 
 		// Initialize the view controller
-		this.viewController.initialize();
+		await this.viewController.initialize();
 		
 		// Initialize the adapter
-		this.adapter.initialize();
+		await this.adapter.initialize();
 	}
 
 	createViewAdapter(view) {
@@ -109,6 +111,12 @@ class GraphicalInterface extends Interface {
 
 	newGraphicalInterface() {
 		return this.manager.newGraphicalInterface();
+	}
+
+	initializeState() {
+		this.initializeDisplays();
+
+		return this.adapter.initializeState();
 	}
 
 	initializeDisplays() {

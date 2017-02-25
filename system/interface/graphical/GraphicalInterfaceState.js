@@ -18,7 +18,7 @@ class GraphicalInterfaceState {
 		var graphicalInterfaceState = new GraphicalInterfaceState();
 
 		var graphicalInterfaceSettings = app.settings.get('interfaces.graphical.defaults');
-		console.info('graphicalInterfaceSettings', graphicalInterfaceSettings);
+		//console.info('graphicalInterfaceSettings', graphicalInterfaceSettings);
 
 		// Calculate the width from the settings
 		var width = graphicalInterfaceSettings.width;

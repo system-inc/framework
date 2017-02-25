@@ -59,9 +59,9 @@ class View extends PropagatingEventEmitter {
 		}
 	}
 
-	initialize() {
+	async initialize() {
 		// Initialize the adapter
-		this.adapter.initialize(...arguments);
+		return await this.adapter.initialize(...arguments);
 	}
 
 	render() {
@@ -112,9 +112,7 @@ class View extends PropagatingEventEmitter {
 	empty() {
 		XmlElement.prototype.empty.apply(this, arguments);
 
-		this.render();
-
-		return this;
+		return this.adapter.empty();
 	}
 
 	setContent(childView) {

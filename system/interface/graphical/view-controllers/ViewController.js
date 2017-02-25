@@ -15,9 +15,9 @@ class ViewController extends PropagatingEventEmitter {
 		//this.view = new View();
 	}
 
-	initialize() {
+	async initialize() {
 		if(this.view) {
-			this.view.initialize();	
+			await this.view.initialize();
 		}
 		else {
 			app.warn('View does not exist for ViewController.');
@@ -31,7 +31,7 @@ class ViewController extends PropagatingEventEmitter {
 		return this;
 	}
 
-	append(viewController) {
+	append(viewController, viewToAppendTo = null) {
 		// Set the view controller's parent
 		viewController.descendFromParent(this);
 
@@ -42,7 +42,12 @@ class ViewController extends PropagatingEventEmitter {
 		if(this.view === null) {
 			throw new Error('The ViewController\'s view does not exist. Classes of type ViewController must assign their view property to a class of type View in their constructors.');
 		}
-		this.view.append(viewController.view);
+
+		// Append to this.view by default
+		if(viewToAppendTo === null) {
+			viewToAppendTo = this.view;
+		}
+		viewToAppendTo.append(viewController.view);
 
 		return viewController;
 	}

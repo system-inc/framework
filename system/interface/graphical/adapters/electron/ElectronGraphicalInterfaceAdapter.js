@@ -31,6 +31,19 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		this.graphicalInterface.display = this.graphicalInterface.displays[1];
 	}
 
+	initializeState() {
+		this.graphicalInterface.state = GraphicalInterfaceState.constructFromSettingsWithDisplays(this.graphicalInterface.displays);
+
+		this.electronBrowserWindow.setBounds({
+			width: this.graphicalInterface.state.dimensions.width,
+			height: this.graphicalInterface.state.dimensions.height,
+			x: this.graphicalInterface.state.position.relativeToAllDisplays.x,
+			y: this.graphicalInterface.state.position.relativeToAllDisplays.y,
+		});
+
+		this.electronBrowserWindow.openDevTools();
+	}
+
 	async inputKeyPressByCombination(key, modifiers = []) {
 		return await ElectronManager.inputKeyPressByCombination(key, modifiers = []);
 	}
@@ -128,7 +141,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
 
 		// Debugging - comment out the lines below when ready for release
-		electronBrowserWindow.webContents.openDevTools(); // Comment out for production
+		electronBrowserWindow.openDevTools(); // Comment out for production
 
 		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow);
 

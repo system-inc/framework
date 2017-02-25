@@ -7,7 +7,7 @@ class GraphicalInterfaceAdapter {
 		this.graphicalInterface = graphicalInterface;
 	}
 
-	initialize() {
+	async initialize() {
 		throw new Error('This method must be implemented by a child class.');
 	}
 

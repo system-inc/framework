@@ -224,7 +224,7 @@ class HtmlElement extends HtmlNode {
 
 		// If there are more child DOM elements than child, we must remove them
 		for(var i = this.children.length; i < domNodeChildNodesLength; i++) {
-			this.domNode.removeChild(this.domNode.childNodes[childIndex]);
+			this.domNode.removeChild(this.domNode.childNodes[i]);
 		}
 	}
 

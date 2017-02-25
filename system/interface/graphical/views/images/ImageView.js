@@ -7,7 +7,7 @@ class ImageView extends View {
 	constructor(url, alternateText = null) {
 		super();
 
-		this.setAttribute('src', url);
+		this.setAttribute('src', url.toString());
 
 		if(alternateText) {
 			this.setAttribute('alt', alternateText);

@@ -48,8 +48,6 @@ class GraphicalInterfaceManager {
 		// Use the current graphical interface's adapter to create a new graphical interface
 		var graphicalInterfaceProxy = app.interfaces.graphical.adapter.newGraphicalInterface();
 
-
-
 		return this.addGraphicalInterface(new GraphicalInterface());
 	}
 

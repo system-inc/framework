@@ -199,9 +199,16 @@ class FileSystemObject {
         return stat;
     }
 
-    static async listFileNames(path) {
+    static async listFileNames(directoryObjectOrPathString) {
+        var directory = directoryObjectOrPathString;
+
+        if(String.is(directoryObjectOrPathString)) {
+            var Directory = require('framework/system/file-system/Directory.js').default;
+            directory = new Directory(path);
+        }
+        
         var fileNamesList = await new Promise(function(resolve, reject) {
-            Node.FileSystem.readdir(path.toString(), function(error, files) {
+            Node.FileSystem.readdir(directory.toString(), function(error, files) {
                 if(error) {
                     reject(error);
                 }
@@ -217,20 +224,22 @@ class FileSystemObject {
     static async list(path, recursive) {
         //app.log('FileSystemObject.list', ...arguments);
 
-        var list = [];
-        var fileNames = await FileSystemObject.listFileNames(path);
-        //app.exit('fileNames', fileNames);
-
         // Dependencies
         //import FileSystemObjectFactory from 'framework/system/file-system/FileSystemObjectFactory.js';
         //var FileSystemObjectFactory = await System.import('system/file-system/FileSystemObjectFactory.js');
         var FileSystemObjectFactory = require('framework/system/file-system/FileSystemObjectFactory.js').default;
         var Directory = require('framework/system/file-system/Directory.js').default;
 
+        var directory = new Directory(path);
+
+        var list = [];
+        var fileNames = await FileSystemObject.listFileNames(directory);
+        //app.exit('fileNames', fileNames);
+
         // Make sure we have the full path
         await fileNames.each(async function(index, fileName) {
-            //app.log('fileName', path+fileName);
-            var fileSystemObject = await FileSystemObjectFactory.create(path+fileName);
+            //app.log('fileName', directory+fileName);
+            var fileSystemObject = await FileSystemObjectFactory.create(directory+fileName);
             //app.log('fileSystemObject', fileSystemObject);
 
             // Handle recursion
@@ -248,7 +257,7 @@ class FileSystemObject {
                 list.append(fileSystemObject);
             }
             else {
-                app.log('No fileSystemObject for', path+fileName);
+                app.log('No fileSystemObject for', directory+fileName);
             }
         });
 
