@@ -3,7 +3,7 @@ import Reusable from 'framework/system/pool/Reusable.js';
 import Electron from 'electron';
 
 // Class
-class TestGraphicalInterface extends Reusable {
+class TestGraphicalInterfaceProxy extends Reusable {
 
 	status = null;
 	graphicalInterface = null;
@@ -18,11 +18,11 @@ class TestGraphicalInterface extends Reusable {
 		//this.graphicalInterface = app.interfaces.graphicalInterfaceManager.createGraphicalInterface();
 
         // Send a message to the main process to create a testGraphicalInterface
-        //console.info('Sending mainGraphicalInterface.createTestGraphicalInterface');
-        //Electron.ipcRenderer.send('mainGraphicalInterface.createTestGraphicalInterface', this.uniqueIdentifier);
+        //console.info('Sending mainGraphicalInterface.createTestGraphicalInterfaceProxy');
+        //Electron.ipcRenderer.send('mainGraphicalInterface.createTestGraphicalInterfaceProxy', this.uniqueIdentifier);
 
         // Do not call super() as we are not available until the application creates a test browser window
-        // MainGraphicalInterface.handleTestGraphicalInterfaceReport will call release() on this when it is ready
+        // MainGraphicalInterface.handleTestGraphicalInterfaceProxyReport will call release() on this when it is ready
 	}
 
 	runTestMethod(testMethod) {
@@ -34,7 +34,7 @@ class TestGraphicalInterface extends Reusable {
 		this.status = 'runningTest';
 
 		// Command the testGraphicalInterface to run the test method
-        Electron.ipcRenderer.send('mainGraphicalInterface.commandTestGraphicalInterface', this.uniqueIdentifier, 'runTestMethod', {
+        Electron.ipcRenderer.send('mainGraphicalInterface.commandTestGraphicalInterfaceProxy', this.uniqueIdentifier, 'runTestMethod', {
             testClassFilePath: this.testMethod.class.file.path,
             testClassName: this.testMethod.class.name,
             testMethodName: this.testMethod.name,
@@ -43,17 +43,17 @@ class TestGraphicalInterface extends Reusable {
 
 	openDeveloperTools() {
 		//console.warn('openDeveloperTools');
-		Electron.ipcRenderer.send('mainGraphicalInterface.commandTestGraphicalInterface', this.uniqueIdentifier, 'openDeveloperTools', {});
+		Electron.ipcRenderer.send('mainGraphicalInterface.commandTestGraphicalInterfaceProxy', this.uniqueIdentifier, 'openDeveloperTools', {});
 	}
 
 	show() {
-		//console.warn('TestGraphicalInterface show');
-		Electron.ipcRenderer.send('mainGraphicalInterface.commandTestGraphicalInterface', this.uniqueIdentifier, 'show', {});
+		//console.warn('TestGraphicalInterfaceProxy show');
+		Electron.ipcRenderer.send('mainGraphicalInterface.commandTestGraphicalInterfaceProxy', this.uniqueIdentifier, 'show', {});
 	}
 
 	retire() {
-		//console.warn('TestGraphicalInterface retire');
-		Electron.ipcRenderer.send('mainGraphicalInterface.commandTestGraphicalInterface', this.uniqueIdentifier, 'close', {});
+		//console.warn('TestGraphicalInterfaceProxy retire');
+		Electron.ipcRenderer.send('mainGraphicalInterface.commandTestGraphicalInterfaceProxy', this.uniqueIdentifier, 'close', {});
 
 		super.retire();
 	}
@@ -61,4 +61,4 @@ class TestGraphicalInterface extends Reusable {
 }
 
 // Export
-export default TestGraphicalInterface;
+export default TestGraphicalInterfaceProxy;

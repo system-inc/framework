@@ -11,7 +11,7 @@ import ListView from 'framework/system/interface/graphical/views/lists/ListView.
 import ButtonView from 'framework/system/interface/graphical/views/buttons/ButtonView.js';
 import TableView from 'framework/system/interface/graphical/views/tables/TableView.js';
 
-import TestGraphicalInterfacePool from 'interface/areas/testing/activities/tests/TestGraphicalInterfacePool.js';
+import TestGraphicalInterfaceProxyPool from 'interface/areas/testing/activities/tests/TestGraphicalInterfaceProxyPool.js';
 
 // Class
 class TestsActivityViewController extends ViewController {
@@ -19,8 +19,8 @@ class TestsActivityViewController extends ViewController {
 	tests = null;
 	testsFormView = null;
 	
-    testGraphicalInterfaces = {};
-    testGraphicalInterfacePool = new TestGraphicalInterfacePool().initialize();
+    testGraphicalInterfaceProxies = {};
+    testGraphicalInterfaceProxyPool = new TestGraphicalInterfaceProxyPool().initialize();
 
     previousTestMethodIndex = null;
     currentTestMethodIndex = null;
@@ -38,7 +38,7 @@ class TestsActivityViewController extends ViewController {
 	}
 
     listen() {
-        // Listen for reports from testGraphicalInterfaces
+        // Listen for reports from testGraphicalInterfaceProxies
         //Electron.ipcRenderer.on('testGraphicalInterface.report', function() {
         //    this.handleTestGraphicalInterfaceReport(...arguments);
         //}.bind(this));
@@ -125,7 +125,7 @@ class TestsActivityViewController extends ViewController {
         testMethod.tableRowView.getColumnCellView('Status').setContent('Initializing...');
 
          // Get a test browser window from the pool
-        var testGraphicalInterface = await this.testGraphicalInterfacePool.getReusable();
+        var testGraphicalInterface = await this.testGraphicalInterfaceProxyPool.getReusable();
         //console.log('runTestMethod testGraphicalInterface', testGraphicalInterface.uniqueIdentifier, testGraphicalInterface);
 
         // Show the browser window immediately with developer tools open and do not reset when finished running tests
@@ -183,7 +183,7 @@ class TestsActivityViewController extends ViewController {
         //console.log('status', status);
         var testGraphicalInterfaceUniqueIdentifier = data.testGraphicalInterfaceUniqueIdentifier;
         //console.log('testGraphicalInterfaceUniqueIdentifier', testGraphicalInterfaceUniqueIdentifier);
-        var testGraphicalInterface = this.testGraphicalInterfacePool.getReusableByUniqueIdentifier(testGraphicalInterfaceUniqueIdentifier);
+        var testGraphicalInterface = this.testGraphicalInterfaceProxyPool.getReusableByUniqueIdentifier(testGraphicalInterfaceUniqueIdentifier);
         //console.log('testGraphicalInterface', testGraphicalInterface);
 
         // The testGraphicalInterface is created and ready for commands
