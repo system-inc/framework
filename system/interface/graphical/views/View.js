@@ -6,6 +6,7 @@ import ViewEvent from 'framework/system/interface/graphical/views/events/ViewEve
 import Settings from 'framework/system/settings/Settings.js';
 import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
 import Position from 'framework/system/interface/graphical/Position.js';
+import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 
 // Class
 class View extends PropagatingEventEmitter {
@@ -93,6 +94,10 @@ class View extends PropagatingEventEmitter {
 	}
 
 	append(childView) {
+		if(ViewController.is(childView)) {
+			throw new Error('ViewControllers cannot be appended to Views. You can however append ViewControllers to other ViewControllers and child ViewController\'s view will be appended to the parent\'s view.');
+		}
+
 		return this.addChild(childView, 'append');
 	}
 

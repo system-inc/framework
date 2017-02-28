@@ -37,6 +37,10 @@ Number.toFloat = function(value) {
 	return parseFloat(value);
 };
 
+Number.toPercentage = function(number, precision = 2) {
+	return Number.round(number * 100, 2)+'%';
+}
+
 Number.precision = function(number) {
 	if(!isFinite(number)) {
 		return 0;

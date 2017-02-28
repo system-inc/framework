@@ -52,6 +52,14 @@ class ViewController extends PropagatingEventEmitter {
 		return viewController;
 	}
 
+	empty() {
+		// Empty the view
+		this.view.empty();
+
+		// Reset the children
+		this.children = [];
+	}
+
 	static is(value) {
 		return Class.isInstance(value, ViewController);
 	}
