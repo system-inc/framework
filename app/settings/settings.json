@@ -86,16 +86,16 @@
 			defaults: {
 				width: .5,
 				height: 1,
-				x: 0, // left
-				y: 0, // top
+				x: 'left',
+				y: 'top',
 				
 				oneDisplay: {
 					display: 1,
 					mode: 'normal',
 					width: .5,
 					height: 1,
-					x: 0, // left
-					y: 0, // top
+					x: 'left',
+					y: 'top',
 				},
 				twoDisplays: {
 					display: 1,
@@ -106,19 +106,18 @@
 					y: 'top',
 				},
 			},
+			types: {
+				test: {
+					width: .5,
+					height: 1,
+					x: 'right',
+					y: 'top',
+					//show: false,
+				},
+			},
 		},
 	},
 	modules: {
-		database: {
-			databases: {
-				frameworkTest: {
-					host: 'localhost',
-					username: 'framework_test',
-					password: 'framework_test',
-					databaseName: 'framework_test',
-				}
-			}
-		},
 		electron: {
 			automaticallyStartElectronIfNotInElectronContext: false, // We will manually start Electron
 		},

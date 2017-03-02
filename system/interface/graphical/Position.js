@@ -90,6 +90,58 @@ class Position {
 		this.edges.left = this.x;
 	}
 
+	static resolveWidth(width, totalWidth) {
+		var resolvedWidth = null;
+
+		if(width <= 1) {
+			resolvedWidth = width * totalWidth;
+		}
+
+		return resolvedWidth;
+	}
+
+	static resolveHeight(height, totalHeight) {
+		var resolvedHeight = null;
+
+		if(height <= 1) {
+			resolvedHeight = height * totalHeight;
+		}
+
+		return resolvedHeight;
+	}
+
+	static resolveX(x, width, totalWidth) {
+		var resolvedX = null;
+
+		if(x == 'left') {
+			resolvedX = 0;
+		}
+		else if(x == 'center') {
+			resolvedX = (totalWidth / 2) - (width / 2);
+		}
+		else if(x == 'right') {
+			resolvedX = totalWidth - width;
+		}
+
+		return resolvedX;
+	}
+
+	static resolveY(y, height, totalHeight) {
+		var resolvedY = null;
+
+		if(y == 'top') {
+			resolvedY = 0;
+		}
+		else if(y == 'center') {
+			resolvedY = (totalHeight / 2) - (height / 2);
+		}
+		else if(y == 'bottom') {
+			resolvedY = totalHeight - height;
+		}
+
+		return resolvedY;
+	}
+
 }
 
 // Export

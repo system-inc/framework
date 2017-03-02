@@ -11,7 +11,7 @@ import ListView from 'framework/system/interface/graphical/views/lists/ListView.
 import ButtonView from 'framework/system/interface/graphical/views/buttons/ButtonView.js';
 import TableView from 'framework/system/interface/graphical/views/tables/TableView.js';
 
-import TestGraphicalInterfaceProxyPool from 'interface/areas/testing/activities/tests/TestGraphicalInterfaceProxyPool.js';
+import TestGraphicalInterfaceProxyPool from 'interface/areas/testing/activities/tests/test-graphical-interface/TestGraphicalInterfaceProxyPool.js';
 
 // Class
 class TestsActivityViewController extends ViewController {

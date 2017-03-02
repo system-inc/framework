@@ -5,6 +5,7 @@ import ElectronManager from 'framework/system/interface/graphical/electron/Elect
 import GraphicalInterfaceProxy from 'framework/system/interface/graphical/GraphicalInterfaceProxy.js';
 import GraphicalInterfaceState from 'framework/system/interface/graphical/GraphicalInterfaceState.js';
 import Url from 'framework/system/web/Url.js';
+import LocalStorage from 'framework/system/interface/graphical/web/data/LocalStorage.js';
 
 // Class
 class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
@@ -19,8 +20,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		this.graphicalInterface.identifier = this.electronBrowserWindow.id;
 	}
 
-	newGraphicalInterface() {
-		var graphicalInterfaceProxy = ElectronGraphicalInterfaceAdapter.newGraphicalInterface();
+	async newGraphicalInterface(options = {}) {
+		var graphicalInterfaceProxy = await ElectronGraphicalInterfaceAdapter.newGraphicalInterface(options);
 
 		return graphicalInterfaceProxy;
 	}
@@ -29,19 +30,21 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		//console.log('ElectronGraphicalInterfaceAdapter initializeDisplays');
 		this.graphicalInterface.displays = app.modules.electronModule.getDisplays();
 		this.graphicalInterface.display = this.graphicalInterface.displays[1];
+
+		return this.graphicalInterface.displays;
 	}
 
 	initializeState() {
-		this.graphicalInterface.state = GraphicalInterfaceState.constructFromSettingsWithDisplays(this.graphicalInterface.displays);
+		this.graphicalInterface.state = GraphicalInterfaceState.constructFromElectronBrowserWindow(this.electronBrowserWindow);
+		//console.info('this.graphicalInterface.state', this.graphicalInterface.state);
 
-		this.electronBrowserWindow.setBounds({
-			width: this.graphicalInterface.state.dimensions.width,
-			height: this.graphicalInterface.state.dimensions.height,
-			x: this.graphicalInterface.state.position.relativeToAllDisplays.x,
-			y: this.graphicalInterface.state.position.relativeToAllDisplays.y,
-		});
+		// TODO: Update state on electron window change
 
-		this.electronBrowserWindow.openDevTools();
+		return this.graphicalInterface.state;
+	}
+
+	broadcast(key, value) {
+		LocalStorage.set('app.interfaces.graphical.'+this.graphicalInterface.identifier+'.'+key, value);
 	}
 
 	async inputKeyPressByCombination(key, modifiers = []) {
@@ -100,9 +103,20 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		return await ElectronManager.inputScroll(Number.round(viewPosition.relativeToGraphicalInterfaceViewport.x), Number.round(viewPosition.relativeToGraphicalInterfaceViewport.y),  deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
 	}
 
-	static newGraphicalInterface(pathToFirstBrowserWindowHtmlFile, type = 'primary') {
+	static async newGraphicalInterface(options) {
+		var path = null;
+		if(options.path) {
+			path = options.path;
+		}
+
+		var type = null;
+		if(options.type) {
+			type = options.type;
+		}
+
 		// Get the right reference for ElectronBrowserWindow based on whether or not we are in the Electron main process or in a renderer process
 		var ElectronBrowserWindow = null;
+		var parentIdentifier = null;
 
 		// Electron main process
 		if(app.modules.electronModule.inElectronMainProcess()) {
@@ -111,19 +125,26 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		// Electron renderer process
 		if(app.modules.electronModule.inElectronRendererProcess()) {
 			ElectronBrowserWindow = Electron.remote.BrowserWindow;
+			parentIdentifier = app.interfaces.graphical.identifier;
 		}
+
+		// Get the settings
+		var graphicalInterfaceStateSettings = GraphicalInterfaceState.getSettings(type);
+		//console.info('graphicalInterfaceStateSettings', graphicalInterfaceStateSettings);
 
 		// Get the displays
 		var displays = app.modules.electronModule.getDisplays();
 		//app.info('displays', displays);
 
 		// Construct the state for the graphical interface
-		var graphicalInterfaceState = GraphicalInterfaceState.constructFromSettingsWithDisplays(displays, type);
+		var graphicalInterfaceState = GraphicalInterfaceState.constructFromSettingsWithDisplays(graphicalInterfaceStateSettings, displays);
 		//app.info('graphicalInterfaceState', graphicalInterfaceState);
 
 		// Create the Electron browser window
 		var electronBrowserWindow = new ElectronBrowserWindow({
 			//url: app.directory.toString(),
+			title: app.title,
+			parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null,
 			width: graphicalInterfaceState.dimensions.width,
 			height: graphicalInterfaceState.dimensions.height,
 			x: graphicalInterfaceState.position.relativeToAllDisplays.x,
@@ -132,20 +153,32 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
 			},
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
-			show: true,
+			show: graphicalInterfaceStateSettings.show,
 		});
 
-		// Load an empty page, we use the webPreferences preload open to load FrameworkApp
-		app.error('https://github.com/electron/electron/issues/8735');
-		var appHtmlFileUrl = new Url(pathToFirstBrowserWindowHtmlFile);
-		electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
+		return new Promise(function(resolve) {
+			electronBrowserWindow.once('ready-to-show', function() {
+				console.info('ready-to-show');
+				resolve(true);
+			});
 
-		// Debugging - comment out the lines below when ready for release
-		electronBrowserWindow.openDevTools(); // Comment out for production
+			electronBrowserWindow.once('did-finish-load', function() {
+				console.info('did-finish-load');
+				resolve(true);
+			});
 
-		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow);
+			// Load an empty page, we use the webPreferences preload open to load FrameworkApp
+			// TODO: newGraphicalInterface with strings instead of files: https://github.com/electron/electron/issues/8735 and https://app.asana.com/0/35428325799561/283058472623355
+			var appHtmlFileUrl = new Url(path);
+			electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
 
-		return graphicalInterfaceProxy;
+			// Debugging - comment out the lines below when ready for release
+			electronBrowserWindow.openDevTools(); // Comment out for production
+
+			var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
+
+			return graphicalInterfaceProxy;
+		}.bind(this));
 	}
 
 }

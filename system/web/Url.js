@@ -12,6 +12,11 @@ class Url {
 	input = null;
 
 	constructor(string) {
+		// Make sure we are working with a string
+		if(string) {
+			string = string.toString();	
+		}
+
 		this.input = string;
 		this.parse(string);	
 	}

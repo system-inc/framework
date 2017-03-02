@@ -155,9 +155,11 @@ class ElectronModule extends Module {
 		this.newGraphicalInterface();	
 	}
 
-	newGraphicalInterface() {
+	async newGraphicalInterface() {
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
-		this.firstGraphicalInterfaceProxy = ElectronGraphicalInterfaceAdapter.newGraphicalInterface(this.settings.get('pathToFirstBrowserWindowHtmlFile'));
+		this.firstGraphicalInterfaceProxy = await ElectronGraphicalInterfaceAdapter.newGraphicalInterface({
+			path: this.settings.get('pathToFirstBrowserWindowHtmlFile'),
+		});
 		
 		// When graphical interface is closed
 		this.firstGraphicalInterfaceProxy.sourceGraphicalInterface.on('closed', function () {

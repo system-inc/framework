@@ -11,7 +11,7 @@ class GraphicalInterfaceAdapter {
 		throw new Error('This method must be implemented by a child class.');
 	}
 
-	newGraphicalInterface(graphicalInterface) {
+	async newGraphicalInterface(options) {
 		throw new Error('This method must be implemented by a child class.');
 	}
 

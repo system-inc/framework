@@ -109,8 +109,8 @@ class GraphicalInterface extends Interface {
 		return graphicalInterfaceAdapter;
 	}
 
-	newGraphicalInterface() {
-		return this.manager.newGraphicalInterface();
+	async newGraphicalInterface(options = {}) {
+		return await this.manager.newGraphicalInterface(options);
 	}
 
 	initializeState() {
@@ -122,6 +122,10 @@ class GraphicalInterface extends Interface {
 	initializeDisplays() {
 		//console.log('GraphicalInterface initializeDisplays');
 		return this.adapter.initializeDisplays();
+	}
+
+	broadcast(key, value) {
+		return this.adapter.broadcast(key, value);
 	}
 
 }

@@ -94,6 +94,9 @@ class App extends EventEmitter {
 			graphical: {
 				// The default settings graphical interfaces
 				defaults: {
+					// To show or not show the interface when it is created
+					show: true,
+					
 					// GraphicalInterfaceManager events that trigger the default settings to be applied
 					applyOn: [
 						'display.added',
@@ -127,6 +130,11 @@ class App extends EventEmitter {
 						x: 'center',
 						y: 'center',
 					},
+				},
+
+				// Allow the user to specify custom types of graphical interfaces
+				types: {
+					// typeName: settings object
 				},
 
 				// Should user changes to the settings be saved? If so, they will be used instead of the default settings

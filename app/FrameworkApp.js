@@ -2,6 +2,7 @@
 import 'framework/globals/Globals.js';
 import AsciiArt from 'framework/system/ascii-art/AsciiArt.js';
 import Proctor from 'framework/system/test/Proctor.js';
+import Url from 'framework/system/web/Url.js';
 
 // Dependencies
 import App from 'framework/system/app/App.js';
