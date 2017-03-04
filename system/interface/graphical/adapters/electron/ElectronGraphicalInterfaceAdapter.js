@@ -81,7 +81,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	async inputPressView(view, button = 'left', pressCount = 1, modifiers = []) {
 		var viewPosition = view.position.relativeToGraphicalInterfaceViewport;
 		//var viewPosition = view.position;
-		//console.info('viewPosition', viewPosition);
+		console.info('viewPosition', viewPosition);
 
 		return await ElectronManager.inputPress(Number.round(viewPosition.x), Number.round(viewPosition.y), button, pressCount, modifiers);
 	}
@@ -155,7 +155,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		var electronBrowserWindow = new ElectronBrowserWindow({
 			//url: app.directory.toString(),
 			title: app.title,
-			//parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null,
+			//parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null, // this always makes the brower window show
 			width: graphicalInterfaceState.dimensions.width,
 			height: graphicalInterfaceState.dimensions.height,
 			x: graphicalInterfaceState.position.relativeToAllDisplays.x,

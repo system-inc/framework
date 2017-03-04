@@ -15,13 +15,13 @@ class ElectronGraphicalInterfaceTest extends ElectronTest {
 		this.viewController = new ViewController();
 	}
 
-	render(view) {
+	async render(view) {
 		if(view !== undefined) {
 			this.viewController.view = view;
 		}
 
 		// Have the graphical interface manager create a graphical interface with a view controller
-		app.interfaces.graphical.initialize(this.viewController);
+		await app.interfaces.graphical.initialize(this.viewController);
 	}
 
 	inputPressView = ElectronGraphicalInterfaceAdapter.prototype.inputPressView;

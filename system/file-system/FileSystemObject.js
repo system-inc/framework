@@ -199,7 +199,7 @@ class FileSystemObject {
         return stat;
     }
 
-    static async listFileNames(directoryObjectOrPathString) {
+    static async listFileNames(directoryObjectOrPathString, filteringFunction) {
         var directory = directoryObjectOrPathString;
 
         if(String.is(directoryObjectOrPathString)) {
@@ -208,12 +208,16 @@ class FileSystemObject {
         }
         
         var fileNamesList = await new Promise(function(resolve, reject) {
-            Node.FileSystem.readdir(directory.toString(), function(error, files) {
+            Node.FileSystem.readdir(directory.toString(), function(error, fileNames) {
                 if(error) {
                     reject(error);
                 }
                 else {
-                    resolve(files);
+                    if(filteringFunction) {
+                        fileNames = fileNames.filter(filteringFunction);
+                    }
+
+                    resolve(fileNames);
                 }
             });
         });
@@ -221,7 +225,7 @@ class FileSystemObject {
         return fileNamesList;
     }
 
-    static async list(path, recursive) {
+    static async list(path, recursive, filteringFunction) {
         //app.log('FileSystemObject.list', ...arguments);
 
         // Dependencies
@@ -233,7 +237,7 @@ class FileSystemObject {
         var directory = new Directory(path);
 
         var list = [];
-        var fileNames = await FileSystemObject.listFileNames(directory);
+        var fileNames = await FileSystemObject.listFileNames(directory, filteringFunction);
         //app.exit('fileNames', fileNames);
 
         // Make sure we have the full path
@@ -245,7 +249,7 @@ class FileSystemObject {
             // Handle recursion
             if(recursive && Directory.is(fileSystemObject)) {
                 // Get the directory listing of any directories
-                var directoryList = await fileSystemObject.list(true);
+                var directoryList = await fileSystemObject.list(true, filteringFunction);
 
                 // Add them to the list to return
                 directoryList.each(function(index, directoryListItem) {

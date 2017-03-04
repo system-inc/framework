@@ -9,10 +9,10 @@ class CommandTest extends Test {
 	async testCommand() {
 		var commandSettings = app.settings.get('interfaces.commandLine.command');
 
-		var commandString = 'nodeExecutableFile javaScriptFile proctor -r dot -b -f command -m method';
+		var commandString = 'node app proctor -r dot -b -f command -m method';
 
 		var actual = new Command(commandSettings, commandString);
-		//app.info(actual);
+		//console.info(actual);
 
 		Assert.strictEqual(actual.subcommands.proctor.options.path, null, 'proctor command path option is set correctly');
 		Assert.strictEqual(actual.subcommands.proctor.options.filePattern, 'command', 'proctor command filePattern option is set correctly');

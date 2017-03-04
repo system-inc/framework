@@ -29,7 +29,7 @@ class WebViewAdapter extends ViewAdapter {
 		adaptedView.attributes = this.view.attributes;
 
 		// When the adapted view is mounted to the DOM, update the view's identifier
-		adaptedView.on('htmlNode.mountedToDom', function() {
+		adaptedView.once('htmlNode.mountedToDom', function() {
 			this.view.identifier = adaptedView.nodeIdentifier;
 		}.bind(this));
 

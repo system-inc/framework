@@ -25,7 +25,7 @@ class Command {
 	options = {};
 	subcommands = {};
 
-	constructor(settings, argumentsArray) {
+	constructor(settings, argumentsArray = []) {
 		this.settings.merge(settings);
 
 		// We will loop through all of the settings and reform them as well as set the default values for the options for the root command
@@ -46,6 +46,10 @@ class Command {
 			this.reformSubcommandSettings(subcommand, subcommandKey);
 		}.bind(this));
 
+		// Make sure we are working with an array
+		if(String.is(argumentsArray)) {
+			argumentsArray = argumentsArray.split(' ');
+		}
 		this.arguments = argumentsArray;
 
 		// Parse the arguments array
@@ -101,89 +105,92 @@ class Command {
 		subcommandSettings.aliases.prepend(subcommandSettingsKey);
 	}
 
-	parse(argumentsArray) {
+	parse(argumentsArray = []) {
 		// Make sure we are working with an array
 		if(String.is(argumentsArray)) {
 			argumentsArray = argumentsArray.split(' ');
 		}
 
-		// If we have an arguments array
-		if(Array.is(argumentsArray)) {
-			//app.info('argumentsArray', argumentsArray);
+		//app.info('argumentsArray', argumentsArray);
 
-			// The JavaScript file Node is executing
-			this.executable = argumentsArray[0];
+		// The JavaScript file Node is executing
+		this.executable = argumentsArray[0];
 
-			// If the executable isn't node, strip out any switches (for example, when running Electron a ton of switches are added)
-			if(!this.executable.endsWith('node')) {
-				let currentArgument = argumentsArray.get(1);
-				while(currentArgument && currentArgument.startsWith('--')) {
-					argumentsArray.delete(1);
-					currentArgument = argumentsArray.get(1);
-				}
-				//app.info('updated argumentsArray', argumentsArray);
+		// If the executable isn't node, strip out any switches (for example, when running Electron a ton of switches are added)
+		if(!this.executable.endsWith('node')) {
+			//console.log('does not end with node');
+
+			let currentArgument = argumentsArray.get(1);
+			while(currentArgument && currentArgument.startsWith('--')) {
+				argumentsArray.delete(1);
+				currentArgument = argumentsArray.get(1);
 			}
+			//app.info('updated argumentsArray', argumentsArray);
+		}
 
-			// The rest of the command arguments
-			var argumentsToProcess = argumentsArray;
+		// The rest of the command arguments
+		var argumentsToProcess = argumentsArray;
 
-			// If we are in a terminal context, the second argument will be the script we are interpreting and we should start processing at the third argument
-			if(app.inTerminalContext()) {
-				this.script = argumentsArray[1];
-				argumentsToProcess = argumentsToProcess.slice(2);
+		// If we are in a terminal context, the second argument will be the script we are interpreting and we should start processing at the third argument
+		if(app.inTerminalContext()) {
+			//console.log('in terminal context');
+			this.script = argumentsArray[1];
+			argumentsToProcess = argumentsToProcess.slice(2);
+		}
+		// If we are not in a terminal context (e.g., we are in Electron), then start processing arguments at the second argument
+		else {
+			//console.log('not in terminal context');
+			argumentsToProcess = argumentsToProcess.slice(1);
+		}
+
+		//console.info('argumentsToProcess', argumentsToProcess);
+
+		var currentCommandSettings = this.settings.get();
+
+		// Loop through the arguments to process
+		for(var currentArgumentIndex = 0; currentArgumentIndex < argumentsToProcess.length; currentArgumentIndex++) {
+			var currentArgument = argumentsToProcess[currentArgumentIndex];
+			//app.log('currentArgument', currentArgument, 'currentArgumentIndex', currentArgumentIndex);
+
+			var possibleSubcommandIdentifier = this.subcommandAliasToSubcommandIdentifier(currentArgument, currentCommandSettings.subcommands);
+			var possibleSubcommandSettings = currentCommandSettings.subcommands[possibleSubcommandIdentifier];
+			//app.log('possibleSubcommandSettings', possibleSubcommandSettings);
+
+			// If the current argument is a subcommand
+			if(possibleSubcommandSettings) {
+				// Set the subcommand
+				this.subcommands[possibleSubcommandSettings.identifier] = {
+					options: {},
+				};
+
+				// Set the defaults for the subcommand options
+				this.setDefaultValuesForCommandOptions(possibleSubcommandSettings.options, this.subcommands[possibleSubcommandSettings.identifier].options);
+
+				// Read in the options for the current subcommand
+				currentArgumentIndex = this.parseOptions(possibleSubcommandSettings.options, this.subcommands[possibleSubcommandSettings.identifier].options, currentArgumentIndex + 1, argumentsToProcess);
 			}
-			// If we are not in a terminal context (e.g., we are in Electron), then start processing arguments at the second argument
+			// If the current argument is not a subcommand
 			else {
-				argumentsToProcess = argumentsToProcess.slice(1);
+				// Read in the options
+				currentArgumentIndex = this.parseOptions(currentCommandSettings.options, this.options, currentArgumentIndex, argumentsToProcess);
 			}
 
-			var currentCommandSettings = this.settings.get();
+			//app.log('currentArgumentIndex', currentArgumentIndex, 'argumentsToProcess.length', argumentsToProcess.length);
+		}
 
-			// Loop through the arguments to process
-			for(var currentArgumentIndex = 0; currentArgumentIndex < argumentsToProcess.length; currentArgumentIndex++) {
-				var currentArgument = argumentsToProcess[currentArgumentIndex];
-				//app.log('currentArgument', currentArgument, 'currentArgumentIndex', currentArgumentIndex);
+		//app.info('command', this);
 
-				var possibleSubcommandIdentifier = this.subcommandAliasToSubcommandIdentifier(currentArgument, currentCommandSettings.subcommands);
-				var possibleSubcommandSettings = currentCommandSettings.subcommands[possibleSubcommandIdentifier];
-				//app.log('possibleSubcommandSettings', possibleSubcommandSettings);
-
-				// If the current argument is a subcommand
-				if(possibleSubcommandSettings) {
-					// Set the subcommand
-					this.subcommands[possibleSubcommandSettings.identifier] = {
-						options: {},
-					};
-
-					// Set the defaults for the subcommand options
-					this.setDefaultValuesForCommandOptions(possibleSubcommandSettings.options, this.subcommands[possibleSubcommandSettings.identifier].options);
-
-					// Read in the options for the current subcommand
-					currentArgumentIndex = this.parseOptions(possibleSubcommandSettings.options, this.subcommands[possibleSubcommandSettings.identifier].options, currentArgumentIndex + 1, argumentsToProcess);
-				}
-				// If the current argument is not a subcommand
-				else {
-					// Read in the options
-					currentArgumentIndex = this.parseOptions(currentCommandSettings.options, this.options, currentArgumentIndex, argumentsToProcess);
-				}
-
-				//app.log('currentArgumentIndex', currentArgumentIndex, 'argumentsToProcess.length', argumentsToProcess.length);
-			}
-
-			//app.info('command', this);
-
-			// Version
-			if(this.options.version) {
-				this.showVersion();
-			}
-			// Help
-			else if(this.options.help) {
-				this.showHelp();
-			}
-			// Debug command
-			else if(this.options.debugCommand) {
-				this.showDebugCommand();
-			}
+		// Version
+		if(this.options.version) {
+			this.showVersion();
+		}
+		// Help
+		else if(this.options.help) {
+			this.showHelp();
+		}
+		// Debug command
+		else if(this.options.debugCommand) {
+			this.showDebugCommand();
 		}
 
 		return this;

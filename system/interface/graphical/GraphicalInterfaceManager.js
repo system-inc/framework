@@ -72,10 +72,7 @@ class GraphicalInterfaceManager {
 			//console.info('event', event);
 
 			var shouldBroadcastEvent = true;
-			if(event.identifier === 'eventEmitter.addedEventListener') {
-				shouldBroadcastEvent = false;
-			}
-			else if(event.graphicalInterface) {
+			if(event.graphicalInterface) {
 				shouldBroadcastEvent = false;	
 			}
 			else if(event.data && event.data.broadcastEvent === false) {

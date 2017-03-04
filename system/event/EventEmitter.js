@@ -8,6 +8,7 @@ class EventEmitter {
 
 	eventClass = Event;
 	eventListeners = [];
+	emitAddedEventListenerEvents = false;
 	recommendedMaximumEventListenersPerEventIdentifier = null;
 
 	async on(eventPattern, functionToBind, timesToRun) {
@@ -157,7 +158,9 @@ class EventEmitter {
 
 		// Do this await at the end of the function
 		// All EventEmitters emit 'eventEmitter.addedEventListener' when an event listener is added
-		await this.emit('eventEmitter.addedEventListener', eventListener); // This bubbles
+		if(this.emitAddedEventListenerEvents) {
+			await this.emit('eventEmitter.addedEventListener', eventListener); // This bubbles
+		}
 
 		return this;
 	}

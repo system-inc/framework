@@ -37,10 +37,11 @@ class Pool extends EventEmitter {
 	}
 
 	createReusable() {
-		//console.log('Pool.createReusable()');
+		//console.log('pool.createReusable()');
 
 		// Increment the size
 		this.size++;
+		this.emit('pool.size', this.size);
 
 		// Construct the new reusable
 		var reusable = new this.reusableClass(this);
@@ -152,6 +153,7 @@ class Pool extends EventEmitter {
 		//reusable = null;
 
 		this.size--;
+		this.emit('pool.size', this.size);
 
 		// Create a new reusable if we are below the minimum size or if there is someone waiting for an available reusable
 		if((this.size < this.minimumSize) || (this.waitingForAvailableReusableCount > 0)) {

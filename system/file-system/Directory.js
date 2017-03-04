@@ -21,8 +21,8 @@ class Directory extends FileSystemObject {
 		}
 	}
 
-	async list(recursive) {
-		var list = await FileSystemObject.list(this.path, recursive);
+	async list(recursive, filteringFunction) {
+		var list = await FileSystemObject.list(this.path, recursive, filteringFunction);
 
 		return list;
 	}

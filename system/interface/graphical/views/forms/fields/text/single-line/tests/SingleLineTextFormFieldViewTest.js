@@ -34,7 +34,7 @@ class SingleLineTextFormFieldViewTest extends ElectronGraphicalInterfaceTest {
         console.info('singleLineTextFormFieldView', singleLineTextFormFieldView);
 
         // Render the view
-        this.render(formView);
+        await this.render(formView);
 
         // Click the input field
         await this.inputPressView(singleLineTextFormFieldView.formControlView);
@@ -72,7 +72,7 @@ class SingleLineTextFormFieldViewTest extends ElectronGraphicalInterfaceTest {
         console.info('singleLineTextFormFieldView', singleLineTextFormFieldView);
 
         // Render the view
-        this.render(formView);
+        await this.render(formView);
 
         // Click the input field
         await this.inputPressView(singleLineTextFormFieldView.formControlView);

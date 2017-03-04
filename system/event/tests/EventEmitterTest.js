@@ -20,6 +20,7 @@ class EventEmitterTest extends Test {
 	async testCoreEventEmitterFunctionality() {
 		// Create the EventEmitter
 		var eventEmitter = new EventEmitter();
+		eventEmitter.emitAddedEventListenerEvents = true;
 
 		// List bound event listeners
 		var eventListeners = eventEmitter.getEventListeners();

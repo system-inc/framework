@@ -825,8 +825,30 @@ class Proctor extends EventEmitter {
 
 			// Recursively get all of the file system objects in the path
 			//app.log('proctor getting all file system objects');
-			fileSystemObjects = await fileSystemObjectFromPath.list(true);
-			//app.log('fileSystemObjects', fileSystemObjects);
+			fileSystemObjects = await fileSystemObjectFromPath.list(true, function(path) {
+				var passesFilter = true;
+
+				// Ignore node_modules
+				if(path.contains('node_modules')) {
+					passesFilter = false;
+				}
+				// Ignore any file system objects with a . in them
+				else if(path.contains('.')) {
+					passesFilter = false;
+
+					// Unless they end in Test.js
+					if(path.endsWith('Test.js')) {
+						passesFilter = true;
+					}
+				}
+
+				if(passesFilter) {
+					//console.log('path', path);	
+				}				
+
+				return passesFilter;
+			});
+			//console.info('fileSystemObjects length', fileSystemObjects.length);
 		}
 		// If we are working with a single test file
 		else {

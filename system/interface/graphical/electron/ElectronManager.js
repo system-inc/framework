@@ -226,8 +226,6 @@ class ElectronManager {
 	//	});
 	//}
 
-	
-
 	static async sendInputEventKeyboard(type, key, modifiers) {
 		var webContents = Electron.remote.getCurrentWindow().webContents;
 
@@ -268,6 +266,8 @@ class ElectronManager {
 
 	// modifiers: shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
 	static async inputPress(relativeToGraphicalInterfaceViewportX, relativeToGraphicalInterfaceViewportY, button = 'left', pressCount = 1, modifiers = []) {
+		console.info(...arguments);
+
 		var webContents = Electron.remote.getCurrentWindow().webContents;
 
 		// A trusted click will be fired after mouse down and mouse up

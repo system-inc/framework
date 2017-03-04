@@ -46,10 +46,10 @@ class TestsActivityViewController extends ViewController {
 
 	async getTests() {
 		// Get all possible tests: Proctor.getTests(path, filePattern, methodPattern)
-        //var tests = await Proctor.getTests();
+        var tests = await Proctor.getTests();
         //var tests = await Proctor.getTests(null, 'Database');
         //var tests = await Proctor.getTests(null, 'SingleLine');
-        var tests = await Proctor.getTests(null, 'Class');
+        //var tests = await Proctor.getTests(null, 'Class');
         //var tests = await Proctor.getTests(null, 'String');
         //var tests = await Proctor.getTests(null, 'interface');
         //var tests = await Proctor.getTests(null, 'Html');
@@ -73,8 +73,11 @@ class TestsActivityViewController extends ViewController {
         var summary = new TextView(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
         testsFormView.append(summary);
 
-        var status = new TextView('Pool status');
+        var status = new TextView('Pool size: '+this.testGraphicalInterfaceProxyPool.size);
         testsFormView.append(status);
+        this.testGraphicalInterfaceProxyPool.on('pool.size', function(event) {
+            status.setContent('Pool size: '+event.data)
+        });        
         
         // Table
         var tableView = new TableView();
@@ -218,6 +221,9 @@ class TestsActivityViewController extends ViewController {
             else if(testGraphicalInterfaceProxy.resetWhenFinishedRunningTests) {
                 //console.error('time to reset the test interface');
                 testGraphicalInterfaceProxy.reset();
+            }
+            else {
+                testGraphicalInterfaceProxy.close();
             }
         }
     }

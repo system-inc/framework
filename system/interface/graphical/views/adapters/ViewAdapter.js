@@ -21,10 +21,19 @@ class ViewAdapter {
 			// Hook the adapted view's emit function
 			var standardAdaptedViewEmit = this.adaptedView.emit;
 			this.adaptedView.emit = async function(eventIdentifier, data, eventOptions) {
-				//console.warn('emit', arguments);
+				if(
+					eventIdentifier === 'htmlNode.domUpdateExecuted' ||
+					eventIdentifier === 'htmlNode.mountedToDom' ||
+					eventIdentifier === 'htmlNode.domUpdateExecuted'
+				) {
+					// Don't do anything
+				}
+				else {
+					//console.log('eventIdentifier', eventIdentifier);
 
-				// We also emit the event on the view
-				await this.view.emit.apply(this.view, arguments);
+					// We also emit the event on the view
+					await this.view.emit.apply(this.view, arguments);
+				}
 
 				// Emit the event on the adapted view as normal
 				return await standardAdaptedViewEmit.apply(this.adaptedView, arguments);
