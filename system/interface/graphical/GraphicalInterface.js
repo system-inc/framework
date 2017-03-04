@@ -9,6 +9,8 @@ import ViewController from 'framework/system/interface/graphical/view-controller
 // Class
 class GraphicalInterface extends Interface {
 
+	children = [];
+
 	manager = null; // GraphicalInterfaceManager
 
 	adapter = null;
@@ -64,7 +66,7 @@ class GraphicalInterface extends Interface {
 		this.initializeState();
 
 		// Create a graphical interface manager
-		this.manager = new GraphicalInterfaceManager();
+		this.manager = new GraphicalInterfaceManager(this);
 	}
 
 	async initialize(viewController) {
@@ -124,8 +126,24 @@ class GraphicalInterface extends Interface {
 		return this.adapter.initializeDisplays();
 	}
 
-	broadcast(key, value) {
-		return this.adapter.broadcast(key, value);
+	toObject() {
+		var identifier = this.identifier;
+
+		var parentIdentifier = null;
+		if(this.parent) {
+			parentIdentifier = this.parent.identifier;
+		}
+
+		var childrenIdentifiers = [];
+		this.children.each(function(index, child) {
+			childrenIdentifiers.append(child.identifier);
+		});
+
+		return {
+			identifier: this.identifier,
+			parentIdentifier: parentIdentifier,
+			childrenIdentifiers: childrenIdentifiers,
+		};
 	}
 
 }

@@ -19,32 +19,10 @@ class GraphicalInterfaceProxy extends EventEmitter {
 
 	toObject() {
 		return {
-			identifier: null,
-			parentIdentifier: null,
-			childrenIdentifiers: null,
+			identifier: this.identifier,
+			parentIdentifier: this.parentIdentifier,
+			childrenIdentifiers: this.childrenIdentifiers,
 		};
-	}
-
-	sendMessage(key, value) {
-		var sourceGraphicalInterface = null;
-
-		var messages = LocalStorage.get('app.interfaces.graphical.'+this.identifier+'.messages');
-
-		if(!messages) {
-			messages = [];
-		}
-
-		messages.append({
-			sourceIdentifier: app.interfaces.graphical.identifier,
-			identifier: key,
-			value: value,
-		});
-
-		LocalStorage.set('app.interfaces.graphical.'+this.identifier+'.messages', messages);
-	}
-
-	receiveMessage(message) {
-		this.emit(message.identifier, message);
 	}
 
 	openDeveloperTools() {

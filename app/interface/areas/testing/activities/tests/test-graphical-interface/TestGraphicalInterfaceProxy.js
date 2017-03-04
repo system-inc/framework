@@ -18,9 +18,14 @@ class TestGraphicalInterfaceProxy extends Reusable {
 		});
 
 		// When the graphical interface is ready, release the reusable into the pool
-		this.graphicalInterfaceProxy.on('ready', function() {
+		this.graphicalInterfaceProxy.on('testGraphicalInterfaceApp.ready', function() {
 			console.log('child graphical interface proxy is ready, releasing into the pool!');
 			this.release();
+		}.bind(this));
+
+		this.graphicalInterfaceProxy.on('graphicalInterface.closed', function() {
+			console.log('child graphical interface proxy is closed, retiring');
+			this.retire();
 		}.bind(this));
 	}
 
@@ -30,11 +35,11 @@ class TestGraphicalInterfaceProxy extends Reusable {
 		this.testMethod = testMethod;
 
 		// Command the testGraphicalInterface to run the test method
-		this.graphicalInterfaceProxy.sendMessage('runTestMethod', {
-			testClassFilePath: this.testMethod.class.file.path,
-            testClassName: this.testMethod.class.name,
-            testMethodName: this.testMethod.name,
-		});
+		//this.graphicalInterfaceProxy.emit('runTestMethod', {
+		//	testClassFilePath: this.testMethod.class.file.path,
+  //          testClassName: this.testMethod.class.name,
+  //          testMethodName: this.testMethod.name,
+		//});
 	}
 
 	openDeveloperTools() {

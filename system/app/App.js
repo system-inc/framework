@@ -551,7 +551,11 @@ class App extends EventEmitter {
 		return inWebContext;
 	}
 
-	exit = Node.exit;
+	exit = async function() {
+		await this.emit('app.beforeExit');
+
+		Node.exit(...arguments);
+	}
 
 }
 

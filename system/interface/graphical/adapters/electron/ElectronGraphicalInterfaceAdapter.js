@@ -156,29 +156,37 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			show: graphicalInterfaceStateSettings.show,
 		});
 
-		return new Promise(function(resolve) {
-			electronBrowserWindow.once('ready-to-show', function() {
-				console.info('ready-to-show');
-				resolve(true);
-			});
+		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
 
-			electronBrowserWindow.once('did-finish-load', function() {
-				console.info('did-finish-load');
-				resolve(true);
-			});
+		electronBrowserWindow.on('closed', function() {
+			graphicalInterfaceProxy.emit('graphicalInterface.closed');
+		});
 
-			// Load an empty page, we use the webPreferences preload open to load FrameworkApp
-			// TODO: newGraphicalInterface with strings instead of files: https://github.com/electron/electron/issues/8735 and https://app.asana.com/0/35428325799561/283058472623355
-			var appHtmlFileUrl = new Url(path);
-			electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
+		electronBrowserWindow.on('show', function() {
+			graphicalInterfaceProxy.emit('graphicalInterface.show');
+		});
 
-			// Debugging - comment out the lines below when ready for release
-			electronBrowserWindow.openDevTools(); // Comment out for production
+		// This approach doesn't work when electronBrowserWindow is over remote
+		// Patch the Electron BrowserWindow event emitter to make the GraphicalInterfaceProxy emit the events as well
+		//var standardElectronBrowserWindowEmit = electronBrowserWindow.emit;
+		//electronBrowserWindow.emit = function() {
+		//	var eventIdentifier = 'graphicalInterface.'+arguments[0].toCamelCase();
+		//	//console.log('eventIdentifier', eventIdentifier);
+		//	graphicalInterfaceProxy.emit(eventIdentifier, arguments[1]);
 
-			var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
+		//	//console.log('electronBrowserWindow emit', arguments);
+		//	standardElectronBrowserWindowEmit.apply(electronBrowserWindow, arguments);
+		//};
 
-			return graphicalInterfaceProxy;
-		}.bind(this));
+		// Load an empty page, we use the webPreferences preload open to load FrameworkApp
+		// TODO: newGraphicalInterface with strings instead of files: https://github.com/electron/electron/issues/8735 and https://app.asana.com/0/35428325799561/283058472623355
+		var appHtmlFileUrl = new Url(path);
+		electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
+
+		// Debugging - comment out the lines below when ready for release
+		electronBrowserWindow.openDevTools(); // Comment out for production
+
+		return graphicalInterfaceProxy;
 	}
 
 }

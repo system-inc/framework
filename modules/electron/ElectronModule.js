@@ -112,7 +112,7 @@ class ElectronModule extends Module {
 		// And send all standard input to the child process
 		Node.Process.stdin.on('data', function(data) {
 			childProcessElectronMainProcess.stdin.write(data);
-		});
+		}.bind(this));
 
 		// Standard out from the child process is bridged to the parent process
 		childProcessElectronMainProcess.stdout.on('data', function(data) {
@@ -133,39 +133,57 @@ class ElectronModule extends Module {
 		});
 	}
 
-	configureElectronMainProcess() {
+	async configureElectronMainProcess() {
+		// Before app.exit() exits the application, quit the Electron app
+		app.on('app.beforeExit', function() {
+			//console.log('app.beforeQuit');
+			this.electron.app.quit();
+		}.bind(this));
+		
 		// Enable Harmony for any Electron renderer processes we create, will eventually not need to do this
 		this.electron.app.commandLine.appendSwitch('--js-flags', '--harmony');
 
 		// When the app is activated from the macOS dock
 		this.electron.app.on('activate', function () {
+			//console.log('electron app activate');
+			//console.log('this', this);
+
 			if(this.firstGraphicalInterfaceProxy === null) {
+				//console.log('this.firstGraphicalInterfaceProxy proxy is null');
 				this.newGraphicalInterface();
 			}
 		}.bind(this));
 
 		// Quit when all windows are closed if not on macOS
 		this.electron.app.on('window-all-closed', function () {
+			//console.log('electron app window-all-closed');
 			if(!app.onMacOs()) {
 				this.electron.app.quit()
 			}
-		});
+		}.bind(this));
 
 		// Create the first graphical interface
-		this.newGraphicalInterface();	
+		await this.newGraphicalInterface();
+		//console.log('this.firstGraphicalInterfaceProxy', this.firstGraphicalInterfaceProxy);
 	}
 
 	async newGraphicalInterface() {
+		//console.log('new graphical interface...');
+
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
 		this.firstGraphicalInterfaceProxy = await ElectronGraphicalInterfaceAdapter.newGraphicalInterface({
 			path: this.settings.get('pathToFirstBrowserWindowHtmlFile'),
 		});
-		
+
 		// When graphical interface is closed
-		this.firstGraphicalInterfaceProxy.sourceGraphicalInterface.on('closed', function () {
+		this.firstGraphicalInterfaceProxy.on('graphicalInterface.closed', function () {
+			//console.log('this.firstGraphicalInterfaceProxy.on closed');
+
 			// Dereference the object so it will be recreated on activation (when the user presses the icon on the macOS dock)
 			this.firstGraphicalInterfaceProxy = null;
 		}.bind(this));
+
+		return this.firstGraphicalInterfaceProxy;
 	}
 
 	getDisplays() {

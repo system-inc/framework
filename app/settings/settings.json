@@ -118,6 +118,16 @@
 		},
 	},
 	modules: {
+		database: {
+			databases: {
+				frameworkTest: {
+					host: 'localhost',
+					username: 'framework_test',
+					password: 'framework_test',
+					databaseName: 'framework_test',
+				}
+			}
+		},
 		electron: {
 			automaticallyStartElectronIfNotInElectronContext: false, // We will manually start Electron
 		},

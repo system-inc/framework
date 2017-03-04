@@ -34,7 +34,7 @@ Path.normalize = function() {
 // Class
 class Node {
 
-	static childProcesses = [];
+	static childProcesses = {};
 
 	static Assert = require('assert');
 	static Buffer = Buffer;
@@ -78,7 +78,12 @@ class Node {
 
 		var childProcess = Node.ChildProcess.spawn(...arguments);
 
-		Node.childProcesses.append(childProcess);
+		Node.childProcesses[childProcess.pid] = childProcess;
+
+		childProcess.on('close', function() {
+			//console.log('removing process from nodeChildProcesses', childProcess.pid);
+			delete Node.childProcesses[childProcess.pid];
+		});
 
 		return childProcess;
 	}
@@ -118,9 +123,13 @@ Node.Process.on('SIGTERM', Node.exit);
 
 // Catch exit
 Node.Process.on('exit', function() {
-	if(Node.childProcesses.length) {
-		console.log('Killing', Node.childProcesses.length, 'child process'+(Node.childProcesses.length > 1 ? 'es' : '')+'...');
-		Node.childProcesses.forEach(function(childProcess) {
+	var nodeChildProcesses = Node.childProcesses.getKeys();
+	//console.log('nodeChildProcesses', nodeChildProcesses);
+
+	if(nodeChildProcesses.length) {
+		console.log('Killing', nodeChildProcesses.length, 'child process'+(nodeChildProcesses.length > 1 ? 'es' : '')+'...');
+
+		Node.childProcesses.each(function(childProcessIdentifier, childProcess) {
 			childProcess.kill();
 		});
 	}
