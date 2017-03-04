@@ -88,6 +88,7 @@
 				height: 1,
 				x: 'left',
 				y: 'top',
+				openDeveloperTools: true,
 				
 				oneDisplay: {
 					display: 1,
@@ -112,7 +113,8 @@
 					height: 1,
 					x: 'right',
 					y: 'top',
-					//show: false,
+					show: false,
+					openDeveloperTools: false,
 				},
 			},
 		},

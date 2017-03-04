@@ -21,7 +21,7 @@ class ElectronGraphicalInterfaceTest extends ElectronTest {
 		}
 
 		// Have the graphical interface manager create a graphical interface with a view controller
-		app.interfaces.graphicalInterfaceManager.getCurrentGraphicalInterface().initialize(this.viewController);
+		app.interfaces.graphical.initialize(this.viewController);
 	}
 
 	inputPressView = ElectronGraphicalInterfaceAdapter.prototype.inputPressView;

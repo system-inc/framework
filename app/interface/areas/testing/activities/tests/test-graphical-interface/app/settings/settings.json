@@ -2,12 +2,13 @@
 	title: 'Test Graphical Interface \u2022 Framework',
 	interfaces: {
 		graphical: {
-			defaults: {
-				width: .5,
-				height: 1,
-				x: 'right',
-				y: 'top',
-			},
+			//defaults: {
+			//	width: .5,
+			//	height: 1,
+			//	x: 'right',
+			//	y: 'top',
+			//	show: false,
+			//},
 		},
 	},
 	modules: {

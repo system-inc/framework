@@ -19,21 +19,21 @@ class TestReporter {
 	constructor(proctor) {
 		this.proctor = proctor;
 
-		this.proctor.on('Proctor.startedRunningTests', function(event) {
+		this.proctor.on('proctor.startedRunningTests', function(event) {
 			this.startedRunningTests(event.data);
 		}.bind(this));
 
-		this.proctor.on('Proctor.startedRunningTest', function(event) {
+		this.proctor.on('proctor.startedRunningTest', function(event) {
 			this.currentTestClassName = event.data.name;
 
 			this.startedRunningTest(event.data);
 		}.bind(this));
 
-		this.proctor.on('Proctor.startedRunningTestMethod', function(event) {
+		this.proctor.on('proctor.startedRunningTestMethod', function(event) {
 			this.startedRunningTestMethod(event.data);
 		}.bind(this));
 
-		this.proctor.on('Proctor.finishedRunningTestMethod', function(event) {
+		this.proctor.on('proctor.finishedRunningTestMethod', function(event) {
 			this.totalTestMethodCount++;
 			this.currentTestMethodCount++;
 
@@ -43,13 +43,13 @@ class TestReporter {
 			this.currentAssertions = [];
 		}.bind(this));
 
-		this.proctor.on('Proctor.finishedRunningTest', function(event) {
+		this.proctor.on('proctor.finishedRunningTest', function(event) {
 			this.finishedRunningTest(event.data);
 
 			this.currentTestMethodCount = 0;
 		}.bind(this));
 
-		this.proctor.on('Proctor.finishedRunningTests', function(event) {
+		this.proctor.on('proctor.finishedRunningTests', function(event) {
 			this.finishedRunningTests(event.data);
 		}.bind(this));
 

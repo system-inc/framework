@@ -96,6 +96,9 @@ class App extends EventEmitter {
 				defaults: {
 					// To show or not show the interface when it is created
 					show: true,
+
+					// To open or not open developer tools
+					openDeveloperTools: false,
 					
 					// GraphicalInterfaceManager events that trigger the default settings to be applied
 					applyOn: [

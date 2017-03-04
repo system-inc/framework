@@ -232,7 +232,7 @@ class Proctor extends EventEmitter {
 		//app.log('this.testMethodQueue', this.testMethodQueue);
 
 		// Started running tests
-		this.emit('Proctor.startedRunningTests', {
+		this.emit('proctor.startedRunningTests', {
 			testCount: this.testCount,
 			testMethodCount: this.testMethodCount,
 		});
@@ -271,7 +271,7 @@ class Proctor extends EventEmitter {
 
 		this.skippedTestMethods.append(this.currentTestMethod);
 
-		this.emit('Proctor.finishedRunningTestMethod', {
+		this.emit('proctor.finishedRunningTestMethod', {
 			status: this.currentTestMethodStatus,
 			name: this.currentTestMethod.method,
 			stopwatch: null,
@@ -303,7 +303,7 @@ class Proctor extends EventEmitter {
 			return this.skipCurrentTest();
 		}
 
-		this.emit('Proctor.startedRunningTestMethod', {
+		this.emit('proctor.startedRunningTestMethod', {
 			name: this.currentTestMethod.method,
 		});
 
@@ -315,9 +315,9 @@ class Proctor extends EventEmitter {
 
 		// Run the test
 		try {
-			//app.info('Proctor.runNextTest running test', this.currentTestMethod.method);
+			//app.info('proctor.runNextTest running test', this.currentTestMethod.method);
 			await this.currentTestClassInstance[this.currentTestMethod.method]();
-			//app.info('Proctor.runNextTest running test completed', this.currentTestMethod.method);
+			//app.info('proctor.runNextTest running test completed', this.currentTestMethod.method);
 
 			this.passCurrentTestMethod();
 		}
@@ -367,7 +367,7 @@ class Proctor extends EventEmitter {
 		// Run .afterEach on the test class
 		await this.currentTestClassInstance.afterEach();
 
-		this.emit('Proctor.finishedRunningTestMethod', {
+		this.emit('proctor.finishedRunningTestMethod', {
 			status: this.currentTestMethodStatus,
 			name: this.currentTestMethod.method,
 			stopwatch: this.currentTestMethodStopwatch,
@@ -394,7 +394,7 @@ class Proctor extends EventEmitter {
 			// Run .after on the test class
 			await this.currentTestClassInstance.after();
 
-			this.emit('Proctor.finishedRunningTest', {
+			this.emit('proctor.finishedRunningTest', {
 				name: this.previousTestMethod.name.replaceLast('Test', ''),
 			});
 
@@ -409,7 +409,7 @@ class Proctor extends EventEmitter {
 		this.currentTestClassStatus = 'passed';
 
 		// Start up the new test
-		this.emit('Proctor.startedRunningTest', this.testMethods[this.currentTestMethod.name]);
+		this.emit('proctor.startedRunningTest', this.testMethods[this.currentTestMethod.name]);
 
 		// Get the instantiated test class
 		this.currentTestClassInstance = this.testClassInstances[this.currentTestMethod.name];
@@ -471,7 +471,7 @@ class Proctor extends EventEmitter {
 		var leakedGlobals = this.getLeakedGlobals();
 
 		// Finished running tests
-		this.emit('Proctor.finishedRunningTests', {
+		this.emit('proctor.finishedRunningTests', {
 			stopwatch: this.stopwatch,
 			passedTestMethods: this.passedTestMethods,
 			passedTestClasses: this.passedTestClasses,
@@ -766,6 +766,8 @@ class Proctor extends EventEmitter {
 			'customElements',
 			'onauxclick',
 			'external',
+
+			'__devtron',
 		],
 		leaked: [],
 	};
@@ -790,7 +792,7 @@ class Proctor extends EventEmitter {
 	}
 
 	static async getTests(path, filePattern, methodPattern, matchStringMethodPatternExactly) {
-		//app.log('Proctor.getTests', ...arguments);
+		//app.log('proctor.getTests', ...arguments);
 
 		var tests = {
 			classes: [],
@@ -822,7 +824,7 @@ class Proctor extends EventEmitter {
 			//app.log('fileSystemObjectFromPath.isDirectory');
 
 			// Recursively get all of the file system objects in the path
-			//app.log('Proctor getting all file system objects');
+			//app.log('proctor getting all file system objects');
 			fileSystemObjects = await fileSystemObjectFromPath.list(true);
 			//app.log('fileSystemObjects', fileSystemObjects);
 		}

@@ -1,5 +1,8 @@
+// Dependencies
+import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
+
 // Class
-class DataStore {
+class DataStore extends PropagatingEventEmitter {
 
 	data = {};
 

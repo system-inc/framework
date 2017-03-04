@@ -9,6 +9,8 @@ class GraphicalInterfaceProxy extends EventEmitter {
 	parentIdentifier = null;
 	childrenIdentifiers = null;
 
+	closed = null;
+
 	constructor(identifier, parentIdentifier = null, childrenIdentifiers = []) {
 		super();
 
@@ -26,14 +28,22 @@ class GraphicalInterfaceProxy extends EventEmitter {
 	}
 
 	openDeveloperTools() {
-
+		//console.error('should open dev tools');
+		this.emit('graphicalInterface.openDeveloperTools');
 	}
 
 	show() {
-
+		//console.error('should show');
+		this.emit('graphicalInterface.show');
 	}
 
 	close() {
+		//console.error('closing');
+		this.emit('graphicalInterface.close');
+	}
+
+	reload() {
+		this.emit('graphicalInterface.reload');
 	}
 
 }

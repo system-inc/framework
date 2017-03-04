@@ -146,6 +146,18 @@ class GraphicalInterface extends Interface {
 		};
 	}
 
+	close() {
+		return this.adapter.close();
+	}
+
+	show() {
+		return this.adapter.show();
+	}
+
+	openDeveloperTools() {
+		return this.adapter.openDeveloperTools();
+	}
+
 }
 
 // Export

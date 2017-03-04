@@ -7,6 +7,8 @@ class LocalStorage extends DataStore {
 	rootPath = null;
 
 	constructor(rootPath) {
+		super();
+
 		if(rootPath) {
 			this.rootPath = rootPath;
 		}
@@ -14,6 +16,27 @@ class LocalStorage extends DataStore {
 		// We do not use the data object, we rely entirely on local storage
 		// TODO: At some point in the future we can use this data object as a caching layer in front of local storage
 		this.data = null;
+
+		// Broadcast storage events
+		window.addEventListener('storage', function(event) {
+			var newValue = event.newValue;
+			if(Json.is(newValue)) {
+				newValue = Json.decode(newValue);
+			}
+
+			var oldValue = event.oldValue;
+			if(Json.is(oldValue)) {
+				oldValue = Json.decode(oldValue);
+			}
+
+			this.emit('localStorage.change', {
+				key: event.key,
+				newValue: newValue,
+				oldValue: oldValue,
+				storageArea: event.storageArea,
+				url: event.ul,
+			});
+		}.bind(this));
 	}
 
 	get(path) {

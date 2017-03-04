@@ -4,23 +4,54 @@ import LocalStorage from 'framework/system/interface/graphical/web/data/LocalSto
 // Class
 class GraphicalInterfaceManager {
 
+	localStorage = null;
 	proxies = {};
 
 	constructor(appGraphicalInterface) {
+		appGraphicalInterface.on('graphicalInterface.reload', function() {
+			//console.log('reload');
+			document.title = '';
+			document.location.reload(true);
+		});
+
+		appGraphicalInterface.on('graphicalInterface.close', function() {
+			//console.log('close');
+			appGraphicalInterface.close();
+		});
+
+		appGraphicalInterface.on('graphicalInterface.show', function() {
+			//console.log('show');
+			appGraphicalInterface.show();
+		});
+
+		appGraphicalInterface.on('graphicalInterface.openDeveloperTools', function() {
+			//console.log('openDeveloperTools');
+			appGraphicalInterface.openDeveloperTools();
+		});
+
 		this.addGraphicalInterfaceProxy(appGraphicalInterface);
 
-		// This only catches events when other tabs mess with local storage
-		window.addEventListener('storage', function(event) {
-			if(event.key === 'app.interfaces.graphical.manager.lastEvent') {
-				var eventData = Json.decode(event.newValue);
-				console.log('window storage event', eventData);
-				//console.log(this.proxies[eventData.graphicalInterfaceIdentifier]);
+		this.localStorage = new LocalStorage();
 
-				if(this.proxies[eventData.graphicalInterfaceIdentifier]) {
-					//console.log('re-emitting', eventData.eventIdentifier);
-					this.proxies[eventData.graphicalInterfaceIdentifier].emit(eventData.eventIdentifier, {
-						doNotSaveToLocalStorage: true,
-					});
+		// Listen to all changes to local storage from other tabs and windows
+		this.localStorage.on('localStorage.change', function(event) {
+			//console.info('localStorage.change event data', event.data.newValue);
+			var graphicalInterfaceEvent = event.data.newValue;
+
+			// If a different window or tab saves a graphical interface event into local storage
+			if(event.data.key === 'app.interfaces.graphical.manager.lastEvent') {
+				//console.info('proxies', this.proxies);
+				//console.info('proxy for event should be '+graphicalInterfaceEvent.graphicalInterface.identifier+' :', this.proxies[graphicalInterfaceEvent.graphicalInterface.identifier]);
+
+				// Emit the event on the graphical interface proxy
+				if(this.proxies[graphicalInterfaceEvent.graphicalInterface.identifier]) {
+					//console.info('emitting but not broadcasting', graphicalInterfaceEvent.identifier);
+
+					var data = {
+						broadcastEvent: false, // Make sure when we emit the event we do not save that event to local storage otherwise we get into an infinite loop
+					}.merge(graphicalInterfaceEvent.data);
+
+					this.proxies[graphicalInterfaceEvent.graphicalInterface.identifier].emit(graphicalInterfaceEvent.identifier, data);
 				}
 			}
 		}.bind(this));
@@ -40,17 +71,30 @@ class GraphicalInterfaceManager {
 		graphicalInterfaceProxy.on('*', function(event) {
 			//console.info('event', event);
 
-			if(
-				event.identifier !== 'eventEmitter.addedEventListener' &&
-				event.data === null
-			) {
-					var eventObject = {
-						graphicalInterfaceIdentifier: graphicalInterfaceProxy.identifier,
-						graphicalInterfaceParentIdentifier: graphicalInterfaceProxy.parentIdentifier,
-						eventIdentifier: event.identifier,
-					};
+			var shouldBroadcastEvent = true;
+			if(event.identifier === 'eventEmitter.addedEventListener') {
+				shouldBroadcastEvent = false;
+			}
+			else if(event.graphicalInterface) {
+				shouldBroadcastEvent = false;	
+			}
+			else if(event.data && event.data.broadcastEvent === false) {
+				shouldBroadcastEvent = false;	
+			}
 
-					LocalStorage.set('app.interfaces.graphical.manager.lastEvent', eventObject);
+			if(shouldBroadcastEvent) {
+				//console.info('Broadcasting event:', event.identifier, event);
+
+				var eventObject = {
+					identifier: event.identifier,
+					graphicalInterface: {
+						identifier: graphicalInterfaceProxy.identifier,
+						parentIdentifier: graphicalInterfaceProxy.parentIdentifier,
+					},
+					data: event.data,
+				};
+
+				LocalStorage.set('app.interfaces.graphical.manager.lastEvent', eventObject);
 			}
 		});
 

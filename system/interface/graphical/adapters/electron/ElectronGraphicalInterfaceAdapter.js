@@ -43,8 +43,19 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		return this.graphicalInterface.state;
 	}
 
-	broadcast(key, value) {
-		LocalStorage.set('app.interfaces.graphical.'+this.graphicalInterface.identifier+'.'+key, value);
+	close() {
+		//console.info('close');
+		this.electronBrowserWindow.close();
+	}
+
+	show() {
+		//console.info('show');
+		this.electronBrowserWindow.show();
+	}
+
+	openDeveloperTools() {
+		//console.info('openDeveloperTools');
+		this.electronBrowserWindow.openDevTools();
 	}
 
 	async inputKeyPressByCombination(key, modifiers = []) {
@@ -144,27 +155,34 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		var electronBrowserWindow = new ElectronBrowserWindow({
 			//url: app.directory.toString(),
 			title: app.title,
-			parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null,
+			//parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null,
 			width: graphicalInterfaceState.dimensions.width,
 			height: graphicalInterfaceState.dimensions.height,
 			x: graphicalInterfaceState.position.relativeToAllDisplays.x,
 			y: graphicalInterfaceState.position.relativeToAllDisplays.y,
+			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
+			show: graphicalInterfaceStateSettings.show,
 			webPreferences: {
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
 			},
-			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
-			show: graphicalInterfaceStateSettings.show,
 		});
 
-		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
+		// Debugging - comment out the lines below when ready for release
+		if(graphicalInterfaceStateSettings.openDeveloperTools) {
+			electronBrowserWindow.openDevTools();
+		}
 
 		electronBrowserWindow.on('closed', function() {
+			graphicalInterfaceProxy.closed = true;
 			graphicalInterfaceProxy.emit('graphicalInterface.closed');
 		});
 
-		electronBrowserWindow.on('show', function() {
-			graphicalInterfaceProxy.emit('graphicalInterface.show');
-		});
+		// TODO: this may actually make the browserwindow show on show
+		//electronBrowserWindow.on('show', function() {
+		//	graphicalInterfaceProxy.emit('graphicalInterface.show');
+		//});
+
+		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
 
 		// This approach doesn't work when electronBrowserWindow is over remote
 		// Patch the Electron BrowserWindow event emitter to make the GraphicalInterfaceProxy emit the events as well
@@ -182,9 +200,6 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		// TODO: newGraphicalInterface with strings instead of files: https://github.com/electron/electron/issues/8735 and https://app.asana.com/0/35428325799561/283058472623355
 		var appHtmlFileUrl = new Url(path);
 		electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
-
-		// Debugging - comment out the lines below when ready for release
-		electronBrowserWindow.openDevTools(); // Comment out for production
 
 		return graphicalInterfaceProxy;
 	}

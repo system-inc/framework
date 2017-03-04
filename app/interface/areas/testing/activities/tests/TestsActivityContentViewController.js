@@ -48,7 +48,8 @@ class TestsActivityViewController extends ViewController {
 		// Get all possible tests: Proctor.getTests(path, filePattern, methodPattern)
         //var tests = await Proctor.getTests();
         //var tests = await Proctor.getTests(null, 'Database');
-        var tests = await Proctor.getTests(null, 'SingleLine');
+        //var tests = await Proctor.getTests(null, 'SingleLine');
+        var tests = await Proctor.getTests(null, 'Class');
         //var tests = await Proctor.getTests(null, 'String');
         //var tests = await Proctor.getTests(null, 'interface');
         //var tests = await Proctor.getTests(null, 'Html');
@@ -125,18 +126,24 @@ class TestsActivityViewController extends ViewController {
         testMethod.tableRowView.getColumnCellView('Status').setContent('Initializing...');
 
          // Get a test browser window from the pool
-        var testGraphicalInterface = await this.testGraphicalInterfaceProxyPool.getReusable();
-        //console.log('runTestMethod testGraphicalInterface', testGraphicalInterface.uniqueIdentifier, testGraphicalInterface);
+        var testGraphicalInterfaceProxy = await this.testGraphicalInterfaceProxyPool.getReusable();
+        //console.log('runTestMethod testGraphicalInterfaceProxy', testGraphicalInterfaceProxy.identifier, testGraphicalInterfaceProxy);
+
+        // Listen to proctor events
+        testGraphicalInterfaceProxy.on('testGraphicalInterfaceApp.proctor.*', function(event) {
+            //console.info(event.identifier);
+            this.handleTestGraphicalInterfaceAppProctorEvent(event, testGraphicalInterfaceProxy, testMethod);
+        }.bind(this));
 
         // Show the browser window immediately with developer tools open and do not reset when finished running tests
         if(show) {
-            testGraphicalInterface.show();
-            testGraphicalInterface.openDeveloperTools();
-            testGraphicalInterface.resetWhenFinishedRunningTests = false;
+            testGraphicalInterfaceProxy.show();
+            testGraphicalInterfaceProxy.openDeveloperTools();
+            testGraphicalInterfaceProxy.resetWhenFinishedRunningTests = false;
         }
 
         // Run the test method in the test browser window
-        testGraphicalInterface.runTestMethod(testMethod);
+        testGraphicalInterfaceProxy.runTestMethod(testMethod);
     }
 
     async runTestMethods() {
@@ -176,72 +183,41 @@ class TestsActivityViewController extends ViewController {
         return runNextTestMethodResult;
     }
 
-    handleTestGraphicalInterfaceReport(event, data) {
-        //console.log('handleTestGraphicalInterfaceReport', data);
+    handleTestGraphicalInterfaceAppProctorEvent(event, testGraphicalInterfaceProxy, testMethod) {
+        //console.info('handleTestGraphicalInterfaceAppProctorEvent', event);
+        //return;
 
-        var status = data.status;
-        //console.log('status', status);
-        var testGraphicalInterfaceUniqueIdentifier = data.testGraphicalInterfaceUniqueIdentifier;
-        //console.log('testGraphicalInterfaceUniqueIdentifier', testGraphicalInterfaceUniqueIdentifier);
-        var testGraphicalInterface = this.testGraphicalInterfaceProxyPool.getReusableByUniqueIdentifier(testGraphicalInterfaceUniqueIdentifier);
-        //console.log('testGraphicalInterface', testGraphicalInterface);
+        var proctorData = event.data.data;
 
-        // The testGraphicalInterface is created and ready for commands
-        if(status == 'readyForCommand') {
-            testGraphicalInterface.status = status;
-            testGraphicalInterface.release();
-            //console.log(testGraphicalInterface);
+        if(event.identifier == 'testGraphicalInterfaceApp.proctor.startedRunningTestMethod') {
+            testMethod.tableRowView.getColumnCellView('Status').setContent('Running...');
         }
-        // The testGraphicalInterface has been closed
-        else if(status == 'testGraphicalInterfaceClosed') {
-            //console.log('testGraphicalInterfaceClosed');
-            if(testGraphicalInterface) {
-                testGraphicalInterface.status = 'closed';
-                testGraphicalInterface.retire();
-            }
+        else if(event.identifier == 'testGraphicalInterfaceApp.proctor.finishedRunningTestMethod') {
+            testMethod.tableRowView.getColumnCellView('Status').setContent(proctorData.status.toTitle());
         }
-        //else if(status == 'Proctor.startedRunningTests') {
-        //    testGraphicalInterface.testMethod.statusSpan.setContent('startedRunningTests');
-        //}
-        //else if(status == 'Proctor.startedRunningTest') {
-        //    testGraphicalInterface.testMethod.statusSpan.setContent('startedRunningTest');
-        //}
-        else if(status == 'Proctor.startedRunningTestMethod') {
-            //console.info('testGraphicalInterface.testMethod', testGraphicalInterface.testMethod);
-            testGraphicalInterface.testMethod.tableRowView.getColumnCellView('Status').setContent('Running...');
-        }
-        else if(status == 'Proctor.finishedRunningTestMethod') {
-            testGraphicalInterface.testMethod.tableRowView.getColumnCellView('Status').setContent(data.data.status.toTitle());
-        }
-        //else if(status == 'Proctor.finishedRunningTest') {
-        //    testGraphicalInterface.testMethod.statusSpan.setContent('finishedRunningTest');
-        //}
-        else if(status == 'Proctor.finishedRunningTests') {
-            //testGraphicalInterface.testMethod.tableRowView.getColumnCellView('Status').setContent('Finished running tests...');
+        else if(event.identifier == 'testGraphicalInterfaceApp.proctor.finishedRunningTests') {
+            //testMethod.tableRowView.getColumnCellView('Status').setContent('Finished running tests...');
 
-            if(testGraphicalInterface.testMethod.callback) {
-                testGraphicalInterface.testMethod.callback.apply(this);
+            if(testMethod.callback) {
+                testMethod.callback.apply(this);
             }
 
             // If a test was skipped
-            if(data.data.skippedTestMethods.length) {
-                testGraphicalInterface.testMethod.tableRowView.getColumnCellView('Status').setContent('Skipped');
+            if(proctorData.skippedTestMethods.length) {
+                testMethod.tableRowView.getColumnCellView('Status').setContent('Skipped');
             }
 
             // If a test failed
-            if(data.data.failedTestMethods.length) {
+            if(proctorData.failedTestMethods.length) {
                 //app.log('failed a test!');
                 // Show the window and the dev tools
-                testGraphicalInterface.openDeveloperTools();
-                testGraphicalInterface.show();
+                testGraphicalInterfaceProxy.openDeveloperTools();
+                testGraphicalInterfaceProxy.show();
             }
             // If no tests failed and we want to reset when finished running tests
-            else if(testGraphicalInterface.resetWhenFinishedRunningTests) {
-                // Command the testGraphicalInterface to close
-                //Electron.ipcRenderer.send('mainGraphicalInterface.commandTestGraphicalInterface', testGraphicalInterfaceUniqueIdentifier, 'close', {});
-
-                // Command the testGraphicalInterface to reset
-                Electron.ipcRenderer.send('mainGraphicalInterface.commandTestGraphicalInterface', testGraphicalInterfaceUniqueIdentifier, 'reset', {});
+            else if(testGraphicalInterfaceProxy.resetWhenFinishedRunningTests) {
+                //console.error('time to reset the test interface');
+                testGraphicalInterfaceProxy.reset();
             }
         }
     }
