@@ -112,6 +112,7 @@ class Pool extends EventEmitter {
 
 		// Mark the reusable as taken
 		reusable.taken();
+		this.emit('pool.reusableTaken', reusable);
 
 		// Add the reusable to the busy list
 		this.busyReusables[reusable.identifier] = reusable;
