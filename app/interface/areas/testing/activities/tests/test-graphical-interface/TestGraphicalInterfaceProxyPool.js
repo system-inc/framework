@@ -6,7 +6,7 @@ import TestGraphicalInterfaceProxy from 'interface/areas/testing/activities/test
 class TestGraphicalInterfaceProxyPool extends Pool {
 
 	reusableClass = TestGraphicalInterfaceProxy;
-	minimumSize = 3;
+	minimumSize = 0;
 	maximumSize = 6;
 	createReusablesAsNecessary = false;
 	timeInMillisecondsToWaitToRetireAvailableReusables = 1000 * .25;

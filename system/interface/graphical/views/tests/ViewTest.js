@@ -14,6 +14,28 @@ class ViewTest extends ElectronGraphicalInterfaceTest {
 
 		Assert.true(Class.doesImplement(View, PropagatingEventEmitter), 'View class implements PropagatingEventEmitter');
 	}
+
+	async testViewEmpty() {
+		// Create a new view
+		var view = new View();
+
+		// Render the view
+        await this.render(view);
+
+		// Create a couple of child views
+		var childView1 = new View();
+		var childView2 = new View();
+
+		// Append them
+		view.append(childView1);
+		view.append(childView2);
+
+		Assert.strictEqual(view.children.length, 2, 'view.append() works');
+
+		view.empty();
+
+		Assert.strictEqual(view.children.length, 0, 'view.empty() works');
+	}
 	
 }
 

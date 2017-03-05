@@ -327,21 +327,25 @@ class InputKeyEventTest extends ElectronHtmlTest {
         // Click into the text area
 		await this.inputPressHtmlNode(htmlElement);
 
-		//await this.inputKeyDown('Up');
-		//await this.inputKeyUp('Up');
-		await this.inputKeyPress('Up');
+		await this.inputKeyDown('Up');
+		await this.inputKeyUp('Up');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyUp, InputKeyEvent), '"input.key.up" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Down');
+		await this.inputKeyDown('Down');
+		await this.inputKeyUp('Down');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyDown, InputKeyEvent), '"input.key.down" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Left');
+		await this.inputKeyDown('Left');
+		await this.inputKeyUp('Left');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyLeft, InputKeyEvent), '"input.key.left" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Right');
+		await this.inputKeyDown('Right');
+		await this.inputKeyUp('Right');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyRight, InputKeyEvent), '"input.key.right" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Enter');
+		//await this.inputKeyDown('Enter');
+		//await this.inputKeyUp('Enter');
+		await this.inputKeyPressByCombination('\u000d');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyEnter, InputKeyEvent), '"input.key.enter" events are instances of InputKeyEvent');
 
 		await this.inputKeyDown('Backspace');
@@ -349,25 +353,34 @@ class InputKeyEventTest extends ElectronHtmlTest {
 		//await this.inputKeyPress('Backspace');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyBackspace, InputKeyEvent), '"input.key.backspace" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Space');
+		//await this.inputKeyDown('Space');
+		//await this.inputKeyUp('Space');
+		//await this.inputKeyPressByCombination('Space');
+		await this.inputKeyPressByCombination('\u0020');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeySpace, InputKeyEvent), '"input.key.space" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Alt');
+		await this.inputKeyDown('Alt');
+		await this.inputKeyUp('Alt');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyAlt, InputKeyEvent), '"input.key.alt" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Control');
+		await this.inputKeyDown('Control');
+		await this.inputKeyUp('Control');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyControl, InputKeyEvent), '"input.key.control" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Meta');
+		await this.inputKeyDown('Meta');
+		await this.inputKeyUp('Meta');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyMeta, InputKeyEvent), '"input.key.meta" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Shift');
+		await this.inputKeyDown('Shift');
+		await this.inputKeyUp('Shift');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyShift, InputKeyEvent), '"input.key.shift" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Delete');
+		await this.inputKeyDown('Delete');
+		await this.inputKeyUp('Delete');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyDelete, InputKeyEvent), '"input.key.delete" events are instances of InputKeyEvent');
 
-		await this.inputKeyPress('Insert');
+		await this.inputKeyDown('Insert');
+		await this.inputKeyUp('Insert');
 		Assert.true(Class.isInstance(capturedEventKeyboardKeyInsert, InputKeyEvent), '"input.key.insert" events are instances of InputKeyEvent');
 
 		// Check counts

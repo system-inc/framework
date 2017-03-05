@@ -100,9 +100,16 @@ class ElectronModule extends Module {
 		// Get the path to the Electron starting JavaScript file from settings
 		var pathToElectronStartingJavaScriptFile = this.settings.get('pathToElectronStartingJavaScriptFile');
 
+		// Pass arguments from node to the Electron main process
+		var electronMainProcessArguments = ['--js-flags=--harmony', pathToElectronStartingJavaScriptFile];
+		electronMainProcessArguments.merge(Node.Process.argv.slice(2));
+		//console.log('Node.Process.argv', Node.Process.argv);
+		//console.log('electronMainProcessArguments', electronMainProcessArguments);
+		//Node.exit();
+
 		// Run Electron as a child process, providing a .js file runs the file in the Electron main process, providing a .html file runs it in a renderer process
 		// We want to run in the main process to take advantage of shared standard streams, so we provide a .js file by default
-		var childProcessElectronMainProcess = Node.spawnChildProcess(pathToElectronExecutable, ['--js-flags=--harmony', pathToElectronStartingJavaScriptFile, 'gi'], {});
+		var childProcessElectronMainProcess = Node.spawnChildProcess(pathToElectronExecutable, electronMainProcessArguments, {});
 
 		// The parent process I am in now exists to just to as a bridge for standard streams to the child process which is the Electron main process
 

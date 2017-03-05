@@ -76,14 +76,6 @@ class ElectronManager {
 	//	}
 	//},
 
-	//initializeWindowState: function() {
-	//	// Get the window state settings
-	//	var windowStateSettings = app.modules.electronModule.settings.get('mainBrowserWindow.windowState');
-
-	//	// Create a window state for the main browser window
-	//	this.mainBrowserWindowState = new BrowserWindowState('main', this.mainBrowserWindow, windowStateSettings);
-	//},
-
 	//registerShortcuts: function() {
 	//	// If the main browser window has an HtmlDocument
 	//	if(this.mainBrowserWindowViewController.viewContainer) {
@@ -124,8 +116,6 @@ class ElectronManager {
 	//		focusedWindow.close();
 	//	}
 	//},
-
-	
 
 	//reset(callback) {
 	//	console.warn(Electron.remote.getCurrentWebContents().session);
@@ -209,21 +199,6 @@ class ElectronManager {
 	//		console.info('ElectronManager.pasteUsingKeyboard does not work on macOS.');
 	//		yield ElectronManager.keyDown('v', ['meta']);
 	//	}
-	//}
-
-	//static getBrowserWindowBounds() {
-	//	var bounds = Electron.remote.getCurrentWindow().getBounds();
-
-	//	return bounds;
-	//}
-
-	//static setBrowserWindowBounds(width, height, x, y) {
-	//	Electron.remote.getCurrentWindow().setBounds({
-	//		width: width,
-	//		height: height,
-	//		x: x,
-	//		y: y,
-	//	});
 	//}
 
 	static async sendInputEventKeyboard(type, key, modifiers) {
@@ -344,9 +319,9 @@ class ElectronManager {
 	static async inputKeyPressByCombination(key, modifiers = []) {
 		//console.info('ElectronGraphicalInterfaceAdapter.pressKey', key);
 
-		await ElectronManager.keyDown(key, modifiers);
-		await ElectronManager.keyUp(key, modifiers);
-		await ElectronManager.keyPress(key, modifiers);
+		await ElectronManager.inputKeyDown(key, modifiers);
+		await ElectronManager.inputKeyUp(key, modifiers);
+		await ElectronManager.inputKeyPress(key, modifiers);
 
 		return true;
 	}

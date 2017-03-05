@@ -37,13 +37,6 @@ class TestsActivityViewController extends ViewController {
         this.listen();
 	}
 
-    listen() {
-        // Listen for reports from testGraphicalInterfaceProxies
-        //Electron.ipcRenderer.on('testGraphicalInterface.report', function() {
-        //    this.handleTestGraphicalInterfaceReport(...arguments);
-        //}.bind(this));
-    }
-
 	async getTests() {
 		// Get all possible tests: Proctor.getTests(path, filePattern, methodPattern)
         var tests = await Proctor.getTests();
@@ -223,7 +216,7 @@ class TestsActivityViewController extends ViewController {
                 testGraphicalInterfaceProxy.reset();
             }
             else {
-                testGraphicalInterfaceProxy.close();
+                //testGraphicalInterfaceProxy.close();
             }
         }
     }

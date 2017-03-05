@@ -58,10 +58,6 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		this.electronBrowserWindow.openDevTools();
 	}
 
-	async inputKeyPressByCombination(key, modifiers = []) {
-		return await ElectronManager.inputKeyPressByCombination(key, modifiers = []);
-	}
-
 	async inputKeyDown(key, modifiers = []) {
 		return await ElectronManager.inputKeyDown(key, modifiers = []);
 	}
@@ -72,6 +68,10 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 	async inputKeyPress(key, modifiers = []) {
 		return await ElectronManager.inputKeyPress(key, modifiers = []);
+	}
+	
+	async inputKeyPressByCombination(key, modifiers = []) {
+		return await ElectronManager.inputKeyPressByCombination(key, modifiers = []);
 	}
 
 	async inputPress() {

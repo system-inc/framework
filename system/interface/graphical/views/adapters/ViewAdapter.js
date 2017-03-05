@@ -49,7 +49,8 @@ class ViewAdapter {
 
 		// Run any queued up method calls now that we have an adapted view
 		this.preInitializationMethodCalls.each(function(methodCallIndex, methodCall) {
-			this.executeAdaptedViewMethod(methodCall.method, methodCall.storedArguments);
+			var result = this.executeAdaptedViewMethod(methodCall.method, methodCall.storedArguments);
+			methodCall.resolve(result);
 		}.bind(this));
 		this.preInitializationMethodCalls = [];
 
@@ -64,6 +65,8 @@ class ViewAdapter {
 	executeAdaptedViewMethod(method, storedArguments) {
 		// If the adapted view exists, we can just call the method on it
 		if(this.adaptedView) {
+			//console.log('adaptedView exists', method);
+
 			// Handle adding children
 			if(method === 'addChild') {
 				method = storedArguments[1];
@@ -75,19 +78,20 @@ class ViewAdapter {
 			}
 
 			//console.info('executeAdaptedViewMethod - immediately ', method, storedArguments);
-			this.adaptedView[method](...storedArguments);
+			return this.adaptedView[method](...storedArguments);
 		}
 		// If the adapted view does not exist, we queue up the methods to call on it
 		else {
 			//console.info('executeAdaptedViewMethod - later', method, storedArguments);
 
-			this.preInitializationMethodCalls.append({
-				method: method,
-				storedArguments: storedArguments,
-			});
+			return new Promise(function(resolve) {
+				this.preInitializationMethodCalls.append({
+					method: method,
+					storedArguments: storedArguments,
+					resolve: resolve,
+				});
+			}.bind(this));
 		}
-
-		return this;
 	}
 
 	render() {
