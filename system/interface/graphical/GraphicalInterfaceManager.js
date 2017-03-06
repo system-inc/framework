@@ -10,8 +10,7 @@ class GraphicalInterfaceManager {
 	constructor(appGraphicalInterface) {
 		appGraphicalInterface.on('graphicalInterface.reload', function() {
 			//console.log('reload');
-			document.title = '';
-			document.location.reload(true);
+			appGraphicalInterface.reload();
 		});
 
 		appGraphicalInterface.on('graphicalInterface.close', function() {
@@ -76,12 +75,6 @@ class GraphicalInterfaceManager {
 				shouldBroadcastEvent = false;	
 			}
 			else if(event.data && event.data.broadcastEvent === false) {
-				shouldBroadcastEvent = false;
-			}
-			else if(
-				event.identifier.startsWith('htmlDocument.') ||
-				event.identifier.startsWith('input.')
-			) {
 				shouldBroadcastEvent = false;
 			}
 

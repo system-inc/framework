@@ -18,11 +18,19 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		// Hook the HtmlDocument's emit function
 		var standardHtmlDocumentEmit = this.htmlDocument.emit;
 		this.htmlDocument.emit = async function(eventIdentifier, data, eventOptions) {
+			//console.log('candidate for GraphicalInterface emit', ...arguments);
+
+			var matching = this.htmlDocument.getEventListeners(eventIdentifier);
+			//console.info('matching', matching);
+
+			// Filter out what GraphicalInterface will emit
 			if(
+				matching.length && // Only emit events on the GraphicalInterface which have direct matches
+				!eventIdentifier.startsWith('htmlDocument.') &&
 				!eventIdentifier.startsWith('input.') &&
-				!eventIdentifier.startsWith('htmlDocument.')
+				!eventIdentifier.startsWith('form.')
 			) {
-				console.log('this event is being written to local storage - eventIdentifier', eventIdentifier);
+				console.info('This event is being written to local storage - eventIdentifier', eventIdentifier);
 				// We also emit the event on the graphical interface
 				await this.graphicalInterface.emit.apply(this.graphicalInterface, arguments);
 			}
@@ -30,6 +38,12 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 			// Emit the event on the HtmlDocument as normal
 			return await standardHtmlDocumentEmit.apply(this.htmlDocument, arguments);
 		}.bind(this);
+
+		// Capture before unload
+		//this.htmlDocument.on('htmlDocument.unload.before', function(event) {
+		//	this.graphicalInterface.emit('graphicalInterface.unload.before', event);
+		//	//return event.domEvent.returnValue = event.previousReturnValue;
+		//}.bind(this));
 
 		// Capture resize events
 		this.htmlDocument.on('htmlDocument.resize', function(event) {
@@ -81,8 +95,11 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 	}
 
 	addEventListener(eventPattern, functionToBind, timesToRun) {
-		// Don't bind graphical interface events to the document
-		if(!eventPattern.startsWith('graphicalInterface.')) {
+		// Filter out events which don't need to be added to the HtmlDocument
+		if(
+			eventPattern !== '*' && // Don't allow the listening to all events as these will be written to local storage
+			!eventPattern.startsWith('graphicalInterface.') // Don't bind graphical interface events to the document
+		) {
 			this.htmlDocument.addEventListener(...arguments);
 		}
 

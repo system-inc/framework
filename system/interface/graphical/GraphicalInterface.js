@@ -167,7 +167,7 @@ class GraphicalInterface extends Interface {
 	}
 
 	getSelection() {
-		return this.adapter.getSelection();
+		return this.adapter.getSelection(...arguments);
 	}
 
 	insertText() {
@@ -175,19 +175,27 @@ class GraphicalInterface extends Interface {
 	}
 
 	print() {
-		return this.adapter.print();
+		return this.adapter.print(...arguments);
 	}
 
 	close() {
-		return this.adapter.close();
+		return this.adapter.close(...arguments);
 	}
 
 	show() {
-		return this.adapter.show();
+		return this.adapter.show(...arguments);
 	}
 
 	openDeveloperTools() {
-		return this.adapter.openDeveloperTools();
+		return this.adapter.openDeveloperTools(...arguments);
+	}
+
+	reload() {
+		return this.adapter.reload(...arguments);
+	}
+
+	reset() {
+		return this.adapter.reset(...arguments);
 	}
 
 }

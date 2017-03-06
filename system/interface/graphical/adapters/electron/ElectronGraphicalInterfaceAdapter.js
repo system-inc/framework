@@ -58,6 +58,34 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		this.electronBrowserWindow.openDevTools();
 	}
 
+	reload() {
+		document.title = '';
+		document.location.reload(true);
+	}
+
+	reset() {
+		Electron.remote.getCurrentWebContents().session.clearStorageData(
+			{
+				storages: [
+					'appcache',
+					'cookies',
+					'filesystem',
+					'indexdb',
+					'localstorage',
+					'shadercache',
+					'websql',
+					'serviceworkers',
+				],
+				quotas: [
+					'temporary',
+					'persistent',
+					'syncable',
+				],
+			},
+			function() {} // Pass an empty callback - https://github.com/electron/electron/issues/6491
+		);
+	}
+
 	async inputKeyDown(key, modifiers = []) {
 		return await ElectronManager.inputKeyDown(key, modifiers = []);
 	}
@@ -162,15 +190,15 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		// Create the graphical interface proxy to return
 		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
 
+		// TODO: newGraphicalInterface with strings instead of files: https://github.com/electron/electron/issues/8735 and https://app.asana.com/0/35428325799561/283058472623355
+		var appHtmlFileUrl = new Url(path);
+		electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
+
 		// Listen to closed events
 		electronBrowserWindow.on('closed', function() {
 			graphicalInterfaceProxy.closed = true;
 			graphicalInterfaceProxy.emit('graphicalInterface.closed');
 		});
-
-		// TODO: newGraphicalInterface with strings instead of files: https://github.com/electron/electron/issues/8735 and https://app.asana.com/0/35428325799561/283058472623355
-		var appHtmlFileUrl = new Url(path);
-		electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
 
 		// Initialize the state
 		ElectronGraphicalInterfaceAdapter.initializeState(electronBrowserWindow, graphicalInterfaceState, false);

@@ -117,32 +117,6 @@ class ElectronManager {
 	//	}
 	//},
 
-	//reset(callback) {
-	//	console.warn(Electron.remote.getCurrentWebContents().session);
-	//	//return;
-
-	//	Electron.remote.getCurrentWebContents().session.clearStorageData(
-	//		{
-	//			storages: [
-	//				'appcache',
-	//				'cookies',
-	//				'filesystem',
-	//				'indexdb',
-	//				'localstorage',
-	//				'shadercache',
-	//				'websql',
-	//				'serviceworkers',
-	//			],
-	//			quotas: [
-	//				'temporary',
-	//				'persistent',
-	//				'syncable',
-	//			],
-	//		},
-	//		function() {} // Pass an empty callback - https://github.com/electron/electron/issues/6491
-	//	);
-	//}
-
 	//exit() {
 	//	Electron.remote.app.quit();
 	//}

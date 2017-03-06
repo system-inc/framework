@@ -15,6 +15,8 @@ class ModalView extends View {
 	constructor(settings) {
 		super();
 
+		this.settings.merge(settings);
+
 		this.setStyle({
 			display: 'none',
 			position: 'absolute',
@@ -37,19 +39,20 @@ class ModalView extends View {
 		});
 
 		if(this.settings.get('hideOnOutsideClick')) {
+			//console.log('enableHideOnOutsideClick');
 			this.enableHideOnOutsideClick();
 		}
 	}
 
 	enableHideOnOutsideClick() {
 		this.modalView.on('input.press', function(event) {
-			//app.log('modal click');
+			//console.log('modal click');
 			event.stopPropagation();
 		}.bind(this));
 
 		// Close on clicking outside of modal
 		this.on('input.press', function(event) {
-			//app.log('modal container click');
+			//console.log('modal container click');
 			this.hide();
 		}.bind(this));
 	}
