@@ -72,21 +72,21 @@ class View extends PropagatingEventEmitter {
 	addEventListener() {
 		//console.log('addEventListener', arguments, this);
 
-		super.addEventListener(...arguments);
+		 this.adapter.addEventListener(...arguments);
 
-		return this.adapter.addEventListener(...arguments);
+		return super.addEventListener(...arguments);
 	}
 
 	removeEventListener() {
-		super.removeEventListener(...arguments);
+		this.adapter.removeEventListener(...arguments);
 
-		return this.adapter.removeEventListener(...arguments);
+		return super.removeEventListener(...arguments);
 	}
 
 	removeAllEventListeners() {
-		super.removeAllEventListeners(...arguments);
+		this.adapter.removeAllEventListeners(...arguments);
 
-		return this.adapter.removeAllEventListeners(...arguments);
+		return super.removeAllEventListeners(...arguments);
 	}
 
 	prepend(childView) {
@@ -162,16 +162,29 @@ class View extends PropagatingEventEmitter {
 	}
 
 	hide() {
-		return this.adapter.show();
+		return this.adapter.hide();
 	}
 
 	focus() {
 		return this.adapter.focus();
 	}
 
+	setHeight() {
+		return this.adapter.setHeight(...arguments);
+	}
+
+	setWidth() {
+		return this.adapter.setWidth(...arguments);
+	}
+
 	getAttribute = XmlElement.prototype.getAttribute;
 
 	setAttribute(attributeName, attributeValue) {
+		if(attributeValue === undefined) {
+			console.error('View setAttribute', ...arguments);
+			throw new Error('Invalid call to setAttribute.');
+		}
+
 		//console.info('setAttribute(attributeName, attributeValue)', ...arguments);
 
 		XmlElement.prototype.setAttribute.apply(this, arguments);

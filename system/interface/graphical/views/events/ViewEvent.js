@@ -1,8 +1,8 @@
 // Dependencies
-import Event from 'framework/system/event/Event.js';
+import PropagatingEvent from 'framework/system/event/PropagatingEvent.js';
 
 // Class
-class ViewEvent extends Event {
+class ViewEvent extends PropagatingEvent {
 
 }
 

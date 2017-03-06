@@ -215,6 +215,7 @@ class ElectronModule extends Module {
 	configureElectronRendererProcess() {
 		// Catch unhandled rejections in Electron renderer windows
 		window.addEventListener('unhandledrejection', function(error, promise) {
+			// Warning - don't do error.stack.toString or that will crash dev tools
 			console.error('(correct trace below)', error.reason.toString());
 		});
 

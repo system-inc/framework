@@ -241,7 +241,7 @@ class ElectronManager {
 
 	// modifiers: shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
 	static async inputPress(relativeToGraphicalInterfaceViewportX, relativeToGraphicalInterfaceViewportY, button = 'left', pressCount = 1, modifiers = []) {
-		console.info(...arguments);
+		//console.info(...arguments);
 
 		var webContents = Electron.remote.getCurrentWindow().webContents;
 

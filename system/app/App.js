@@ -111,8 +111,8 @@ class App extends EventEmitter {
 					mode: 'normal', // minimized, normal, maximized, full screen
 					width: .5,
 					height: .5,
-					x: .5, // .5 = center
-					y: .5, // .5 = center
+					x: 'center',
+					y: 'center',
 
 					// Default settings for the GraphicalInterface if there is just one display
 					oneDisplay: {
@@ -120,8 +120,8 @@ class App extends EventEmitter {
 						mode: 'normal',
 						width: .5,
 						height: .5,
-						x: 'center', // left == 0 and 0 == left
-						y: 'center', // top == 0 and 0 == top
+						x: 'center',
+						y: 'center',
 					},
 
 					// Default settings for the GraphicalInterface if there are two displays

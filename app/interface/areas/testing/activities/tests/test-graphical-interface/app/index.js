@@ -20,4 +20,9 @@ require('babel-register')({
 	sourceMaps: 'both',
 });
 
-require('TestGraphicalInterfaceApp.js');
+try {
+	require('TestGraphicalInterfaceApp.js');
+}
+catch(error) {
+	console.error(error.toString());
+}

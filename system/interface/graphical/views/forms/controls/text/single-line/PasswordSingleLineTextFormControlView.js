@@ -4,9 +4,13 @@ import SingleLineTextFormControlView from 'framework/system/interface/graphical/
 // Class
 class PasswordSingleLineTextFormControlView extends SingleLineTextFormControlView {
 
-    attributes = {
-        type: 'password',
-    };
+    constructor() {
+    	super(...arguments);
+
+    	this.setAttribute({
+    		type: 'password',
+    	});
+    }
 
 }
 

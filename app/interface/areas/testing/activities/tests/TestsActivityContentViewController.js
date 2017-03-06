@@ -33,18 +33,17 @@ class TestsActivityViewController extends ViewController {
 
         // Form
 		this.createTestsFormView();
-
-        this.listen();
 	}
 
 	async getTests() {
 		// Get all possible tests: Proctor.getTests(path, filePattern, methodPattern)
-        var tests = await Proctor.getTests();
+        //var tests = await Proctor.getTests();
         //var tests = await Proctor.getTests(null, 'Database');
         //var tests = await Proctor.getTests(null, 'SingleLine');
         //var tests = await Proctor.getTests(null, 'Class');
         //var tests = await Proctor.getTests(null, 'String');
         //var tests = await Proctor.getTests(null, 'interface');
+        var tests = await Proctor.getTests(null, 'Graphical');
         //var tests = await Proctor.getTests(null, 'Html');
         //var tests = await Proctor.getTests(null, 'Input');
         //console.log('tests', tests);

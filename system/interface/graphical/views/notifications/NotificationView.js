@@ -1,14 +1,16 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
+import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
-class NotificationView extends View {
+class NotificationView extends TextView {
 
-	attributes = {
-		style: {
+	constructor() {
+		super();
+
+		this.setStyle({
 			display: 'none',
-		},
-	};
+		});
+	}
 
 	show(content, options) {
 		this.setContent(content);

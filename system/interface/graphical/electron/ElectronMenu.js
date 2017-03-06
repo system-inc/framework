@@ -1,12 +1,14 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
+import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
 
 // Class
-class ElectronMenu extends EventEmitter {
+class ElectronMenu extends PropagatingEventEmitter {
 
 	electronMenu = null;
 
 	constructor() {
+		super();
+
 		this.create();
 	}
 
@@ -151,4 +153,4 @@ class ElectronMenu extends EventEmitter {
 }
 
 // Export
-export default Menu;
+export default ElectronMenu;

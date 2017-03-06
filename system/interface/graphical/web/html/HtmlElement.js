@@ -164,6 +164,10 @@ class HtmlElement extends HtmlNode {
 
 		// Loop through all of the HtmlElement's attributes looking to see if we have any new attributes to set
 		this.attributes.each(function(attributeName, attributeValue) {
+			//if(!String.is(attributeName)) {
+			//	console.error('attributeName is not a string', attributeName);
+			//}
+
 			// If the attribute does not exist in domNodeAttributesToUpdate, then we must set it
 			if(domNodeAttributeNames[attributeName] === undefined) {
 				domNodeAttributesToUpdate[attributeName] = {

@@ -5,6 +5,12 @@ import Position from 'framework/system/interface/graphical/Position.js';
 // Class
 class GraphicalInterfaceState {
 
+	title = null;
+
+	type = null;
+	show = null;
+	openDeveloperTools = null;
+
 	dimensions = new Dimensions();
 
 	position = {
@@ -31,7 +37,7 @@ class GraphicalInterfaceState {
 		return settings;
 	}
 
-	static constructFromSettingsWithDisplays(settings, displays) {
+	static constructFromSettingsWithDisplays(settings, displays, type = null) {
 		//console.info('settings', settings, 'displays', displays);
 
 		var graphicalInterfaceState = new GraphicalInterfaceState();
@@ -39,14 +45,20 @@ class GraphicalInterfaceState {
 		// Get the desired display
 		var desiredDisplay = displays[1];
 
+		graphicalInterfaceState.title = app.title;
+
+		graphicalInterfaceState.type = type;
+		graphicalInterfaceState.show = settings.show;
+		graphicalInterfaceState.openDeveloperTools = settings.openDeveloperTools;
+
 		graphicalInterfaceState.dimensions.width = Position.resolveWidth(settings.width, desiredDisplay.dimensions.width);
 		graphicalInterfaceState.dimensions.height = Position.resolveHeight(settings.height, desiredDisplay.dimensions.height);
 
 		graphicalInterfaceState.position.relativeToAllDisplays.x = Position.resolveX(settings.x, graphicalInterfaceState.dimensions.width, desiredDisplay.dimensions.width);
 		graphicalInterfaceState.position.relativeToAllDisplays.y = Position.resolveY(settings.y, graphicalInterfaceState.dimensions.height, desiredDisplay.dimensions.height);
 
-		//console.log('x', graphicalInterfaceState.position.relativeToAllDisplays.x);
-		//console.log('y', graphicalInterfaceState.position.relativeToAllDisplays.y);
+		//console.info('x', graphicalInterfaceState.position.relativeToAllDisplays.x);
+		//console.info('y', graphicalInterfaceState.position.relativeToAllDisplays.y);
 		
 		//graphicalInterfaceState.position.relativeToAllDisplays.calculateCoordinatesAndEdges();
 

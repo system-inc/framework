@@ -14,23 +14,25 @@ class FormFieldView extends View {
 		},
 	});
 
+	formFieldIdentifier = null;
+
 	formLabelView = null;
 
 	formControlView = null;
 
-	constructor(identifier, settings) {
+	constructor(formFieldIdentifier, settings) {
 		// Call the View constructor
 		super();
 
 		// Merge in the settings
 		this.settings.merge(settings);
 
-		// Set the identifier, this will tie data for the form to the identifier as a key
-		this.identifier = identifier;
+		// Set the formFieldIdentifier, this will tie data for the form to the formFieldIdentifier as a key
+		this.formFieldIdentifier = formFieldIdentifier;
 
 		// Each form control has a unique identifier
 		if(this.formControlView) {
-			this.formControlView.setAttribute('id', 'formControl-'+this.identifier+'-'+String.uniqueIdentifier());	
+			this.formControlView.setAttribute('id', 'formControl-'+this.formFieldIdentifier+'-'+String.uniqueIdentifier());	
 		}		
 		
 		// Conditionally add a label
@@ -113,7 +115,7 @@ class FormFieldView extends View {
 			if(FormControlView.is(view)) {
 				view.clear();
 			}
-			else if(HtmlElement.is(view)) {
+			else {
 				// Recurse through all children
 				view.children.each(function(childIndex, child) {
 					clearRecursively(child);

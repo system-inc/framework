@@ -76,7 +76,13 @@ class GraphicalInterfaceManager {
 				shouldBroadcastEvent = false;	
 			}
 			else if(event.data && event.data.broadcastEvent === false) {
-				shouldBroadcastEvent = false;	
+				shouldBroadcastEvent = false;
+			}
+			else if(
+				event.identifier.startsWith('htmlDocument.') ||
+				event.identifier.startsWith('input.')
+			) {
+				shouldBroadcastEvent = false;
 			}
 
 			if(shouldBroadcastEvent) {

@@ -22,15 +22,11 @@ class ViewAdapter {
 			var standardAdaptedViewEmit = this.adaptedView.emit;
 			this.adaptedView.emit = async function(eventIdentifier, data, eventOptions) {
 				if(
-					eventIdentifier === 'htmlNode.domUpdateExecuted' ||
-					eventIdentifier === 'htmlNode.mountedToDom' ||
-					eventIdentifier === 'htmlNode.domUpdateExecuted'
+					eventIdentifier !== 'htmlNode.domUpdateExecuted' &&
+					eventIdentifier !== 'htmlNode.mountedToDom' &&
+					eventIdentifier !== 'htmlNode.domUpdateExecuted'
 				) {
-					// Don't do anything
-				}
-				else {
 					//console.log('eventIdentifier', eventIdentifier);
-
 					// We also emit the event on the view
 					await this.view.emit.apply(this.view, arguments);
 				}
@@ -101,7 +97,8 @@ class ViewAdapter {
 	// PropagatingEventEmitter
 
 	addEventListener(eventPattern, functionToBind, timesToRun = null) {
-		// The bound function on the adapted view will do nothing, instead the hook for the adapted view will trigger the function on the View itself
+		// This bound function on the adapted view will do nothing, instead the hook for the adapted view will trigger the function on the View itself
+		// See the constructor for more information
 		functionToBind = function(event) {
 			//console.log('no op for adapted view, instead the function will be called on the View itself');
 			//event.stop();
@@ -170,6 +167,14 @@ class ViewAdapter {
 
 	focus() {
 		return this.executeAdaptedViewMethod('focus', arguments);
+	}
+
+	setHeight() {
+		return this.executeAdaptedViewMethod('setHeight', arguments);
+	}
+
+	setWidth() {
+		return this.executeAdaptedViewMethod('setWidth', arguments);
 	}
 
 	select() {

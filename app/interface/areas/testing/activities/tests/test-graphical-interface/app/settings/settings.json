@@ -80,13 +80,14 @@
 			},
 		},
 		graphical: {
-			//defaults: {
-			//	width: .5,
-			//	height: 1,
-			//	x: 'right',
-			//	y: 'top',
-			//	show: false,
-			//},
+			defaults: {
+				width: .5,
+				height: 1,
+				x: 'right',
+				y: 'top',
+				show: false,
+				openDeveloperTools: false,
+			},
 		},
 	},
 	modules: {

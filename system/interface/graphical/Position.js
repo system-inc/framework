@@ -111,33 +111,43 @@ class Position {
 	}
 
 	static resolveX(x, width, totalWidth) {
-		var resolvedX = null;
+		var resolvedX = x;
 
 		if(x == 'left') {
 			resolvedX = 0;
 		}
 		else if(x == 'center') {
-			resolvedX = (totalWidth / 2) - (width / 2);
+			resolvedX = Number.round((totalWidth / 2) - (width / 2));
 		}
 		else if(x == 'right') {
 			resolvedX = totalWidth - width;
 		}
+		else if(x <= 1) {
+			resolvedX = x * totalWidth;
+		}
+
+		//console.info('resolvedX', resolvedX);
 
 		return resolvedX;
 	}
 
 	static resolveY(y, height, totalHeight) {
-		var resolvedY = null;
+		var resolvedY = y;
 
 		if(y == 'top') {
 			resolvedY = 0;
 		}
 		else if(y == 'center') {
-			resolvedY = (totalHeight / 2) - (height / 2);
+			resolvedY = Number.round((totalHeight / 2) - (height / 2));
 		}
 		else if(y == 'bottom') {
 			resolvedY = totalHeight - height;
 		}
+		else if(y <= 1) {
+			resolvedY = y * totalHeight;
+		}
+
+		//console.info('resolvedY', resolvedY);
 
 		return resolvedY;
 	}

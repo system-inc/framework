@@ -35,10 +35,10 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	initializeState() {
-		this.graphicalInterface.state = GraphicalInterfaceState.constructFromElectronBrowserWindow(this.electronBrowserWindow);
+		this.graphicalInterface.state = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(null, this.graphicalInterface.displays);
 		//console.info('this.graphicalInterface.state', this.graphicalInterface.state);
 
-		// TODO: Update state on electron window change
+		ElectronGraphicalInterfaceAdapter.initializeState(this.electronBrowserWindow, this.graphicalInterface.state);
 
 		return this.graphicalInterface.state;
 	}
@@ -81,7 +81,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	async inputPressView(view, button = 'left', pressCount = 1, modifiers = []) {
 		var viewPosition = view.position.relativeToGraphicalInterfaceViewport;
 		//var viewPosition = view.position;
-		console.info('viewPosition', viewPosition);
+		//console.info('viewPosition', viewPosition);
 
 		return await ElectronManager.inputPress(Number.round(viewPosition.x), Number.round(viewPosition.y), button, pressCount, modifiers);
 	}
@@ -125,6 +125,9 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			type = options.type;
 		}
 
+		// Get the state
+		var graphicalInterfaceState = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(type);
+
 		// Get the right reference for ElectronBrowserWindow based on whether or not we are in the Electron main process or in a renderer process
 		var ElectronBrowserWindow = null;
 		var parentIdentifier = null;
@@ -138,19 +141,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			ElectronBrowserWindow = Electron.remote.BrowserWindow;
 			parentIdentifier = app.interfaces.graphical.identifier;
 		}
-
-		// Get the settings
-		var graphicalInterfaceStateSettings = GraphicalInterfaceState.getSettings(type);
-		//console.info('graphicalInterfaceStateSettings', graphicalInterfaceStateSettings);
-
-		// Get the displays
-		var displays = app.modules.electronModule.getDisplays();
-		//app.info('displays', displays);
-
-		// Construct the state for the graphical interface
-		var graphicalInterfaceState = GraphicalInterfaceState.constructFromSettingsWithDisplays(graphicalInterfaceStateSettings, displays);
-		//app.info('graphicalInterfaceState', graphicalInterfaceState);
-
+		
 		// Create the Electron browser window
 		var electronBrowserWindow = new ElectronBrowserWindow({
 			//url: app.directory.toString(),
@@ -161,47 +152,69 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			x: graphicalInterfaceState.position.relativeToAllDisplays.x,
 			y: graphicalInterfaceState.position.relativeToAllDisplays.y,
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
-			show: graphicalInterfaceStateSettings.show,
+			//show: graphicalInterfaceState.show,
+			show: true,
 			webPreferences: {
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
 			},
 		});
 
-		// Debugging - comment out the lines below when ready for release
-		if(graphicalInterfaceStateSettings.openDeveloperTools) {
-			electronBrowserWindow.openDevTools();
-		}
+		// Create the graphical interface proxy to return
+		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
 
+		// Listen to closed events
 		electronBrowserWindow.on('closed', function() {
 			graphicalInterfaceProxy.closed = true;
 			graphicalInterfaceProxy.emit('graphicalInterface.closed');
 		});
 
-		// TODO: this may actually make the browserwindow show on show
-		//electronBrowserWindow.on('show', function() {
-		//	graphicalInterfaceProxy.emit('graphicalInterface.show');
-		//});
-
-		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
-
-		// This approach doesn't work when electronBrowserWindow is over remote
-		// Patch the Electron BrowserWindow event emitter to make the GraphicalInterfaceProxy emit the events as well
-		//var standardElectronBrowserWindowEmit = electronBrowserWindow.emit;
-		//electronBrowserWindow.emit = function() {
-		//	var eventIdentifier = 'graphicalInterface.'+arguments[0].toCamelCase();
-		//	//console.log('eventIdentifier', eventIdentifier);
-		//	graphicalInterfaceProxy.emit(eventIdentifier, arguments[1]);
-
-		//	//console.log('electronBrowserWindow emit', arguments);
-		//	standardElectronBrowserWindowEmit.apply(electronBrowserWindow, arguments);
-		//};
-
-		// Load an empty page, we use the webPreferences preload open to load FrameworkApp
 		// TODO: newGraphicalInterface with strings instead of files: https://github.com/electron/electron/issues/8735 and https://app.asana.com/0/35428325799561/283058472623355
 		var appHtmlFileUrl = new Url(path);
 		electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
 
+		// Initialize the state
+		ElectronGraphicalInterfaceAdapter.initializeState(electronBrowserWindow, graphicalInterfaceState, false);
+
 		return graphicalInterfaceProxy;
+	}
+
+	static constructGraphicalInterfaceState(type = null, displays = null) {
+		// Get the displays
+		if(displays === null) {
+			displays = app.modules.electronModule.getDisplays();
+		}
+		//app.info('displays', displays);
+
+		var graphicalInterfaceStateSettings = GraphicalInterfaceState.getSettings(type);
+		//console.info('graphicalInterfaceStateSettings', graphicalInterfaceStateSettings);
+
+		// Construct the state for the graphical interface
+		var graphicalInterfaceState = GraphicalInterfaceState.constructFromSettingsWithDisplays(graphicalInterfaceStateSettings, displays, type);
+		//console.info('graphicalInterfaceState', graphicalInterfaceState);
+
+		return graphicalInterfaceState;
+	}
+
+	static initializeState(electronBrowserWindow, graphicalInterfaceState, updateDimensionsAndPosition = true) {
+		if(graphicalInterfaceState.title) {
+			electronBrowserWindow.setTitle(graphicalInterfaceState.title);
+		}
+
+		if(updateDimensionsAndPosition) {
+			//console.info('graphicalInterfaceState', graphicalInterfaceState);
+
+			electronBrowserWindow.setBounds({
+				x: graphicalInterfaceState.position.relativeToAllDisplays.x,
+				y: graphicalInterfaceState.position.relativeToAllDisplays.y,
+				width: graphicalInterfaceState.dimensions.width,
+				height: graphicalInterfaceState.dimensions.height,
+			});
+		}
+
+		// Open developer tools
+		if(graphicalInterfaceState.openDeveloperTools) {
+			electronBrowserWindow.openDevTools();
+		}
 	}
 
 }

@@ -47,9 +47,7 @@ class TextFormControlView extends FormControlView {
     }
 
     insertText(text) {
-        this.viewContainer.insertText(text);
-
-        this.valueChangedOnDom();
+        app.interfaces.graphical.adapter.htmlDocument.insertText(text);
     }
 
     handleInputKeyTabDown(event) {
@@ -117,7 +115,7 @@ class TextFormControlView extends FormControlView {
     }
 
     insertIndentationSymbol() {
-        this.viewContainer.insertText(this.settings.get('indentationSymbol'));
+        app.interfaces.graphical.insertText(this.settings.get('indentationSymbol'));
     }
 
     indentCurrentLine() {
@@ -384,11 +382,12 @@ class TextFormControlView extends FormControlView {
     }
 
     getSelectionStartIndex() {
-        return this.domNode.selectionStart;
+        //console.info('this.adapter.adaptedView.domNode.selectionStart', this.adapter.adaptedView.domNode.selectionStart);
+        return this.adapter.adaptedView.domNode.selectionStart;
     }
 
     getSelectionEndIndex() {
-        return this.domNode.selectionEnd;
+        return this.adapter.adaptedView.domNode.selectionEnd;
     }
 
     getCurrentLineNumber() {
@@ -450,14 +449,15 @@ class TextFormControlView extends FormControlView {
 	getCursorIndex() {
         var index = this.getSelectionStartIndex();
 
-        if(index === undefined) {
-            this.domNode.focus();
-            var selection = this.viewContainer.getSelection();
-            var selectionRange = selection.createRange();
-            var selectionLength = selection.createRange().text.length;
-            selectionRange.moveStart('character', -this.getValue().length);
-            index = selectionRange.text.length - selectionLength;
-        }
+        // This is broken, this selection.createRange does not exist
+        //if(index === undefined) {
+        //    this.adapter.adaptedView.focus();
+        //    var selection = app.interfaces.graphical.getSelection();
+        //    var selectionRange = selection.createRange();
+        //    var selectionLength = selection.createRange().text.length;
+        //    selectionRange.moveStart('character', -this.getValue().length);
+        //    index = selectionRange.text.length - selectionLength;
+        //}
 
         return index;
     }
@@ -479,12 +479,12 @@ class TextFormControlView extends FormControlView {
             end = this.getValue().length;
         }
 
-        if(this.domNode.setSelectionRange) {
-            this.domNode.focus();
-            this.domNode.setSelectionRange(start, end);
+        if(this.adapter.adaptedView.setSelectionRange) {
+            this.adapter.adaptedView.focus();
+            this.adapter.adaptedView.setSelectionRange(start, end);
         }
-        else if(this.domNode.createTextRange) {
-            var range = this.domNode.createTextRange();
+        else if(this.adapter.adaptedView.createTextRange) {
+            var range = this.adapter.adaptedView.createTextRange();
             range.collapse(true);
             range.moveEnd('character', end);
             range.moveStart('character', start);

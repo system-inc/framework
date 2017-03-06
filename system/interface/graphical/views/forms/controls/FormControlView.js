@@ -26,7 +26,14 @@ class FormControlView extends View {
 
 	setValue(value) {
 		//console.info('setValue', this, value);
-		this.value = this.adapter.adaptedView.domNode.value = value;
+		this.value = value;
+
+		if(this.adapter.adaptedView && this.adapter.adaptedView.domNode) {
+			this.adapter.adaptedView.domNode.value = this.value;
+		}
+		else {
+			//console.log('no adaptedView');
+		}
 
 		return this.value;
 	}

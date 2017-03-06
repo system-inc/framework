@@ -5,14 +5,29 @@ import WebRequest from 'framework/system/web/WebRequest.js';
 // Class
 class WebApi {
 
-    protocol = 'https;, // https or http
+    protocol = 'https'; // https or http
     host = null;
     port = 80;
     path = null;
     url = null;
 
-    constructor() {
-        this.url = new Url(this.protocol+'://'+this.host+'/'+this.path);
+    constructor(protocol, host, path) {
+        if(protocol) {
+            this.protocol = protocol;
+        }
+        if(host) {
+            this.host = host;
+        }
+        if(path) {
+            this.path = path;
+        }
+
+        var url = this.protocol+'://'+this.host+'/';
+        if(this.path) {
+            url = url+this.path;
+        }
+
+        this.url = new Url(url);
     }
 
     async request(method, path, data, options) {
@@ -20,7 +35,7 @@ class WebApi {
 
         // Build the URL
         var url = new Url(this.url.toString()+path);
-        //app.log(url.toString());
+        //console.log('url', url.toString());
 
         // Set the options
         var options = {

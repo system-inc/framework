@@ -5,7 +5,7 @@ import SingleLineTextFormControlView from 'framework/system/interface/graphical/
 // Class
 class SingleLineTextFormFieldView extends TextFormFieldView {
 
-	constructor(identifier, settings) {
+	constructor(formFieldIdentifier, settings) {
 		super(...arguments);
 
 		// Create the form control, SingleLineTextFormControlView

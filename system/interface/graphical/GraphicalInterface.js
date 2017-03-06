@@ -70,15 +70,17 @@ class GraphicalInterface extends Interface {
 	}
 
 	async initialize(viewController) {
-		if(viewController === undefined || !ViewController.is(viewController)) {
-			throw new Error('Must pass instance of ViewController as first argument to GraphicalInterface constructor.');
+		if(viewController !== undefined) {
+			if(!ViewController.is(viewController)) {
+				throw new Error('Must pass instance of ViewController as first argument to GraphicalInterface constructor.');
+			}
+
+			// Set the view controller
+			this.viewController = viewController;
+
+			// Initialize the view controller
+			await this.viewController.initialize();
 		}
-
-		// Set the view controller
-		this.viewController = viewController;
-
-		// Initialize the view controller
-		await this.viewController.initialize();
 		
 		// Initialize the adapter
 		await this.adapter.initialize();
@@ -144,6 +146,36 @@ class GraphicalInterface extends Interface {
 			parentIdentifier: parentIdentifier,
 			childrenIdentifiers: childrenIdentifiers,
 		};
+	}
+
+	addEventListener(eventPattern, functionToBind, timesToRun) {
+		this.adapter.addEventListener(...arguments);
+
+		return super.addEventListener(...arguments);
+	}
+
+	removeEventListener() {
+		this.adapter.removeEventListener(...arguments);
+
+		return super.removeEventListener(...arguments);
+	}
+
+	removeAllEventListeners() {
+		this.adapter.removeAllEventListeners(...arguments);
+
+		return super.removeAllEventListeners(...arguments);
+	}
+
+	getSelection() {
+		return this.adapter.getSelection();
+	}
+
+	insertText() {
+		return this.adapter.insertText(...arguments);
+	}
+
+	print() {
+		return this.adapter.print();
 	}
 
 	close() {

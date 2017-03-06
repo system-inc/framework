@@ -1,29 +1,40 @@
 // Dependencies
 import View from 'framework/system/interface/graphical/views/View.js';
 
+import Settings from 'framework/system/settings/Settings.js';
+
 // Class
 class ModalView extends View {
 
-	modal = null;
+	modalView = null;
 
-	attributes = {
-		style: {
-			display: 'none',
-		},
-	};
+	settings = new Settings({
+		hideOnOutsideClick: true,
+	});
 
 	constructor(settings) {
-		super(null, settings);
+		super();
 
-		this.settings.setDefaults({
-			hideOnOutsideClick: true,
+		this.setStyle({
+			display: 'none',
+			position: 'absolute',
+			zIndex: 3,
+			background: 'rgba(0, 0, 0, .5)',
+			border: '1px solid #CCC',
+			position: 'fixed',
+		    top: 0,
+		    right: 0,
+		    bottom: 0,
+		    left: 0,
+		    justifyContent: 'center',
+		    alignItems: 'center',
 		});
 
-		this.modal = new View({
-			class: 'modal',
+		this.modalView = this.append(new View());
+		this.modalView.setStyle({
+			background: '#FFF',
+			border: '1px solid #CCC',
 		});
-
-		this.append(this.modal);
 
 		if(this.settings.get('hideOnOutsideClick')) {
 			this.enableHideOnOutsideClick();
@@ -31,7 +42,7 @@ class ModalView extends View {
 	}
 
 	enableHideOnOutsideClick() {
-		this.modal.on('input.press', function(event) {
+		this.modalView.on('input.press', function(event) {
 			//app.log('modal click');
 			event.stopPropagation();
 		}.bind(this));

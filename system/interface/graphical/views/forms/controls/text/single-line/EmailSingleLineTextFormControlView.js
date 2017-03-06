@@ -4,9 +4,11 @@ import SingleLineTextFormControlView from 'framework/system/interface/graphical/
 // Class
 class EmailSingleLineTextFormControlView extends SingleLineTextFormControlView {
 
-    attributes = {
-        type: 'email',
-    };
+    constructor() {
+    	super(...arguments);
+
+    	this.setAttribute('type', 'email');
+    }
 
 }
 

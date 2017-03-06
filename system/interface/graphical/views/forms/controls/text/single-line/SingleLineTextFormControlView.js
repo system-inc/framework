@@ -4,10 +4,11 @@ import TextFormControlView from 'framework/system/interface/graphical/views/form
 // Class
 class SingleLineTextFormControlView extends TextFormControlView {
 
-    attributes = {
-        type: 'text',
-        class: 'control text singleLine',
-    };
+    constructor() {
+    	super(...arguments);
+
+    	this.setAttribute('type', 'text');
+    }
 
     getWebViewAdapterSettings() {
 		return {

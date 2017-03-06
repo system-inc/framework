@@ -12,20 +12,46 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 	constructor(graphicalInterface) {
 		super(graphicalInterface);
 
-		//app.log('creating HtmlDocument');
+		//console.log('creating HtmlDocument');
 		this.htmlDocument = new HtmlDocument();
+
+		// Hook the HtmlDocument's emit function
+		var standardHtmlDocumentEmit = this.htmlDocument.emit;
+		this.htmlDocument.emit = async function(eventIdentifier, data, eventOptions) {
+			if(
+				!eventIdentifier.startsWith('input.') &&
+				!eventIdentifier.startsWith('htmlDocument.')
+			) {
+				console.log('this event is being written to local storage - eventIdentifier', eventIdentifier);
+				// We also emit the event on the graphical interface
+				await this.graphicalInterface.emit.apply(this.graphicalInterface, arguments);
+			}
+
+			// Emit the event on the HtmlDocument as normal
+			return await standardHtmlDocumentEmit.apply(this.htmlDocument, arguments);
+		}.bind(this);
+
+		// Capture resize events
+		this.htmlDocument.on('htmlDocument.resize', function(event) {
+			this.graphicalInterface.emit('graphicalInterface.resize', event);
+			this.graphicalInterface.dimensions = this.htmlDocument.dimensions;
+		}.bind(this));
+
+		// Set the dimensions
+		this.graphicalInterface.dimensions = this.htmlDocument.dimensions;
+		//console.info('this.htmlDocument.dimensions', this.htmlDocument.dimensions);
 	}
 
 	initialize() {
 		// Connect the graphical interface to the ViewController's view
-		if(this.graphicalInterface.viewController.view) {
+		if(this.graphicalInterface.viewController && this.graphicalInterface.viewController.view) {
 			this.htmlDocument.body.append(this.graphicalInterface.viewController.view.adapter.adaptedView);	
 		}
 		else {
-			app.error('View does not exist for ViewController.');
+			console.warn('View does not exist for ViewController.');
 		}
 		
-		//app.log('Mounting HtmlDocument to DOM');
+		//console.log('Mounting HtmlDocument to DOM');
 		this.htmlDocument.mountToDom();
 	}
 
@@ -52,6 +78,27 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 
 	addStyleSheet() {
 		this.htmlDocument.addStyleSheet(...arguments);
+	}
+
+	addEventListener(eventPattern, functionToBind, timesToRun) {
+		// Don't bind graphical interface events to the document
+		if(!eventPattern.startsWith('graphicalInterface.')) {
+			this.htmlDocument.addEventListener(...arguments);
+		}
+
+		return this;
+	}
+
+	getSelection() {
+		return this.htmlDocument.getSelection(...arguments);
+	}
+
+	insertText() {
+		return this.htmlDocument.insertText(...arguments);
+	}
+
+	print() {
+		return this.htmlDocument.domWindow.print();
 	}
 
 }

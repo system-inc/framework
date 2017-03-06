@@ -20,4 +20,9 @@ require('babel-register')({
 	sourceMaps: 'both',
 });
 
-require('FrameworkApp.js');
+try {
+	require('FrameworkApp.js');
+}
+catch(error) {
+	console.error(error.toString());
+}

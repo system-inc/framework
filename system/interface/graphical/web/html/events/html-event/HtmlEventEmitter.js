@@ -9,6 +9,8 @@ class HtmlEventEmitter extends PropagatingEventEmitter {
 	eventListenersOnDomObject = {};
 
 	addEventListener(eventPattern, functionToBind, timesToRun) {
+		//console.info('HtmlEventEmitter addEventListener() ', eventPattern);
+
 		var HtmlEventProxy = require('framework/system/interface/graphical/web/html/events/HtmlEventProxy.js').default;
 
 		// All events are routed through the HtmlEventProxy
