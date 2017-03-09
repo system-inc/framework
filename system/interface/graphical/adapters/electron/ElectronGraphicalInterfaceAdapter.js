@@ -146,6 +146,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		var path = null;
 		if(options.path) {
 			path = options.path;
+			//console.log('path', path);
 		}
 
 		var type = null;
@@ -155,6 +156,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 		// Get the state
 		var graphicalInterfaceState = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(type);
+		//console.log('graphicalInterfaceState', graphicalInterfaceState);
 
 		// Get the right reference for ElectronBrowserWindow based on whether or not we are in the Electron main process or in a renderer process
 		var ElectronBrowserWindow = null;
@@ -180,8 +182,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			x: graphicalInterfaceState.position.relativeToAllDisplays.x,
 			y: graphicalInterfaceState.position.relativeToAllDisplays.y,
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
-			//show: graphicalInterfaceState.show,
-			show: true,
+			show: graphicalInterfaceState.show,
+			//show: true,
 			webPreferences: {
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
 			},
@@ -191,8 +193,58 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
 
 		// TODO: newGraphicalInterface with strings instead of files: https://github.com/electron/electron/issues/8735 and https://app.asana.com/0/35428325799561/283058472623355
-		var appHtmlFileUrl = new Url(path);
-		electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
+		//var appHtmlFileUrl = new Url(path);
+		//electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
+
+		var appModulePathDirectory = Node.Path.join(app.framework.directory.toString(), 'node_modules', 'app-module-path');
+		//console.log('appModulePathDirectory', appModulePathDirectory);
+		var librariesDirectory = Node.Path.join(app.framework.directory.toString(), '../');
+		//console.log('librariesDirectory', librariesDirectory);
+		var babelRegisterDirectory = Node.Path.join(app.framework.directory.toString(), 'node_modules', 'babel-register');
+		//console.log('babelRegisterDirectory', babelRegisterDirectory);
+
+		// Create a JavaScript string to start the app, this is the same as index.js in framework/app/index.js
+		var script = "";
+
+		script += "var appModulePathDirectory = require('"+appModulePathDirectory+"');			\n";
+		script += "appModulePathDirectory.addPath('"+app.directory.toString()+"');				\n";
+		script += "appModulePathDirectory.addPath('"+librariesDirectory+"');					\n";
+		
+		// Disable the Babel cache for debugging
+		//script += "process.env.BABEL_DISABLE_CACHE = 1;											\n";
+		
+		// Include the Babel polyfill when generator support is not available
+		//script += "require('babel-polyfill THIS NEEDS TO BE THE CORRECT PATH');					\n";
+
+		// Integrate transpilation with import statements
+		script += "require('"+babelRegisterDirectory+"')({										\n";
+		script += "    presets: [																\n";
+		//script += "        'latest',															\n";
+		//script += "        'stage-0',															\n";
+		script += "    ],																		\n";
+		script += "    plugins: [																\n";
+		script += "        'transform-class-properties',										\n";
+		script += "        'transform-es2015-modules-commonjs',									\n";
+		script += "    ],																		\n";
+		script += "    sourceMaps: 'both',														\n";
+		script += "});																			\n";
+		script += "																				\n";
+		script += "try {																		\n";
+		script += "    require('"+path+"');														\n";
+		script += "}																			\n";
+		script += "catch(error) {																\n";
+		script += "    console.error(error.toString());											\n";
+		script += "}																			\n";
+
+		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';
+
+		//console.log('script', script);
+		electronBrowserWindow.loadURL(htmlString,
+			{
+				// String (optional) - Base url (with trailing path separator) for files to be loaded by the data url. This is needed only if the specified url is a data url and needs to load other files.
+				baseURLForDataURL: new Url(app.directory.toString()).toString(),
+			}
+		);
 
 		// Listen to closed events
 		electronBrowserWindow.on('closed', function() {

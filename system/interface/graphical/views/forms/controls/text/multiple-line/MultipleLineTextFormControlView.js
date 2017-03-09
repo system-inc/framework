@@ -4,12 +4,12 @@ import TextFormControlView from 'framework/system/interface/graphical/views/form
 // Class
 class MultipleLineTextFormControlView extends TextFormControlView {
 
+    settings = this.settings.mergeDefaults({
+        wordWrap: false,
+    });
+
     constructor(settings) {
         super(settings);
-
-        this.settings.setDefaults({
-        	wordWrap: false,
-		});
 
 		// Word wrap
 		if(this.settings.get('wordWrap')) {

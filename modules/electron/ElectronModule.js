@@ -17,7 +17,6 @@ class ElectronModule extends Module {
 	defaultSettings = {
 		automaticallyStartElectronIfNotInElectronContext: true,
 		pathToElectronStartingJavaScriptFile: Node.Path.join(app.directory, 'index.js'),
-		pathToFirstBrowserWindowHtmlFile: Node.Path.join(app.directory, 'index.html'),
 	};
 
 	async initialize() {
@@ -179,7 +178,7 @@ class ElectronModule extends Module {
 
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
 		this.firstGraphicalInterfaceProxy = await ElectronGraphicalInterfaceAdapter.newGraphicalInterface({
-			path: this.settings.get('pathToFirstBrowserWindowHtmlFile'),
+			path: this.settings.get('pathToElectronStartingJavaScriptFile'),
 		});
 
 		// When graphical interface is closed

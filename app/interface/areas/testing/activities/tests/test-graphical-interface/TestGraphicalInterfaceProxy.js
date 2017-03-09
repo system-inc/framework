@@ -14,7 +14,7 @@ class TestGraphicalInterfaceProxy extends Reusable {
 		// Create a new graphical interface
 		//console.log('TestGraphicalInterfaceProxy - creating new graphical interface...');
 		this.graphicalInterfaceProxy = await app.interfaces.graphical.newGraphicalInterface({
-			path: Node.Path.join(app.directory, 'interface', 'areas', 'testing', 'activities', 'tests', 'test-graphical-interface', 'app', 'index.html'),
+			path: Node.Path.join(app.directory, 'interface', 'areas', 'testing', 'activities', 'tests', 'test-graphical-interface', 'app', 'TestGraphicalInterfaceApp.js'),
 			type: 'test',
 		});
 

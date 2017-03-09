@@ -28,6 +28,8 @@ class Settings {
 			// Apply the defaults to the current data store
 			this.applyDefaults();
 		}
+
+		return this;
 	}
 
 	mergeDefaults(defaultsToMerge) {
@@ -36,6 +38,8 @@ class Settings {
 
 		// Apply the defaults to the current data store
 		this.applyDefaults();
+
+		return this;
 	}
 
 	applyDefaults() {
@@ -48,6 +52,8 @@ class Settings {
 
 		// Merge the current data on top of the defaults
 		this.dataStore.merge(data);
+
+		return this;
 	}
 
 	merge(settingsOrData) {

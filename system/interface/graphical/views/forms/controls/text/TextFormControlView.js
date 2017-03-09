@@ -4,14 +4,14 @@ import FormControlView from 'framework/system/interface/graphical/views/forms/co
 // Class
 class TextFormControlView extends FormControlView {
 
+    settings = this.settings.mergeDefaults({
+        indentationSymbol: '    ', // four spaces
+        tabKeyInsertsIndentationSymbol: false,
+        indentationManagement: false,
+    });
+
     constructor(settings) {
         super(settings);
-
-        this.settings.setDefaults({
-            indentationSymbol: '    ', // four spaces
-            tabKeyInsertsIndentationSymbol: false,
-            indentationManagement: false,
-        });
 
         // Set the indentation symbol from the settings
         this.indentationSymbol = this.settings.get('indentationSymbol');
