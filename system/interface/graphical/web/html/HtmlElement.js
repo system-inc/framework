@@ -290,13 +290,25 @@ class HtmlElement extends HtmlNode {
 
 		// Allow strings and objects (for .setStyle({this:that, this:that}))
 		if(String.is(propertyOrObject)) {
-			this.attributes.style[propertyOrObject] = value;
+			if(value === null) {
+				delete this.attributes.style[propertyOrObject];
+			}
+			else {
+				this.attributes.style[propertyOrObject] = value;
+			}
 		}
 		else {
 			propertyOrObject.each(function(property, value) {
 				// Convert "borderBottom" to "border-bottom"
 				property = property.toDashes();
 				this.attributes.style[property] = value;
+
+				if(value === null) {
+					delete this.attributes.style[property];
+				}
+				else {
+					this.attributes.style[property] = value;
+				}
 			}.bind(this));
 		}
 

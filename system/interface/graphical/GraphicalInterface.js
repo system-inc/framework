@@ -182,6 +182,10 @@ class GraphicalInterface extends Interface {
 		return this.adapter.close(...arguments);
 	}
 
+	destroy() {
+		return this.adapter.destroy(...arguments);	
+	}
+
 	show() {
 		return this.adapter.show(...arguments);
 	}

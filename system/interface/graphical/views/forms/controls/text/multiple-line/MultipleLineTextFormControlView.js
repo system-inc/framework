@@ -20,10 +20,20 @@ class MultipleLineTextFormControlView extends TextFormControlView {
 
     enableWordWrap() {
     	this.setAttribute('wrap', 'soft');
+        this.setStyle({
+            overflowX: null,
+            overflowWrap: null,
+            whiteSpace: 'pre-wrap',
+        });
     }
 
     disableWordWrap() {
     	this.setAttribute('wrap', 'off');
+        this.setStyle({
+            overflowX: 'scroll',
+            overflowWrap: 'normal',
+            whiteSpace: 'pre',
+        });
     }
 
     getWebViewAdapterSettings() {

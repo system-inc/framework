@@ -48,6 +48,10 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		this.electronBrowserWindow.close();
 	}
 
+	destroy() {
+		this.electronBrowserWindow.destroy();
+	}
+
 	show() {
 		//console.info('show');
 		this.electronBrowserWindow.show();
@@ -183,11 +187,18 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			y: graphicalInterfaceState.position.relativeToAllDisplays.y,
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
 			show: graphicalInterfaceState.show,
-			//show: true,
+			//show: false,
 			webPreferences: {
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
 			},
 		});
+
+		// Show the window gracefully
+		//if(graphicalInterfaceState.show) {
+		//	electronBrowserWindow.once('ready-to-show', function() {
+		//		electronBrowserWindow.show();
+		//	});
+		//}
 
 		// Create the graphical interface proxy to return
 		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
@@ -229,12 +240,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		script += "    sourceMaps: 'both',														\n";
 		script += "});																			\n";
 		script += "																				\n";
-		script += "try {																		\n";
-		script += "    require('"+path+"');														\n";
-		script += "}																			\n";
-		script += "catch(error) {																\n";
-		script += "    console.error(error.toString());											\n";
-		script += "}																			\n";
+		script += "require('"+path+"');														\n";
 
 		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';
 
@@ -247,9 +253,9 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		);
 
 		// Listen to closed events
-		electronBrowserWindow.on('closed', function() {
+		electronBrowserWindow.on('closed', function(event) {
 			graphicalInterfaceProxy.closed = true;
-			graphicalInterfaceProxy.emit('graphicalInterface.closed');
+			graphicalInterfaceProxy.emit('graphicalInterface.closed', event);
 		});
 
 		// Initialize the state

@@ -40,10 +40,10 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		}.bind(this);
 
 		// Capture before unload
-		//this.htmlDocument.on('htmlDocument.unload.before', function(event) {
-		//	this.graphicalInterface.emit('graphicalInterface.unload.before', event);
-		//	//return event.domEvent.returnValue = event.previousReturnValue;
-		//}.bind(this));
+		this.htmlDocument.on('htmlDocument.unload.before', async function(event) {
+			var emittedEvent = await this.graphicalInterface.emit('graphicalInterface.unload.before', event);
+			return emittedEvent.previousReturnValue;
+		}.bind(this));
 
 		// Capture resize events
 		this.htmlDocument.on('htmlDocument.resize', function(event) {

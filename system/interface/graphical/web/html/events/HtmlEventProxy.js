@@ -420,30 +420,27 @@ class HtmlEventProxy {
 		}
 
 		// When the DOM object emits a domEvent
-		// This function can't be a generator in order to make sure the DOM events are propagated correctly
-		// Native DOM events will not wait for the generator function to return
-		// As a consequence, this means that any bound generator functions will be emitted immediately
-		// TODO: Maybe I can fix this at some point by making the events yield on .emit and somehow
-		// controlling when the native DOM event bubbles
-		// Note: Event though event.emit is a generator function this seems to be working synchronously
-		// such that when I can event.stop() it works
-		var domEventListenerFunctionToBind = function(domEvent) {
+		var domEventListenerFunctionToBind = async function(domEvent) {
 			// Get the events to emit from the domEvent
 			var events = HtmlEventProxy.createEventsFromDomEvent(domEvent, htmlEventEmitter);
 			//console.log('events', events);
 
 			// Emit the event
-			events.each(function(eventIndex, event) {
+			await events.each(async function(eventIndex, event) {
 				//console.log('htmlEventEmitter.emit event', event);
-				htmlEventEmitter.emit(event.identifier, event);
+				await htmlEventEmitter.emit(event.identifier, event);
 			});
 
 			// Return the value of the last event
-			var lastEventReturnPreviousReturnValue = events.last().previousReturnValue;
-			if(lastEventReturnPreviousReturnValue !== undefined) {
-				//domEvent.returnValue = lastEventReturnPreviousReturnValue;
-				return lastEventReturnPreviousReturnValue;
+			var lastEventPreviousReturnValue = events.last().previousReturnValue;
+			if(lastEventPreviousReturnValue) {
+				domEvent.returnValue = lastEventPreviousReturnValue;	
 			}
+			else {
+				lastEventPreviousReturnValue = undefined;
+			}
+
+			return lastEventPreviousReturnValue;
 		};
 
 		// If we have a valid domEventIdentifier
