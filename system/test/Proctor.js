@@ -8,7 +8,6 @@ import DotTestReporter from 'framework/system/test/test-reporters/DotTestReporte
 import ConciseTestReporter from 'framework/system/test/test-reporters/ConciseTestReporter.js';
 import ElectronTestReporter from 'framework/system/test/test-reporters/ElectronTestReporter.js';
 import FileSystemObject from 'framework/system/file-system/FileSystemObject.js';
-import FileSystemObjectFactory from 'framework/system/file-system/FileSystemObjectFactory.js';
 import AsciiArt from 'framework/system/ascii-art/AsciiArt.js';
 
 // Class
@@ -813,7 +812,7 @@ class Proctor extends EventEmitter {
 		}
 
 		// Create a file or directory object from the path
-		var fileSystemObjectFromPath = await FileSystemObjectFactory.create(path);
+		var fileSystemObjectFromPath = await FileSystemObject.createFromPath(path);
 		//app.log('fileSystemObjectFromPath', fileSystemObjectFromPath);
 
 		// Store all of the file system objects

@@ -1,5 +1,5 @@
 // Dependencies
-import RouteFactory from 'framework/system/server/web/routes/RouteFactory.js';
+import Route from 'framework/system/server/web/routes/Route.js';
 import NotFoundError from 'framework/system/server/web/errors/NotFoundError.js';
 
 // Class
@@ -12,7 +12,7 @@ class Router {
 
 		if(routes) {
 			routes.each(function(routeSettingsIndex, routeSettings) {
-				this.routes.append(RouteFactory.create(routeSettings));
+				this.routes.append(Route.create(routeSettings));
 			}.bind(this));
 		}
 

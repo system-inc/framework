@@ -229,9 +229,6 @@ class FileSystemObject {
         //app.log('FileSystemObject.list', ...arguments);
 
         // Dependencies
-        //import FileSystemObjectFactory from 'framework/system/file-system/FileSystemObjectFactory.js';
-        //var FileSystemObjectFactory = await System.import('system/file-system/FileSystemObjectFactory.js');
-        var FileSystemObjectFactory = require('framework/system/file-system/FileSystemObjectFactory.js').default;
         var Directory = require('framework/system/file-system/Directory.js').default;
 
         var directory = new Directory(path);
@@ -243,7 +240,7 @@ class FileSystemObject {
         // Make sure we have the full path
         await fileNames.each(async function(index, fileName) {
             //app.log('fileName', directory+fileName);
-            var fileSystemObject = await FileSystemObjectFactory.create(directory+fileName);
+            var fileSystemObject = await FileSystemObject.createFromPath(directory+fileName);
             //app.log('fileSystemObject', fileSystemObject);
 
             // Handle recursion
@@ -283,7 +280,7 @@ class FileSystemObject {
             //app.log('path', path);
 
             // Instantiate a file or directory from the path
-            var fileSystemObject = await FileSystemObjectFactory.create(path);
+            var fileSystemObject = await FileSystemObject.createFromPath(path);
 
             // Create an array to store file system objects to watch
             fileSystemObjectsToWatch.append(fileSystemObject);
@@ -365,6 +362,36 @@ class FileSystemObject {
         //app.log('Watching', fileSystemObjectsToWatch.length, 'file system objects.');
             
         return fileSystemObjectsToWatch;
+    }
+
+    static async createFromPath(path) {
+        //app.log('FileSystemObject.createFromPath', ...arguments);
+
+        // Make sure we have a path
+        if(!path) {
+            throw new Error('No path provided at FileSystemObject.createFromPath(path).');
+        }
+
+        var fileSystemObject = null;
+
+        // Get the file object status
+        //app.log('calling FileSystemObject.stat');
+        var nodeStatus = await FileSystemObject.stat(path);
+        //app.log('nodeStatus', nodeStatus);
+
+        // Make sure to always be an instance of File or Directory
+        if(nodeStatus.isFile()) {
+            var File = require('framework/system/file-system/File.js').default;
+            fileSystemObject = new File(path);
+            await fileSystemObject.initializeStatus();
+        }
+        else if(nodeStatus.isDirectory()) {
+            var Directory = require('framework/system/file-system/Directory.js').default;
+            fileSystemObject = new Directory(path);
+            await fileSystemObject.initializeStatus();
+        }
+
+        return fileSystemObject;
     }
 	
 }

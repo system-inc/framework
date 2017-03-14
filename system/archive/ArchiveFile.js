@@ -1,7 +1,7 @@
 // Dependencies
 import File from 'framework/system/file-system/File.js';
 import SevenZip from 'framework/system/archive//libraries/7-zip/SevenZip.js';
-import ArchivedFileSystemObjectFactory from 'framework/system/archive/file-system-objects/ArchivedFileSystemObjectFactory.js';
+import ArchivedFileSystemObject from 'framework/system/archive/file-system-objects/ArchivedFileSystemObject.js';
 
 // Class
 class ArchiveFile extends File {
@@ -37,7 +37,7 @@ class ArchiveFile extends File {
 			// Create new ArchivedFileSystemObjects from the list
 			sevenZipList.each(function(sevenZipArchivedFileSystemObjectPropertiesIndex, sevenZipArchivedFileSystemObjectProperties) {
 				//app.log('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
-				var archivedFileSystemObject = ArchivedFileSystemObjectFactory.createFromSevenZipArchivedFileSystemObjectProperties(this, sevenZipArchivedFileSystemObjectProperties);
+				var archivedFileSystemObject = ArchivedFileSystemObject.createFromSevenZipArchivedFileSystemObjectProperties(this, sevenZipArchivedFileSystemObjectProperties);
 				this.archivedFileSystemObjects.append(archivedFileSystemObject);
 			}.bind(this));
 		}

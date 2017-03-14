@@ -2,7 +2,7 @@
 import Headers from 'framework/system/web/headers/Headers.js';
 import Cookies from 'framework/system/web/headers/Cookies.js';
 import Url from 'framework/system/web/Url.js';
-import IpAddressFactory from 'framework/system/network/IpAddressFactory.js';
+import IpAddress from 'framework/system/network/IpAddress.js';
 import Browser from 'framework/system/web/Browser.js';
 import Device from 'framework/system/hardware/Device.js';
 import OperatingSystem from 'framework/system/operating-system/OperatingSystem.js';
@@ -75,7 +75,7 @@ class Request {
 
 		// IP address
 		//app.log(Json.encode(nodeRequest.connection.remoteAddress));
-		this.ipAddress = this.connectingIpAddress = IpAddressFactory.create(nodeRequest.connection.remoteAddress);
+		this.ipAddress = this.connectingIpAddress = IpAddress.create(nodeRequest.connection.remoteAddress);
 		
 		// Referrer
 		this.referrer = new Url(this.headers.get('referer'));
@@ -88,10 +88,10 @@ class Request {
 		if(xForwardedFor) {
 			// Catch x.x.x.x,y.y.y.y format
 			if(xForwardedFor.contains(',')) {
-				this.ipAddress = IpAddressFactory.create(xForwardedFor.split(',').first());
+				this.ipAddress = IpAddress.create(xForwardedFor.split(',').first());
 			}
 			else {
-				this.ipAddress = IpAddressFactory.create(xForwardedFor);	
+				this.ipAddress = IpAddress.create(xForwardedFor);	
 			}
 		}
 

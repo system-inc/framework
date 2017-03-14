@@ -1,6 +1,3 @@
-// Dependencies
-import RouteFactory from 'framework/system/server/web/routes/RouteFactory.js';
-
 // Class
 class Route {
 	
@@ -78,7 +75,7 @@ class Route {
 		// Create route children if they exist
 		if(settings.children) {
 			settings.children.each(function(index, childRouteSettings) {
-				this.children.append(RouteFactory.create(childRouteSettings, this));
+				this.children.append(Route.create(childRouteSettings, this));
 			}.bind(this));
 		}
 	}
@@ -252,6 +249,41 @@ class Route {
 		});
 
 		return captureGroupNames;
+	}
+
+	static create(settings, parent) {
+		var route = null;
+
+		// Make sure child routes without types are subclassed the same as their parent
+		if(!settings.type && parent && parent.type) {
+			settings.type = parent.type;
+		}
+
+		// RedirectRoute
+		if(settings.type == 'redirect') {
+			var RedirectRoute = require('framework/system/server/web/routes/RedirectRoute.js').default;
+			route = new RedirectRoute(settings, parent);
+		}
+		// FileRoute
+		else if(settings.type == 'file') {
+			var FileRoute = require('framework/system/server/web/routes/FileRoute.js').default;
+			route = new FileRoute(settings, parent);
+		}
+		// ProxyRoute
+		else if(settings.type == 'proxy') {
+			var ProxyRoute = require('framework/system/server/web/routes/ProxyRoute.js').default;
+			route = new ProxyRoute(settings, parent);
+		}
+		// ControllerRoute is the default subclass
+		else {
+			var ControllerRoute = require('framework/system/server/web/routes/ControllerRoute.js').default;
+			route = new ControllerRoute(settings, parent);
+		}
+
+		// Create children routes
+		route.createChildrenRoutes(settings);
+
+		return route;
 	}
 	
 }

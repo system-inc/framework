@@ -6,6 +6,7 @@ import Router from 'framework/system/server/web/routes/Router.js';
 import Request from 'framework/system/server/web/Request.js';
 import Response from 'framework/system/server/web/Response.js';
 import InternalServerError from 'framework/system/server/web/errors/InternalServerError.js';
+import File from 'framework/system/file-system/File.js';
 
 // Class
 class WebServer extends Server {
@@ -172,18 +173,21 @@ class WebServer extends Server {
 								app.error('Could not create a secure web server (HTTPS) listener on port '+port+', the certicate file is not set.');
 								return;
 							}
-							if(!File.synchronous.exists(protocolSettings.keyFile)) {
+							if(!(await File.exists(protocolSettings.keyFile))) {
 								app.error('Could not create a secure web server (HTTPS) listener on port '+port+', the key file "'+protocolSettings.keyFile+'" does not exist.');
 								return;
 							}
-							if(!File.synchronous.exists(protocolSettings.certificateFile)) {
+							if(!(await File.exists(protocolSettings.certificateFile))) {
 								app.error('Could not create a secure web server (HTTPS) listener on port '+port+', the certificate file "'+protocolSettings.certificateFile+'" does not exist.');
 								return;
 							}
 
+							var key = await (await File.read(protocolSettings.keyFile)).toString();
+							var cert = await (await File.read(protocolSettings.certificateFile)).toString();
+
 							var httpsServerSettings = {
-								key: File.synchronous.read(protocolSettings.keyFile).toString(),
-								cert: File.synchronous.read(protocolSettings.certificateFile).toString(),
+								key: key,
+								cert: cert,
 							};
 							//app.log(httpsServerSettings);
 
@@ -314,7 +318,7 @@ class WebServer extends Server {
 
 	// Handles errors that occur after nodeResponse is wrapped in a Framework response object
 	handleError(request, response, error) {
-		var logEntry = app.formatLogData('WebServer.handleError() called on request '+request.id+'. '+"\n\n"+error.name+': '+error.message+"\n"+error.stack.stackTraceToString()+"\n"+'Request:', request.getPublicErrorData());
+		var logEntry = app.formatLogData('WebServer.handleError() called on request '+request.id+'. '+"\n\n"+error.name+': '+error.message+"\n"+error.stack.toString()+"\n"+'Request:', request.getPublicErrorData());
 		if(this.settings.get('verbose')) {
 			app.error(logEntry);
 		}
@@ -355,7 +359,7 @@ class WebServer extends Server {
 			requestPublicErrorData = request.getPublicErrorData();
 		}
 
-		var logEntry = app.formatLogData('WebServer.handleError() called on request '+requestId+'. '+"\n\n"+error.name+': '+error.message+"\n"+error.stack.stackTraceToString()+"\n"+'Request:', requestPublicErrorData);
+		var logEntry = app.formatLogData('WebServer.handleError() called on request '+requestId+'. '+"\n\n"+error.name+': '+error.message+"\n"+error.stack.toString()+"\n"+'Request:', requestPublicErrorData);
 		if(this.settings.get('verbose')) {
 			app.error(logEntry);
 		}
