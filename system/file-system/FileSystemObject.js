@@ -239,8 +239,16 @@ class FileSystemObject {
 
         // Make sure we have the full path
         await fileNames.each(async function(index, fileName) {
+            var fileSystemObject = null;
+
             //app.log('fileName', directory+fileName);
-            var fileSystemObject = await FileSystemObject.createFromPath(directory+fileName);
+            try {
+                var fileSystemObject = await FileSystemObject.createFromPath(directory+fileName);
+            }
+            catch(error) {
+                // Do nothing, this is most likely a permissions issue
+            }
+            
             //app.log('fileSystemObject', fileSystemObject);
 
             // Handle recursion
