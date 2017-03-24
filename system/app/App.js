@@ -294,10 +294,17 @@ class App extends EventEmitter {
 			// Create the current graphical interface
 			var GraphicalInterface = require('framework/system/interface/graphical/GraphicalInterface.js').default;
 			this.interfaces.graphical = new GraphicalInterface();
+
+			this.initializeGraphicalInterface();
 		}
 		else {
 			//console.log('inGraphicalInterfaceContext', false);
 		}
+	}
+
+	async initializeGraphicalInterface() {
+		// This will be implemented by a child class of App
+		console.log('initializeGraphicalInterface')
 	}
 
 	setPropertiesFromAppSettings() {

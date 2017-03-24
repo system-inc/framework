@@ -1,7 +1,5 @@
 // Dependencies
 import WebGraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
-import Electron from 'electron';
-import ElectronManager from 'framework/system/interface/graphical/electron/ElectronManager.js';
 import GraphicalInterfaceProxy from 'framework/system/interface/graphical/GraphicalInterfaceProxy.js';
 import GraphicalInterfaceState from 'framework/system/interface/graphical/GraphicalInterfaceState.js';
 import Url from 'framework/system/web/Url.js';
@@ -15,7 +13,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	constructor(graphicalInterface) {
 		super(graphicalInterface);
 
-		this.electronBrowserWindow = Electron.remote.getCurrentWindow();
+		this.electronBrowserWindow = app.modules.electronModule.getCurrentWindow();
 
 		this.graphicalInterface.identifier = this.electronBrowserWindow.id;
 	}
@@ -68,7 +66,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	reset() {
-		Electron.remote.getCurrentWebContents().session.clearStorageData(
+		app.modules.electronModule.getCurrentWebContents().session.clearStorageData(
 			{
 				storages: [
 					'appcache',
@@ -91,19 +89,19 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	async inputKeyDown(key, modifiers = []) {
-		return await ElectronManager.inputKeyDown(key, modifiers = []);
+		return await app.modules.electronModule.inputKeyDown(key, modifiers = []);
 	}
 
 	async inputKeyUp(key, modifiers = []) {
-		return await ElectronManager.inputKeyUp(key, modifiers = []);
+		return await app.modules.electronModule.inputKeyUp(key, modifiers = []);
 	}
 
 	async inputKeyPress(key, modifiers = []) {
-		return await ElectronManager.inputKeyPress(key, modifiers = []);
+		return await app.modules.electronModule.inputKeyPress(key, modifiers = []);
 	}
 	
 	async inputKeyPressByCombination(key, modifiers = []) {
-		return await ElectronManager.inputKeyPressByCombination(key, modifiers = []);
+		return await app.modules.electronModule.inputKeyPressByCombination(key, modifiers = []);
 	}
 
 	async inputPress() {
@@ -115,7 +113,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		//var viewPosition = view.position;
 		//console.info('viewPosition', viewPosition);
 
-		return await ElectronManager.inputPress(Number.round(viewPosition.x), Number.round(viewPosition.y), button, pressCount, modifiers);
+		return await app.modules.electronModule.inputPress(Number.round(viewPosition.x), Number.round(viewPosition.y), button, pressCount, modifiers);
 	}
 
 	async inputPressDoubleView(view, button = 'left', pressCount = 2, modifiers = []) {
@@ -123,11 +121,11 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		//var viewPosition = view.position;
 		//console.info('viewPosition', viewPosition);
 
-		return await ElectronManager.inputPress(Number.round(viewPosition.x), Number.round(viewPosition.y), button, 2, modifiers);
+		return await app.modules.electronModule.inputPress(Number.round(viewPosition.x), Number.round(viewPosition.y), button, 2, modifiers);
 	}
 
 	async inputHover(relativeToGraphicalInterfaceViewportX, relativeToGraphicalInterfaceViewportY) {
-		return await ElectronManager.inputHover(relativeToGraphicalInterfaceViewportX, relativeToGraphicalInterfaceViewportY);
+		return await app.modules.electronModule.inputHover(relativeToGraphicalInterfaceViewportX, relativeToGraphicalInterfaceViewportY);
 	}
 
 	async inputHoverView(view) {
@@ -143,7 +141,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	async inputScrollView(view, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers = []) {
 		var viewPosition = view.getPosition();
 
-		return await ElectronManager.inputScroll(Number.round(viewPosition.relativeToGraphicalInterfaceViewport.x), Number.round(viewPosition.relativeToGraphicalInterfaceViewport.y),  deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
+		return await app.modules.electronModule.inputScroll(Number.round(viewPosition.relativeToGraphicalInterfaceViewport.x), Number.round(viewPosition.relativeToGraphicalInterfaceViewport.y),  deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
 	}
 
 	static async newGraphicalInterface(options) {
@@ -168,11 +166,11 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 		// Electron main process
 		if(app.modules.electronModule.inElectronMainProcess()) {
-			ElectronBrowserWindow = Electron.BrowserWindow;
+			ElectronBrowserWindow = app.modules.electronModule.electron.BrowserWindow;
 		}
 		// Electron renderer process
 		if(app.modules.electronModule.inElectronRendererProcess()) {
-			ElectronBrowserWindow = Electron.remote.BrowserWindow;
+			ElectronBrowserWindow = app.modules.electronModule.electron.remote.BrowserWindow;
 			parentIdentifier = app.interfaces.graphical.identifier;
 		}
 		
@@ -215,8 +213,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		//console.log('babelRegisterDirectory', babelRegisterDirectory);
 
 		// Create a JavaScript string to start the app, this is the same as index.js in framework/app/index.js
-		var script = "";
-
+		var script = '';
+		script += "(function() {																\n";
 		script += "var appModulePathDirectory = require('"+appModulePathDirectory+"');			\n";
 		script += "appModulePathDirectory.addPath('"+app.directory.toString()+"');				\n";
 		script += "appModulePathDirectory.addPath('"+librariesDirectory+"');					\n";
@@ -240,7 +238,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		script += "    sourceMaps: 'both',														\n";
 		script += "});																			\n";
 		script += "																				\n";
-		script += "require('"+path+"');														\n";
+		script += "require('"+path+"');															\n";
+		script += "})();																		\n";
 
 		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';
 

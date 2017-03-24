@@ -1,5 +1,5 @@
 // Dependencies
-import ElectronGraphicalInterfaceTest from 'framework/system/interface/graphical/electron/tests/ElectronGraphicalInterfaceTest.js';
+import ElectronGraphicalInterfaceTest from 'framework/modules/electron/interface/graphical/tests/ElectronGraphicalInterfaceTest.js';
 import Assert from 'framework/system/test/Assert.js';
 
 import View from 'framework/system/interface/graphical/views/View.js';

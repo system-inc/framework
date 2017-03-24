@@ -1,6 +1,5 @@
 // Dependencies
 import Reusable from 'framework/system/pool/Reusable.js';
-import Electron from 'electron';
 
 // Class
 class TestGraphicalInterfaceProxy extends Reusable {

@@ -1,5 +1,5 @@
 // Dependencies
-import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
+import ElectronHtmlTest from 'framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
 
 import HtmlNode from 'framework/system/interface/graphical/web/html/HtmlNode.js';

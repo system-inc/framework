@@ -1,7 +1,5 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
-
-import ElectronManager from 'framework/system/interface/graphical/electron/ElectronManager.js';
+import ElectronTest from 'framework/modules/electron/tests/ElectronTest.js';
 
 // Class
 class ElectronHtmlTest extends ElectronTest {
@@ -11,7 +9,7 @@ class ElectronHtmlTest extends ElectronTest {
 		//var viewPosition = htmlNode.position;
 		//console.info('viewPosition', viewPosition);
 
-		return await ElectronManager.inputPress(Number.round(viewPosition.x), Number.round(viewPosition.y), button, pressCount, modifiers);
+		return await app.modules.electronModule.inputPress(Number.round(viewPosition.x), Number.round(viewPosition.y), button, pressCount, modifiers);
 	}
 
 	async inputPressDoubleHtmlNode(htmlNode, button = 'left', pressCount = 2, modifiers = []) {
@@ -19,19 +17,19 @@ class ElectronHtmlTest extends ElectronTest {
 		//var viewPosition = htmlNode.position;
 		//console.info('viewPosition', viewPosition);
 
-		return await ElectronManager.inputPress(Number.round(viewPosition.x), Number.round(viewPosition.y), button, 2, modifiers);
+		return await app.modules.electronModule.inputPress(Number.round(viewPosition.x), Number.round(viewPosition.y), button, 2, modifiers);
 	}
 
 	async inputScrollHtmlNode(htmlNode, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers = []) {
 		var viewPosition = htmlNode.position.relativeToDocumentViewport;
 
-		return await ElectronManager.inputScroll(Number.round(viewPosition.x), Number.round(viewPosition.y), deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
+		return await app.modules.electronModule.inputScroll(Number.round(viewPosition.x), Number.round(viewPosition.y), deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
 	}
 
 	async inputHoverHtmlNode(htmlNode) {
 		var viewPosition = htmlNode.position.relativeToDocumentViewport;
 		
-		return await ElectronManager.inputHover(Number.round(viewPosition.x), Number.round(viewPosition.y));
+		return await app.modules.electronModule.inputHover(Number.round(viewPosition.x), Number.round(viewPosition.y));
 	}
 
 	// This is an abstract class, do not add any tests here

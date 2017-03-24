@@ -2,7 +2,7 @@
 import Module from 'framework/system/module/Module.js';
 import Version from 'framework/system/version/Version.js';
 import Directory from 'framework/system/file-system/Directory.js';
-import ElectronGraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/electron/ElectronGraphicalInterfaceAdapter.js';
+import ElectronGraphicalInterfaceAdapter from 'framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js';
 import Display from 'framework/system/interface/graphical/Display.js';
 
 // Class
@@ -43,7 +43,7 @@ class ElectronModule extends Module {
 		}
 		// Start Electron if the settings have it set to start automatically if not in the Electron context
 		else if(this.settings.get('automaticallyStartElectronIfNotInElectronContext')) {
-			//console.warn('Not in Electron, starting Electron...');
+			//console.warn('Not in Electron, starting this.electron...');
 			this.startElectron();
 		}
 	}
@@ -192,6 +192,14 @@ class ElectronModule extends Module {
 		return this.firstGraphicalInterfaceProxy;
 	}
 
+	getCurrentWindow() {
+		return this.electron.remote.getCurrentWindow();
+	}
+
+	getCurrentWebContents() {
+		return this.electron.remote.getCurrentWebContents();
+	}
+
 	getDisplays() {
 		var displays = {};
 
@@ -214,8 +222,7 @@ class ElectronModule extends Module {
 	configureElectronRendererProcess() {
 		// Catch unhandled rejections in Electron renderer windows
 		window.addEventListener('unhandledrejection', function(error, promise) {
-			// Warning - don't do error.stack.toString or that will crash dev tools
-			console.error('(correct trace below)', error.reason.toString());
+			console.error('(correct trace below)', error.reason.toString(), error.reason.stack.toString());
 		});
 
 		// Update the command with the command from the Electron main process
@@ -253,6 +260,315 @@ class ElectronModule extends Module {
 		}
 
 		return inElectronRendererProcess;
+	}
+
+	//initialize: function*() {
+	//	// Do nothing if Electron is not active (e.g., we are running a Framework app that uses Electron but from the console so there is no Electron window)
+	//	if(!Node.Process.versions.electron) {
+	//		app.warn('Electron is disabled. No Electron application code will be executed.');
+	//		return;
+	//	}
+
+	//	// Set the application menu
+	//	this.electron.remote.Menu.setApplicationMenu(this.getDefaultMenu());
+
+	//	// Remove all screen event listeners to prevent duplicate listeners from being attached on browser window refresh
+	//	this.electron.remote.screen.removeAllListeners();
+
+	//	// Set the main browser window
+	//	this.mainBrowserWindow = this.electron.remote.getCurrentWindow();
+
+	//	// Set the app title
+	//	this.mainBrowserWindow.setTitle(app.title);
+
+	//	// Initialize the window state
+	//	this.initializeWindowState();
+
+	//	// Initialize the developer tools
+	//	this.initializeDeveloperTools();
+
+	//	// Testing
+	//	//var Proctor = Framework.require('framework/system/test/Proctor.js');
+	//	//var proctor = new Proctor('electron');
+	//	//proctor.getAndRunTests();
+	//	//return;
+
+	//	// Require and construct the application
+	//	var applicationClassFilePath = 'Application';
+
+	//	// Require and construct the main view controller
+	//	var viewControllerClassFilePath = 'view-controllers/'+app.modules.electronModule.settings.get('mainBrowserWindow.viewControllerName')+'.js';
+	//	var ViewControllerClass = app.require(viewControllerClassFilePath);
+	//	mainViewController = this.mainBrowserWindowViewController = new ViewControllerClass(this);
+		
+		
+	//	settings: new Settings({
+	//		'default1': 1,
+	//		'default2': 2,
+	//	});
+
+	//	var mysettinginlocalstorage = LocalStorage.get('thing');
+	//	this.settings.set('mysettinginlocalstorage', mysettinginlocalstorage);
+
+	//	this.quickAccess = this.setting.get('mysettinginlocalstorage');
+
+	//	// Add default shortcuts
+	//	this.registerShortcuts();
+
+	//	// Conditionally show the main browser window
+	//	var windowStateSettings = app.modules.electronModule.settings.get('mainBrowserWindow.windowState');
+	//	if(windowStateSettings.show) {
+	//		this.mainBrowserWindow.show();
+	//	}
+	//},
+
+	//initializeDeveloperTools: function() {
+	//	// Handle developer tools settings
+	//	var developerToolsSettings = app.modules.electronModule.settings.get('mainBrowserWindow.developerTools');
+
+	//	// Show the developer tools
+	//	if(developerToolsSettings.show) {
+	//		// Open the developer tools
+	//		this.mainBrowserWindow.openDevTools();	
+	//	}
+	//},
+
+	//registerShortcuts: function() {
+	//	// If the main browser window has an HtmlDocument
+	//	if(this.mainBrowserWindowViewController.viewContainer) {
+	//		var shortcutSettings = app.modules.electronModule.settings.get('shortcuts');
+
+	//		//console.log('This next line is for testing input.key events.');
+	//		//this.mainBrowserWindowViewController.viewContainer.on('input.*', function(event) {});
+	//		//return;
+			
+	//		if(shortcutSettings.closeFocusedWindow) {
+	//			this.mainBrowserWindowViewController.viewContainer.on('input.key.w.control', this.closeFocusedWindow.bind(this));
+	//		}
+	//		if(shortcutSettings.reloadFocusedWindow) {
+	//			this.mainBrowserWindowViewController.viewContainer.on('input.key.r.(control|command)', this.reloadFocusedWindow.bind(this));
+	//		}
+	//		if(shortcutSettings.toggleFullScreenOnFocusedWindow) {
+	//			this.mainBrowserWindowViewController.viewContainer.on('input.key.f11.(control|command)', this.toggleFullScreenOnFocusedWindow.bind(this));
+	//		}
+	//		if(shortcutSettings.toggleDeveloperToolsOnFocusedWindow) {
+	//			this.mainBrowserWindowViewController.viewContainer.on('input.key.i.alt.(control|command)', this.toggleDeveloperToolsOnFocusedWindow.bind(this));
+	//		}
+	//		if(shortcutSettings.applyDefaultWindowStateOnFocusedWindow) {
+	//			this.mainBrowserWindowViewController.viewContainer.on('input.key.d.(control|command)', this.applyDefaultWindowStateOnFocusedWindow.bind(this));
+	//		}
+	//	}
+	//},
+
+	//applyDefaultWindowStateOnFocusedWindow: function() {
+	//	//app.log(applyDefaultWindowStateOnFocusedWindow);
+
+	//	// TODO: For apps with multiple windows, need to make this work on the focused window
+	//	this.mainBrowserWindowState.applyDefault();
+	//},
+
+	//closeFocusedWindow: function() {
+	//	var focusedWindow = this.electron.remote.BrowserWindow.getFocusedWindow();
+	//	if(focusedWindow) {
+	//		focusedWindow.close();
+	//	}
+	//},
+
+	//exit() {
+	//	this.electron.remote.app.quit();
+	//}
+
+	//reloadFocusedWindow() {
+	//	var focusedWindow = this.electron.remote.BrowserWindow.getFocusedWindow();
+	//	if(focusedWindow) {
+	//		focusedWindow.reload();
+	//	}
+	//}
+
+	//toggleFullScreenOnFocusedWindow() {
+	//	var focusedWindow = this.electron.remote.BrowserWindow.getFocusedWindow();
+	//	if(focusedWindow) {
+	//		focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+	//	}
+	//}
+
+	//toggleDeveloperToolsOnFocusedWindow() {
+	//	var focusedWindow = this.electron.remote.BrowserWindow.getFocusedWindow();
+	//	if(focusedWindow) {
+	//		focusedWindow.toggleDevTools();
+	//	}
+	//}
+
+	//async copyUsingKeyboard() {
+	//	if(app.onWindows()) {
+	//		yield ElectronGraphicalInterfaceAdapter.keyDown('c', ['control']);
+	//	}
+	//	else {
+	//		// TODO: Does not work on macOS
+	//		console.info('this.copyUsingKeyboard does not work on macOS.');
+	//		yield this.keyDown('c', ['meta']);
+	//	}
+	//}
+
+	//async cutUsingKeyboard() {
+	//	if(app.onWindows()) {
+	//		yield this.keyDown('x', ['control']);
+	//	}
+	//	else {
+	//		// TODO: Does not work on macOS
+	//		console.info('this.cutUsingKeyboard does not work on macOS.');
+	//		yield this.keyDown('x', ['meta']);
+	//	}
+	//}
+
+	//async pasteUsingKeyboard() {
+	//	if(app.onWindows()) {
+	//		yield this.keyDown('v', ['control']);
+	//	}
+	//	else {
+	//		// TODO: Does not work on macOS
+	//		console.info('this.pasteUsingKeyboard does not work on macOS.');
+	//		yield this.keyDown('v', ['meta']);
+	//	}
+	//}
+
+	async sendInputEventKeyboard(type, key, modifiers) {
+		var webContents = this.electron.remote.getCurrentWindow().webContents;
+
+		webContents.sendInputEvent({
+			type: type,
+			keyCode: key,
+			modifiers: modifiers,
+		});
+
+		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
+		// This seems to not resolve the promise until the input event has completed
+		await Function.delay(50);
+
+		return true;
+	}
+
+	async sendInputEventMouse(type, x, y, button, globalX, globalY, movementX, movementY, pressCount) {
+		var webContents = this.electron.remote.getCurrentWindow().webContents;
+
+		webContents.sendInputEvent({
+			type: type, // mouseDown, mouseUp, mouseEnter, mouseLeave, contextMenu, mouseWheel, mouseMove, keyDown, keyUp, char
+			x: x, // Integer (required)
+			y: y, // Integer (required)
+			button: button, // String - The button pressed, can be left, middle, right
+			globalX: globalX, // Integer
+			globalY: globalY, // Integer
+			movementX: movementX, // Integer
+			movementY: movementY, // Integer
+			clickCount: pressCount, // Integer
+		});
+
+		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
+		// This seems to not resolve the promise until the input event has completed
+		await Function.delay(50);
+
+		return true;
+	}
+
+	// modifiers: shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
+	async inputPress(relativeToGraphicalInterfaceViewportX, relativeToGraphicalInterfaceViewportY, button = 'left', pressCount = 1, modifiers = []) {
+		//console.info(...arguments);
+
+		var webContents = this.electron.remote.getCurrentWindow().webContents;
+
+		// A trusted click will be fired after mouse down and mouse up
+
+		// Send mouse down
+		webContents.sendInputEvent({
+			type: 'mouseDown',
+			x: relativeToGraphicalInterfaceViewportX,
+			y: relativeToGraphicalInterfaceViewportY,
+			button: button,
+			clickCount: pressCount,
+			modifiers: modifiers,
+		});
+
+		// Send mouse up
+		webContents.sendInputEvent({
+			type: 'mouseUp',
+			x: relativeToGraphicalInterfaceViewportX,
+			y: relativeToGraphicalInterfaceViewportY,
+			button: button,
+			clickCount: pressCount,
+			modifiers: modifiers,
+		});
+
+		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
+		// This seems to not resolve the promise until the input event has completed
+		await Function.delay(50);
+
+		return true;
+	}
+
+	// modifiers: shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
+	async inputScroll(relativeToGraphicalInterfaceViewportX, relativeToGraphicalInterfaceViewportY, deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers = []) {
+		var webContents = this.electron.remote.getCurrentWindow().webContents;
+
+		webContents.sendInputEvent({
+			type: 'mouseWheel',
+			// x, y is the mouse position inside element where the scroll should occur.
+			x: relativeToGraphicalInterfaceViewportX,
+			y: relativeToGraphicalInterfaceViewportY,
+			//button: 'middle',
+			//clickCount: 0,
+			// deltaX, deltaY is the relative scroll amount
+			deltaX: deltaX,
+			deltaY: deltaY,
+			wheelTicksX: wheelTicksX,
+			wheelTicksY: wheelTicksY,
+			accelerationRatioX: accelerationRatioX,
+			accelerationRatioY: accelerationRatioY,
+			//hasPreciseScrollingDeltas: null,
+			canScroll: true,
+			//modifiers: modifiers,
+		});
+
+		// TODO: This is a hack until https://github.com/electron/electron/issues/6291
+		// This seems to not resolve the promise until the input event has completed
+		await Function.delay(50);
+
+		return true;
+	}
+
+	async inputHover(relativeToGraphicalInterfaceViewportX, relativeToGraphicalInterfaceViewportY) {
+		return await this.sendInputEventMouse('mouseMove', relativeToGraphicalInterfaceViewportX, relativeToGraphicalInterfaceViewportY);
+	}
+
+	async inputKeyPress(key, modifiers = []) {
+		//console.info('ElectronGraphicalInterfaceAdapter.keyPress', key, modifiers);
+		await this.sendInputEventKeyboard('char', key, modifiers);
+
+		return true;
+	}
+
+	// modifiers: shift, control, alt, meta, isKeypad, isAutoRepeat, leftButtonDown, middleButtonDown, rightButtonDown, capsLock, numLock, left, right
+	async inputKeyPressByCombination(key, modifiers = []) {
+		//console.info('ElectronGraphicalInterfaceAdapter.pressKey', key);
+
+		await this.inputKeyDown(key, modifiers);
+		await this.inputKeyUp(key, modifiers);
+		await this.inputKeyPress(key, modifiers);
+
+		return true;
+	}
+
+	async inputKeyDown(key, modifiers = []) {
+		//console.info('ElectronGraphicalInterfaceAdapter.keyDown', key, modifiers);
+		await this.sendInputEventKeyboard('keyDown', key, modifiers);
+
+		return true;
+	}
+
+	async inputKeyUp(key, modifiers = []) {
+		//console.info('ElectronGraphicalInterfaceAdapter.keyUp', key, modifiers);
+		await this.sendInputEventKeyboard('keyUp', key, modifiers);
+
+		return true;
 	}
 	
 }

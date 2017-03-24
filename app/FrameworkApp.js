@@ -34,7 +34,7 @@ class FrameworkApp extends App {
 			this.exit();
 		}
 		else {
-			console.info('no command was triggered');
+			console.info('No command was issued.');
 		}
 	}
 
@@ -76,18 +76,18 @@ class FrameworkApp extends App {
 		if(!this.modules.electronModule.inElectronContext()) {
 			this.modules.electronModule.startElectron();
 		}
-		// If we have a graphical interface (ElectronModule will first start Electron for us and then create the first graphical interface, at which point this condition will pass)
-		else if(this.interfaces.graphical) {
-			// Load the view controller
-			var FrameworkViewController = require('interface/FrameworkViewController.js').default;
-			var frameworkViewController = new FrameworkViewController();
-
-			// Intitialize the graphical interface with the view controller
-			this.interfaces.graphical.initialize(frameworkViewController);
-		}
 		else {
 			//app.info('In the Electron main process, do nothing here as the main process is just used to launch the first renderer process where the app really lives');
-		}	
+		}
+	}
+
+	// If we have a graphical interface (ElectronModule will first start Electron for us and then create the first graphical interface, at which point this condition will pass)
+	async initializeGraphicalInterface() {
+		// Load the view controller
+		var FrameworkViewController = require('interface/FrameworkViewController.js').default;
+
+		// Initialize the graphical interface with the view controller
+		this.interfaces.graphical.initialize(new FrameworkViewController());
 	}
 
 }
