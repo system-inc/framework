@@ -56,6 +56,11 @@ class Settings {
 		return this;
 	}
 
+	reset() {
+		this.delete();
+		this.applyDefaults();
+	}
+
 	merge(settingsOrData) {
 		var dataToMerge = settingsOrData;
 

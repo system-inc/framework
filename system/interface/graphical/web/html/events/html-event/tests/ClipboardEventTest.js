@@ -1,5 +1,5 @@
 // Dependencies
-import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
+import ElectronHtmlTest from 'framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
 
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
@@ -53,9 +53,9 @@ class ClipboardEventTest extends ElectronHtmlTest {
         await this.inputPressDoubleHtmlNode(textAreaElement);
 
         // This only works on Windows right now
-		//await ElectronManager.copyUsingKeyboard();
-		//await ElectronManager.cutUsingKeyboard();
-		//await ElectronManager.pasteUsingKeyboard();
+		//await app.modules.electronModule.copyUsingKeyboard();
+		//await app.modules.electronModule.cutUsingKeyboard();
+		//await app.modules.electronModule.pasteUsingKeyboard();
 
 		htmlDocument.executeCopy();
 		htmlDocument.executeCut();

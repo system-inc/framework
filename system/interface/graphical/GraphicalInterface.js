@@ -97,7 +97,7 @@ class GraphicalInterface extends Interface {
 		// If in Electron
 		if(app.modules.electronModule && app.modules.electronModule.inElectronContext()) {
 			//console.log('createGraphicalInterfaceAdapter - inElectronContext');
-			var ElectronGraphicalInterfaceAdapter = require('framework/system/interface/graphical/adapters/electron/ElectronGraphicalInterfaceAdapter.js').default;
+			var ElectronGraphicalInterfaceAdapter = require('framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js').default;
 			graphicalInterfaceAdapter = new ElectronGraphicalInterfaceAdapter(this);
 		}
 		// If in a normal web browser

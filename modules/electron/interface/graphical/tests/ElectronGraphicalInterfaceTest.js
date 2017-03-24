@@ -1,7 +1,7 @@
 // Dependencies
-import ElectronTest from 'framework/system/interface/graphical/electron/tests/ElectronTest.js';
+import ElectronTest from 'framework/modules/electron/tests/ElectronTest.js';
 
-import ElectronGraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/electron/ElectronGraphicalInterfaceAdapter.js';
+import ElectronGraphicalInterfaceAdapter from 'framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js';
 
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 import View from 'framework/system/interface/graphical/views/View.js';

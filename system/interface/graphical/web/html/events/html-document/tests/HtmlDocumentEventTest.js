@@ -1,5 +1,5 @@
 // Dependencies
-import ElectronHtmlTest from 'framework/system/interface/graphical/electron/tests/ElectronHtmlTest.js';
+import ElectronHtmlTest from 'framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
 import Assert from 'framework/system/test/Assert.js';
 
 import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
@@ -153,9 +153,9 @@ class HtmlDocumentEventTest extends ElectronHtmlTest {
 
         // Resize the document
         // TODO: can't test this functionality with a hidden browser window
-        //var bounds = ElectronManager.getBrowserWindowBounds();
+        //var bounds = app.modules.electronModule.getBrowserWindowBounds();
         //console.info('bounds', bounds);
-        //ElectronManager.setBrowserWindowBounds(bounds.width, bounds.height, bounds.x + 1, bounds.y);
+        //app.modules.electronModule.setBrowserWindowBounds(bounds.width, bounds.height, bounds.x + 1, bounds.y);
         //Assert.true(Class.isInstance(capturedEventHtmlDocumentResize, HtmlDocumentEvent), '"htmlDocument.resize" events are instances of HtmlDocumentEvent');
 
         //throw new Error('Throwing error to display browser window.');
