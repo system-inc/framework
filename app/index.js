@@ -18,6 +18,20 @@ require('babel-register')({
 		'transform-es2015-modules-commonjs',
 	],
 	sourceMaps: 'both',
+	// Files to not transpile
+	ignore: function(path) {
+		var ignore = false;
+		
+		if(
+			path.match(/node_modules/) || // Do not transpile node_modules
+			path.match(/system.*libraries.*/) // Do not transpile files in libraries folders
+		) {
+			//console.log(path);
+			ignore = true;
+		}
+
+		return ignore;
+	},
 });
 
 try {

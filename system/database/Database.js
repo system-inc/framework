@@ -1,7 +1,7 @@
 // Dependencies
 import Settings from 'framework/system/settings/Settings.js';
 import MySql from 'mysql';
-import MySqlAdapter from 'framework/system/database/adapters/MySqlAdapter.js';
+import MySqlDatabaseAdapter from 'framework/system/database/adapters/mysql/MySqlDatabaseAdapter.js';
 import DatabaseTable from 'framework/system/database/DatabaseTable.js';
 import Stopwatch from 'framework/system/time/Stopwatch.js';
 
@@ -87,7 +87,7 @@ class Database {
 		// Time the query
 		var stopwatch = new Stopwatch();
 
-		var queryResults = await MySqlAdapter.query(this.databaseConnectionPool, query, values);
+		var queryResults = await MySqlDatabaseAdapter.query(this.databaseConnectionPool, query, values);
 
 		// Stop the stopwatch
 		stopwatch.stop();
