@@ -23,8 +23,8 @@ require('babel-register')({
 		var ignore = false;
 		
 		if(
-			path.match(/node_modules/) || // Do not transpile node_modules
-			path.match(/system.*libraries.*/) // Do not transpile files in libraries folders
+			path.match('node_modules') || // Do not transpile node_modules
+			path.match('sql.js') // Do not transpile sql.js
 		) {
 			//console.log(path);
 			ignore = true;
