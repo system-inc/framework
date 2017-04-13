@@ -26,7 +26,7 @@ class SqliteDatabase {
 
 	async query(sqlString) {
 		var exec = this.sqliteDatabase.exec(sqlString);
-		console.log('exec', exec);
+		//console.log('exec', exec);
 
 		var result = {
 			sql: sqlString,
@@ -38,10 +38,10 @@ class SqliteDatabase {
 		if(exec[0] && exec[0].values) {
 			result.rows = [];
 			exec[0].values.each(function(index, value) {
-				console.log(index, value);
+				//console.log(index, value);
 			});
 			result.fields = exec[0].columns;
-		}	
+		}
 
 		return result;
 	}
