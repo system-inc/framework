@@ -185,6 +185,10 @@ class ViewAdapter {
 		return this.executeAdaptedViewMethod('getSelectionText', arguments);
 	}
 
+	setSelectionRange() {
+		return this.executeAdaptedViewMethod('setSelectionRange', arguments);
+	}
+
 	press() {
 		return this.executeAdaptedViewMethod('press', arguments);
 	}

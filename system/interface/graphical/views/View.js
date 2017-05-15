@@ -210,6 +210,18 @@ class View extends PropagatingEventEmitter {
 		return this.adapter.getSelectionText();
 	}
 
+	setSelectionRange() {
+		return this.adapter.setSelectionRange(...arguments);
+	}
+
+	// TODO: getValue and setValue should not exist here as they are not ubiquitous to all Views, just form views
+	getValue() {
+		return this.adapter.getValue(...arguments);
+	}
+	setValue() {
+		return this.adapter.setValue(...arguments);
+	}
+
 	press() {
 		return this.adapter.press();
 	}

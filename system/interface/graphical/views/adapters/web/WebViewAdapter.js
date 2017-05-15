@@ -31,6 +31,11 @@ class WebViewAdapter extends ViewAdapter {
 		// When the adapted view is mounted to the DOM, update the view's identifier
 		adaptedView.once('htmlNode.mountedToDom', function() {
 			this.view.identifier = adaptedView.nodeIdentifier;
+
+			// If the view has a value (is a form control)
+			if(this.view.value) {
+				adaptedView.domNode.value = this.view.value;
+			}
 		}.bind(this));
 
 		//console.warn('need to hook into adaptedView\'s emit function to catch everything it emits and reemit from the View');

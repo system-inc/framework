@@ -21,6 +21,7 @@ class FormEvent extends HtmlElementEvent{
 
 		if(domEvent.type == 'change' || domEvent.type == 'input') {
 			eventIdentifier = 'form.control.change';
+			formEventWithoutIdentifier.data = domEvent.srcElement.value;
 		}
 		else if(domEvent.type == 'submit') {
 			eventIdentifier = 'form.submit';

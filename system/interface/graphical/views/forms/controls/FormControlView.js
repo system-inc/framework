@@ -7,8 +7,8 @@ class FormControlView extends View {
 
 	settings = new Settings();
 
-	value = null;
-	originalValue = null;
+	value = '';
+	originalValue = '';
 
 	constructor(settings) {
 		super();
@@ -16,7 +16,8 @@ class FormControlView extends View {
 		this.settings.merge(settings);
 
 		this.on('form.control.change', function(event) {
-            this.valueChangedOnDom();
+			//console.log('event', event);
+            this.valueChangedOnDom(event.data);
         }.bind(this));
 
 		this.originalValue = this.value;
@@ -27,14 +28,14 @@ class FormControlView extends View {
 	}
 
 	setValue(value) {
-		//console.info('setValue', this, value);
+		if(value === null || value === undefined) {
+			value = '';
+		}
+
 		this.value = value;
 
 		if(this.adapter.adaptedView && this.adapter.adaptedView.domNode) {
 			this.adapter.adaptedView.domNode.value = this.value;
-		}
-		else {
-			//console.log('no adaptedView');
 		}
 
 		return this.value;
@@ -49,9 +50,9 @@ class FormControlView extends View {
 	}
 
 	// Two-way data binding: if the user changes the value on the DOM, the FormControlView is updated to reflect the new value
-	valueChangedOnDom() {
-		//console.info('Value changed on DOM, updating FormControlView');
-		this.value = this.adapter.adaptedView.domNode.value;
+	valueChangedOnDom(newValue) {
+		console.info('Value changed on DOM, updating FormControlView');
+		this.value = newValue;
 
 		return this.value;
 	}

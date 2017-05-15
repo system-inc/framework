@@ -295,6 +295,10 @@ class HtmlNode extends XmlNode {
         return selectionText;
     }
 
+    setSelectionRange() {
+    	return this.domNode.setSelectionRange(...arguments);
+    }
+
 	calculateDimensionsAndPosition() {
 		var dimensionsAndPosition = {
 			dimensions: new Dimensions(),
