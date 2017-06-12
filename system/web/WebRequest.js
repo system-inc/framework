@@ -20,6 +20,7 @@ class WebRequest {
 	decode = true;
 	authorizeConnection = false;
 	requestCertificate = false;
+	timeoutInMilliseconds = 20 * 1000;
 
 	constructor(url, options) {
 		// Make sure we are working with a URL object
@@ -66,6 +67,9 @@ class WebRequest {
 			}
 			if(options.requestCertificate !== undefined) {
 				this.requestCertificate = options.requestCertificate;
+			}
+			if(options.timeoutInMilliseconds !== undefined) {
+				this.timeoutInMilliseconds = options.timeoutInMilliseconds;
 			}
 		}
 
@@ -132,6 +136,7 @@ class WebRequest {
 			headers: webRequest.headers.toObject(),
 			rejectUnauthorized: webRequest.authorizeConnection,
 			requestCert: webRequest.requestCertificate,
+			timeout: webRequest.timeoutInMilliseconds,
 		};
 
 		var response = await WebRequest.request(options);

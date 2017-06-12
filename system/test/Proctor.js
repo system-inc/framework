@@ -767,6 +767,9 @@ class Proctor extends EventEmitter {
 			'external',
 
 			'__devtron',
+
+			'ongotpointercapture',
+			'onlostpointercapture',
 		],
 		leaked: [],
 	};

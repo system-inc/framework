@@ -10,6 +10,7 @@ class WebApi {
     port = 80;
     path = null;
     url = null;
+    timeoutInMilliseconds = null;
 
     constructor(protocol, host, path) {
         if(protocol) {
@@ -41,6 +42,7 @@ class WebApi {
         var options = {
             method: method,
             body: data,
+            timeoutInMilliseconds: this.timeoutInMilliseconds,
         }.merge(options);
         //app.log(options);
 
