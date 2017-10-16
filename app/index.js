@@ -1,5 +1,6 @@
-require('app-module-path').addPath(__dirname);
-require('app-module-path').addPath(require('path').join(__dirname, '../../'));
+var Require = require('./../globals/Require.js');
+Require.addRequirePath(__dirname); // Make require() check the current directory
+Require.addRequirePath(require('path').join(__dirname, '../../')); // Make require() check the libraries directory
 
 // Disable the Babel cache for debugging
 //process.env.BABEL_DISABLE_CACHE = 1;
