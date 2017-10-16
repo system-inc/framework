@@ -205,6 +205,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		//var appHtmlFileUrl = new Url(path);
 		//electronBrowserWindow.loadURL(appHtmlFileUrl.toString());
 
+		var requirePath = Node.Path.join(app.framework.directory.toString(), 'globals', 'Require.js');
+		//console.log('requirePath', requirePath);
 		var librariesDirectory = Node.Path.join(app.framework.directory.toString(), '../');
 		//console.log('librariesDirectory', librariesDirectory);
 		var babelRegisterDirectory = Node.Path.join(app.framework.directory.toString(), 'node_modules', 'babel-register');
@@ -213,7 +215,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		// Create a JavaScript string to start the app, this is the same as index.js in framework/app/index.js
 		var script = '';
 		script += "(function() {																\n";
-		script += "var Require = require('./globals/Require.js');								\n";
+		script += "var Require = require('"+requirePath+"');									\n";
 		script += "Require.addRequirePath('"+app.directory.toString()+"');						\n";
 		script += "Require.addRequirePath('"+librariesDirectory+"');							\n";
 		
