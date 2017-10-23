@@ -68,7 +68,7 @@ class TableView extends View {
 				// if the column is a string and is not an empty string
 				if(column && String.is(column) && column.trim() != '') {
 					useColumnIndexAsColumnName = false;
-					columnName = column.toCamelCase();
+					columnName = column.toCamelcase();
 				}
 
 				var columnValue = row[columnIndex];

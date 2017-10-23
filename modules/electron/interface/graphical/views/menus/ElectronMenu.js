@@ -4,7 +4,7 @@ import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmit
 // Class
 class ElectronMenu extends PropagatingEventEmitter {
 
-	electronMenu = null;
+	menu = null;
 
 	constructor() {
 		super();
@@ -13,22 +13,23 @@ class ElectronMenu extends PropagatingEventEmitter {
 	}
 
 	create() {
-		throw new Error('Subclasses must implement Menu.create().');
+		this.menu = new app.modules.electronModule.electron.remote.Menu();
+
+        return this.menu;
 	}
 
 	update() {
 		// TODO: https://github.com/atom/electron/issues/528
 		// Update just calls this.create() as Electron needs to recreate the entire menu to update menu labels
-		this.create.apply(this, arguments);
+		this.create(...arguments);
 	}
 
 	show() {
-		this.electronMenu.popup();
+		this.menu.popup();
 	}
 
-	/*
-
-		Default macOS Menubar Menu
+    /*
+        Default macOS Menubar Menu
 
             App
                 About App
@@ -71,8 +72,7 @@ class ElectronMenu extends PropagatingEventEmitter {
                 Documentation
                 Community Discussions
                 Search Issues
-
-	*/
+        */
 
 }
 

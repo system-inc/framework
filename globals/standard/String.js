@@ -238,7 +238,7 @@ String.prototype.toDashes = function() {
 	return string;
 };
 
-String.prototype.toCamelCase = function(uppercaseFirstCharacter) {
+String.prototype.toCamelcase = function(uppercaseFirstCharacter) {
 	var string = this.toDashes();
 
 	if(string.contains('-')) {

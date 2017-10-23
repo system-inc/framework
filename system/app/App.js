@@ -323,7 +323,7 @@ class App extends EventEmitter {
 			this.identifier = identifierFromSettings;
 		}
 		else {
-			this.identifier = this.title.toCamelCase();
+			this.identifier = this.title.toCamelcase();
 		}
 
 		// Set the headline

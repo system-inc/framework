@@ -12,18 +12,18 @@ class Schema {
 	static constructFromDatabaseSchema(databaseSchema) {
 		var schema = new Schema();
 
-		schema.name = databaseSchema.name.toCamelCase(true);
+		schema.name = databaseSchema.name.toCamelcase(true);
 
 		// Loop through tables
 		databaseSchema.tables.each(function(tableIndex, table) {
 			var schemaModel = new SchemaModel();
-			schemaModel.name = table.name.toCamelCase(true);
+			schemaModel.name = table.name.toCamelcase(true);
 			schemaModel.description = table.comment;
 			
 			// Loop through the columns
 			table.columns.each(function(columnIndex, column) {
 				var schemaModelProperty = new SchemaModelProperty();
-				schemaModelProperty.name = column.name.toCamelCase();
+				schemaModelProperty.name = column.name.toCamelcase();
 				schemaModelProperty.description = column.comment;
 
 				schemaModelProperty.type = SchemaModelProperty.getTypeFromMySqlSchema(column.dataType);
@@ -48,7 +48,7 @@ class Schema {
 				var schemaModelIndex = {};
 				schemaModelIndex.properties = [];
 				index.columns.each(function(indexColumnIndex, indexColumn) {
-					schemaModelIndex.properties.append(indexColumn.toCamelCase());
+					schemaModelIndex.properties.append(indexColumn.toCamelcase());
 				});
 				schemaModelIndex.options = {};
 				if(index.unique) {
@@ -63,8 +63,8 @@ class Schema {
 			table.relationships.each(function(relationshipIndex, relationship) {
 				var relationshipToAdd = {};
 				relationshipToAdd.type = 'hasOne';
-				relationshipToAdd.model = relationship.referencedTableName.toCamelCase(true);
-				relationshipToAdd.property = relationship.column.toCamelCase();
+				relationshipToAdd.model = relationship.referencedTableName.toCamelcase(true);
+				relationshipToAdd.property = relationship.column.toCamelcase();
 
 				schemaModel.relationships.append(relationshipToAdd);
 			});
@@ -73,11 +73,11 @@ class Schema {
 			databaseSchema.tables.each(function(relationshipsLoopTableIndex, relationshipsLoopTable) {
 				relationshipsLoopTable.relationships.each(function(relationshipsLoopRelationshipsIndex, relationshipsLoopRelationship) {
 					// If the relationship points to this model
-					if(relationshipsLoopRelationship.referencedTableName.toCamelCase(true) == schemaModel.name) {
+					if(relationshipsLoopRelationship.referencedTableName.toCamelcase(true) == schemaModel.name) {
 						var relationshipToAdd = {};
 						relationshipToAdd.type = 'belongsTo';
-						relationshipToAdd.model = relationshipsLoopTable.name.toCamelCase(true);
-						relationshipToAdd.property = relationshipsLoopRelationship.column.toCamelCase();
+						relationshipToAdd.model = relationshipsLoopTable.name.toCamelcase(true);
+						relationshipToAdd.property = relationshipsLoopRelationship.column.toCamelcase();
 
 						schemaModel.relationships.append(relationshipToAdd);
 					}

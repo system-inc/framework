@@ -118,7 +118,7 @@ class Database {
 			var reformedRow = {};
 
 			row.each(function(key, value) {
-				reformedRow[key.toCamelCase()] = value;
+				reformedRow[key.toCamelcase()] = value;
 			});
 
 			reformedRows.append(reformedRow.sort());

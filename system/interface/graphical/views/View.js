@@ -51,7 +51,7 @@ class View extends PropagatingEventEmitter {
 			var classString = '';
 
 			classHierarchy.each(function(index, className) {
-				classString += className.replaceLast('View', '').toCamelCase()+' ';
+				classString += className.replaceLast('View', '').toCamelcase()+' ';
 			});
 			
 			classString = classString.replaceLast(' ', '');

@@ -354,6 +354,10 @@ class TextFormControlView extends FormControlView {
         return selectedText;
     }
 
+    replaceSelectedText(newText) {
+        this.insertText(newText);
+    }
+
     getSelectedLinesCount() {
         var selectionLineCount = 0;
         var selectedText = this.getSelectedText();
@@ -507,6 +511,14 @@ class TextFormControlView extends FormControlView {
         }
 
         return whiteSpaceAtStartOfString;
+    }
+
+    transformSelectedTextToUppercase() {
+        console.log('transformSelectedTextToUppercase');
+
+        var selectedText = this.getSelectedText();
+        var transformedSelectedText = selectedText.uppercase();
+        this.replaceSelectedText(transformedSelectedText);
     }
 
 }
