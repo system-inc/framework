@@ -345,22 +345,26 @@ class HtmlElement extends HtmlNode {
 	}
 
     focus() {
-    	//app.log('HtmlElement.focus', this.tag, this.attributes);
+    	// Resolve the promise once the DOM node has received focus
+    	return new Promise(function(resolve) {
+    		//console.log('HtmlElement.focus', this.tag, this.attributes);
 
-        // If we have a domNode
-        if(this.domNode) {
-        	// Focus on the next update - this is important because you cannot .focus() on a DOM node unless it is visible
-        	// Pending DOM updates may be making the DOM node visible, so we wait until they finish before calling .focus
-        	this.once('htmlNode.domUpdateExecuted', function() {
-				this.domNode.focus();
-        	}.bind(this));
+	        // If we have a domNode
+	        if(this.domNode) {
+	        	// Focus on the next update - this is important because you cannot .focus() on a DOM node unless it is visible
+	        	// Pending DOM updates may be making the DOM node visible, so we wait until they finish before calling .focus
+	        	this.once('htmlNode.domUpdateExecuted', function() {
+					this.domNode.focus();
+					resolve(this);
+	        	}.bind(this));
 
-        	// Trigger an update
-        	this.shouldExecuteDomUpdate = true;
-        	this.updateDom();
-        }
+	        	// Trigger an update
+	        	this.shouldExecuteDomUpdate = true;
+	        	this.updateDom();
+	        }
 
-        return this;
+	        return this;
+    	}.bind(this));
     }
 
     find(selector) {

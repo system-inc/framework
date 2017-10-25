@@ -48,7 +48,11 @@ class TextFormControlView extends FormControlView {
         return value;
     }
 
-    insertText(text) {
+    async insertText(text) {
+        // Wait for the text form control view to get focus
+        await this.focus();
+
+        // Insert the text
         app.interfaces.graphical.adapter.htmlDocument.insertText(text);
     }
 
@@ -345,7 +349,7 @@ class TextFormControlView extends FormControlView {
     }
 
     getSelectedText() {
-        var selectedText = null;
+        var selectedText = '';
 
         if((this.getSelectionEndIndex() - this.getSelectionStartIndex()) > 0) {
             selectedText = this.getValue().substring(this.getSelectionStartIndex(), this.getSelectionEndIndex());
@@ -354,8 +358,41 @@ class TextFormControlView extends FormControlView {
         return selectedText;
     }
 
-    replaceSelectedText(newText) {
+    replaceSelectedText(newTextOrFunction = '', selectNewText = true) {
+        var newText = '';
+
+        // Get the selected text
+        var selectedText = this.getSelectedText();
+        //console.log('selectedText', selectedText);
+        
+        // The argument is a string
+        if(String.is(newTextOrFunction)) {
+            newText = newTextOrFunction;
+        }
+        // The argument is a function
+        if(Function.is(newTextOrFunction)) {
+            // Call the replace function to get the new text
+            newText = newTextOrFunction(selectedText);
+            //console.log('newText', newText);    
+        }
+
+        // Track the start of the current selection before inserting the new text
+        var selectionStartIndex = this.getSelectionStartIndex();
+        //console.log('selectionStartIndex', selectionStartIndex);
+
+        // Insert the new text, replacing the current selection
         this.insertText(newText);
+
+        // If we want to select the new text
+        if(selectNewText) {
+            var selectionEndIndex = selectionStartIndex + newText.length;
+            //console.log('selectionEndIndex', selectionEndIndex);
+
+            // Select the new text
+            this.selectRange(selectionStartIndex, selectionEndIndex);
+        }
+
+        return newText;
     }
 
     getSelectedLinesCount() {
@@ -511,14 +548,6 @@ class TextFormControlView extends FormControlView {
         }
 
         return whiteSpaceAtStartOfString;
-    }
-
-    transformSelectedTextToUppercase() {
-        console.log('transformSelectedTextToUppercase');
-
-        var selectedText = this.getSelectedText();
-        var transformedSelectedText = selectedText.uppercase();
-        this.replaceSelectedText(transformedSelectedText);
     }
 
 }

@@ -42,8 +42,11 @@ class LocalStorage extends DataStore {
 	get(path) {
 		//app.log('LocalStorage.prototype.get path', path);
 
-		if(this.rootPath) {
+		if(this.rootPath && path !== undefined) {
 			path = this.rootPath+'.'+path;
+		}
+		else if(this.rootPath) {
+			path = this.rootPath;	
 		}
 		//app.log('path', path);
 
@@ -54,8 +57,11 @@ class LocalStorage extends DataStore {
 	}
 
 	set(path, value) {
-		if(this.rootPath) {
+		if(this.rootPath && path !== undefined) {
 			path = this.rootPath+'.'+path;
+		}
+		else if(this.rootPath) {
+			path = this.rootPath;	
 		}
 
 		LocalStorage.setValueByPath(path, value);
@@ -64,8 +70,11 @@ class LocalStorage extends DataStore {
 	}
 
 	delete(path) {
-		if(this.rootPath) {
+		if(this.rootPath && path !== undefined) {
 			path = this.rootPath+'.'+path;
+		}
+		else if(this.rootPath) {
+			path = this.rootPath;	
 		}
 
 		LocalStorage.deleteValueByPath(path);

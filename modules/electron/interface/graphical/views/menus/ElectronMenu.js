@@ -9,19 +9,9 @@ class ElectronMenu extends PropagatingEventEmitter {
 	constructor() {
 		super();
 
-		this.create();
-	}
+        this.menu = new app.modules.electronModule.electron.remote.Menu();
 
-	create() {
-		this.menu = new app.modules.electronModule.electron.remote.Menu();
-
-        return this.menu;
-	}
-
-	update() {
-		// TODO: https://github.com/atom/electron/issues/528
-		// Update just calls this.create() as Electron needs to recreate the entire menu to update menu labels
-		this.create(...arguments);
+		//this.create();
 	}
 
 	show() {
