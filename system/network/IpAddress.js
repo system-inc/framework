@@ -1,6 +1,8 @@
 // Class
 class IpAddress {
 
+	// TODO: Integrate this stuff: https://github.com/indutny/node-ip
+
 	address = null;
 	version = null;
 
