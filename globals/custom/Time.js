@@ -244,7 +244,7 @@ class Time {
 
 	// The number of seconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
 	get unixTime() {
-		return this.nowInSeconds().toFixed(0);
+		return this.nowInSeconds.toFixed(0);
 	}
 
 	// The number of milliseconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
