@@ -107,32 +107,13 @@ class App extends EventEmitter {
 						'display.changed',
 					],
 
-					// Default settings for any number of displays, overridden by "oneDisplay", "twoDisplays", "threeDisplays", etc. keys 
+					// Default settings for any number of displays, overridden by a type or by a numbered display key, e.g., "oneDisplay", "twoDisplays", "threeDisplays", etc.
+					display: 1, // The display the graphical interface will appear on
 					mode: 'normal', // minimized, normal, maximized, full screen
 					width: .5,
 					height: .5,
 					x: 'center',
 					y: 'center',
-
-					// Default settings for the GraphicalInterface if there is just one display
-					oneDisplay: {
-						display: 1, // The display the graphical interface will appear on
-						mode: 'normal',
-						width: .5,
-						height: .5,
-						x: 'center',
-						y: 'center',
-					},
-
-					// Default settings for the GraphicalInterface if there are two displays
-					twoDisplays: {
-						display: 1, // The display the graphical interface will appear on
-						mode: 'normal',
-						width: .5,
-						height: .5,
-						x: 'center',
-						y: 'center',
-					},
 				},
 
 				// Allow the user to specify custom types of graphical interfaces

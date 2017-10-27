@@ -210,8 +210,31 @@ class ElectronModule extends Module {
 			var display = new Display();
 
 			display.identifier = electronDisplayIndex + 1;
+			
+			// Dimensions
 			display.dimensions.width = electronDisplay.size.width;
 			display.dimensions.height = electronDisplay.size.height;
+
+			// Work area dimensions
+			display.workAreaDimensions.width = electronDisplay.workArea.width;
+			display.workAreaDimensions.height = electronDisplay.workArea.height;
+
+			// Position relative to all displays
+			display.position.relativeToAllDisplays.x = electronDisplay.bounds.x;
+			display.position.relativeToAllDisplays.y = electronDisplay.bounds.y;
+
+			// Work area relative to all displays
+			display.position.workAreaRelativeToAllDisplays.x = electronDisplay.workArea.x;
+			display.position.workAreaRelativeToAllDisplays.y = electronDisplay.workArea.y;
+
+			// Scale factor
+			display.scaleFactor = electronDisplay.scaleFactor;
+
+			// Rotation
+			display.rotation = electronDisplay.rotation;
+
+			// Touch support
+			display.touchSupport = electronDisplay.touchSupport;
 
 			displays[display.identifier] = display;
 		});

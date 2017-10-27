@@ -94,6 +94,95 @@ Number.toMoney = function(number, precision = 2) {
 	return formatted;
 };
 
+Number.toEnglish = function(number) {
+    var string = number.toString()
+
+    // Handle zero
+    if(parseInt(string) === 0) {
+        return 'zero';
+    }
+
+    // Array of units as words
+    var units = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+
+    // Array of tens as words
+    var tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+    // Array of scales as words
+    var scales = [ '', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion', 'octillion', 'nonillion', 'decillion', 'undecillion', 'duodecillion', 'tredecillion', 'quatttuor-decillion', 'quindecillion', 'sexdecillion', 'septen-decillion', 'octodecillion', 'novemdecillion', 'vigintillion', 'centillion'];
+   
+    var and = 'and';
+
+    // Split user argument into 3 digit chunks from right to left
+    var start = string.length;
+    var end = null;
+    var chunks = [];
+    while(start > 0) {
+        end = start;
+        chunks.push(string.slice((start = Math.max(0, start - 3)), end));
+    }
+
+    // Check if function has enough scale words to be able to stringify the user argument
+    var chunksLength = chunks.length;
+    if(chunksLength > scales.length) {
+        return '';
+    }
+
+    // Stringify each integer in each chunk
+    var word = null;
+    var words = [];
+    for(var i = 0; i < chunksLength; i++) {
+        var chunk = parseInt(chunks[i]);
+
+        if(chunk) {
+            // Split chunk into array of individual integers
+            var integers = chunks[i].split('').reverse().map(parseFloat);
+
+            // If tens integer is 1, i.e. 10, then add 10 to units integer
+            if(integers[1] === 1) {
+                integers[0] += 10;
+            }
+
+            // Add scale word if chunk is not zero and array item exists
+            if((word = scales[i])) {
+                words.push(word);
+            }
+
+            // Add unit word if array item exists
+            if((word = units[integers[0]])) {
+                words.push(word);
+            }
+
+            // Add tens word if array item exists
+            if((word = tens[integers[1]])) {
+                words.push(word);
+            }
+
+            // Add 'and' string after units or tens integer if:
+            if(integers[0] || integers[1]) {
+
+                // Chunk has a hundreds integer or chunk is the first of multiple chunks
+                if(integers[2] || ! i && chunksLength) {
+                    words.push(and);
+                }
+
+            }
+
+            // Add hundreds word if array item exists
+            if((word = units[integers[2]])) {
+                words.push(word + ' hundred' );
+            }
+        }
+    }
+
+    // Remove last and
+    if(words.last() == 'and') {
+    	words.pop();
+    }
+
+    return words.reverse().join(' ' );
+};
+
 // Minimum and maximum are both inclusive
 Number.random = function(minimum = 0, maximum = 9007199254740992, precision = 0) {
 	// toFixed digits argument must be between 0 and 20

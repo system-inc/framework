@@ -18,7 +18,7 @@ class GraphicalInterfaceState {
 		relativeToAllDisplays: new Position(),
 	};
 
-	static getSettings(type = null) {
+	static getSettingsWithDisplays(type = null, displays) {
 		var settings = null;
 		var defaultSettings = app.settings.get('interfaces.graphical.defaults');
 
@@ -28,22 +28,43 @@ class GraphicalInterfaceState {
 			var typeSettings = app.settings.get('interfaces.graphical.types.'+type);
 			settings = defaultSettings.merge(typeSettings);
 		}
-		// If no type, just take the defaults
+		// If no type
 		else {
-			settings = defaultSettings;
+			// If a numbered display key is set that matches the number of monitors
+			var displaysLength = Object.keys(displays).length;
+			var displaysLengthInEnglish = Number.toEnglish(displaysLength);
+			//console.log('displaysLengthInEnglish', displaysLengthInEnglish);
+
+			var numberedDisplaySettingsKey = displaysLengthInEnglish + 'Display';
+			if(displaysLength > 1) {
+				numberedDisplaySettingsKey += 's';
+			}
+			//console.log('numberedDisplaySettingsKey', numberedDisplaySettingsKey);
+
+			var numberedDisplaySettings = app.settings.get('interfaces.graphical.'+numberedDisplaySettingsKey);
+
+			// Use the numbered display settings merged with the defaults
+			if(numberedDisplaySettings) {
+				settings = defaultSettings.merge(numberedDisplaySettings);
+			}
+			// Just use the defaults
+			else {
+				settings = defaultSettings;
+			}
 		}
+
 		//console.info('GraphicalInterfaceState settings', settings);
 
 		return settings;
 	}
 
 	static constructFromSettingsWithDisplays(settings, displays, type = null) {
-		//console.info('settings', settings, 'displays', displays);
+		//console.info('constructFromSettingsWithDisplays', 'settings', settings, 'displays', displays, 'type', type);
 
 		var graphicalInterfaceState = new GraphicalInterfaceState();
 
-		// Get the desired display
-		var desiredDisplay = displays[1];
+		var desiredDisplay = displays[settings.display];
+		//console.log('desiredDisplay', desiredDisplay);
 
 		graphicalInterfaceState.title = app.title;
 
@@ -52,13 +73,21 @@ class GraphicalInterfaceState {
 		graphicalInterfaceState.openDeveloperTools = settings.openDeveloperTools;
 
 		graphicalInterfaceState.dimensions.width = Position.resolveWidth(settings.width, desiredDisplay.dimensions.width);
+		//console.info('width', graphicalInterfaceState.dimensions.width);
 		graphicalInterfaceState.dimensions.height = Position.resolveHeight(settings.height, desiredDisplay.dimensions.height);
+		//console.info('height', graphicalInterfaceState.dimensions.height);
 
+		//console.log(settings.x, graphicalInterfaceState.dimensions.width, desiredDisplay.dimensions.width);
 		graphicalInterfaceState.position.relativeToAllDisplays.x = Position.resolveX(settings.x, graphicalInterfaceState.dimensions.width, desiredDisplay.dimensions.width);
-		graphicalInterfaceState.position.relativeToAllDisplays.y = Position.resolveY(settings.y, graphicalInterfaceState.dimensions.height, desiredDisplay.dimensions.height);
+		//console.info('x for display', graphicalInterfaceState.position.relativeToAllDisplays.x);
+		graphicalInterfaceState.position.relativeToAllDisplays.x = graphicalInterfaceState.position.relativeToAllDisplays.x + desiredDisplay.position.relativeToAllDisplays.x;
+		//console.info('x for all displays', graphicalInterfaceState.position.relativeToAllDisplays.x);
 
-		//console.info('x', graphicalInterfaceState.position.relativeToAllDisplays.x);
-		//console.info('y', graphicalInterfaceState.position.relativeToAllDisplays.y);
+		//console.log(settings.y, graphicalInterfaceState.dimensions.height, desiredDisplay.dimensions.height);
+		graphicalInterfaceState.position.relativeToAllDisplays.y = Position.resolveY(settings.y, graphicalInterfaceState.dimensions.height, desiredDisplay.dimensions.height);
+		//console.info('y for display', graphicalInterfaceState.position.relativeToAllDisplays.y);
+		graphicalInterfaceState.position.relativeToAllDisplays.y = graphicalInterfaceState.position.relativeToAllDisplays.y + desiredDisplay.position.relativeToAllDisplays.y;
+		//console.info('y for all displays', graphicalInterfaceState.position.relativeToAllDisplays.y);
 		
 		//graphicalInterfaceState.position.relativeToAllDisplays.calculateCoordinatesAndEdges();
 

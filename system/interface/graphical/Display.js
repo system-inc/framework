@@ -8,10 +8,16 @@ class Display {
 	identifier = null;
 
 	dimensions = new Dimensions();
+	workAreaDimensions = new Dimensions();
 	
 	position = {
 		relativeToAllDisplays: new Position(),
+		workAreaRelativeToAllDisplays: new Position(),
 	};
+
+	scaleFactor = null;
+	rotation = null;
+	touchSupport = null;
 
 }
 

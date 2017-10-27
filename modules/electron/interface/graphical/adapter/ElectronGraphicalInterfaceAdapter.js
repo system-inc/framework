@@ -270,7 +270,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		}
 		//app.info('displays', displays);
 
-		var graphicalInterfaceStateSettings = GraphicalInterfaceState.getSettings(type);
+		var graphicalInterfaceStateSettings = GraphicalInterfaceState.getSettingsWithDisplays(type, displays);
 		//console.info('graphicalInterfaceStateSettings', graphicalInterfaceStateSettings);
 
 		// Construct the state for the graphical interface

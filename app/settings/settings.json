@@ -90,30 +90,10 @@
 				y: 'top',
 				//show: false,
 				openDeveloperTools: true,
-				
-				oneDisplay: {
-					display: 1,
-					mode: 'normal',
-					width: .5,
-					height: 1,
-					x: 'left',
-					y: 'top',
-				},
-				twoDisplays: {
-					display: 1,
-					mode: 'normal',
-					width: .5,
-					height: 1,
-					x: 'left',
-					y: 'top',
-				},
 			},
 			types: {
 				test: {
-					width: .5,
-					height: 1,
 					x: 'right',
-					y: 'top',
 					show: false,
 					openDeveloperTools: false,
 				},
