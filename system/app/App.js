@@ -361,8 +361,12 @@ class App extends EventEmitter {
 		return this.inGraphicalInterfaceContext();
 	}
 
+	// Use app.log if you want to write the log data to the log file
+	// If you are using Developer Tools you will lose your line number until
+	// https://bugs.chromium.org/p/chromium/issues/detail?id=779244 is resolved
 	log() {
 		if(this.developerToolsAvailable()) {
+			console.log('developerToolsAvailable');
 			console.log(...arguments);
 		}
 
