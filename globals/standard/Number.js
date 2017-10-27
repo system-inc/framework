@@ -95,7 +95,21 @@ Number.toMoney = function(number, precision = 2) {
 };
 
 Number.toEnglish = function(number) {
-    var string = number.toString()
+    var string = number.toString();
+
+    // Handle decimals
+    var stringArray = string.split('.');
+    var decimals = '';
+    if(stringArray.length == 2) {
+        string = stringArray[0];
+
+        // Loop through each decimal
+        stringArray[1].each(function(index, decimal) {
+            decimals += Number.toEnglish(decimal)+' ';
+        });
+
+        decimals = decimals.trim();
+    }
 
     // Handle zero
     if(parseInt(string) === 0) {
@@ -180,7 +194,13 @@ Number.toEnglish = function(number) {
     	words.pop();
     }
 
-    return words.reverse().join(' ' );
+    var words = words.reverse().join(' ');
+
+    if(decimals != '') {
+        words += ' point '+decimals;
+    }
+
+    return words;
 };
 
 // Minimum and maximum are both inclusive
