@@ -29,6 +29,7 @@ class ModalView extends View {
 		    bottom: 0,
 		    left: 0,
 		    justifyContent: 'center',
+		    alignItems: 'center',
 		});
 
 		this.modalView = this.append(new View());
@@ -36,7 +37,7 @@ class ModalView extends View {
 			background: '#FFF',
 			border: '1px solid #CCC',
 			overflow: 'scroll',
-			//margin: '2rem', // Let the implementer set this instead of having it be global
+			//margin: '1rem', // Let the implementer set this instead of having it be global
 		});
 
 		if(this.settings.get('hideOnOutsideClick')) {

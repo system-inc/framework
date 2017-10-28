@@ -289,10 +289,10 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			//console.info('graphicalInterfaceState', graphicalInterfaceState);
 
 			electronBrowserWindow.setBounds({
-				x: graphicalInterfaceState.position.relativeToAllDisplays.x,
-				y: graphicalInterfaceState.position.relativeToAllDisplays.y,
-				width: graphicalInterfaceState.dimensions.width,
-				height: graphicalInterfaceState.dimensions.height,
+				x: Math.floor(graphicalInterfaceState.position.relativeToAllDisplays.x),
+				y: Math.floor(graphicalInterfaceState.position.relativeToAllDisplays.y),
+				width: Math.floor(graphicalInterfaceState.dimensions.width),
+				height: Math.floor(graphicalInterfaceState.dimensions.height),
 			});
 		}
 

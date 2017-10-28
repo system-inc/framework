@@ -72,9 +72,9 @@ class GraphicalInterfaceState {
 		graphicalInterfaceState.show = settings.show;
 		graphicalInterfaceState.openDeveloperTools = settings.openDeveloperTools;
 
-		graphicalInterfaceState.dimensions.width = Position.resolveWidth(settings.width, desiredDisplay.dimensions.width);
+		graphicalInterfaceState.dimensions.width = Position.resolveWidth(settings.width, desiredDisplay.workAreaDimensions.width);
 		//console.info('width', graphicalInterfaceState.dimensions.width);
-		graphicalInterfaceState.dimensions.height = Position.resolveHeight(settings.height, desiredDisplay.dimensions.height);
+		graphicalInterfaceState.dimensions.height = Position.resolveHeight(settings.height, desiredDisplay.workAreaDimensions.height);
 		//console.info('height', graphicalInterfaceState.dimensions.height);
 
 		//console.log(settings.x, graphicalInterfaceState.dimensions.width, desiredDisplay.dimensions.width);
