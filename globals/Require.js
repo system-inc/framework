@@ -1,3 +1,5 @@
+// This class must be in ES5 for maximum compatibility
+
 // TODO: Clean this up
 
 var Module = require('module').Module;
