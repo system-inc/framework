@@ -1,0 +1,9 @@
+Need to download and compile versions of 7-Zip that support RAR5.
+
+Download here: https://sourceforge.net/projects/p7zip/files/p7zip/
+
+Extract the bz2 file and then the tar file to get all of the source code.
+
+Run the command 'make all3'. You'll need a bunch of the compiling software installed.
+
+After compilation finishes, all of the binaries will be in the bin folder.
