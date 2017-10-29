@@ -72,21 +72,21 @@ class GraphicalInterfaceState {
 		graphicalInterfaceState.show = settings.show;
 		graphicalInterfaceState.openDeveloperTools = settings.openDeveloperTools;
 
-		graphicalInterfaceState.dimensions.width = Position.resolveWidth(settings.width, desiredDisplay.workAreaDimensions.width);
+		graphicalInterfaceState.dimensions.width = Math.floor(Position.resolveWidth(settings.width, desiredDisplay.workAreaDimensions.width));
 		//console.info('width', graphicalInterfaceState.dimensions.width);
-		graphicalInterfaceState.dimensions.height = Position.resolveHeight(settings.height, desiredDisplay.workAreaDimensions.height);
+		graphicalInterfaceState.dimensions.height = Math.floor(Position.resolveHeight(settings.height, desiredDisplay.workAreaDimensions.height));
 		//console.info('height', graphicalInterfaceState.dimensions.height);
 
 		//console.log(settings.x, graphicalInterfaceState.dimensions.width, desiredDisplay.dimensions.width);
-		graphicalInterfaceState.position.relativeToAllDisplays.x = Position.resolveX(settings.x, graphicalInterfaceState.dimensions.width, desiredDisplay.dimensions.width);
+		graphicalInterfaceState.position.relativeToAllDisplays.x = Math.floor(Position.resolveX(settings.x, graphicalInterfaceState.dimensions.width, desiredDisplay.dimensions.width));
 		//console.info('x for display', graphicalInterfaceState.position.relativeToAllDisplays.x);
-		graphicalInterfaceState.position.relativeToAllDisplays.x = graphicalInterfaceState.position.relativeToAllDisplays.x + desiredDisplay.position.relativeToAllDisplays.x;
+		graphicalInterfaceState.position.relativeToAllDisplays.x = Math.floor(graphicalInterfaceState.position.relativeToAllDisplays.x + desiredDisplay.position.relativeToAllDisplays.x);
 		//console.info('x for all displays', graphicalInterfaceState.position.relativeToAllDisplays.x);
 
 		//console.log(settings.y, graphicalInterfaceState.dimensions.height, desiredDisplay.dimensions.height);
-		graphicalInterfaceState.position.relativeToAllDisplays.y = Position.resolveY(settings.y, graphicalInterfaceState.dimensions.height, desiredDisplay.dimensions.height);
+		graphicalInterfaceState.position.relativeToAllDisplays.y = Math.floor(Position.resolveY(settings.y, graphicalInterfaceState.dimensions.height, desiredDisplay.dimensions.height));
 		//console.info('y for display', graphicalInterfaceState.position.relativeToAllDisplays.y);
-		graphicalInterfaceState.position.relativeToAllDisplays.y = graphicalInterfaceState.position.relativeToAllDisplays.y + desiredDisplay.position.relativeToAllDisplays.y;
+		graphicalInterfaceState.position.relativeToAllDisplays.y = Math.floor(graphicalInterfaceState.position.relativeToAllDisplays.y + desiredDisplay.position.relativeToAllDisplays.y);
 		//console.info('y for all displays', graphicalInterfaceState.position.relativeToAllDisplays.y);
 		
 		//graphicalInterfaceState.position.relativeToAllDisplays.calculateCoordinatesAndEdges();

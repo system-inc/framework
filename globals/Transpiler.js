@@ -5,6 +5,8 @@ var Transpiler = {};
 
 // Static methods
 Transpiler.execute = function(appFile, appDirectory, directoryContainingFramework) {
+	//console.log('appFile', appFile, 'appDirectory', appDirectory, 'directoryContainingFramework', directoryContainingFramework);
+
 	// Use Node's Path class
 	var Path = require('path');
 
@@ -32,8 +34,6 @@ Transpiler.execute = function(appFile, appDirectory, directoryContainingFramewor
 	// Integrate transpilation with import statements
 	require('babel-register')({
 		presets: [
-			//'latest',
-			//'stage-0',
 		],
 		plugins: [
 			'transform-class-properties',
