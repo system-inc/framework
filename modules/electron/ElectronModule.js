@@ -89,16 +89,32 @@ class ElectronModule extends Module {
 			//app.log('pathToElectronExecutable', pathToElectronExecutable);
 		}
 
+		// Check for Windows Subsystem for Linux
+		if(!pathToElectronExecutable) {
+			if(await Directory.exists('/mnt/c/Program Files/Electron/')) {
+				pathToElectronExecutable = '/mnt/c/Program Files/Electron/electron.exe';	
+			}
+		}
+
 		return pathToElectronExecutable;
 	}
 
 	async startElectron() {
+		//console.log('ElectronModule', 'startElectron');
+
 		// Get the path to the Electron executable
 		var pathToElectronExecutable = await this.getPathToElectronExecutable();
-		app.log('pathToElectronExecutable', pathToElectronExecutable);
+		//app.log('pathToElectronExecutable', pathToElectronExecutable);
 
 		// Get the path to the Electron starting JavaScript file from settings
 		var pathToElectronStartingJavaScriptFile = this.settings.get('pathToElectronStartingJavaScriptFile');
+		
+		// Check for Windows Subsystem for Linux
+		if(pathToElectronStartingJavaScriptFile.startsWith('/mnt/c/')) {
+			pathToElectronStartingJavaScriptFile = pathToElectronStartingJavaScriptFile.replaceFirst('/mnt/c/', 'c:/');
+		}
+
+		//app.log('pathToElectronStartingJavaScriptFile', pathToElectronStartingJavaScriptFile);
 
 		// Pass arguments from node to the Electron main process
 		var electronMainProcessArguments = ['--js-flags=--harmony', pathToElectronStartingJavaScriptFile];
@@ -141,9 +157,11 @@ class ElectronModule extends Module {
 	}
 
 	async configureElectronMainProcess() {
+		//app.log('ElectronModule', 'configureElectronMainProcess');
+
 		// Before app.exit() exits the application, quit the Electron app
 		app.on('app.beforeExit', function() {
-			//console.log('app.beforeQuit');
+			//app.log('app.beforeQuit');
 			this.electron.app.quit();
 		}.bind(this));
 		
@@ -152,11 +170,11 @@ class ElectronModule extends Module {
 
 		// When the app is activated from the macOS dock
 		this.electron.app.on('activate', function () {
-			//console.log('electron app activate');
-			//console.log('this', this);
+			//app.log('electron app activate');
+			//app.log('this', this);
 
 			if(this.firstGraphicalInterfaceProxy === null) {
-				//console.log('this.firstGraphicalInterfaceProxy proxy is null');
+				//app.log('this.firstGraphicalInterfaceProxy proxy is null');
 				this.newGraphicalInterface();
 			}
 		}.bind(this));
@@ -172,7 +190,7 @@ class ElectronModule extends Module {
 
 		// Create the first graphical interface
 		await this.newGraphicalInterface();
-		//console.log('this.firstGraphicalInterfaceProxy', this.firstGraphicalInterfaceProxy);
+		//app.log('this.firstGraphicalInterfaceProxy', this.firstGraphicalInterfaceProxy);
 	}
 
 	async newGraphicalInterface() {

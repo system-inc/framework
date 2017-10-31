@@ -147,13 +147,13 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	static async newGraphicalInterface(options) {
-		//console.log('static async newGraphicalInterface');
+		//app.log('static async newGraphicalInterface');
 
 		var path = null;
 		if(options.path) {
 			path = options.path;
-			//console.log('path', path);
 		}
+		//app.log('newGraphicalInterface', 'path', path);
 
 		var type = null;
 		if(options.type) {
@@ -162,7 +162,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 		// Get the state
 		var graphicalInterfaceState = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(type);
-		//console.log('graphicalInterfaceState', graphicalInterfaceState);
+		//app.log('graphicalInterfaceState', graphicalInterfaceState);
 
 		// Get the right reference for ElectronBrowserWindow based on whether or not we are in the Electron main process or in a renderer process
 		var ElectronBrowserWindow = null;
@@ -180,17 +180,23 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 		// Create a JavaScript string to start the app, this is the same as index.js in framework/app/index.js
 		var transpilerPath = Node.Path.join(app.framework.directory.toString(), 'globals', 'Transpiler.js');
-		//console.log('transpilerPath', transpilerPath);
+		//app.log('transpilerPath', transpilerPath);
 		var directoryContainingFramework = Node.Path.join(app.framework.directory.toString(), '../');
-		//console.log('directoryContainingFramework', directoryContainingFramework);
+		//app.log('directoryContainingFramework', directoryContainingFramework);
+
+		// Escape backslashes
+		path = path.replace('\\', '\\\\');
+		transpilerPath = transpilerPath.replace('\\', '\\\\');
+		directoryContainingFramework = directoryContainingFramework.replace('\\', '\\\\');
+
 		var script = "require('"+transpilerPath+"').execute('"+path+"', __dirname, '"+directoryContainingFramework+"');";
-		//console.log('script', script);
+		//app.log('script', script);
 		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';
 
-		//console.log('graphicalInterfaceState.dimensions.width', graphicalInterfaceState.dimensions.width);
-		//console.log('graphicalInterfaceState.dimensions.height', graphicalInterfaceState.dimensions.height);
-		//console.log('graphicalInterfaceState.position.relativeToAllDisplays.x', graphicalInterfaceState.position.relativeToAllDisplays.x);
-		//console.log('graphicalInterfaceState.position.relativeToAllDisplays.y', graphicalInterfaceState.position.relativeToAllDisplays.y);
+		//app.log('graphicalInterfaceState.dimensions.width', graphicalInterfaceState.dimensions.width);
+		//app.log('graphicalInterfaceState.dimensions.height', graphicalInterfaceState.dimensions.height);
+		//app.log('graphicalInterfaceState.position.relativeToAllDisplays.x', graphicalInterfaceState.position.relativeToAllDisplays.x);
+		//app.log('graphicalInterfaceState.position.relativeToAllDisplays.y', graphicalInterfaceState.position.relativeToAllDisplays.y);
 		
 		// Create the Electron browser window
 		var electronBrowserWindow = new ElectronBrowserWindow({
@@ -207,6 +213,9 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			},
 		});
 
+		// Remove the default menu
+		electronBrowserWindow.setMenu(null);
+
 		// Load the string
 		electronBrowserWindow.loadURL(htmlString,
 			{
@@ -220,7 +229,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 		// Listen to closed events
 		electronBrowserWindow.on('closed', function(event) {
-			console.log('electronBrowserWindow closed');
+			//app.log('electronBrowserWindow closed');
 
 			graphicalInterfaceProxy.closed = true;
 			graphicalInterfaceProxy.emit('graphicalInterface.closed', event);
