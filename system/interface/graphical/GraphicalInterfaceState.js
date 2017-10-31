@@ -18,6 +18,19 @@ class GraphicalInterfaceState {
 		relativeToAllDisplays: new Position(),
 	};
 
+	//closed = null;
+	//fullscreen = null;
+	//backgroundColor = null;
+	//useContentDimensions = null;
+	//resizable = null;
+	//movable = null;
+	//minimizable = null;
+	//maximizable = null;
+	//fullscreenable = null;
+	//closable = null;
+	//focusable = null;
+	//alwaysOnTop = null;
+
 	static getSettingsWithDisplays(type = null, displays) {
 		var settings = null;
 		var defaultSettings = app.settings.get('interfaces.graphical.defaults');
@@ -88,6 +101,15 @@ class GraphicalInterfaceState {
 		//console.info('y for display', graphicalInterfaceState.position.relativeToAllDisplays.y);
 		graphicalInterfaceState.position.relativeToAllDisplays.y = Math.floor(graphicalInterfaceState.position.relativeToAllDisplays.y + desiredDisplay.position.relativeToAllDisplays.y);
 		//console.info('y for all displays', graphicalInterfaceState.position.relativeToAllDisplays.y);
+
+		// Temporary hack to fix Windows 10 browser window sizing issues until Electron is fixed
+		// Windows 10 Browser Window Bounds Calculating Incorrectly #4045
+		// TODO: https://github.com/atom/electron/issues/4045
+		if(app.onWindows() && Node.OperatingSystem.release().startsWith('10.')) {
+			graphicalInterfaceState.position.relativeToAllDisplays.x = graphicalInterfaceState.position.relativeToAllDisplays.x - 7;
+			graphicalInterfaceState.dimensions.width = graphicalInterfaceState.dimensions.width + 14;
+			graphicalInterfaceState.dimensions.height = graphicalInterfaceState.dimensions.height + 7;
+		}
 		
 		//graphicalInterfaceState.position.relativeToAllDisplays.calculateCoordinatesAndEdges();
 

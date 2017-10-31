@@ -1,8 +1,6 @@
 // Dependencies
 import Interface from 'framework/system/interface/Interface.js';
 import GraphicalInterfaceHistory from 'framework/system/interface/graphical/GraphicalInterfaceHistory.js';
-import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
-import Position from 'framework/system/interface/graphical/Position.js';
 import GraphicalInterfaceManager from 'framework/system/interface/graphical/GraphicalInterfaceManager.js';
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 
@@ -30,28 +28,6 @@ class GraphicalInterface extends Interface {
 	state = null;
 
 	history = new GraphicalInterfaceHistory();
-
-	closed = null;
-	fullscreen = null;
-
-	dimensions = new Dimensions();
-
-	position = {
-		relativeToDisplay: new Position(),
-		relativeToAllDisplays: new Position(),
-	};
-
-	backgroundColor = null;
-	useContentDimensions = null;
-
-	resizable = null;
-	movable = null;
-	minimizable = null;
-	maximizable = null;
-	fullscreenable = null;
-	closable = null;
-	focusable = null;
-	alwaysOnTop = null;
 
 	// TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
 
