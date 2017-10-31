@@ -17,6 +17,7 @@ class ElectronModule extends Module {
 	defaultSettings = {
 		automaticallyStartElectronIfNotInElectronContext: true,
 		pathToElectronStartingJavaScriptFile: Node.Path.join(app.directory, 'index.js'),
+		quitWhenAllWindowsClosedOnMacOs: false,
 	};
 
 	async initialize() {
@@ -37,7 +38,7 @@ class ElectronModule extends Module {
 			}
 			// If in the Electron renderer process
 			else if(this.inElectronRendererProcess()) {
-				//console.warn('In Electron, configureElectronRendererProcess');
+				//console.log('In Electron, configureElectronRendererProcess');
 				this.configureElectronRendererProcess();
 			}
 		}
@@ -94,7 +95,7 @@ class ElectronModule extends Module {
 	async startElectron() {
 		// Get the path to the Electron executable
 		var pathToElectronExecutable = await this.getPathToElectronExecutable();
-		//console.log('pathToElectronExecutable', pathToElectronExecutable);
+		app.log('pathToElectronExecutable', pathToElectronExecutable);
 
 		// Get the path to the Electron starting JavaScript file from settings
 		var pathToElectronStartingJavaScriptFile = this.settings.get('pathToElectronStartingJavaScriptFile');
@@ -162,8 +163,9 @@ class ElectronModule extends Module {
 
 		// Quit when all windows are closed if not on macOS
 		this.electron.app.on('window-all-closed', function () {
-			//console.log('electron app window-all-closed');
-			if(!app.onMacOs()) {
+			//app.log('electron app window-all-closed');
+			//app.log('quitWhenAllWindowsClosedOnMacOs', this.settings.get('quitWhenAllWindowsClosedOnMacOs'));
+			if(!app.onMacOs() || this.settings.get('quitWhenAllWindowsClosedOnMacOs')) {
 				this.electron.app.quit()
 			}
 		}.bind(this));
@@ -174,7 +176,7 @@ class ElectronModule extends Module {
 	}
 
 	async newGraphicalInterface() {
-		//console.log('new graphical interface...');
+		//app.log('new graphical interface...');
 
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
 		this.firstGraphicalInterfaceProxy = await ElectronGraphicalInterfaceAdapter.newGraphicalInterface({
@@ -183,7 +185,7 @@ class ElectronModule extends Module {
 
 		// When graphical interface is closed
 		this.firstGraphicalInterfaceProxy.on('graphicalInterface.closed', function () {
-			//console.log('this.firstGraphicalInterfaceProxy.on closed');
+			//app.log('this.firstGraphicalInterfaceProxy.on closed');
 
 			// Dereference the object so it will be recreated on activation (when the user presses the icon on the macOS dock)
 			this.firstGraphicalInterfaceProxy = null;

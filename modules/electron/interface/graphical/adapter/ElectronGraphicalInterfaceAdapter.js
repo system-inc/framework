@@ -19,6 +19,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	async newGraphicalInterface(options = {}) {
+		//console.log('async newGraphicalInterface', arguments);
+
 		var graphicalInterfaceProxy = await ElectronGraphicalInterfaceAdapter.newGraphicalInterface(options);
 
 		return graphicalInterfaceProxy;
@@ -145,6 +147,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	static async newGraphicalInterface(options) {
+		//console.log('static async newGraphicalInterface');
+
 		var path = null;
 		if(options.path) {
 			path = options.path;
@@ -216,6 +220,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 		// Listen to closed events
 		electronBrowserWindow.on('closed', function(event) {
+			console.log('electronBrowserWindow closed');
+
 			graphicalInterfaceProxy.closed = true;
 			graphicalInterfaceProxy.emit('graphicalInterface.closed', event);
 		});
