@@ -273,6 +273,9 @@ class ElectronModule extends Module {
 		//console.info('electronMainProcessArguments', electronMainProcessArguments);
 		app.interfaces.commandLine.initializeCommand(electronMainProcessArguments);
 		//console.info('app.interfaces.commandLine', app.interfaces.commandLine);
+
+		// Clear the default application menu and all of its shortcuts / accelerators
+        this.electron.remote.Menu.setApplicationMenu(null);
 	}
 
 	inElectronContext() {

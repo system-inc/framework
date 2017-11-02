@@ -38,6 +38,9 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		this.graphicalInterface.state = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(null, this.graphicalInterface.displays);
 		//console.info('this.graphicalInterface.state', this.graphicalInterface.state);
 
+		// Store a reference to the graphical interface on the state
+		this.graphicalInterface.state.graphicalInterface = this.graphicalInterface;
+
 		ElectronGraphicalInterfaceAdapter.initializeState(this.electronBrowserWindow, this.graphicalInterface.state);
 
 		return this.graphicalInterface.state;
@@ -60,6 +63,16 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	openDeveloperTools() {
 		//console.info('openDeveloperTools');
 		this.electronBrowserWindow.openDevTools();
+	}
+
+	closeDeveloperTools() {
+		//console.info('openDeveloperTools');
+		this.electronBrowserWindow.closeDevTools();
+	}
+
+	toggleDeveloperTools() {
+		//console.info('openDeveloperTools');
+		this.electronBrowserWindow.toggleDevTools();
 	}
 
 	reload() {

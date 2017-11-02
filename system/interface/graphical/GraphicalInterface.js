@@ -170,6 +170,14 @@ class GraphicalInterface extends Interface {
 		return this.adapter.openDeveloperTools(...arguments);
 	}
 
+	closeDeveloperTools() {
+		return this.adapter.closeDeveloperTools(...arguments);
+	}
+
+	toggleDeveloperTools() {
+		return this.adapter.toggleDeveloperTools(...arguments);
+	}
+
 	reload() {
 		return this.adapter.reload(...arguments);
 	}

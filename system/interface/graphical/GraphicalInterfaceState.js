@@ -1,15 +1,22 @@
 // Dependencies
+import EventEmitter from 'framework/system/event/EventEmitter.js';
 import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
 import Position from 'framework/system/interface/graphical/Position.js';
 
 // Class
-class GraphicalInterfaceState {
+class GraphicalInterfaceState extends EventEmitter {
+
+	graphicalInterface = null; // A reference to the graphical interface for which we are managing state
 
 	title = null;
 
 	type = null;
+
 	show = null;
+
 	openDeveloperTools = null;
+
+	mode = null; // maximized, minimized, normal
 
 	dimensions = new Dimensions();
 
@@ -30,6 +37,12 @@ class GraphicalInterfaceState {
 	//closable = null;
 	//focusable = null;
 	//alwaysOnTop = null;
+
+	constructor() {
+		super();
+
+		// TODO: Do things to further initialize manage the state
+	}
 
 	static getSettingsWithDisplays(type = null, displays) {
 		var settings = null;
@@ -102,13 +115,28 @@ class GraphicalInterfaceState {
 		graphicalInterfaceState.position.relativeToAllDisplays.y = Math.floor(graphicalInterfaceState.position.relativeToAllDisplays.y + desiredDisplay.position.relativeToAllDisplays.y);
 		//console.info('y for all displays', graphicalInterfaceState.position.relativeToAllDisplays.y);
 
+		// Factor in the operating system taskbar height
+		var operatingSystemTaskbarHeight = desiredDisplay.dimensions.height - desiredDisplay.workAreaDimensions.height;
+		//console.log('operatingSystemTaskbarHeight', operatingSystemTaskbarHeight);
+
+		// Assume the taskbar is on the bottom on Windows
+		if(app.onWindows()) {
+			graphicalInterfaceState.position.relativeToAllDisplays.y -= operatingSystemTaskbarHeight;
+		}
+		// Assume the taskbar is on the top on macOS
+		// TODO: Need to test this:
+		//else if(app.onMacOs()) {
+		//	graphicalInterfaceState.position.relativeToAllDisplays.y += operatingSystemTaskbarHeight;
+		//}
+
 		// Temporary hack to fix Windows 10 browser window sizing issues until Electron is fixed
 		// Windows 10 Browser Window Bounds Calculating Incorrectly #4045
 		// TODO: https://github.com/atom/electron/issues/4045
+		// TODO: Also figure out where the Windows task is and how big it is and factor that in
 		if(app.onWindows() && Node.OperatingSystem.release().startsWith('10.')) {
-			graphicalInterfaceState.position.relativeToAllDisplays.x = graphicalInterfaceState.position.relativeToAllDisplays.x - 7;
-			graphicalInterfaceState.dimensions.width = graphicalInterfaceState.dimensions.width + 14;
-			graphicalInterfaceState.dimensions.height = graphicalInterfaceState.dimensions.height + 7;
+			graphicalInterfaceState.position.relativeToAllDisplays.x -= 6;
+			graphicalInterfaceState.dimensions.width += 12;
+			graphicalInterfaceState.dimensions.height += 5;
 		}
 		
 		//graphicalInterfaceState.position.relativeToAllDisplays.calculateCoordinatesAndEdges();

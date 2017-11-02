@@ -28,6 +28,16 @@ class GraphicalInterfaceManager {
 			appGraphicalInterface.openDeveloperTools();
 		});
 
+		appGraphicalInterface.on('graphicalInterface.closeDeveloperTools', function() {
+			//console.log('closeDeveloperTools');
+			appGraphicalInterface.closeDeveloperTools();
+		});
+
+		appGraphicalInterface.on('graphicalInterface.toggleDeveloperTools', function() {
+			//console.log('toggleDeveloperTools');
+			appGraphicalInterface.toggleDeveloperTools();
+		});
+
 		this.addGraphicalInterfaceProxy(appGraphicalInterface);
 
 		this.localStorage = new LocalStorage();
@@ -113,7 +123,7 @@ class GraphicalInterfaceManager {
 	getParent() {
 		var parent = null;
 
-
+		// TODO
 
 		return parent;
 	}
