@@ -363,7 +363,10 @@ class TextFormControlView extends FormControlView {
 
         // Get the selected text
         var selectedText = this.getSelectedText();
-        //console.log('selectedText', selectedText);
+        console.log('selectedText', selectedText);
+
+        //var selectedTextLength = selectedText.length;
+        //console.log('selectedTextLength', selectedTextLength);
         
         // The argument is a string
         if(String.is(newTextOrFunction)) {
@@ -373,24 +376,35 @@ class TextFormControlView extends FormControlView {
         if(Function.is(newTextOrFunction)) {
             // Call the replace function to get the new text
             newText = newTextOrFunction(selectedText);
-            //console.log('newText', newText);    
         }
+        //console.log('newText', newText);
 
         // Track the start of the current selection before inserting the new text
         var selectionStartIndex = this.getSelectionStartIndex();
-        //console.log('selectionStartIndex', selectionStartIndex);
+        console.log('selectionStartIndex', selectionStartIndex);
 
         // Insert the new text, replacing the current selection
         this.insertText(newText);
+        console.log('Inserted new text');
 
         // If we want to select the new text
         if(selectNewText) {
+            console.log('Select the new text');
+
             var selectionEndIndex = selectionStartIndex + newText.length;
-            //console.log('selectionEndIndex', selectionEndIndex);
+            console.log('selectionEndIndex', selectionEndIndex);
 
             // Select the new text
-            this.selectRange(selectionStartIndex, selectionEndIndex);
-        }
+
+            // This doesn't work
+            //this.selectRange(selectionStartIndex, selectionEndIndex);
+
+            // This does work
+            // TODO: Figure out why
+            Function.delay(0, function() {
+                this.selectRange(selectionStartIndex, selectionEndIndex);
+            }.bind(this));
+        }       
 
         return newText;
     }
