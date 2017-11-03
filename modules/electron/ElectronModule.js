@@ -264,9 +264,9 @@ class ElectronModule extends Module {
 
 	configureElectronRendererProcess() {
 		// Catch unhandled rejections in Electron renderer windows
-		window.addEventListener('unhandledrejection', function(error, promise) {
-			console.error('(correct trace below)', error.reason.toString(), error.reason.stack.toString());
-		});
+		//window.addEventListener('unhandledrejection', function(error, promise) {
+		//	console.error('(correct trace below)', error.reason.toString(), error.reason.stack.toString());
+		//});
 
 		// Update the command with the command from the Electron main process
 		var electronMainProcessArguments = this.electron.remote.getGlobal('process').argv;

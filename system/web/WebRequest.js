@@ -124,12 +124,18 @@ class WebRequest {
 			webRequest = new WebRequest(url, options);
 		}
 
+		var path = webRequest.url.path;
+		if(webRequest.url.queryString) {
+			path += webRequest.url.queryString;
+		}
+
 		var options = {
+			url: webRequest.url,
 			method: webRequest.method,
 			protocol: webRequest.url.protocol,
 			host: webRequest.url.host,
 			port: webRequest.url.port,
-			path: webRequest.url.path+webRequest.url.queryString,
+			path: path,
 			encoding: webRequest.encoding,
 			decode: webRequest.decode,
 			body: webRequest.body,
@@ -170,11 +176,19 @@ class WebRequest {
 
 				var chunks = [];
 
-				//app.log('response!!!', response);
+				//app.info('response', response);
+
+				var url = null;
+				if(options.url) {
+					url = options.url;
+				}
+				else {
+					url = new Url(options.protocol+'//'+options.host+':'+options.port+options.path);
+				}
 
 				// Bundle the webResponse
 				var webResponse = {
-					url: new Url(options.protocol+'//'+options.host+':'+options.port+options.path),
+					url: url,
 					statusCode: response.statusCode,
 					statusMessage: response.statusMessage,
 					headers: Headers.constructFromNodeHeaders(response.headers),
@@ -214,7 +228,7 @@ class WebRequest {
 
 					// Concatenate all of the data chunks into one buffer
 					var buffer = Buffer.concat(chunks);
-					//app.highlight('decode', options.decode, 'buffer', buffer.toString());
+					//app.highlight('decode', options.decode, 'buffer', buffer, 'buffer.toString()', buffer.toString());
 
 					// If we are to decode the response
 					if(options.decode) {

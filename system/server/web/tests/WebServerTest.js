@@ -45,10 +45,13 @@ class WebServerTest extends Test {
 
 	// Controller Route for Main.main() - /
 	async testRootRoute() {
+		//app.info('this.baseUrl', this.baseUrl);
+
 		var webRequest = new WebRequest(this.baseUrl, {});
 		var webRequestResponse = await webRequest.execute();
-		//app.log('webRequest', webRequest);
-		//app.log('webRequestResponse', webRequestResponse);
+		//app.info('webRequest', webRequest);
+		//app.info('webRequestResponse', webRequestResponse);
+		//app.info('webRequestResponse', webRequestResponse.url);
 
 		Assert.strictEqual(webRequestResponse.statusCode, 200, 'statusCode is correct');
 		Assert.strictEqual(webRequestResponse.statusMessage, 'OK', 'statusMessage is correct');

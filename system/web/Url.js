@@ -18,7 +18,7 @@ class Url {
 		}
 
 		this.input = string;
-		this.parse(string);	
+		this.parse(string);
 	}
 
 	parse(string) {
@@ -82,7 +82,28 @@ class Url {
 	}
 
 	getUrl() {
-		return this.protocol+'://'+(this.host ? this.host : '')+(this.port && this.port != 80 && this.port != 443 ? ':'+this.port : '')+this.path+this.queryString+(this.fragment ? '#'+this.fragment : '');
+		// Protocol and host
+		var url = this.protocol+'://'+(this.host ? this.host : '');
+
+		// Port
+		if(this.port && this.port != 80 && this.port != 443) {
+			url += ':'+this.port;
+		}		
+
+		// Path
+		url += this.path;
+
+		// Query string
+		if(this.queryString) {
+			url += this.queryString;
+		}
+
+		// Fragment
+		if(this.fragment) {
+			url += '#'+this.fragment;
+		}
+
+		return url;
 	}
 
 	rebuild() {

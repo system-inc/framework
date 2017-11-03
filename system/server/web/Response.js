@@ -88,6 +88,8 @@ class Response {
 	}
 
 	async send(evenIfHandled) {
+		//app.info('Response send');
+
 		// Don't send the request if it is already handled unless forced
 		// evenIfHandled allows us to send an error response in the case of the code in this method failing
 		if(this.handled && !evenIfHandled) {
@@ -107,7 +109,7 @@ class Response {
 
 		// If the content is something
 		if(this.content) {
-			//app.highlight(this.content);
+			//app.highlight('this.content', this.content);
 
 			// Handle when the content is an ArchivedFile
 			if(Class.isInstance(this.content, ArchivedFile)) {
@@ -328,14 +330,19 @@ class Response {
 	}
 
 	async sendContent() {
-		//app.log(this.content);
-		//app.log(this.acceptedEncodings);
-		//app.log('contentEncoded', this.contentEncoded);
+		//app.info('Response sendContent');
+		//app.warn('this.content', this.content);
+		//app.warn(this.acceptedEncodings);
+		//app.warn('contentEncoded', this.contentEncoded);
 
 		// Handle streams
 		if(Stream.is(this.content)) {
+			//app.info('Content is Stream');
+
 			// If the content is not encoded and the encoding is deflate
 			if(!this.contentEncoded && this.encoding == 'deflate') {
+				//app.info('deflate');
+
 				var deflate = Node.Zlib.createDeflate();
 				this.content.pipe(deflate).pipe(this.nodeResponse).on('finish', function() {
 					//app.log('done sending!')
@@ -344,6 +351,8 @@ class Response {
 			}
 			// If the content is not encoded and the encoding is gzip
 			else if(!this.contentEncoded && this.encoding == 'gzip') {
+				//app.info('gzip');
+
 				var gzip = Node.Zlib.createGzip();
 				this.content.pipe(gzip).pipe(this.nodeResponse).on('finish', function() {
 					//app.log('done sending!')
@@ -352,6 +361,8 @@ class Response {
 			}
 			// If there is no encoding
 			else {
+				//app.info('no encoding');
+
 				this.content.pipe(this.nodeResponse).on('finish', function() {
 					//app.log('done sending!')
 					this.sent();
@@ -359,20 +370,24 @@ class Response {
 			}
 		}
 		else {
+			//app.info('Content is not Stream');
+
 			// If the content is not encoded and we need to encode
-			if(!this.contentEncoded && (this.encoding == 'gzip' || this.encoding == 'deflate')) {
+			if(this.content && !this.contentEncoded && (this.encoding == 'gzip' || this.encoding == 'deflate')) {
+				//app.info('Content is not encoded.');
 				this.content = await Data.encode(this.content, this.encoding);
 			}
 
 			// End the response
-			this.nodeResponse.end(this.content, function() {
-				//app.highlight('Ending response');
+			this.nodeResponse.end(this.content, 'utf8', function() {
 				this.sent();
 			}.bind(this));
 		}
 	}
 
 	sent() {
+		//app.info('Response sent');
+
 		// Record the time
 		this.time = new Time();
 

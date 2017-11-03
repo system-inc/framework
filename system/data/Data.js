@@ -2,6 +2,13 @@
 class Data {
 
 	static decode(data, encoding) {
+		//app.info('Data.decode');
+
+		if(!data || Buffer.is(data) && data.byteLength == 0) {
+			//app.info('No data to decode, returning data.');
+			return data;
+		}
+
 	    return new Promise(function(resolve, reject) {
 	    	// Gzip
 			if(encoding == 'gzip') {
@@ -31,6 +38,13 @@ class Data {
 	}
 
 	static encode(data, encoding) {
+		//app.info('Data.encode');
+
+		if(!data || Buffer.is(data) && data.byteLength == 0) {
+			//app.info('No data to encode, returning data.');
+			return data;
+		}
+
 	    return new Promise(function(resolve, reject) {
 	    	// Gzip or deflate
 			if(encoding == 'gzip' || encoding == 'deflate') {
@@ -41,7 +55,7 @@ class Data {
 					else {
 						resolve(result);
 					}
-				});
+				});	
 			}
 			else {
 				reject(new Error(encoding+' is an unsupported encoding type.'));

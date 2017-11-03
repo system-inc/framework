@@ -285,7 +285,7 @@ class App extends EventEmitter {
 
 	async initializeGraphicalInterface() {
 		// This will be implemented by a child class of App
-		console.log('initializeGraphicalInterface')
+		//console.log('initializeGraphicalInterface')
 	}
 
 	setPropertiesFromAppSettings() {
