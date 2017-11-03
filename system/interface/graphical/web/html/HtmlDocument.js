@@ -160,10 +160,12 @@ class HtmlDocument extends XmlDocument {
 		}
 		// If DOM update scheduling is enabled
 		else if(this.shouldScheduleDomUpdates) {
+			//console.log('Scheduling update.');
 			this.scheduleDomUpdate(htmlNode);
 		}
 		// If not, immediately update the DOM
 		else {
+			//console.log('Immediately executing...');
 			htmlNode.executeDomUpdate();
 		}
 	}
