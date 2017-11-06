@@ -298,6 +298,17 @@ class Time {
         return timePosted;
 	}
 
+	// TODO: Make this do awesome shit
+	format(string) {
+		var formattedString = '';
+
+		if(string == "MM/DD") {
+			formattedString = this.monthPadded + '/' + this.dayPadded;
+		}
+
+		return formattedString;
+	}
+
 	toString() {
 		var string = '';
 
