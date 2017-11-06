@@ -497,6 +497,9 @@ class HtmlEventProxy {
 				'htmlNode.domUpdateExecuted',
 				'htmlDocument.domUpdatesExecuted',
 				'testGraphicalInterfaceApp.runTestMethod',
+				'display.added',
+				'display.removed',
+				'display.changed',
 			];
 			if(!common.contains(eventPattern)) {
 				console.log('No domEventIdentifier found for "'+eventPattern+'", the eventPattern must not be for a standard event.');

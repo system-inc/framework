@@ -16,6 +16,28 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		this.electronBrowserWindow = app.modules.electronModule.getCurrentWindow();
 
 		this.graphicalInterface.identifier = this.electronBrowserWindow.id;
+
+		this.listenToDisplayEvents();
+	}
+
+	listenToDisplayEvents() {
+		// Display added
+		app.modules.electronModule.electron.remote.screen.on('display-added', function(event, newDisplay) {
+			console.info('display-added', event);
+			this.graphicalInterface.emit('display.added', arguments);
+		}.bind(this));	
+
+		// Display removed
+		app.modules.electronModule.electron.remote.screen.on('display-removed', function(event, oldDisplay) {
+			console.info('display-removed', event);
+			this.graphicalInterface.emit('display.removed', arguments);
+		}.bind(this));
+
+		// Display metrics changed
+		app.modules.electronModule.electron.remote.screen.on('display-metrics-changed', function(event, display, changedMetrics) {
+			console.info('display-metrics-changed', event);
+			this.graphicalInterface.emit('display.changed', arguments);
+		}.bind(this));
 	}
 
 	async newGraphicalInterface(options = {}) {

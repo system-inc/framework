@@ -7,6 +7,8 @@ import ViewController from 'framework/system/interface/graphical/view-controller
 // Class
 class GraphicalInterface extends Interface {
 
+	settings = null;
+
 	children = [];
 
 	manager = null; // GraphicalInterfaceManager
@@ -40,6 +42,9 @@ class GraphicalInterface extends Interface {
 
 		// Initialize the state
 		this.initializeState();
+
+		// Handle display events
+		this.handleDisplayEvents();
 
 		// Create a graphical interface manager
 		this.manager = new GraphicalInterfaceManager(this);
@@ -102,6 +107,38 @@ class GraphicalInterface extends Interface {
 	initializeDisplays() {
 		//console.log('GraphicalInterface initializeDisplays');
 		return this.adapter.initializeDisplays();
+	}
+
+	handleDisplayEvents() {
+		// Display added
+		this.on('display.added', function(event) {
+			console.log('display.added', event);
+
+			// Apply default on display added
+			if(this.state.settings.applyOn.contains('display.added')) {
+				this.applyDefaultState();
+			}
+		}.bind(this));
+
+		// Display removed
+		this.on('display.removed', function(event) {
+			console.log('display.removed', event);
+
+			// Apply default on display removed
+			if(this.state.settings.applyOn.contains('display.removed')) {
+				this.applyDefaultState();
+			}
+		}.bind(this));
+	
+		// Display changed
+		this.on('display.changed', function(event) {
+			console.log('display.changed', event);
+
+			// Apply default on display changed
+			if(this.state.settings.applyOn.contains('display.changed')) {
+				this.applyDefaultState();
+			}
+		}.bind(this));
 	}
 
 	toObject() {
@@ -184,6 +221,11 @@ class GraphicalInterface extends Interface {
 
 	reset() {
 		return this.adapter.reset(...arguments);
+	}
+
+	applyDefaultState() {
+		//console.info('GraphicalInterface applyDefaultState');
+		return this.state.applyDefault();
 	}
 
 }

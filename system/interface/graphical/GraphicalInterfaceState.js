@@ -8,6 +8,8 @@ class GraphicalInterfaceState extends EventEmitter {
 
 	graphicalInterface = null; // A reference to the graphical interface for which we are managing state
 
+	settings = null;
+
 	title = null;
 
 	type = null;
@@ -38,10 +40,28 @@ class GraphicalInterfaceState extends EventEmitter {
 	//focusable = null;
 	//alwaysOnTop = null;
 
-	constructor() {
+	constructor(settings) {
+		//console.log('GraphicalInterfaceState constructor');
+
 		super();
 
-		// TODO: Do things to further initialize manage the state
+		this.settings = settings;
+	}
+
+	applyDefault() {
+		//console.log('GraphicalInterfaceState applyDefault');
+		return this.graphicalInterface.initializeState();
+	}
+
+	toObject() {
+		return {
+			//mode: this.mode,
+			//display: this.display,
+			//x: this.x,
+			//y: this.y,
+			//height: this.height,
+			//width: this.width,
+		};
 	}
 
 	static getSettingsWithDisplays(type = null, displays) {
@@ -87,7 +107,7 @@ class GraphicalInterfaceState extends EventEmitter {
 	static constructFromSettingsWithDisplays(settings, displays, type = null) {
 		//console.info('constructFromSettingsWithDisplays', 'settings', settings, 'displays', displays, 'type', type);
 
-		var graphicalInterfaceState = new GraphicalInterfaceState();
+		var graphicalInterfaceState = new GraphicalInterfaceState(settings);
 
 		var desiredDisplay = displays[settings.display];
 		//console.log('desiredDisplay', desiredDisplay);

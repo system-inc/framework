@@ -92,7 +92,7 @@ class App extends EventEmitter {
 				},
 			},
 			graphical: {
-				// The default settings graphical interfaces
+				// The default settings for graphical interfaces
 				defaults: {
 					// To show or not show the interface when it is created
 					show: true,
