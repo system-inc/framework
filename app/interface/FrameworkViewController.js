@@ -62,7 +62,6 @@ class FrameworkViewController extends ViewController {
 			height: '100%',
 			flexDirection: 'column',
 		});
-		this.view.addClass('framework');
 
 		// Header
 		this.headerViewController = this.append(new HeaderViewController());
@@ -106,7 +105,6 @@ class FrameworkViewController extends ViewController {
 		//app.interfaces.graphical.adapter.addStyleSheet('interface/style-sheets/framework.css');
 		app.interfaces.graphical.adapter.addStyleSheet(Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'reset', 'style-sheets', 'reset.css'));
 		app.interfaces.graphical.adapter.addStyleSheet(Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'framework', 'style-sheets', 'framework.css'));
-		app.interfaces.graphical.adapter.addStyleSheet(Node.Path.join(app.directory, 'interface', 'style-sheets', 'app.css'));
 	}
 
 }
