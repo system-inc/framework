@@ -45,9 +45,6 @@ class GraphicalInterface extends Interface {
 
 		// Handle display events
 		this.handleDisplayEvents();
-
-		// Create a graphical interface manager
-		this.manager = new GraphicalInterfaceManager(this);
 	}
 
 	async initialize(viewController) {

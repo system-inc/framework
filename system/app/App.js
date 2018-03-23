@@ -1,14 +1,47 @@
 // Dependencies
 import EventEmitter from 'framework/system/event/EventEmitter.js';
+
+// TODO - this isn't universal
 import Directory from 'framework/system/file-system/Directory.js';
+
 import Module from 'framework/system/module/Module.js';
 import Settings from 'framework/system/settings/Settings.js';
+
+// TODO - this isn't universal
 import Terminal from 'framework/system/interface/Terminal.js';
+
 import Version from 'framework/system/version/Version.js';
 
+// TODO - need to make this work - this is permanent data store for the app
+import AppDataStore from 'framework/system/app/data-store/AppDataStore.js';
+
+// TODO - need to make this work - this is session data store for the app, starts fresh on load
+import AppSessionDataStore from 'framework/system/app/data-store/AppSessionDataStore.js';
+
+/* Notes:
+
+Apps can run in a variety of contexts
+* Terminal, Electron
+* Web browser
+
+We need to know where the code lives for the project and also for framework. In the terminal and Electron, this path will be a Directory, e.g., ~/projects/code/. For the web, this will actually be a URL, such as https://www.project.com/. We need a universal way to address paths, perhaps the URI? E.g., file://blah/?
+
+How do we abstract the app away from the context?
+
+Let's walk through the life cycle of a web app
+
+1. The user loads any web page on a domain, such as project.com/abc
+2. The server identifies what content is intended to be rendered, if it is static is just sends down the static content. But if it is not static, it will send down the html and css needed to render the current view but also all of the code necessary to navigate through the app and rely on data over the wire.
+
+UI components are downloaded and cached or fetched on demand.
+
+*/
+
 // Class
+// TODO: Rewrite all of this as if a web app with no operating system or file access
 class App extends EventEmitter {
 
+	// TODO: Move these all to settings
 	title = 'App Title';
 	headline = null;
 	description = null;
@@ -16,27 +49,35 @@ class App extends EventEmitter {
 	identifier = null;
 	version = null;
 
+	// TODO: Move this, doesn't make sense for a web app
 	directory = null;
 
+	// TODO: Move this, doesn't make sense for a web app, move under commmand line interface
 	standardStreams = {
 		input: null,
 		output: null,
 		error: null,
 	};
 
+	// TODO: Move this into standardStreams object standardStreams.fileLog
 	standardStreamsFileLog = null;
 
+	dataStore = null;
+	sessionDataStore = null;
+
+	// TODO: Turn this into an object
 	environment = null;
 
 	modules = {};
 
 	interfaces = {
-		commandLine: null,
+		//commandLine: null, // Will initialize if necessary
 		//interactiveCommandLine: null, // Will initialize if necessary
 		//textual: null, // Will initialize if necessary
 		//graphical: null, // Will initialize if necessary
 	};
 
+	// TODO: Move this, doesn't make sense for a web app
 	framework = {
 		version: new Version('0.1.0'),
 		directory: new Directory(Node.Path.join(__dirname, '../', '../')),
@@ -178,6 +219,9 @@ class App extends EventEmitter {
 		// Configure the standard streams file log
 		await this.configureStandardStreamsFileLog();
 
+		// Initialize the app data stores
+		await this.initializeDataStores();
+
 		// Configure the command line interface
 		await this.configureCommandLineInterface();
 
@@ -188,7 +232,7 @@ class App extends EventEmitter {
 		await this.requireAndInitializeAppModules();
 
 		// Configure the graphical interface
-		await this.configureGraphicalInterface();
+		await this.configureGraphicalInterfaceManager();
 
 		//this.log('Framework initialization complete.');
 		//this.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
@@ -245,6 +289,11 @@ class App extends EventEmitter {
 		}
 	}
 
+	async initializeDataStores() {
+		this.dataStore = new AppDataStore();
+		this.sessionDataStore = new AppSessionDataStore();
+	}
+
 	async configureCommandLineInterface() {
 		// TODO: Make this work with standard web pages, load an empty command
 
@@ -268,24 +317,33 @@ class App extends EventEmitter {
 		}
 	}
 
-	async configureGraphicalInterface() {
+	async configureGraphicalInterfaceManager() {
+		//console.log('App configureGraphicalInterfaceManager');
+
 		if(this.inGraphicalInterfaceContext()) {
 			//console.log('inGraphicalInterfaceContext', true);
 
 			// Create the current graphical interface
-			var GraphicalInterface = require('framework/system/interface/graphical/GraphicalInterface.js').default;
-			this.interfaces.graphical = new GraphicalInterface();
-
-			this.initializeGraphicalInterface();
+			var GraphicalInterfaceManager = require('framework/system/interface/graphical/GraphicalInterfaceManager.js').default;
+			this.interfaces.graphical = new GraphicalInterfaceManager();
 		}
 		else {
 			//console.log('inGraphicalInterfaceContext', false);
 		}
 	}
 
-	async initializeGraphicalInterface() {
-		// This will be implemented by a child class of App
-		//console.log('initializeGraphicalInterface')
+	// This function should be implemented by apps which have graphical interfaces
+	async initializeGraphicalInterfaceManager() {
+		console.log('App initializeGraphicalInterfaceManager');
+
+		// Add the application menu bar on macOS
+        if(this.onMacOs()) {
+            this.interfaces.graphical.setMacOsApplicationMenu(this.createMacOsApplicationMenu());
+        }
+	}
+
+	createMacOsApplicationMenu() {
+		throw new Error('createMacOsApplicationMenu() must be implemented by a class extending the App class running on macOS.');
 	}
 
 	setPropertiesFromAppSettings() {

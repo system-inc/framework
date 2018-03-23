@@ -183,7 +183,6 @@ class WildcardPatternMatcher {
                 
                 // Start group on token A
                 if(tokenA[0] == 'START_GROUP') {
-
                     patternA = patternA.substr(1);
                     var groupA = WildcardPatternMatcher.readGroup(patternA);
                     if(!groupA) {
