@@ -40,6 +40,17 @@ Transpiler.execute = function(appFile, appDirectory, directoryContainingFramewor
 			'transform-es2015-modules-commonjs',
 		],
 		sourceMaps: 'both',
+		ignore: function(fileName) {
+			//console.log('fileName', fileName);
+
+			// Ignore node_modules and sql.js
+			if(fileName.match('node_modules') !== null || fileName.match('sql.js') !== null) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		},
 	});
 
 	// Require the app file

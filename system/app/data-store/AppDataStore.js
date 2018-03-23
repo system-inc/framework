@@ -1,20 +1,21 @@
 // Dependencies
-import DataStore from 'framework/system/data/DataStore.js';
+import DataStoreInterface from 'framework/system/data/DataStoreInterface.js';
 
 // Class
 /*
-	This is an abstract data store which when initialized will automatically use the proper adapter to provide permanent storage
-	for application data
+	This is a data store which when initialized will automatically use the proper adapter to provide permanent storage for application data.
 */
-class AppDataStore extends DataStore {
+class AppDataStore extends DataStoreInterface {
 
-	rootPath = null;
+	adapter = null;
 
-	constructor(rootPath) {
+	constructor() {
+		super();
+
 		this.adapter = AppDataStore.getAdapter(...arguments);
 	}
 
-	get(path) {
+	get(path = null) {
 		return this.adapter.get(...arguments);
 	}
 
@@ -46,22 +47,23 @@ class AppDataStore extends DataStore {
 		return this.adapter.integrate(...arguments);
 	}
 
-	createNewInstanceWithRootPath(rootPath) {
-		return new AppDataStore(rootPath);
-	}
-
-	static getAdapter(rootPath) {
+	static getAdapter() {
 		var adapter = null;
 
-		if(app.inWebContext()) {
-			var AppDataStoreWebAdapter = require()
-			adapter = new AppDataStoreWebAdapter(...arguments);
+		// If in a web context use an adapter based on LocalStorage, because in a web browser we don't have access to write data to the disk
+		// If in Electron context don't use LocalStorage because the app will not have consistent access to the same persisted storage based on the context it is executed in (Electron/terminal)
+		if(app.inWebContext() && !app.inElectronContext()) {
+			console.log('Using LocalStorage for AppDataStore!');
 
-			var AppDataStoreWebAdapter = require('framework/system/app/data-store/adapters/web/AppDataStoreWebAdapter.js').default;
-			this.interfaces.commandLine = new CommandLineInterface(commandLineInterfaceSettings);
+			var AppDataStoreWebAdapter = require('framework/system/app/data-store/adapters/AppDataStoreWebAdapter.js').default;
+			adapter = new AppDataStoreWebAdapter();
 		}
+		// If not in a web context use an adapter based on SQLite
 		else {
-			throw new Error('need to implement');
+			console.log('Using SQLite for AppDataStore!');
+
+			var AppDataStoreSqliteAdapter = require('framework/system/app/data-store/adapters/AppDataStoreSqliteAdapter.js').default;
+			adapter = new AppDataStoreSqliteAdapter();
 		}
 
 		return adapter;

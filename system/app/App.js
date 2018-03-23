@@ -604,6 +604,16 @@ class App extends EventEmitter {
 		return inWebContext;
 	}
 
+	inElectronContext() {
+		var inElectronContext = false;
+
+		if(process.versions.electron !== undefined) {
+			inElectronContext = true;
+		}
+
+		return inElectronContext;
+	}
+
 	exit = async function() {
 		await this.emit('app.beforeExit');
 

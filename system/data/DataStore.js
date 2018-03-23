@@ -1,16 +1,16 @@
 // Dependencies
-import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
+import DataStoreInterface from 'framework/system/data/DataStoreInterface.js';
 
 // Class
-class DataStore extends PropagatingEventEmitter {
+class DataStore extends DataStoreInterface {
 
 	data = {};
 
-	get(path) {
+	get(path = null) {
 		var value = null;
 
 		// Calling get() with no path will return data
-		if(path === undefined) {
+		if(path === null) {
 			value = this.data;
 		}
 		else {
