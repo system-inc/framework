@@ -54,9 +54,12 @@ class Module {
 				//console.log('modulePath', modulePath);	
 
 				try {
-					var moduleClass = require(modulePath).default;
+					//console.log('modulePath', modulePath);
+					//var moduleClass = (await import(modulePath)).default; // TODO: Not sure why this is breaking things
+					var moduleClass = (require(modulePath)).default;
 					//console.log('moduleClass', moduleClass);
 					var moduleInstance = new (moduleClass)(moduleTitle);
+					//console.log('moduleInstance', moduleInstance);
 
 					app.modules[modulePropertyTitle] = moduleInstance;	
 				}
@@ -80,6 +83,8 @@ class Module {
 			var modulePropertyTitle = moduleTitle.lowercaseFirstCharacter();
 
 			var moduleInstance = app.modules[modulePropertyTitle];
+
+			//console.log('moduleTitle', moduleTitle, 'moduleInstance', moduleInstance);
 
 			// Only initialize modules once
 			if(moduleInstance.isInitialized) {

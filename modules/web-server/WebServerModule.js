@@ -41,6 +41,7 @@ class WebServerModule extends Module {
 
 				// Create the web server
 				this.webServers[webServerIdentifier] = new WebServer(webServerIdentifier, webServerSettingsData);
+				await this.webServers[webServerIdentifier].initialize();
 				
 				// Start the web server
 				await this.webServers[webServerIdentifier].start();

@@ -71,11 +71,11 @@ class Route {
 		}
 	}
 
-	createChildrenRoutes(settings) {
+	async createChildrenRoutes(settings) {
 		// Create route children if they exist
 		if(settings.children) {
-			settings.children.each(function(index, childRouteSettings) {
-				this.children.append(Route.create(childRouteSettings, this));
+			await settings.children.each(async function(index, childRouteSettings) {
+				this.children.append(await Route.create(childRouteSettings, this));
 			}.bind(this));
 		}
 	}
@@ -251,7 +251,7 @@ class Route {
 		return captureGroupNames;
 	}
 
-	static create(settings, parent) {
+	static async create(settings, parent) {
 		var route = null;
 
 		// Make sure child routes without types are subclassed the same as their parent
@@ -261,27 +261,27 @@ class Route {
 
 		// RedirectRoute
 		if(settings.type == 'redirect') {
-			var RedirectRoute = require('framework/system/server/web/routes/RedirectRoute.js').default;
+			const RedirectRoute = (await import('framework/system/server/web/routes/RedirectRoute.js')).default;
 			route = new RedirectRoute(settings, parent);
 		}
 		// FileRoute
 		else if(settings.type == 'file') {
-			var FileRoute = require('framework/system/server/web/routes/FileRoute.js').default;
+			const FileRoute = (await import('framework/system/server/web/routes/FileRoute.js')).default;
 			route = new FileRoute(settings, parent);
 		}
 		// ProxyRoute
 		else if(settings.type == 'proxy') {
-			var ProxyRoute = require('framework/system/server/web/routes/ProxyRoute.js').default;
+			const ProxyRoute = (await import('framework/system/server/web/routes/ProxyRoute.js')).default;
 			route = new ProxyRoute(settings, parent);
 		}
 		// ControllerRoute is the default subclass
 		else {
-			var ControllerRoute = require('framework/system/server/web/routes/ControllerRoute.js').default;
+			const ControllerRoute = (await import('framework/system/server/web/routes/ControllerRoute.js')).default;
 			route = new ControllerRoute(settings, parent);
 		}
 
 		// Create children routes
-		route.createChildrenRoutes(settings);
+		await route.createChildrenRoutes(settings);
 
 		return route;
 	}

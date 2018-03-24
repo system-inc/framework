@@ -256,9 +256,9 @@ class App extends EventEmitter {
 	}
 
 	async configureStandardStreams() {
-		var StandardInputStream = require('framework/system/stream/StandardInputStream.js').default;
-		var StandardOutputStream = require('framework/system/stream/StandardOutputStream.js').default;
-		var StandardErrorStream = require('framework/system/stream/StandardErrorStream.js').default;
+		var StandardInputStream = (await import('framework/system/stream/StandardInputStream.js')).default;
+		var StandardOutputStream = (await import('framework/system/stream/StandardOutputStream.js')).default;
+		var StandardErrorStream = (await import('framework/system/stream/StandardErrorStream.js')).default;
 
 		app.standardStreams.input = new StandardInputStream();
 		app.standardStreams.output = new StandardOutputStream();
@@ -270,7 +270,7 @@ class App extends EventEmitter {
 		//this.log('standardStreamsFileLogSettings', standardStreamsFileLogSettings);
 
 		if(standardStreamsFileLogSettings.enabled) {
-			var FileLog = require('framework/system/log/FileLog.js').default;
+			var FileLog = (await import('framework/system/log/FileLog.js')).default;
 
 			// Create the file log
 			this.standardStreamsFileLog = new FileLog(standardStreamsFileLogSettings.directory, standardStreamsFileLogSettings.nameWithoutExtension);
@@ -303,7 +303,7 @@ class App extends EventEmitter {
 		var commandLineInterfaceSettings = this.settings.get('interfaces.commandLine');
 		//this.info('commandLineInterfaceSettings', commandLineInterfaceSettings);
 
-		var CommandLineInterface = require('framework/system/interface/command-line/CommandLineInterface.js').default;
+		var CommandLineInterface = (await import('framework/system/interface/command-line/CommandLineInterface.js')).default;
 		this.interfaces.commandLine = new CommandLineInterface(commandLineInterfaceSettings);
 	}
 
@@ -313,7 +313,7 @@ class App extends EventEmitter {
 
 		// Enable the interactive command line interface by default if in terminal context
 		if(interactiveCommandLineInterfaceSettings.enabled && this.inTerminalContext()) {
-			var InteractiveCommandLineInterface = require('framework/system/interface/interactive-command-line/InteractiveCommandLineInterface.js').default;
+			var InteractiveCommandLineInterface = (await import('framework/system/interface/interactive-command-line/InteractiveCommandLineInterface.js')).default;
 
 			//console.log('creating InteractiveCommandLineInterface');
 			this.interfaces.interactiveCommandLine = new InteractiveCommandLineInterface(interactiveCommandLineInterfaceSettings);
@@ -327,7 +327,7 @@ class App extends EventEmitter {
 			//console.log('inGraphicalInterfaceContext', true);
 
 			// Create the current graphical interface
-			var GraphicalInterfaceManager = require('framework/system/interface/graphical/GraphicalInterfaceManager.js').default;
+			var GraphicalInterfaceManager = (await import('framework/system/interface/graphical/GraphicalInterfaceManager.js')).default;
 			this.interfaces.graphical = new GraphicalInterfaceManager();
 		}
 		else {

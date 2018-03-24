@@ -10,15 +10,15 @@ class IpAddress {
 		return this.address;
 	}
 
-	static create(address) {
+	static async create(address) {
 		var ipAddress = null;
 
 		if(address.contains(':')) {
-			var IpV6Address = require('framework/system/network/IpV6Address.js').default;
+			const IpV6Address = (await import('framework/system/network/IpV6Address.js')).default;
 			ipAddress = new IpV6Address(address);
 		}
 		else {
-			var IpV4Address = require('framework/system/network/IpV4Address.js').default;
+			const IpV4Address = (await import('framework/system/network/IpV4Address.js')).default;
 			ipAddress = new IpV4Address(address);
 		}
 

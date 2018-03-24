@@ -203,7 +203,7 @@ class FileSystemObject {
         var directory = directoryObjectOrPathString;
 
         if(String.is(directoryObjectOrPathString)) {
-            var Directory = require('framework/system/file-system/Directory.js').default;
+            const Directory = (await import('framework/system/file-system/Directory.js')).default;
             directory = new Directory(path);
         }
         
@@ -229,7 +229,7 @@ class FileSystemObject {
         //app.log('FileSystemObject.list', ...arguments);
 
         // Dependencies
-        var Directory = require('framework/system/file-system/Directory.js').default;
+        const Directory = (await import('framework/system/file-system/Directory.js')).default;
 
         var directory = new Directory(path);
 
@@ -389,12 +389,12 @@ class FileSystemObject {
 
         // Make sure to always be an instance of File or Directory
         if(nodeStatus.isFile()) {
-            var File = require('framework/system/file-system/File.js').default;
+            const File = (await import('framework/system/file-system/File.js')).default;
             fileSystemObject = new File(path);
             await fileSystemObject.initializeStatus();
         }
         else if(nodeStatus.isDirectory()) {
-            var Directory = require('framework/system/file-system/Directory.js').default;
+            const Directory = (await import('framework/system/file-system/Directory.js')).default;
             fileSystemObject = new Directory(path);
             await fileSystemObject.initializeStatus();
         }

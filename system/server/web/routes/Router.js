@@ -7,12 +7,12 @@ class Router {
 
 	routes = [];
 
-	loadRoutes(routes) {
+	async loadRoutes(routes) {
 		//app.log('Loading routes...');
 
 		if(routes) {
-			routes.each(function(routeSettingsIndex, routeSettings) {
-				this.routes.append(Route.create(routeSettings));
+			await routes.each(async function(routeSettingsIndex, routeSettings) {
+				this.routes.append(await Route.create(routeSettings));
 			}.bind(this));
 		}
 

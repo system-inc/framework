@@ -55,20 +55,20 @@ class ArchivedFileSystemObject {
 		return this.archivedSizeInBytes;
 	}
 
-	static createFromSevenZipArchivedFileSystemObjectProperties(archiveFile, sevenZipArchivedFileSystemObjectProperties) {	
+	static async createFromSevenZipArchivedFileSystemObjectProperties(archiveFile, sevenZipArchivedFileSystemObjectProperties) {	
 		//app.highlight('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
 
 		var archivedFileSystemObject = null;
 
 		// Directories
 		if(sevenZipArchivedFileSystemObjectProperties.folder == '+') {
-			var ArchivedDirectory = require('framework/system/archive/file-system-objects/ArchivedDirectory.js').default;
+			const ArchivedDirectory = (await import('framework/system/archive/file-system-objects/ArchivedDirectory.js')).default;
 			archivedFileSystemObject = new ArchivedDirectory(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
 			//app.log('ArchivedDirectory', archivedFileSystemObject);
 		}
 		// Files
 		else {
-			var ArchivedFile = require('framework/system/archive/file-system-objects/ArchivedFile.js').default;
+			const ArchivedFile = (await import('framework/system/archive/file-system-objects/ArchivedFile.js')).default;
 			archivedFileSystemObject = new ArchivedFile(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
 			//app.log('ArchivedFile', archivedFileSystemObject);
 		}

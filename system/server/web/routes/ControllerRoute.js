@@ -22,7 +22,7 @@ class ControllerRoute extends Route {
 		//app.log('this.controllerName', this.controllerName);
 
 		// Try to get the controller
-		var controller = WebServerController.getControllerInstance(this.controllerName, request, response, this);
+		var controller = await WebServerController.getControllerInstance(this.controllerName, request, response, this);
 		//app.info('got controller instance');
 
 		// If the controller was found, invoke the method for the route

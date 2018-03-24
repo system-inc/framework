@@ -30,6 +30,7 @@ class WebServerTest extends Test {
 		webServerSettings.modules.webServer.webServers[0].directory = Node.Path.normalize(app.framework.directory+'/system/server/web/tests/');
 
 		this.webServer = new WebServer('test', webServerSettings.modules.webServer.webServers[0]);
+		await this.webServer.initialize();
 
 		//app.highlight(this.webServer);
 

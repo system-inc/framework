@@ -14,7 +14,7 @@ class WebServerController extends ServerController {
 		this.data = this.route.collectData(request);
 	}
 
-	static getControllerInstance(controllerName, request, response, route) {
+	static async getControllerInstance(controllerName, request, response, route) {
 		//app.highlight('WebServerController.getControllerInstance');
 		//app.highlight(arguments);
 
@@ -28,7 +28,7 @@ class WebServerController extends ServerController {
 		// Load the controller class
 		var controllerPath = Node.Path.join(directory, 'controllers', controllerName+'.js');
 		//app.info('controllerPath', controllerPath);
-		var controllerClass = require(controllerPath).default;
+		var controllerClass = (await import(controllerPath)).default;
 		//app.info('controllerClass', controllerClass);
 
 		// Instantiate the controller
@@ -82,7 +82,7 @@ class WebServerController extends ServerController {
 			//app.log('response', response);
 		}
 		else {
-			response = Framework.require(viewFile.path);
+			response = (await import(viewFile.path));
 			//app.log('response', response)
 		}
 

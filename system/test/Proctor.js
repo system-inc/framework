@@ -863,7 +863,7 @@ class Proctor extends EventEmitter {
 		//app.log('fileSystemObjects', fileSystemObjects);
 
 		// Loop through each of the file system objects
-		fileSystemObjects.each(function(index, fileSystemObject) {
+		await fileSystemObjects.each(async function(index, fileSystemObject) {
 			//app.log(fileSystemObject.path);
 
 			// If we have a file
@@ -878,7 +878,7 @@ class Proctor extends EventEmitter {
 
 						// Require the test class file
 						try {
-							var testClass = require(fileSystemObject.file).default;
+							var testClass = (await import(fileSystemObject.file)).default;
 							//app.log('testClass', testClass);
 
 							// Check to see if the testClass is a class

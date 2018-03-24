@@ -117,8 +117,11 @@ class WebServer extends Server {
 
 		// Load the routes into the router
 		this.router = new Router();
-		this.router.loadRoutes(this.settings.get('router.routes'));
 		//app.info('this.router', this.router); app.exit();
+	}
+
+	async initialize() {
+		await this.router.loadRoutes(this.settings.get('router.routes'));
 	}
 
 	resolveHttpsProtocolFiles() {
@@ -258,13 +261,14 @@ class WebServer extends Server {
 		}.bind(this));
 	}
 
-	handleRequestConnection(nodeRequest, nodeResponse) {
+	async handleRequestConnection(nodeRequest, nodeResponse) {
 		// Increment the requests counter right away in case of crashes
 		this.requests++;
 
 		// Create the request object which wrap node's request object
 		try {
 			var request = new Request(nodeRequest, this);
+			await request.initialize();
 		}
 		catch(error) {
 			this.handleInternalServerError(error, nodeResponse);

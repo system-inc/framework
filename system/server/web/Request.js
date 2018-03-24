@@ -72,10 +72,6 @@ class Request {
 		//	'length': this.headers.get('content-length'),
 		//	'type': this.headers.get('type'),
 		//};
-
-		// IP address
-		//app.log(Json.encode(nodeRequest.connection.remoteAddress));
-		this.ipAddress = this.connectingIpAddress = IpAddress.create(nodeRequest.connection.remoteAddress);
 		
 		// Referrer
 		this.referrer = new Url(this.headers.get('referer'));
@@ -114,6 +110,12 @@ class Request {
 			'major': nodeRequest.httpVersionMajor,
 			'minor': nodeRequest.httpVersionMinor,
 		});
+	}
+
+	async initialize() {
+		// IP address
+		//app.log(Json.encode(nodeRequest.connection.remoteAddress));
+		this.ipAddress = this.connectingIpAddress = await IpAddress.create(this.nodeRequest.connection.remoteAddress);
 	}
 
 	isSecure() {

@@ -26,7 +26,7 @@ class SqliteDatabaseTest extends Test {
 		// TODO:
 		//Assert.true(actual.hasKey('stopwatch'), 'SqliteDatabase.query() returns an object which has the key "stopwatch"');
 		
-		//var fs = require("fs");
+		//var fs = await import("fs");
 		//var data = testSqliteDatabase.sqliteDatabase.export();
 		//var buffer = new Buffer(data);
 		//fs.writeFileSync("filename.sqlite", buffer);

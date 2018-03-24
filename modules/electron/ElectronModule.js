@@ -26,7 +26,7 @@ class ElectronModule extends Module {
 		// If in the Electron context
 		if(this.inElectronContext()) {
 			//console.warn('In Electron, configuring ElectronModule');
-			this.electron = require('electron');
+			this.electron = (await import('electron')).default;
 
 			// If in the Electron main process
 			if(this.inElectronMainProcess()) {
@@ -85,7 +85,7 @@ class ElectronModule extends Module {
 		//app.info('pathToElectronModule', pathToElectronModule);
 
 		if(pathToElectronModule) {
-			pathToElectronExecutable = require(pathToElectronModule);
+			pathToElectronExecutable = (await import(pathToElectronModule)).default;
 			//app.log('pathToElectronExecutable', pathToElectronExecutable);
 		}
 

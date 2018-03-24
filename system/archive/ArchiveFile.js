@@ -35,9 +35,9 @@ class ArchiveFile extends File {
 			this.archivedFileSystemObjects = [];
 
 			// Create new ArchivedFileSystemObjects from the list
-			sevenZipList.each(function(sevenZipArchivedFileSystemObjectPropertiesIndex, sevenZipArchivedFileSystemObjectProperties) {
+			await sevenZipList.each(async function(sevenZipArchivedFileSystemObjectPropertiesIndex, sevenZipArchivedFileSystemObjectProperties) {
 				//app.log('sevenZipArchivedFileSystemObjectProperties', sevenZipArchivedFileSystemObjectProperties);
-				var archivedFileSystemObject = ArchivedFileSystemObject.createFromSevenZipArchivedFileSystemObjectProperties(this, sevenZipArchivedFileSystemObjectProperties);
+				var archivedFileSystemObject = await ArchivedFileSystemObject.createFromSevenZipArchivedFileSystemObjectProperties(this, sevenZipArchivedFileSystemObjectProperties);
 				this.archivedFileSystemObjects.append(archivedFileSystemObject);
 			}.bind(this));
 		}

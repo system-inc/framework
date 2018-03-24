@@ -138,16 +138,16 @@ class File extends FileSystemObject {
         return writeStream;
     }
 
-    getFormat() {
-        var FileFormats = require('framework/system/file-system/FileFormats.js').default;
+    async getFormat() {
+        const FileFormats = (await import('framework/system/file-system/FileFormats.js')).default;
 
         return FileFormats[this.extension];
     }
 
-    isImage() {
+    async isImage() {
         var isImage = false;
 
-        var fileFormat = this.getFormat();
+        var fileFormat = await this.getFormat();
         if(fileFormat && fileFormat.type.startsWith('image/')) {
             isImage = true;
         }
