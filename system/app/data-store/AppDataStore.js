@@ -53,14 +53,14 @@ class AppDataStore extends DataStoreInterface {
 		// If in a web context use an adapter based on LocalStorage, because in a web browser we don't have access to write data to the disk
 		// If in Electron context don't use LocalStorage because the app will not have consistent access to the same persisted storage based on the context it is executed in (Electron/terminal)
 		if(app.inWebContext() && !app.inElectronContext()) {
-			console.log('Using LocalStorage for AppDataStore!');
+			//console.log('Using LocalStorage for AppDataStore!');
 
 			var AppDataStoreWebAdapter = require('framework/system/app/data-store/adapters/AppDataStoreWebAdapter.js').default;
 			adapter = new AppDataStoreWebAdapter();
 		}
 		// If not in a web context use an adapter based on SQLite
 		else {
-			console.log('Using SQLite for AppDataStore!');
+			//console.log('Using SQLite for AppDataStore!');
 
 			var AppDataStoreSqliteAdapter = require('framework/system/app/data-store/adapters/AppDataStoreSqliteAdapter.js').default;
 			adapter = new AppDataStoreSqliteAdapter();

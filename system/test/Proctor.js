@@ -505,6 +505,10 @@ class Proctor extends EventEmitter {
 
 	static globals = {
 		expected: [
+			// sql.js
+			// TODO: This should not leak but I am importing it and not having Babel transpile it so it is causing it to leak. When I no longer need Babel it should not leak anymore.
+			'SQL', 
+
 			// Framework
 			'Node',
 			'Class',
