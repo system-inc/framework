@@ -291,7 +291,10 @@ class App extends EventEmitter {
 
 	async initializeDataStores() {
 		this.dataStore = new AppDataStore();
+		await this.dataStore.initialize();
+
 		this.sessionDataStore = new AppSessionDataStore();
+		await this.sessionDataStore.initialize();
 	}
 
 	async configureCommandLineInterface() {

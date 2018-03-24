@@ -9,10 +9,8 @@ class AppDataStore extends DataStoreInterface {
 
 	adapter = null;
 
-	constructor() {
-		super();
-
-		this.adapter = AppDataStore.getAdapter(...arguments);
+	async initialize() {
+		this.adapter = await AppDataStore.getAdapter();
 	}
 
 	get(path = null) {
@@ -47,7 +45,7 @@ class AppDataStore extends DataStoreInterface {
 		return this.adapter.integrate(...arguments);
 	}
 
-	static getAdapter() {
+	static async getAdapter() {
 		var adapter = null;
 
 		// If in a web context use an adapter based on LocalStorage, because in a web browser we don't have access to write data to the disk
@@ -55,14 +53,14 @@ class AppDataStore extends DataStoreInterface {
 		if(app.inWebContext() && !app.inElectronContext()) {
 			//console.log('Using LocalStorage for AppDataStore!');
 
-			var AppDataStoreWebAdapter = require('framework/system/app/data-store/adapters/AppDataStoreWebAdapter.js').default;
+			const AppDataStoreWebAdapter = (await import('framework/system/app/data-store/adapters/AppDataStoreWebAdapter.js')).default;
 			adapter = new AppDataStoreWebAdapter();
 		}
 		// If not in a web context use an adapter based on SQLite
 		else {
 			//console.log('Using SQLite for AppDataStore!');
 
-			var AppDataStoreSqliteAdapter = require('framework/system/app/data-store/adapters/AppDataStoreSqliteAdapter.js').default;
+			const AppDataStoreSqliteAdapter = (await import('framework/system/app/data-store/adapters/AppDataStoreSqliteAdapter.js')).default;
 			adapter = new AppDataStoreSqliteAdapter();
 		}
 

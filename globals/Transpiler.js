@@ -11,7 +11,7 @@ Transpiler.execute = function(appFile, appDirectory, directoryContainingFramewor
 	var Path = require('path');
 
 	// Update the places Node looks to require files
-	var Require = require('./Require.js');
+	var Require = require('./node/Require.js');
 
 	// Make import and require statements check the app directory
 	Require.addRequirePath(appDirectory);
@@ -38,6 +38,7 @@ Transpiler.execute = function(appFile, appDirectory, directoryContainingFramewor
 		plugins: [
 			'transform-class-properties',
 			'transform-es2015-modules-commonjs',
+			'dynamic-import-node',
 		],
 		sourceMaps: 'both',
 		ignore: function(fileName) {
@@ -56,6 +57,19 @@ Transpiler.execute = function(appFile, appDirectory, directoryContainingFramewor
 	// Require the app file
 	require(appFile);
 };
+
+Transpiler.logCachedTranspiledSourceForPath = function(path) {
+	var TranspilerCache = require('babel-register/lib/cache').get()
+
+	TranspilerCache.each(function(key, value) {
+		var keyObject = Json.decode(key.substring(0, key.length - 7));
+		
+		if(keyObject.filename == path) {
+			console.log(value.code);
+			return false; // break
+		}
+	});
+}
 
 // Export
 module.exports = Transpiler;

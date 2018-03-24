@@ -1,34 +1,36 @@
 // Dependencies
 import Test from 'framework/system/test/Test.js';
 import Assert from 'framework/system/test/Assert.js';
-//import SqliteDatabase from 'framework/system/database/sqlite/SqliteDatabase.js';
+import SqliteDatabase from 'framework/system/database/sqlite/SqliteDatabase.js';
 
 // Class
 class SqliteDatabaseTest extends Test {
 
-	//async testSqliteDatabase() {
-	//	var testSqliteDatabase = new SqliteDatabase();
+	async testSqliteDatabase() {
+		var testSqliteDatabase = new SqliteDatabase();
 
-	//	// Run a query
-	//	await testSqliteDatabase.query('CREATE TABLE test (column1, column2);');
+		// Run a query
+		await testSqliteDatabase.query('CREATE TABLE test (field1, field2);');
 
-	//	// Insert rows
-	//	await testSqliteDatabase.query('INSERT INTO test VALUES (?,?), (?,?)', [
-	//		'row1column1',
-	//		'row1column2',
-	//		'row2column1',
-	//		'row2column2',
-	//	]);
+		// Insert rows
+		await testSqliteDatabase.query('INSERT INTO test VALUES (\'firstRowField1\', \'firstRowField2\')');
+		await testSqliteDatabase.query('INSERT INTO test VALUES (\'secondRowField1\', \'secondRowField2\')');
 
-	//	// Prepare a statement
-	//	var results = await testSqliteDatabase.query('SELECT * FROM test');
-	//	//console.log(results);
+		// Prepare a statement
+		var actual = await testSqliteDatabase.query('SELECT * FROM test');
+		//console.log(actual);
+
+		Assert.true(actual.hasKey('sql'), 'SqliteDatabase.query() returns an object which has the key "sql"');
+		Assert.true(actual.hasKey('columns'), 'SqliteDatabase.query() returns an object which has the key "columns"');
+		Assert.true(actual.hasKey('rows'), 'SqliteDatabase.query() returns an object which has the key "rows"');
+		// TODO:
+		//Assert.true(actual.hasKey('stopwatch'), 'SqliteDatabase.query() returns an object which has the key "stopwatch"');
 		
-	//	//var fs = require("fs");
-	//	//var data = testSqliteDatabase.sqliteDatabase.export();
-	//	//var buffer = new Buffer(data);
-	//	//fs.writeFileSync("filename.sqlite", buffer);
-	//}
+		//var fs = require("fs");
+		//var data = testSqliteDatabase.sqliteDatabase.export();
+		//var buffer = new Buffer(data);
+		//fs.writeFileSync("filename.sqlite", buffer);
+	}
 
 }
 

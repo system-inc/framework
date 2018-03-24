@@ -6,7 +6,6 @@ import File from 'framework/system/file-system/File.js';
 class SqliteDatabase {
 
 	sqliteDatabase = null;
-
 	file = null;
 
 	constructor(path) {
@@ -18,30 +17,44 @@ class SqliteDatabase {
 		if(this.file) {
 			this.sqliteDatabase = new Sqlite.Database(this.file.path);	
 		}
-		// Do not load a file
+		// Do not load a file and use an in-memory database
 		else {
 			this.sqliteDatabase = new Sqlite.Database();
 		}
 	}
 
-	async query(sqlString) {
-		var exec = this.sqliteDatabase.exec(sqlString);
-		//console.log('exec', exec);
+	async query(sql) {
+		//console.log('sql', sql);
 
+		// Execute the query
+		var executedQuery = this.sqliteDatabase.exec(sql);
+		//console.log('executedQuery', executedQuery);
+
+		// Setup the structure of the result
 		var result = {
-			sql: sqlString,
-			//values: queryResults.values,
+			sql: sql,
+			columns: null,
 			rows: null,
-			fields: null,
 		};
 
-		if(exec[0] && exec[0].values) {
-			result.rows = [];
-			exec[0].values.each(function(index, value) {
-				//console.log(index, value);
-			});
-			result.fields = exec[0].columns;
+		// Columns
+		if(executedQuery[0] && executedQuery[0].columns) {
+			result.columns = executedQuery[0].columns;
 		}
+
+		// Rows
+		if(executedQuery[0] && executedQuery[0].values) {
+			result.rows = executedQuery[0].values;
+		}
+
+		//if(executedQuery[0] && executedQuery[0].values) {
+		//	result.rows = [];
+		//	executedQuery[0].values.each(function(index, value) {
+		//		app.highlight(index, value);
+		//		//result.rows.append(value);
+		//	});
+		//	result.fields = ;
+		//}
 
 		return result;
 	}
