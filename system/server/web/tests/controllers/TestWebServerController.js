@@ -126,7 +126,7 @@ class TestWebServerController extends WebServerController {
 	}
 
 	contentBuffer() {
-		return new Buffer('Content is buffer.');
+		return Buffer.from('Content is buffer.');
 	}
 
 	contentStream() {

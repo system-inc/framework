@@ -1,16 +1,16 @@
 // Dependencies
-import DataStoreInterface from 'framework/system/data/DataStoreInterface.js';
+import DatastoreInterface from 'framework/system/data/datastore/DatastoreInterface.js';
 
 // Class
 /*
 	This is a data store which when initialized will automatically use the proper adapter to provide permanent storage for application data.
 */
-class AppDataStore extends DataStoreInterface {
+class AppDatastore extends DatastoreInterface {
 
 	adapter = null;
 
 	async initialize() {
-		this.adapter = await AppDataStore.getAdapter();
+		this.adapter = await AppDatastore.getAdapter();
 	}
 
 	get(path = null) {
@@ -51,17 +51,15 @@ class AppDataStore extends DataStoreInterface {
 		// If in a web context use an adapter based on LocalStorage, because in a web browser we don't have access to write data to the disk
 		// If in Electron context don't use LocalStorage because the app will not have consistent access to the same persisted storage based on the context it is executed in (Electron/terminal)
 		if(app.inWebContext() && !app.inElectronContext()) {
-			//console.log('Using LocalStorage for AppDataStore!');
+			//console.log('Using LocalStorage for AppDatastore!');
 
-			const AppDataStoreWebAdapter = (await import('framework/system/app/data-store/adapters/AppDataStoreWebAdapter.js')).default;
-			adapter = new AppDataStoreWebAdapter();
+			const AppDatastoreWebAdapter = (await import('framework/system/app/datastore/adapters/AppDatastoreWebAdapter.js')).default;
+			adapter = new AppDatastoreWebAdapter();
 		}
-		// If not in a web context use an adapter based on SQLite
+		// If not in a web context use an adapter based on saving files on the disk
 		else {
-			//console.log('Using SQLite for AppDataStore!');
-
-			const AppDataStoreSqliteAdapter = (await import('framework/system/app/data-store/adapters/AppDataStoreSqliteAdapter.js')).default;
-			adapter = new AppDataStoreSqliteAdapter();
+			const AppDatastoreFileAdapter = (await import('framework/system/app/datastore/adapters/AppDatastoreFileAdapter.js')).default;
+			adapter = new AppDatastoreFileAdapter();
 		}
 
 		return adapter;
@@ -70,4 +68,4 @@ class AppDataStore extends DataStoreInterface {
 }
 
 // Export
-export default AppDataStore;
+export default AppDatastore;

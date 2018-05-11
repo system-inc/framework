@@ -2,7 +2,7 @@
 import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
 
 // Class
-class DataStoreInterface extends PropagatingEventEmitter {
+class DatastoreInterface extends PropagatingEventEmitter {
 
 	get(path = null) {
 		throw new Error('This method must be implemented by a child class.');
@@ -39,4 +39,4 @@ class DataStoreInterface extends PropagatingEventEmitter {
 }
 
 // Export
-export default DataStoreInterface;
+export default DatastoreInterface;

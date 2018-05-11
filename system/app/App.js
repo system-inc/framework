@@ -13,10 +13,10 @@ import Terminal from 'framework/system/interface/Terminal.js';
 import Version from 'framework/system/version/Version.js';
 
 // TODO - need to make this work - this is permanent data store for the app
-import AppDataStore from 'framework/system/app/data-store/AppDataStore.js';
+import AppDatastore from 'framework/system/app/datastore/AppDatastore.js';
 
 // TODO - need to make this work - this is session data store for the app, starts fresh on load
-import AppSessionDataStore from 'framework/system/app/data-store/AppSessionDataStore.js';
+import AppSessionDatastore from 'framework/system/app/datastore/AppSessionDatastore.js';
 
 /* Notes:
 
@@ -62,8 +62,8 @@ class App extends EventEmitter {
 	// TODO: Move this into standardStreams object standardStreams.fileLog
 	standardStreamsFileLog = null;
 
-	dataStore = null;
-	sessionDataStore = null;
+	datastore = null;
+	sessionDatastore = null;
 
 	// TODO: Turn this into an object
 	environment = null;
@@ -220,7 +220,7 @@ class App extends EventEmitter {
 		await this.configureStandardStreamsFileLog();
 
 		// Initialize the app data stores
-		await this.initializeDataStores();
+		await this.initializeDatastores();
 
 		// Configure the command line interface
 		await this.configureCommandLineInterface();
@@ -289,12 +289,12 @@ class App extends EventEmitter {
 		}
 	}
 
-	async initializeDataStores() {
-		this.dataStore = new AppDataStore();
-		await this.dataStore.initialize();
+	async initializeDatastores() {
+		this.datastore = new AppDatastore();
+		await this.datastore.initialize();
 
-		this.sessionDataStore = new AppSessionDataStore();
-		await this.sessionDataStore.initialize();
+		this.sessionDatastore = new AppSessionDatastore();
+		await this.sessionDatastore.initialize();
 	}
 
 	async configureCommandLineInterface() {

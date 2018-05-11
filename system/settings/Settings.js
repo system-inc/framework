@@ -1,17 +1,17 @@
 // Dependencies
 import File from 'framework/system/file-system/File.js';
-import DataStore from 'framework/system/data/DataStore.js';
+import Datastore from 'framework/system/data/datastore/Datastore.js';
 
 // Class
 class Settings {
 
-	dataStore = null;
+	datastore = null;
 	defaults = null;
 
-	constructor(defaults = {}, data = {}, dataStore = new DataStore()) {
+	constructor(defaults = {}, data = {}, datastore = new Datastore()) {
 		// Set the data store
-		this.dataStore = dataStore;
-		//console.log('this.dataStore', this.dataStore);
+		this.datastore = datastore;
+		//console.log('this.datastore', this.datastore);
 
 		// Set the defaults
 		this.setDefaults(defaults);
@@ -44,14 +44,14 @@ class Settings {
 
 	applyDefaults() {
 		// Get the current data
-		var data = this.dataStore.getData();
+		var data = this.datastore.getData();
 		//console.log('data', data);
 
 		// Set the data to the default data
-		this.dataStore.setData(this.defaults);
+		this.datastore.setData(this.defaults);
 
 		// Merge the current data on top of the defaults
-		this.dataStore.merge(data);
+		this.datastore.merge(data);
 
 		return this;
 	}
@@ -69,7 +69,7 @@ class Settings {
 			dataToMerge = settingsOrData.getData();
 		}
 
-		return this.dataStore.merge(dataToMerge);
+		return this.datastore.merge(dataToMerge);
 	}
 
 	async mergeFromFile(dataFilePath) {
@@ -81,7 +81,7 @@ class Settings {
 	}
 
 	integrate(data) {
-		return this.dataStore.integrate(data);
+		return this.datastore.integrate(data);
 	}
 
 	async integrateFromFile(dataFilePath) {
@@ -100,28 +100,28 @@ class Settings {
 	}
 
 	get(path) {
-		return this.dataStore.get(path);
+		return this.datastore.get(path);
 	}
 
 	set(path, value) {
-		return this.dataStore.set(path, value);
+		return this.datastore.set(path, value);
 	}
 
 	delete(path) {
-		return this.dataStore.delete(path);
+		return this.datastore.delete(path);
 	}
 
-	static async constructFromFile(defaults, dataFilePath, dataStore) {
+	static async constructFromFile(defaults, dataFilePath, datastore) {
 		//console.log('dataFilePath', dataFilePath);
 
 		// Read the data from the file
 		var data = await File.readAndDecodeJson(dataFilePath);
 		//console.log('data', data);
 
-		//console.log('dataStore', dataStore);
+		//console.log('datastore', datastore);
 
 		// Create a new settings object with the data
-		var settings = new Settings(defaults, data, dataStore);
+		var settings = new Settings(defaults, data, datastore);
 
 		return settings;
 	}

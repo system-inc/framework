@@ -1,8 +1,8 @@
 // Dependencies
-import DataStore from 'framework/system/data/DataStore.js';
+import Datastore from 'framework/system/data/datastore/Datastore.js';
 
 // Class
-class LocalStorage extends DataStore {
+class LocalStorage extends Datastore {
 
 	rootPath = null;
 

@@ -6,7 +6,7 @@ import Assert from 'framework/system/test/Assert.js';
 class BufferTest extends Test {
 
 	testIs() {
-		Assert.true(Buffer.is(new Buffer('Buffer')), 'buffer object');
+		Assert.true(Buffer.is(Buffer.from('Buffer')), 'buffer object');
 		Assert.false(Buffer.is(''), 'empty string');
 		Assert.false(Buffer.is('string'), 'string');
 	}
