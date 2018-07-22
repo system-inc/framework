@@ -7,7 +7,7 @@ class TimeTest extends Test {
 
 	testTime() {
 		var time = new Time('1984-06-28 11:11 AM MST');
-		console.log(time);
+		//console.log(time);
 
 		Assert.notStrictEqual(time.dateObject, null, 'DateObject is set');
 		Assert.notStrictEqual(time.precision, null, 'Precision is set');

@@ -15,7 +15,7 @@ class FileDatastoreTest extends Test {
 	*/
 
 	async testCreateNewFileDatastore() {
-		console.log('FileDatastoreTest', app.directory);
+		//console.log('FileDatastoreTest', app.directory);
 
 		//var actual = 'Encode and decode me.';
 
