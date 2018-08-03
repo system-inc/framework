@@ -123,6 +123,11 @@ class StackTrace {
 		return string;
 	}
 
+	// Allow calls to error.stack.indexOf (because error.stack is not a string)
+	indexOf() {
+		return this.toString().indexOf(...arguments);
+	}
+
 	// Allow calls to error.stack.replace (because error.stack is not a string)
 	replace() {
 		return this.toString().replace(...arguments);

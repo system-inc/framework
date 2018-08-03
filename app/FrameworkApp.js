@@ -72,6 +72,8 @@ class FrameworkApp extends App {
 	}
 
 	async processCommandGraphicalInterface() {
+		//console.log('processCommandGraphicalInterface');
+
 		// We must manually start Electron as it will not start automatically as FrameworkApp can be a command line interface or a graphical interface app
 		if(!this.modules.electronModule.inElectronContext()) {
 			this.modules.electronModule.startElectron();

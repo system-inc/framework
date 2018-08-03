@@ -26,7 +26,8 @@ class ElectronModule extends Module {
 		// If in the Electron context
 		if(this.inElectronContext()) {
 			//console.warn('In Electron, configuring ElectronModule');
-			this.electron = (await import('electron')).default;
+			this.electron = (await import('electron'));
+			//console.log('this.electron', this.electron);
 
 			// If in the Electron main process
 			if(this.inElectronMainProcess()) {
@@ -161,7 +162,7 @@ class ElectronModule extends Module {
 
 		// Before app.exit() exits the application, quit the Electron app
 		app.on('app.beforeExit', function() {
-			//app.log('app.beforeQuit');
+			app.log('app.beforeQuit');
 			this.electron.app.quit();
 		}.bind(this));
 		
