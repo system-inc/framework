@@ -34,12 +34,12 @@ class ElectronModule extends Module {
 				// The Electron main process is responsible for starting the first web browser window when there are no other windows
 				// The Electron main process does not communicate between windows
 				//console.log('Now in Electron Main Process');
-				//console.warn('In Electron, configureElectronMainProcess');
+				//console.warn('In Electron Main Process, configureElectronMainProcess');
 				this.configureElectronMainProcess();
 			}
 			// If in the Electron renderer process
 			else if(this.inElectronRendererProcess()) {
-				//console.log('In Electron, configureElectronRendererProcess');
+				//console.log('In Electron Renderer Process, configureElectronRendererProcess');
 				this.configureElectronRendererProcess();
 			}
 		}
@@ -195,6 +195,8 @@ class ElectronModule extends Module {
 	}
 
 	async newGraphicalInterface() {
+		console.error('refactor this for graphical interface manager');
+
 		//app.log('new graphical interface...');
 
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface

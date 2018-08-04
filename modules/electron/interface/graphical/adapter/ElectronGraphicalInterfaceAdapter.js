@@ -58,7 +58,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 	initializeState() {
 		this.graphicalInterface.state = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(null, this.graphicalInterface.displays);
-		//console.info('this.graphicalInterface.state', this.graphicalInterface.state);
+		console.info('this.graphicalInterface.state', this.graphicalInterface.state);
 
 		// Store a reference to the graphical interface on the state
 		this.graphicalInterface.state.graphicalInterface = this.graphicalInterface;
@@ -228,10 +228,14 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		//app.log('script', script);
 		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';
 
+		//app.log('graphicalInterfaceState', graphicalInterfaceState);
 		//app.log('graphicalInterfaceState.dimensions.width', graphicalInterfaceState.dimensions.width);
 		//app.log('graphicalInterfaceState.dimensions.height', graphicalInterfaceState.dimensions.height);
 		//app.log('graphicalInterfaceState.position.relativeToAllDisplays.x', graphicalInterfaceState.position.relativeToAllDisplays.x);
 		//app.log('graphicalInterfaceState.position.relativeToAllDisplays.y', graphicalInterfaceState.position.relativeToAllDisplays.y);
+
+		// Disable security warnings in Electron
+		Node.Process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 		
 		// Create the Electron browser window
 		var electronBrowserWindow = new ElectronBrowserWindow({
@@ -244,6 +248,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
 			show: graphicalInterfaceState.show,
 			webPreferences: {
+				allowRunningInsecureContent: false,
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
 			},
 		});
@@ -252,6 +257,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		electronBrowserWindow.setMenu(null);
 
 		// Load the string
+		//console.log('baseURLForDataURL', new Url(app.directory.toString()).toString());
 		electronBrowserWindow.loadURL(htmlString,
 			{
 				// String (optional) - Base url (with trailing path separator) for files to be loaded by the data url. This is needed only if the specified url is a data url and needs to load other files.
@@ -271,7 +277,9 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		});
 
 		// Initialize the state
-		ElectronGraphicalInterfaceAdapter.initializeState(electronBrowserWindow, graphicalInterfaceState, false);
+		// TODO: The last argument here should be false because we don't need to initialize state because we already set the x, y, width, and height
+		// but for some reason there are issues with the height that are fixed when calling it afterwards
+		ElectronGraphicalInterfaceAdapter.initializeState(electronBrowserWindow, graphicalInterfaceState, true);
 
 		return graphicalInterfaceProxy;
 	}

@@ -326,7 +326,7 @@ class App extends EventEmitter {
 		if(this.inGraphicalInterfaceContext()) {
 			//console.log('inGraphicalInterfaceContext', true);
 
-			// Create the current graphical interface
+			// Create the graphical interface manager
 			var GraphicalInterfaceManager = (await import('framework/system/interface/graphical/GraphicalInterfaceManager.js')).default;
 			this.interfaces.graphical = new GraphicalInterfaceManager();
 		}
@@ -335,13 +335,18 @@ class App extends EventEmitter {
 		}
 	}
 
-	// This function should be implemented by apps which have graphical interfaces
-	async initializeGraphicalInterfaceManager() {
+	// This function should be implemented and super'd by apps which have graphical interfaces
+	async initializeGraphicalInterfaceManager(viewControllerForMainGraphicalInterface = null) {
 		console.log('App initializeGraphicalInterfaceManager');
 
 		// Add the application menu bar on macOS
         if(this.onMacOs()) {
             this.interfaces.graphical.setMacOsApplicationMenu(this.createMacOsApplicationMenu());
+        }
+
+        // If we want to initialize the main graphical interface with a view controller
+        if(viewControllerForMainGraphicalInterface) {
+        	this.interfaces.graphical.initializeMainGraphicalInterface(viewControllerForMainGraphicalInterface);
         }
 	}
 

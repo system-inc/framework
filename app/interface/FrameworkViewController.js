@@ -53,6 +53,8 @@ class FrameworkViewController extends ViewController {
 	consoleViewController = null;
 
 	constructor() {
+		console.log('FrameworkViewController.constructor');
+
 		super();
 
 		// Create and configure the view

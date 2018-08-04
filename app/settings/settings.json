@@ -91,6 +91,12 @@
 				//show: false,
 				openDeveloperTools: true,
 			},
+			twoDisplays: {
+				display: 2,
+			},
+			threeDisplays: {
+				display: 3,
+			},
 			types: {
 				test: {
 					x: 'right',

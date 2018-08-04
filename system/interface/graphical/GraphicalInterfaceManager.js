@@ -6,6 +6,7 @@ import GraphicalInterface from 'framework/system/interface/graphical/GraphicalIn
 class GraphicalInterfaceManager extends EventEmitter {
 
 	graphicalInterfaces = [];
+	mainGraphicalInterface = null;
 	macOsApplicationMenu = null;
 
 	constructor() {
@@ -36,8 +37,12 @@ class GraphicalInterfaceManager extends EventEmitter {
 		//}.bind(this));
 	}
 
-	newGraphicalInterface() {
-		var graphicalInterface = this.graphicalInterfaces.append(new GraphicalInterface());
+	initializeMainGraphicalInterface(viewController) {
+		console.log('initializeMainGraphicalInterface', 'viewController', viewController);
+	}
+
+	newGraphicalInterface(viewController) {
+		var graphicalInterface = this.graphicalInterfaces.append(new GraphicalInterface(viewController));
 
 		return graphicalInterface;
 	}

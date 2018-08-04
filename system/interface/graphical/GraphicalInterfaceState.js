@@ -140,9 +140,9 @@ class GraphicalInterfaceState extends EventEmitter {
 		//console.log('operatingSystemTaskbarHeight', operatingSystemTaskbarHeight);
 
 		// Assume the taskbar is on the bottom on Windows
-		if(app.onWindows()) {
-			graphicalInterfaceState.position.relativeToAllDisplays.y -= operatingSystemTaskbarHeight;
-		}
+		//if(app.onWindows()) {
+			//graphicalInterfaceState.position.relativeToAllDisplays.y -= operatingSystemTaskbarHeight;
+		//}
 		// Assume the taskbar is on the top on macOS
 		// TODO: Need to test this:
 		//else if(app.onMacOs()) {
@@ -153,11 +153,18 @@ class GraphicalInterfaceState extends EventEmitter {
 		// Windows 10 Browser Window Bounds Calculating Incorrectly #4045
 		// TODO: https://github.com/atom/electron/issues/4045
 		// TODO: Also figure out where the Windows task is and how big it is and factor that in
+		//console.log('app.onWindows()', app.onWindows());
+		//console.log('Node.OperatingSystem.release()', Node.OperatingSystem.release());
 		if(app.onWindows() && Node.OperatingSystem.release().startsWith('10.')) {
+			//console.log('On Windows 10, manually adjusting graphicalInterfaceState');
 			graphicalInterfaceState.position.relativeToAllDisplays.x -= 6;
 			graphicalInterfaceState.dimensions.width += 12;
+			//console.log('graphicalInterfaceState.dimensions.height', graphicalInterfaceState.dimensions.height);
+			// TODO: This isn't working: https://github.com/electron/electron/issues/13932
 			graphicalInterfaceState.dimensions.height += 5;
 		}
+
+		//console.info('graphicalInterfaceState', graphicalInterfaceState);
 		
 		//graphicalInterfaceState.position.relativeToAllDisplays.calculateCoordinatesAndEdges();
 

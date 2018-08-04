@@ -15,7 +15,7 @@ class FrameworkApp extends App {
 
 		// Graphical interface command
 		if(this.interfaces.commandLine.command.subcommands.graphicalInterface) {
-			//this.log('this.interfaces.commandLine.command.subcommands.graphicalInterface');
+			//console.log('this.interfaces.commandLine.command.subcommands.graphicalInterface');
 			this.processCommandGraphicalInterface();
 		}
 		// Proctor command
@@ -74,22 +74,21 @@ class FrameworkApp extends App {
 	async processCommandGraphicalInterface() {
 		//console.log('processCommandGraphicalInterface');
 
-		// We must manually start Electron as it will not start automatically as FrameworkApp can be a command line interface or a graphical interface app
+		// If we aren't in an Electron context start Electron
 		if(!this.modules.electronModule.inElectronContext()) {
+			// We must manually start Electron as it will not start automatically as FrameworkApp can be a command line interface or a graphical interface app
 			this.modules.electronModule.startElectron();
+		}
+		// If we are in an Electron renderer process, initialize the graphical interface manager
+		else if(this.modules.electronModule.inElectronRendererProcess()) {
+			// Load the view controller
+			const FrameworkViewController = (await import('interface/FrameworkViewController.js')).default;
+
+			app.initializeGraphicalInterfaceManager(new FrameworkViewController());
 		}
 		else {
 			//app.info('In the Electron main process, do nothing here as the main process is just used to launch the first renderer process where the app really lives');
 		}
-	}
-
-	// If we have a graphical interface (ElectronModule will first start Electron for us and then create the first graphical interface, at which point this condition will pass)
-	async initializeGraphicalInterface() {
-		// Load the view controller
-		const FrameworkViewController = (await import('interface/FrameworkViewController.js')).default;
-
-		// Initialize the graphical interface with the view controller
-		this.interfaces.graphical.initialize(new FrameworkViewController());
 	}
 
 }
