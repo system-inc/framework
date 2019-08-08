@@ -6,6 +6,13 @@ class Assert extends Node.Assert {
 
 	static eventEmitter = new EventEmitter();
 
+	static fail(actual, expected, message, operator, startingStackFunction) {
+		//console.log('actual', actual, 'expected', expected, 'message', message, 'operator', operator, 'startingStackFunction', startingStackFunction);
+		var failMessage = message+' '+actual+' '+operator+' '+expected;
+
+		return Node.Assert.fail(failMessage);
+	}
+
 	static true(value, message) {
 		try {
 			if(!value) {

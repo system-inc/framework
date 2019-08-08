@@ -18,13 +18,29 @@ Array.prototype.sortObjectsByKeyValue = function(keyName, direction = 'ascending
 	// Ascending, smallest to largest (default)
 	if(direction == 'ascending') {
 		this.sort(function(a, b) {
-			return a[keyName] > b[keyName];
+			if(a[keyName] > b[keyName]) {
+				return 1;
+			}
+			else if(a[keyName] < b[keyName]) {
+				return -1;
+			}
+			else {
+				return 0;
+			}
 		});
 	}
 	// Descending, largest to smallest
 	else if(direction == 'descending') {
 		this.sort(function(a, b) {
-			return b[keyName] < a[keyName];
+			if(a[keyName] < b[keyName]) {
+				return 1;
+			}
+			else if(a[keyName] > b[keyName]) {
+				return -1;
+			}
+			else {
+				return 0;
+			}
 		});
 	}
 
