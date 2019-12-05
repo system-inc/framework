@@ -11,7 +11,7 @@ class TestGraphicalInterfaceApp extends App {
 	async initialize() {
 		await super.initialize(...arguments);
 
-		//console.info('Ready for command...');
+		console.info('Ready for command...');
 
 		// Tell the parent we are ready
 		this.interfaces.graphical.emit('testGraphicalInterfaceApp.ready');

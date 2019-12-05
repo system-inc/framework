@@ -58,7 +58,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 	initializeState() {
 		this.graphicalInterface.state = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(null, this.graphicalInterface.displays);
-		console.info('this.graphicalInterface.state', this.graphicalInterface.state);
+		//console.info('this.graphicalInterface.state', this.graphicalInterface.state);
 
 		// Store a reference to the graphical interface on the state
 		this.graphicalInterface.state.graphicalInterface = this.graphicalInterface;
@@ -195,20 +195,20 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			type = options.type;
 		}
 
-		// Get the state
-		var graphicalInterfaceState = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(type);
-		//app.log('graphicalInterfaceState', graphicalInterfaceState);
-
 		// Get the right reference for ElectronBrowserWindow based on whether or not we are in the Electron main process or in a renderer process
 		var ElectronBrowserWindow = null;
 		var parentIdentifier = null;
 
 		// Electron main process
 		if(app.modules.electronModule.inElectronMainProcess()) {
+			//console.log('inElectronMainProcess');
+			
 			ElectronBrowserWindow = app.modules.electronModule.electron.BrowserWindow;
 		}
 		// Electron renderer process
-		if(app.modules.electronModule.inElectronRendererProcess()) {
+		else if(app.modules.electronModule.inElectronRendererProcess()) {
+			//console.log('inElectronRendererProcess');
+
 			ElectronBrowserWindow = app.modules.electronModule.electron.remote.BrowserWindow;
 			parentIdentifier = app.interfaces.graphical.identifier;
 		}
@@ -224,9 +224,14 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		transpilerPath = transpilerPath.replace('\\', '\\\\');
 		directoryContainingFramework = directoryContainingFramework.replace('\\', '\\\\');
 
+		// The script string
 		var script = "require('"+transpilerPath+"').execute('"+path+"', __dirname, '"+directoryContainingFramework+"');";
 		//app.log('script', script);
+
 		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';
+
+		// Get the state
+		var graphicalInterfaceState = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(type);
 
 		//app.log('graphicalInterfaceState', graphicalInterfaceState);
 		//app.log('graphicalInterfaceState.dimensions.width', graphicalInterfaceState.dimensions.width);
@@ -248,7 +253,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
 			show: graphicalInterfaceState.show,
 			webPreferences: {
-				allowRunningInsecureContent: false,
+				webSecurity: false,
+				nodeIntegration: true, // Must have this on as it is off by default
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
 			},
 		});
@@ -258,12 +264,13 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 		// Load the string
 		//console.log('baseURLForDataURL', new Url(app.directory.toString()).toString());
-		electronBrowserWindow.loadURL(htmlString,
-			{
+		//console.log('htmlString', htmlString);
+		app.log('baseURLForDataURL broken, need to use base tag? https://github.com/electron/electron/issues/18472');
+
+		electronBrowserWindow.loadURL(htmlString, {
 				// String (optional) - Base url (with trailing path separator) for files to be loaded by the data url. This is needed only if the specified url is a data url and needs to load other files.
-				baseURLForDataURL: new Url(app.directory.toString()).toString(),
-			}
-		);
+				//baseURLForDataURL: new Url(app.directory.toString()).toString(),
+		});
 
 		// Create the graphical interface proxy to return
 		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);

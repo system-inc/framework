@@ -57,16 +57,18 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 	}
 
 	initialize() {
-		// Connect the graphical interface to the ViewController's view
+		//console.log('Mounting HtmlDocument to DOM');
+		this.htmlDocument.mountToDom();
+	}
+
+	updateViewController() {
 		if(this.graphicalInterface.viewController && this.graphicalInterface.viewController.view) {
+			//console.log('Adapted view', this.graphicalInterface.viewController.view.adapter.adaptedView);
 			this.htmlDocument.body.append(this.graphicalInterface.viewController.view.adapter.adaptedView);	
 		}
 		else {
-			console.warn('View does not exist for ViewController.');
+			throw new Error('View does not exist for ViewController.');
 		}
-		
-		//console.log('Mounting HtmlDocument to DOM');
-		this.htmlDocument.mountToDom();
 	}
 
 	createViewAdapter(view) {

@@ -66,7 +66,7 @@ class TestsActivityViewController extends ViewController {
         var summary = new TextView(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
         testsFormView.append(summary);
 
-        var status = new TextView('Hi');
+        var status = new TextView('');
         testsFormView.append(status);
         this.testGraphicalInterfaceProxyPool.on('pool.*', function(event) {
             status.setContent('Pool - Size: '+this.testGraphicalInterfaceProxyPool.size+' &bull; Available: '+this.testGraphicalInterfaceProxyPool.availableReusables.getKeys().length+' &bull; Busy: '+this.testGraphicalInterfaceProxyPool.busyReusables.getKeys().length+' &bull; Waiting: '+this.testGraphicalInterfaceProxyPool.waitingForAvailableReusableCount);

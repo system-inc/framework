@@ -9,7 +9,7 @@ class TestGraphicalInterfaceProxyPool extends Pool {
 	minimumSize = 0;
 	maximumSize = 6;
 	createReusablesAsNecessary = false;
-	timeInMillisecondsToWaitToRetireAvailableReusables = 1000 * .25;
+	timeInMillisecondsToWaitToRetireAvailableReusables = 1000 * 0.25;
 
 }
 

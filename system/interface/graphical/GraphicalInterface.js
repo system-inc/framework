@@ -1,13 +1,12 @@
 // Dependencies
 import Interface from 'framework/system/interface/Interface.js';
-import GraphicalInterfaceHistory from 'framework/system/interface/graphical/GraphicalInterfaceHistory.js';
 import GraphicalInterfaceManager from 'framework/system/interface/graphical/GraphicalInterfaceManager.js';
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
 
+// TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
+
 // Class
 class GraphicalInterface extends Interface {
-
-	settings = null;
 
 	children = [];
 
@@ -24,49 +23,39 @@ class GraphicalInterface extends Interface {
 
 	viewController = null;
 
-	display = null;
-	displays = {};
-
 	state = null;
 
-	history = new GraphicalInterfaceHistory();
-
-	// TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
-
-	constructor() {
-		// Interface is a PropagatingEventEmitter
-		super();
+	async initialize() {
+		// Handle child graphical interfaces
+		if(this.parent !== null) {
+			// Reference the existing GraphicalInterfaceManager
+			this.manager = this.parent.manager;
+		}
+		// If there is no parent
+		else {
+			// Create a graphical interface manager	
+			this.manager = new GraphicalInterfaceManager(this);
+		}
 
 		// Create the adapter for the graphical interface
-		this.adapter = this.createGraphicalInterfaceAdapter();
+		this.adapter = await this.createGraphicalInterfaceAdapter();
 
 		// Initialize the state
-		this.initializeState();
+		await this.initializeState();
 
 		// Handle display events
 		this.handleDisplayEvents();
-	}
-
-	async initialize(viewController) {
-		if(viewController !== undefined) {
-			if(!ViewController.is(viewController)) {
-				throw new Error('Must pass instance of ViewController as first argument to GraphicalInterface constructor.');
-			}
-
-			// Set the view controller
-			this.viewController = viewController;
-
-			// Initialize the view controller
-			await this.viewController.initialize();
-		}
 		
 		// Initialize the adapter
 		await this.adapter.initialize();
 	}
 
 	createViewAdapter(view) {
-		//app.info('createViewAdapter', this.adapter);
-		return this.adapter.createViewAdapter(view);
+		//console.info('createViewAdapter', this.adapter);
+
+		var viewAdapter = this.adapter.createViewAdapter(view);
+
+		return viewAdapter;
 	}
 
 	createGraphicalInterfaceAdapter() {
@@ -91,19 +80,21 @@ class GraphicalInterface extends Interface {
 		return graphicalInterfaceAdapter;
 	}
 
-	async newGraphicalInterface(options = {}) {
-		return await this.manager.newGraphicalInterface(options);
+	async initializeState() {
+		//console.log('GraphicalInterface initializeState');
+		await this.initializeDisplays();
+
+		var response = await this.adapter.initializeState();
+
+		return response;
 	}
 
-	initializeState() {
-		this.initializeDisplays();
-
-		return this.adapter.initializeState();
-	}
-
-	initializeDisplays() {
+	async initializeDisplays() {
 		//console.log('GraphicalInterface initializeDisplays');
-		return this.adapter.initializeDisplays();
+
+		var response = await this.adapter.initializeDisplays();
+		
+		return response;
 	}
 
 	handleDisplayEvents() {
@@ -138,6 +129,19 @@ class GraphicalInterface extends Interface {
 		}.bind(this));
 	}
 
+	async setViewController(viewController) {
+		//console.log('setViewController', viewController);
+
+		// Set the view controller
+		this.viewController = viewController;
+
+		// Initialize the view controller
+		await this.viewController.initialize();
+
+		// Have the adapter update the view controller
+		this.adapter.updateViewController();
+	}
+
 	toObject() {
 		var identifier = this.identifier;
 
@@ -158,71 +162,85 @@ class GraphicalInterface extends Interface {
 		};
 	}
 
+	applyDefaultState() {
+		//console.info('GraphicalInterface applyDefaultState');
+		return this.state.applyDefault();
+	}
+
+	// Bind addEventListener to the adapter
 	addEventListener(eventPattern, functionToBind, timesToRun) {
 		this.adapter.addEventListener(...arguments);
 
 		return super.addEventListener(...arguments);
 	}
 
+	// Bind removeEventListener to the adapter
 	removeEventListener() {
 		this.adapter.removeEventListener(...arguments);
 
 		return super.removeEventListener(...arguments);
 	}
 
+	// Bind removeAllEventListeners to the adapter
 	removeAllEventListeners() {
 		this.adapter.removeAllEventListeners(...arguments);
 
 		return super.removeAllEventListeners(...arguments);
 	}
 
+	// Bind getSelection to the adapter
 	getSelection() {
 		return this.adapter.getSelection(...arguments);
 	}
 
+	// Bind insertText to the adapter
 	insertText() {
 		return this.adapter.insertText(...arguments);
 	}
 
+	// Bind print to the adapter
 	print() {
 		return this.adapter.print(...arguments);
 	}
 
+	// Bind close to the adapter
 	close() {
 		return this.adapter.close(...arguments);
 	}
 
+	// Bind destroy to the adapter
 	destroy() {
 		return this.adapter.destroy(...arguments);	
 	}
 
+	// Bind show to the adapter
 	show() {
 		return this.adapter.show(...arguments);
 	}
 
+	// Bind openDeveloperTools to the adapter
 	openDeveloperTools() {
 		return this.adapter.openDeveloperTools(...arguments);
 	}
 
+	// Bind closeDeveloperTools to the adapter
 	closeDeveloperTools() {
 		return this.adapter.closeDeveloperTools(...arguments);
 	}
 
+	// Bind toggleDeveloperTools to the adapter
 	toggleDeveloperTools() {
 		return this.adapter.toggleDeveloperTools(...arguments);
 	}
 
+	// Bind reload to the adapter
 	reload() {
 		return this.adapter.reload(...arguments);
 	}
 
+	// Bind reset to the adapter
 	reset() {
 		return this.adapter.reset(...arguments);
-	}
-
-	applyDefaultState() {
-		//console.info('GraphicalInterface applyDefaultState');
-		return this.state.applyDefault();
 	}
 
 }

@@ -119,6 +119,7 @@
 		},
 		electron: {
 			automaticallyStartElectronIfNotInElectronContext: false, // We will manually start Electron
+			quitWhenAllWindowsClosedOnMacOs: false, // Be able to reactivate from the dock
 		},
 	},
 }

@@ -6,13 +6,20 @@ import GraphicalInterface from 'framework/system/interface/graphical/GraphicalIn
 class GraphicalInterfaceManager extends EventEmitter {
 
 	graphicalInterfaces = [];
-	mainGraphicalInterface = null;
 	macOsApplicationMenu = null;
 
-	constructor() {
-		console.log('GraphicalInterfaceManager constructor');
+	constructor(firstGraphicalInterface) {
 		super();
 
+		// Keep a reference to the first graphical interface
+		this.graphicalInterfaces.append(firstGraphicalInterface);
+
+		// Discover all of the other graphical interfaces
+		this.discoverGraphicalInterfaces();
+	}
+
+	discoverGraphicalInterfaces() {
+		console.info('Remove the following commented code block - When the graphical interface manager is constructed, it should broadcast to app session storage and see if there are any other windows and contstruct references to them');
 		//// Listen to all changes to local storage from other tabs and windows
 		//this.localStorage.on('localStorage.change', function(event) {
 		//	//console.info('localStorage.change event data', event.data.newValue);
@@ -37,14 +44,21 @@ class GraphicalInterfaceManager extends EventEmitter {
 		//}.bind(this));
 	}
 
-	initializeMainGraphicalInterface(viewController) {
-		console.log('initializeMainGraphicalInterface', 'viewController', viewController);
-	}
+	async newGraphicalInterface(options = {}) {
+		var graphicalInterface = new GraphicalInterface();
 
-	newGraphicalInterface(viewController) {
-		var graphicalInterface = this.graphicalInterfaces.append(new GraphicalInterface(viewController));
+		// Convenience for creating a new GraphicalInterface with a provided view controller
+		if(options.viewController) {
+			await graphicalInterface.initialize(options.viewController);
+		}
+
+		this.graphicalInterfaces.append(graphicalInterface);
 
 		return graphicalInterface;
+	}
+
+	getMacOsApplicationMenu() {
+		return this.macOsApplicationMenu;
 	}
 
 	setMacOsApplicationMenu(macOsApplicationMenu) {
@@ -53,9 +67,7 @@ class GraphicalInterfaceManager extends EventEmitter {
 		return this.macOsApplicationMenu;
 	}
 
-	getMacOsApplicationMenu() {
-		return this.macOsApplicationMenu;
-	}
+	// TODO: Remove these comments
 
 	//	appGraphicalInterface.on('graphicalInterface.reload', function() {
 	//		//console.log('reload');

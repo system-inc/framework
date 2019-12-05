@@ -35,8 +35,9 @@ class View extends PropagatingEventEmitter {
 		super();
 
 		// Create the adapter for the view
+		//app.log('app.interfaces.graphical', app.interfaces.graphical);
 		this.adapter = app.interfaces.graphical.createViewAdapter(this);
-		//console.log('Created adapter', this.adapter.webView.tag);
+		//console.log('Created adapter', this.adapter);
 
 		// Add the default classes
 		this.addDefaultClasses();

@@ -133,6 +133,16 @@ class StackTrace {
 		return this.toString().replace(...arguments);
 	}
 
+	// Allow calls to error.stack.startsWith (because error.stack is not a string)
+	startsWith() {
+		return this.toString().startsWith(...arguments);
+	}
+
+	// Allow calls to error.stack.slice (because error.stack is not a string)
+	slice() {
+		return this.toString().slice(...arguments);
+	}
+
 }
 
 // Export

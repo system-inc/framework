@@ -83,8 +83,7 @@ class FrameworkApp extends App {
 		else if(this.modules.electronModule.inElectronRendererProcess()) {
 			// Load the view controller
 			const FrameworkViewController = (await import('interface/FrameworkViewController.js')).default;
-
-			app.initializeGraphicalInterfaceManager(new FrameworkViewController());
+			app.interfaces.graphical.setViewController(new FrameworkViewController());
 		}
 		else {
 			//app.info('In the Electron main process, do nothing here as the main process is just used to launch the first renderer process where the app really lives');

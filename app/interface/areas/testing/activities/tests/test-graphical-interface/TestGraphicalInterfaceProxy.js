@@ -4,30 +4,30 @@ import Reusable from 'framework/system/pool/Reusable.js';
 // Class
 class TestGraphicalInterfaceProxy extends Reusable {
 
-	graphicalInterfaceProxy = null;
+	graphicalInterface = null;
 	testMethod = null;
 
 	resetWhenFinishedRunningTests = true;
 
 	async initialize() {
 		// Create a new graphical interface
-		//console.log('TestGraphicalInterfaceProxy - creating new graphical interface...');
-		this.graphicalInterfaceProxy = await app.interfaces.graphical.newGraphicalInterface({
-			path: Node.Path.join(app.directory, 'interface', 'areas', 'testing', 'activities', 'tests', 'test-graphical-interface', 'app', 'TestGraphicalInterfaceApp.js'),
-			type: 'test',
-		});
+		console.log('TestGraphicalInterfaceProxy - creating new graphical interface...');
+		this.graphicalInterface = await app.interfaces.graphical.manager.newGraphicalInterface();
+		//path: Node.Path.join(app.directory, 'interface', 'areas', 'testing', 'activities', 'tests', 'test-graphical-interface', 'app', 'TestGraphicalInterfaceApp.js'),
+		//type: 'test',
 
-		//this.graphicalInterfaceProxy.on('*', function(event) {
-		//	console.warn('this.graphicalInterfaceProxy.on event', event.identifier, event);
+
+		//this.graphicalInterface.on('*', function(event) {
+		//	console.warn('this.graphicalInterface.on event', event.identifier, event);
 		//});
 
 		// When the graphical interface is ready, release the reusable into the pool
-		this.graphicalInterfaceProxy.on('testGraphicalInterfaceApp.ready', function() {
+		this.graphicalInterface.on('testGraphicalInterfaceApp.ready', function() {
 			//console.log('child graphical interface proxy is ready, releasing into the pool!');
 			this.release();
 		}.bind(this));
 
-		this.graphicalInterfaceProxy.on('graphicalInterface.closed', function() {
+		this.graphicalInterface.on('graphicalInterface.closed', function() {
 			//console.log('child graphical interface proxy is closed, retiring');
 			this.retire();
 		}.bind(this));
@@ -38,12 +38,12 @@ class TestGraphicalInterfaceProxy extends Reusable {
 	}
 
 	addEventListener() {
-		return this.graphicalInterfaceProxy.addEventListener.apply(this.graphicalInterfaceProxy, arguments);
+		return this.graphicalInterface.addEventListener.apply(this.graphicalInterface, arguments);
 	}
 
 	reset() {
-		this.graphicalInterfaceProxy.removeEventListener('testGraphicalInterfaceApp.proctor.*');
-		this.graphicalInterfaceProxy.reload();
+		this.graphicalInterface.removeEventListener('testGraphicalInterfaceApp.proctor.*');
+		this.graphicalInterface.reload();
 		return this;
 	}
 
@@ -51,7 +51,7 @@ class TestGraphicalInterfaceProxy extends Reusable {
 		var retire = null;
 
 		// If the graphical interface is already closed
-		if(this.graphicalInterfaceProxy.closed) {
+		if(this.graphicalInterface.closed) {
 			retire = this.closed();
 		}
 		else {
@@ -62,7 +62,7 @@ class TestGraphicalInterfaceProxy extends Reusable {
 	}
 
 	close() {
-		return this.graphicalInterfaceProxy.close();
+		return this.graphicalInterface.close();
 	}
 
 	closed() {
@@ -75,7 +75,7 @@ class TestGraphicalInterfaceProxy extends Reusable {
 		this.testMethod = testMethod;
 
 		// Command the testGraphicalInterface to run the test method
-		this.graphicalInterfaceProxy.emit('testGraphicalInterfaceApp.runTestMethod', {
+		this.graphicalInterface.emit('testGraphicalInterfaceApp.runTestMethod', {
 			testClassFilePath: this.testMethod.class.file.path,
             testClassName: this.testMethod.class.name,
             testMethodName: this.testMethod.name,
@@ -83,11 +83,11 @@ class TestGraphicalInterfaceProxy extends Reusable {
 	}
 
 	openDeveloperTools() {
-		return this.graphicalInterfaceProxy.openDeveloperTools();
+		return this.graphicalInterface.openDeveloperTools();
 	}
 
 	show() {
-		return this.graphicalInterfaceProxy.show();
+		return this.graphicalInterface.show();
 	}
 	
 }

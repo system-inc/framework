@@ -10,7 +10,7 @@ class ElectronModule extends Module {
 
 	electron = null;
 
-	firstGraphicalInterfaceProxy = null;
+	firstGraphicalInterface = null;
 
 	version = new Version('0.1.0');
 
@@ -97,6 +97,11 @@ class ElectronModule extends Module {
 			}
 		}
 
+		// Just use electron as the default if we don't have anything
+		if(!pathToElectronExecutable) {
+			pathToElectronExecutable = 'electron';
+		}
+
 		return pathToElectronExecutable;
 	}
 
@@ -126,6 +131,8 @@ class ElectronModule extends Module {
 
 		// Run Electron as a child process, providing a .js file runs the file in the Electron main process, providing a .html file runs it in a renderer process
 		// We want to run in the main process to take advantage of shared standard streams, so we provide a .js file by default
+		//console.log('pathToElectronExecutable', pathToElectronExecutable);
+		//console.log('electronMainProcessArguments', electronMainProcessArguments);
 		var childProcessElectronMainProcess = Node.spawnChildProcess(pathToElectronExecutable, electronMainProcessArguments, {});
 
 		// The parent process I am in now exists to just to as a bridge for standard streams to the child process which is the Electron main process
@@ -160,22 +167,23 @@ class ElectronModule extends Module {
 	async configureElectronMainProcess() {
 		//app.log('ElectronModule', 'configureElectronMainProcess');
 
-		// Before app.exit() exits the application, quit the Electron app
-		app.on('app.beforeExit', function() {
-			app.log('app.beforeQuit');
-			this.electron.app.quit();
-		}.bind(this));
-		
 		// Enable Harmony for any Electron renderer processes we create, will eventually not need to do this
 		this.electron.app.commandLine.appendSwitch('--js-flags', '--harmony');
 
+		// Before app.exit() exits the application, quit the Electron app
+		app.on('app.beforeExit', function() {
+			//app.log('app.beforeQuit');
+
+			this.electron.app.quit();
+		}.bind(this));
+		
 		// When the app is activated from the macOS dock
 		this.electron.app.on('activate', function () {
 			//app.log('electron app activate');
 			//app.log('this', this);
 
-			if(this.firstGraphicalInterfaceProxy === null) {
-				//app.log('this.firstGraphicalInterfaceProxy proxy is null');
+			if(this.firstGraphicalInterface === null) {
+				//app.log('this.firstGraphicalInterface proxy is null');
 				this.newGraphicalInterface();
 			}
 		}.bind(this));
@@ -184,35 +192,69 @@ class ElectronModule extends Module {
 		this.electron.app.on('window-all-closed', function () {
 			//app.log('electron app window-all-closed');
 			//app.log('quitWhenAllWindowsClosedOnMacOs', this.settings.get('quitWhenAllWindowsClosedOnMacOs'));
+
 			if(!app.onMacOs() || this.settings.get('quitWhenAllWindowsClosedOnMacOs')) {
 				this.electron.app.quit()
 			}
 		}.bind(this));
 
-		// Create the first graphical interface
-		await this.newGraphicalInterface();
-		//app.log('this.firstGraphicalInterfaceProxy', this.firstGraphicalInterfaceProxy);
+		// Create the first graphical interface when the app is ready
+		if(this.electron.app.isReady()) {
+			//console.log('app is ready');
+			this.newGraphicalInterface();
+		}
+		// If the app is not ready, wait for the ready event
+		else {
+			//console.log('app is not ready');
+			this.electron.app.on('ready', function () {
+				this.newGraphicalInterface();
+			}.bind(this));
+		}
+	}
+
+	configureElectronRendererProcess() {
+		// Catch unhandled rejections in Electron renderer windows
+		window.addEventListener('unhandledrejection', function(error, promise) {
+			//console.log(this.electron.remote.getCurrentWindow());
+
+			// Maximize the window
+			//this.electron.remote.getCurrentWindow().maximize();
+
+			// Open the developer tools
+			this.electron.remote.getCurrentWindow().openDevTools();
+
+			// Log the error
+			console.error(error.reason.stack.toString());
+		}.bind(this));
+
+		// Update the command with the command from the Electron main process
+		var electronMainProcessArguments = this.electron.remote.getGlobal('process').argv;
+		//console.info('electronMainProcessArguments', electronMainProcessArguments);
+		app.interfaces.commandLine.initializeCommand(electronMainProcessArguments);
+		//console.info('app.interfaces.commandLine', app.interfaces.commandLine);
+
+		// Clear the default application menu and all of its shortcuts / accelerators
+        this.electron.remote.Menu.setApplicationMenu(null);
 	}
 
 	async newGraphicalInterface() {
-		console.error('refactor this for graphical interface manager');
-
-		//app.log('new graphical interface...');
+		var pathToElectronStartingJavaScriptFile = this.settings.get('pathToElectronStartingJavaScriptFile');
+		console.log('Creating a new Electron graphical interface', 'pathToElectronStartingJavaScriptFile', pathToElectronStartingJavaScriptFile);
 
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
-		this.firstGraphicalInterfaceProxy = await ElectronGraphicalInterfaceAdapter.newGraphicalInterface({
-			path: this.settings.get('pathToElectronStartingJavaScriptFile'),
+		this.firstGraphicalInterface = await ElectronGraphicalInterfaceAdapter.newGraphicalInterface({
+			path: pathToElectronStartingJavaScriptFile,
 		});
 
 		// When graphical interface is closed
-		this.firstGraphicalInterfaceProxy.on('graphicalInterface.closed', function () {
-			//app.log('this.firstGraphicalInterfaceProxy.on closed');
+		this.firstGraphicalInterface.on('graphicalInterface.closed', function () {
+			//app.log('this.firstGraphicalInterface.on closed');
 
 			// Dereference the object so it will be recreated on activation (when the user presses the icon on the macOS dock)
-			this.firstGraphicalInterfaceProxy = null;
+			this.firstGraphicalInterface = null;
 		}.bind(this));
 
-		return this.firstGraphicalInterfaceProxy;
+		return this.firstGraphicalInterface;
 	}
 
 	getCurrentWindow() {
@@ -226,7 +268,16 @@ class ElectronModule extends Module {
 	getDisplays() {
 		var displays = {};
 
-		var electronScreens = this.electron.screen.getAllDisplays();
+		// Get the displays
+		var electronScreens = null;
+		// Directly access the screen object if in the Electron main process
+		if(this.inElectronMainProcess()) {
+			electronScreens = this.electron.screen.getAllDisplays();	
+		}
+		// Use remote if not in the main process
+		else {
+			electronScreens = this.electron.remote.screen.getAllDisplays();	
+		}
 		//console.info('electronScreens', electronScreens);
 
 		electronScreens.each(function(electronDisplayIndex, electronDisplay) {
@@ -265,31 +316,6 @@ class ElectronModule extends Module {
 		return displays;
 	}
 
-	configureElectronRendererProcess() {
-		// Catch unhandled rejections in Electron renderer windows
-		window.addEventListener('unhandledrejection', function(error, promise) {
-			//console.log(this.electron.remote.getCurrentWindow());
-
-			// Maximize the window
-			this.electron.remote.getCurrentWindow().maximize();
-
-			// Open the developer tools
-			this.electron.remote.getCurrentWindow().openDevTools();
-
-			// Log the error
-			console.error(error.reason.stack.toString());
-		}.bind(this));
-
-		// Update the command with the command from the Electron main process
-		var electronMainProcessArguments = this.electron.remote.getGlobal('process').argv;
-		//console.info('electronMainProcessArguments', electronMainProcessArguments);
-		app.interfaces.commandLine.initializeCommand(electronMainProcessArguments);
-		//console.info('app.interfaces.commandLine', app.interfaces.commandLine);
-
-		// Clear the default application menu and all of its shortcuts / accelerators
-        this.electron.remote.Menu.setApplicationMenu(null);
-	}
-
 	inElectronContext() {
 		var inElectronContext = false;
 
@@ -319,176 +345,6 @@ class ElectronModule extends Module {
 
 		return inElectronRendererProcess;
 	}
-
-	//initialize: function*() {
-	//	// Do nothing if Electron is not active (e.g., we are running a Framework app that uses Electron but from the console so there is no Electron window)
-	//	if(!Node.Process.versions.electron) {
-	//		app.warn('Electron is disabled. No Electron application code will be executed.');
-	//		return;
-	//	}
-
-	//	// Set the application menu
-	//	this.electron.remote.Menu.setApplicationMenu(this.getDefaultMenu());
-
-	//	// Remove all screen event listeners to prevent duplicate listeners from being attached on browser window refresh
-	//	this.electron.remote.screen.removeAllListeners();
-
-	//	// Set the main browser window
-	//	this.mainBrowserWindow = this.electron.remote.getCurrentWindow();
-
-	//	// Set the app title
-	//	this.mainBrowserWindow.setTitle(app.title);
-
-	//	// Initialize the window state
-	//	this.initializeWindowState();
-
-	//	// Initialize the developer tools
-	//	this.initializeDeveloperTools();
-
-	//	// Testing
-	//	//var Proctor = Framework.require('framework/system/test/Proctor.js');
-	//	//var proctor = new Proctor('electron');
-	//	//proctor.getAndRunTests();
-	//	//return;
-
-	//	// Require and construct the application
-	//	var applicationClassFilePath = 'Application';
-
-	//	// Require and construct the main view controller
-	//	var viewControllerClassFilePath = 'view-controllers/'+app.modules.electronModule.settings.get('mainBrowserWindow.viewControllerName')+'.js';
-	//	var ViewControllerClass = app.require(viewControllerClassFilePath);
-	//	mainViewController = this.mainBrowserWindowViewController = new ViewControllerClass(this);
-		
-		
-	//	settings: new Settings({
-	//		'default1': 1,
-	//		'default2': 2,
-	//	});
-
-	//	var mysettinginlocalstorage = LocalStorage.get('thing');
-	//	this.settings.set('mysettinginlocalstorage', mysettinginlocalstorage);
-
-	//	this.quickAccess = this.setting.get('mysettinginlocalstorage');
-
-	//	// Add default shortcuts
-	//	this.registerShortcuts();
-
-	//	// Conditionally show the main browser window
-	//	var windowStateSettings = app.modules.electronModule.settings.get('mainBrowserWindow.windowState');
-	//	if(windowStateSettings.show) {
-	//		this.mainBrowserWindow.show();
-	//	}
-	//},
-
-	//initializeDeveloperTools: function() {
-	//	// Handle developer tools settings
-	//	var developerToolsSettings = app.modules.electronModule.settings.get('mainBrowserWindow.developerTools');
-
-	//	// Show the developer tools
-	//	if(developerToolsSettings.show) {
-	//		// Open the developer tools
-	//		this.mainBrowserWindow.openDevTools();	
-	//	}
-	//},
-
-	//registerShortcuts: function() {
-	//	// If the main browser window has an HtmlDocument
-	//	if(this.mainBrowserWindowViewController.viewContainer) {
-	//		var shortcutSettings = app.modules.electronModule.settings.get('shortcuts');
-
-	//		//console.log('This next line is for testing input.key events.');
-	//		//this.mainBrowserWindowViewController.viewContainer.on('input.*', function(event) {});
-	//		//return;
-			
-	//		if(shortcutSettings.closeFocusedWindow) {
-	//			this.mainBrowserWindowViewController.viewContainer.on('input.key.w.control', this.closeFocusedWindow.bind(this));
-	//		}
-	//		if(shortcutSettings.reloadFocusedWindow) {
-	//			this.mainBrowserWindowViewController.viewContainer.on('input.key.r.(control|command)', this.reloadFocusedWindow.bind(this));
-	//		}
-	//		if(shortcutSettings.toggleFullScreenOnFocusedWindow) {
-	//			this.mainBrowserWindowViewController.viewContainer.on('input.key.f11.(control|command)', this.toggleFullScreenOnFocusedWindow.bind(this));
-	//		}
-	//		if(shortcutSettings.toggleDeveloperToolsOnFocusedWindow) {
-	//			this.mainBrowserWindowViewController.viewContainer.on('input.key.i.alt.(control|command)', this.toggleDeveloperToolsOnFocusedWindow.bind(this));
-	//		}
-	//		if(shortcutSettings.applyDefaultWindowStateOnFocusedWindow) {
-	//			this.mainBrowserWindowViewController.viewContainer.on('input.key.d.(control|command)', this.applyDefaultWindowStateOnFocusedWindow.bind(this));
-	//		}
-	//	}
-	//},
-
-	//applyDefaultWindowStateOnFocusedWindow: function() {
-	//	//app.log(applyDefaultWindowStateOnFocusedWindow);
-
-	//	// TODO: For apps with multiple windows, need to make this work on the focused window
-	//	this.mainBrowserWindowState.applyDefault();
-	//},
-
-	//closeFocusedWindow: function() {
-	//	var focusedWindow = this.electron.remote.BrowserWindow.getFocusedWindow();
-	//	if(focusedWindow) {
-	//		focusedWindow.close();
-	//	}
-	//},
-
-	//exit() {
-	//	this.electron.remote.app.quit();
-	//}
-
-	//reloadFocusedWindow() {
-	//	var focusedWindow = this.electron.remote.BrowserWindow.getFocusedWindow();
-	//	if(focusedWindow) {
-	//		focusedWindow.reload();
-	//	}
-	//}
-
-	//toggleFullScreenOnFocusedWindow() {
-	//	var focusedWindow = this.electron.remote.BrowserWindow.getFocusedWindow();
-	//	if(focusedWindow) {
-	//		focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-	//	}
-	//}
-
-	//toggleDeveloperToolsOnFocusedWindow() {
-	//	var focusedWindow = this.electron.remote.BrowserWindow.getFocusedWindow();
-	//	if(focusedWindow) {
-	//		focusedWindow.toggleDevTools();
-	//	}
-	//}
-
-	//async copyUsingKeyboard() {
-	//	if(app.onWindows()) {
-	//		yield ElectronGraphicalInterfaceAdapter.keyDown('c', ['control']);
-	//	}
-	//	else {
-	//		// TODO: Does not work on macOS
-	//		console.info('this.copyUsingKeyboard does not work on macOS.');
-	//		yield this.keyDown('c', ['meta']);
-	//	}
-	//}
-
-	//async cutUsingKeyboard() {
-	//	if(app.onWindows()) {
-	//		yield this.keyDown('x', ['control']);
-	//	}
-	//	else {
-	//		// TODO: Does not work on macOS
-	//		console.info('this.cutUsingKeyboard does not work on macOS.');
-	//		yield this.keyDown('x', ['meta']);
-	//	}
-	//}
-
-	//async pasteUsingKeyboard() {
-	//	if(app.onWindows()) {
-	//		yield this.keyDown('v', ['control']);
-	//	}
-	//	else {
-	//		// TODO: Does not work on macOS
-	//		console.info('this.pasteUsingKeyboard does not work on macOS.');
-	//		yield this.keyDown('v', ['meta']);
-	//	}
-	//}
 
 	async sendInputEventKeyboard(type, key, modifiers) {
 		var webContents = this.electron.remote.getCurrentWindow().webContents;

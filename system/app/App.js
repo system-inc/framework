@@ -232,7 +232,7 @@ class App extends EventEmitter {
 		await this.requireAndInitializeAppModules();
 
 		// Configure the graphical interface
-		await this.configureGraphicalInterfaceManager();
+		await this.configureGraphicalInterface();
 
 		//this.log('Framework initialization complete.');
 		//this.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
@@ -320,38 +320,22 @@ class App extends EventEmitter {
 		}
 	}
 
-	async configureGraphicalInterfaceManager() {
-		//console.log('App configureGraphicalInterfaceManager');
+	// Graphical interfaces are treated as a decentralized system. This works well in web browsers, where each browser window is it's own instance of the app.
+	async configureGraphicalInterface() {
+		//app.log('App configureGraphicalInterface');
 
 		if(this.inGraphicalInterfaceContext()) {
-			//console.log('inGraphicalInterfaceContext', true);
+			//app.log('inGraphicalInterfaceContext', true);
 
-			// Create the graphical interface manager
-			var GraphicalInterfaceManager = (await import('framework/system/interface/graphical/GraphicalInterfaceManager.js')).default;
-			this.interfaces.graphical = new GraphicalInterfaceManager();
+			// Create the graphical interface
+
+			var GraphicalInterface = (await import('framework/system/interface/graphical/GraphicalInterface.js')).default;
+			this.interfaces.graphical = new GraphicalInterface();
+			await this.interfaces.graphical.initialize();
 		}
 		else {
-			//console.log('inGraphicalInterfaceContext', false);
+			//app.log('inGraphicalInterfaceContext', false);
 		}
-	}
-
-	// This function should be implemented and super'd by apps which have graphical interfaces
-	async initializeGraphicalInterfaceManager(viewControllerForMainGraphicalInterface = null) {
-		console.log('App initializeGraphicalInterfaceManager');
-
-		// Add the application menu bar on macOS
-        if(this.onMacOs()) {
-            this.interfaces.graphical.setMacOsApplicationMenu(this.createMacOsApplicationMenu());
-        }
-
-        // If we want to initialize the main graphical interface with a view controller
-        if(viewControllerForMainGraphicalInterface) {
-        	this.interfaces.graphical.initializeMainGraphicalInterface(viewControllerForMainGraphicalInterface);
-        }
-	}
-
-	createMacOsApplicationMenu() {
-		throw new Error('createMacOsApplicationMenu() must be implemented by a class extending the App class running on macOS.');
 	}
 
 	setPropertiesFromAppSettings() {
@@ -430,9 +414,10 @@ class App extends EventEmitter {
 	// Use app.log if you want to write the log data to the log file
 	// If you are using Developer Tools you will lose your line number until
 	// https://bugs.chromium.org/p/chromium/issues/detail?id=779244 is resolved
+	// So you'll need to use console.log to use the Chrome debuggers with proper line numbers
 	log() {
 		if(this.developerToolsAvailable()) {
-			console.log('developerToolsAvailable');
+			//console.log('developerToolsAvailable');
 			console.log(...arguments);
 		}
 
