@@ -11,24 +11,26 @@ class TestGraphicalInterfaceProxy extends Reusable {
 
 	async initialize() {
 		// Create a new graphical interface
-		console.log('TestGraphicalInterfaceProxy - creating new graphical interface...');
-		this.graphicalInterface = await app.interfaces.graphical.manager.newGraphicalInterface();
-		//path: Node.Path.join(app.directory, 'interface', 'areas', 'testing', 'activities', 'tests', 'test-graphical-interface', 'app', 'TestGraphicalInterfaceApp.js'),
-		//type: 'test',
+		//console.log('TestGraphicalInterfaceProxy - creating new graphical interface...');
+		this.graphicalInterface = await app.interfaces.graphical.manager.newGraphicalInterface('test');
+		console.log('this.graphicalInterface', this.graphicalInterface);
 
+		// Navigate to the starting path, directly access the Electron Module to do this, meaning these tests can only work in Electron (for now)
+		var path = Node.Path.join(app.directory, 'interface', 'areas', 'testing', 'activities', 'tests', 'test-graphical-interface', 'app', 'TestGraphicalInterfaceApp.js');
+		app.modules.electronModule.navigateBrowserWindowToPath(this.graphicalInterface.adapter.electronBrowserWindow, path);
 
-		//this.graphicalInterface.on('*', function(event) {
-		//	console.warn('this.graphicalInterface.on event', event.identifier, event);
-		//});
+		this.graphicalInterface.on('*', function(event) {
+			console.warn('this.graphicalInterface.on event', event.identifier, event);
+		});
 
 		// When the graphical interface is ready, release the reusable into the pool
 		this.graphicalInterface.on('testGraphicalInterfaceApp.ready', function() {
-			//console.log('child graphical interface proxy is ready, releasing into the pool!');
+			console.log('child graphical interface proxy is ready, releasing into the pool!');
 			this.release();
 		}.bind(this));
 
 		this.graphicalInterface.on('graphicalInterface.closed', function() {
-			//console.log('child graphical interface proxy is closed, retiring');
+			console.log('child graphical interface proxy is closed, retiring');
 			this.retire();
 		}.bind(this));
 	}

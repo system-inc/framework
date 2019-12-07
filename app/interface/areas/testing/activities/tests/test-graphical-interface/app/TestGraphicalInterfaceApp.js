@@ -14,6 +14,7 @@ class TestGraphicalInterfaceApp extends App {
 		console.info('Ready for command...');
 
 		// Tell the parent we are ready
+		console.error('Need to tell the parent we are ready');
 		this.interfaces.graphical.emit('testGraphicalInterfaceApp.ready');
 
 		//this.interfaces.graphical.on('*', function(event) {

@@ -8,6 +8,14 @@ class PropagatingEventEmitter extends EventEmitter {
 	eventClass = PropagatingEvent;
 	parent = null;
 
+	constructor(parent = null) {
+		super();
+
+		if(parent !== null) {
+			this.parent = parent;
+		}
+	}
+
 	async emit(eventIdentifier, data, eventOptions) {
 		//console.warn('PropagatingEventEmitter emit', eventIdentifier);
 

@@ -27,7 +27,8 @@ class GraphicalInterfaceState extends EventEmitter {
 		relativeToAllDisplays: new Position(),
 	};
 
-	//closed = null;
+	closed = null;
+	
 	//fullscreen = null;
 	//backgroundColor = null;
 	//useContentDimensions = null;

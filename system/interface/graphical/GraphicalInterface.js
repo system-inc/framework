@@ -8,15 +8,13 @@ import ViewController from 'framework/system/interface/graphical/view-controller
 // Class
 class GraphicalInterface extends Interface {
 
-	children = [];
-
 	manager = null; // GraphicalInterfaceManager
 
 	adapter = null;
 
 	identifier = null;
 
-	type = 'primary'; // primary, secondary, tertiary, etc.
+	type = 'primary'; // primary, secondary, tertiary, any custom type
 
 	title = null;
 	icon = null;
@@ -24,6 +22,17 @@ class GraphicalInterface extends Interface {
 	viewController = null;
 
 	state = null;
+
+	constructor(parent, type) {
+		super(parent);
+
+		// Set the type
+		if(type) {
+			this.type = type;
+		}
+
+		console.log('GraphicalInterface', 'type', this.type);
+	}
 
 	async initialize() {
 		// Handle child graphical interfaces
@@ -40,14 +49,8 @@ class GraphicalInterface extends Interface {
 		// Create the adapter for the graphical interface
 		this.adapter = await this.createGraphicalInterfaceAdapter();
 
-		// Initialize the state
-		await this.initializeState();
-
 		// Handle display events
 		this.handleDisplayEvents();
-		
-		// Initialize the adapter
-		await this.adapter.initialize();
 	}
 
 	createViewAdapter(view) {
@@ -58,7 +61,7 @@ class GraphicalInterface extends Interface {
 		return viewAdapter;
 	}
 
-	createGraphicalInterfaceAdapter() {
+	async createGraphicalInterfaceAdapter() {
 		var graphicalInterfaceAdapter = null;
 
 		// If in Electron
@@ -77,24 +80,21 @@ class GraphicalInterface extends Interface {
 			throw new Error('No suitable GraphicalInterfaceAdapter found.');
 		}
 
+		// If the graphical interface has a parent, then we need to create a new source graphical interface and not initialize into the existing one
+		var useExistingSourceGraphicalInterface = true;
+		if(this.parent !== null) {
+			//console.info('A parent graphical interface exists so we must create a new source graphical interface instead of initializing into the existing one.');
+			useExistingSourceGraphicalInterface = false;
+		}
+		else {
+			//console.info('A parent graphical interface does not exist so we will initialize into the existing source graphical interface.');
+		}
+
+		// Initialize the graphical interface adapter
+		//console.info('Initializing graphical interface adapter');
+		await graphicalInterfaceAdapter.initialize(useExistingSourceGraphicalInterface);
+
 		return graphicalInterfaceAdapter;
-	}
-
-	async initializeState() {
-		//console.log('GraphicalInterface initializeState');
-		await this.initializeDisplays();
-
-		var response = await this.adapter.initializeState();
-
-		return response;
-	}
-
-	async initializeDisplays() {
-		//console.log('GraphicalInterface initializeDisplays');
-
-		var response = await this.adapter.initializeDisplays();
-		
-		return response;
 	}
 
 	handleDisplayEvents() {
@@ -150,15 +150,9 @@ class GraphicalInterface extends Interface {
 			parentIdentifier = this.parent.identifier;
 		}
 
-		var childrenIdentifiers = [];
-		this.children.each(function(index, child) {
-			childrenIdentifiers.append(child.identifier);
-		});
-
 		return {
 			identifier: this.identifier,
 			parentIdentifier: parentIdentifier,
-			childrenIdentifiers: childrenIdentifiers,
 		};
 	}
 
@@ -169,6 +163,7 @@ class GraphicalInterface extends Interface {
 
 	// Bind addEventListener to the adapter
 	addEventListener(eventPattern, functionToBind, timesToRun) {
+		//console.log('add event listener!');
 		this.adapter.addEventListener(...arguments);
 
 		return super.addEventListener(...arguments);

@@ -9,9 +9,7 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 
 	htmlDocument = null;
 
-	constructor(graphicalInterface) {
-		super(graphicalInterface);
-
+	async initialize() {
 		//console.log('creating HtmlDocument');
 		this.htmlDocument = new HtmlDocument();
 
@@ -54,11 +52,11 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		// Set the dimensions
 		this.graphicalInterface.dimensions = this.htmlDocument.dimensions;
 		//console.info('this.htmlDocument.dimensions', this.htmlDocument.dimensions);
-	}
 
-	initialize() {
 		//console.log('Mounting HtmlDocument to DOM');
 		this.htmlDocument.mountToDom();
+
+		return this;
 	}
 
 	updateViewController() {
@@ -100,9 +98,14 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		// Filter out events which don't need to be added to the HtmlDocument
 		if(
 			eventPattern !== '*' && // Don't allow the listening to all events as these will be written to local storage
-			!eventPattern.startsWith('graphicalInterface.') // Don't bind graphical interface events to the document
+			!eventPattern.startsWith('graphicalInterface.') && // Don't bind graphical interface events to the document
+			!eventPattern.startsWith('display.') // Don't bind display events to the document
 		) {
-			this.htmlDocument.addEventListener(...arguments);
+			// Only listen to events if there is an HtmlDocument to listen to events
+			// The first graphical interface will have an HtmlDocument, any other graphical interfaces will not
+			if(this.htmlDocument) {
+				this.htmlDocument.addEventListener(...arguments);
+			}
 		}
 
 		return this;

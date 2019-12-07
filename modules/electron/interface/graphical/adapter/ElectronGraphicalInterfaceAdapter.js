@@ -1,31 +1,54 @@
 // Dependencies
 import WebGraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
-import GraphicalInterfaceProxy from 'framework/system/interface/graphical/GraphicalInterfaceProxy.js';
 import GraphicalInterfaceState from 'framework/system/interface/graphical/GraphicalInterfaceState.js';
-import Url from 'framework/system/web/Url.js';
 import LocalStorage from 'framework/system/interface/graphical/web/data/LocalStorage.js';
 
 // Class
 class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
+	path = null;
 	electronBrowserWindow = null;
 
-	constructor(graphicalInterface) {
-		super(graphicalInterface);
+	async initialize(useExistingSourceGraphicalInterface) {
+		// If using the source graphical interface (existing Electorn BrowserWindow)
+		if(useExistingSourceGraphicalInterface) {
+			// Initialize the WebGraphicalInterfaceAdapter
+			await super.initialize();
+			
+			// Reference the current window
+			this.electronBrowserWindow = app.modules.electronModule.getCurrentWindow();
+		}
+		else {
+			// Create a new Electron BrowserWindow
+			//console.info('Creating a new source graphical interface (Electron BrowserWindow)...');
+			this.electronBrowserWindow = await app.modules.electronModule.newBrowserWindow();
+		}
 
-		this.electronBrowserWindow = app.modules.electronModule.getCurrentWindow();
-
+		// Make the identifier of the graphical interface the ID of the source graphical interface (Electron BrowserWindow ID)
 		this.graphicalInterface.identifier = this.electronBrowserWindow.id;
 
-		this.listenToDisplayEvents();
+		// Initialize the state
+		await this.initializeState();
+
+		// Listen to Electron events
+		this.listenToElectronEvents();
+
+		return this;
 	}
 
-	listenToDisplayEvents() {
+	listenToElectronEvents() {
+		// Listen to closed events
+		this.electronBrowserWindow.on('closed', function(event) {
+			console.log('electronBrowserWindow closed', this.graphicalInterface);
+			this.graphicalInterface.state.closed = true;
+			this.graphicalInterface.emit('graphicalInterface.closed', event);
+		});
+
 		// Display added
 		app.modules.electronModule.electron.remote.screen.on('display-added', function(event, newDisplay) {
 			console.info('display-added', event);
 			this.graphicalInterface.emit('display.added', arguments);
-		}.bind(this));	
+		}.bind(this));
 
 		// Display removed
 		app.modules.electronModule.electron.remote.screen.on('display-removed', function(event, oldDisplay) {
@@ -40,32 +63,28 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		}.bind(this));
 	}
 
-	async newGraphicalInterface(options = {}) {
-		//console.log('async newGraphicalInterface', arguments);
+	async initializeState() {
+		await this.initializeDisplays();
 
-		var graphicalInterfaceProxy = await ElectronGraphicalInterfaceAdapter.newGraphicalInterface(options);
-
-		return graphicalInterfaceProxy;
-	}
-
-	initializeDisplays() {
-		//console.log('ElectronGraphicalInterfaceAdapter initializeDisplays');
-		this.graphicalInterface.displays = app.modules.electronModule.getDisplays();
-		this.graphicalInterface.display = this.graphicalInterface.displays[1];
-
-		return this.graphicalInterface.displays;
-	}
-
-	initializeState() {
 		this.graphicalInterface.state = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(null, this.graphicalInterface.displays);
 		//console.info('this.graphicalInterface.state', this.graphicalInterface.state);
 
 		// Store a reference to the graphical interface on the state
 		this.graphicalInterface.state.graphicalInterface = this.graphicalInterface;
 
-		ElectronGraphicalInterfaceAdapter.initializeState(this.electronBrowserWindow, this.graphicalInterface.state);
+		// TODO: The last argument here should be false because we don't need to initialize state because we already set the x, y, width, and height
+		// but for some reason there are issues with the height that are fixed when calling it afterwards
+		app.modules.electronModule.setBrowserWindowState(this.electronBrowserWindow, this.graphicalInterface.state, true);
 
 		return this.graphicalInterface.state;
+	}
+
+	async initializeDisplays() {
+		//console.log('ElectronGraphicalInterfaceAdapter initializeDisplays');
+		this.graphicalInterface.displays = app.modules.electronModule.getDisplays();
+		this.graphicalInterface.display = this.graphicalInterface.displays[1];
+
+		return this.graphicalInterface.displays;
 	}
 
 	close() {
@@ -181,116 +200,6 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		return await app.modules.electronModule.inputScroll(Number.round(viewPosition.relativeToGraphicalInterfaceViewport.x), Number.round(viewPosition.relativeToGraphicalInterfaceViewport.y),  deltaX, deltaY, wheelTicksX, wheelTicksY, accelerationRatioX, accelerationRatioY, hasPreciseScrollingDeltas, canScroll, modifiers);
 	}
 
-	static async newGraphicalInterface(options) {
-		//app.log('static async newGraphicalInterface');
-
-		var path = null;
-		if(options.path) {
-			path = options.path;
-		}
-		//app.log('newGraphicalInterface', 'path', path);
-
-		var type = null;
-		if(options.type) {
-			type = options.type;
-		}
-
-		// Get the right reference for ElectronBrowserWindow based on whether or not we are in the Electron main process or in a renderer process
-		var ElectronBrowserWindow = null;
-		var parentIdentifier = null;
-
-		// Electron main process
-		if(app.modules.electronModule.inElectronMainProcess()) {
-			//console.log('inElectronMainProcess');
-			
-			ElectronBrowserWindow = app.modules.electronModule.electron.BrowserWindow;
-		}
-		// Electron renderer process
-		else if(app.modules.electronModule.inElectronRendererProcess()) {
-			//console.log('inElectronRendererProcess');
-
-			ElectronBrowserWindow = app.modules.electronModule.electron.remote.BrowserWindow;
-			parentIdentifier = app.interfaces.graphical.identifier;
-		}
-
-		// Create a JavaScript string to start the app, this is the same as index.js in framework/app/index.js
-		var transpilerPath = Node.Path.join(app.framework.directory.toString(), 'globals', 'Transpiler.js');
-		//app.log('transpilerPath', transpilerPath);
-		var directoryContainingFramework = Node.Path.join(app.framework.directory.toString(), '../');
-		//app.log('directoryContainingFramework', directoryContainingFramework);
-
-		// Escape backslashes
-		path = path.replace('\\', '\\\\');
-		transpilerPath = transpilerPath.replace('\\', '\\\\');
-		directoryContainingFramework = directoryContainingFramework.replace('\\', '\\\\');
-
-		// The script string
-		var script = "require('"+transpilerPath+"').execute('"+path+"', __dirname, '"+directoryContainingFramework+"');";
-		//app.log('script', script);
-
-		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';
-
-		// Get the state
-		var graphicalInterfaceState = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(type);
-
-		//app.log('graphicalInterfaceState', graphicalInterfaceState);
-		//app.log('graphicalInterfaceState.dimensions.width', graphicalInterfaceState.dimensions.width);
-		//app.log('graphicalInterfaceState.dimensions.height', graphicalInterfaceState.dimensions.height);
-		//app.log('graphicalInterfaceState.position.relativeToAllDisplays.x', graphicalInterfaceState.position.relativeToAllDisplays.x);
-		//app.log('graphicalInterfaceState.position.relativeToAllDisplays.y', graphicalInterfaceState.position.relativeToAllDisplays.y);
-
-		// Disable security warnings in Electron
-		Node.Process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
-		
-		// Create the Electron browser window
-		var electronBrowserWindow = new ElectronBrowserWindow({
-			title: app.title,
-			//parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null, // this always makes the brower window show
-			width: graphicalInterfaceState.dimensions.width,
-			height: graphicalInterfaceState.dimensions.height,
-			x: graphicalInterfaceState.position.relativeToAllDisplays.x,
-			y: graphicalInterfaceState.position.relativeToAllDisplays.y,
-			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
-			show: graphicalInterfaceState.show,
-			webPreferences: {
-				webSecurity: false,
-				nodeIntegration: true, // Must have this on as it is off by default
-				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
-			},
-		});
-
-		// Remove the default menu
-		electronBrowserWindow.setMenu(null);
-
-		// Load the string
-		//console.log('baseURLForDataURL', new Url(app.directory.toString()).toString());
-		//console.log('htmlString', htmlString);
-		app.log('baseURLForDataURL broken, need to use base tag? https://github.com/electron/electron/issues/18472');
-
-		electronBrowserWindow.loadURL(htmlString, {
-				// String (optional) - Base url (with trailing path separator) for files to be loaded by the data url. This is needed only if the specified url is a data url and needs to load other files.
-				//baseURLForDataURL: new Url(app.directory.toString()).toString(),
-		});
-
-		// Create the graphical interface proxy to return
-		var graphicalInterfaceProxy = new GraphicalInterfaceProxy(electronBrowserWindow.id, parentIdentifier);
-
-		// Listen to closed events
-		electronBrowserWindow.on('closed', function(event) {
-			//app.log('electronBrowserWindow closed');
-
-			graphicalInterfaceProxy.closed = true;
-			graphicalInterfaceProxy.emit('graphicalInterface.closed', event);
-		});
-
-		// Initialize the state
-		// TODO: The last argument here should be false because we don't need to initialize state because we already set the x, y, width, and height
-		// but for some reason there are issues with the height that are fixed when calling it afterwards
-		ElectronGraphicalInterfaceAdapter.initializeState(electronBrowserWindow, graphicalInterfaceState, true);
-
-		return graphicalInterfaceProxy;
-	}
-
 	static constructGraphicalInterfaceState(type = null, displays = null) {
 		//console.log('constructGraphicalInterfaceState', type, displays);
 
@@ -308,28 +217,6 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		//console.info('graphicalInterfaceState', graphicalInterfaceState);
 
 		return graphicalInterfaceState;
-	}
-
-	static initializeState(electronBrowserWindow, graphicalInterfaceState, updateDimensionsAndPosition = true) {
-		if(graphicalInterfaceState.title) {
-			electronBrowserWindow.setTitle(graphicalInterfaceState.title);
-		}
-
-		if(updateDimensionsAndPosition) {
-			//console.info('updateDimensionsAndPosition', 'graphicalInterfaceState', graphicalInterfaceState);
-
-			electronBrowserWindow.setBounds({
-				x: Math.floor(graphicalInterfaceState.position.relativeToAllDisplays.x),
-				y: Math.floor(graphicalInterfaceState.position.relativeToAllDisplays.y),
-				width: Math.floor(graphicalInterfaceState.dimensions.width),
-				height: Math.floor(graphicalInterfaceState.dimensions.height),
-			});
-		}
-
-		// Open developer tools
-		if(graphicalInterfaceState.openDeveloperTools) {
-			electronBrowserWindow.openDevTools();
-		}
 	}
 
 }

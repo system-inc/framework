@@ -44,14 +44,14 @@ class GraphicalInterfaceManager extends EventEmitter {
 		//}.bind(this));
 	}
 
-	async newGraphicalInterface(options = {}) {
-		var graphicalInterface = new GraphicalInterface();
+	async newGraphicalInterface(type = null) {
+		//console.info('A new graphical interface is being created...');
 
-		// Convenience for creating a new GraphicalInterface with a provided view controller
-		if(options.viewController) {
-			await graphicalInterface.initialize(options.viewController);
-		}
+		// Create and initialize the graphical interface
+		var graphicalInterface = new GraphicalInterface(app.interfaces.graphical, type); // A reference to the parent must be passed
+		await graphicalInterface.initialize();
 
+		// Keep track of the graphical interface
 		this.graphicalInterfaces.append(graphicalInterface);
 
 		return graphicalInterface;

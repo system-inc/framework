@@ -4,19 +4,20 @@ import Version from 'framework/system/version/Version.js';
 import Directory from 'framework/system/file-system/Directory.js';
 import ElectronGraphicalInterfaceAdapter from 'framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js';
 import Display from 'framework/system/interface/graphical/Display.js';
+import Url from 'framework/system/web/Url.js';
 
 // Class
 class ElectronModule extends Module {
 
 	electron = null;
 
-	firstGraphicalInterface = null;
+	firstBrowserWindow = null;
 
 	version = new Version('0.1.0');
 
 	defaultSettings = {
 		automaticallyStartElectronIfNotInElectronContext: true,
-		pathToElectronStartingJavaScriptFile: Node.Path.join(app.directory, 'index.js'),
+		pathToStartingJavaScriptFile: Node.Path.join(app.directory, 'index.js'),
 		quitWhenAllWindowsClosedOnMacOs: false,
 	};
 
@@ -113,17 +114,17 @@ class ElectronModule extends Module {
 		//app.log('pathToElectronExecutable', pathToElectronExecutable);
 
 		// Get the path to the Electron starting JavaScript file from settings
-		var pathToElectronStartingJavaScriptFile = this.settings.get('pathToElectronStartingJavaScriptFile');
+		var pathToStartingJavaScriptFile = this.settings.get('pathToStartingJavaScriptFile');
 		
 		// Check for Windows Subsystem for Linux
-		if(pathToElectronStartingJavaScriptFile.startsWith('/mnt/c/')) {
-			pathToElectronStartingJavaScriptFile = pathToElectronStartingJavaScriptFile.replaceFirst('/mnt/c/', 'c:/');
+		if(pathToStartingJavaScriptFile.startsWith('/mnt/c/')) {
+			pathToStartingJavaScriptFile = pathToStartingJavaScriptFile.replaceFirst('/mnt/c/', 'c:/');
 		}
 
-		//app.log('pathToElectronStartingJavaScriptFile', pathToElectronStartingJavaScriptFile);
+		//app.log('pathToStartingJavaScriptFile', pathToStartingJavaScriptFile);
 
 		// Pass arguments from node to the Electron main process
-		var electronMainProcessArguments = ['--js-flags=--harmony', pathToElectronStartingJavaScriptFile];
+		var electronMainProcessArguments = ['--js-flags=--harmony', pathToStartingJavaScriptFile];
 		electronMainProcessArguments.merge(Node.Process.argv.slice(2));
 		//console.log('Node.Process.argv', Node.Process.argv);
 		//console.log('electronMainProcessArguments', electronMainProcessArguments);
@@ -182,9 +183,9 @@ class ElectronModule extends Module {
 			//app.log('electron app activate');
 			//app.log('this', this);
 
-			if(this.firstGraphicalInterface === null) {
-				//app.log('this.firstGraphicalInterface proxy is null');
-				this.newGraphicalInterface();
+			if(this.firstBrowserWindow === null) {
+				//app.log('this.firstBrowserWindow proxy is null');
+				this.createFirstBrowserWindow();
 			}
 		}.bind(this));
 
@@ -198,16 +199,16 @@ class ElectronModule extends Module {
 			}
 		}.bind(this));
 
-		// Create the first graphical interface when the app is ready
+		// Create the first browser window when the app is ready
 		if(this.electron.app.isReady()) {
 			//console.log('app is ready');
-			this.newGraphicalInterface();
+			this.createFirstBrowserWindow();
 		}
 		// If the app is not ready, wait for the ready event
 		else {
 			//console.log('app is not ready');
 			this.electron.app.on('ready', function () {
-				this.newGraphicalInterface();
+				this.createFirstBrowserWindow();
 			}.bind(this));
 		}
 	}
@@ -237,24 +238,162 @@ class ElectronModule extends Module {
         this.electron.remote.Menu.setApplicationMenu(null);
 	}
 
-	async newGraphicalInterface() {
-		var pathToElectronStartingJavaScriptFile = this.settings.get('pathToElectronStartingJavaScriptFile');
-		console.log('Creating a new Electron graphical interface', 'pathToElectronStartingJavaScriptFile', pathToElectronStartingJavaScriptFile);
+	async createFirstBrowserWindow() {
+		var pathToStartingJavaScriptFile = this.settings.get('pathToStartingJavaScriptFile');
+		console.log('Creating first Electron BrowserWindow', 'pathToStartingJavaScriptFile', pathToStartingJavaScriptFile);
 
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
-		this.firstGraphicalInterface = await ElectronGraphicalInterfaceAdapter.newGraphicalInterface({
-			path: pathToElectronStartingJavaScriptFile,
+		this.firstBrowserWindow = await this.newBrowserWindow({
+			path: pathToStartingJavaScriptFile,
 		});
 
 		// When graphical interface is closed
-		this.firstGraphicalInterface.on('graphicalInterface.closed', function () {
-			//app.log('this.firstGraphicalInterface.on closed');
+		this.firstBrowserWindow.on('closed', function(event) {
+			//console.log('this.firstBrowserWindow.on closed');
 
 			// Dereference the object so it will be recreated on activation (when the user presses the icon on the macOS dock)
-			this.firstGraphicalInterface = null;
+			this.firstBrowserWindow = null;
 		}.bind(this));
 
-		return this.firstGraphicalInterface;
+		return this.firstBrowserWindow;
+	}
+
+	async newBrowserWindow(options = {
+		path: null,
+		graphicalInterfaceState: null,
+	}) {
+		// Set the defaults for graphical interface state
+		if(!options.graphicalInterfaceState) {
+			options.graphicalInterfaceState = {
+				dimensions: {
+					width: null,
+					height: null,
+				},
+				position: {
+					relativeToAllDisplays: {
+						x: null,
+						y: null,
+					},
+				},
+				show: false, // Do not show the window at first, wait for it to be set to the right dimensions and position
+			};
+		};
+		console.log('newBrowserWindow', options);
+
+		// Get the right reference for ElectronBrowserWindow based on whether or not we are in the Electron main process or in a renderer process
+		var ElectronBrowserWindow = null;
+		var parentIdentifier = null;
+
+		// Electron main process
+		if(this.inElectronMainProcess()) {
+			//console.log('inElectronMainProcess');
+			
+			ElectronBrowserWindow = this.electron.BrowserWindow;
+		}
+		// Electron renderer process
+		else if(this.inElectronRendererProcess()) {
+			//console.log('inElectronRendererProcess');
+
+			ElectronBrowserWindow = this.electron.remote.BrowserWindow;
+			parentIdentifier = app.interfaces.graphical.identifier;
+		}
+
+		// Disable security warnings in Electron
+		Node.Process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+		
+		// Create the Electron browser window
+		var electronBrowserWindow = new ElectronBrowserWindow({
+			title: app.title,
+			//parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null, // this always makes the brower window show
+			width: options.graphicalInterfaceState.dimensions.width,
+			height: options.graphicalInterfaceState.dimensions.height,
+			x: options.graphicalInterfaceState.position.relativeToAllDisplays.x,
+			y: options.graphicalInterfaceState.position.relativeToAllDisplays.y,
+			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
+			show: options.graphicalInterfaceState.show,
+			webPreferences: {
+				webSecurity: false,
+				nodeIntegration: true, // Must have this on as it is off by default
+				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
+			},
+		});
+
+		// For testing - open dev tools every time
+		//electronBrowserWindow.webContents.openDevTools();
+
+		// Remove the default menu
+		electronBrowserWindow.setMenu(null);
+
+		// Optionally load the path
+		if(options.path !== null) {
+			this.navigateBrowserWindowToPath(electronBrowserWindow, options.path)
+		}
+
+		return electronBrowserWindow;
+	}
+
+	async navigateBrowserWindowToPath(electronBrowserWindow, path = null) {
+		if(path === null) {
+			throw new Error('Must specify a path to a JavaScript file to load.');
+		}
+
+		// Create a JavaScript string to start the app, this is the same as index.js in framework/app/index.js
+		var transpilerPath = Node.Path.join(app.framework.directory.toString(), 'globals', 'Transpiler.js');
+		//app.log('transpilerPath', transpilerPath);
+		var directoryContainingFramework = Node.Path.join(app.framework.directory.toString(), '../');
+		//app.log('directoryContainingFramework', directoryContainingFramework);
+
+		// Escape backslashes
+		path = path.replace('\\', '\\\\');
+		transpilerPath = transpilerPath.replace('\\', '\\\\');
+		directoryContainingFramework = directoryContainingFramework.replace('\\', '\\\\');
+
+		// The script string
+		var script = "require('"+transpilerPath+"').execute('"+path+"', __dirname, '"+directoryContainingFramework+"');";
+		//app.log('script', script);
+
+		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';
+		//console.log('htmlString', htmlString);
+		
+		var baseUrlForDataUrl = new Url(app.directory.toString()).toString();
+		//console.log('baseURLForDataURL', baseUrlForDataUrl);
+		console.warn('baseURLForDataURL broken and crashes Electron, need to use base tag to pass all tests? https://github.com/electron/electron/issues/18472');
+
+		// Load the string
+		electronBrowserWindow.loadURL(htmlString, {
+			// This currently crashes Electron
+			//baseURLForDataURL: baseUrlForDataUrl, // String (optional) - Base url (with trailing path separator) for files to be loaded by the data url. This is needed only if the specified url is a data url and needs to load other files.
+		});
+
+		return electronBrowserWindow;
+	}
+
+	setBrowserWindowState(electronBrowserWindow, graphicalInterfaceState, updateDimensionsAndPosition = true) {
+		if(graphicalInterfaceState.title) {
+			electronBrowserWindow.setTitle(graphicalInterfaceState.title);
+		}
+
+		if(updateDimensionsAndPosition) {
+			//console.info('updateDimensionsAndPosition', 'graphicalInterfaceState', graphicalInterfaceState);
+
+			electronBrowserWindow.setBounds({
+				x: Math.floor(graphicalInterfaceState.position.relativeToAllDisplays.x),
+				y: Math.floor(graphicalInterfaceState.position.relativeToAllDisplays.y),
+				width: Math.floor(graphicalInterfaceState.dimensions.width),
+				height: Math.floor(graphicalInterfaceState.dimensions.height),
+			});
+		}
+
+		// Show
+		//console.log('graphicalInterfaceState', 'graphicalInterfaceState);
+		if(graphicalInterfaceState.show) {
+			electronBrowserWindow.show();
+		}
+		
+		// Open developer tools
+		if(graphicalInterfaceState.openDeveloperTools) {
+			electronBrowserWindow.openDevTools();
+		}
 	}
 
 	getCurrentWindow() {
