@@ -6,20 +6,15 @@ import GraphicalInterface from 'framework/system/interface/graphical/GraphicalIn
 class GraphicalInterfaceManager extends EventEmitter {
 
 	graphicalInterfaces = [];
-	macOsApplicationMenu = null;
 
-	constructor(firstGraphicalInterface) {
-		super();
-
-		// Keep a reference to the first graphical interface
-		this.graphicalInterfaces.append(firstGraphicalInterface);
+	async initialize() {
+		// The manager uses app session datastore to configure the contextual graphical interface and discover other graphical interfaces
 
 		// Discover all of the other graphical interfaces
-		this.discoverGraphicalInterfaces();
-	}
+		console.error('Discover all of the other graphical interfaces');
 
-	discoverGraphicalInterfaces() {
-		console.info('Remove the following commented code block - When the graphical interface manager is constructed, it should broadcast to app session storage and see if there are any other windows and contstruct references to them');
+		// Listen to changes to graphical interfaces to stay in sync
+		console.error('Listen to changes to graphical interfaces to stay in sync');
 		//// Listen to all changes to local storage from other tabs and windows
 		//this.localStorage.on('localStorage.change', function(event) {
 		//	//console.info('localStorage.change event data', event.data.newValue);
@@ -44,27 +39,33 @@ class GraphicalInterfaceManager extends EventEmitter {
 		//}.bind(this));
 	}
 
-	async newGraphicalInterface(type = null) {
-		//console.info('A new graphical interface is being created...');
+	async registerGraphicalInterface(graphicalInterface) {
+		console.log('registerGraphicalInterface');
 
-		// Create and initialize the graphical interface
-		var graphicalInterface = new GraphicalInterface(app.interfaces.graphical, type); // A reference to the parent must be passed
-		await graphicalInterface.initialize();
+		console.error('Set parent, type, and identifier')
 
-		// Keep track of the graphical interface
-		this.graphicalInterfaces.append(graphicalInterface);
-
-		return graphicalInterface;
+		// Something like this
+		var registration = {
+			parentIdentifier: graphicalInterface.parent ? graphicalInterface.parent.identifier : null,
+			identifier: graphicalInterface.identifier,
+			type: graphicalInterface.type,
+		};
+		console.error('registration', registration);
 	}
 
-	getMacOsApplicationMenu() {
-		return this.macOsApplicationMenu;
-	}
+	async initializeGraphicalInterface(graphicalInterface) {
+		console.error('read the registration object from app session store');
 
-	setMacOsApplicationMenu(macOsApplicationMenu) {
-		this.macOsApplicationMenu = macOsApplicationMenu;
+		console.log('initializeGraphicalInterface');
 
-		return this.macOsApplicationMenu;
+		// Determine if the contextual graphical interface has a parent
+		console.error('Determine if the graphical interface has a parent');
+
+		// Determine if the contextual graphical interface has a type
+		console.error('Determine if the graphical interface has a type');
+
+		// Determine if the contextual graphical interface has an identifier
+		console.error('Determine if the graphical interface has an identifier');
 	}
 
 	// TODO: Remove these comments

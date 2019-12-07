@@ -218,8 +218,11 @@ class ElectronModule extends Module {
 		window.addEventListener('unhandledrejection', function(error, promise) {
 			//console.log(this.electron.remote.getCurrentWindow());
 
+			// Show the window
+			this.electron.remote.getCurrentWindow().show();
+
 			// Maximize the window
-			//this.electron.remote.getCurrentWindow().maximize();
+			this.electron.remote.getCurrentWindow().maximize();
 
 			// Open the developer tools
 			this.electron.remote.getCurrentWindow().openDevTools();
@@ -240,7 +243,7 @@ class ElectronModule extends Module {
 
 	async createFirstBrowserWindow() {
 		var pathToStartingJavaScriptFile = this.settings.get('pathToStartingJavaScriptFile');
-		console.log('Creating first Electron BrowserWindow', 'pathToStartingJavaScriptFile', pathToStartingJavaScriptFile);
+		//console.log('Creating first Electron BrowserWindow', 'pathToStartingJavaScriptFile', pathToStartingJavaScriptFile);
 
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
 		this.firstBrowserWindow = await this.newBrowserWindow({
@@ -258,13 +261,11 @@ class ElectronModule extends Module {
 		return this.firstBrowserWindow;
 	}
 
-	async newBrowserWindow(options = {
-		path: null,
-		graphicalInterfaceState: null,
-	}) {
-		// Set the defaults for graphical interface state
-		if(!options.graphicalInterfaceState) {
-			options.graphicalInterfaceState = {
+	async newBrowserWindow(options) {
+		// Set the default options
+		options = {
+			path: null,
+			graphicalInterfaceState: {
 				dimensions: {
 					width: null,
 					height: null,
@@ -276,26 +277,21 @@ class ElectronModule extends Module {
 					},
 				},
 				show: false, // Do not show the window at first, wait for it to be set to the right dimensions and position
-			};
-		};
-		console.log('newBrowserWindow', options);
+			},
+		}.merge(options);
+		//console.log('newBrowserWindow', 'options', options);
 
 		// Get the right reference for ElectronBrowserWindow based on whether or not we are in the Electron main process or in a renderer process
 		var ElectronBrowserWindow = null;
-		var parentIdentifier = null;
-
 		// Electron main process
 		if(this.inElectronMainProcess()) {
 			//console.log('inElectronMainProcess');
-			
 			ElectronBrowserWindow = this.electron.BrowserWindow;
 		}
 		// Electron renderer process
 		else if(this.inElectronRendererProcess()) {
 			//console.log('inElectronRendererProcess');
-
 			ElectronBrowserWindow = this.electron.remote.BrowserWindow;
-			parentIdentifier = app.interfaces.graphical.identifier;
 		}
 
 		// Disable security warnings in Electron
@@ -333,6 +329,8 @@ class ElectronModule extends Module {
 	}
 
 	async navigateBrowserWindowToPath(electronBrowserWindow, path = null) {
+		//console.log('Navigating to path...');
+
 		if(path === null) {
 			throw new Error('Must specify a path to a JavaScript file to load.');
 		}
@@ -355,14 +353,13 @@ class ElectronModule extends Module {
 		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';
 		//console.log('htmlString', htmlString);
 		
+		// Base url (with trailing path separator) for files to be loaded by the data url. This is needed only if the specified url is a data url and needs to load other files.
 		var baseUrlForDataUrl = new Url(app.directory.toString()).toString();
 		//console.log('baseURLForDataURL', baseUrlForDataUrl);
-		console.warn('baseURLForDataURL broken and crashes Electron, need to use base tag to pass all tests? https://github.com/electron/electron/issues/18472');
 
-		// Load the string
+		// Load the HTML string
 		electronBrowserWindow.loadURL(htmlString, {
-			// This currently crashes Electron
-			//baseURLForDataURL: baseUrlForDataUrl, // String (optional) - Base url (with trailing path separator) for files to be loaded by the data url. This is needed only if the specified url is a data url and needs to load other files.
+			//baseURLForDataURL: baseUrlForDataUrl, // TODO: baseURLForDataURL broken and crashes Electron, need to use base tag to pass all tests? https://github.com/electron/electron/issues/18472
 		});
 
 		return electronBrowserWindow;

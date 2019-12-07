@@ -12,7 +12,7 @@ class TestGraphicalInterfaceProxy extends Reusable {
 	async initialize() {
 		// Create a new graphical interface
 		//console.log('TestGraphicalInterfaceProxy - creating new graphical interface...');
-		this.graphicalInterface = await app.interfaces.graphical.manager.newGraphicalInterface('test');
+		this.graphicalInterface = await app.interfaces.graphical.newGraphicalInterface('test');
 		console.log('this.graphicalInterface', this.graphicalInterface);
 
 		// Navigate to the starting path, directly access the Electron Module to do this, meaning these tests can only work in Electron (for now)

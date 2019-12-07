@@ -8,30 +8,32 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 	path = null;
 	electronBrowserWindow = null;
+	macOsApplicationMenu = null;
 
-	async initialize(useExistingSourceGraphicalInterface) {
-		// If using the source graphical interface (existing Electorn BrowserWindow)
-		if(useExistingSourceGraphicalInterface) {
+	async initialize() {
+		// If initializing with the existing Electron BrowserWindow
+		if(this.graphicalInterface.usesPreexistingAdapter) {
+			//console.log('Using preexisting adapter');
+
 			// Initialize the WebGraphicalInterfaceAdapter
 			await super.initialize();
 			
 			// Reference the current window
 			this.electronBrowserWindow = app.modules.electronModule.getCurrentWindow();
+
+			// Listen to Electron events
+			this.listenToElectronEvents();
+
+			// Initialize the state
+			await this.initializeState();
 		}
+		// If not initializing into an existing interface
 		else {
 			// Create a new Electron BrowserWindow
+			// This new browser window will listen to Electron events and initialize it's own state
 			//console.info('Creating a new source graphical interface (Electron BrowserWindow)...');
 			this.electronBrowserWindow = await app.modules.electronModule.newBrowserWindow();
 		}
-
-		// Make the identifier of the graphical interface the ID of the source graphical interface (Electron BrowserWindow ID)
-		this.graphicalInterface.identifier = this.electronBrowserWindow.id;
-
-		// Initialize the state
-		await this.initializeState();
-
-		// Listen to Electron events
-		this.listenToElectronEvents();
 
 		return this;
 	}
@@ -66,7 +68,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	async initializeState() {
 		await this.initializeDisplays();
 
-		this.graphicalInterface.state = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(null, this.graphicalInterface.displays);
+		this.graphicalInterface.state = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(this.graphicalInterface.type, this.graphicalInterface.displays);
 		//console.info('this.graphicalInterface.state', this.graphicalInterface.state);
 
 		// Store a reference to the graphical interface on the state
@@ -142,6 +144,16 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			},
 			function() {} // Pass an empty callback - https://github.com/electron/electron/issues/6491
 		);
+	}
+
+	getMacOsApplicationMenu() {
+		return this.macOsApplicationMenu;
+	}
+
+	setMacOsApplicationMenu(macOsApplicationMenu) {
+		this.macOsApplicationMenu = macOsApplicationMenu;
+
+		return this.macOsApplicationMenu;
 	}
 
 	async inputKeyDown(key, modifiers = []) {

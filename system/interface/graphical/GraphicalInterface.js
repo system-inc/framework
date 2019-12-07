@@ -2,11 +2,15 @@
 import Interface from 'framework/system/interface/Interface.js';
 import GraphicalInterfaceManager from 'framework/system/interface/graphical/GraphicalInterfaceManager.js';
 import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
+import AppSessionDatastore from 'framework/system/app/datastore/AppSessionDatastore.js';
 
 // TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
 
 // Class
 class GraphicalInterface extends Interface {
+
+	// Whether or not the graphical interface was initialized into an 
+	usesPreexistingAdapter = null;
 
 	manager = null; // GraphicalInterfaceManager
 
@@ -14,7 +18,7 @@ class GraphicalInterface extends Interface {
 
 	identifier = null;
 
-	type = 'primary'; // primary, secondary, tertiary, any custom type
+	type = null; // primary, secondary, tertiary, any custom type - this can be used in settings.json to set state for the interface
 
 	title = null;
 	icon = null;
@@ -23,32 +27,47 @@ class GraphicalInterface extends Interface {
 
 	state = null;
 
-	constructor(parent, type) {
+	constructor(type, parent) {
 		super(parent);
+
+		// If the graphical interface has a parent, then we need to create a new graphical interface adapter and not initialize into the existing one
+		if(this.parent !== null) {
+			this.usesPreexistingAdapter = false;
+		}
+		else {
+			//console.info('A parent graphical interface does not exist so we will initialize into the existing source graphical interface.');
+			this.usesPreexistingAdapter = true;
+		}
 
 		// Set the type
 		if(type) {
 			this.type = type;
 		}
 
-		console.log('GraphicalInterface', 'type', this.type);
+		// Generate a unique identifier
+		this.identifier = String.uniqueIdentifier();
 	}
 
 	async initialize() {
-		// Handle child graphical interfaces
-		if(this.parent !== null) {
-			// Reference the existing GraphicalInterfaceManager
-			this.manager = this.parent.manager;
+		if(this.usesPreexistingAdapter) {
+			// Create a manager to handle orchestration between interfaces
+			this.manager = new GraphicalInterfaceManager();
+			await this.manager.initialize();
+
+			// Initialize the graphical interface
+			await this.manager.initializeGraphicalInterface(this);
 		}
-		// If there is no parent
 		else {
-			// Create a graphical interface manager	
-			this.manager = new GraphicalInterfaceManager(this);
+			// Reference the already created manager
+			this.manager = this.parent.manager;
+
+			// Register the graphical interface
+			await this.manager.registerGraphicalInterface(this);
 		}
 
 		// Create the adapter for the graphical interface
 		this.adapter = await this.createGraphicalInterfaceAdapter();
-
+		
 		// Handle display events
 		this.handleDisplayEvents();
 	}
@@ -80,19 +99,9 @@ class GraphicalInterface extends Interface {
 			throw new Error('No suitable GraphicalInterfaceAdapter found.');
 		}
 
-		// If the graphical interface has a parent, then we need to create a new source graphical interface and not initialize into the existing one
-		var useExistingSourceGraphicalInterface = true;
-		if(this.parent !== null) {
-			//console.info('A parent graphical interface exists so we must create a new source graphical interface instead of initializing into the existing one.');
-			useExistingSourceGraphicalInterface = false;
-		}
-		else {
-			//console.info('A parent graphical interface does not exist so we will initialize into the existing source graphical interface.');
-		}
-
 		// Initialize the graphical interface adapter
 		//console.info('Initializing graphical interface adapter');
-		await graphicalInterfaceAdapter.initialize(useExistingSourceGraphicalInterface);
+		await graphicalInterfaceAdapter.initialize();
 
 		return graphicalInterfaceAdapter;
 	}
@@ -140,6 +149,22 @@ class GraphicalInterface extends Interface {
 
 		// Have the adapter update the view controller
 		this.adapter.updateViewController();
+	}
+
+	async newGraphicalInterface(type = null, isChild = true) {
+		//console.info('A new graphical interface is being created...');
+
+		// For children graphical interfaces
+		var parent = null;
+		if(isChild) {
+			parent = this;
+		}
+
+		// Create and initialize the graphical interface
+		var graphicalInterface = new GraphicalInterface(type, parent);
+		await graphicalInterface.initialize();
+
+		return graphicalInterface;
 	}
 
 	toObject() {
