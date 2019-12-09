@@ -12,11 +12,7 @@ import Terminal from 'framework/system/interface/Terminal.js';
 
 import Version from 'framework/system/version/Version.js';
 
-// TODO - need to make this work - this is permanent data store for the app
-import AppDatastore from 'framework/system/app/datastore/AppDatastore.js';
-
-// TODO - need to make this work - this is session data store for the app, starts fresh on load
-import AppSessionDatastore from 'framework/system/app/datastore/AppSessionDatastore.js';
+import AppService from 'framework/system/app/service/AppService.js';
 
 /* Notes:
 
@@ -62,6 +58,8 @@ class App extends EventEmitter {
 	// TODO: Move this into standardStreams object standardStreams.fileLog
 	standardStreamsFileLog = null;
 
+	// AppService
+	service = null;
 	datastore = null;
 	sessionDatastore = null;
 
@@ -213,14 +211,14 @@ class App extends EventEmitter {
 		// Use app settings to configure the environment
 		this.configureEnvironment();
 
+		// Initialize the app service
+		await this.initializeService();
+
 		// Configure the standard streams
 		await this.configureStandardStreams();
 
 		// Configure the standard streams file log
 		await this.configureStandardStreamsFileLog();
-
-		// Initialize the app data stores
-		await this.initializeDatastores();
 
 		// Configure the command line interface
 		await this.configureCommandLineInterface();
@@ -253,89 +251,6 @@ class App extends EventEmitter {
 		//this.log('Integrating environment settings...')
 		await this.settings.integrateFromFile(Node.Path.join(this.directory, 'settings', 'environment.json'));
 		//this.log('app.settings', this.settings);
-	}
-
-	async configureStandardStreams() {
-		var StandardInputStream = (await import('framework/system/stream/StandardInputStream.js')).default;
-		var StandardOutputStream = (await import('framework/system/stream/StandardOutputStream.js')).default;
-		var StandardErrorStream = (await import('framework/system/stream/StandardErrorStream.js')).default;
-
-		app.standardStreams.input = new StandardInputStream();
-		app.standardStreams.output = new StandardOutputStream();
-		app.standardStreams.error = new StandardErrorStream();
-	}
-
-	async configureStandardStreamsFileLog() {
-		var standardStreamsFileLogSettings = this.settings.get('standardStreamsFileLog');
-		//this.log('standardStreamsFileLogSettings', standardStreamsFileLogSettings);
-
-		if(standardStreamsFileLogSettings.enabled) {
-			var FileLog = (await import('framework/system/log/FileLog.js')).default;
-
-			// Create the file log
-			this.standardStreamsFileLog = new FileLog(standardStreamsFileLogSettings.directory, standardStreamsFileLogSettings.nameWithoutExtension);
-
-			// Hook up standard output to the file log
-			this.standardStreams.output.on('stream.data', function(event) {
-				this.standardStreamsFileLog.log(event.data);
-			}.bind(this));
-
-			// Hook up standard error to the file log
-			this.standardStreams.error.on('stream.data', function(event) {
-				this.standardStreamsFileLog.error(event.data);
-			}.bind(this));
-
-			//this.log('Logging standard stream data to', this.standardStreamsFileLog.file.path+'.');
-		}
-	}
-
-	async initializeDatastores() {
-		this.datastore = new AppDatastore();
-		await this.datastore.initialize();
-
-		this.sessionDatastore = new AppSessionDatastore();
-		await this.sessionDatastore.initialize();
-	}
-
-	async configureCommandLineInterface() {
-		// TODO: Make this work with standard web pages, load an empty command
-
-		var commandLineInterfaceSettings = this.settings.get('interfaces.commandLine');
-		//this.info('commandLineInterfaceSettings', commandLineInterfaceSettings);
-
-		var CommandLineInterface = (await import('framework/system/interface/command-line/CommandLineInterface.js')).default;
-		this.interfaces.commandLine = new CommandLineInterface(commandLineInterfaceSettings);
-	}
-
-	async configureInteractiveCommandLineInterface() {
-		var interactiveCommandLineInterfaceSettings = this.settings.get('interfaces.interactiveCommandLine');
-		//this.info('interactiveCommandLineInterfaceSettings', interactiveCommandLineInterfaceSettings);
-
-		// Enable the interactive command line interface by default if in terminal context
-		if(interactiveCommandLineInterfaceSettings.enabled && this.inTerminalContext()) {
-			var InteractiveCommandLineInterface = (await import('framework/system/interface/interactive-command-line/InteractiveCommandLineInterface.js')).default;
-
-			//console.log('creating InteractiveCommandLineInterface');
-			this.interfaces.interactiveCommandLine = new InteractiveCommandLineInterface(interactiveCommandLineInterfaceSettings);
-		}
-	}
-
-	// Graphical interfaces are treated as a decentralized system. This works well in web browsers, where each browser window is it's own instance of the app.
-	async configureGraphicalInterface() {
-		//app.log('App configureGraphicalInterface');
-
-		if(this.inGraphicalInterfaceContext()) {
-			//app.log('inGraphicalInterfaceContext', true);
-
-			// Create the graphical interface
-
-			var GraphicalInterface = (await import('framework/system/interface/graphical/GraphicalInterface.js')).default;
-			this.interfaces.graphical = new GraphicalInterface();
-			await this.interfaces.graphical.initialize();
-		}
-		else {
-			//app.log('inGraphicalInterfaceContext', false);
-		}
 	}
 
 	setPropertiesFromAppSettings() {
@@ -383,6 +298,91 @@ class App extends EventEmitter {
 
 		// Development
 		if(this.environment == 'development') {
+		}
+	}
+
+	async initializeService() {
+		this.service = new AppService();
+		await this.service.initialize();
+
+		this.datastore = this.service.datastore;
+		this.sessionDatastore = this.service.sessionDatastore;
+
+		return this.service;
+	}
+
+	async configureStandardStreams() {
+		var StandardInputStream = (await import('framework/system/stream/StandardInputStream.js')).default;
+		var StandardOutputStream = (await import('framework/system/stream/StandardOutputStream.js')).default;
+		var StandardErrorStream = (await import('framework/system/stream/StandardErrorStream.js')).default;
+
+		app.standardStreams.input = new StandardInputStream();
+		app.standardStreams.output = new StandardOutputStream();
+		app.standardStreams.error = new StandardErrorStream();
+	}
+
+	async configureStandardStreamsFileLog() {
+		var standardStreamsFileLogSettings = this.settings.get('standardStreamsFileLog');
+		//this.log('standardStreamsFileLogSettings', standardStreamsFileLogSettings);
+
+		if(standardStreamsFileLogSettings.enabled) {
+			var FileLog = (await import('framework/system/log/FileLog.js')).default;
+
+			// Create the file log
+			this.standardStreamsFileLog = new FileLog(standardStreamsFileLogSettings.directory, standardStreamsFileLogSettings.nameWithoutExtension);
+
+			// Hook up standard output to the file log
+			this.standardStreams.output.on('stream.data', function(event) {
+				this.standardStreamsFileLog.log(event.data);
+			}.bind(this));
+
+			// Hook up standard error to the file log
+			this.standardStreams.error.on('stream.data', function(event) {
+				this.standardStreamsFileLog.error(event.data);
+			}.bind(this));
+
+			//this.log('Logging standard stream data to', this.standardStreamsFileLog.file.path+'.');
+		}
+	}
+
+	async configureCommandLineInterface() {
+		// TODO: Make this work with standard web pages, load an empty command
+
+		var commandLineInterfaceSettings = this.settings.get('interfaces.commandLine');
+		//this.info('commandLineInterfaceSettings', commandLineInterfaceSettings);
+
+		var CommandLineInterface = (await import('framework/system/interface/command-line/CommandLineInterface.js')).default;
+		this.interfaces.commandLine = new CommandLineInterface(commandLineInterfaceSettings);
+	}
+
+	async configureInteractiveCommandLineInterface() {
+		var interactiveCommandLineInterfaceSettings = this.settings.get('interfaces.interactiveCommandLine');
+		//this.info('interactiveCommandLineInterfaceSettings', interactiveCommandLineInterfaceSettings);
+
+		// Enable the interactive command line interface by default if in terminal context
+		if(interactiveCommandLineInterfaceSettings.enabled && this.inTerminalContext()) {
+			var InteractiveCommandLineInterface = (await import('framework/system/interface/interactive-command-line/InteractiveCommandLineInterface.js')).default;
+
+			//console.log('creating InteractiveCommandLineInterface');
+			this.interfaces.interactiveCommandLine = new InteractiveCommandLineInterface(interactiveCommandLineInterfaceSettings);
+		}
+	}
+
+	// Graphical interfaces are treated as a decentralized system. This works well in web browsers, where each browser window is it's own instance of the app.
+	async configureGraphicalInterface() {
+		//app.log('App configureGraphicalInterface');
+
+		if(this.inGraphicalInterfaceContext()) {
+			//app.log('inGraphicalInterfaceContext', true);
+
+			// Create the graphical interface
+
+			var GraphicalInterface = (await import('framework/system/interface/graphical/GraphicalInterface.js')).default;
+			this.interfaces.graphical = new GraphicalInterface();
+			await this.interfaces.graphical.initialize();
+		}
+		else {
+			//app.log('inGraphicalInterfaceContext', false);
 		}
 	}
 
@@ -563,6 +563,20 @@ class App extends EventEmitter {
 
 		// Initialize the modules for the App
 		await Module.initialize(modulesForApp);
+	}
+
+	inMainContext() {
+		console.error('Implement inMainContext');
+		var inMainContext = true;
+
+		return inMainContext;
+	}
+
+	inChildContext() {
+		console.error('Implement inChildContext');
+		var inChildContext = false;
+
+		return inChildContext;
 	}
 
 	inTerminalContext() {

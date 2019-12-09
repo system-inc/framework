@@ -51,7 +51,7 @@ class GraphicalInterfaceState extends EventEmitter {
 
 	applyDefault() {
 		//console.log('GraphicalInterfaceState applyDefault');
-		return this.graphicalInterface.initializeState();
+		return this.graphicalInterface.adapter.initializeState();
 	}
 
 	toObject() {

@@ -49,6 +49,7 @@ class Node {
 	static Http = require('http');
 	static Https = require('https');
 	static Module = require('module');
+	static Net = require('net');
 	static OperatingSystem = require('os');
 	static Path = Path;
 	static Process = process;

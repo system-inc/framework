@@ -172,7 +172,7 @@ class FileSystemObject {
         var watch = await FileSystemObject.watch(this.path, callback);
 		
         return watch;
-	}
+    }
 
     toString() {
         return this.path;

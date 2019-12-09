@@ -122,7 +122,13 @@ class File extends FileSystemObject {
 		var response = await File.write(this.descriptor, data);
 
         return response;
-	}
+    }
+
+    async delete() {
+        var response = await File.delete(this.path);
+
+        return response;
+    }
 
     async toReadStream(options) {
         if(!this.readStream) {
@@ -280,6 +286,20 @@ class File extends FileSystemObject {
             writeStream.on('error', function(error) {
                 app.error(error);
                 reject(error);
+            });
+        });
+    }
+
+    static delete(path) {
+        return new Promise(function(resolve, reject) {
+            Node.FileSystem.unlink(path, function(error) {
+                if(error) {
+                    reject(error);
+                }
+                else {
+                    //console.log('Deleted (unlinked)', path);
+                    resolve(true);
+                }
             });
         });
     }
