@@ -10,10 +10,15 @@ class DomainSocketServerTest extends Test {
     domainSocketFilePath = Node.Path.join(Node.OperatingSystem.tmpdir(), app.identifier+'-test-domain-socket-server.socket');
     domainSocketServer = null;
 
+    socketServerClient = null;
+
     async beforeEach() {
         // Create and initialize the server
         this.domainSocketServer = new DomainSocketServer(this.domainSocketFilePath);
         await this.domainSocketServer.initialize();
+
+        // Create the client
+        this.socketServerClient = new SocketServerClient(this.domainSocketServer.domainSocketFilePath);
     }
 
     async afterEach() {
@@ -21,51 +26,45 @@ class DomainSocketServerTest extends Test {
         await this.domainSocketServer.close();
     }
 
-    async testDomainSocketServer() {
-        var actual = null;
+    // async testDomainSocketServer() {
+    //     // Have the server listen for our request
+    //     this.domainSocketServer.on('request', function(event) {
+    //         //console.log('Server: data event', event);
+    //         var dataString = event.data.toString();
+    //         console.log('Server: dataString -', dataString);
+    //         if(dataString == 'Hello server!') {
+    //             event.emitter.send('Hello client!');
+    //         }
+    //     });
 
-        // Listen for data events
-        this.domainSocketServer.on('data', function(event) {
-            //console.log('Server: data event', event);
+    //     // Create the client
+    //     var socketServerClient = new SocketServerClient(this.domainSocketServer.domainSocketFilePath);
+    //     socketServerClient.on('data', function(event) {
+    //         var dataString = event.data.toString();
+    //         console.log('Client: dataString -', dataString);
+    //         actual = dataString;
+    //     }.bind(this));
 
-            var dataString = event.data.toString();
-            console.log('Server: dataString -', dataString);
+    //     // Have the client send the server a specific message
+    //     var response = await socketServerClient.sendRequest('Hello server!');
 
-            if(dataString == 'Hello server!') {
-                event.emitter.send('Hello client!');
-            }
-        });
+    //     // Have the server respond with a specific response
+    //     var actual = response.data;
+    //     var expected = 'Hello client!';
 
-        // Create the client
-        var socketServerClient = new SocketServerClient(this.domainSocketServer.domainSocketFilePath);
-        socketServerClient.on('data', function(event) {
-            var dataString = event.data.toString();
-            console.log('Client: dataString -', dataString);
-            actual = dataString;
-        }.bind(this));
+    //     // Make sure the server responded with the specific response
+    //     Assert.equal(actual, expected, 'Client can send a message to server and receive a response');
+    // }
+    
+    // async testLargeSend() {
+    //     var data = String.random(2^16);
+    //     console.log(data);
+    //     await Function.delay(1000);
+    //     this.socketServerClient.send(data);
+    //     await Function.delay(1000);
+    // }
 
-        // Have the client send the server a specific message
-        socketServerClient.send('Hello server!');
-
-        console.error('I need two types of packets, ones that are expecting a response and ones that dont');
-        socketServerClient.send(); // does not expect a response
-        await socketServerClient.sendRequest(); // expects a response within a timeout
-
-        // Have the server respond with a specific response
-        var expected = 'Hello client!';
-
-        // Make sure the server responded with the specific response
-        Assert.equal(actual, expected, 'Client can send a message to server and receive a response');
-
-        await Function.delay(100);
-	}
-
-        //await Function.delay(50);
-        // Spam a bunch of stuff for fun
-        // for(var i = 0; i < 10; i++) {
-        //     socketServerClient.send('writeFromClient'+i);
-        //     domainSocketServer.broadcast('writeFromServer'+i);
-        // }
+        
 
 }
 

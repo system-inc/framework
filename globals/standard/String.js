@@ -461,7 +461,7 @@ String.uniqueIdentifier = function(length = 16) {
 	return uniqueIdentifier;
 };
 
-String.makeString = function(value) {
+String.castToString = function(value) {
 	if(!String.is(value)) {
 		value = String(value);
 	}

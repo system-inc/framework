@@ -6,6 +6,7 @@ import SqliteDatabase from 'framework/system/database/sqlite/SqliteDatabase.js';
 // Class
 class SqliteDatabaseTest extends Test {
 
+	/* Commenting this out for now since it takes 5 seconds on average to run the first query
 	async testSqliteDatabase() {
 		var testSqliteDatabase = new SqliteDatabase();
 
@@ -31,6 +32,7 @@ class SqliteDatabaseTest extends Test {
 		//var buffer = new Buffer(data);
 		//fs.writeFileSync("filename.sqlite", buffer);
 	}
+	*/
 
 }
 
