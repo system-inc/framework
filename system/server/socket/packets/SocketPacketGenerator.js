@@ -12,7 +12,7 @@ class SocketPacketGenerator extends EventEmitter {
     currentIncomingPacketPayload = null;
     currentIncomingPacketPayloadSizeInBytes = null;
     currentIncomingPacketTrailer = null;
-    currentIncomingPacketTrailerSizeInBytes = 8;
+    currentIncomingPacketTrailerSizeInBytes = 4;
     
     dataToProcessSizeInBytes = 0;
     dataToProcess = [];
@@ -118,8 +118,8 @@ class SocketPacketGenerator extends EventEmitter {
     }
 
     emitPacket() {
-        if(!this.validateCurrentIncomingPacket()) {
-            throw new Error('The packet failed the crc32 check.');
+        if(!this.validCurrentIncomingPacket()) {
+            throw new Error('The packet failed the CRC-32 check.');
         }
 
         var socketPacket = new BasicSocketPacket(this.currentIncomingPacketPayload);
@@ -127,13 +127,8 @@ class SocketPacketGenerator extends EventEmitter {
         this.emit('packet', socketPacket);
     }
 
-    validateCurrentIncomingPacket() {
-        var valid = CyclicRedundancyCheck.checkCrc32(this.currentIncomingPacketPayload, this.currentIncomingPacketTrailer);
-        if(valid) {
-            console.log('Packet is valid!');
-        }
-
-        return valid;
+    validCurrentIncomingPacket() {
+        return CyclicRedundancyCheck.checkCrc32(this.currentIncomingPacketPayload, this.currentIncomingPacketTrailer);
     }
     
 }

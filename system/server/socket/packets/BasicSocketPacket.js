@@ -6,7 +6,7 @@ class BasicSocketPacket {
 
     header = null; // 4 bytes indicating the total length of the packet
     payload = null; // n bytes containing the payload
-    trailer = null; // 8 bytes containing the hexadecimal crc32 checksum of the payload
+    trailer = null; // 4 bytes containing the CRC-32 of the payload
 
     constructor(data) {
         console.error('after finishing this move abstract stuff to SocketPacketInterface');
@@ -22,13 +22,12 @@ class BasicSocketPacket {
     }
 
     createTrailer() {
-        var crc32Checksum = CyclicRedundancyCheck.getCrc32Checksum(this.payload);
-        this.trailer = Buffer.from(crc32Checksum);
+        this.trailer = CyclicRedundancyCheck.getCrc32AsBuffer(this.payload);
     }
 
     createHeader() {
         // Allocate two bytes to store the number of bytes in the packet
-        this.header = Buffer.allocUnsafe(4);
+        this.header = Buffer.alloc(4);
 
         // Calculate the total number of the bytes in the packet
         var numberOfBytesInPacket = (this.header.length + this.payload.length + this.trailer.length);

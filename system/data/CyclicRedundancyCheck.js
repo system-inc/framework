@@ -54,8 +54,7 @@ class CyclicRedundancyCheck {
     }
 
     static getCrc32AsUnsignedInteger(data, previousCrc32) {
-        var crc32AsBuffer = CyclicRedundancyCheck.getCrc32AsBuffer(data, previousCrc32);
-        var crc32UnsignedInteger = crc32AsBuffer.readUInt32BE();
+        var crc32UnsignedInteger = CyclicRedundancyCheck.getCrc32AsSignedInteger(data, previousCrc32) >>> 0;
 
         return crc32UnsignedInteger;
     }
@@ -80,11 +79,36 @@ class CyclicRedundancyCheck {
         return crc32AsBuffer;
     }
 
+    static castCrc32ToSignedInteger(crc32) {
+        var crc32AsSignedInteger = null;
+
+        // If it is a number
+        if(Number.is(crc32)) {
+            crc32AsSignedInteger = crc32
+        }
+        // If it is a buffer
+        else if(Buffer.is(crc32)) {
+            crc32AsSignedInteger = crc32.readInt32BE(0);
+        }
+        // If it is a string (assume hexadecimal)
+        else if(String.is(crc32)) {
+            crc32AsSignedInteger = Number.hexadecimalToInteger(crc32);
+        }
+
+        return crc32AsSignedInteger;
+    }
+
     static checkCrc32(data, crc32) {
         var passed = false;
 
-        if(CyclicRedundancyCheck.getCrc32AsBuffer(data) == CyclicRedundancyCheck.castCrc32ToBuffer(crc32)) {
+        var dataCrc32AsSignedInteger = CyclicRedundancyCheck.getCrc32AsSignedInteger(data);
+        var crc32AsSignedInteger = CyclicRedundancyCheck.castCrc32ToSignedInteger(crc32);
+
+        if(dataCrc32AsSignedInteger == crc32AsSignedInteger) {
             passed = true;
+        }
+        else {
+            //console.log('inputCrc32AsSignedInteger', dataCrc32AsSignedInteger, 'crc32AsSignedInteger', crc32AsSignedInteger);
         }
 
         return passed;

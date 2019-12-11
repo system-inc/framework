@@ -80,6 +80,18 @@ Number.addCommas = function(number = null) {
     return parts.join('.');
 };
 
+Number.hexadecimalToInteger = function(hexadecimal) {
+    if(hexadecimal.length % 2 != 0) {
+        hexadecimal = '0' + hexadecimal;
+    }
+    var integer = parseInt(hexadecimal, 16);
+    var maximumValue = Math.pow(2, hexadecimal.length / 2 * 8);
+    if(integer > maximumValue / 2 - 1) {
+        integer = integer - maximumValue
+    }
+    return integer;
+}
+
 Number.toMoney = function(number, precision = 2) {
 	number = Number.toFloat(number);
 

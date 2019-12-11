@@ -10,8 +10,8 @@ class CyclicRedundancyCheckTest extends Test {
         var actual = CyclicRedundancyCheck.getCrc32AsBuffer(Buffer.from('hey sup bros'));
         var expected = Buffer.from([0x47, 0xfa, 0x55, 0x70]);
 
-        console.log('actual', actual);
-        console.log('expected', expected);
+        //console.log('actual', actual);
+        //console.log('expected', expected);
 
         Assert.deepEqual(actual, expected, 'CRC-32 simple 1');
     }
@@ -101,6 +101,13 @@ class CyclicRedundancyCheckTest extends Test {
         Assert.throws(function() {
             CyclicRedundancyCheck.getCrc32AsBuffer({}); // {} is invalid input
 		}, 'CRC-32 throws on invalid input');
+    }
+
+    async testCastStringCrc32ToSignedInteger() {
+        // CRC-32 'kirkouimet' == hex 'dcda36f1' = signed integer -589678863
+        var actual = CyclicRedundancyCheck.castCrc32ToSignedInteger('dcda36f1');
+        var expected = -589678863;
+        Assert.equal(actual, expected, 'Casting strings to signed integer');
     }
 
 }
