@@ -1,8 +1,8 @@
 // Dependencies
 import Test from 'framework/system/test/Test.js';
 import Assert from 'framework/system/test/Assert.js';
-import DomainSocketServer from 'framework/system/server/socket/DomainSocketServer.js';
-import SocketServerClient from 'framework/system/server/socket/SocketServerClient.js';
+import DomainSocketServer from 'framework/system/server/socket/servers/DomainSocketServer.js';
+import SocketServerClient from 'framework/system/server/socket/clients/SocketServerClient.js';
 
 // Class
 class DomainSocketServerTest extends Test {

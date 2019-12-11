@@ -2,13 +2,15 @@
 import CyclicRedundancyCheck from 'framework/system/data/CyclicRedundancyCheck.js';
 
 // Class
-class SocketPacket {
+class BasicSocketPacket {
 
-    header = null; // 2 bytes indicating the total length of the packet
+    header = null; // 4 bytes indicating the total length of the packet
     payload = null; // n bytes containing the payload
     trailer = null; // 8 bytes containing the hexadecimal crc32 checksum of the payload
 
     constructor(data) {
+        console.error('after finishing this move abstract stuff to SocketPacketInterface');
+
         // Create the payload, trailer, and finally the header
         this.createPayload(data);
         this.createTrailer();
@@ -26,7 +28,7 @@ class SocketPacket {
 
     createHeader() {
         // Allocate two bytes to store the number of bytes in the packet
-        this.header = Buffer.allocUnsafe(2);
+        this.header = Buffer.allocUnsafe(4);
 
         // Calculate the total number of the bytes in the packet
         var numberOfBytesInPacket = (this.header.length + this.payload.length + this.trailer.length);
@@ -34,10 +36,6 @@ class SocketPacket {
 
         // Write the total number of bytes in the packet into the header bytes
         this.header.writeUInt16BE(numberOfBytesInPacket);
-    }
-
-    validate() {
-        return CyclicRedundancyCheck.checkCrc32(this.payload, this.trailer);
     }
 
     write(nodeSocket) {
@@ -50,4 +48,4 @@ class SocketPacket {
 }
 
 // Export
-export default SocketPacket;
+export default BasicSocketPacket;

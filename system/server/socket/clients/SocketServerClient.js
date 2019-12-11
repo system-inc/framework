@@ -1,7 +1,7 @@
 // Dependencies
 import EventEmitter from 'framework/system/event/EventEmitter.js';
-import SocketPacket from 'framework/system/server/socket/SocketPacket.js';
-import SocketPacketGenerator from 'framework/system/server/socket/SocketPacketGenerator.js';
+import BasicSocketPacket from 'framework/system/server/socket/packets/BasicSocketPacket.js';
+import SocketPacketGenerator from 'framework/system/server/socket/packets/SocketPacketGenerator.js';
 
 // Class
 class SocketServerClient extends EventEmitter {
@@ -41,7 +41,7 @@ class SocketServerClient extends EventEmitter {
 
     // When the node socket gets data
     onData(data) {
-        this.socketPacketGenerator.processData(data);
+        this.socketPacketGenerator.receiveDataToProcess(data);
     }
 
     // When the socket packet generator generates a packet
@@ -50,7 +50,7 @@ class SocketServerClient extends EventEmitter {
     }
 
     send(data) {
-        var socketPacket = new SocketPacket(data);
+        var socketPacket = new BasicSocketPacket(data);
         socketPacket.write(this.nodeSocket);
     }
 

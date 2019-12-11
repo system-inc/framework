@@ -1,5 +1,5 @@
 // Dependencies
-import SocketServerInterface from 'framework/system/server/socket/SocketServerInterface.js';
+import SocketServerInterface from 'framework/system/server/socket/servers/SocketServerInterface.js';
 import File from 'framework/system/file-system/File.js';
 
 // Class

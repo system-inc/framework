@@ -5,11 +5,6 @@
 class CyclicRedundancyCheck {
 
     static getCrc32Checksum(data) {
-        // Work with strings
-        if(!String.is(data)) {
-            data = data.toString();
-        }
-
         var crc32Checksum = ~0;
         for(var i = 0; i < data.length; i++) {
             crc32Checksum = (crc32Checksum >>> 8) ^ CyclicRedundancyCheck.crc32Table[(crc32Checksum ^ data.charCodeAt(i)) & 0xff];
@@ -19,12 +14,13 @@ class CyclicRedundancyCheck {
         return crc32Checksum.toString(16);
     }
 
-    static checkCrc32(data, checksum) {
-        // Work with strings
-        if(!String.is(data)) {
-            data = data.toString();
-        }
+    static getCrc32ChecksumSigned(data) {
+    }
 
+    static getCrc32ChecksumUnsigned(data) {
+    }
+
+    static checkCrc32(data, checksum) {
         var passed = false;
 
         if(CyclicRedundancyCheck.getCrc32Checksum(data) == checksum) {

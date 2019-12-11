@@ -1,6 +1,6 @@
 // Dependencies
 import Server from 'framework/system/server/Server.js';
-import SocketServerConnection from 'framework/system/server/socket/SocketServerConnection.js';
+import SocketServerConnection from 'framework/system/server/socket/servers/SocketServerConnection.js';
 
 // Class
 class SocketServerInterface extends Server {

@@ -1,6 +1,6 @@
 // Dependencies
 import AppServiceServerAdapterInterface from 'framework/system/app/service/server/adapters/AppServiceServerAdapterInterface.js';
-import DomainSocketServer from 'framework/system/server/socket/DomainSocketServer.js';
+import DomainSocketServer from 'framework/system/server/socket/servers/DomainSocketServer.js';
 
 // Class
 class AppServiceServerNativeAdapter extends AppServiceServerAdapterInterface {
