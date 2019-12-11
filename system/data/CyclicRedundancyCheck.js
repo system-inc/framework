@@ -4,26 +4,86 @@
 // Class
 class CyclicRedundancyCheck {
 
-    static getCrc32Checksum(data) {
-        var crc32Checksum = ~0;
-        for(var i = 0; i < data.length; i++) {
-            crc32Checksum = (crc32Checksum >>> 8) ^ CyclicRedundancyCheck.crc32Table[(crc32Checksum ^ data.charCodeAt(i)) & 0xff];
+    // The default is to return CRC-32s in hexadecimal
+    static getCrc32(data, previousCrc32) {
+        return CyclicRedundancyCheck.getCrc32AsHexadecimal(data, previousCrc32);
+    }
+
+    static getCrc32AsHexadecimal(data, previousCrc32) {
+        var crc32AsBuffer = CyclicRedundancyCheck.getCrc32AsBuffer(data, previousCrc32);
+        var crc32AsHexadecimal = crc32AsBuffer.toString('hex');
+
+        return crc32AsHexadecimal;
+    }
+
+    static getCrc32AsBuffer(data, previousCrc32) {
+        var crc32AsSignedInteger = CyclicRedundancyCheck.getCrc32AsSignedInteger(data, previousCrc32);
+        var crc32AsBuffer = CyclicRedundancyCheck.castCrc32ToBuffer(crc32AsSignedInteger);
+
+        return crc32AsBuffer;
+    }
+
+    static getCrc32AsSignedInteger(data, previousCrc32) {
+        // Work with buffers
+        var dataAsBuffer = Buffer.cast(data);
+
+        // Start out with -1
+        var crc32AsInteger = -1;
+        
+        // If we are appending to a previously processed CRC-32
+        if(previousCrc32 !== undefined) {
+            // Convert the previous CRC-32 into a buffer if it isn't one
+            if(!Buffer.is(previousCrc32)) {
+                previousCrc32 = CyclicRedundancyCheck.castCrc32ToBuffer(previousCrc32);
+            }
+
+            // Finally, use an unsigned integers
+            var previousCrc32AsUnsignedInteger = previousCrc32.readUInt32BE(0);
+
+            // Append the previous CRC-32
+            crc32AsInteger = ~~previousCrc32AsUnsignedInteger ^ -1;
         }
-        crc32Checksum = crc32Checksum ^ -1;
+        
+        // Calculate the CRC-32       
+        for(var i = 0; i < dataAsBuffer.length; i++) {
+            crc32AsInteger = CyclicRedundancyCheck.crc32Table[(crc32AsInteger ^ dataAsBuffer[i]) & 0xff] ^ (crc32AsInteger >>> 8);
+        }
+        crc32AsInteger = crc32AsInteger ^ -1;
 
-        return crc32Checksum.toString(16);
+        return crc32AsInteger;
     }
 
-    static getCrc32ChecksumSigned(data) {
+    static getCrc32AsUnsignedInteger(data, previousCrc32) {
+        var crc32AsBuffer = CyclicRedundancyCheck.getCrc32AsBuffer(data, previousCrc32);
+        var crc32UnsignedInteger = crc32AsBuffer.readUInt32BE();
+
+        return crc32UnsignedInteger;
     }
 
-    static getCrc32ChecksumUnsigned(data) {
+    static castCrc32ToBuffer(crc32) {
+        var crc32AsBuffer = null;
+
+        // If it already is a buffer
+        if(Buffer.is(crc32)) {
+            crc32AsBuffer = crc32;
+        }
+        // If it is a number
+        else if(Number.is(crc32)) {
+            crc32AsBuffer = Buffer.alloc(4);
+            crc32AsBuffer.writeInt32BE(crc32);
+        }
+        // If it is a string
+        else if(String.is(crc32)) {
+            crc32AsBuffer = Buffer.from(crc32, 'hex');
+        }
+
+        return crc32AsBuffer;
     }
 
-    static checkCrc32(data, checksum) {
+    static checkCrc32(data, crc32) {
         var passed = false;
 
-        if(CyclicRedundancyCheck.getCrc32Checksum(data) == checksum) {
+        if(CyclicRedundancyCheck.getCrc32AsBuffer(data) == CyclicRedundancyCheck.castCrc32ToBuffer(crc32)) {
             passed = true;
         }
 
