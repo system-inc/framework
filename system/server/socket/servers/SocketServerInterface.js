@@ -65,8 +65,9 @@ class SocketServerInterface extends Server {
         //console.log('this.connections', this.connections);
     }
 
+    // Triggered any time a packet is received from any connection
     onConnectionData(event) {
-        this.emit('data', event.data)
+        this.emit('data', event); // Emit the event which has references to everything
     }
 
     removeConnection(identifier) {

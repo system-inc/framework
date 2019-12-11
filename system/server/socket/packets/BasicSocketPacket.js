@@ -4,21 +4,30 @@ import CyclicRedundancyCheck from 'framework/system/data/CyclicRedundancyCheck.j
 // Class
 class BasicSocketPacket {
 
-    header = null; // 4 bytes indicating the total length of the packet
-    payload = null; // n bytes containing the payload
-    trailer = null; // 4 bytes containing the CRC-32 of the payload
+    header = null; // 4 byte buffer indicating the total length of the packet
+    payload = null; // n byte buffer containing the payload
+    trailer = null; // 4 byte buffer containing the CRC-32 of the payload
 
-    constructor(data) {
-        console.error('after finishing this move abstract stuff to SocketPacketInterface');
-
-        // Create the payload, trailer, and finally the header
-        this.createPayload(data);
-        this.createTrailer();
-        this.createHeader();
+    constructor(header, payload, trailer) {
+        if(header !== undefined) {
+            this.header = header;
+        }
+        if(payload !== undefined) {
+            this.payload = payload;
+        }
+        if(trailer !== undefined) {
+            this.trailer = trailer;
+        }
     }
 
     createPayload(data) {
-        this.payload = Buffer.from(data);
+        // Work with buffers
+        if(Buffer.is(data)) {
+            this.payload = data;
+        }
+        else {
+            this.payload = Buffer.from(data);
+        }
     }
 
     createTrailer() {
@@ -42,6 +51,17 @@ class BasicSocketPacket {
         nodeSocket.write(this.header);
         nodeSocket.write(this.payload);
         nodeSocket.write(this.trailer);
+    }
+
+    static constructFromData(data) {
+        var basicSocketPacket = new BasicSocketPacket();
+
+        // Create the payload, trailer, and finally the header
+        basicSocketPacket.createPayload(data);
+        basicSocketPacket.createTrailer();
+        basicSocketPacket.createHeader();
+
+        return basicSocketPacket;
     }
     
 }

@@ -50,7 +50,7 @@ class SocketServerClient extends EventEmitter {
     }
 
     send(data) {
-        var socketPacket = new BasicSocketPacket(data);
+        var socketPacket = BasicSocketPacket.constructFromData(data);
         socketPacket.write(this.nodeSocket);
     }
 

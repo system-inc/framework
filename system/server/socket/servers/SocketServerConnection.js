@@ -19,6 +19,7 @@ class SocketServerConnection extends EventEmitter {
         this.nodeSocket = nodeSocket;
         this.identifier = String.uniqueIdentifier();
 
+        // Listen for packets
         this.socketPacketGenerator.on('packet', this.onPacket.bind(this));
 
         this.nodeSocket.on('data', this.onData.bind(this));
@@ -27,7 +28,7 @@ class SocketServerConnection extends EventEmitter {
 
     // Send a packet
     send(data) {
-        var socketPacket = new BasicSocketPacket(data);
+        var socketPacket = BasicSocketPacket.constructFromData(data);
         socketPacket.write(this.nodeSocket);
     }
 
@@ -41,7 +42,6 @@ class SocketServerConnection extends EventEmitter {
     // When the socket packet generator generates a packet
     onPacket(event) {
         //console.log('Got a packet event from the socket packet generator', event);
-        
         this.emit('data', event.data.payload);
     }
 
