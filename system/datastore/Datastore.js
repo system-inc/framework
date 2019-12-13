@@ -1,5 +1,5 @@
 // Dependencies
-import DatastoreInterface from 'framework/system/data/datastore/DatastoreInterface.js';
+import DatastoreInterface from 'framework/system/datastore/DatastoreInterface.js';
 
 // Class
 class Datastore extends DatastoreInterface {

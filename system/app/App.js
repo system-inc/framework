@@ -12,8 +12,6 @@ import Terminal from 'framework/system/interface/Terminal.js';
 
 import Version from 'framework/system/version/Version.js';
 
-import AppService from 'framework/system/app/service/AppService.js';
-
 /* Notes:
 
 Apps can run in a variety of contexts
@@ -58,8 +56,7 @@ class App extends EventEmitter {
 	// TODO: Move this into standardStreams object standardStreams.fileLog
 	standardStreamsFileLog = null;
 
-	// AppService
-	service = null;
+	// Datastore
 	datastore = null;
 	sessionDatastore = null;
 
@@ -211,8 +208,8 @@ class App extends EventEmitter {
 		// Use app settings to configure the environment
 		this.configureEnvironment();
 
-		// Initialize the app service
-		await this.initializeService();
+		// Initialize the app process
+		await this.intializeProcess();
 
 		// Configure the standard streams
 		await this.configureStandardStreams();
@@ -301,14 +298,44 @@ class App extends EventEmitter {
 		}
 	}
 
-	async initializeService() {
-		this.service = new AppService();
-		await this.service.initialize();
+	async intializeProcess() {
+		console.log('intializeProcess - Uncomment when ready');
 
-		this.datastore = this.service.datastore;
-		this.sessionDatastore = this.service.sessionDatastore;
+		if(this.inMainContext()) {
+			//await this.initializeMainContext();
+		}
+		else {
+			//await this.initializeChildContext();
+		}
+	}
 
-		return this.service;
+	async initializeMainContext() {
+		console.log('In main context!');
+
+		var Datastore = (await import('framework/system/datastore/Datastore.js')).default;
+		var DatastoreServer = (await import('framework/system/datastore/server/DatastoreServer.js')).default;
+
+		// Setup app.datastore server
+		this.datastore = new DatastoreServer(new Datastore());
+		await this.datastore.initialize();
+
+		// Setup app.sessionDatastore server
+		this.sessionDatastore = new DatastoreServer(new Datastore());
+		await this.sessionDatastore.initialize();
+	}
+
+	async initializeChildContext() {
+		console.log('In child context!');
+
+		var DatastoreClient = (await import('framework/system/datastore/server/DatastoreClient.js')).default;
+
+		// Setup app.datastore client
+		this.datastore = new DatastoreClient();
+		await this.datastore.initialize();
+
+		// Setup app.sessionDatastore client
+		this.sessionDatastore = new DatastoreClient();
+		await this.sessionDatastore.initialize();
 	}
 
 	async configureStandardStreams() {

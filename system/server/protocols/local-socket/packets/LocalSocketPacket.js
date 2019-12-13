@@ -2,7 +2,7 @@
 import CyclicRedundancyCheck from 'framework/system/data/CyclicRedundancyCheck.js';
 
 // Class
-class BasicSocketPacket {
+class LocalSocketPacket {
 
     header = null; // 4 byte buffer indicating the total length of the packet
     payload = null; // n byte buffer containing the payload
@@ -54,17 +54,17 @@ class BasicSocketPacket {
     }
 
     static constructFromData(data) {
-        var basicSocketPacket = new BasicSocketPacket();
+        var localSocketPacket = new LocalSocketPacket();
 
         // Create the payload, trailer, and finally the header
-        basicSocketPacket.createPayload(data);
-        basicSocketPacket.createTrailer();
-        basicSocketPacket.createHeader();
+        localSocketPacket.createPayload(data);
+        localSocketPacket.createTrailer();
+        localSocketPacket.createHeader();
 
-        return basicSocketPacket;
+        return localSocketPacket;
     }
     
 }
 
 // Export
-export default BasicSocketPacket;
+export default LocalSocketPacket;

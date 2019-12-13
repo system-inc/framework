@@ -1,7 +1,6 @@
 // Dependencies
 import WebGraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
 import GraphicalInterfaceState from 'framework/system/interface/graphical/GraphicalInterfaceState.js';
-import LocalStorage from 'framework/system/interface/graphical/web/data/LocalStorage.js';
 
 // Class
 class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {

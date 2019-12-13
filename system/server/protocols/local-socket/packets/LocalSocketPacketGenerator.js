@@ -1,10 +1,10 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
-import BasicSocketPacket from 'framework/system/server/socket/packets/BasicSocketPacket.js';
+import PacketGenerator from 'framework/system/server/protocols/PacketGenerator.js';
+import LocalSocketPacket from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacket.js';
 import CyclicRedundancyCheck from 'framework/system/data/CyclicRedundancyCheck.js';
 
 // Class
-class SocketPacketGenerator extends EventEmitter {
+class LocalSocketPacketGenerator extends PacketGenerator {
 
     currentIncomingPacketSizeInBytes = null;
     currentIncomingPacketHeader = null;
@@ -13,23 +13,6 @@ class SocketPacketGenerator extends EventEmitter {
     currentIncomingPacketPayloadSizeInBytes = null;
     currentIncomingPacketTrailer = null;
     currentIncomingPacketTrailerSizeInBytes = 4;
-    
-    dataToProcessSizeInBytes = 0;
-    dataToProcess = [];
-    dataToProcessState = null; // null, header, payload, trailer
-
-    packetsEmitted = 0;
-    
-    receiveDataToProcess(data) {
-        //console.log('Socket packet generator processing data', data.toString());
-        
-        // We've got new data from the wire, add it to our data to process
-        this.dataToProcess.append(data);
-        this.dataToProcessSizeInBytes += data.length;
-
-        // Process the data
-        this.processData();
-    }
 
     processData() {
         // If the current state is null, then try to read the header
@@ -76,61 +59,15 @@ class SocketPacketGenerator extends EventEmitter {
         }
     }
 
-    readFromDataToProcess(size) {
-        var result = null;
-
-        // Keep track of the bytes we are reading
-        this.dataToProcessSizeInBytes -= size;
-
-        // If the bytes we want to read are the exact length of the first entry in the data to process array
-        if(size === this.dataToProcess[0].length) {
-            result = this.dataToProcess.shift();
-        }
-        // If the bytes we want to read are less than the size of the first entry in the data to process array
-        else if(size < this.dataToProcess[0].length) {
-            // Cut out just the data we need from the first entry
-            result = this.dataToProcess[0].slice(0, size);
-            this.dataToProcess[0] = this.dataToProcess[0].slice(size);
-        }
-        // If the bytes we want to read span more than one entry in the data to process array
-        else {
-            result = Buffer.allocUnsafe(size);
-            var offset = 0;
-            var length;
-
-            while(size > 0) {
-                length = this.dataToProcess[0].length;
-
-                if(size >= length) {
-                    this.dataToProcess[0].copy(result, offset);
-                    offset += length;
-                    this.dataToProcess.shift();
-                }
-                else {
-                    this.dataToProcess[0].copy(result, offset, 0, size);
-                    this.dataToProcess[0] = this.dataToProcess[0].slice(size);
-                }
-
-                size -= length;
-            }
-        }
-
-        return result;
-    }
-
     emitPacket() {
         if(!this.validCurrentIncomingPacket()) {
             throw new Error('The packet failed the CRC-32 check.');
         }
 
-        // Increment packets emitted
-        this.packetsEmitted++;
+        var packet = new LocalSocketPacket(this.currentIncomingPacketHeader, this.currentIncomingPacketPayload, this.currentIncomingPacketTrailer);
+        //console.log('packet', packet);
 
-        var socketPacket = new BasicSocketPacket(this.currentIncomingPacketHeader, this.currentIncomingPacketPayload, this.currentIncomingPacketTrailer);
-        //console.log('socketPacket', socketPacket);
-
-        // Emit the packet
-        this.emit('packet', socketPacket);
+        super.emitPacket(packet);
 
         // Reset the current incoming packet properties
         this.currentIncomingPacketSizeInBytes = null;
@@ -149,4 +86,4 @@ class SocketPacketGenerator extends EventEmitter {
 }
 
 // Export
-export default SocketPacketGenerator;
+export default LocalSocketPacketGenerator;
