@@ -24,24 +24,22 @@ class ServerConnection extends EventEmitter {
 
     // Send data to the client and expect a response
     async request(data) {
-        var data = await this.send(data);
+        console.error('need to implement')
+        // var data = await this.send(data);
+        // return data;
+    }
 
-        return new Promise(function(resolve, reject) {
-            resolve('data!');
-        });
+    async respond(correlationIdentifier, data) {
+        return this.send(data, correlationIdentifier);
     }
 
     onData(event) {
         this.emit('data', event);
     }
 
-    onClosed(event) {
-        this.close();
-    }
-
     close() {
         this.closed = true;
-        this.emit('closed', event);
+        this.emit('closed');
     }
 	
 }

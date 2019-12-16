@@ -1,6 +1,6 @@
 // Dependencies
 import ServerConnection from 'framework/system/server/ServerConnection.js';
-import PacketGenerator from 'framework/system/server/protocols/PacketGenerator.js';
+import LocalSocketPacketGenerator from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacketGenerator.js';
 import LocalSocketPacket from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacket.js';
 
 // Class
@@ -15,16 +15,16 @@ class LocalSocketProtocolServerConnection extends ServerConnection {
         // Configure the Node socket
         this.nodeSocket = nodeSocket;
         this.nodeSocket.on('data', this.onNodeSocketData.bind(this));
-        this.nodeSocket.on('close', this.onClosed.bind(this));
+        this.nodeSocket.on('close', this.onNodeSocketClosed.bind(this));
 
         // Listen for packets
-        this.packetGenerator = new PacketGenerator(LocalSocketPacket);
+        this.packetGenerator = new LocalSocketPacketGenerator();
         this.packetGenerator.on('packet', this.onPacket.bind(this));
     }
 
-    async send(data) {
+    async send(data, correlationIdentifierString = null) {
         // Create a packet
-        var localSocketPacket = LocalSocketPacket.constructFromData(data);
+        var localSocketPacket = LocalSocketPacket.constructFromData(data, correlationIdentifierString);
 
         // Write the packet using the Node socket
         localSocketPacket.write(this.nodeSocket);
@@ -42,12 +42,17 @@ class LocalSocketProtocolServerConnection extends ServerConnection {
     onPacket(event) {
         //console.log('Got a packet event from the socket packet generator', event);
         // Emit a data event
-        this.onData(event.data);
+        event.connection = this;
+        this.onData(event);
+    }
+
+    onNodeSocketClosed(event) {
+        this.close();
     }
 
     close() {
         // Close the Node socket
-        this.nodeSocket.close();
+        this.nodeSocket.destroy();
 
         // Mark the connection as closed and emit the closed event
         super.close();

@@ -79,11 +79,19 @@ class LocalSocketProtocolServer extends ProtocolServer {
             //console.log('Closing socket server at', this.localSocketFilePath);
             await new Promise(function(resolve, reject) {
                 //console.log('Closing server, no longer accepting new connections...');
+                
+                // This just stops new connections from connecting
                 this.nodeServer.close(function() {
-                    //console.log('All connections ended and server stopped.');
+                    //console.log('All connections closed and server stopped.');
                     superStop();
                     resolve(true);
                 }.bind(this));
+
+                // Loop through each connection and close it
+                this.connections.each(function(identifier, connection) {
+                    //console.log('connection', connection);
+                    connection.close();
+                });
 
                 // No longer listening
                 this.listening = false;

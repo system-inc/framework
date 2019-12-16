@@ -61,13 +61,17 @@ class LocalSocketPacket extends Packet {
     }
 
     createMajorVersionBuffer() {
-        console.log('LocalSocketPacket.structure.majorVersion.bytes', LocalSocketPacket.structure.majorVersion.bytes);
+        //console.log('LocalSocketPacket.structure.majorVersion.bytes', LocalSocketPacket.structure.majorVersion.bytes);
         this.majorVersionBuffer = Buffer.alloc(LocalSocketPacket.structure.majorVersion.bytes);
         this.majorVersionBuffer.writeUInt8(LocalSocketPacket.majorVersion); // Version 0
     }
 
-    createCorrelationIdentifierBuffer() {
-        this.correlationIdentifierBuffer = Buffer.from(String.uniqueIdentifier());
+    createCorrelationIdentifierBuffer(correlationIdentifierString = null) {
+        if(correlationIdentifierString === null) {
+            correlationIdentifierString = String.uniqueIdentifier();
+        }
+
+        this.correlationIdentifierBuffer = Buffer.from(correlationIdentifierString);
     }
 
     createPayloadTypeBuffer(payloadTypeString = null) {
@@ -106,6 +110,25 @@ class LocalSocketPacket extends Packet {
         nodeSocket.write(this.payloadCrc32Buffer);
     }
 
+    readCorrelationIdentifier() {
+        return LocalSocketPacket.readStructure('correlationIdentifier', this);
+    }
+
+    readPayload() {
+        var payloadType = LocalSocketPacket.payloadTypes[LocalSocketPacket.readStructure('payloadType', this)];
+        //console.log('payloadType', payloadType);
+        var payload = this.payloadBuffer;
+
+        if(payloadType == 'string') {
+            payload = payload.toString();
+        }
+        else if(payloadType == 'json') {
+            payload = Json.decode(payload);
+        }
+
+        return payload;
+    }
+
     static payloadTypeStringToBuffer(payloadTypeString = null) {
         var payloadTypeIndex = 0;
 
@@ -117,21 +140,31 @@ class LocalSocketPacket extends Packet {
         }
 
         var payloadTypeBuffer = Buffer.alloc(LocalSocketPacket.structure.payloadType.bytes);
-        payloadTypeBuffer.writeUInt8(LocalSocketPacket.payloadTypes[payloadTypeIndex]);
+        payloadTypeBuffer.writeUInt8(payloadTypeIndex);
 
         return payloadTypeBuffer;
     }
 
-    static constructFromData(data, payloadTypeString = null) {
+    static constructFromData(data, correlationIdentifierString = null) {
         var localSocketPacket = new LocalSocketPacket();
 
         // Create the major version
         localSocketPacket.createMajorVersionBuffer();
 
         // Create the correlation identifier
-        localSocketPacket.createCorrelationIdentifierBuffer();
+        localSocketPacket.createCorrelationIdentifierBuffer(correlationIdentifierString);
 
-        // Create the payload type
+        // Create the payload type and encode the data
+        var payloadTypeString = 'buffer';
+        if(String.is(data)) {
+            payloadTypeString = 'string';
+            data = Buffer.from(data);
+        }
+        if(Object.is(data)) {
+            payloadTypeString = 'json';
+            data = Json.encode(data);
+        }
+
         localSocketPacket.createPayloadTypeBuffer(payloadTypeString);
 
         // Create the payload

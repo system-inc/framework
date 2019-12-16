@@ -45,7 +45,7 @@ class Server extends EventEmitter {
 
     async onConnectionData(event) {
         //console.log('Server.onConnectionData event:', event);
-        console.log('Server.onConnectionData event.data:', event.data);
+        //console.log('Server.onConnectionData event.data:', event.data);
         this.emit('data', event);
     }
 

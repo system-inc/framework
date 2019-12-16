@@ -1,7 +1,6 @@
 // Dependencies
 import EventEmitter from 'framework/system/event/EventEmitter.js';
-import LocalSocketPacket from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacket.js';
-import CyclicRedundancyCheck from 'framework/system/data/CyclicRedundancyCheck.js';
+import PacketEvent from 'framework/system/server/protocols/PacketEvent.js';
 
 // Class
 class PacketGenerator extends EventEmitter {
@@ -93,7 +92,9 @@ class PacketGenerator extends EventEmitter {
             if(this.currentPacketStructureIndex > this.packetStructureKeys.length - 1) {
                 //console.log('Finished!');
                 // We've got a full packet at this point
+                this.packetsEmitted++;
                 this.emitPacket();
+                this.reset();
             }
 
             // Recurse if there are more bytes to process
@@ -146,22 +147,13 @@ class PacketGenerator extends EventEmitter {
     }
 
     emitPacket() {
-        //console.log('packet!', this.incomingPacket);
+        throw new Error('This method must be implemented by a child class.');
+    }
 
-        if(this.incomingPacket.valid()) {
-            // Increment packets emitted
-            this.packetsEmitted++;
-
-            // Emit the packet
-            this.emit('packet', this.incomingPacket);
-
-            // Reset the incoming packet
-            this.currentPacketStructureIndex = null;
-            this.incomingPacket = null;
-        }
-        else {
-            throw new Error('The packet failed the validation check.', this.incomingPacket);
-        }
+    reset() {
+        // Reset the incoming packet
+        this.currentPacketStructureIndex = null;
+        this.incomingPacket = null;
     }
     
 }

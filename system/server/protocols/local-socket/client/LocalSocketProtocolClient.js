@@ -1,14 +1,14 @@
 // Dependencies
 import ProtocolClient from 'framework/system/server/protocols/ProtocolClient.js';
 import LocalSocketPacket from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacket.js';
-import PacketGenerator from 'framework/system/server/protocols/PacketGenerator.js';
+import LocalSocketPacketGenerator from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacketGenerator.js';
 
 // Class
 class LocalSocketProtocolClient extends ProtocolClient {
 
     localSocketFilePath = null;
     nodeSocket = null;
-    packetGenerator = new PacketGenerator(LocalSocketPacket);
+    packetGenerator = new LocalSocketPacketGenerator();
 
     constructor(localSocketFilePath = null) {
         super();
@@ -21,26 +21,25 @@ class LocalSocketProtocolClient extends ProtocolClient {
 
         // Listen for packets from the local socket packet generator
         this.packetGenerator.on('packet', this.onPacket.bind(this));
-
-        // Initialize
-        this.initialize();
     }
 
     async connect() {
-        //console.log('Client: Connecting...');
-        this.nodeSocket = Node.Net.createConnection(this.localSocketFilePath);
-        this.nodeSocket.on('connected', this.onConnected.bind(this));
-        this.nodeSocket.on('disconnected', this.onDisconnected.bind(this));
-        this.nodeSocket.on('data', this.onNodeSocketData.bind(this));
+        return new Promise(function(resolve, reject) {
+            console.error('need a timeout in case this thing never connects');
 
-        await super.connect();
+            //console.log('Client: Connecting...');
+            this.nodeSocket = Node.Net.createConnection(this.localSocketFilePath, function() {
+                this.onConnected();
+                resolve(true);
+            }.bind(this));
+            this.nodeSocket.on('disconnected', this.onDisconnected.bind(this));
+            this.nodeSocket.on('data', this.onNodeSocketData.bind(this));    
+        }.bind(this));
     }
 
     async disconnect() {
         //console.log('Client: Disconnecting...');
         this.nodeSocket.end();
-
-        await super.disconnect();
     }
 
     // When the Node socket gets data
@@ -53,7 +52,8 @@ class LocalSocketProtocolClient extends ProtocolClient {
     onPacket(event) {
         //console.log('Got a packet event from the socket packet generator', event);
         // Emit a data event
-        this.onData(event.data.payload);
+        event.connection = this;
+        this.onData(event);
     }
 
     async send(data) {
@@ -61,6 +61,36 @@ class LocalSocketProtocolClient extends ProtocolClient {
         socketPacket.write(this.nodeSocket);
 
         return socketPacket;
+    }
+
+    async request(data, timeoutInMilliseconds = 20 * 1000) {
+        var packet = await this.send(data);
+        var correlationIdentifier = packet.readCorrelationIdentifier();
+
+        return new Promise(function(resolve, reject) {
+            console.error('I need timeouts, see if WebRequest.js or WebServer has the logic already');
+
+            // Listen to data until we get a response to our request
+            this.on('data', function(event) {
+                //console.log('Client.request on data event:', event);
+                console.log('Client.request on data event.data:', event.data);
+
+                if(event.correlationIdentifier == correlationIdentifier) {
+                    //console.log('correlationIdentifier matches!', correlationIdentifier);
+
+                    // When we get the event, remove the event listener
+                    console.error('When we get the event, remove the event listener');
+
+                    resolve(event.data);
+                }
+                else {
+                    //console.log('correlationIdentifier does not match!', 'event.correlationIdentifier', event.correlationIdentifier, 'correlationIdentifier', correlationIdentifier);
+                }
+            });
+        }.bind(this));
+    }
+    async respond(correlationIdentifier, data) {
+        return this.send(data, correlationIdentifier);
     }
     
 }
