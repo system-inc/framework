@@ -25,7 +25,7 @@ class Server extends EventEmitter {
         this.stopped = true;
     }
 
-    async onConnection(connection) {
+    async newConnection(connection) {
         //console.log('Server: Client connected!');
         this.connections[connection.identifier] = connection;
         //console.log('this.connections', this.connections);
@@ -37,10 +37,16 @@ class Server extends EventEmitter {
         connection.on('close', function(event) {
             this.removeConnection(connection);
         }.bind(this));
+
+        this.emit('connection', connection);
+
+        return connection;
     }
 
-    async onConnectionData(data) {
-        this.emit('data', data);
+    async onConnectionData(event) {
+        //console.log('Server.onConnectionData event:', event);
+        console.log('Server.onConnectionData event.data:', event.data);
+        this.emit('data', event);
     }
 
     async removeConnection(connection) {

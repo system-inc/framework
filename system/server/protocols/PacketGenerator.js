@@ -6,11 +6,23 @@ import CyclicRedundancyCheck from 'framework/system/data/CyclicRedundancyCheck.j
 // Class
 class PacketGenerator extends EventEmitter {
 
+    packetClass = null;
+    packetStructureKeys = null;
+
+    currentPacketStructureIndex = null;
+    incomingPacket = null;
+
     dataToProcessSizeInBytes = 0;
     dataToProcess = [];
-    dataToProcessState = null; // null, header, payload, trailer
 
     packetsEmitted = 0;
+
+    constructor(packetClass) {
+        super();
+
+        this.packetClass = packetClass;
+        this.packetStructureKeys = this.packetClass.structure.getKeys();
+    }
     
     receiveDataToProcess(data) {
         //console.log('Socket packet generator processing data', data.toString());
@@ -23,8 +35,72 @@ class PacketGenerator extends EventEmitter {
         this.processData();
     }
 
+    getSizeOfBytesForCurrentPacketStructureIndex() {
+        return this.packetClass.structure[this.packetStructureKeys[this.currentPacketStructureIndex]].bytes;
+    }
+
+    getSizeOfBytesForCurrentPacketPayload() {
+        //console.log('getSizeOfBytesForCurrentPacketPayload');
+        var packetSizeInBytes = this.packetClass.readStructure('sizeInBytes', this.incomingPacket);
+        //console.log('packetSizeInBytes', packetSizeInBytes);
+        var payloadSizeInBytes = packetSizeInBytes;
+
+        // Loop through all of the pieces of the structure and subtract the size of the other pieces
+        this.packetClass.structure.each(function(structureKey, structure) {
+            if(structure.bytes !== 'n') {
+                payloadSizeInBytes -= structure.bytes;
+            }
+        });
+
+        return payloadSizeInBytes;
+    }
+
     processData() {
-        throw new Error('This method must be implemented by a child class.');
+        // If the current state index is null, start off with a new packet
+        if(this.currentPacketStructureIndex == null) {
+            //console.log('Creating a new packet...');
+            // Create a new packet
+            this.incomingPacket = new this.packetClass();
+            
+            // Start off at the first structure at index 0
+            this.currentPacketStructureIndex = 0;
+        }
+
+        // Convenience variables
+        var currentPacketStructureKey = this.packetStructureKeys[this.currentPacketStructureIndex];
+        //console.log('currentPacketStructureKey', currentPacketStructureKey);
+        var sizeOfBytesForCurrentPacketStructure = this.getSizeOfBytesForCurrentPacketStructureIndex();
+
+        // If we are at the payload
+        if(sizeOfBytesForCurrentPacketStructure == 'n') {
+            // Calculate the size of the payload
+            sizeOfBytesForCurrentPacketStructure = this.getSizeOfBytesForCurrentPacketPayload();
+        }
+
+        //console.log('sizeOfBytesForCurrentPacketStructure', sizeOfBytesForCurrentPacketStructure);
+
+        // If we have enough bytes for the next structure
+        if(this.dataToProcessSizeInBytes >= sizeOfBytesForCurrentPacketStructure) {
+            //console.log('We have enough bytes to read', currentPacketStructureKey);
+
+            // Read the bytes into the incoming packet
+            this.incomingPacket[currentPacketStructureKey+'Buffer'] = this.readFromDataToProcess(sizeOfBytesForCurrentPacketStructure);
+
+            // Go to the next part of the structure
+            this.currentPacketStructureIndex++;
+
+            // If we are at the end of the structure
+            if(this.currentPacketStructureIndex > this.packetStructureKeys.length - 1) {
+                //console.log('Finished!');
+                // We've got a full packet at this point
+                this.emitPacket();
+            }
+
+            // Recurse if there are more bytes to process
+            if(this.dataToProcessSizeInBytes > 0) {
+                return this.processData();
+            }
+        }
     }
 
     readFromDataToProcess(size) {
@@ -69,12 +145,23 @@ class PacketGenerator extends EventEmitter {
         return result;
     }
 
-    emitPacket(packet) {
-        // Increment packets emitted
-        this.packetsEmitted++;
+    emitPacket() {
+        //console.log('packet!', this.incomingPacket);
 
-        // Emit the packet
-        this.emit('packet', packet);
+        if(this.incomingPacket.valid()) {
+            // Increment packets emitted
+            this.packetsEmitted++;
+
+            // Emit the packet
+            this.emit('packet', this.incomingPacket);
+
+            // Reset the incoming packet
+            this.currentPacketStructureIndex = null;
+            this.incomingPacket = null;
+        }
+        else {
+            throw new Error('The packet failed the validation check.', this.incomingPacket);
+        }
     }
     
 }

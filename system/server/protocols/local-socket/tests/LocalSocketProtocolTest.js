@@ -14,10 +14,10 @@ class LocalSocketProtocolTest extends Test {
 
         // Listen for specific data
         localSocketProtocolServer.on('data', function(event) {
-            console.log('received data event!', event);
+            //console.log('received data event!', event);
 
             var dataString = event.data.toString();
-            console.log('dataString', dataString);
+            //console.log('dataString', dataString);
 
             if(dataString == 'Hi Server. Can you tell me you got these bytes?') {
                 event.emitter.send('Hi Client. I received the bytes you sent.');
@@ -28,12 +28,12 @@ class LocalSocketProtocolTest extends Test {
         var localSocketProtocolClient = new LocalSocketProtocolClient(localSocketProtocolServer.localSocketFilePath);
 
         // Send a request
-        var response = await localSocketProtocolClient.send('Hi Server. Can you tell me you got these bytes?');
+        var response = await localSocketProtocolClient.request('Hi Server. Can you tell me you got these bytes?');
         console.log('response', response);
-        //var actual = response.data;
-        //var expected = 'Hi Client. I received the bytes you sent.';
+        var actual = response;
+        var expected = 'Hi Client. I received the bytes you sent.';
 
-        //Assert.equal(actual, expected, 'Local socket protocol request');
+        Assert.equal(actual, expected, 'Local socket protocol request');
     }
 
 }

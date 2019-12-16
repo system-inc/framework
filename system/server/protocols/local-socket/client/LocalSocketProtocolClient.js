@@ -1,14 +1,14 @@
 // Dependencies
 import ProtocolClient from 'framework/system/server/protocols/ProtocolClient.js';
 import LocalSocketPacket from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacket.js';
-import LocalSocketPacketGenerator from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacketGenerator.js';
+import PacketGenerator from 'framework/system/server/protocols/PacketGenerator.js';
 
 // Class
 class LocalSocketProtocolClient extends ProtocolClient {
 
     localSocketFilePath = null;
     nodeSocket = null;
-    localSocketPacketGenerator = new LocalSocketPacketGenerator();
+    packetGenerator = new PacketGenerator(LocalSocketPacket);
 
     constructor(localSocketFilePath = null) {
         super();
@@ -20,7 +20,7 @@ class LocalSocketProtocolClient extends ProtocolClient {
         this.localSocketFilePath = localSocketFilePath;
 
         // Listen for packets from the local socket packet generator
-        this.localSocketPacketGenerator.on('packet', this.onPacket.bind(this));
+        this.packetGenerator.on('packet', this.onPacket.bind(this));
 
         // Initialize
         this.initialize();
@@ -31,7 +31,7 @@ class LocalSocketProtocolClient extends ProtocolClient {
         this.nodeSocket = Node.Net.createConnection(this.localSocketFilePath);
         this.nodeSocket.on('connected', this.onConnected.bind(this));
         this.nodeSocket.on('disconnected', this.onDisconnected.bind(this));
-        this.nodeSocket.on('data', this.onData.bind(this));
+        this.nodeSocket.on('data', this.onNodeSocketData.bind(this));
 
         await super.connect();
     }
@@ -44,24 +44,24 @@ class LocalSocketProtocolClient extends ProtocolClient {
     }
 
     // When the Node socket gets data
-    onData(data) {
-        this.localSocketPacketGenerator.receiveDataToProcess(data);
+    onNodeSocketData(data) {
+        //console.log('LocalSocketProtocolClient onNodeSocketData data', data);
+        this.packetGenerator.receiveDataToProcess(data);
     }
 
-    // When the socket packet generator generates a packet
+    // When the packet generator generates a packet
     onPacket(event) {
-        super.onData(event);
+        //console.log('Got a packet event from the socket packet generator', event);
+        // Emit a data event
+        this.onData(event.data.payload);
     }
 
     async send(data) {
         var socketPacket = LocalSocketPacket.constructFromData(data);
         socketPacket.write(this.nodeSocket);
-    }
 
-    async request(data) {
-        var socketPacket = LocalSocketPacket.constructFromData(data);
-        socketPacket.write(this.nodeSocket);
-    }    
+        return socketPacket;
+    }
     
 }
 

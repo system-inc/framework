@@ -27,7 +27,7 @@ class LocalSocketProtocolServer extends ProtocolServer {
                 allowHalfOpen: false, // Indicates whether half-opened TCP connections are allowed. Default: false
                 pauseOnConnect: false, // Indicates whether the socket should be paused on incoming connections. Default: false
             },
-            this.onConnection.bind(this)
+            this.onNodeServerConnection.bind(this)
         );
 
         // Super initialize which calls this.start()
@@ -94,10 +94,10 @@ class LocalSocketProtocolServer extends ProtocolServer {
         }
     }
 
-    onConnection(nodeSocket) {
+    onNodeServerConnection(nodeSocket) {
         //console.log('nodeSocket', nodeSocket);
         var connection = new LocalSocketProtocolServerConnection(this, nodeSocket);
-        super.onConnection(connection);
+        return this.newConnection(connection);
     }
 
 }

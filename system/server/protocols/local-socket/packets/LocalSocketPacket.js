@@ -1,65 +1,147 @@
 // Dependencies
+import Packet from 'framework/system/server/protocols/Packet.js';
 import CyclicRedundancyCheck from 'framework/system/data/CyclicRedundancyCheck.js';
 
 // Class
-class LocalSocketPacket {
+class LocalSocketPacket extends Packet {
 
-    header = null; // 4 byte buffer indicating the total length of the packet
-    payload = null; // n byte buffer containing the payload
-    trailer = null; // 4 byte buffer containing the CRC-32 of the payload
+    static majorVersion = 1;
+    static payloadTypes = [
+        'buffer', // 0
+        'string', // 1
+        'json', // 2
+    ];
+    static structure = {
+        'majorVersion': {
+            bytes: 1,
+            type: 'unsignedInteger8',
+        },
+        'sizeInBytes': {
+            bytes: 4,
+            type: 'unsignedInteger32BigEndian',
+        },
+        'correlationIdentifier': {
+            bytes: 16,
+            type: 'string',
+        },
+        'payloadType': {
+            bytes: 1,
+            type: 'unsignedInteger8',
+        },
+        'payload': {
+            bytes: 'n',
+            type: 'buffer',
+        },
+        'payloadCrc32': {
+            bytes: 4,
+            type: 'buffer',
+        },
+    };
 
-    constructor(header, payload, trailer) {
-        if(header !== undefined) {
-            this.header = header;
-        }
-        if(payload !== undefined) {
-            this.payload = payload;
-        }
-        if(trailer !== undefined) {
-            this.trailer = trailer;
-        }
-    }
+    // The order of the variables below is the structure of the packet
+    majorVersionBuffer = null; // 1 byte buffer containing the the major version (0-255) of the packet structure
+    sizeInBytesBuffer = null; // 8 byte buffer indicating the total bytes of the packet (2^64 is the max size)
+    correlationIdentifierBuffer = null; // 16 byte buffer providing an identifier to correlate requests, responses, and logging
+    payloadTypeBuffer = null; // 1 byte buffer describing what type the payload is
+    payloadBuffer = null; // n byte buffer containing the payload
+    payloadCrc32Buffer = null; // 4 byte buffer containing the CRC-32 of the payload
 
-    createPayload(data) {
+    createPayloadBuffer(data) {
         // Work with buffers
         if(Buffer.is(data)) {
-            this.payload = data;
+            this.payloadBuffer = data;
         }
         else {
-            this.payload = Buffer.from(data);
+            this.payloadBuffer = Buffer.from(data);
         }
     }
 
-    createTrailer() {
-        this.trailer = CyclicRedundancyCheck.getCrc32AsBuffer(this.payload);
+    createPayloadCrc32Buffer() {
+        this.payloadCrc32Buffer = CyclicRedundancyCheck.getCrc32AsBuffer(this.payloadBuffer);
     }
 
-    createHeader() {
-        // Allocate two bytes to store the number of bytes in the packet
-        this.header = Buffer.alloc(4);
+    createMajorVersionBuffer() {
+        console.log('LocalSocketPacket.structure.majorVersion.bytes', LocalSocketPacket.structure.majorVersion.bytes);
+        this.majorVersionBuffer = Buffer.alloc(LocalSocketPacket.structure.majorVersion.bytes);
+        this.majorVersionBuffer.writeUInt8(LocalSocketPacket.majorVersion); // Version 0
+    }
+
+    createCorrelationIdentifierBuffer() {
+        this.correlationIdentifierBuffer = Buffer.from(String.uniqueIdentifier());
+    }
+
+    createPayloadTypeBuffer(payloadTypeString = null) {
+        this.payloadTypeBuffer = LocalSocketPacket.payloadTypeStringToBuffer(payloadTypeString);
+    }
+
+    createSizeInBytesBuffer() {
+        // Allocate bytes to store the total number of bytes in the packet
+        this.sizeInBytesBuffer = Buffer.alloc(LocalSocketPacket.structure.sizeInBytes.bytes);
 
         // Calculate the total number of the bytes in the packet
-        var numberOfBytesInPacket = (this.header.length + this.payload.length + this.trailer.length);
+        var numberOfBytesInPacket =
+            this.majorVersionBuffer.length +
+            this.sizeInBytesBuffer.length +
+            this.correlationIdentifierBuffer.length +
+            this.payloadTypeBuffer.length +
+            this.payloadBuffer.length +
+            this.payloadCrc32Buffer.length;
         //console.log('numberOfBytesInPacket', numberOfBytesInPacket);
 
-        // Write the total number of bytes in the packet into the header bytes
-        this.header.writeUInt16BE(numberOfBytesInPacket);
+        // Write the total number of bytes in the packet into the sizeInBytes bytes
+        this.sizeInBytesBuffer.writeUInt32BE(numberOfBytesInPacket);
+    }
+
+    valid() {
+        return CyclicRedundancyCheck.checkCrc32(this.payloadBuffer, this.payloadCrc32Buffer);
     }
 
     write(nodeSocket) {
-        // Write the header, payload, and trailer
-        nodeSocket.write(this.header);
-        nodeSocket.write(this.payload);
-        nodeSocket.write(this.trailer);
+        // Write out the packet
+        nodeSocket.write(this.majorVersionBuffer);
+        nodeSocket.write(this.sizeInBytesBuffer);
+        nodeSocket.write(this.correlationIdentifierBuffer);
+        nodeSocket.write(this.payloadTypeBuffer);
+        nodeSocket.write(this.payloadBuffer);
+        nodeSocket.write(this.payloadCrc32Buffer);
     }
 
-    static constructFromData(data) {
+    static payloadTypeStringToBuffer(payloadTypeString = null) {
+        var payloadTypeIndex = 0;
+
+        if(payloadTypeString == 'string') {
+            payloadTypeIndex = 1;
+        }
+        else if(payloadTypeString == 'json') {
+            payloadTypeIndex = 2;
+        }
+
+        var payloadTypeBuffer = Buffer.alloc(LocalSocketPacket.structure.payloadType.bytes);
+        payloadTypeBuffer.writeUInt8(LocalSocketPacket.payloadTypes[payloadTypeIndex]);
+
+        return payloadTypeBuffer;
+    }
+
+    static constructFromData(data, payloadTypeString = null) {
         var localSocketPacket = new LocalSocketPacket();
 
-        // Create the payload, trailer, and finally the header
-        localSocketPacket.createPayload(data);
-        localSocketPacket.createTrailer();
-        localSocketPacket.createHeader();
+        // Create the major version
+        localSocketPacket.createMajorVersionBuffer();
+
+        // Create the correlation identifier
+        localSocketPacket.createCorrelationIdentifierBuffer();
+
+        // Create the payload type
+        localSocketPacket.createPayloadTypeBuffer(payloadTypeString);
+
+        // Create the payload
+        localSocketPacket.createPayloadBuffer(data);
+
+        // Create the payload CRC-32
+        localSocketPacket.createPayloadCrc32Buffer();
+
+        // Lastly, calculate the size in bytes
+        localSocketPacket.createSizeInBytesBuffer();
 
         return localSocketPacket;
     }

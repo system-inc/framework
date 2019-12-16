@@ -17,12 +17,22 @@ class ServerConnection extends EventEmitter {
         this.closed = false;
     }
 
-    async send() {
+    // Send data to the client with no expectation of a response
+    async send(data) {
         throw new Error('This method must be implemented by a child class.');
     }
 
-    onData(data) {
-        this.emit('data', data);
+    // Send data to the client and expect a response
+    async request(data) {
+        var data = await this.send(data);
+
+        return new Promise(function(resolve, reject) {
+            resolve('data!');
+        });
+    }
+
+    onData(event) {
+        this.emit('data', event);
     }
 
     onClosed(event) {
