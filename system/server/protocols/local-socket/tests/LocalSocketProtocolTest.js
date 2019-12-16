@@ -19,7 +19,7 @@ class LocalSocketProtocolTest extends Test {
         // Listen for specific data
         localSocketProtocolServer.on('data', function(event) {
             //console.log('localSocketProtocolServer.on data event', event);
-            console.log('localSocketProtocolServer.on data event data', event.data);
+            //console.log('localSocketProtocolServer.on data event data', event.data);
 
             // String
             if(event.data == 'Hi Server. Can you tell me you got these bytes?') {
@@ -42,6 +42,8 @@ class LocalSocketProtocolTest extends Test {
 
         // Send a request from the client
         var response = await localSocketProtocolClient.request('Hi Server. Can you tell me you got these bytes?');
+
+        Assert.equal(localSocketProtocolClient.eventListeners.length, 0, 'Event listeners do not leak');
 
         // Send another broadcast
         localSocketProtocolServer.broadcast('General broadcast 2!');
@@ -70,9 +72,9 @@ class LocalSocketProtocolTest extends Test {
 
         localSocketFilePathExists = await File.exists(localSocketProtocolServer.localSocketFilePath);
         Assert.false(localSocketFilePathExists, 'Server local socket file still exists');
-
-        console.error('do an assertion to verify the event listeners have been removed from the request')
-        console.error('write a test where the client asks for the connection to be closed and the connection is closed')
+        
+        console.error('write a test where the server asks the client for something');
+        console.error('write a test where the client asks for the connection to be closed and the connection is closed');
 
     }
 

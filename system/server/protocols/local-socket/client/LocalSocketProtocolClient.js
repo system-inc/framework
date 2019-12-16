@@ -70,23 +70,28 @@ class LocalSocketProtocolClient extends ProtocolClient {
         return new Promise(function(resolve, reject) {
             console.error('I need timeouts, see if WebRequest.js or WebServer has the logic already');
 
-            // Listen to data until we get a response to our request
-            this.on('data', function(event) {
+            // A function to check the correlation identifiers of future packets until we get a match
+            var correlationIdentifierCheckFunction = function(event) {
                 //console.log('Client.request on data event:', event);
-                console.log('Client.request on data event.data:', event.data);
+                //console.log('Client.request on data event.data:', event.data);
 
+                // If the correlation identifiers match
                 if(event.correlationIdentifier == correlationIdentifier) {
                     //console.log('correlationIdentifier matches!', correlationIdentifier);
 
                     // When we get the event, remove the event listener
-                    console.error('When we get the event, remove the event listener');
+                    this.removeEventListener('data', correlationIdentifierCheckFunction);
 
+                    // Return the data from the packet
                     resolve(event.data);
                 }
                 else {
                     //console.log('correlationIdentifier does not match!', 'event.correlationIdentifier', event.correlationIdentifier, 'correlationIdentifier', correlationIdentifier);
                 }
-            });
+            }.bind(this);
+
+            // Listen to data until we get a response to our request
+            this.on('data', correlationIdentifierCheckFunction);
         }.bind(this));
     }
     async respond(correlationIdentifier, data) {
