@@ -9,14 +9,19 @@ import File from 'framework/system/file-system/File.js';
 class LocalSocketProtocolTest extends Test {
 
 	async testLocalSocketProtocol() {
+        var response = null;
+        var actual = null;
+        var expected = null;
+
         // Create a local socket protocol server
         var localSocketProtocolServer = new LocalSocketProtocolServer();
         await localSocketProtocolServer.initialize();
 
+        // Make sure the socket file has been created
         var localSocketFilePathExists = await File.exists(localSocketProtocolServer.localSocketFilePath);
         Assert.true(localSocketFilePathExists, 'Server local socket file has been created');
 
-        // Listen for specific data
+        // Have the server listen for specific data
         localSocketProtocolServer.on('data', function(event) {
             //console.log('localSocketProtocolServer.on data event', event);
             //console.log('localSocketProtocolServer.on data event data', event.data);
@@ -36,21 +41,33 @@ class LocalSocketProtocolTest extends Test {
         // Create a local socket protocol client
         var localSocketProtocolClient = new LocalSocketProtocolClient(localSocketProtocolServer.localSocketFilePath);
         await localSocketProtocolClient.initialize();
+        Assert.true(localSocketProtocolClient.connected, 'Client is connected');
 
-        // Send a broadcast
+        // Have the client listen for specific date
+        localSocketProtocolClient.on('data', function(event) {
+            //console.log('localSocketProtocolClient.on data event', event);
+            //console.log('localSocketProtocolClient.on data event.data', event.data);
+
+            // String
+            if(event.data == 'Hi Client. Can you tell me you got these bytes?') {
+                //console.log('localSocketProtocolClient.on data event', event);
+                event.respond('Hi Server. I received the bytes you sent.');
+            }
+        });
+
+        // Have the server send a broadcast just for fun
         localSocketProtocolServer.broadcast('General broadcast 1!');
 
         // Send a request from the client
-        var response = await localSocketProtocolClient.request('Hi Server. Can you tell me you got these bytes?');
+        response = await localSocketProtocolClient.request('Hi Server. Can you tell me you got these bytes?');
+        Assert.equal(localSocketProtocolClient.eventListeners.length, 1, 'Event listeners do not leak');
 
-        Assert.equal(localSocketProtocolClient.eventListeners.length, 0, 'Event listeners do not leak');
-
-        // Send another broadcast
+        // Have the server send another broadcast
         localSocketProtocolServer.broadcast('General broadcast 2!');
 
-        var actual = response;
-        var expected = 'Hi Client. I received the bytes you sent.';
-
+        // Validate the response from the server
+        actual = response;
+        expected = 'Hi Client. I received the bytes you sent.';
         Assert.equal(actual, expected, 'Client request gets the right response');
         Assert.true(String.is(actual), 'Client requests response is the right type (string)');
 
@@ -59,23 +76,41 @@ class LocalSocketProtocolTest extends Test {
             question: 'Do you speak JSON?',
         });
 
-        var actual = response;
-        var expected = {
+        // Validate the second response from the sever
+        actual = response;
+        expected = {
             answer: 'Yes I do!',
         };
-
         Assert.deepEqual(actual, expected, 'Client request gets the right response');
         Assert.true(Object.is(actual), 'Client requests response is the right type (object)');
 
+        // Have the server send a request to the client
+        var serverConnection = localSocketProtocolServer.connections[localSocketProtocolServer.connections.getKeys().first()];
+        //console.log('serverConnection', serverConnection);
+        response = await serverConnection.request('Hi Client. Can you tell me you got these bytes?');
+        //console.log('response', response);
+        actual = response;
+        expected = 'Hi Server. I received the bytes you sent.';
+        Assert.equal(actual, expected, 'Server request gets the right response');
+        Assert.true(String.is(actual), 'Server requests response is the right type (string)');
+
+        // Performance test
+        //for(var i = 0; i < 50000; i++) {
+        //    await localSocketProtocolClient.request('Hi');
+        //}
+
+        // Have the client disconnect
+        await localSocketProtocolClient.disconnect();
+        //console.log(localSocketProtocolServer.connections);
+        Assert.false(localSocketProtocolClient.connected, 'After disconnect client is no longer connected');
+
         // Stop the server
         await localSocketProtocolServer.stop();
+        Assert.equal(localSocketProtocolServer.connections.getKeys().length, 0, 'Server no longer has any connections');
 
+        // Make sure the socket file has been deleted
         localSocketFilePathExists = await File.exists(localSocketProtocolServer.localSocketFilePath);
-        Assert.false(localSocketFilePathExists, 'Server local socket file still exists');
-        
-        console.error('write a test where the server asks the client for something');
-        console.error('write a test where the client asks for the connection to be closed and the connection is closed');
-
+        Assert.false(localSocketFilePathExists, 'Server local socket file has been deleted');
     }
 
 }

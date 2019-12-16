@@ -4,43 +4,47 @@ import EventEmitter from 'framework/system/event/EventEmitter.js';
 // Class
 class Client extends EventEmitter {
 
-    connected = false;
+    connection = null;
+
+    get connected() {
+        var connected = false;
+
+        if(this.connection !== null) {
+            connected = this.connection.connected;
+        }
+
+        return connected;
+    }
 
     async initialize() {
-		await this.connect();
+        this.connection = await this.connect();
+        this.connection.on('data', this.onData.bind(this));
 	}
 
     async connect() {
-        throw new Error('This method must be implemented by a child class.');
-    }
-
-    onConnected(event) {
-        //console.log('Client: Connected!');
-        this.connected = true;
-    }
-
-    async disconnect() {
-        throw new Error('This method must be implemented by a child class.');
-    }
-
-    onDisconnected(event) {
-        //console.log('Client: Disconnected!');
-        this.connected = false;
+        throw new Error('This method must be implemented by a child class, returns an object of type Connection.');
     }
 
     onData(event) {
         this.emit('data', event);
     }
 
-    // Send data to the server with no expectation of a response, return the packet
-    async send(data) {
-        throw new Error('This method must be implemented by a child class, must return an object of type Packet.');
-        //return packet;
+    // Allow connection calls to be made directly on client
+
+    async send() {
+        return this.connection.send.apply(this.connection, arguments);
     }
 
-    // Send data to the server and expect a response, return the response
-    async request(data) {
-        throw new Error('This method must be implemented by a child class.');
+    async request() {
+        return this.connection.request.apply(this.connection, arguments);
+    }
+    
+    async respond() {
+        return this.connection.respond.apply(this.connection, arguments);
+    }
+
+    async disconnect() {
+        return this.connection.disconnect.apply(this.connection, arguments);
     }
 
 }

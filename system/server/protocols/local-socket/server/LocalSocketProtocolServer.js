@@ -1,7 +1,7 @@
 // Dependencies
 import ProtocolServer from 'framework/system/server/protocols/ProtocolServer.js';
 import File from 'framework/system/file-system/File.js';
-import LocalSocketProtocolServerConnection from 'framework/system/server/protocols/local-socket/server/LocalSocketProtocolServerConnection.js';
+import LocalSocketProtocolConnection from 'framework/system/server/protocols/local-socket/LocalSocketProtocolConnection.js';
 
 // Class
 class LocalSocketProtocolServer extends ProtocolServer {
@@ -58,6 +58,12 @@ class LocalSocketProtocolServer extends ProtocolServer {
 
         //console.log('this.localSocketFilePath', this.localSocketFilePath);
     }
+    
+    onNodeServerConnection(nodeSocket) {
+        //console.log('nodeSocket', nodeSocket);
+        var connection = new LocalSocketProtocolConnection(nodeSocket);
+        return this.newConnection(connection);
+    }
 
     async start() {
         var superStart = super.start.bind(this);
@@ -87,10 +93,10 @@ class LocalSocketProtocolServer extends ProtocolServer {
                     resolve(true);
                 }.bind(this));
 
-                // Loop through each connection and close it
+                // Loop through each connection and disconnect it
                 this.connections.each(function(identifier, connection) {
                     //console.log('connection', connection);
-                    connection.close();
+                    connection.disconnect();
                 });
 
                 // No longer listening
@@ -100,12 +106,6 @@ class LocalSocketProtocolServer extends ProtocolServer {
         else {
             return true;
         }
-    }
-
-    onNodeServerConnection(nodeSocket) {
-        //console.log('nodeSocket', nodeSocket);
-        var connection = new LocalSocketProtocolServerConnection(this, nodeSocket);
-        return this.newConnection(connection);
     }
 
 }

@@ -97,7 +97,8 @@ class LocalSocketPacket extends Packet {
     }
 
     valid() {
-        return CyclicRedundancyCheck.checkCrc32(this.payloadBuffer, this.payloadCrc32Buffer);
+        return true;
+        //return CyclicRedundancyCheck.checkCrc32(this.payloadBuffer, this.payloadCrc32Buffer);
     }
 
     write(nodeSocket) {

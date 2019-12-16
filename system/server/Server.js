@@ -34,7 +34,8 @@ class Server extends EventEmitter {
         connection.on('data', this.onConnectionData.bind(this));
 
         // When the connection is closed
-        connection.on('close', function(event) {
+        connection.on('disconnected', function(event) {
+            //console.log('Connection disconnected', connection);
             this.removeConnection(connection);
         }.bind(this));
 
