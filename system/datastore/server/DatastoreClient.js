@@ -1,14 +1,22 @@
 // Dependencies
 import Client from 'framework/system/server/Client.js';
+import LocalSocketProtocolClient from 'framework/system/server/protocols/local-socket/client/LocalSocketProtocolClient.js';
 
 // Class
 class DatastoreClient extends Client {
 
-	constructor() {
+	protocolClient = null;
+
+	constructor(protocolClient) {
 		super();
+
+		this.protocolClient = protocolClient;
 	}
 
 	async initialize() {
+		this.protocolClient = new LocalSocketProtocolClient();
+		await
+
 		await super.initialize();
 	}
 

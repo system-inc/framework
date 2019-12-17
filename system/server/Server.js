@@ -25,6 +25,20 @@ class Server extends EventEmitter {
         this.stopped = true;
     }
 
+    async onConnection(connection) {
+        this.emit('connection', connection);
+    }
+
+    async onDisconnection(connection) {
+        this.emit('disconnection', connection);
+    }
+
+    async onConnectionData(event) {
+        //console.log('Server.onConnectionData event:', event);
+        //console.log('Server.onConnectionData event.data:', event.data);
+        this.emit('data', event);
+    }
+
     async newConnection(connection) {
         //console.log('Server: Client connected!');
         this.connections[connection.identifier] = connection;
@@ -39,18 +53,13 @@ class Server extends EventEmitter {
             this.removeConnection(connection);
         }.bind(this));
 
-        this.emit('connection', connection);
+        this.onConnection(connection);
 
         return connection;
     }
 
-    async onConnectionData(event) {
-        //console.log('Server.onConnectionData event:', event);
-        //console.log('Server.onConnectionData event.data:', event.data);
-        this.emit('data', event);
-    }
-
     async removeConnection(connection) {
+        this.onDisconnection(connection);
         //console.log('Connection count before delete:', this.connections.getKeys().length);
         //console.log('Deleting connection', connection.identifier);
         this.connections.deleteValueByPath(connection.identifier);
@@ -61,8 +70,8 @@ class Server extends EventEmitter {
     async broadcast(data) {
         //console.log('Broadcasting data', data);
         
-        await this.connections.each(async function(identifier, currentConnection) {
-            await currentConnection.send(data);
+        await this.connections.each(async function(connectionIdentifier, connection) {
+            await connection.send(data);
         }.bind(this));
     }
 	
