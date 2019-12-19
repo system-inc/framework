@@ -1,10 +1,10 @@
 // Dependencies
-import ProtocolServer from 'framework/system/server/protocols/ProtocolServer.js';
+import Server from 'framework/system/server/Server.js';
 import File from 'framework/system/file-system/File.js';
-import LocalSocketProtocolConnection from 'framework/system/server/protocols/local-socket/LocalSocketProtocolConnection.js';
+import LocalSocketConnection from 'framework/system/server/protocols/local-socket/LocalSocketConnection.js';
 
 // Class
-class LocalSocketProtocolServer extends ProtocolServer {
+class LocalSocketServer extends Server {
 
     nodeServer = null;
     localSocketFilePath = null;
@@ -61,27 +61,37 @@ class LocalSocketProtocolServer extends ProtocolServer {
     
     onNodeServerConnection(nodeSocket) {
         //console.log('nodeSocket', nodeSocket);
-        var connection = new LocalSocketProtocolConnection(nodeSocket);
+        var connection = new LocalSocketConnection(nodeSocket);
         return this.newConnection(connection);
     }
 
     async start() {
-        var superStart = super.start.bind(this);
+        // If the server is stopped
+        if(this.stopped == true) {
+            var superStart = super.start.bind(this);
 
-        // Start the server
-        await new Promise(function(resolve, reject) {
-            // Domain (file) sockets are much faster than TCP (https://stackoverflow.com/questions/14973942/tcp-loopback-connection-vs-unix-domain-socket-performance)
-            this.nodeServer.listen(this.localSocketFilePath, function() {
-                superStart();
-                resolve(true);
+            // Start the server
+            await new Promise(function(resolve, reject) {
+                // Domain (file) sockets are much faster than TCP (https://stackoverflow.com/questions/14973942/tcp-loopback-connection-vs-unix-domain-socket-performance)
+                this.nodeServer.listen(this.localSocketFilePath, function() {
+                    superStart();
+                    resolve(true);
+                }.bind(this));
             }.bind(this));
-        }.bind(this));
+        }
+        else {
+            return true;
+        }
     }
 
     async stop() {
-        var superStop = super.stop.bind(this);
+        //console.log('LocalSocketServer stop()');
+        //console.log('LocalSocketServer stop()', new Error().stack);
 
+        // If the server is not already stopped
         if(!this.stopped) {
+            var superStop = super.stop.bind(this);
+
             //console.log('Closing socket server at', this.localSocketFilePath);
             await new Promise(function(resolve, reject) {
                 //console.log('Closing server, no longer accepting new connections...');
@@ -111,4 +121,4 @@ class LocalSocketProtocolServer extends ProtocolServer {
 }
 
 // Export
-export default LocalSocketProtocolServer;
+export default LocalSocketServer;

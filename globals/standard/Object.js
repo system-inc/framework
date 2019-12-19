@@ -7,6 +7,13 @@ Object.defineProperty(Object.prototype, 'getKeys', {
     }
 });
 
+Object.defineProperty(Object.prototype, 'getSize', {
+    enumerable: false,
+    value: function() {
+        return Object.keys(this).length;
+    },
+});
+
 Object.defineProperty(Object.prototype, 'isEmpty', {
     enumerable: false,
     value: function() {

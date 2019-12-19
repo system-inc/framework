@@ -1,8 +1,6 @@
 // Dependencies
 import PacketGenerator from 'framework/system/server/protocols/PacketGenerator.js';
 import LocalSocketPacket from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacket.js';
-import LocalSocketPacketEvent from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacketEvent.js';
-
 
 // Class
 class LocalSocketPacketGenerator extends PacketGenerator {
@@ -14,14 +12,7 @@ class LocalSocketPacketGenerator extends PacketGenerator {
     emitPacket() {
         //console.log('packet!', this.incomingPacket);
         if(this.incomingPacket.valid()) {
-            // Emit the packet
-            var data = this.incomingPacket.readPayload();
-            //console.log('data', data);
-            var correlationIdentifier = this.incomingPacket.readCorrelationIdentifier();
-            //console.log('correlationIdentifier', correlationIdentifier);
-
-            var packetEvent = new LocalSocketPacketEvent(this, 'packet', data, correlationIdentifier);
-            this.emit('packet', packetEvent);
+            this.emit('packet', this.incomingPacket);
 
             // Reset the incoming packet
             this.currentPacketStructureIndex = null;

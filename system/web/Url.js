@@ -134,6 +134,10 @@ class Url {
 	    this.constructor(baseUrl + '?' + newAdditionalUrl + rows_txt);
 	}
 
+	static is(value) {
+		return Class.isInstance(value, Url);
+	}
+
 	static constructFromNodeRequest(nodeRequest) {
 		var protocol = 'http';
 		if(nodeRequest.connection.encrypted) {

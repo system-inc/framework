@@ -1,6 +1,5 @@
 // Dependencies
 import EventEmitter from 'framework/system/event/EventEmitter.js';
-import PacketEvent from 'framework/system/server/protocols/PacketEvent.js';
 
 // Class
 class PacketGenerator extends EventEmitter {

@@ -1,9 +1,9 @@
 // Dependencies
-import ProtocolClient from 'framework/system/server/protocols/ProtocolClient.js';
-import LocalSocketProtocolConnection from 'framework/system/server/protocols/local-socket/LocalSocketProtocolConnection.js';
+import Client from 'framework/system/server/Client.js';
+import LocalSocketConnection from 'framework/system/server/protocols/local-socket/LocalSocketConnection.js';
 
 // Class
-class LocalSocketProtocolClient extends ProtocolClient {
+class LocalSocketClient extends Client {
 
     localSocketFilePath = null;
 
@@ -12,7 +12,7 @@ class LocalSocketProtocolClient extends ProtocolClient {
 
         // Set the local socket file path
         if(localSocketFilePath === null) {
-            throw new Error('Path must be specified when constructing a LocalSocketProtocolClient.');
+            throw new Error('Path must be specified when constructing a LocalSocketClient.');
         }
         this.localSocketFilePath = localSocketFilePath;
     }
@@ -27,7 +27,7 @@ class LocalSocketProtocolClient extends ProtocolClient {
             });
 
             // Create the connection
-            var connection = new LocalSocketProtocolConnection(Node.Net.createConnection(this.localSocketFilePath, function() {
+            var connection = new LocalSocketConnection(Node.Net.createConnection(this.localSocketFilePath, function() {
                 //console.log('Client connected!');
 
                 // Cancel the timeout function
@@ -41,4 +41,4 @@ class LocalSocketProtocolClient extends ProtocolClient {
 }
 
 // Export
-export default LocalSocketProtocolClient;
+export default LocalSocketClient;

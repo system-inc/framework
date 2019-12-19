@@ -6,6 +6,10 @@ Array.prototype.prepend = Array.prototype.unshift;
 
 Array.prototype.toString = Object.prototype.toString;
 
+Array.prototype.getSize = function() {
+	return this.length;
+};
+
 Array.prototype.clone = function() {
 	return Array.clone(this);
 };

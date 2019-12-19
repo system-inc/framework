@@ -19,6 +19,7 @@ class Client extends EventEmitter {
     async initialize() {
         this.connection = await this.connect();
         this.connection.on('data', this.onData.bind(this));
+        this.connection.on('message', this.onMessage.bind(this));
 	}
 
     async connect() {
@@ -27,6 +28,10 @@ class Client extends EventEmitter {
 
     onData(event) {
         this.emit('data', event);
+    }
+
+    onMessage(event) {
+        this.emit('message', event);
     }
 
     // Allow connection calls to be made directly on client

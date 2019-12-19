@@ -4,14 +4,13 @@ import EventEmitter from 'framework/system/event/EventEmitter.js';
 // Class
 class Connection extends EventEmitter {
 
-    nodeSocket = null;
     identifier = null;
+    nodeSocket = null;
     connected = null;
 
     constructor(nodeSocket) {
         super();
 
-        this.nodeSocket = nodeSocket;
         this.identifier = String.uniqueIdentifier();
 
         // Configure the Node socket
@@ -24,29 +23,34 @@ class Connection extends EventEmitter {
 
     // When the Node socket gets data
     onNodeSocketData(data) {
-        throw new Error('This method must be implemented by a child class.');
+        this.onData(data);
     }
 
-    onNodeSocketClosed(event) {
+    onNodeSocketClosed() {
+        //console.log('Connection.onNodeSocketClosed');
         this.disconnect();
     }
 
-    onData(event) {
-        this.emit('data', event);
+    onData(data) {
+        this.emit('data', data);
+    }
+
+    onMessage(message) {
+        this.emit('message', message);
     }
 
     // Send data to the client with no expectation of a response
-    async send(data) {
+    async send() {
         throw new Error('This method must be implemented by a child class.');
     }
 
     // Send data to the client and expect a response
-    async request(data) {
+    async request() {
         throw new Error('This method must be implemented by a child class.');
     }
 
-    async respond(correlationIdentifier, data) {
-        return this.send(data, correlationIdentifier);
+    async respond() {
+        throw new Error('This method must be implemented by a child class.');
     }
 
     async disconnect() {

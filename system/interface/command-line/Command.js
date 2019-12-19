@@ -399,7 +399,7 @@ class Command {
 		function showOptionHelp(optionsSettings, commandIdentifier = '', indentationSpaces = 0) {
 			var indentation = ' '.repeat(indentationSpaces);
 
-			if(optionsSettings.getKeys().length) {
+			if(optionsSettings.getSize()) {
 				app.standardStreams.output.writeLine(indentation+Terminal.style(commandIdentifier+'Options', 'underline')+"\n");
 				optionsSettings.each(function(optionSettingsIndex, optionSettings) {
 					var line = indentation+'--'+optionSettings.identifier;
@@ -424,7 +424,7 @@ class Command {
 		showOptionHelp(optionsSettings);
 
 		var subcommandsSettings = this.settings.get('subcommands');
-		if(subcommandsSettings.getKeys().length) {
+		if(subcommandsSettings.getSize()) {
 			app.standardStreams.output.writeLine(Terminal.style('Subcommands', 'underline')+"\n");
 			subcommandsSettings.each(function(subcommandSettingsIndex, subcommandSettings) {
 				var line = Terminal.style(subcommandSettings.identifier, 'bold');
@@ -442,7 +442,7 @@ class Command {
 				}
 
 				// Subcommand options
-				if(subcommandSettings.options.getKeys().length) {
+				if(subcommandSettings.options.getSize()) {
 					showOptionHelp(subcommandSettings.options, subcommandSettings.identifier+' ', 2);
 				}
 			});
@@ -461,7 +461,7 @@ class Command {
 		function addOptionsDebugCommandString(debugCommand, options, indentationSpaces = 0) {
 			var indentation = ' '.repeat(indentationSpaces);
 
-			if(options.getKeys().length) {
+			if(options.getSize()) {
 				debugCommand += indentation+Terminal.style('Options', 'underline')+"\n\n";
 				options.each(function(key, value) {
 					debugCommand += indentation+'  '+key+': '+Terminal.style(value, 'bold')+"\n";
@@ -473,11 +473,11 @@ class Command {
 
 		debugCommand = addOptionsDebugCommandString(debugCommand, this.options);
 
-		if(this.options.getKeys().length && this.subcommands.getKeys().length) {
+		if(this.options.getSize() && this.subcommands.getSize()) {
 			debugCommand += "\n";
 		}
 
-		if(this.subcommands.getKeys().length) {
+		if(this.subcommands.getSize()) {
 			debugCommand += Terminal.style('Subcommands', 'underline')+"\n";
 			this.subcommands.each(function(key, value) {
 				debugCommand += "\n"+'  '+Terminal.style(key, 'bold')+"\n\n";

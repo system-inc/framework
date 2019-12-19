@@ -48,6 +48,7 @@ class Node {
 	static FileSystem = require('fs');
 	static Http = require('http');
 	static Https = require('https');
+	static Http2 = require('http2');
 	static Module = require('module');
 	static Net = require('net');
 	static OperatingSystem = require('os');
