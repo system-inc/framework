@@ -10,9 +10,8 @@ class Message {
         this.connection = connection;
     }
 
-    // Allow messages to be responded to
-    async respond() {
-        throw new Error('This method must be implemented by a child class.');
+    async respond(messageOrData) {
+        return this.connection.request(messageOrData, this);
     }
 
     static is(value) {

@@ -22,7 +22,7 @@ class LocalSocketTest extends Test {
         Assert.true(localSocketFilePathExists, 'Server local socket file has been created');
 
         // Have the server listen for specific messages
-        localSocketServer.on('message', function(event) {
+        localSocketServer.on('message', async function(event) {
             var message = event.data;
             //console.log('localSocketServer.on message event message:', message);
             //console.log('localSocketServer.on message event message.data:', message.data);
@@ -36,6 +36,12 @@ class LocalSocketTest extends Test {
                 message.respond({
                     answer: 'Yes I do!',
                 });
+            }
+            else if(message.data == 'Server, what is your purpose?') {
+                message.respond('Client, what do you think my purpose is?');
+            }
+            else if(message.data == 'Server, I think you live to serve.') {
+                message.respond('Client, I live to serve.');
             }
         });
 
@@ -95,12 +101,19 @@ class LocalSocketTest extends Test {
         Assert.equal(actual, expected, 'Server request gets the right response');
         Assert.true(String.is(actual), 'Server requests response is the right type (string)');
 
+        // Have the client send a request, get a response, send a response, and get a response
+        var serverResponse1 = await localSocketClient.request('Server, what is your purpose?');
+        if(serverResponse1.data == 'Client, what do you think my purpose is?') {
+            var serverResponse2 = await serverResponse1.respond('Server, I think you live to serve.');
+        }
+        actual = serverResponse2.data;
+        expected = 'Client, I live to serve.';
+        Assert.equal(actual, expected, 'Reponses can be responded to');
+
         // Performance test
         //for(var i = 0; i < 50000; i++) {
         //    await localSocketClient.request('Hi');
         //}
-
-        console.error('write a test using respond expect response');
 
         // Have the client disconnect
         await localSocketClient.disconnect();

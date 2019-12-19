@@ -68,8 +68,8 @@ class LocalSocketProtocolConnection extends Connection {
         return message;
     }
 
-    async request(messageOrData, timeoutInMilliseconds = 1 * 1000) {
-        var sentMessage = await this.send(messageOrData);
+    async request(messageOrData, correlatingMessage = null, timeoutInMilliseconds = 1 * 1000) {
+        var sentMessage = await this.send(messageOrData, correlatingMessage);
 
         return new Promise(function(resolve, reject) {
             var timeoutFunction = Function.schedule(timeoutInMilliseconds, function() {

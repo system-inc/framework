@@ -41,11 +41,6 @@ class LocalSocketMessage extends Message {
 
         return this.packet;
     }
-    
-    async respond(messageOrData, expectResponse = false) {
-        //console.log('LocalSocketMessage respond', messageOrData);
-        return this.connection.send(messageOrData, this);
-    }
 
     static async constructFromData(connection, data, correlationIdentifier = null) {
         var localSocketMessage = new LocalSocketMessage(connection, data);
