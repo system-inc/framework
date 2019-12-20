@@ -20,8 +20,8 @@ class HttpServerConnection extends HttpConnection {
     }
 
     onNodeRequestData(data) {
+        console.log('onNodeRequestData', data.toString());
         this.nodeRequestData.append(data);
-        console.log('onNodeRequestData', data);
     }
 
     onNodeRequestEnd() {

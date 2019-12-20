@@ -115,7 +115,7 @@ class Url {
 	}
 
 	setQueryParameter(key, value) {
-		// Copy and pasted this code, can probably clean this up
+		// TODO: Copy and pasted this code, can probably clean this up
 		var newAdditionalUrl = '';
 	    var tempArray = this.url.split('?');
 	    var baseUrl = tempArray[0];

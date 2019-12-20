@@ -4,10 +4,12 @@
 // Class
 class Message {
 
+    identifier = null;
     connection = null;
 
     constructor(connection) {
         this.connection = connection;
+        this.identifier = String.uniqueIdentifier();
     }
 
     async respond(messageOrData) {

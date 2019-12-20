@@ -1,5 +1,6 @@
 // Dependencies
 import HttpMessage from 'framework/system/server/protocols/http/messages/HttpMessage.js';
+import Url from 'framework/system/web/Url.js';
 
 // Class
 class HttpRequestMessage extends HttpMessage {
@@ -22,8 +23,8 @@ class HttpRequestMessage extends HttpMessage {
         httpRequestMessage.headers = nodeRequest.headers;
         httpRequestMessage.body = nodeRequestData;
         httpRequestMessage.trailers = nodeRequest.trailers;
-        httpRequestMessage.method = nodeRequest.method;
-        httpRequestMessage.url = nodeRequest.url;
+        httpRequestMessage.method = nodeRequest.method.uppercase();
+        httpRequestMessage.url = Url.constructFromNodeRequest(nodeRequest);
 
         return httpRequestMessage;
     }

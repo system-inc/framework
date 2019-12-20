@@ -13,12 +13,52 @@ class HttpConnection extends Connection {
         //console.log(data);
         //console.log('^ ---');
         this.nodeSocket.write(data);
+
+        // //console.log('LocalSocketConnection send', 'messageOrData', messageOrData, 'correlatingMessage', correlatingMessage);
+
+        // var message = null;
+
+        // // If we are sending an existing message
+        // if(LocalSocketMessage.is(messageOrData)) {
+        //     message = messageOrData;
+        // }
+        // // If we need to create the message
+        // else {
+        //     message = new LocalSocketMessage(this, messageOrData);
+        // }
+
+        // // If there is a correlating message, set the correlation identifier
+        // if(correlatingMessage !== null) {
+        //     message.correlationIdentifier = correlatingMessage.correlationIdentifier;
+        // }
+
+        // // Send the message's packet over the Node socket
+        // message.sendPacket(this.nodeSocket);
+
+        // // Return the message
+        // return message;
     }
 
-    async request(data, timeoutInMilliseconds = 1 * 1000) {
-        //console.log('HttpConnection.request data', data);
+    async request(request, correlatingMessage = null, timeoutInMilliseconds = 1 * 1000) {
+        var httpRequestMessage = null;
 
-        await this.send(data);
+        // If the request is a string, assume it is a URL path and the method is GET
+        if(String.is(request)) {
+
+        }
+        // If the request is an object, build an HttpRequestMessage with the properties
+        else if(Object.is(request)) {
+            
+        }
+        else {
+            httpRequestMessage = request;
+        }
+
+        console.error('need to do this HttpConnection');
+        this.nodeResponse.end(data);
+        return true;
+        
+        //var sentMessage = await this.send(messageOrData, correlatingMessage);
 
         return new Promise(function(resolve, reject) {
             var timeoutFunction = Function.schedule(timeoutInMilliseconds, function() {
