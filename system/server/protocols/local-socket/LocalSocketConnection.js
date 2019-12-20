@@ -1,9 +1,7 @@
 // Dependencies
 import Connection from 'framework/system/server/Connection.js';
 import LocalSocketPacketGenerator from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacketGenerator.js';
-
 import LocalSocketMessage from 'framework/system/server/protocols/local-socket/messages/LocalSocketMessage.js';
-import Message from '../../Message';
 
 // Class
 class LocalSocketProtocolConnection extends Connection {
@@ -48,7 +46,7 @@ class LocalSocketProtocolConnection extends Connection {
         var message = null;
 
         // If we are sending an existing message
-        if(Message.is(messageOrData)) {
+        if(LocalSocketMessage.is(messageOrData)) {
             message = messageOrData;
         }
         // If we need to create the message

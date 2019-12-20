@@ -1,10 +1,10 @@
 // Dependencies
-import ProtocolClient from 'framework/system/server/protocols/ProtocolClient.js';
+import Client from 'framework/system/server/Client.js';
 import HttpConnection from 'framework/system/server/protocols/http/HttpConnection.js';
 import Url from 'framework/system/web/Url.js';
 
 // Class
-class HttpClient extends ProtocolClient {
+class HttpClient extends Client {
 
     url = null;
 
@@ -16,10 +16,11 @@ class HttpClient extends ProtocolClient {
             throw new Error('URL must be specified when constructing a HttpClient.');
         }
         
+        // If we already have a URL
         if(Url.is(url)) {
             this.url = url;
         }
-        // Support strings in the constructor
+        // If a string was provided, turn it into a Url object
         else if(String.is(url)) {
             this.url = new Url(url);
         }

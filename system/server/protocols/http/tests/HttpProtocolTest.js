@@ -12,38 +12,29 @@ class HttpProtocolTest extends Test {
         var actual = null;
         var expected = null;
 
-        // Create an HTTP protocol server
+        // Create a HTTP protocol server
         var httpServer = new HttpServer(8181);
         await httpServer.initialize();
 
         // Have the server listen for specific data
         httpServer.on('message', function(event) {
-            //console.log('httpServer.on data event', event);
-            //console.log('httpServer.on data event data.toString()', event.data.toString());
-            //console.log('httpServer.on data event data', event.data);
-            event.emitter.nodeResponse.write('Hello');
+            var message = event.data;
+            console.log('httpServer.on message event message:', message);
         });
 
         // Create a HTTP protocol client
-        var httpClient = new HttpClient('http://127.0.0.1:8181');
-        await httpClient.initialize();
-        Assert.true(httpClient.connected, 'Client is connected');
+        // var httpClient = new HttpClient('http://127.0.0.1:8181');
+        // await httpClient.initialize();
+        // Assert.true(httpClient.connected, 'Client is connected');
 
-        // Have the client listen for specific data
-        httpClient.on('data', function(event) {
-            //console.log('httpClient.on data event', event);
-            console.log('httpClient.on data event.data', event.data);
-            console.log('httpClient.on data event.data', event.data.toString());
+        // // Have the client listen for specific data
+        // httpClient.on('message', function(event) {
+        //     var message = event.data;
+        //     console.log('httpClient.on message event message:', message);
+        // });
 
-            // // String
-            // if(event.data == 'Hi Client. Can you tell me you got these bytes?') {
-            //     //console.log('httpClient.on data event', event);
-            //     event.respond('Hi Server. I received the bytes you sent.');
-            // }
-        });
-
-        await httpClient.request("POST /1 HTTP/1.1\r\nHost: localhost\r\n\r\nBody");
-        await httpClient.request("POST /2 HTTP/1.1\r\nHost: localhost\r\n\r\nBody");
+        //await httpClient.request("POST /1 HTTP/1.1\r\nHost: localhost\r\n\r\nBody");
+        //await httpClient.request("POST /2 HTTP/1.1\r\nHost: localhost\r\n\r\nBody");
 
         //var response = await httpClient.request("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
         //console.log('response', response);

@@ -1,9 +1,9 @@
 // Dependencies
-import ProtocolServer from 'framework/system/server/protocols/ProtocolServer.js';
+import Server from 'framework/system/server/Server.js';
 import HttpServerConnection from 'framework/system/server/protocols/http/server/HttpServerConnection.js';
 
 // Class
-class HttpServer extends ProtocolServer {
+class HttpServer extends Server {
 
     nodeServer = null;
     port = null;
@@ -24,14 +24,14 @@ class HttpServer extends ProtocolServer {
         await super.initialize();
     }
     
-    onNodeServerConnection(nodeRequest, nodeResponse) {
+    async onNodeServerConnection(nodeRequest, nodeResponse) {
+        console.log('HttpServer.onNodeServerConnection');
         //console.log('HttpServer onNodeServerConnection nodeRequest', nodeRequest, 'nodeResponse', nodeResponse);
         
         var connection = new HttpServerConnection(nodeRequest.socket, nodeRequest, nodeResponse);
+        
+        // Add the connection to the server
         this.newConnection(connection);
-
-        console.error('dont do this, instead we emit a message event');
-        connection.emit('data', nodeRequest);
 
         return connection;
     }

@@ -12,9 +12,7 @@ class LocalSocketServer extends Server {
     constructor(localSocketFilePath = null) {
         super();
 
-        if(localSocketFilePath !== null) {
-            this.localSocketFilePath = localSocketFilePath;
-        }
+        this.localSocketFilePath = localSocketFilePath;
     }
 
     async initialize() {
