@@ -21,9 +21,9 @@ class HttpProtocolTest extends Test {
         // Have the server listen for specific data
         httpServer.on('message', function(event) {
             var httpRequestMessage = event.data;
-            //console.log('httpServer.on message event message:', httpRequestMessage);
+            console.log('httpServer.on message event message:', httpRequestMessage);
 
-            console.error('TO DO');
+            app.error('TO DO');
             // [ ] responding with just data respond(string) just writes a 200 OK with response body
             // [ ] respond(object) creates an httpresponsemessage and sends it
             // [ ] respond(httpresponsemessage) just sends the message
@@ -48,7 +48,7 @@ class HttpProtocolTest extends Test {
             console.log('httpClient.on message event message:', message);
         });
 
-        console.error('TO DO');
+        app.error('TO DO');
         // define how we send requests
         // [ ] requesting with just data request(string) assumes string is a URL and method is GET
         // [ ] request(object) creates an httprequestmessage and sends it

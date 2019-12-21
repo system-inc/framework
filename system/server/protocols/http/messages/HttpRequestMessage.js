@@ -12,12 +12,22 @@ class HttpRequestMessage extends HttpMessage {
         super(connection);
     }
 
+    toBuffer() {
+        console.log(this);
+
+        var string = this.method+' '+this.url.toString()+' '+this.protocol.uppercase()+'/1.1'+"\r\n";
+        string += "\r\n\r\n";
+
+        console.log('HttpRequestMessage toBuffer string', string);
+        return Buffer.from(string);
+    }
+
     static constructFromNodeRequest(connection, nodeRequest, nodeRequestData) {
         //console.log('nodeRequest', nodeRequest);
 
         var httpRequestMessage = new HttpRequestMessage(connection);
         
-        httpRequestMessage.protocol = 'HTTP';
+        httpRequestMessage.protocol = connection.protocol;
         httpRequestMessage.majorVersion = nodeRequest.httpVersionMajor;
         httpRequestMessage.minorVersion = nodeRequest.httpVersionMinor;
         httpRequestMessage.headers = nodeRequest.headers;
@@ -33,7 +43,7 @@ class HttpRequestMessage extends HttpMessage {
         var httpRequestMessage = new HttpRequestMessage(connection);
 
         httpRequestMessage.method = HttpRequestMessage.methods.get;
-        httpRequestMessage.url = new Url(this.protocol+'://'+this.);
+        httpRequestMessage.url = new Url(connection.protocol+'://'+connection.host+':'+connection.port+urlPath);
 
         return httpRequestMessage;
     }

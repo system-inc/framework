@@ -33,54 +33,58 @@ class HttpMessage extends Message {
     
     time = null;
 
-    constructor(connection, protocol = 'HTTP', majorVersion = 1, minorVersion = 1, headers = {}, body = null, trailers = {}) {
+    constructor(connection) {
         super(connection);
 
         this.time = new Time();
 
-        this.protocol = protocol;
-        this.protocolVersion = majorVersion;
-        this.headers = Headers.constructFromNodeHeaders(this.connection.nodeRequest.headers);
-        this.cookies = new Cookies(this.headers.get('cookie'));
-        this.body = body;
-        this.trailers = Headers.constructFromNodeHeaders(this.connection.nodeRequest.trailers);
+        this.protocol = connection.protocol;
+        // this.protocolVersion = new Version({
+        //     'major': this.connection.nodeRequest.httpVersionMajor,
+        //     'minor': this.connection.nodeRequest.httpVersionMinor,
+        // });
+        //this.headers = Headers.constructFromNodeHeaders(this.connection.nodeRequest.headers);
+        this.headers = new Headers();
+        //this.cookies = new Cookies(this.headers.get('cookie'));
+        this.cookies = new Cookies();
+        //this.body = body;
+        //this.trailers = Headers.constructFromNodeHeaders(this.connection.nodeRequest.trailers);
+        this.trailers = new Headers();
 
-        this.referrer = new Url(this.headers.get('referer'));
+        //this.referrer = new Url(this.headers.get('referer'));
 
         // Cache the user agent
-        var userAgent = this.headers.get('user-agent');
+        //var userAgent = this.headers.get('user-agent');
 
         // Revisit IP address to see if X-Forwarded-For is set
-        var xForwardedFor = this.headers.get('x-forwarded-for');
-        if(xForwardedFor) {
-            // Catch x.x.x.x,y.y.y.y format
-            if(xForwardedFor.contains(',')) {
-                this.ipAddress = IpAddress.create(xForwardedFor.split(',').first());
-            }
-            else {
-                this.ipAddress = IpAddress.create(xForwardedFor);	
-            }
-        }
+        // var xForwardedFor = this.headers.get('x-forwarded-for');
+        // if(xForwardedFor) {
+        //     // Catch x.x.x.x,y.y.y.y format
+        //     if(xForwardedFor.contains(',')) {
+        //         this.ipAddress = IpAddress.create(xForwardedFor.split(',').first());
+        //     }
+        //     else {
+        //         this.ipAddress = IpAddress.create(xForwardedFor);	
+        //     }
+        // }
 
         // Browser identification from user agent
-        this.browser = Browser.constructFromUserAgent(userAgent);
+        //this.browser = Browser.constructFromUserAgent(userAgent);
 
         // Device identification from user agent
-        this.device = Device.constructFromUserAgent(userAgent);
+        //this.device = Device.constructFromUserAgent(userAgent);
 
         // Operating system identification from user agent
-        this.operatingSystem = OperatingSystem.constructFromUserAgent(userAgent);
+        //this.operatingSystem = OperatingSystem.constructFromUserAgent(userAgent);
 
         // Geolocation (optionally provided by Cloudflare)
-        this.geolocation = new Geolocation();
-        this.geolocation.country = new Country();
-        this.geolocation.country.code = this.headers.get('cf-ipcountry');
+        //this.geolocation = new Geolocation();
+        //this.geolocation.country = new Country();
+        //this.geolocation.country.code = this.headers.get('cf-ipcountry');
+    }
 
-        // HTTP version
-        this.httpVersion = new Version({
-            'major': this.connection.nodeRequest.httpVersionMajor,
-            'minor': this.connection.nodeRequest.httpVersionMinor,
-        });
+    static constructFromNodeRequest() {
+
     }
 
     static is(value) {

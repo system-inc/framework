@@ -9,8 +9,8 @@ class HttpServerConnection extends HttpConnection {
     nodeRequestData = [];
     nodeResponse = null;
 
-    constructor(nodeSocket, nodeRequest, nodeResponse) {
-        super(nodeSocket);
+    constructor(nodeSocket, protocol, port, host, nodeRequest, nodeResponse) {
+        super(nodeSocket, protocol, port, host);
 
         this.nodeRequest = nodeRequest;
         this.nodeResponse = nodeResponse;

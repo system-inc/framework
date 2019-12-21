@@ -5,8 +5,16 @@ import HttpRequestMessage from 'framework/system/server/protocols/http/messages/
 // Class
 class HttpConnection extends Connection {
 
-    constructor(nodeSocket) {
+    protocol = null;
+    port = null;
+    host = null;
+
+    constructor(nodeSocket, protocol, port, host) {
         super(nodeSocket);
+
+        this.protocol = protocol.uppercase();
+        this.port = port;
+        this.host = host;
     }
 
     async send(data) {
@@ -55,9 +63,9 @@ class HttpConnection extends Connection {
             httpRequestMessage = request;
         }
 
-        app.error('httpRequestMessage', httpRequestMessage);
+        //app.highlight('httpRequestMessage', httpRequestMessage);
 
-        this.nodeResponse.end(httpRequestMessage);
+        this.send(httpRequestMessage.toBuffer());
         return true;
         
         //var sentMessage = await this.send(messageOrData, correlatingMessage);

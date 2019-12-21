@@ -6,6 +6,7 @@ import HttpServerConnection from 'framework/system/server/protocols/http/server/
 class HttpServer extends Server {
 
     nodeServer = null;
+    protocol = 'HTTP';
     port = null;
     host = null;
 
@@ -28,7 +29,7 @@ class HttpServer extends Server {
         console.log('HttpServer.onNodeServerConnection');
         //console.log('HttpServer onNodeServerConnection nodeRequest', nodeRequest, 'nodeResponse', nodeResponse);
         
-        var connection = new HttpServerConnection(nodeRequest.socket, nodeRequest, nodeResponse);
+        var connection = new HttpServerConnection(nodeRequest.socket, this.protocol, this.port, this.host, nodeRequest, nodeResponse);
         
         // Add the connection to the server
         this.newConnection(connection);

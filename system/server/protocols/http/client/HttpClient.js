@@ -36,14 +36,19 @@ class HttpClient extends Client {
             });
 
             // Create the connection
-            var connection = new HttpConnection(Node.Net.createConnection(this.url.port, this.url.host, function() {
-                //console.log('HttpClient connected!');
+            var connection = new HttpConnection(
+                Node.Net.createConnection(this.url.port, this.url.host, function() {
+                    //console.log('HttpClient connected!');
 
-                // Cancel the timeout function
-                Function.cancel(timeoutFunction);
+                    // Cancel the timeout function
+                    Function.cancel(timeoutFunction);
                 
-                resolve(connection);
-            }.bind(this)));
+                    resolve(connection);
+                }.bind(this)),
+                this.url.protocol,
+                this.url.port,
+                this.url.host
+            );
         }.bind(this));
     }
     
