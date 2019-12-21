@@ -27,6 +27,10 @@ class HttpResponseMessage extends HttpMessage {
 
         return httpResponseMessage;
     }
+
+    static is(value) {
+		return Class.isInstance(value, HttpResponseMessage);
+    }
     
 }
 

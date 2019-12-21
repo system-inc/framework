@@ -3,6 +3,7 @@ import Test from 'framework/system/test/Test.js';
 import Assert from 'framework/system/test/Assert.js';
 import HttpServer from 'framework/system/server/protocols/http/server/HttpServer.js';
 import HttpClient from 'framework/system/server/protocols/http/client/HttpClient.js';
+import HttpRequestMessage from 'framework/system/server/protocols/http/messages/HttpRequestMessage.js';
 import HttpResponseMessage from 'framework/system/server/protocols/http/messages/HttpResponseMessage.js';
 
 // Class
@@ -43,7 +44,7 @@ class HttpProtocolTest extends Test {
 
         // Have the client listen for specific data
         httpClient.on('message', function(event) {
-            var message = event.data;
+            var httpResponseMessage = event.data;
             console.log('httpClient.on message event message:', message);
         });
 

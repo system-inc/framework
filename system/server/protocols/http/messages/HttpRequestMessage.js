@@ -28,6 +28,37 @@ class HttpRequestMessage extends HttpMessage {
 
         return httpRequestMessage;
     }
+
+    static constructFromUrlPath(connection, urlPath) {
+        var httpRequestMessage = new HttpRequestMessage(connection);
+
+        httpRequestMessage.method = HttpRequestMessage.methods.get;
+        httpRequestMessage.url = new Url(this.protocol+'://'+this.);
+
+        return httpRequestMessage;
+    }
+
+    static constructFromObject(string) {
+        var httpRequestMessage = new HttpRequestMessage();
+
+        return httpRequestMessage;
+    }
+
+    static methods = {
+        get: 'GET',
+        head: 'HEAD',
+        post: 'POST',
+        put: 'PUT',
+        delete: 'DELET',
+        connect: 'CONNECT',
+        options: 'OPTIONS',
+        trace: 'TRACE',
+        patch: 'PATCH',
+    };
+
+    static is(value) {
+		return Class.isInstance(value, HttpRequestMessage);
+    }
     
 }
 

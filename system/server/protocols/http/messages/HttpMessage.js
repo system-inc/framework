@@ -82,6 +82,10 @@ class HttpMessage extends Message {
             'minor': this.connection.nodeRequest.httpVersionMinor,
         });
     }
+
+    static is(value) {
+		return Class.isInstance(value, HttpMessage);
+    }
     
 }
 

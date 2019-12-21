@@ -1,5 +1,6 @@
 // Dependencies
 import Connection from 'framework/system/server/Connection.js';
+import HttpRequestMessage from 'framework/system/server/protocols/http/messages/HttpRequestMessage.js';
 
 // Class
 class HttpConnection extends Connection {
@@ -44,18 +45,19 @@ class HttpConnection extends Connection {
 
         // If the request is a string, assume it is a URL path and the method is GET
         if(String.is(request)) {
-
+            httpRequestMessage = HttpRequestMessage.constructFromUrlPath(this, request);
         }
         // If the request is an object, build an HttpRequestMessage with the properties
         else if(Object.is(request)) {
-            
+            httpRequestMessage = HttpRequestMessage.constructFromObject(request);
         }
         else {
             httpRequestMessage = request;
         }
 
-        console.error('need to do this HttpConnection');
-        this.nodeResponse.end(data);
+        app.error('httpRequestMessage', httpRequestMessage);
+
+        this.nodeResponse.end(httpRequestMessage);
         return true;
         
         //var sentMessage = await this.send(messageOrData, correlatingMessage);
