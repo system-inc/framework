@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "node app test",
+            "type": "node",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**",
+                "**node_modules**",
+                "sql.js",
+                "File.js",
+            ],
+            "program": "${workspaceFolder}/app/index.js",
+            "args": ["test"],
+            "console": "integratedTerminal",
+            "outputCapture": "std",
+        }
+    ]
+}
