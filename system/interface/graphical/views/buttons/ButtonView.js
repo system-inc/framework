@@ -1,8 +1,8 @@
 // Dependencies
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import View from 'framework/system/interface/graphical/views/View.js';
 
 // Class
-class ButtonView extends TextView {
+class ButtonView extends View {
 
 	getWebViewAdapterSettings() {
 		return {

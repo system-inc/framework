@@ -1,3 +1,6 @@
+// Dependencies
+import PrimitiveView from 'framework/system/interface/graphical/views/PrimitiveView.js';
+
 // Class
 class ViewAdapter {
 
@@ -5,6 +8,14 @@ class ViewAdapter {
 	adaptedView = null;
 
 	preInitializationMethodCalls = [];
+
+	get dimensions() {
+		return this.adaptedView.dimensions;
+	}
+
+	get position() {
+		return this.adaptedView.position;
+	}
 
 	constructor(view) {
 		this.view = view;
@@ -15,33 +26,17 @@ class ViewAdapter {
 
 		// Create the view
 		if(this.adaptedView === null) {
-			this.adaptedView = this.createAdaptedView();	
+			this.adaptedView = this.createAdaptedView();
 			//console.info('created this.adaptedView', this.adaptedView);
 
-			// Hook the adapted view's emit function
-			var standardAdaptedViewEmit = this.adaptedView.emit;
-			this.adaptedView.emit = async function(eventIdentifier, data, eventOptions) {
-				if(
-					eventIdentifier !== 'htmlNode.domUpdateExecuted' &&
-					eventIdentifier !== 'htmlNode.mountedToDom' &&
-					eventIdentifier !== 'htmlNode.domUpdateExecuted'
-				) {
-					//console.log('eventIdentifier', eventIdentifier);
-					// We also emit the event on the view
-					await this.view.emit.apply(this.view, arguments);
-				}
-
-				// Emit the event on the adapted view as normal
-				return await standardAdaptedViewEmit.apply(this.adaptedView, arguments);
-			}.bind(this);
+			// Echo events from the adaptedView to the view
+			this.adaptedView.on('*', function(event) {
+				this.view.emit(event.identifier, event);
+			}.bind(this));
 		}
 		else {
 			throw new Error('Adapted view already created, this should never happen?');
 		}
-
-		// Hook the adapted view's emit method
-		//console.log('this looks super sketchy, need to rethink this');
-		//this.adaptedView.emit = this.view.emit;
 
 		// Run any queued up method calls now that we have an adapted view
 		this.preInitializationMethodCalls.each(function(methodCallIndex, methodCall) {
@@ -57,22 +52,14 @@ class ViewAdapter {
 		throw new Error('createAdaptedView() must be implemented by a child class of ViewAdapter.');
 	}
 
+	initializeAdaptedView() {
+		throw new Error('createAdaptedView() must be implemented by a child class of ViewAdapter.');
+	}
+
 	// All methods calls for adapted views are sent here to be queued up for when the adapted view is created
 	executeAdaptedViewMethod(method, storedArguments) {
 		// If the adapted view exists, we can just call the method on it
 		if(this.adaptedView) {
-			//console.log('adaptedView exists', method);
-
-			// Handle adding children
-			if(method === 'addChild') {
-				method = storedArguments[1];
-				var childView = storedArguments[0];
-				if(childView.adapter.adaptedView === null) {
-					childView.initialize();
-				}
-				storedArguments = [childView.adapter.adaptedView];
-			}
-
 			//console.info('executeAdaptedViewMethod - immediately ', method, storedArguments);
 			return this.adaptedView[method](...storedArguments);
 		}
@@ -88,6 +75,14 @@ class ViewAdapter {
 				});
 			}.bind(this));
 		}
+	}
+
+	detach() {
+		return this.executeAdaptedViewMethod('detach', arguments);
+	}
+
+	setContent() {
+		return this.executeAdaptedViewMethod('setContent', arguments);
 	}
 
 	render() {
@@ -121,40 +116,20 @@ class ViewAdapter {
 
 	// HtmlElement
 
-	empty() {
-		return this.executeAdaptedViewMethod('empty', arguments);	
+	addChild(childView, arrayMethod = 'append') {
+		return this.executeAdaptedViewMethod('addChild', [childView.adapter.adaptedView, arrayMethod]);
 	}
 
-	prepend(childView) {
-		return this.addChild(childView, 'prepend');
-	}
-
-	append(childView) {
-		return this.addChild(childView, 'append');
+	removeChild(childView) {
+		return this.executeAdaptedViewMethod('removeChild', [childView.adapter.adaptedView]);
 	}
 
 	setAttribute() {
 		return this.executeAdaptedViewMethod('setAttribute', arguments);
 	}
 
-	addChild(childView, arrayMethod = 'append') {
-		return this.executeAdaptedViewMethod('addChild', arguments);
-	}
-
-	setContent() {
-		return this.executeAdaptedViewMethod('setContent', arguments);	
-	}
-
-	addClass() {
-		return this.executeAdaptedViewMethod('addClass', arguments);
-	}
-
-	removeClass() {
-		return this.executeAdaptedViewMethod('removeClass', arguments);
-	}
-
-	setStyle() {
-		return this.executeAdaptedViewMethod('setStyle', arguments);
+	removeAttribute() {
+		return this.executeAdaptedViewMethod('removeAttribute', arguments);
 	}
 
 	show() {
@@ -191,16 +166,6 @@ class ViewAdapter {
 
 	press() {
 		return this.executeAdaptedViewMethod('press', arguments);
-	}
-
-	// HtmlNode
-
-	get dimensions() {
-		return this.adaptedView.dimensions;
-	}
-
-	get position() {
-		return this.adaptedView.position;
 	}
 
 }

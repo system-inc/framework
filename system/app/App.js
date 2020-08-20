@@ -1,14 +1,17 @@
+// Globals
+import 'framework/globals/Globals.js';
+
 // Dependencies
 import EventEmitter from 'framework/system/event/EventEmitter.js';
 
 // TODO - this isn't universal
-import Directory from 'framework/system/file-system/Directory.js';
+//import Directory from 'framework/system/file-system/Directory.js';
 
 import Module from 'framework/system/module/Module.js';
 import Settings from 'framework/system/settings/Settings.js';
 
 // TODO - this isn't universal
-import Terminal from 'framework/system/interface/Terminal.js';
+//import Terminal from 'framework/system/interface/Terminal.js';
 
 import Version from 'framework/system/version/Version.js';
 
@@ -75,7 +78,7 @@ class App extends EventEmitter {
 	// TODO: Move this, doesn't make sense for a web app
 	framework = {
 		version: new Version('0.1.0'),
-		directory: new Directory(Node.Path.join(__dirname, '../', '../')),
+		//directory: new Directory(Node.Path.join(__dirname, '../', '../')),
 	};
 
 	settings = new Settings({
@@ -178,17 +181,17 @@ class App extends EventEmitter {
 		super();
 
 		// Set the app directory
-		this.directory = new Directory(appDirectory);
+		//this.directory = new Directory(appDirectory);
 
 		// Set the default file log directory
 		this.settings.mergeDefaults({
 			standardStreamsFileLog: {
-				directory: Node.Path.join(this.directory, 'logs'),
+				//directory: Node.Path.join(this.directory, 'logs'),
 			},
 			interfaces: {
 				interactiveCommandLine: {
 					history: {
-						directory: Node.Path.join(this.directory, 'logs'),
+						//directory: Node.Path.join(this.directory, 'logs'),
 					},
 				},
 			},
@@ -199,32 +202,34 @@ class App extends EventEmitter {
 		// Announce starting
 		//this.log('Initializing Framework '+this.framework.version+'...');
 
-		// Load the app settings
-		await this.loadAppSettings();
+		if(!this.inWebContext()) {
+			// Load the app settings
+			await this.loadAppSettings();
 
-		// Use app settings to set the title and the identifier
-		this.setPropertiesFromAppSettings();
+			// Use app settings to set the title and the identifier
+			this.setPropertiesFromAppSettings();
 
-		// Use app settings to configure the environment
-		this.configureEnvironment();
+			// Use app settings to configure the environment
+			this.configureEnvironment();
 
-		// Initialize the app process
-		await this.intializeProcess();
+			// Initialize the app process
+			await this.intializeProcess();
 
-		// Configure the standard streams
-		await this.configureStandardStreams();
+			// Configure the standard streams
+			await this.configureStandardStreams();
 
-		// Configure the standard streams file log
-		await this.configureStandardStreamsFileLog();
+			// Configure the standard streams file log
+			await this.configureStandardStreamsFileLog();
 
-		// Configure the command line interface
-		await this.configureCommandLineInterface();
+			// Configure the command line interface
+			await this.configureCommandLineInterface();
 
-		// Configure the interactive command line interface
-		await this.configureInteractiveCommandLineInterface();
+			// Configure the interactive command line interface
+			await this.configureInteractiveCommandLineInterface();
 
-		// Load all of the modules for the App indicated in the app settings
-		await this.requireAndInitializeAppModules();
+			// Load all of the modules for the App indicated in the app settings
+			await this.requireAndInitializeAppModules();
+		}
 
 		// Configure the graphical interface
 		await this.configureGraphicalInterface();
@@ -353,7 +358,7 @@ class App extends EventEmitter {
 		//this.log('standardStreamsFileLogSettings', standardStreamsFileLogSettings);
 
 		if(standardStreamsFileLogSettings.enabled) {
-			var FileLog = (await import('framework/system/log/FileLog.js')).default;
+			//var FileLog = (await import('framework/system/log/FileLog.js')).default;
 
 			// Create the file log
 			this.standardStreamsFileLog = new FileLog(standardStreamsFileLogSettings.directory, standardStreamsFileLogSettings.nameWithoutExtension);
@@ -422,15 +427,33 @@ class App extends EventEmitter {
 	}
 
 	onWindows() {
-		return Node.Process.platform == 'win32';
+		var onWindows = false;
+
+		if(!this.inWebContext()) {
+			onWindows = Node.Process.platform == 'win32';
+		}
+		
+		return onWindows;
 	}
 
 	onMacOs() {
-		return Node.Process.platform == 'darwin';
+		var onMacOs = false;
+
+		if(!this.inWebContext()) {
+			onMacOs = Node.Process.platform == 'darwin';
+		}
+		
+		return onMacOs;
 	}
 
 	onLinux() {
-		return Node.Process.platform == 'linux';
+		var onLinux = false;
+
+		if(!this.inWebContext()) {
+			onLinux = Node.Process.platform == 'linux';
+		}
+		
+		return onLinux;
 	}
 
 	developerToolsAvailable() {
@@ -438,60 +461,83 @@ class App extends EventEmitter {
 		return this.inGraphicalInterfaceContext();
 	}
 
-	// Use app.log if you want to write the log data to the log file
-	// If you are using Developer Tools you will lose your line number until
-	// https://bugs.chromium.org/p/chromium/issues/detail?id=779244 is resolved
-	// So you'll need to use console.log to use the Chrome debuggers with proper line numbers
-	log() {
+	get log() {
 		if(this.developerToolsAvailable()) {
-			//console.log('developerToolsAvailable');
-			console.log(...arguments);
+			return console.log.bind(window.console);
 		}
-
-		var formattedLogData = this.formatLogData(...arguments);
-		return this.standardStreams.output.writeLine(formattedLogData);
+		else {
+			return function() {
+				var formattedLogData = this.formatLogData(...arguments);
+				return this.standardStreams.output.writeLine(formattedLogData);
+			}
+		}
 	}
 
-	info() {
+	get info() {
 		if(this.developerToolsAvailable()) {
-			console.info(...arguments);
+			return console.info.bind(window.console);
 		}
-
-		var formattedLogData = this.formatLogData(...arguments);
-		formattedLogData = Terminal.style(formattedLogData, 'cyan');
-		return this.standardStreams.output.writeLine(formattedLogData);
+		else {
+			return function() {
+				var formattedLogData = this.formatLogData(...arguments);
+				formattedLogData = Terminal.style(formattedLogData, 'cyan');
+				return this.standardStreams.output.writeLine(formattedLogData);
+			}
+		}
 	}
 
-	warn() {
+	get warn() {
 		if(this.developerToolsAvailable()) {
-			console.warn(...arguments);
+			return console.warn.bind(window.console);
 		}
-
-		var formattedLogData = this.formatLogData(...arguments);
-		formattedLogData = Terminal.style(formattedLogData, 'yellow');
-		return this.standardStreams.output.writeLine(formattedLogData);
+		else {
+			return function() {
+				var formattedLogData = this.formatLogData(...arguments);
+				formattedLogData = Terminal.style(formattedLogData, 'yellow');
+				return this.standardStreams.output.writeLine(formattedLogData);
+			}
+		}
 	}
 
-	error() {
+	get error() {
 		if(this.developerToolsAvailable()) {
-			console.error(...arguments);
+			return console.error.bind(window.console);
 		}
-
-		var formattedLogData = this.formatLogData(...arguments);
-		formattedLogData = Terminal.style(formattedLogData, 'red');
-		return this.standardStreams.output.writeLine(formattedLogData);
+		else {
+			return function() {
+				var formattedLogData = this.formatLogData(...arguments);
+				formattedLogData = Terminal.style(formattedLogData, 'red');
+				return this.standardStreams.output.writeLine(formattedLogData);
+			}
+		}
 	}
 
-	highlight() {
+	get table() {
 		if(this.developerToolsAvailable()) {
-			var highlight = "%c\n\n                                                |>>>\r\n                                                |\r\n                                            _  _|_  _\r\n                                           |;|_|;|_|;|\r\n                                           \\\\.    .  \/\r\n                                            \\\\:  .  \/\r\n                                             ||:   |\r\n                                             ||:.  |\r\n                                             ||:  .|\r\n                                             ||:   |       \\,\/\r\n                                             ||: , |            \/`\\\r\n                                             ||:   |\r\n                                             ||: . |\r\n              __                            _||_   |\r\n     ____--`~    \'--~~__            __ ----~    ~`---,              ___\r\n-~--~                   ~---__ ,--~\'                  ~~----_____-~\'   `~----~~\n\n\n\n";
-			console.log(highlight, 'color: #CCC');
-			console.log(...arguments);
+			return console.table.bind(window.console);
 		}
+		else {
+			return function() {
+				var formattedLogData = this.formatLogData(...arguments);
+				formattedLogData = Terminal.style(formattedLogData, 'green');
+				return this.standardStreams.output.writeLine(formattedLogData);
+			}
+		}
+	}
 
-		var formattedLogData = this.formatLogData(...arguments);
-		formattedLogData = Terminal.style(formattedLogData, 'green');
-		return this.standardStreams.output.writeLine(formattedLogData);
+	get highlight() {
+		if(this.developerToolsAvailable()) {
+			var highlight = "%c \n\n                                                |>>>\r\n                                                |\r\n                                            _  _|_  _\r\n                                           |;|_|;|_|;|\r\n                                           \\\\.    .  \/\r\n                                            \\\\:  .  \/\r\n                                             ||:   |\r\n                                             ||:.  |\r\n                                             ||:  .|\r\n                                             ||:   |       \\,\/\r\n                                             ||: , |            \/`\\\r\n                                             ||:   |\r\n                                             ||: . |\r\n              __                            _||_   |\r\n     ____--`~    \'--~~__            __ ----~    ~`---,              ___\r\n-~--~                   ~---__ ,--~\'                  ~~----_____-~\'   `~----~~\n\n\n\n";
+			console.log(highlight, 'color: green;');
+			return console.info.bind(window.console);
+		}
+		else {
+			return function() {
+				var formattedLogData = this.formatLogData(...arguments);
+				formattedLogData = Terminal.style(formattedLogData, 'green');
+				return this.standardStreams.output.writeLine(formattedLogData);
+			}
+		}
 	}
 
 	formatLogData() {
@@ -502,12 +548,12 @@ class App extends EventEmitter {
 		var formattedLogData = this.formatLogDataWithoutMetaDataPrefix(...arguments);
 
 		// Create a new error
-		var error = new Error('Error manually created to get stack trace.');
+		//var error = new Error('Error manually created to get stack trace.');
 
 	    // Get the location data of the first call site
-	    var callSiteData = error.stack.getCallSite(3);
+	    //var callSiteData = error.stack.getCallSite(3);
 
-    	formattedLogData = '['+new Time().dateTime+'] ('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+formattedLogData;
+    	//formattedLogData = '['+new Time().dateTime+'] ('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+formattedLogData;
 
 		return formattedLogData;
 	}

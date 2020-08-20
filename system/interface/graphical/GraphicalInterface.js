@@ -1,15 +1,16 @@
 // Dependencies
 import Interface from 'framework/system/interface/Interface.js';
 import GraphicalInterfaceManager from 'framework/system/interface/graphical/GraphicalInterfaceManager.js';
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import AppSessionDatastore from 'framework/system/app/datastore/AppSessionDatastore.js';
+import View from 'framework/system/interface/graphical/views/View.js';
+//import AppSessionDatastore from 'framework/system/app/datastore/AppSessionDatastore.js';
+import WebGraphicalInterfaceAdapter  from 'framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
 
 // TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
 
 // Class
 class GraphicalInterface extends Interface {
 
-	// Whether or not the graphical interface was initialized into an 
+	// Whether or not the graphical interface was initialized into an existing adapter
 	usesPreexistingAdapter = null;
 
 	manager = null; // GraphicalInterfaceManager
@@ -23,7 +24,8 @@ class GraphicalInterface extends Interface {
 	title = null;
 	icon = null;
 
-	viewController = null;
+	view = null; // The root view
+	viewController = null; // The root view controller
 
 	state = null;
 
@@ -67,6 +69,9 @@ class GraphicalInterface extends Interface {
 
 		// Create the adapter for the graphical interface
 		this.adapter = await this.createGraphicalInterfaceAdapter();
+
+		// Create the root view now that we have a graphical interface adapter
+		this.view = await this.createRootView();
 		
 		// Handle display events
 		this.handleDisplayEvents();
@@ -92,7 +97,7 @@ class GraphicalInterface extends Interface {
 		// If in a normal web browser
 		else if(app.inWebContext()) {
 			//console.log('createGraphicalInterfaceAdapter - inWebContext');
-			var WebGraphicalInterfaceAdapter = require('framework/system/interface/graphical/managers/adapters/web/WebGraphicalInterfaceAdapter.js').default;
+			//var WebGraphicalInterfaceAdapter = require('framework/system/interface/graphical/managers/adapters/web/WebGraphicalInterfaceAdapter.js').default;
 			graphicalInterfaceAdapter = new WebGraphicalInterfaceAdapter(this);
 		}
 		else {
@@ -138,6 +143,17 @@ class GraphicalInterface extends Interface {
 		}.bind(this));
 	}
 
+	async createRootView() {
+		var rootView = new View();
+		
+		// Manually initialize the adapted view for the root view instead of using PrimitiveView .initialize()
+		rootView.graphicalInterface = this;
+		rootView.adapter.adaptedView = rootView.adapter.initializeAdaptedView(this.adapter.view);
+		rootView.initialized = true;
+
+		return rootView;
+	}
+
 	async setViewController(viewController) {
 		//console.log('setViewController', viewController);
 
@@ -145,10 +161,10 @@ class GraphicalInterface extends Interface {
 		this.viewController = viewController;
 
 		// Initialize the view controller
-		await this.viewController.initialize();
+		await this.viewController.initialize(this);
 
-		// Have the adapter update the view controller
-		this.adapter.updateViewController();
+		// Append the view controller's view to the root view
+		this.view.append(this.viewController.view);
 	}
 
 	async newGraphicalInterface(type = null, isChild = true) {

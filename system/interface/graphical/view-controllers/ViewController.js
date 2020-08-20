@@ -4,9 +4,10 @@ import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmit
 // Class
 class ViewController extends PropagatingEventEmitter {
 
+	graphicalInterface = null;
 	view = null;
 	children = [];
-
+	
 	constructor() {
 		// PropagatingEventEmitter
 		super();
@@ -15,16 +16,15 @@ class ViewController extends PropagatingEventEmitter {
 		//this.view = new View();
 	}
 
-	async initialize() {
-		if(this.view) {
-			await this.view.initialize();
-		}
-		else {
-			app.warn('View does not exist for ViewController.');
+	async initialize(graphicalInterface) {
+		this.graphicalInterface = graphicalInterface;
+
+		if(!this.view) {
+			throw new Error('View does not exist for ViewController.');
 		}
 	}
 
-	descendFromParent(parentViewController) {
+	setParent(parentViewController) {
 		this.parent = parentViewController;
 		this.graphicalInterface = this.parent.graphicalInterface;
 
@@ -33,7 +33,7 @@ class ViewController extends PropagatingEventEmitter {
 
 	append(viewController, viewToAppendTo = null) {
 		// Set the view controller's parent
-		viewController.descendFromParent(this);
+		viewController.setParent(this);
 
 		// Add the view controller as a child
 		this.children.append(viewController);

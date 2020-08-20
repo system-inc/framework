@@ -400,23 +400,44 @@ Array.prototype.randomize = function() {
 }
 
 // Takes either a normal callback function or an async callback function
-Array.prototype.each = function(callback) {
+// Similar to Object.prototype.each
+Array.prototype.each = function(callback, direction = 'ascending') {
 	var context = this;
 	var promiseFromFirstItemCallback = null;
 
 	// Start out with a standard for loop
-	for(var i = 0; i < this.length; i++) {
-		var advance = callback.apply(context, [i, this[i], this]);
-
-		// If the callback on the first item returns a Promise, break
-		if(i == 0 && Promise.is(advance)) {
-			promiseFromFirstItemCallback = advance;
-			break;
+	// Loop forward
+	if(direction == 'ascending') {
+		for(var i = 0; i < this.length; i++) {
+			var advance = callback.apply(context, [i, this[i], this]);
+	
+			// If the callback on the first item returns a Promise, break
+			if(i == 0 && Promise.is(advance)) {
+				promiseFromFirstItemCallback = advance;
+				break;
+			}
+	
+			// If the callback returns false, break out of the for loop
+			if(advance === false) {
+				break;
+			}
 		}
-
-		// If the callback returns false, break out of the for loop
-		if(advance === false) {
-			break;
+	}
+	// Loop backwards
+	else if(direction == 'descending') {
+		for(var i = this.length - 1; i >= 0; i--) {
+			var advance = callback.apply(context, [i, this[i], this]);
+	
+			// If the callback on the first item returns a Promise, break
+			if(i == 0 && Promise.is(advance)) {
+				promiseFromFirstItemCallback = advance;
+				break;
+			}
+	
+			// If the callback returns false, break out of the for loop
+			if(advance === false) {
+				break;
+			}
 		}
 	}
 
@@ -435,20 +456,38 @@ Array.prototype.each = function(callback) {
 	    	}
 	    	else {
 				// Use a for loop here instead of .each so I can use await below
-	    		// Start the loop on the second item
-		    	for(var i = 1; i < array.length; i++) {
-		    		// Await on a sub promise which resolves when the async callback for the current array element completes
-		   			var advance = await new Promise(async function(subResolve) {
-		   				// Run the async callback for the current array element, resolve the sub promise when complete
-						var callbackReturnValue = await callback.apply(context, [i, array[i], array]);
-						subResolve(callbackReturnValue);
-					});
+				// Loop forwards
+				if(direction == 'ascending') {
+					for(var i = 1; i < array.length; i++) { // Start the loop on the second item
+						// Await on a sub promise which resolves when the async callback for the current array element completes
+						var advance = await new Promise(async function(subResolve) {
+							// Run the async callback for the current array element, resolve the sub promise when complete
+							var callbackReturnValue = await callback.apply(context, [i, array[i], array]);
+							subResolve(callbackReturnValue);
+						});
 
-					// If the callback returns false, break out of the for loop
-					if(advance === false) {
-						break;
+						// If the callback returns false, break out of the for loop
+						if(advance === false) {
+							break;
+						}
 					}
-		    	}
+				}
+				// Loop backwards
+				else if(direction == 'descending') {
+					for(var i = array.length - 2; i >= 0; i--) { // Start the loop on the second item
+						// Await on a sub promise which resolves when the async callback for the current array element completes
+						var advance = await new Promise(async function(subResolve) {
+							// Run the async callback for the current array element, resolve the sub promise when complete
+							var callbackReturnValue = await callback.apply(context, [i, array[i], array]);
+							subResolve(callbackReturnValue);
+						});
+
+						// If the callback returns false, break out of the for loop
+						if(advance === false) {
+							break;
+						}
+					}
+				}
 	    	}
 
 	    	resolve();

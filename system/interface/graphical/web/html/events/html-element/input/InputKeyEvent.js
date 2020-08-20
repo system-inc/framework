@@ -159,7 +159,9 @@ class InputKeyEvent extends HtmlElementEvent {
 
 		' ': 'space',
 
-		'meta': (app.onWindows() ? 'windows' : (app.onMacOs() ? 'command' : 'meta')),
+		// app is not available, need to define a .get for this object
+		//'meta': (app.onWindows() ? 'windows' : (app.onMacOs() ? 'command' : 'meta')),
+		'meta': 'meta',
 
 		'arrowUp': 'up',
 		'arrowDown': 'down',

@@ -2,7 +2,6 @@
 import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
 import WildcardPatternMatcher from 'framework/system/search/patterns/WildcardPatternMatcher.js';
 import HtmlDocumentEvent from 'framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEvent.js';
-import HtmlDocumentEventEmitter from 'framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEventEmitter.js';
 import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
 import ClipboardEvent from 'framework/system/interface/graphical/web/html/events/html-event/ClipboardEvent.js';
 import InputComposeEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputComposeEvent.js';
@@ -12,10 +11,11 @@ import InputPressEvent from 'framework/system/interface/graphical/web/html/event
 import InputScrollEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputScrollEvent.js';
 import InputSelectEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputSelectEvent.js';
 import FormEvent from 'framework/system/interface/graphical/web/html/events/html-element/FormEvent.js';
-import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
-import HtmlNode from 'framework/system/interface/graphical/web/html/HtmlNode.js';
 
 // Class
+/*
+	HtmlEventProxy standardizes DOM events
+*/
 class HtmlEventProxy {
 
 	static domEventIdentifierMap = {
@@ -331,7 +331,7 @@ class HtmlEventProxy {
 
 		// Set the domObject
 		// Deal with HtmlDocument events
-		if(HtmlDocument.is(htmlEventEmitter)) {
+		if(Class.getClassNameFromInstance(htmlEventEmitter) == 'HtmlDocument') {
 			// window events
 			if(
 				domEventIdentifier == 'resize' ||
@@ -351,7 +351,7 @@ class HtmlEventProxy {
 				domObject = htmlEventEmitter.domDocument;
 			}
 		}
-		else if(HtmlNode.is(htmlEventEmitter)) {
+		else {
 			domObject = htmlEventEmitter.domNode;
 		}
 
@@ -415,7 +415,7 @@ class HtmlEventProxy {
 
 		// Determine which event to use for mountedOnDom
 		var mountedToDomEventIdentifier = 'htmlNode.mountedToDom';
-		if(Class.isInstance(htmlEventEmitter, HtmlDocumentEventEmitter)) {
+		if(Class.getClassNameFromInstance(htmlEventEmitter) == 'HtmlDocumentEventEmitter') {
 			mountedToDomEventIdentifier = 'htmlDocument.mountedToDom';
 		}
 

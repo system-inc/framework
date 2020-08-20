@@ -23,7 +23,6 @@ class HtmlDocument extends XmlDocument {
 
 	domDocument = null;
 	domWindow = null;
-	isMountedToDom = false;
 	//shouldScheduleDomUpdates = false; // Testing
 	shouldScheduleDomUpdates = true;
 	domUpdatesScheduled = false;
@@ -69,14 +68,22 @@ class HtmlDocument extends XmlDocument {
 		// An <html> tag to store the head and body
 		this.view = Html.html();
 
+		// Manually set the <html> tag to the children array
+		this.children = [
+			this.view,
+		];
+
 		// Establish a reference to the HtmlDocument
 		this.view.htmlDocument = this;
 
 		// Create the head and body tags
 		this.head = Html.head();
 		this.body = Html.body();
+	}
 
-		// If we the DOM is present, reference the DOM document
+	// Called by WebGraphicalInterfaceAdapter.initialize
+	initialize() {
+		// If the DOM is present, reference the DOM document
 		if(global['document']) {
 			// Connect this.domDocument to the global document
 			this.domDocument = document;
@@ -91,6 +98,17 @@ class HtmlDocument extends XmlDocument {
 			this.head.domNode = this.domDocument.head;
 			this.body.domNode = this.domDocument.body;
 
+			// Clear the head and body in preparation for writing the HTML document to the DOM
+			// Even though we are removing script references from <head>, any previously included scripts will still have code available (we want this to be the case)
+			//this.head.emptyDomNode(); // Don't empty the head as it will remove any style sheets linked
+			this.body.emptyDomNode();
+
+			// Inherit attributes from the body
+			//console.log('this.domDocument.body.attributes', this.domDocument.body.attributes);
+			this.domDocument.body.attributes.each(function(attributeIndex, attribute) {
+				this.body.setAttribute(attribute.nodeName, attribute.nodeValue);
+			}.bind(this));
+
 			// Set the URL
 			this.url = new Url(this.domDocument.location.toString());
 		}
@@ -98,35 +116,18 @@ class HtmlDocument extends XmlDocument {
 		this.view.append(this.head);
 		this.view.append(this.body);
 
-		// Manually set the <html> tag to the children array
-		this.children = [
-			this.view,
-		];
-	}
+		// If the DOM is present
+		if(this.domDocument) {
+			// Add this.view to the DOM
+			this.view.executeDomUpdate();
 
-	mountToDom() {
-		//app.log('HtmlDocument mountToDom');
-
-		// Clear the head and body in preparation for writing the HTML document to the DOM
-		// Even though we are removing script references from <head>, any previously included scripts will still have code available (we want this to be the case)
-		this.head.emptyDomNode();
-		this.body.emptyDomNode();
-
-		//app.log('HtmlDocument.mountToDom', this);
-
-		// Add this.view to the DOM
-		this.view.executeDomUpdate();
-
-		// At this point the HtmlDocument has been added to the DOM
-		this.mountedToDom();
+			// At this point the HtmlDocument has been added to the DOM
+			this.mountedToDom();
+		}
 	}
 
 	mountedToDom() {
-		//app.log('HtmlDocument mountedToDom');
-
-		// The HtmlDocument is now added to the DOM
-		this.isMountedToDom = true;
-
+		//app.log('HtmlDocument mountedToDom', this);
 		this.emit('htmlDocument.mountedToDom', this);
 
 		//this.printDomUpdates();
@@ -150,22 +151,22 @@ class HtmlDocument extends XmlDocument {
 		console.info('**************************************');
 	}
 
-	updateDom(htmlNode) {
-		//app.log('HtmlDocument.updateDom', htmlNode);
+	render(htmlNode) {
+		//app.log('HtmlDocument.render', htmlNode);
 		//app.log('HtmlDocument.shouldScheduleDomUpdates', this.shouldScheduleDomUpdates);
 
 		// Do nothing if the HtmlDocument is not added to the DOM yet
-		if(!this.isMountedToDom) {
-			//console.info('HtmlDocument.updateDom ignored because HtmlDocument.isMountedToDom is false');
+		if(this.domDocument === null) {
+			//console.info('HtmlDocument .render - Skipping render, HtmlDocument is not mounted to the DOM yet (HtmlDocument .domDocument is null)');
 		}
 		// If DOM update scheduling is enabled
 		else if(this.shouldScheduleDomUpdates) {
-			//console.log('Scheduling update.');
+			//console.log('HtmlDocument .render - Scheduling update', htmlNode);
 			this.scheduleDomUpdate(htmlNode);
 		}
 		// If not, immediately update the DOM
 		else {
-			//console.log('Immediately executing...');
+			console.log('HtmlDocument .render - Immediately executing...', htmlNode);
 			htmlNode.executeDomUpdate();
 		}
 	}
@@ -198,6 +199,7 @@ class HtmlDocument extends XmlDocument {
 
 	executeDomUpdates() {
 		//app.log('HtmlDocument.executeDomUpdates', 'this.domUpdates', this.domUpdates);
+		//this.printDomUpdates();
 
 		// Iterate over all DOM updates
 		this.domUpdates.each(function(htmlNodeIdentifier, htmlNode) {

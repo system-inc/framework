@@ -1,11 +1,8 @@
-// Globals
-import 'framework/globals/Globals.js';
+// Dependencies
+import App from 'framework/system/app/App.js';
 import AsciiArt from 'framework/system/ascii-art/AsciiArt.js';
 import Proctor from 'framework/system/test/Proctor.js';
 import Url from 'framework/system/web/Url.js';
-
-// Dependencies
-import App from 'framework/system/app/App.js';
 
 // Class
 class FrameworkApp extends App {
@@ -92,8 +89,6 @@ class FrameworkApp extends App {
 
 }
 
-// Global instance
+// Global app instance
 global.app = new FrameworkApp(__dirname);
-
-// Initialize
 global.app.initialize();

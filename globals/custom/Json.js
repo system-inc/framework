@@ -109,7 +109,7 @@ class Json {
                     }
                 }
                 // Call .toString all Buffer objects to prevent a giant string of buffer content in output
-                else if(value instanceof Buffer) {
+                else if(typeof Buffer !== 'undefined' && value instanceof Buffer) {
                     decycledValue = value.toString();
                 }
                 // If it is an object, replicate the object

@@ -40,10 +40,13 @@ class Class {
 		return is;
 	}
 
+	// Add static and instance properties to a class from another class
 	static implement(classToReceiveImplementation, classToImplement) {
+		//console.log('Class.implement, referencing properties on', classToReceiveImplementation.name, 'from', classToImplement.name);
+
 		// Static properties
 		var classToImplementStaticPropertyNames = Class.getStaticPropertyNames(classToImplement);
-		//console.log('classToImplementStaticPropertyNames', classToImplementStaticPropertyNames);
+		//console.info('classToImplementStaticPropertyNames', classToImplementStaticPropertyNames);
 		classToImplementStaticPropertyNames.each(function(index, staticPropertyName) {
 			//console.log('classToImplement staticPropertyName', staticPropertyName);
 			if(classToReceiveImplementation[staticPropertyName] === undefined) {
@@ -54,7 +57,7 @@ class Class {
 
 		// Instance properties
 		var classToImplementInstanceMethodNames = Class.getInstanceMethodNames(classToImplement);
-		//console.log('classToImplementInstanceMethodNames', classToImplementInstanceMethodNames);
+		//console.info('classToImplementInstanceMethodNames', classToImplementInstanceMethodNames);
 		classToImplementInstanceMethodNames.each(function(index, instanceMethodName) {
 			//console.log('classToImplement instanceMethodName', instanceMethodName);
 			if(classToReceiveImplementation.prototype[instanceMethodName] === undefined) {
@@ -131,7 +134,8 @@ class Class {
 		var className = null;
 
 		if(instance) {
-			className = Object.prototype.toString.call(instance).match(/^\[object\s(.*)\]$/)[1];
+			className = instance.constructor.name;
+			//className = Object.prototype.toString.call(instance).match(/^\[object\s(.*)\]$/)[1];
 		}
 
 		return className;
@@ -175,6 +179,7 @@ class Class {
 			}
 
 			var propertyNames = Object.getOwnPropertyNames(currentPrototype);
+
 			propertyNames.forEach(function(propertyName) {
 				if(
 					propertyName !== 'constructor' &&

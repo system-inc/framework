@@ -1,15 +1,15 @@
 // Dependencies
-import StackTrace from 'framework/globals/standard/errors/StackTrace.js';
+//import StackTrace from 'framework/globals/standard/errors/StackTrace.js';
 
 // Instance methods
 
-Error.prototype.toObject = function() {
-	return Error.toObject(this);
-}
+// Error.prototype.toObject = function() {
+// 	return Error.toObject(this);
+// }
 
-Error.prototype.toString = function() {
-	return this.stack.toString();
-}
+// Error.prototype.toString = function() {
+// 	return this.stack.toString();
+// }
 
 // Static properties
 
@@ -23,10 +23,10 @@ Error.is = function(value) {
 	return is;
 };
 
-Error.prepareStackTrace = function(error, callSites) {
-	// Return an array of CallSite objects instead of a string when error.stack is accessed
-	return new StackTrace(error, callSites);
-};
+// Error.prepareStackTrace = function(error, callSites) {
+// 	// Return an array of CallSite objects instead of a string when error.stack is accessed
+// 	return new StackTrace(error, callSites);
+// };
 
 Error.toObject = function(error) {
 	var object = {

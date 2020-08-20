@@ -1,6 +1,6 @@
 // Dependencies
 import EventEmitter from 'framework/system/event/EventEmitter.js';
-import GraphicalInterface from 'framework/system/interface/graphical/GraphicalInterface.js';
+//import GraphicalInterface from 'framework/system/interface/graphical/GraphicalInterface.js';
 
 // Class
 class GraphicalInterfaceManager extends EventEmitter {

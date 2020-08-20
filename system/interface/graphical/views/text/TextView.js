@@ -1,44 +1,21 @@
 // Dependencies
 import View from 'framework/system/interface/graphical/views/View.js';
+import PrimitiveView from 'framework/system/interface/graphical/views/PrimitiveView.js';
 
 // Class
 class TextView extends View {
 
-	text = null;
-	layout = 'block'; // 'block' or 'inline'
+	primitiveView = null; // A primitive view to store the text
+	layout = 'block'; // 'block' (breaks text) or 'inline' (does not break text)
 
-	constructor(childViewOrText) {
-		// View
+	constructor(text, layout = 'block') {
 		super();
 
-		if(childViewOrText) {
-			if(View.is(childViewOrText)) {
-				this.append(childViewOrText);
-			}
-			else {
-				this.text = childViewOrText;
-			}
-		}
-	}
+		// Use a primitive view to store the text
+		this.primitiveView = new PrimitiveView(text);
+		this.append(this.primitiveView);
 
-	setContent(childViewOrText) {
-		// Empty the current content
-		this.empty();
-
-		if(childViewOrText) {
-			// If the content is a view
-			if(View.is(childViewOrText)) {
-				// Append the new content
-				this.append(childViewOrText);
-			}
-			// If the content is text
-			else {
-				this.text = childViewOrText;
-				this.adapter.setContent(childViewOrText);
-			}
-		}
-
-		return this;
+		this.layout = layout;
 	}
 
 	getWebViewAdapterSettings() {

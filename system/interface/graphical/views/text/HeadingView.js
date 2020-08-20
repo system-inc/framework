@@ -3,9 +3,6 @@ import TextView from 'framework/system/interface/graphical/views/text/TextView.j
 
 // Class
 class HeadingView extends TextView {
-
-	// TextView
-	layout = 'block';
 	
 	level = 1; // 1-infinity
 

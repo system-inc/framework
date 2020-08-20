@@ -13,6 +13,9 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		//console.log('creating HtmlDocument');
 		this.htmlDocument = new HtmlDocument();
 
+		// Set the root view
+		this.view = this.htmlDocument.body;
+
 		// Hook the HtmlDocument's emit function
 		var standardHtmlDocumentEmit = this.htmlDocument.emit;
 		this.htmlDocument.emit = async function(eventIdentifier, data, eventOptions) {
@@ -37,6 +40,9 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 			return await standardHtmlDocumentEmit.apply(this.htmlDocument, arguments);
 		}.bind(this);
 
+		//console.log('Mounting HtmlDocument to DOM');
+		this.htmlDocument.initialize();
+
 		// Capture before unload
 		this.htmlDocument.on('htmlDocument.unload.before', async function(event) {
 			var emittedEvent = await this.graphicalInterface.emit('graphicalInterface.unload.before', event);
@@ -53,20 +59,7 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		this.graphicalInterface.dimensions = this.htmlDocument.dimensions;
 		//console.info('this.htmlDocument.dimensions', this.htmlDocument.dimensions);
 
-		//console.log('Mounting HtmlDocument to DOM');
-		this.htmlDocument.mountToDom();
-
 		return this;
-	}
-
-	updateViewController() {
-		if(this.graphicalInterface.viewController && this.graphicalInterface.viewController.view) {
-			//console.log('Adapted view', this.graphicalInterface.viewController.view.adapter.adaptedView);
-			this.htmlDocument.body.append(this.graphicalInterface.viewController.view.adapter.adaptedView);	
-		}
-		else {
-			throw new Error('View does not exist for ViewController.');
-		}
 	}
 
 	createViewAdapter(view) {

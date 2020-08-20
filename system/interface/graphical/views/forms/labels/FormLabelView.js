@@ -1,8 +1,8 @@
 // Dependencies
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import View from 'framework/system/interface/graphical/views/text/View.js';
 
 // Class
-class FormLabelView extends TextView {
+class FormLabelView extends View {
 
 	relatedFormControlView = null;
 

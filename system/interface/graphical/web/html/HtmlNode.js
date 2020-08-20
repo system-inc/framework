@@ -5,7 +5,7 @@ import HtmlNodeEvent from 'framework/system/interface/graphical/web/html/events/
 import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
 import Position from 'framework/system/interface/graphical/Position.js';
 
-// Class
+// Class (implements HtmlNodeEventEmitter)
 class HtmlNode extends XmlNode {
 
 	// HtmlNodeEventEmitter
@@ -17,14 +17,9 @@ class HtmlNode extends XmlNode {
 	// PropagatingEventEmitter
 	eventListeners = [];
 
-	htmlDocument = null;
-
-	domNode = null;
-	isMountedToDom = false;
+	htmlDocument = null; // The HtmlDocument the HtmlNode is attached to
+	domNode = null; // The native DOM node for this HtmlNode
 	shouldExecuteDomUpdate = false; // Keep track of whether or not the HtmlElement is different from the DOM
-
-	nodeIdentifier = null // Used to uniquely identify HtmlNodes for tree comparisons againt the DOM
-	nodeIdentifierCounter = 0; // Used to ensure unique identifiers
 
 	cachedDimensions = null;
 	get dimensions() {
@@ -44,169 +39,67 @@ class HtmlNode extends XmlNode {
 		return position;
 	}
 
-	constructor(content, parent, type) {
-		super(...arguments);
+	setParent(parent) {
+		super.setParent(parent);
 
-		this.descendFromParent();
+		// Set a reference to the parent's htmlDocument
+		this.htmlDocument = this.parent.htmlDocument;
 	}
 
-	descendFromParent(parent) {
-		// Allow the parent relationship to be established with this call
-		if(parent) {
-			this.parent = parent;
-		}
+	orphan() {
+		// Use XmlNode's method to separate from the parent
+		super.orphan();
 
-		// If we have a relationship to a parent
-		if(this.parent) {
-			// Set a reference to parent's htmlDocument
-			this.htmlDocument = this.parent.htmlDocument;
+		// Detach from the DOM
+		this.detach();
 
-			// If the parent does not have an identifier, give it the root identifier of '0'
-			if(this.parent.nodeIdentifier === null) {
-				this.parent.nodeIdentifier = '0';
-			}
-
-			// Set the identifier
-			this.nodeIdentifier = this.parent.nodeIdentifier+'.'+this.parent.nodeIdentifierCounter;
-			this.parent.nodeIdentifierCounter++;
-		}
+		return this;
 	}
 
-	// Called whenever the HtmlNode changes
-	updateDom() {
-		//app.log('HtmlNode.updateDom()');
+	detach() {
+		// Detach from the dom
+		this.domNode.remove();
+		this.unmountedFromDom();
+
+		return this;
+	}
+
+	setContent(content) {
+		this.content = content;
+
+		this.render();
+
+		return this;
+	}
+
+	beforeRender() {
+	}
+
+	render() {
+		this.beforeRender();
 
 		// Mark the object as dirty
 		this.shouldExecuteDomUpdate = true;
 
 		// Don't do anything if we aren't connected to the DOM
 		if(!this.htmlDocument) {
-			//app.warn('Unable to updateDom, HtmlElement is missing the htmlDocument property.', this);
+			//app.info('Skipping render, HtmlNode is not connected to the DOM yet (missing the .htmlDocument property)', this);
 		}
 		// Don't do anything if we don't have a domNode
 		else if(!this.domNode) {
-			//app.warn('Unable to updateDom, HtmlElement is missing the domNode property.', this);
+			//app.info('Skipping render, HtmlNode is not initialized yet (missing the .domNode property)', this);
 		}
-		// Register an update with the HtmlDocument
+		// Register a render task with the HtmlDocument
 		else {
-			this.htmlDocument.updateDom(this);
+			//app.log('htmlNode.render()', this);
+			this.htmlDocument.render(this);
 		}
 	}
 
-	// Alias for updateDom, used by ViewAdapter
-	render() {
-		return this.updateDom(...arguments);
-	}
-
-	executeDomUpdate() {
-		//app.log('HtmlNode executeDomUpdate', this.tag);
-
-		// If we should execute an update
-		if(this.shouldExecuteDomUpdate) {
-			// Apply the current state to the DOM
-			this.applyDomUpdates();
-
-			// Mark the update as complete
-			this.domUpdateExecuted();
+	press() {
+		if(this.domNode) {
+			this.domNode.click();
 		}
-		else {
-			//console.info('No need to run updates on this element', this);
-		}
-	}
-
-	domUpdateExecuted() {
-		// Mark the object as clean
-		this.shouldExecuteDomUpdate = false;
-
-		this.emit('htmlNode.domUpdateExecuted', this, {
-			propagationStopped: true, // Do not propagate this event
-		});
-	}
-
-	applyDomUpdates() {
-		// Update the DOM node's value
-		this.updateDomNodeValue();
-	}
-
-	updateDomNodeValue() {
-		// Make sure the string matches
-		if(this.value != this.domNode.nodeValue) {
-			// Must use nodeValue here because innerHTML does not exist on DOM nodes which just have text
-			this.domNode.nodeValue = this.value;
-		}
-	}
-
-	createDomNode(htmlNode) {
-		// Allow this method to be called statically
-		if(!htmlNode) {
-			htmlNode = this;
-		}
-
-		// Must use document global here as this.domDocument may not be populated
-		var domFragment = document.createRange().createContextualFragment(htmlNode.toString());
-		//app.log('HtmlNode domFragment for', htmlNode.tag, domFragment);
-
-		return domFragment;
-	}
-
-	appendDomNode() {
-		//app.log('HtmlNode.appendDomNode', this.tag);
-
-		var domFragment = this.createDomNode();
-
-		//console.log('this.parent.domNode', this.parent.domNode);
-
-		// Append the child DOM node to this node's DOM node
-		var appendedNode = this.parent.domNode.appendChild(domFragment);
-
-		// Have the child reference the newly created DOM node
-		this.domNode = this.parent.domNode.lastChild;
-
-		//console.log('this.domNode', this.domNode);
-
-		this.mountedToDom();
-	}
-
-	replaceDomNode(indexOfChildDomNodeToReplace) {
-		//app.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace, this.tag);
-
-		var domFragment = this.createDomNode();
-
-		// Replace the DOM node with the replacement fragment
-		this.parent.domNode.replaceChild(domFragment, this.parent.domNode.childNodes[indexOfChildDomNodeToReplace]);
-
-		// Have the child reference the replaced DOM node
-		this.domNode = this.parent.domNode.childNodes[indexOfChildDomNodeToReplace];
-
-		this.mountedToDom();
-	}
-
-	mountedToDom() {
-		//app.log('HtmlNode mountedToDom', this.tag)
-		
-		// The domNode has a reference to the HtmlNode
-		this.domNode.htmlNode = this;
-
-		this.isMountedToDom = true;
-
-		// Execute DOM updates if necessary
-		this.executeDomUpdate();
-
-		this.emit('htmlNode.mountedToDom', this, {
-			propagationStopped: true, // Do not propagate this event
-		});
-	}
-
-	emptyDomNode(domNode) {
-		if(!domNode) {
-			domNode = this.domNode;
-		}
-
-		while(domNode.firstChild) {
-			domNode.removeChild(domNode.firstChild);
-		}
-
-		return domNode;
 	}
 
 	// TODO: At some point add some arguments to this function to allow it to specify the start and end offsets of the selection
@@ -347,19 +240,141 @@ class HtmlNode extends XmlNode {
 		return dimensionsAndPosition;
 	}
 
-	press() {
-		if(this.domNode) {
-			this.domNode.click();
+	executeDomUpdate() {
+		//app.log('htmlNode.executeDomUpdate()', this.tag, this);
+
+		// If we should execute an update
+		if(this.shouldExecuteDomUpdate) {
+			//console.info('Need to run updates on this element', this);
+
+			// Apply the current state to the DOM
+			this.applyDomUpdates();
+
+			// Mark the update as complete
+			this.domUpdateExecuted();
 		}
+		else {
+			//console.info('No need to run updates on this element', this);
+		}
+	}
+
+	domUpdateExecuted() {
+		// Mark the object as clean
+		this.shouldExecuteDomUpdate = false;
+
+		this.emit('htmlNode.domUpdateExecuted', this, {
+			propagationStopped: true, // Do not propagate this event
+		});
+	}
+
+	applyDomUpdates() {
+		// Update the DOM node's value
+		this.updateDomNodeValue();
+	}
+
+	updateDomNodeValue() {
+		// Make sure the string matches
+		if(this.content != this.domNode.nodeValue) {
+			// Must use nodeValue here because innerHTML does not exist on DOM nodes which just have text
+			this.domNode.nodeValue = this.content;
+		}
+	}
+
+	appendDomNode() {
+		//app.log('HtmlNode.appendDomNode', this.tag);
+
+		var domFragment = HtmlNode.createDomNode(this);
+
+		//console.log('this.parent.domNode', this.parent.domNode);
+
+		// Append the child DOM node to this node's DOM node
+		var appendedNode = this.parent.domNode.appendChild(domFragment);
+
+		// Have the child reference the newly created DOM node
+		this.domNode = this.parent.domNode.lastChild;
+
+		//console.log('this.domNode', this.domNode);
+
+		this.mountedToDom();
+	}
+
+	replaceDomNode(indexOfChildDomNodeToReplace) {
+		//app.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace, this.tag);
+
+		var domFragment = HtmlNode.createDomNode(this);
+
+		// Replace the DOM node with the replacement fragment
+		this.parent.domNode.replaceChild(domFragment, this.parent.domNode.childNodes[indexOfChildDomNodeToReplace]);
+
+		// Have the child reference the replaced DOM node
+		this.domNode = this.parent.domNode.childNodes[indexOfChildDomNodeToReplace];
+
+		this.mountedToDom();
+	}
+
+	mountedToDom() {
+		//app.log('HtmlNode mountedToDom', this.tag)
+		
+		// The domNode has a reference to the HtmlNode
+		this.domNode.htmlNode = this;
+
+		// Execute DOM updates if necessary
+		this.executeDomUpdate();
+
+		this.emit('htmlNode.mountedToDom', this, {
+			propagationStopped: true, // Do not propagate this event
+		});
+	}
+
+	unmountedFromDom() {
+		this.htmlDocument = null;
+	}
+
+	createDomNode() {
+		return HtmlNode.createDomNode(this);
+	}
+
+	emptyDomNode() {
+		//console.info('htmlNode.emptyDomNode', this);
+
+		return HtmlNode.emptyDomNode(this.domNode);
+	}
+
+	static createDomNode(htmlNode) {
+		// Must use document global here as this.domDocument may not be populated
+		var domFragment = document.createRange().createContextualFragment(htmlNode.toString());
+		//app.log('HtmlNode domFragment for', htmlNode, domFragment);
+
+		return domFragment;
+	}
+
+	static emptyDomNode(domNode) {
+		while(domNode.firstChild) {
+			domNode.removeChild(domNode.firstChild);
+		}
+
+		return domNode;
+	}
+
+	static makeHtmlNode(value, parent, type) {
+		if(value === null || value === undefined) {
+			throw new Error('HtmlNodes may not be created from from null or undefined values.');
+		}
+
+		// If the value is currently not of type HtmlNode (it must be a string), turn it into an HtmlNode
+		if(!HtmlNode.is(value)) {
+			// if(value.contains('<')) {
+			// 	app.warn('HTML strings are not supported (I should implement), use View or HtmlElement or HtmlNode.', value);
+			// }
+			value = new HtmlNode(value, parent, type);
+		}
+
+		return value;
 	}
 
 	static is(value) {
 		return Class.isInstance(value, HtmlNode);
 	}
-
-	static createDomNode = HtmlNode.prototype.createDomNode;
-
-	static emptyDomNode = HtmlNode.prototype.emptyDomNode;
 
 }
 

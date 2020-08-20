@@ -13,46 +13,148 @@ class XmlElement extends XmlNode {
 	attributes = {};
 	children = []; // Array containing strings or elements
 
-	constructor(tag, options, unary) {
-		super();
-		this.initialize(...arguments);
+	constructor(tag, options, unary = false, parent = null) {
+		// XmlNode
+		// Do not pass parent into this, will use initialize to set the parent
+		super(this.children);
+
+		// Initialize the XmlElement
+		this.initialize(tag, options, unary, parent);
 	}
 
-	initialize(tag, options, unary) {
-		// this.children is an array and this.content is an alias to it
+	// A separate initialize function which is not part of the constructor so it can be invoked by HtmlElement
+	initialize(tag, options = null, unary = false, parent = null) {
+		// this.content is an alias for this.children
 		this.content = this.children;
 
+		// Set the tag
 		if(tag) {
 			this.tag = tag;
 		}
 
-		// If unary is passed
-		if(unary) {
-			this.unary = unary;
+		// Allow lots of flexibility with options
+		if(options !== null) {
+			//app.log('XmlElement initialize options', options);
+
+			// Options may be a string (or any primitive) or XmlNodes which will be appended
+			if(Primitive.is(options) || XmlNode.is(options)) {
+				this.append(options);
+			}
+			// Options may be an array of primitives or XmlNodes which will be appended
+			else if(Array.is(options)) {
+				options.each(function(primitiveOrXmlNodeIndex, primitiveOrXmlNode) {
+					this.append(primitiveOrXmlNode);
+				}.bind(this));
+			}
+			// Options may be an object with content or children, or attributes
+			else {
+				options.each(function(optionName, optionValue) {
+					// Handle content/children
+					if(optionName == 'content' || optionName == 'children') {
+						// Allow arrays of children
+						if(Array.is(optionValue)) {
+							optionValue.each(function(primitiveOrXmlNodeIndex, primitiveOrXmlNode) {
+								this.append(primitiveOrXmlNode);
+							}.bind(this));
+						}
+						// A single child
+						else {
+							this.append(optionValue);
+						}
+					}
+					// All other option keys and values are attributes
+					else {
+						this.setAttribute(optionName, optionValue);
+					}
+				}.bind(this));
+			}
 		}
 
-		// Allow options to be strings (or any primitive) or XmlNodes which will be used as the default content
-		if(options && (Primitive.is(options) || XmlNode.is(options))) {
-			this.append(options);
-		}
-		// Allow options to be an object
-		else if(options) {
-			//app.log(options);
+		// Set unary
+		this.unary = unary;
 
-			options.each(function(optionName, optionValue) {
-				// Handle content (children)
-				if(optionName == 'content' || optionName == 'children') {
-					this.append(optionValue);
-				}
-				// Handle unary being passed as an option
-				else if(optionName == 'unary') {
-					this.unary = optionValue;
-				}
-				else {
-					this.setAttribute(optionName, optionValue);
-				}
-			}.bind(this));
+		// Set the parent
+		if(parent !== null) {
+			this.setParent(parent);
+		}		
+	}
+
+	setParent(parent) {
+		super.setParent(parent);
+
+		this.children.each(function(childIndex, child) {
+			child.setParent(this);
+		}.bind(this));
+	}
+
+	prepend(primitiveOrXmlNode) {
+		return this.addChild(primitiveOrXmlNode, 'prepend');
+	}
+
+	append(primitiveOrXmlNode) {
+		return this.addChild(primitiveOrXmlNode, 'append');
+	}
+
+	addChild(primitiveOrXmlNode, arrayMethod = 'append') {
+		var xmlNode = null;
+
+		// If the child is an XmlNode (or XmlElement)
+		if(XmlNode.is(primitiveOrXmlNode)) {
+			xmlNode = primitiveOrXmlNode;
 		}
+		// Content is allowed to be a primitive such a string or a number, convert it into an XmlNode
+		else {
+			xmlNode = XmlNode.makeXmlNode(primitiveOrXmlNode);
+		}
+
+		// Throw an error if the child already has a parent
+		if(xmlNode.parent !== null) {
+			throw new Error('This node already has a parent. It may not be added to a different parent until it has been removed from its current parent.');
+		}
+
+		// Set the parent
+		xmlNode.setParent(this);
+		
+		// Add the child to the children array with the specified array method (append, prepend)
+		this.children[arrayMethod](xmlNode);
+
+		return this;
+	}
+
+	removeChild(child) {
+		// Remove the parent from the child
+		child.orphan();
+
+		// Delete the child from the children array
+		this.children.deleteValue(child);
+
+		return this;
+	}
+
+	remove() {
+		// Remove this element from the parent's children
+		this.parent.removeChild(this);
+
+		return this;
+	}
+
+	empty() {
+		// Loop through the children and remove each one
+		this.children.each(function(childIndex, child) {
+			child.remove();
+		}, 'descending'); // Loop backwards as we are removing elements of the array in the loop and the array will be reindexed
+
+		return this;
+	}
+
+	setContent(content) {
+		// Empty the current content
+		this.empty();
+
+		// Append the new content
+		this.append(content);
+
+		return this;
 	}
 
 	getAttribute(attributeName) {
@@ -66,7 +168,14 @@ class XmlElement extends XmlNode {
 	}
 
 	setAttribute(attributeName, attributeValue) {
-		this.attributes[attributeName] = attributeValue;
+		if(attributeValue === undefined) {
+			throw new Error('Invalid call to setAttribute.');
+		}
+
+		// Do not allow null attributes
+		if(attributeValue !== null) {			
+			this.attributes[attributeName] = attributeValue;
+		}
 
 		return this;
 	}
@@ -75,24 +184,6 @@ class XmlElement extends XmlNode {
 		if(this.attributes[attributeName]) {
 			delete this.attributes[attributeName];
 		}
-
-		return this;
-	}
-
-	empty() {
-		this.children = [];
-
-		return this;
-	}
-
-	prepend(stringOrXmlNode) {
-		this.children.prepend(XmlNode.makeXmlNode(stringOrXmlNode, this));
-
-		return this;
-	}
-
-	append(stringOrXmlNode) {
-		this.children.append(XmlNode.makeXmlNode(stringOrXmlNode, this));
 
 		return this;
 	}
@@ -189,10 +280,6 @@ class XmlElement extends XmlNode {
 		return string;
 	}
 
-	static is(value) {
-		return Class.isInstance(value, XmlElement);
-	}
-
 	static attributeValueToString(attributeValue) {
 		var attributeValueString = attributeValue;
 
@@ -208,6 +295,10 @@ class XmlElement extends XmlNode {
 		}
 
 		return attributeValueString;
+	}
+
+	static is(value) {
+		return Class.isInstance(value, XmlElement);
 	}
 
 }

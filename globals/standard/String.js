@@ -443,7 +443,13 @@ String.distance = function(a, b) {
 
 String.fromCharacterCode = String.fromCharCode;
 
-String.newline = Node.OperatingSystem.EOL;
+// Newline
+if(Node && Node.OperatingSystem) {
+	String.newline = Node.OperatingSystem.EOL;	
+}
+else {
+	String.newline = "\n";
+}
 
 String.uniqueIdentifier = function(length = 16) {
 	var uniqueIdentifier = '';

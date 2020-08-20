@@ -31,24 +31,25 @@ class Url {
 			string = 'file://'+string;
 		}
 
-		var nodeUrl = Node.Url.parse(string, true);
+		// TODO: Haven't test this
+		var whatwgUrl = new URL(string);
 
-		// Fix Node's URL parser
-		if(nodeUrl.host === null && nodeUrl.path !== null) {
-			nodeUrl.host = nodeUrl.hostname = nodeUrl.path;
-			nodeUrl.path = nodeUrl.pathname = '';
+		// Fix URL parser
+		if(whatwgUrl.host === null && whatwgUrl.path !== null) {
+			whatwgUrl.host = whatwgUrl.hostname = whatwgUrl.path;
+			whatwgUrl.path = whatwgUrl.pathname = '';
 		}
 
 		// Set the protocol
-		if(!nodeUrl.protocol) {
+		if(!whatwgUrl.protocol) {
 			this.protocol = 'http';
 		}
 		else {
-			this.protocol = nodeUrl.protocol.replace(':', '');	
+			this.protocol = whatwgUrl.protocol.replace(':', '');	
 		}
 		
 		// Set the port
-		if(nodeUrl.port == null) {
+		if(whatwgUrl.port == null) {
 			if(this.protocol == 'http')	{
 				this.port = 80;
 			}
@@ -57,24 +58,24 @@ class Url {
 			}
 		}
 		else {
-			this.port = nodeUrl.port.toNumber();
+			this.port = whatwgUrl.port.toNumber();
 		}
 
 		// Set the host
-		this.host = nodeUrl.hostname;
+		this.host = whatwgUrl.hostname;
 
 		// Set the path
-		this.path = nodeUrl.pathname;
+		this.path = whatwgUrl.pathname;
 
 		// Set the query
-		this.query = nodeUrl.query;
+		this.query = whatwgUrl.query;
 
 		// Set the query string
-		this.queryString = nodeUrl.search;
+		this.queryString = whatwgUrl.search;
 
 		// Set the fragment
-		if(nodeUrl.hash) {
-			this.fragment = nodeUrl.hash.replaceFirst('#', '');	
+		if(whatwgUrl.hash) {
+			this.fragment = whatwgUrl.hash.replaceFirst('#', '');	
 		}
 
 		// Set the complete URL

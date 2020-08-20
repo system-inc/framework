@@ -2,15 +2,15 @@
 import View from 'framework/system/interface/graphical/views/View.js';
 
 // Class
-class ListItemView extends View {
+class ThematicBreakView extends View {
 
 	getWebViewAdapterSettings() {
 		return {
-			tag: 'li',
+			tag: 'hr',
 		};
 	}
 
 }
 
 // Export
-export default ListItemView;
+export default ThematicBreakView;

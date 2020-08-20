@@ -24,10 +24,13 @@ class FormControlView extends View {
 	}
 
 	getValue() {
-		return this.value;
+		return this.adapter.getValue(...arguments);
 	}
 
 	setValue(value) {
+		return this.adapter.setValue(...arguments);
+
+		// TODO: DO I need this?
 		if(value === null || value === undefined) {
 			value = '';
 		}

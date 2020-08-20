@@ -4,9 +4,9 @@ if(!global && window) {
 }
 
 // Node
-import 'framework/globals/node/Node.js';
-import 'framework/globals/node/Buffer.js';
-import 'framework/globals/node/Stream.js';
+//import 'framework/globals/node/Node.js';
+//import 'framework/globals/node/Buffer.js';
+//import 'framework/globals/node/Stream.js';
 
 // Standard
 import 'framework/globals/standard/Array.js';

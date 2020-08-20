@@ -3,6 +3,9 @@ class GraphicalInterfaceAdapter {
 
 	graphicalInterface = null;
 
+	// The root view, which is an adapted view
+	view = null;
+
 	constructor(graphicalInterface) {
 		this.graphicalInterface = graphicalInterface;
 	}
