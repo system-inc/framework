@@ -273,26 +273,33 @@ class HtmlNode extends XmlNode {
 	}
 
 	updateDomNodeValue() {
-		console.log('comparing this.content', this.content, 'to this.domNode.nodeValue', this.domNode.nodeValue);
+		//console.log('comparing this.content', this.content, 'to this.domNode.nodeValue', this.domNode.nodeValue);
 
 		// Make sure the string matches
 		if(this.content != this.domNode.nodeValue) {
-			console.error('the content does not match');
-
 			// Must use nodeValue here because innerHTML does not exist on DOM nodes which just have text
 			this.domNode.nodeValue = this.content;
 		}
 	}
 
 	appendDomNode() {
-		//app.log('HtmlNode.appendDomNode', this);
+		var domNodeToAppend = null;
 
-		var domFragment = this.createDomNode(this);
+		// If the domNode does not exist, create it
+		if(this.domNode === null) {
+			domNodeToAppend = this.createDomNode();
+		}
+		// Use the existing domNode if it exists
+		else {
+			//console.log('Using existing DOM node');
+			domNodeToAppend = this.domNode;
+		}
 
 		// Append the child DOM node to this node's DOM node
-		var appendedNode = this.parent.domNode.appendChild(domFragment);
+		this.parent.domNode.appendChild(domNodeToAppend);
 
 		// Have the child reference the newly created DOM node
+		// If we do not set this reference like this, things will break
 		this.domNode = this.parent.domNode.lastChild;
 
 		//console.log('this.domNode', this.domNode);
@@ -301,12 +308,12 @@ class HtmlNode extends XmlNode {
 	}
 
 	replaceDomNode(indexOfChildDomNodeToReplace) {
-		var domFragment = this.createDomNode(this);
+		var domNode = this.createDomNode(this);
 
-		app.log('HtmlNode.replaceDomNode replacing', this.parent.domNode.childNodes[indexOfChildDomNodeToReplace], 'with', domFragment);
+		app.log('HtmlNode.replaceDomNode replacing', this.parent.domNode.childNodes[indexOfChildDomNodeToReplace], 'with', domNode);
 
 		// Replace the DOM node with the replacement fragment
-		this.parent.domNode.replaceChild(domFragment, this.parent.domNode.childNodes[indexOfChildDomNodeToReplace]);
+		this.parent.domNode.replaceChild(domNode, this.parent.domNode.childNodes[indexOfChildDomNodeToReplace]);
 
 		// Have the child reference the replaced DOM node
 		this.domNode = this.parent.domNode.childNodes[indexOfChildDomNodeToReplace];
@@ -352,15 +359,12 @@ class HtmlNode extends XmlNode {
 	}
 
 	static emptyDomNode(domNode) {
-		// while(domNode.firstChild) {
-		// 	domNode.removeChild(domNode.lastChild); // Removing the last child is faster
-		// }
-
+		// Loop backward for performance
 		for(var i = domNode.childNodes.length - 1; i >= 0; i--) {
 			domNode.removeChild(domNode.childNodes[i]);
 		}
 
-		console.log('domNode.childNodes.length', domNode.childNodes.length);
+		//console.log('domNode.childNodes.length', domNode.childNodes.length);
 
 		return domNode;
 	}

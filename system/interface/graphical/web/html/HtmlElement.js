@@ -335,37 +335,30 @@ class HtmlElement extends HtmlNode {
 			if(childIndex < this.domNode.childNodes.length) {
 				var currentChildDomNode = this.domNode.childNodes[childIndex];
 
-				app.log('Comparing currentChildDomNode:', currentChildDomNode, 'at index', childIndex, 'to child.domNode:', child.domNode, 'on child', child);
+				//app.log('Comparing currentChildDomNode:', currentChildDomNode, 'at index', childIndex, 'to child.domNode:', child.domNode, 'on child', child);
 
 				// If the child's domNode matches the current child DOM node
 				if(child.domNode === currentChildDomNode) {
-					console.log('they match');
+					//console.log('they match');
 					// Call executeDomUpdate which will update the DOM node if necessary
 					child.executeDomUpdate();
 				}
 				// If the current child DOM node does not match, we need to replace it
 				else {
-					console.log('they do not match');
+					//console.log('they do not match');
 					child.replaceDomNode(childIndex);
 				}
 			}
-			// If there is no corresponding child DOM node for the current index, we will create one
+			// If there is no corresponding child DOM node for the current index
 			else {
-				console.log('appending')
+				//console.log('appending');
 				child.appendDomNode();
 			}
 		}.bind(this));
 
-		console.log('remove this when done testing');
-		if(this.domNode.childNodes.length > this.children.length) {
-			console.log('Trimming excess nodes this.children.length', this.children.length, 'this.domNode.childNodes.length', this.domNode.childNodes.length);
-			console.log('this.children', this.children, 'this.domNode.childNodes', this.domNode.childNodes);
-			throw new Error();
-		}
-
-		// If there are more child DOM elements than child, we must remove them (backwards for performance)
+		// If there are more child DOM elements than child, we must remove them (loop backwards for performance)
 		for(var i = this.domNode.childNodes.length - 1; i >= this.children.length; i--) {
-			console.log('Excess child DOM node found at index', i, 'removing', this.domNode.childNodes[i]);
+			//console.log('Excess child DOM node found at index', i, 'removing', this.domNode.childNodes[i]);
 			this.domNode.removeChild(this.domNode.childNodes[i]);
 		}
 	}

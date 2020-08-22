@@ -151,7 +151,7 @@ class HtmlDocument extends XmlDocument {
 		}
 		else {
 			this.domUpdates.each(function(htmlNodeIdentifier, htmlNode) {
-				console.info(htmlNodeIdentifier, 'tag', htmlNode.tag, 'children.length', htmlNode.children.length, 'attributes', htmlNode.attributes);
+				console.info(htmlNodeIdentifier, 'tag', htmlNode.tag, 'content', htmlNode.content, 'attributes', htmlNode.attributes);
 			});
 		}
 		console.info('**************************************');
@@ -206,7 +206,7 @@ class HtmlDocument extends XmlDocument {
 
 	executeDomUpdates() {
 		//app.log('HtmlDocument.executeDomUpdates', 'this.domUpdates', this.domUpdates);
-		this.printDomUpdates();
+		//this.printDomUpdates();
 
 		// Iterate over all DOM updates
 		this.domUpdates.each(function(htmlNodeIdentifier, htmlNode) {
