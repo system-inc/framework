@@ -54,9 +54,9 @@ class GraphicalInterfaceManager extends EventEmitter {
 	}
 
 	async initializeGraphicalInterface(graphicalInterface) {
-		console.error('read the registration object from app session store');
+		console.error('GraphicalInterfaceManager .initializeGraphicalInterface()');
 
-		console.log('initializeGraphicalInterface');
+		console.error('read the registration object from app session store');		
 
 		// Determine if the contextual graphical interface has a parent
 		console.error('Determine if the graphical interface has a parent');

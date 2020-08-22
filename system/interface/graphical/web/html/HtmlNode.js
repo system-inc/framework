@@ -245,7 +245,7 @@ class HtmlNode extends XmlNode {
 
 		// If we should execute an update
 		if(this.shouldExecuteDomUpdate) {
-			//console.info('Need to run updates on this element', this);
+			//console.info('Need to run updates on this element', this.domNode, this);
 
 			// Apply the current state to the DOM
 			this.applyDomUpdates();
@@ -254,7 +254,7 @@ class HtmlNode extends XmlNode {
 			this.domUpdateExecuted();
 		}
 		else {
-			//console.info('No need to run updates on this element', this);
+			//console.info('No need to run updates on this element', this.domNode, this);
 		}
 	}
 
@@ -273,19 +273,21 @@ class HtmlNode extends XmlNode {
 	}
 
 	updateDomNodeValue() {
+		console.log('comparing this.content', this.content, 'to this.domNode.nodeValue', this.domNode.nodeValue);
+
 		// Make sure the string matches
 		if(this.content != this.domNode.nodeValue) {
+			console.error('the content does not match');
+
 			// Must use nodeValue here because innerHTML does not exist on DOM nodes which just have text
 			this.domNode.nodeValue = this.content;
 		}
 	}
 
 	appendDomNode() {
-		//app.log('HtmlNode.appendDomNode', this.tag);
+		//app.log('HtmlNode.appendDomNode', this);
 
-		var domFragment = HtmlNode.createDomNode(this);
-
-		//console.log('this.parent.domNode', this.parent.domNode);
+		var domFragment = this.createDomNode(this);
 
 		// Append the child DOM node to this node's DOM node
 		var appendedNode = this.parent.domNode.appendChild(domFragment);
@@ -299,9 +301,9 @@ class HtmlNode extends XmlNode {
 	}
 
 	replaceDomNode(indexOfChildDomNodeToReplace) {
-		//app.log('HtmlNode.replaceDomNode', indexOfChildDomNodeToReplace, this.tag);
+		var domFragment = this.createDomNode(this);
 
-		var domFragment = HtmlNode.createDomNode(this);
+		app.log('HtmlNode.replaceDomNode replacing', this.parent.domNode.childNodes[indexOfChildDomNodeToReplace], 'with', domFragment);
 
 		// Replace the DOM node with the replacement fragment
 		this.parent.domNode.replaceChild(domFragment, this.parent.domNode.childNodes[indexOfChildDomNodeToReplace]);
@@ -341,17 +343,24 @@ class HtmlNode extends XmlNode {
 	}
 
 	static createDomNode(htmlNode) {
-		// Must use document global here as this.domDocument may not be populated
-		var domFragment = document.createRange().createContextualFragment(htmlNode.toString());
-		//app.log('HtmlNode domFragment for', htmlNode, domFragment);
+		// It is important that we create a text node here and not parse any HTML tags as all nodes must be created programmatically
+		// If we parse HTML tags this will create new DOM nodes which the virtual DOM (HtmlDocument, HtmlElement, HtmlNode) will not be aware of
+		// This is also a performance gain
+		var domNode = document.createTextNode(htmlNode.toString());
 
-		return domFragment;
+		return domNode;
 	}
 
 	static emptyDomNode(domNode) {
-		while(domNode.firstChild) {
-			domNode.removeChild(domNode.firstChild);
+		// while(domNode.firstChild) {
+		// 	domNode.removeChild(domNode.lastChild); // Removing the last child is faster
+		// }
+
+		for(var i = domNode.childNodes.length - 1; i >= 0; i--) {
+			domNode.removeChild(domNode.childNodes[i]);
 		}
+
+		console.log('domNode.childNodes.length', domNode.childNodes.length);
 
 		return domNode;
 	}

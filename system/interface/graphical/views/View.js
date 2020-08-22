@@ -118,8 +118,11 @@ class View extends PrimitiveView {
 		// Add the child view to the children array with the specified array method (append, prepend)
 		this.children[arrayMethod](primitiveView);
 
-		// Run this method on the adapter
-		this.adapter.addChild(primitiveView, arrayMethod);
+		// Initialize the adapter which will create the adapted view
+		primitiveView.adapter.initialize();
+
+		// Run this method on the adapter passing in the adapted view
+		this.adapter.addChild(primitiveView.adapter.adaptedView, arrayMethod);
 
 		return this;
 	}
@@ -129,7 +132,8 @@ class View extends PrimitiveView {
 		// Use logic from XmlElement to remove the child view from this view
 		XmlElement.prototype.removeChild.apply(this, arguments);
 
-		this.adapter.removeChild(childView);
+		// Run this method on the adapter passing in the adapted view
+		this.adapter.removeChild(childView.adapter.adaptedView);
 
 		return this;
 	}

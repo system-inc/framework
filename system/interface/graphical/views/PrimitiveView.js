@@ -21,8 +21,6 @@ class PrimitiveView extends PropagatingEventEmitter {
 	// Adapts the view to an underlying component (e.g., an HtmlElement) or an iOS or Android view object
 	adapter = null;
 
-	initialized = false;
-
 	get dimensions() {
 		return this.adapter.dimensions;
 	}
@@ -49,14 +47,6 @@ class PrimitiveView extends PropagatingEventEmitter {
 		this.adapter = app.interfaces.graphical.createViewAdapter(this);
 		//console.log('Created adapter', this.adapter);
     }
-	
-    initialize() {
-		this.adapter.initialize();
-
-		this.initialized = true;
-
-		return this;
-	}
 
 	// See HtmlNode .setParent(parent)
 	setParent(parent) {
@@ -65,16 +55,6 @@ class PrimitiveView extends PropagatingEventEmitter {
 
 		// Set a reference to the parent's graphicalInterface
 		this.graphicalInterface = this.parent.graphicalInterface;
-
-		// Initialize the view if it has a graphical interface and has not been initialized yet
-		//if(this.graphicalInterface !== null && this.initialized === false) {
-		if(this.initialized === false) {
-			console.warn('initializing', this);
-			this.initialize();
-		}
-		else {
-			console.error('not initializing', this);
-		}
 	}
 
 	// See HtmlNode .orphan()

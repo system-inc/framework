@@ -182,6 +182,7 @@ class NavigationViewController extends ViewController {
 
         // await this.currentPageView.initialize();
         // await this.currentPageView.render();
+
         this.view.append(this.currentPageView);
         console.log('appended this.currentPageView', this.currentPageView);
         //app.html.append(this.currentPageView.render());

@@ -468,7 +468,8 @@ class HtmlEventProxy {
 					}
 					// If we don't have a domObject, wait to be mountedToDom
 					else {
-						htmlEventEmitter.on(mountedToDomEventIdentifier, function(event) {
+						// Just fire this once
+						htmlEventEmitter.once(mountedToDomEventIdentifier, function(event) {
 							//console.info(event.identifier, event, 'Mounted to DOM, calling domOjbect.addEventListener now for', htmlEventEmitter.tag, Json.encode(htmlEventEmitter.attributes));
 
 							// Get the domObject from the htmlEventEmitter

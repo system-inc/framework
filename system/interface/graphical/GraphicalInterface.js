@@ -148,8 +148,9 @@ class GraphicalInterface extends Interface {
 		
 		// Manually initialize the adapted view for the root view instead of using PrimitiveView .initialize()
 		rootView.graphicalInterface = this;
-		rootView.adapter.adaptedView = rootView.adapter.initializeAdaptedView(this.adapter.view);
-		rootView.initialized = true;
+
+		// Initialize the root view with the existing adapted view (which is the root view) from the graphical interface adapter
+		rootView.adapter.initialize(this.adapter.view);
 
 		return rootView;
 	}

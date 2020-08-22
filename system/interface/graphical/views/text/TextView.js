@@ -5,15 +5,10 @@ import PrimitiveView from 'framework/system/interface/graphical/views/PrimitiveV
 // Class
 class TextView extends View {
 
-	primitiveView = null; // A primitive view to store the text
 	layout = 'block'; // 'block' (breaks text) or 'inline' (does not break text)
 
 	constructor(text, layout = 'block') {
-		super();
-
-		// Use a primitive view to store the text
-		this.primitiveView = new PrimitiveView(text);
-		this.append(this.primitiveView);
+		super(text);
 
 		this.layout = layout;
 	}

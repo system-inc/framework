@@ -1,8 +1,3 @@
-// Make sure global variable is set
-if(!global && window) {
-	global = window;
-}
-
 // Node
 //import 'framework/globals/node/Node.js';
 //import 'framework/globals/node/Buffer.js';

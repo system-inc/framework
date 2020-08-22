@@ -196,6 +196,15 @@ class App extends EventEmitter {
 				},
 			},
 		});
+
+		if(this.inWebContext()) {
+			document.addEventListener('DOMContentLoaded', function(event) {
+				this.emit('readyToInitialize');
+			}.bind(this));
+		}
+		else {
+			this.emit('readyToInitialize');
+		}
 	}
 
 	async initialize(callback) {

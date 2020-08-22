@@ -98,29 +98,34 @@ class HtmlDocument extends XmlDocument {
 			this.head.domNode = this.domDocument.head;
 			this.body.domNode = this.domDocument.body;
 
-			// Clear the head and body in preparation for writing the HTML document to the DOM
-			// Even though we are removing script references from <head>, any previously included scripts will still have code available (we want this to be the case)
-			//this.head.emptyDomNode(); // Don't empty the head as it will remove any style sheets linked
-			this.body.emptyDomNode();
+			// Remove the text node between the head and body
+			if(this.head.domNode.nextSibling != this.body.domNode) {
+				this.head.domNode.parentNode.removeChild(this.head.domNode.nextSibling);
+			}
+
+			// Clear the body in preparation for writing the HTML document to the DOM
+			this.body.domNode.innerHTML = ''; // Use this method to quickly empty the node
 
 			// Inherit attributes from the body
 			//console.log('this.domDocument.body.attributes', this.domDocument.body.attributes);
 			this.domDocument.body.attributes.each(function(attributeIndex, attribute) {
-				this.body.setAttribute(attribute.nodeName, attribute.nodeValue);
+				this.body.attributes[attribute.nodeName] = attribute.nodeValue; // Do not use setAttribute a this will trigger an unneccessary render
 			}.bind(this));
 
 			// Set the URL
 			this.url = new Url(this.domDocument.location.toString());
 		}
 
-		this.view.append(this.head);
-		this.view.append(this.body);
+		// Manually set the children (do not use .append as this will cause unnecessary renders)
+		this.head.setParent(this.view);
+		this.body.setParent(this.view);
+		this.view.children = [
+			this.head,
+			this.body,
+		];
 
 		// If the DOM is present
 		if(this.domDocument) {
-			// Add this.view to the DOM
-			this.view.executeDomUpdate();
-
 			// At this point the HtmlDocument has been added to the DOM
 			this.mountedToDom();
 		}
@@ -133,19 +138,20 @@ class HtmlDocument extends XmlDocument {
 		//this.printDomUpdates();
 
 		// Now that all of the callbacks have run, execute any pending DOM updates
-		this.executeDomUpdates();
+		// TODO: I think we can remove this line
+		//this.executeDomUpdates();
 	}
 
 	printDomUpdates() {
 		console.info('**************************************');
-		console.info('Pending DOM Updates:')
+		console.info('Pending DOM Updates (nodes that have attributes or children modified):')
 
 		if(Object.isEmpty(this.domUpdates)) {
 			console.info('No updates.');
 		}
 		else {
 			this.domUpdates.each(function(htmlNodeIdentifier, htmlNode) {
-				console.info(htmlNodeIdentifier, htmlNode.tag, Json.encode(htmlNode.attributes));
+				console.info(htmlNodeIdentifier, 'tag', htmlNode.tag, 'children.length', htmlNode.children.length, 'attributes', htmlNode.attributes);
 			});
 		}
 		console.info('**************************************');
@@ -166,7 +172,8 @@ class HtmlDocument extends XmlDocument {
 		}
 		// If not, immediately update the DOM
 		else {
-			console.log('HtmlDocument .render - Immediately executing...', htmlNode);
+			// Do not uncomment this console warning
+			console.warn('HtmlDocument in immediate rendering mode. You must be testing. Switch htmlDocument.shouldScheduleDomUpdates to true when done testing.', htmlNode);
 			htmlNode.executeDomUpdate();
 		}
 	}
@@ -199,10 +206,12 @@ class HtmlDocument extends XmlDocument {
 
 	executeDomUpdates() {
 		//app.log('HtmlDocument.executeDomUpdates', 'this.domUpdates', this.domUpdates);
-		//this.printDomUpdates();
+		this.printDomUpdates();
 
 		// Iterate over all DOM updates
 		this.domUpdates.each(function(htmlNodeIdentifier, htmlNode) {
+			//console.log('htmlNode.executeDomUpdate', htmlNode);
+
 			// Run the DOM updates for the HtmlElement
 			htmlNode.executeDomUpdate();
 

@@ -249,8 +249,11 @@ class HtmlElement extends HtmlNode {
 		// Update the DOM element's attributes
 		this.renderNodeAttributes();
 
-		// Update the DOM element's children
-		this.renderNodeChildren();
+		// Do not render the children for special namespace tags
+		if(!HtmlElement.specialNamespaceTags.contains(this.tag)) {
+			// Update the DOM element's children
+			this.renderNodeChildren();
+		}
 	}
 
 	renderNodeAttributes() {
@@ -322,37 +325,48 @@ class HtmlElement extends HtmlNode {
 	}
 
 	renderNodeChildren() {
-		// Keep track of how many DOM node children actually exist
-		var domNodeChildNodesLength = this.domNode.childNodes.length;
+		//console.log('this.domNode.childNodes.length', this.domNode.childNodes.length);
 		
 		// Update the domNode's children, maintaining domNode references for each HtmlNode
 		this.children.each(function(childIndex, child) {
+			//console.log('looping through children, at childIndex', childIndex, child);
+
 			// If there is a corresponding child DOM node for the childIndex, we will do a comparison
-			if(childIndex < domNodeChildNodesLength) {
+			if(childIndex < this.domNode.childNodes.length) {
 				var currentChildDomNode = this.domNode.childNodes[childIndex];
 
-				//app.log('Comparing to current domNode', 'currentChildDomNode', currentChildDomNode, 'child', child);
+				app.log('Comparing currentChildDomNode:', currentChildDomNode, 'at index', childIndex, 'to child.domNode:', child.domNode, 'on child', child);
 
 				// If the child's domNode matches the current child DOM node
 				if(child.domNode === currentChildDomNode) {
+					console.log('they match');
 					// Call executeDomUpdate which will update the DOM node if necessary
 					child.executeDomUpdate();
 				}
 				// If the current child DOM node does not match, we need to replace it
 				else {
+					console.log('they do not match');
 					child.replaceDomNode(childIndex);
 				}
 			}
 			// If there is no corresponding child DOM node for the current index, we will create one
 			else {
+				console.log('appending')
 				child.appendDomNode();
 			}
 		}.bind(this));
 
-		// If there are more child DOM elements than child, we must remove them
-		for(var i = this.children.length; i < this.domNode.childNodes.length; i++) {
-			var childToRemove = this.domNode.childNodes[i];
-			this.domNode.removeChild(childToRemove);
+		console.log('remove this when done testing');
+		if(this.domNode.childNodes.length > this.children.length) {
+			console.log('Trimming excess nodes this.children.length', this.children.length, 'this.domNode.childNodes.length', this.domNode.childNodes.length);
+			console.log('this.children', this.children, 'this.domNode.childNodes', this.domNode.childNodes);
+			throw new Error();
+		}
+
+		// If there are more child DOM elements than child, we must remove them (backwards for performance)
+		for(var i = this.domNode.childNodes.length - 1; i >= this.children.length; i--) {
+			console.log('Excess child DOM node found at index', i, 'removing', this.domNode.childNodes[i]);
+			this.domNode.removeChild(this.domNode.childNodes[i]);
 		}
 	}
 
@@ -373,16 +387,25 @@ class HtmlElement extends HtmlNode {
 	toString = XmlElement.prototype.toString;
 
 	static createDomNode(htmlElement) {
-		// The DOM fragment is just for the tag, not for the children - must use document global here as this.domDocument may not be populated
-		var domFragment = document.createElement(htmlElement.tag);
-		//var domFragment = document.createRange().createContextualFragment(htmlElement.tagToString()); // This does not work consistently
-		//app.log('HtmlElement domFragment for', htmlElement.tagToString(), domFragment);
+		var domNode = null;
 
-		return domFragment;
+		// Let the DOM create full elements with children for tags which belong to a special namespace, such as SVGs
+		if(HtmlElement.specialNamespaceTags.contains(htmlElement.tag)) {
+			domNode = document.createRange().createContextualFragment(htmlElement.toString());
+		}
+		// For everything else, the domNode is just for the tag, not the children
+		else {
+			domNode = document.createElement(htmlElement.tag);
+		}
+
+		//app.log('HtmlElement domNode for', htmlElement.toString(), domNode);
+
+		return domNode;
 	}
 
 	static attributeValueToString = XmlElement.attributeValueToString;
 
+	// These tags close themselves, e.g., <meta />
 	static unaryTags = [
 		'meta',
 		'link',
@@ -400,6 +423,13 @@ class HtmlElement extends HtmlNode {
 		'input',
 		'keygen',
 		'command',
+	];
+
+	// These tags require special treatment when rendering
+	// https://developer.mozilla.org/en-US/docs/Web/API/Document/createElementNS
+	static specialNamespaceTags = [
+		'svg',
+		'math',
 	];
 
 	static is(value) {

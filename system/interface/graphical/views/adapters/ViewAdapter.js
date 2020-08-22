@@ -1,13 +1,12 @@
 // Dependencies
-import PrimitiveView from 'framework/system/interface/graphical/views/PrimitiveView.js';
+import View from 'framework/system/interface/graphical/views/View.js';
 
 // Class
 class ViewAdapter {
 
+	initialized = false;
 	view = null;
 	adaptedView = null;
-
-	preInitializationMethodCalls = [];
 
 	get dimensions() {
 		return this.adaptedView.dimensions;
@@ -21,29 +20,42 @@ class ViewAdapter {
 		this.view = view;
 	}
 
-	initialize() {
+	initialize(existingAdaptedView = null) {
 		//console.log('initialize()');
 
-		// Create the view
-		if(this.adaptedView === null) {
-			this.adaptedView = this.createAdaptedView();
-			//console.info('created this.adaptedView', this.adaptedView);
+		// We will not initialize until the view exists on the view heirarchy
+		if(!this.initialized && this.view.graphicalInterface !== null) {
+			// Create the adapted view
+			if(this.adaptedView === null) {
+				// Use an existing adapted view if it is provided
+				if(existingAdaptedView !== null) {
+					this.adaptedView = existingAdaptedView;
+				}
+				else {
+					this.adaptedView = this.createAdaptedView();
+				}
 
-			// Echo events from the adaptedView to the view
-			this.adaptedView.on('*', function(event) {
-				this.view.emit(event.identifier, event);
-			}.bind(this));
-		}
-		else {
-			throw new Error('Adapted view already created, this should never happen?');
-		}
+				// Initialize the adapted view
+				this.initializeAdaptedView(this.adaptedView);
+				
+				//console.info('created this.adaptedView', this.adaptedView);
 
-		// Run any queued up method calls now that we have an adapted view
-		this.preInitializationMethodCalls.each(function(methodCallIndex, methodCall) {
-			var result = this.executeAdaptedViewMethod(methodCall.method, methodCall.storedArguments);
-			methodCall.resolve(result);
-		}.bind(this));
-		this.preInitializationMethodCalls = [];
+				// Initialize and create the adapted views for all of the view's children
+				if(View.is(this.view)) {
+					this.view.children.each(function(childViewIndex, childView) {
+						childView.adapter.initialize();
+
+						// Add add the child's adapted view to this adapted view
+						this.adaptedView.addChild(childView.adapter.adaptedView);
+					}.bind(this));
+				}
+
+				this.initialized = true;
+			}
+			else {
+				throw new Error('Adapted view already created, this should never happen');
+			}
+		}
 
 		return this;
 	}
@@ -53,27 +65,32 @@ class ViewAdapter {
 	}
 
 	initializeAdaptedView() {
-		throw new Error('createAdaptedView() must be implemented by a child class of ViewAdapter.');
+		// Attach the event listeners from the view onto the adapted view
+		this.view.eventListeners.each(function(eventListenerIndex, eventListener) {
+			//console.log('adding event listener for', eventListener.eventPattern);
+
+			// The adapted view will listen for events and then emit them on the view
+			this.adaptedView.addEventListener(eventListener.eventPattern, this.emitEventFromView.bind(this), eventListener.timesToRun);
+		}.bind(this));
+		//console.log('event listeners on this.view.eventListeners', this.view.eventListeners, 'event listeners on this.adaptedView.eventListeners', this.adaptedView.eventListeners);
 	}
 
-	// All methods calls for adapted views are sent here to be queued up for when the adapted view is created
+	// All methods calls for adapted views are sent here
 	executeAdaptedViewMethod(method, storedArguments) {
-		// If the adapted view exists, we can just call the method on it
-		if(this.adaptedView) {
+		// Adapted views are expensive to create
+		// We do not create or manipulate any adapted views until the view exists in the view heirarchy
+		if(this.view.graphicalInterface !== null) {
+			// If the adapted view does not exist yet, create it and all of its children
+			this.initialize();
+
 			//console.info('executeAdaptedViewMethod - immediately ', method, storedArguments);
+			//console.log('Running', method, 'on adapted view for', this.view, 'it exists in the view heirarchy', storedArguments);
+
+			// Run the method on the adapted view
 			return this.adaptedView[method](...storedArguments);
 		}
-		// If the adapted view does not exist, we queue up the methods to call on it
 		else {
-			//console.info('executeAdaptedViewMethod - later', method, storedArguments);
-
-			return new Promise(function(resolve) {
-				this.preInitializationMethodCalls.append({
-					method: method,
-					storedArguments: storedArguments,
-					resolve: resolve,
-				});
-			}.bind(this));
+			//console.log('Skipping', method, 'on adapted view for', this.view, 'until it exists in the view heirarchy');
 		}
 	}
 
@@ -89,21 +106,26 @@ class ViewAdapter {
 		return this.executeAdaptedViewMethod('render', arguments);
 	}
 
-	// PropagatingEventEmitter
+	// See PropagatingEventEmitter
 
 	addEventListener(eventPattern, functionToBind, timesToRun = null) {
-		// This bound function on the adapted view will do nothing, instead the hook for the adapted view will trigger the function on the View itself
-		// See the constructor for more information
-		functionToBind = function(event) {
-			//console.log('no op for adapted view, instead the function will be called on the View itself');
-			//event.stop();
-		};
+		// This bound function on the adapted view will not actually run
+		// Instead, it will cause the view to emit the event
+		functionToBind = this.emitEventFromView.bind(this);
 
 		return this.executeAdaptedViewMethod('addEventListener', [
 			eventPattern,
 			functionToBind,
 			timesToRun,
 		]);
+	}
+
+	emitEventFromView(event) {
+		this.view.emit(event.identifier, event);
+	}
+
+	addEventListenerToAdaptedView(eventPattern, functionToBind, timesToRun = null) {
+
 	}
 
 	removeEventListener() {
@@ -114,14 +136,14 @@ class ViewAdapter {
 		return this.executeAdaptedViewMethod('removeAllEventListeners', arguments);
 	}
 
-	// HtmlElement
+	// See HtmlElement
 
-	addChild(childView, arrayMethod = 'append') {
-		return this.executeAdaptedViewMethod('addChild', [childView.adapter.adaptedView, arrayMethod]);
+	addChild(adaptedView, arrayMethod = 'append') {
+		return this.executeAdaptedViewMethod('addChild', arguments);
 	}
 
-	removeChild(childView) {
-		return this.executeAdaptedViewMethod('removeChild', [childView.adapter.adaptedView]);
+	removeChild(adaptedView) {
+		return this.executeAdaptedViewMethod('removeChild', arguments);
 	}
 
 	setAttribute() {

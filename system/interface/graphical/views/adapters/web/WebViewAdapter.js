@@ -18,29 +18,31 @@ class WebViewAdapter extends ViewAdapter {
 		else {
 			var webViewAdapterSettings = this.view.getWebViewAdapterSettings();
 
+			// Get the tag from the web view adapter settings
 			var tag = webViewAdapterSettings.tag;
-			var attributes = webViewAdapterSettings.attributes ? webViewAdapterSettings.attributes : null;
-			adaptedView = new HtmlElement(tag);
+
+			// Get the attributes from the web view adapter settings
+			var attributes = webViewAdapterSettings.attributes ? webViewAdapterSettings.attributes : {};
+
+			// Merge attributes from the view
+			attributes = attributes.merge(this.view.attributes);
+
+			// Create the adapted view which is an HtmlElement
+			adaptedView = new HtmlElement(tag, attributes);
 		}
-
-		// Initialize the adapted view
-		adaptedView = this.initializeAdaptedView(adaptedView);
-
-		//console.warn('need to hook into adaptedView\'s emit function to catch everything it emits and reemit from the View');
 
 		return adaptedView;
 	}
 
 	initializeAdaptedView(adaptedView) {
-		// When the adapted view is mounted to the DOM, update the view's identifier
-		adaptedView.once('htmlNode.mountedToDom', function() {
-			this.view.identifier = adaptedView.nodeIdentifier;
+		super.initializeAdaptedView(adaptedView);
 
-			// If the view has a value (is a form control)
-			if(this.view.value) {
-				adaptedView.domNode.value = this.view.value;
-			}
-		}.bind(this));
+		// TODO: Rethink how to do this
+		// This was originally here for setting form values
+		// I commented it out because I think there is a better way to do this, maybe when the element is initialized in ViewAdapter.initializeAdaptedView
+		// if(this.view.value) {
+		// 	adaptedView.domNode.value = this.view.value;
+		// }
 
 		return adaptedView;
 	}
