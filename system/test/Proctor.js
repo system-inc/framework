@@ -324,7 +324,7 @@ class Proctor extends EventEmitter {
 			this.failCurrentTestMethod(error);
 
 			// Throw the error if in a browser window
-			if(app.inGraphicalInterfaceContext()) {
+			if(app.inGraphicalInterfaceEnvironment()) {
 				//console.error(error);
 				throw error;
 			}

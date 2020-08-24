@@ -69,14 +69,28 @@ class App extends EventEmitter {
 		// Announce starting
 		//this.log('Initializing Framework '+this.framework.version+'...');
 
-		// Initialize for the Node context
-		if(this.inNodeContext()) {
-			await this.initializeNodeContext();
+		// Initialize settings for the Node environment
+		if(this.inNodeEnvironment()) {
+			await this.initializeNodeEnvironmentSettings();
 		}
 
-		// Initialize for the web
-		if(this.inGraphicalInterfaceContext()) {
-			await this.initializeGraphicalInterfaceContext();
+		// Use app settings to set the title and the identifier
+		await this.setPropertiesFromAppSettings();
+
+		// Use app settings to configure the environment
+		await this.configureEnvironment();
+
+		// Initialize for the Node environment
+		if(this.inNodeEnvironment()) {
+			await this.initializeNodeEnvironment();
+		}
+
+		// Load all of the modules for the App indicated in the app settings
+		await this.importAndInitializeModules();
+
+		// Initialize for the web environment
+		if(this.inGraphicalInterfaceEnvironment()) {
+			await this.initializeGraphicalInterfaceEnvironment();
 		}
 
 		//this.log('Framework initialization complete.');
@@ -84,7 +98,7 @@ class App extends EventEmitter {
 		//this.log('Modules: '+Module.modules.initialized.join(', '));
 	}
 
-	async initializeNodeContext() {
+	async initializeNodeEnvironmentSettings() {
 		// Set the Framework path
 		var frameworkPath = Node.Path.dirname(import.meta.url.replace('file://', '')); //  .../framework/system/app
 		frameworkPath = Node.Path.resolve(frameworkPath, '../../'); // .../framework
@@ -144,7 +158,7 @@ class App extends EventEmitter {
 				},
 			},
 			modules: {
-				archive: {}, // Archive is a default module which is enabled for all apps in Node context
+				archive: {}, // Archive is a default module which is enabled for all apps in Node environments
 			},
 		});
 
@@ -152,13 +166,9 @@ class App extends EventEmitter {
 
 		// Load the app settings
 		await this.loadAppSettings();
+	}
 
-		// Use app settings to set the title and the identifier
-		await this.setPropertiesFromAppSettings();
-
-		// Use app settings to configure the environment
-		await this.configureEnvironment();
-
+	async initializeNodeEnvironment() {
 		// Initialize the app process
 		await this.intializeProcess();
 
@@ -173,9 +183,6 @@ class App extends EventEmitter {
 
 		// Configure the interactive command line interface
 		await this.configureInteractiveCommandLineInterface();
-
-		// Load all of the modules for the App indicated in the app settings
-		await this.importAndInitializeAppModules();
 	}
 
 	async loadAppSettings() {
@@ -207,16 +214,16 @@ class App extends EventEmitter {
 	async intializeProcess() {
 		//console.log('intializeProcess - Uncomment when ready');
 
-		if(this.inMainContext()) {
-			//await this.initializeMainContext();
+		if(this.inMainProcessEnvironment()) {
+			//await this.initializeMainProcessEnvironment();
 		}
 		else {
-			//await this.initializeChildContext();
+			//await this.initializeChildProcessEnvironment();
 		}
 	}
 
-	async initializeMainContext() {
-		//console.log('In main context!');
+	async initializeMainProcessEnvironment() {
+		//console.log('In main process!');
 
 		const { Datastore } = await import('@framework/system/datastore/Datastore.js');
 		const { DatastoreServer } = await import('@framework/system/datastore/server/DatastoreServer.js');
@@ -230,8 +237,8 @@ class App extends EventEmitter {
 		await this.sessionDatastore.initialize();
 	}
 
-	async initializeChildContext() {
-		console.log('In child context!');
+	async initializeChildProcessEnvironment() {
+		//console.log('In child process!');
 
 		const { DatastoreClient } = await import('@framework/system/datastore/server/DatastoreClient.js');
 
@@ -294,8 +301,8 @@ class App extends EventEmitter {
 		var interactiveCommandLineInterfaceSettings = this.settings.get('interfaces.interactiveCommandLine');
 		//this.info('interactiveCommandLineInterfaceSettings', interactiveCommandLineInterfaceSettings);
 
-		// Enable the interactive command line interface by default if in terminal context
-		if(interactiveCommandLineInterfaceSettings.enabled && this.inTerminalContext()) {
+		// Enable the interactive command line interface by default if in terminal environment
+		if(interactiveCommandLineInterfaceSettings.enabled && this.inTerminalEnvironment()) {
 			const { InteractiveCommandLineInterface } = await import('@framework/system/interface/interactive-command-line/InteractiveCommandLineInterface.js');
 
 			//console.log('creating InteractiveCommandLineInterface');
@@ -303,7 +310,7 @@ class App extends EventEmitter {
 		}
 	}
 
-	async importAndInitializeAppModules() {
+	async importAndInitializeModules() {
 		//this.log(this.settings);
 		//this.log('Loading modules for app...', this.settings.get('modules'));
 
@@ -332,7 +339,7 @@ class App extends EventEmitter {
 		await Module.initialize(modulesForApp);
 	}
 
-	async initializeGraphicalInterfaceContext() {
+	async initializeGraphicalInterfaceEnvironment() {
 		this.settings.mergeDefaults({
 			interfaces: {
 				graphical: {
@@ -390,8 +397,8 @@ class App extends EventEmitter {
 	async configureGraphicalInterface() {
 		//app.log('App configureGraphicalInterface');
 
-		if(this.inGraphicalInterfaceContext()) {
-			//app.log('inGraphicalInterfaceContext', true);
+		if(this.inGraphicalInterfaceEnvironment()) {
+			//app.log('inGraphicalInterfaceEnvironment', true);
 
 			// Create the graphical interface
 
@@ -400,7 +407,7 @@ class App extends EventEmitter {
 			await this.interfaces.graphical.initialize();
 		}
 		else {
-			//app.log('inGraphicalInterfaceContext', false);
+			//app.log('inGraphicalInterfaceEnvironment', false);
 		}
 	}
 
@@ -415,7 +422,7 @@ class App extends EventEmitter {
 	onWindows() {
 		var onWindows = false;
 
-		if(!this.inWebContext()) {
+		if(!this.inWebEnvironment()) {
 			onWindows = Node.Process.platform == 'win32';
 		}
 		
@@ -425,7 +432,7 @@ class App extends EventEmitter {
 	onMacOs() {
 		var onMacOs = false;
 
-		if(!this.inWebContext()) {
+		if(!this.inWebEnvironment()) {
 			onMacOs = Node.Process.platform == 'darwin';
 		}
 		
@@ -435,7 +442,7 @@ class App extends EventEmitter {
 	onLinux() {
 		var onLinux = false;
 
-		if(!this.inWebContext()) {
+		if(!this.inWebEnvironment()) {
 			onLinux = Node.Process.platform == 'linux';
 		}
 		
@@ -444,7 +451,7 @@ class App extends EventEmitter {
 
 	developerToolsAvailable() {
 		//return (process && process.versions && process.versions.electron);
-		return this.inGraphicalInterfaceContext();
+		return this.inGraphicalInterfaceEnvironment();
 	}
 
 	get log() {
@@ -597,70 +604,70 @@ class App extends EventEmitter {
 		return formattedLogData;
 	}
 
-	inMainContext() {
-		//console.error('Implement inMainContext');
-		var inMainContext = true;
+	inMainProcessEnvironment() {
+		//console.error('Implement inMainProcessEnvironment');
+		var inMainProcessEnvironment = true;
 
-		return inMainContext;
+		return inMainProcessEnvironment;
 	}
 
-	inChildContext() {
-		console.error('Implement inChildContext');
-		var inChildContext = false;
+	inChildProcessEnvironment() {
+		console.error('Implement inChildProcessEnvironment');
+		var inChildProcessEnvironment = false;
 
-		return inChildContext;
+		return inChildProcessEnvironment;
 	}
 
-	inTerminalContext() {
-		var inTerminalContext = false;
+	inTerminalEnvironment() {
+		var inTerminalEnvironment = false;
 
 		// If you are not in a graphical interface you are in a terminal
-		//if((Node.Process.stdout.isTTY || Node.Process.stdout.writable) && !this.inGraphicalInterfaceContext()) {
-		if(!this.inGraphicalInterfaceContext()) {
-			inTerminalContext = true;
+		//if((Node.Process.stdout.isTTY || Node.Process.stdout.writable) && !this.inGraphicalInterfaceEnvironment()) {
+		if(!this.inGraphicalInterfaceEnvironment()) {
+			inTerminalEnvironment = true;
 		}
 
-		return inTerminalContext;
+		return inTerminalEnvironment;
 	}
 
-	inGraphicalInterfaceContext() {
-		var inGraphicalInterfaceContext = false;
+	inGraphicalInterfaceEnvironment() {
+		var inGraphicalInterfaceEnvironment = false;
 
-		if(this.inWebContext()) {
-			inGraphicalInterfaceContext = true;
+		if(this.inWebEnvironment()) {
+			inGraphicalInterfaceEnvironment = true;
 		}
 
-		return inGraphicalInterfaceContext;
+		return inGraphicalInterfaceEnvironment;
 	}
 
-	inWebContext() {
-		var inWebContext = false;
+	inWebEnvironment() {
+		var inWebEnvironment = false;
 
 		if(typeof window !== 'undefined') {
-			inWebContext = true;
+			inWebEnvironment = true;
 		}
 
-		return inWebContext;
+		return inWebEnvironment;
 	}
 
-	inNodeContext() {
-		var inNodeContext = false;
+	inNodeEnvironment() {
+		var inNodeEnvironment = false;
 		
 		if(typeof process !== 'undefined' && process.release.name === 'node') {
-			inNodeContext = true;
+			inNodeEnvironment = true;
 		}
 
-		return inNodeContext;
+		return inNodeEnvironment;
 	}
 
-	inElectronContext() {
-		var inElectronContext = false;
+	inElectronEnvironment() {
+		var inElectronEnvironment = false;
 
 		if(process.versions.electron !== undefined) {
-			inElectronContext = true;
+			inElectronEnvironment = true;
 		}
 
-		return inElectronContext;
+		return inElectronEnvironment;
 	}
 
 	exit = async function() {

@@ -24,7 +24,7 @@ class FrameworkApp extends App {
 			// Do nothing, this will leave the user in the interactive command line interface
 		}
 		// Show help by default
-		else if(this.inTerminalContext()) {
+		else if(this.inTerminalEnvironment()) {
 			// Fun with ASCII art
 			this.standardStreams.output.writeLine("\n"+AsciiArt.framework.version[this.framework.version.toString()]+"\n");
 			this.interfaces.commandLine.command.showHelp();
@@ -72,7 +72,7 @@ class FrameworkApp extends App {
 		//console.log('processCommandGraphicalInterface');
 
 		// If we aren't in an Electron context start Electron
-		if(!this.modules.electronModule.inElectronContext()) {
+		if(!this.modules.electronModule.inElectronEnvironment()) {
 			// We must manually start Electron as it will not start automatically as FrameworkApp can be a command line interface or a graphical interface app
 			this.modules.electronModule.startElectron();
 		}

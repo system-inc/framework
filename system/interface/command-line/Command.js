@@ -131,7 +131,7 @@ class Command {
 		var argumentsToProcess = argumentsArray;
 
 		// If we are in a terminal context, the second argument will be the script we are interpreting and we should start processing at the third argument
-		if(app.inTerminalContext()) {
+		if(app.inTerminalEnvironment()) {
 			//console.log('in terminal context');
 			this.script = argumentsArray[1];
 			argumentsToProcess = argumentsToProcess.slice(2);
@@ -493,7 +493,7 @@ class Command {
 
 	exit(message) {
 		// Only exit if the app is in a terminal context
-		if(app.inTerminalContext()) {
+		if(app.inTerminalEnvironment()) {
 			if(message) {
 				app.standardStreams.output.writeLine(message);
 			}

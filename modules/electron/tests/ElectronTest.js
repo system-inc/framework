@@ -7,7 +7,7 @@ import { ElectronGraphicalInterfaceAdapter } from '@framework/modules/electron/i
 class ElectronTest extends Test {
 
 	async shouldRun() {
-		return app.inGraphicalInterfaceContext();
+		return app.inGraphicalInterfaceEnvironment();
 	}
 
 	// Input - Key

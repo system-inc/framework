@@ -25,7 +25,7 @@ class ElectronModule extends Module {
 		await super.initialize(...arguments);
 
 		// If in the Electron context
-		if(this.inElectronContext()) {
+		if(this.inElectronEnvironment()) {
 			//console.warn('In Electron, configuring ElectronModule');
 			this.electron = await import('electron');
 			//console.log('this.electron', this.electron);
@@ -452,20 +452,20 @@ class ElectronModule extends Module {
 		return displays;
 	}
 
-	inElectronContext() {
-		var inElectronContext = false;
+	inElectronEnvironment() {
+		var inElectronEnvironment = false;
 
 		if(Node.Process.versions && Node.Process.versions.electron) {
-			inElectronContext = true;
+			inElectronEnvironment = true;
 		}
 
-		return inElectronContext;
+		return inElectronEnvironment;
 	}
 
 	inElectronMainProcess() {
 		var inElectronMainProcess = false;
 
-		if(this.inElectronContext() && Node.Process.type !== 'renderer') {
+		if(this.inElectronEnvironment() && Node.Process.type !== 'renderer') {
 			inElectronMainProcess = true;
 		}
 
@@ -475,7 +475,7 @@ class ElectronModule extends Module {
 	inElectronRendererProcess() {
 		var inElectronRendererProcess = false;
 
-		if(this.inElectronContext() && Node.Process.type === 'renderer') {
+		if(this.inElectronEnvironment() && Node.Process.type === 'renderer') {
 			inElectronRendererProcess = true;
 		}
 
