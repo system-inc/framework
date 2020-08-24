@@ -1,4 +1,5 @@
 // Globals
+import '@framework/globals/NodeGlobals.js';
 import '@framework/globals/Globals.js';
 
 // Dependencies
@@ -83,10 +84,11 @@ class App extends EventEmitter {
 		// Initialize for the Node environment
 		if(this.inNodeEnvironment()) {
 			await this.initializeNodeEnvironment();
-		}
 
-		// Load all of the modules for the App indicated in the app settings
-		await this.importAndInitializeModules();
+			// Load all of the modules for the app indicated in the app settings
+			// TODO: Allow this to be run in graphical interface environments
+			await this.importAndInitializeModules();
+		}
 
 		// Initialize for the web environment
 		if(this.inGraphicalInterfaceEnvironment()) {
@@ -95,7 +97,7 @@ class App extends EventEmitter {
 
 		//this.log('Framework initialization complete.');
 		//this.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
-		//this.log('Modules: '+Module.modules.initialized.join(', '));
+		//this.log('Modules:', app.modules);
 	}
 
 	async initializeNodeEnvironmentSettings() {
@@ -170,7 +172,7 @@ class App extends EventEmitter {
 
 	async initializeNodeEnvironment() {
 		// Initialize the app process
-		await this.intializeProcess();
+		await this.initializeProcess();
 
 		// Configure the standard streams
 		await this.configureStandardStreams();
@@ -211,44 +213,44 @@ class App extends EventEmitter {
 		//this.log('Configuring environment ('+this.environment+')...');
 	}
 
-	async intializeProcess() {
-		//console.log('intializeProcess - Uncomment when ready');
+	async initializeProcess() {
+		//console.log('initializeProcess - Uncomment when ready');
 
 		if(this.inMainProcessEnvironment()) {
-			//await this.initializeMainProcessEnvironment();
+			await this.initializeMainProcessEnvironment();
 		}
 		else {
-			//await this.initializeChildProcessEnvironment();
+			await this.initializeChildProcessEnvironment();
 		}
 	}
 
 	async initializeMainProcessEnvironment() {
 		//console.log('In main process!');
 
-		const { Datastore } = await import('@framework/system/datastore/Datastore.js');
-		const { DatastoreServer } = await import('@framework/system/datastore/server/DatastoreServer.js');
+		// const { Datastore } = await import('@framework/system/datastore/Datastore.js');
+		// const { DatastoreServer } = await import('@framework/system/datastore/server/DatastoreServer.js');
 
-		// Setup app.datastore server
-		this.datastore = new DatastoreServer(new Datastore());
-		await this.datastore.initialize();
+		// // Setup app.datastore server
+		// this.datastore = new DatastoreServer(new Datastore());
+		// await this.datastore.initialize();
 
-		// Setup app.sessionDatastore server
-		this.sessionDatastore = new DatastoreServer(new Datastore());
-		await this.sessionDatastore.initialize();
+		// // Setup app.sessionDatastore server
+		// this.sessionDatastore = new DatastoreServer(new Datastore());
+		// await this.sessionDatastore.initialize();
 	}
 
 	async initializeChildProcessEnvironment() {
 		//console.log('In child process!');
 
-		const { DatastoreClient } = await import('@framework/system/datastore/server/DatastoreClient.js');
+		// const { DatastoreClient } = await import('@framework/system/datastore/server/DatastoreClient.js');
 
-		// Setup app.datastore client
-		this.datastore = new DatastoreClient();
-		await this.datastore.initialize();
+		// // Setup app.datastore client
+		// this.datastore = new DatastoreClient();
+		// await this.datastore.initialize();
 
-		// Setup app.sessionDatastore client
-		this.sessionDatastore = new DatastoreClient();
-		await this.sessionDatastore.initialize();
+		// // Setup app.sessionDatastore client
+		// this.sessionDatastore = new DatastoreClient();
+		// await this.sessionDatastore.initialize();
 	}
 
 	async configureStandardStreams() {
@@ -411,12 +413,12 @@ class App extends EventEmitter {
 		}
 	}
 
-	getUserDirectory() {
+	getUserPath() {
 		return Node.Process.env[this.onWindows() ? 'USERPROFILE' : 'HOME'];
 	}
 
-	getUserDesktopDirectory() {
-		return Node.Path.join(this.getUserDirectory(), 'Desktop');
+	getUserDesktopPath() {
+		return Node.Path.join(this.getUserPath(), 'Desktop');
 	}
 
 	onWindows() {

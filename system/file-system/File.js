@@ -145,8 +145,6 @@ class File extends FileSystemObject {
     }
 
     async getFormat() {
-        const { FileFormats } = await import('@framework/system/file-system/FileFormats.js');
-
         return FileFormats[this.extension];
     }
 
