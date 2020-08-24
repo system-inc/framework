@@ -1,9 +1,9 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import Datastore from 'framework/system/datastore/Datastore.js';
-import DatastoreServer from 'framework/system/datastore/server/DatastoreServer.js';
-import DatastoreClient from 'framework/system/datastore/server/DatastoreClient.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { Datastore } from '@framework/system/datastore/Datastore.js';
+import { DatastoreServer } from '@framework/system/datastore/server/DatastoreServer.js';
+import { DatastoreClient } from '@framework/system/datastore/server/DatastoreClient.js';
 
 // Class
 class DatastoreServerTest extends Test {
@@ -83,4 +83,4 @@ class DatastoreServerTest extends Test {
 }
 
 // Export
-export default DatastoreServerTest;
+export { DatastoreServerTest };

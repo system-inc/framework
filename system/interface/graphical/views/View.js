@@ -1,8 +1,8 @@
 // Dependencies
-import PrimitiveView from 'framework/system/interface/graphical/views/PrimitiveView.js';
-import XmlElement from 'framework/system/xml/XmlElement.js';
-import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlElement.js';
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
+import { PrimitiveView } from '@framework/system/interface/graphical/views/PrimitiveView.js';
+import { XmlElement } from '@framework/system/xml/XmlElement.js';
+import { HtmlElement } from '@framework/system/interface/graphical/web/html/HtmlElement.js';
+import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
 
 // Class
 class View extends PrimitiveView {
@@ -188,7 +188,7 @@ class View extends PrimitiveView {
 			var classString = '';
 
 			classHierarchy.each(function(index, className) {
-				classString += className.replaceLast('View', '').toCamelcase()+' ';
+				classString += className.replaceLast('View', '').toCamelCase()+' ';
 			});
 			
 			classString = classString.replaceLast(' ', '');
@@ -254,4 +254,4 @@ class View extends PrimitiveView {
 }
 
 // Export
-export default View;
+export { View };

@@ -1,6 +1,6 @@
 // Dependencies
-import WebGraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
-import GraphicalInterfaceState from 'framework/system/interface/graphical/GraphicalInterfaceState.js';
+import { WebGraphicalInterfaceAdapter } from '@framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
+import { GraphicalInterfaceState } from '@framework/system/interface/graphical/GraphicalInterfaceState.js';
 
 // Class
 class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
@@ -233,4 +233,4 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 }
 
 // Export
-export default ElectronGraphicalInterfaceAdapter;
+export { ElectronGraphicalInterfaceAdapter };

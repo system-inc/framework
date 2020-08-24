@@ -1,6 +1,6 @@
 // Dependencies
-import Client from 'framework/system/server/Client.js';
-import LocalSocketConnection from 'framework/system/server/protocols/local-socket/LocalSocketConnection.js';
+import { Client } from '@framework/system/server/Client.js';
+import { LocalSocketConnection } from '@framework/system/server/protocols/local-socket/LocalSocketConnection.js';
 
 // Class
 class LocalSocketClient extends Client {
@@ -41,4 +41,4 @@ class LocalSocketClient extends Client {
 }
 
 // Export
-export default LocalSocketClient;
+export { LocalSocketClient };

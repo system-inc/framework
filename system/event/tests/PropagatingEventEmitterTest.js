@@ -1,8 +1,8 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
-import PropagatingEvent from 'framework/system/event/PropagatingEvent.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { PropagatingEventEmitter } from '@framework/system/event/PropagatingEventEmitter.js';
+import { PropagatingEvent } from '@framework/system/event/PropagatingEvent.js';
 
 // Class
 class PropagatingEventEmitterTest extends Test {
@@ -441,4 +441,4 @@ class PropagatingEventEmitterTest extends Test {
 }
 
 // Export
-export default PropagatingEventEmitterTest;
+export { PropagatingEventEmitterTest };

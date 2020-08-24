@@ -1,12 +1,12 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
 // Class
 class FfmpegTest extends Test {
 
 	//testResizeImage: function*() {
-	//	var testFilePath = Node.Path.join(app.framework.directory, 'modules', 'media', 'tests', 'files', 'images', 'test-1.jpg');
+	//	var testFilePath = Node.Path.join(app.settings.get('framework.path'), 'modules', 'media', 'tests', 'files', 'images', 'test-1.jpg');
 	//	var testFile = new File(testFilePath);
 
 	//	var actual = yield FfmpegWrapper.resizeImage(testFile, 50);
@@ -28,4 +28,4 @@ class FfmpegTest extends Test {
 }
 
 // Export
-export default FfmpegTest;
+export { FfmpegTest };

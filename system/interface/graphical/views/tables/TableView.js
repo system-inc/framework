@@ -1,9 +1,9 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import TableCellView from 'framework/system/interface/graphical/views/tables/TableCellView.js';
-import TableHeadingCellView from 'framework/system/interface/graphical/views/tables/TableHeadingCellView.js';
-import TableHeadingView from 'framework/system/interface/graphical/views/tables/TableHeadingView.js';
-import TableRowView from 'framework/system/interface/graphical/views/tables/TableRowView.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { TableCellView } from '@framework/system/interface/graphical/views/tables/TableCellView.js';
+import { TableHeadingCellView } from '@framework/system/interface/graphical/views/tables/TableHeadingCellView.js';
+import { TableHeadingView } from '@framework/system/interface/graphical/views/tables/TableHeadingView.js';
+import { TableRowView } from '@framework/system/interface/graphical/views/tables/TableRowView.js';
 
 // Class
 class TableView extends View {
@@ -68,7 +68,7 @@ class TableView extends View {
 				// if the column is a string and is not an empty string
 				if(column && String.is(column) && column.trim() != '') {
 					useColumnIndexAsColumnName = false;
-					columnName = column.toCamelcase();
+					columnName = column.toCamelCase();
 				}
 
 				var columnValue = row[columnIndex];
@@ -102,4 +102,4 @@ class TableView extends View {
 }
 
 // Export
-export default TableView;
+export { TableView };

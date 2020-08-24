@@ -66,4 +66,4 @@ class Data {
 }
 
 // Export
-export default Data;
+export { Data };

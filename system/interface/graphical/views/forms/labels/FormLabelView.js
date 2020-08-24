@@ -1,5 +1,5 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/text/View.js';
+import { View } from '@framework/system/interface/graphical/views/text/View.js';
 
 // Class
 class FormLabelView extends View {
@@ -33,4 +33,4 @@ class FormLabelView extends View {
 }
 
 // Export
-export default FormLabelView;
+export { FormLabelView };

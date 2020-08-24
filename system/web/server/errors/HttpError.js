@@ -1,5 +1,5 @@
 // Dependencies
-import ExtendableError from 'framework/globals/standard/errors/ExtendableError.js';
+import { ExtendableError } from '@framework/globals/standard/errors/ExtendableError.js';
 
 // Class
 class HttpError extends ExtendableError {
@@ -21,4 +21,4 @@ class HttpError extends ExtendableError {
 }
 
 // Export
-export default HttpError;
+export { HttpError };

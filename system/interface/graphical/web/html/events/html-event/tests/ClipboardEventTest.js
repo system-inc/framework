@@ -1,10 +1,10 @@
 // Dependencies
-import ElectronHtmlTest from 'framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
-import Assert from 'framework/system/test/Assert.js';
+import { ElectronHtmlTest } from '@framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
-import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
-import Html from 'framework/system/interface/graphical/web/html/Html.js';
-import ClipboardEvent from 'framework/system/interface/graphical/web/html/events/html-event/ClipboardEvent.js';
+import { HtmlDocument } from '@framework/system/interface/graphical/web/html/HtmlDocument.js';
+import { Html } from '@framework/system/interface/graphical/web/html/Html.js';
+import { ClipboardEvent } from '@framework/system/interface/graphical/web/html/events/html-event/ClipboardEvent.js';
 
 // Class
 class ClipboardEventTest extends ElectronHtmlTest {
@@ -71,4 +71,4 @@ class ClipboardEventTest extends ElectronHtmlTest {
 }
 
 // Export
-export default ClipboardEventTest;
+export { ClipboardEventTest };

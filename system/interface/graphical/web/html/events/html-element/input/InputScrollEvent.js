@@ -1,5 +1,5 @@
 // Dependencies
-import InputPressEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
+import { InputPressEvent } from '@framework/system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
 
 // Class
 class InputScrollEvent extends InputPressEvent {
@@ -94,4 +94,4 @@ class InputScrollEvent extends InputPressEvent {
 }
 
 // Export
-export default InputScrollEvent;
+export { InputScrollEvent };

@@ -150,4 +150,4 @@ class BrowserWindowState {
 }
 
 // Export
-export default BrowserWindowState;
+export { BrowserWindowState };

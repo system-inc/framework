@@ -1,6 +1,6 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import ListItemView from 'framework/system/interface/graphical/views/lists/ListItemView.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { ListItemView } from '@framework/system/interface/graphical/views/lists/ListItemView.js';
 
 // Class
 class ListView extends View {
@@ -31,4 +31,4 @@ class ListView extends View {
 }
 
 // Export
-export default ListView;
+export { ListView };

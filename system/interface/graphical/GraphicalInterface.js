@@ -1,9 +1,9 @@
 // Dependencies
-import Interface from 'framework/system/interface/Interface.js';
-import GraphicalInterfaceManager from 'framework/system/interface/graphical/GraphicalInterfaceManager.js';
-import View from 'framework/system/interface/graphical/views/View.js';
-//import AppSessionDatastore from 'framework/system/app/datastore/AppSessionDatastore.js';
-import WebGraphicalInterfaceAdapter  from 'framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
+import { Interface } from '@framework/system/interface/Interface.js';
+import { GraphicalInterfaceManager } from '@framework/system/interface/graphical/GraphicalInterfaceManager.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+//import { AppSessionDatastore } from '@framework/system/app/datastore/AppSessionDatastore.js';
+import { WebGraphicalInterfaceAdapter  } from '@framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
 
 // TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
 
@@ -283,4 +283,4 @@ class GraphicalInterface extends Interface {
 }
 
 // Export
-export default GraphicalInterface;
+export { GraphicalInterface };

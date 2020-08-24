@@ -1,6 +1,6 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
-import LocalStorage from 'framework/system/interface/graphical/web/data/LocalStorage.js';
+import { EventEmitter } from '@framework/system/event/EventEmitter.js';
+import { LocalStorage } from '@framework/system/interface/graphical/web/data/LocalStorage.js';
 
 // Class
 class GraphicalInterfaceProxy extends EventEmitter {
@@ -49,4 +49,4 @@ class GraphicalInterfaceProxy extends EventEmitter {
 }
 
 // Export
-export default GraphicalInterfaceProxy;
+export { GraphicalInterfaceProxy };

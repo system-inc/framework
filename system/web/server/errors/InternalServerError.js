@@ -1,5 +1,5 @@
 // Dependencies
-import HttpError from 'framework/system/server/web/errors/HttpError.js';
+import { HttpError } from '@framework/system/server/web/errors/HttpError.js';
 
 // Class
 class InternalServerError extends HttpError {
@@ -22,4 +22,4 @@ class InternalServerError extends HttpError {
 }
 
 // Export
-export default InternalServerError;
+export { InternalServerError };

@@ -1,8 +1,8 @@
 // Dependencies
-import App from 'framework/system/app/App.js';
-import AsciiArt from 'framework/system/ascii-art/AsciiArt.js';
-import Proctor from 'framework/system/test/Proctor.js';
-import Url from 'framework/system/web/Url.js';
+import { App } from '@framework/system/app/App.js';
+import { AsciiArt } from '@framework/system/ascii-art/AsciiArt.js';
+import { Proctor } from '@framework/system/test/Proctor.js';
+import { Url } from '@framework/system/web/Url.js';
 
 // Class
 class FrameworkApp extends App {
@@ -49,7 +49,7 @@ class FrameworkApp extends App {
 		else {
 			// If there is no path set the path to the framework directory
 			if(!this.interfaces.commandLine.command.subcommands.proctor.options.path) {
-				this.interfaces.commandLine.command.subcommands.proctor.options.path = app.framework.directory;
+				this.interfaces.commandLine.command.subcommands.proctor.options.path = app.settings.get('framework.path');
 			}
 
 			//proctor.getAndRunTests(this.interfaces.commandLine.command.subcommands.proctor.options.path, this.interfaces.commandLine.command.subcommands.proctor.options.filePattern, this.interfaces.commandLine.command.subcommands.proctor.options.methodPattern);
@@ -59,7 +59,7 @@ class FrameworkApp extends App {
 			var filePattern = this.interfaces.commandLine.command.subcommands.proctor.options.filePattern;
 			var methodPattern = this.interfaces.commandLine.command.subcommands.proctor.options.methodPattern;
 			
-			//path = Node.Path.join(app.framework.directory, 'globals');
+			//path = Node.Path.join(app.settings.get('framework.path'), 'globals');
 			//filePattern = 'Command';
 			//methodPattern = '';			
 			//this.log('path', path, 'filePattern', filePattern, 'methodPattern', methodPattern);

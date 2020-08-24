@@ -1,17 +1,17 @@
 // Dependencies
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import View from 'framework/system/interface/graphical/views/View.js';
+import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
-import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
+import { TextView } from '@framework/system/interface/graphical/views/text/TextView.js';
+import { HeadingView } from '@framework/system/interface/graphical/views/text/HeadingView.js';
 
-import Proctor from 'framework/system/test/Proctor.js';
-import FormView from 'framework/system/interface/graphical/views/forms/FormView.js';
-import ListView from 'framework/system/interface/graphical/views/lists/ListView.js';
-import ButtonView from 'framework/system/interface/graphical/views/buttons/ButtonView.js';
-import TableView from 'framework/system/interface/graphical/views/tables/TableView.js';
+import { Proctor } from '@framework/system/test/Proctor.js';
+import { FormView } from '@framework/system/interface/graphical/views/forms/FormView.js';
+import { ListView } from '@framework/system/interface/graphical/views/lists/ListView.js';
+import { ButtonView } from '@framework/system/interface/graphical/views/buttons/ButtonView.js';
+import { TableView } from '@framework/system/interface/graphical/views/tables/TableView.js';
 
-import TestGraphicalInterfaceProxyPool from 'interface/areas/testing/activities/tests/test-graphical-interface/TestGraphicalInterfaceProxyPool.js';
+import TestGraphicalInterfaceProxyPool from '@app/interface/areas/testing/activities/tests/test-graphical-interface/TestGraphicalInterfaceProxyPool.js';
 
 // Class
 class TestsActivityViewController extends ViewController {
@@ -224,4 +224,4 @@ class TestsActivityViewController extends ViewController {
 }
 
 // Export
-export default TestsActivityViewController;
+export { TestsActivityViewController };

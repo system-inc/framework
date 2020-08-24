@@ -1,5 +1,5 @@
 // Dependencies
-import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
+import { PropagatingEventEmitter } from '@framework/system/event/PropagatingEventEmitter.js';
 
 // Class
 class Interface extends PropagatingEventEmitter {
@@ -7,4 +7,4 @@ class Interface extends PropagatingEventEmitter {
 }
 
 // Export
-export default Interface;
+export { Interface };

@@ -249,4 +249,4 @@ class Ffmpeg {
 }
 
 // Export
-export default Ffmpeg;
+export { Ffmpeg };

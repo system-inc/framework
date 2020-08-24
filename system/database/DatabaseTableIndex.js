@@ -79,4 +79,4 @@ class DatabaseTableIndex {
 }
 
 // Export
-export default DatabaseTableIndex;
+export { DatabaseTableIndex };

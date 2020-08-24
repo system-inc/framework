@@ -1,5 +1,5 @@
 // Dependencies
-import HttpError from 'framework/system/server/web/errors/HttpError.js';
+import { HttpError } from '@framework/system/server/web/errors/HttpError.js';
 
 // Class
 class UnauthorizedError extends HttpError {
@@ -22,4 +22,4 @@ class UnauthorizedError extends HttpError {
 }
 
 // Export
-export default UnauthorizedError;
+export { UnauthorizedError };

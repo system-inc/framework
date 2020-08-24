@@ -19,4 +19,4 @@ class ExtendableError extends Error {
 //ExtendableError.prototype = Error.prototype;
 
 // Export
-export default ExtendableError;
+export { ExtendableError };

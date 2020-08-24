@@ -1,6 +1,6 @@
 // Dependencies
-import TextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
-import MultipleLineTextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/multiple-line/MultipleLineTextFormControlView.js';
+import { TextFormFieldView } from '@framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
+import { MultipleLineTextFormControlView } from '@framework/system/interface/graphical/views/forms/controls/text/multiple-line/MultipleLineTextFormControlView.js';
 
 // Class
 class MultipleLineTextFormFieldView extends TextFormFieldView {
@@ -18,4 +18,4 @@ class MultipleLineTextFormFieldView extends TextFormFieldView {
 }
 
 // Export
-export default MultipleLineTextFormFieldView;
+export { MultipleLineTextFormFieldView };

@@ -66,4 +66,4 @@ class Device {
 }
 
 // Export
-export default Device;
+export { Device };

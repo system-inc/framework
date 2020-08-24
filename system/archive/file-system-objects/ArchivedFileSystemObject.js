@@ -1,6 +1,6 @@
 // Dependencies
-import FileSystemObject from 'framework/system/file-system/FileSystemObject.js';
-import SevenZip from 'framework/system/archive/libraries/7-zip/SevenZip.js';
+import { FileSystemObject } from '@framework/system/file-system/FileSystemObject.js';
+import { SevenZip } from '@framework/system/archive/libraries/7-zip/SevenZip.js';
 
 // Class
 class ArchivedFileSystemObject {
@@ -62,13 +62,13 @@ class ArchivedFileSystemObject {
 
 		// Directories
 		if(sevenZipArchivedFileSystemObjectProperties.folder == '+') {
-			const ArchivedDirectory = (await import('framework/system/archive/file-system-objects/ArchivedDirectory.js')).default;
+			const { ArchivedDirectory } = await import('@framework/system/archive/file-system-objects/ArchivedDirectory.js');
 			archivedFileSystemObject = new ArchivedDirectory(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
 			//app.log('ArchivedDirectory', archivedFileSystemObject);
 		}
 		// Files
 		else {
-			const ArchivedFile = (await import('framework/system/archive/file-system-objects/ArchivedFile.js')).default;
+			const { ArchivedFile } = await import('@framework/system/archive/file-system-objects/ArchivedFile.js');
 			archivedFileSystemObject = new ArchivedFile(archiveFile, sevenZipArchivedFileSystemObjectProperties.path);
 			//app.log('ArchivedFile', archivedFileSystemObject);
 		}
@@ -93,4 +93,4 @@ class ArchivedFileSystemObject {
 }
 
 // Export
-export default ArchivedFileSystemObject;
+export { ArchivedFileSystemObject };

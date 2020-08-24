@@ -1,7 +1,7 @@
 // Dependencies
-import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
-import ViewEvent from 'framework/system/interface/graphical/views/events/ViewEvent.js';
-import XmlNode from 'framework/system/xml/XmlNode.js';
+import { PropagatingEventEmitter } from '@framework/system/event/PropagatingEventEmitter.js';
+import { ViewEvent } from '@framework/system/interface/graphical/views/events/ViewEvent.js';
+import { XmlNode } from '@framework/system/xml/XmlNode.js';
 
 // Class
 // Similar to HtmlNode, this is a view which has no attributes or children and can be used to display primitive text
@@ -181,4 +181,4 @@ class PrimitiveView extends PropagatingEventEmitter {
 }
 
 // Export
-export default PrimitiveView;
+export { PrimitiveView };

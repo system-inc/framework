@@ -1,5 +1,5 @@
 // Dependencies
-import ModelProperty from 'framework/system/data/ModelProperty.js';
+import { ModelProperty } from '@framework/system/data/ModelProperty.js';
 
 // Class
 class Model {
@@ -144,4 +144,4 @@ class Model {
 }
 
 // Export
-export default Model;
+export { Model };

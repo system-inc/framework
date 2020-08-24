@@ -1,9 +1,9 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import MultiprotocolServer from 'framework/system/server/MultiprotocolServer.js';
-import LocalSocketProtocolServer from 'framework/system/server/protocols/local-socket/server/LocalSocketProtocolServer.js';
-import LocalSocketProtocolClient from 'framework/system/server/protocols/local-socket/client/LocalSocketProtocolClient.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { MultiprotocolServer } from '@framework/system/server/MultiprotocolServer.js';
+import { LocalSocketProtocolServer } from '@framework/system/server/protocols/local-socket/server/LocalSocketProtocolServer.js';
+import { LocalSocketProtocolClient } from '@framework/system/server/protocols/local-socket/client/LocalSocketProtocolClient.js';
 
 // Class
 class MultiprotocolServerTest extends Test {
@@ -67,4 +67,4 @@ class MultiprotocolServerTest extends Test {
 }
 
 // Export
-export default MultiprotocolServerTest;
+export { MultiprotocolServerTest };

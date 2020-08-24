@@ -1,6 +1,6 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import LinkListView from 'framework/system/interface/graphical/views/lists/LinkListView.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { LinkListView } from '@framework/system/interface/graphical/views/lists/LinkListView.js';
 
 // Class
 class ActivityNavigationView extends View {
@@ -31,4 +31,4 @@ class ActivityNavigationView extends View {
 }
 
 // Export
-export default ActivityNavigationView;
+export { ActivityNavigationView };

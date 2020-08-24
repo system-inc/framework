@@ -184,4 +184,4 @@ class CyclicRedundancyCheck {
 }
 
 // Export
-export default CyclicRedundancyCheck;
+export { CyclicRedundancyCheck };

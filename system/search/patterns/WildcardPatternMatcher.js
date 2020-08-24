@@ -436,4 +436,4 @@ class WildcardPatternMatcher {
 }
 
 // Export
-export default WildcardPatternMatcher;
+export { WildcardPatternMatcher };

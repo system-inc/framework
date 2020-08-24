@@ -1,5 +1,5 @@
 // Dependencies
-import Request from 'framework/system/server/Request.js';
+import { Request } from '@framework/system/server/Request.js';
 
 // Class
 class DatastoreRequest extends Request {
@@ -9,4 +9,4 @@ class DatastoreRequest extends Request {
 }
 
 // Export
-export default DatastoreRequest;
+export { DatastoreRequest };

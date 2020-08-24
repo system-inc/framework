@@ -1,6 +1,6 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
 // Class
 class JsonTest extends Test {
@@ -103,4 +103,4 @@ class JsonTest extends Test {
 }
 
 // Export
-export default JsonTest;
+export { JsonTest };

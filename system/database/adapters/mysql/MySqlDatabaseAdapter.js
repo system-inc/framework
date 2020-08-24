@@ -1,5 +1,5 @@
 // Dependencies
-import DatabaseField from 'framework/system/database/DatabaseField.js';
+import { DatabaseField } from '@framework/system/database/DatabaseField.js';
 
 // Class
 class MySqlAdapter {
@@ -61,4 +61,4 @@ class MySqlAdapter {
 }
 
 // Export
-export default MySqlAdapter;
+export { MySqlAdapter };

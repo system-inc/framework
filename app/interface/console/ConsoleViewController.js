@@ -1,6 +1,6 @@
 // Dependencies
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import ConsoleView from 'interface/console/ConsoleView.js';
+import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
+import ConsoleView from '@app/interface/console/ConsoleView.js';
 
 // Class
 class ConsoleViewController extends ViewController {
@@ -14,4 +14,4 @@ class ConsoleViewController extends ViewController {
 }
 
 // Export
-export default ConsoleViewController;
+export { ConsoleViewController };

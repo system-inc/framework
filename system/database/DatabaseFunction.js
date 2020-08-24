@@ -4,4 +4,4 @@ class DatabaseFunction {
 }
 
 // Export
-export default DatabaseFunction;
+export { DatabaseFunction };

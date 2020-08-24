@@ -1,5 +1,5 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
 // Class
 class SvgView extends View {
@@ -16,4 +16,4 @@ class SvgView extends View {
 }
 
 // Export
-export default SvgView;
+export { SvgView };

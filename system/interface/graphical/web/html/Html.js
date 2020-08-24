@@ -1,5 +1,5 @@
 // Dependencies
-import HtmlElement from 'framework/system/interface/graphical/web/html/HtmlElement.js';
+import { HtmlElement } from '@framework/system/interface/graphical/web/html/HtmlElement.js';
 
 // Class
 class Html {
@@ -584,4 +584,4 @@ class Html {
 
 
 // Export
-export default Html;
+export { Html };

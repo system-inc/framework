@@ -1,5 +1,5 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
 // Class
 class ButtonView extends View {
@@ -13,4 +13,4 @@ class ButtonView extends View {
 }
 
 // Export
-export default ButtonView;
+export { ButtonView };

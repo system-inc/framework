@@ -1,5 +1,5 @@
 // Dependencies
-import FormControlView from 'framework/system/interface/graphical/views/forms/controls/FormControlView.js';
+import { FormControlView } from '@framework/system/interface/graphical/views/forms/controls/FormControlView.js';
 
 // Class
 class TextFormControlView extends FormControlView {
@@ -567,4 +567,4 @@ class TextFormControlView extends FormControlView {
 }
 
 // Export
-export default TextFormControlView;
+export { TextFormControlView };

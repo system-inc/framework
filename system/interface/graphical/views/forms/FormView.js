@@ -1,8 +1,8 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import Settings from 'framework/system/settings/Settings.js';
-import FormFieldView from 'framework/system/interface/graphical/views/forms/fields/FormFieldView.js';
-import ButtonView from 'framework/system/interface/graphical/views/buttons/ButtonView.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { Settings } from '@framework/system/settings/Settings.js';
+import { FormFieldView } from '@framework/system/interface/graphical/views/forms/fields/FormFieldView.js';
+import { ButtonView } from '@framework/system/interface/graphical/views/buttons/ButtonView.js';
 
 // Class
 class FormView extends View {
@@ -110,4 +110,4 @@ class FormView extends View {
 }
 
 // Export
-export default FormView;
+export { FormView };

@@ -1,8 +1,8 @@
 // Dependencies
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import NavigationContainerView from 'framework/system/interface/graphical/views/navigation/NavigationContainerView.js';
-import NavigationView from 'framework/system/interface/graphical/views/navigation/NavigationView.js';
-import NotFoundPageView from 'framework/system/interface/graphical/views/navigation/pages/NotFoundPageView.js';
+import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
+import { NavigationContainerView } from '@framework/system/interface/graphical/views/navigation/NavigationContainerView.js';
+import { NavigationView } from '@framework/system/interface/graphical/views/navigation/NavigationView.js';
+import { NotFoundPageView } from '@framework/system/interface/graphical/views/navigation/pages/NotFoundPageView.js';
 
 // Class
 class NavigationViewController extends ViewController {
@@ -234,4 +234,4 @@ class NavigationViewController extends ViewController {
 }
 
 // Export
-export default NavigationViewController;
+export { NavigationViewController };

@@ -25,4 +25,4 @@ class GraphicalInterfaceAdapter {
 }
 
 // Export
-export default GraphicalInterfaceAdapter;
+export { GraphicalInterfaceAdapter };

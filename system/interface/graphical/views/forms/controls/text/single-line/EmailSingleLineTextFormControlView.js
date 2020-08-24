@@ -1,5 +1,5 @@
 // Dependencies
-import SingleLineTextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/single-line/SingleLineTextFormControlView.js';
+import { SingleLineTextFormControlView } from '@framework/system/interface/graphical/views/forms/controls/text/single-line/SingleLineTextFormControlView.js';
 
 // Class
 class EmailSingleLineTextFormControlView extends SingleLineTextFormControlView {
@@ -13,4 +13,4 @@ class EmailSingleLineTextFormControlView extends SingleLineTextFormControlView {
 }
 
 // Export
-export default EmailSingleLineTextFormControlView;
+export { EmailSingleLineTextFormControlView };

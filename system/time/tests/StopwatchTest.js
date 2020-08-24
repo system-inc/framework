@@ -1,7 +1,7 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import Stopwatch from 'framework/system/time/Stopwatch.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { Stopwatch } from '@framework/system/time/Stopwatch.js';
 
 // Class
 class StopwatchTest extends Test {
@@ -16,4 +16,4 @@ class StopwatchTest extends Test {
 }
 
 // Export
-export default StopwatchTest;
+export { StopwatchTest };

@@ -1,5 +1,5 @@
 // Dependencies
-import StandardWritableStream from 'framework/system/stream/StandardWritableStream.js';
+import { StandardWritableStream } from '@framework/system/stream/StandardWritableStream.js';
 
 // Class
 class StandardOutputStream extends StandardWritableStream {
@@ -11,4 +11,4 @@ class StandardOutputStream extends StandardWritableStream {
 }
 
 // Export
-export default StandardOutputStream;
+export { StandardOutputStream };

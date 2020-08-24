@@ -1,8 +1,8 @@
 // Dependencies
-import DatabaseTableColumn from 'framework/system/database/DatabaseTableColumn.js';
-import DatabaseTableIndex from 'framework/system/database/DatabaseTableIndex.js';
-import DatabaseTableRelationship from 'framework/system/database/DatabaseTableRelationship.js';
-import Version from 'framework/system/version/Version.js';
+import { DatabaseTableColumn } from '@framework/system/database/DatabaseTableColumn.js';
+import { DatabaseTableIndex } from '@framework/system/database/DatabaseTableIndex.js';
+import { DatabaseTableRelationship } from '@framework/system/database/DatabaseTableRelationship.js';
+import { Version } from '@framework/system/version/Version.js';
 
 // Class
 class DatabaseTable {
@@ -269,4 +269,4 @@ class DatabaseTable {
 }
 
 // Export
-export default DatabaseTable;
+export { DatabaseTable };

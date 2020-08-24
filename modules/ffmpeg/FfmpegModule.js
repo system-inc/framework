@@ -1,6 +1,6 @@
 // Dependencies
-import Module from 'framework/system/module/Module.js';
-import Version from 'framework/system/version/Version.js';
+import { Module } from '@framework/system/module/Module.js';
+import { Version } from '@framework/system/version/Version.js';
 
 // Class
 class FfmpegModule extends Module {
@@ -17,4 +17,4 @@ class FfmpegModule extends Module {
 }
 
 // Export
-export default FfmpegModule;
+export { FfmpegModule };

@@ -1,7 +1,7 @@
 // Dependencies
-import Header from 'framework/system/server/protocols/http/messages/headers/Header.js';
-import Cookies from 'framework/system/server/protocols/http/messages/headers/Cookies.js';
-import Cookie from 'framework/system/server/protocols/http/messages/headers/Cookie.js';
+import { Header } from '@framework/system/server/protocols/http/messages/headers/Header.js';
+import { Cookies } from '@framework/system/server/protocols/http/messages/headers/Cookies.js';
+import { Cookie } from '@framework/system/server/protocols/http/messages/headers/Cookie.js';
 
 // Class
 class Headers {
@@ -212,4 +212,4 @@ class Headers {
 }
 
 // Export
-export default Headers;
+export { Headers };

@@ -1,10 +1,10 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import File from 'framework/system/file-system/File.js';
-import WebServer from 'framework/system/server/web/WebServer.js';
-import WebRequest from 'framework/system/web/WebRequest.js';
-import Url from 'framework/system/web/Url.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { File } from '@framework/system/file-system/File.js';
+import { WebServer } from '@framework/system/server/web/WebServer.js';
+import { WebRequest } from '@framework/system/web/WebRequest.js';
+import { Url } from '@framework/system/web/Url.js';
 
 // Class
 class WebServerTest extends Test {
@@ -16,7 +16,7 @@ class WebServerTest extends Test {
 	webServer = null;
 
 	async before() {
-		var webServerSettings = await File.readAndDecodeJson(app.framework.directory+'/system/server/web/tests/settings/settings.json');
+		var webServerSettings = await File.readAndDecodeJson(app.settings.get('framework.path')+'/system/server/web/tests/settings/settings.json');
 
 		this.port = webServerSettings.modules.webServer.webServers[0].protocols.http.ports[0];
 
@@ -27,7 +27,7 @@ class WebServerTest extends Test {
 		webServerSettings.modules.webServer.webServers[0].verbose = false;
 
 		// Set the web server directory
-		webServerSettings.modules.webServer.webServers[0].directory = Node.Path.normalize(app.framework.directory+'/system/server/web/tests/');
+		webServerSettings.modules.webServer.webServers[0].directory = Node.Path.normalize(app.settings.get('framework.path')+'/system/server/web/tests/');
 
 		this.webServer = new WebServer('test', webServerSettings.modules.webServer.webServers[0]);
 		await this.webServer.initialize();
@@ -756,4 +756,4 @@ class WebServerTest extends Test {
 }
 
 // Export
-export default WebServerTest;
+export { WebServerTest };

@@ -1,15 +1,15 @@
 // Dependencies
-import Message from 'framework/system/server/Message.js';
-import Headers from 'framework/system/server/protocols/http/messages/headers/Headers.js';
-import Cookies from 'framework/system/server/protocols/http/messages/headers/Cookies.js';
-import IpAddress from 'framework/system/network/IpAddress.js';
-import Browser from 'framework/system/web/Browser.js';
-import Device from 'framework/system/hardware/Device.js';
-import OperatingSystem from 'framework/system/operating-system/OperatingSystem.js';
-import Geolocation from 'framework/system/geolocation/Geolocation.js';
-import Country from 'framework/system/geolocation/Country.js';
-import Version from 'framework/system/version/Version.js';
-import Url from 'framework/system/web/Url.js';
+import { Message } from '@framework/system/server/Message.js';
+import { Headers } from '@framework/system/server/protocols/http/messages/headers/Headers.js';
+import { Cookies } from '@framework/system/server/protocols/http/messages/headers/Cookies.js';
+import { IpAddress } from '@framework/system/network/IpAddress.js';
+import { Browser } from '@framework/system/web/Browser.js';
+import { Device } from '@framework/system/hardware/Device.js';
+import { OperatingSystem } from '@framework/system/operating-system/OperatingSystem.js';
+import { Geolocation } from '@framework/system/geolocation/Geolocation.js';
+import { Country } from '@framework/system/geolocation/Country.js';
+import { Version } from '@framework/system/version/Version.js';
+import { Url } from '@framework/system/web/Url.js';
 
 // Class
 class HttpMessage extends Message {
@@ -94,4 +94,4 @@ class HttpMessage extends Message {
 }
 
 // Export
-export default HttpMessage;
+export { HttpMessage };

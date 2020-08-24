@@ -1,6 +1,6 @@
 // Dependencies
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import BodyNavigationView from 'interface/layout/body/navigation/BodyNavigationView.js';
+import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
+import BodyNavigationView from '@app/interface/layout/body/navigation/BodyNavigationView.js';
 
 // Class
 class BodyNavigationViewController extends ViewController {
@@ -14,4 +14,4 @@ class BodyNavigationViewController extends ViewController {
 }
 
 // Export
-export default BodyNavigationViewController;
+export { BodyNavigationViewController };

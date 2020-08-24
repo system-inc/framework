@@ -1,5 +1,5 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
+import { EventEmitter } from '@framework/system/event/EventEmitter.js';
 
 // Class
 class Pool extends EventEmitter {
@@ -180,4 +180,4 @@ class Pool extends EventEmitter {
 }
 
 // Export
-export default Pool;
+export { Pool };

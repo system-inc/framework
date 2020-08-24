@@ -4,4 +4,4 @@ class ModelAdapter {
 }
 
 // Export
-export default ModelAdapter;
+export { ModelAdapter };

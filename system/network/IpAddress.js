@@ -14,11 +14,11 @@ class IpAddress {
 		var ipAddress = null;
 
 		if(address.contains(':')) {
-			const IpV6Address = (await import('framework/system/network/IpV6Address.js')).default;
+			const { IpV6Address } = await import('@framework/system/network/IpV6Address.js');
 			ipAddress = new IpV6Address(address);
 		}
 		else {
-			const IpV4Address = (await import('framework/system/network/IpV4Address.js')).default;
+			const { IpV4Address } = await import('@framework/system/network/IpV4Address.js');
 			ipAddress = new IpV4Address(address);
 		}
 
@@ -31,4 +31,4 @@ class IpAddress {
 }
 
 // Export
-export default IpAddress;
+export { IpAddress };

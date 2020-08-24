@@ -1,6 +1,6 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
 // Class
 class NumberTest extends Test {
@@ -133,4 +133,4 @@ class NumberTest extends Test {
 }
 
 // Export
-export default NumberTest;
+export { NumberTest };

@@ -1,13 +1,13 @@
 // Dependencies
-import Headers from 'framework/system/web/headers/Headers.js';
-import Cookies from 'framework/system/web/headers/Cookies.js';
-import RangeHeader from 'framework/system/web/headers/RangeHeader.js';
-import Stopwatch from 'framework/system/time/Stopwatch.js';
-import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
-import Data from 'framework/system/data/Data.js';
-import File from 'framework/system/file-system/File.js';
-import ArchivedFile from 'framework/system/archive/file-system-objects/ArchivedFile.js';
-import NotFoundError from 'framework/system/server/web/errors/NotFoundError.js';
+import { Headers } from '@framework/system/web/headers/Headers.js';
+import { Cookies } from '@framework/system/web/headers/Cookies.js';
+import { RangeHeader } from '@framework/system/web/headers/RangeHeader.js';
+import { Stopwatch } from '@framework/system/time/Stopwatch.js';
+import { HtmlDocument } from '@framework/system/interface/graphical/web/html/HtmlDocument.js';
+import { Data } from '@framework/system/data/Data.js';
+import { File } from '@framework/system/file-system/File.js';
+import { ArchivedFile } from '@framework/system/archive/file-system-objects/ArchivedFile.js';
+import { NotFoundError } from '@framework/system/server/web/errors/NotFoundError.js';
 
 // Class
 class Response {
@@ -444,4 +444,4 @@ class Response {
 }
 
 // Export
-export default Response;
+export { Response };

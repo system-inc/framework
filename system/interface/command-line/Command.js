@@ -1,6 +1,5 @@
 // Dependencies
-import Terminal from 'framework/system/interface/Terminal.js';
-import Settings from 'framework/system/settings/Settings.js';
+import { Settings } from '@framework/system/settings/Settings.js';
 
 // Class
 class Command {
@@ -506,4 +505,4 @@ class Command {
 }
 
 // Export
-export default Command;
+export { Command };

@@ -1,5 +1,5 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
 // Class
 class NotificationView extends View {
@@ -27,4 +27,4 @@ class NotificationView extends View {
 }
 
 // Export
-export default NotificationView;
+export { NotificationView };

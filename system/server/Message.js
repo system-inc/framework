@@ -23,4 +23,4 @@ class Message {
 }
 
 // Export
-export default Message;
+export { Message };

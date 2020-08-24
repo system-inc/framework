@@ -1,6 +1,6 @@
 // Dependencies
-import Route from 'framework/system/server/web/routes/Route.js';
-import File from 'framework/system/file-system/File.js';
+import { Route } from '@framework/system/server/web/routes/Route.js';
+import { File } from '@framework/system/file-system/File.js';
 
 // Class
 class FileRoute extends Route {
@@ -42,4 +42,4 @@ class FileRoute extends Route {
 }
 
 // Export
-export default FileRoute;
+export { FileRoute };

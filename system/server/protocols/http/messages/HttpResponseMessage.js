@@ -1,5 +1,5 @@
 // Dependencies
-import HttpMessage from 'framework/system/server/protocols/http/messages/HttpMessage.js';
+import { HttpMessage } from '@framework/system/server/protocols/http/messages/HttpMessage.js';
 
 // Class
 class HttpResponseMessage extends HttpMessage {
@@ -35,4 +35,4 @@ class HttpResponseMessage extends HttpMessage {
 }
 
 // Export
-export default HttpResponseMessage;
+export { HttpResponseMessage };

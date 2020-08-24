@@ -1,7 +1,7 @@
 // Dependencies
-import FileSystemObject from 'framework/system/file-system/FileSystemObject.js';
-import Directory from 'framework/system/file-system/Directory.js';
-import FileFormats from 'framework/system/file-system/FileFormats.js';
+import { FileSystemObject } from '@framework/system/file-system/FileSystemObject.js';
+import { Directory } from '@framework/system/file-system/Directory.js';
+import { FileFormats } from '@framework/system/file-system/FileFormats.js';
 
 // Class
 class File extends FileSystemObject {
@@ -145,7 +145,7 @@ class File extends FileSystemObject {
     }
 
     async getFormat() {
-        const FileFormats = (await import('framework/system/file-system/FileFormats.js')).default;
+        const { FileFormats } = await import('@framework/system/file-system/FileFormats.js');
 
         return FileFormats[this.extension];
     }
@@ -307,4 +307,4 @@ class File extends FileSystemObject {
 }
 
 // Export
-export default File;
+export { File };

@@ -1,6 +1,6 @@
 // Dependencies
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import FooterView from 'interface/layout/footer/FooterView.js';
+import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
+import FooterView from '@app/interface/layout/footer/FooterView.js';
 
 // Class
 class FooterViewController extends ViewController {
@@ -14,4 +14,4 @@ class FooterViewController extends ViewController {
 }
 
 // Export
-export default FooterViewController;
+export { FooterViewController };

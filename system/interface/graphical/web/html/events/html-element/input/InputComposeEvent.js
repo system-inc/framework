@@ -1,5 +1,5 @@
 // Dependencies
-import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
+import { HtmlElementEvent } from '@framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
 
 // Class
 class InputComposeEvent extends HtmlElementEvent {
@@ -49,4 +49,4 @@ class InputComposeEvent extends HtmlElementEvent {
 }
 
 // Export
-export default InputComposeEvent;
+export { InputComposeEvent };

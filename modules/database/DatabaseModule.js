@@ -1,7 +1,7 @@
 // Dependencies
-import Module from 'framework/system/module/Module.js';
-import Version from 'framework/system/version/Version.js';
-import DatabaseManager from 'framework/system/database/DatabaseManager.js';
+import { Module } from '@framework/system/module/Module.js';
+import { Version } from '@framework/system/version/Version.js';
+import { DatabaseManager } from '@framework/system/database/DatabaseManager.js';
 
 // Class
 class DatabaseModule extends Module {
@@ -29,4 +29,4 @@ class DatabaseModule extends Module {
 }
 
 // Export
-export default DatabaseModule;
+export { DatabaseModule };

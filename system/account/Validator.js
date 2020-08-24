@@ -129,4 +129,4 @@ class Validator {
 }
 
 // Export
-export default Validator;
+export { Validator };

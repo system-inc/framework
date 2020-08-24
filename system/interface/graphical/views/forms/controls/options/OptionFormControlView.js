@@ -1,5 +1,5 @@
 // Dependencies
-import FormControlView from 'framework/system/interface/graphical/views/forms/controls/FormControlView.js';
+import { FormControlView } from '@framework/system/interface/graphical/views/forms/controls/FormControlView.js';
 
 // Class
 class OptionFormControlView extends FormControlView {
@@ -17,4 +17,4 @@ class OptionFormControlView extends FormControlView {
 }
 
 // Export
-export default OptionFormControlView;
+export { OptionFormControlView };

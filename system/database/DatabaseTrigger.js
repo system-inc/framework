@@ -4,4 +4,4 @@ class DatabaseTrigger {
 }
 
 // Export
-export default DatabaseTrigger;
+export { DatabaseTrigger };

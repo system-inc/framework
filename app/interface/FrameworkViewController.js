@@ -1,32 +1,32 @@
 // Dependencies
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import View from 'framework/system/interface/graphical/views/View.js';
+import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import { TextView } from '@framework/system/interface/graphical/views/text/TextView.js';
 
 // Header
-import HeaderViewController from 'interface/layout/header/HeaderViewController.js';
+import HeaderViewController from '@app/interface/layout/header/HeaderViewController.js';
 
 // Body
-import BodyViewController from 'interface/layout/body/BodyViewController.js';
+import BodyViewController from '@app/interface/layout/body/BodyViewController.js';
 
 // Body - Navigation
-import BodyNavigationViewController from 'interface/layout/body/navigation/BodyNavigationViewController.js';
-import AreaNavigationViewController from 'interface/area/navigation/AreaNavigationViewController.js';
-import ActivityNavigationViewController from 'interface/area/activity/navigation/ActivityNavigationViewController.js';
+import BodyNavigationViewController from '@app/interface/layout/body/navigation/BodyNavigationViewController.js';
+import AreaNavigationViewController from '@app/interface/area/navigation/AreaNavigationViewController.js';
+import ActivityNavigationViewController from '@app/interface/area/activity/navigation/ActivityNavigationViewController.js';
 
 // Body - Content
-import BodyContentViewController from 'interface/layout/body/content/BodyContentViewController.js';
-import ActivityHeaderViewController from 'interface/area/activity/header/ActivityHeaderViewController.js';
-import ActivityContentViewController from 'interface/area/activity/content/ActivityContentViewController.js';
-import ActivityConsoleViewController from 'interface/area/activity/console/ActivityConsoleViewController.js';
+import BodyContentViewController from '@app/interface/layout/body/content/BodyContentViewController.js';
+import ActivityHeaderViewController from '@app/interface/area/activity/header/ActivityHeaderViewController.js';
+import ActivityContentViewController from '@app/interface/area/activity/content/ActivityContentViewController.js';
+import ActivityConsoleViewController from '@app/interface/area/activity/console/ActivityConsoleViewController.js';
 
 // Footer
-import FooterViewController from 'interface/layout/footer/FooterViewController.js';
-import ConsoleViewController from 'interface/console/ConsoleViewController.js';
+import FooterViewController from '@app/interface/layout/footer/FooterViewController.js';
+import ConsoleViewController from '@app/interface/console/ConsoleViewController.js';
 
 // Activities
-import TestsActivityContentViewController from 'interface/areas/testing/activities/tests/TestsActivityContentViewController.js';
+import TestsActivityContentViewController from '@app/interface/areas/testing/activities/tests/TestsActivityContentViewController.js';
 
 // Class
 class FrameworkViewController extends ViewController {
@@ -105,11 +105,11 @@ class FrameworkViewController extends ViewController {
 
 		// Add style sheets to the html document
 		//app.interfaces.graphical.adapter.addStyleSheet('interface/style-sheets/framework.css');
-		app.interfaces.graphical.adapter.addStyleSheet('file://'+Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'reset', 'style-sheets', 'reset.css'));
-		app.interfaces.graphical.adapter.addStyleSheet('file://'+Node.Path.join(app.framework.directory, 'system', 'interface', 'graphical', 'web', 'themes', 'framework', 'style-sheets', 'framework.css'));
+		app.interfaces.graphical.adapter.addStyleSheet('file://'+Node.Path.join(app.settings.get('framework.path'), 'system', 'interface', 'graphical', 'web', 'themes', 'reset', 'style-sheets', 'reset.css'));
+		app.interfaces.graphical.adapter.addStyleSheet('file://'+Node.Path.join(app.settings.get('framework.path'), 'system', 'interface', 'graphical', 'web', 'themes', 'framework', 'style-sheets', 'framework.css'));
 	}
 
 }
 
 // Export
-export default FrameworkViewController;
+export { FrameworkViewController };

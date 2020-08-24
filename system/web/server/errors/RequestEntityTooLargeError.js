@@ -1,5 +1,5 @@
 // Dependencies
-import HttpError from 'framework/system/server/web/errors/HttpError.js';
+import { HttpError } from '@framework/system/server/web/errors/HttpError.js';
 
 // Class
 class RequestEntityTooLargeError extends HttpError {
@@ -22,4 +22,4 @@ class RequestEntityTooLargeError extends HttpError {
 }
 
 // Export
-export default RequestEntityTooLargeError;
+export { RequestEntityTooLargeError };

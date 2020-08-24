@@ -23,4 +23,4 @@ class Cryptography {
 }
 
 // Export
-export default Cryptography;
+export { Cryptography };

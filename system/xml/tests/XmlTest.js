@@ -1,9 +1,9 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import XmlDocument from 'framework/system/xml/XmlDocument.js';
-import XmlElement from 'framework/system/xml/XmlElement.js';
-import Version from 'framework/system/version/Version.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { XmlDocument } from '@framework/system/xml/XmlDocument.js';
+import { XmlElement } from '@framework/system/xml/XmlElement.js';
+import { Version } from '@framework/system/version/Version.js';
 
 // Class
 class XmlTest extends Test {
@@ -56,4 +56,4 @@ class XmlTest extends Test {
 }
 
 // Export
-export default XmlTest;
+export { XmlTest };

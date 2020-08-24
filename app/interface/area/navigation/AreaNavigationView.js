@@ -1,7 +1,7 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
-import LinkView from 'framework/system/interface/graphical/views/links/LinkView.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { HeadingView } from '@framework/system/interface/graphical/views/text/HeadingView.js';
+import { LinkView } from '@framework/system/interface/graphical/views/links/LinkView.js';
 
 // Class
 class AreaNavigationView extends View {
@@ -35,4 +35,4 @@ class AreaNavigationView extends View {
 }
 
 // Export
-export default AreaNavigationView;
+export { AreaNavigationView };

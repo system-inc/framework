@@ -1,8 +1,7 @@
 // Dependencies
-import Log from 'framework/system/log/Log.js';
-import File from 'framework/system/file-system/File.js';
-import Directory from 'framework/system/file-system/Directory.js';
-import Terminal from 'framework/system/interface/Terminal.js';
+import { Log } from '@framework/system/log/Log.js';
+import { File } from '@framework/system/file-system/File.js';
+import { Directory } from '@framework/system/file-system/Directory.js';
 
 // Class
 class FileLog extends Log {
@@ -98,4 +97,4 @@ class FileLog extends Log {
 }
 
 // Export
-export default FileLog;
+export { FileLog };

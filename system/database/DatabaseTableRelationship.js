@@ -69,4 +69,4 @@ class DatabaseTableRelationship {
 }
 
 // Export
-export default DatabaseTableRelationship;
+export { DatabaseTableRelationship };

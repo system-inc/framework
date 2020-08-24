@@ -1,5 +1,5 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
 // Class
 class TableRowView extends View {
@@ -27,4 +27,4 @@ class TableRowView extends View {
 }
 
 // Export
-export default TableRowView;
+export { TableRowView };

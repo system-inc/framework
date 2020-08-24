@@ -1,7 +1,7 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import SqliteDatabase from 'framework/system/database/sqlite/SqliteDatabase.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { SqliteDatabase } from '@framework/system/database/sqlite/SqliteDatabase.js';
 
 // Class
 class SqliteDatabaseTest extends Test {
@@ -37,4 +37,4 @@ class SqliteDatabaseTest extends Test {
 }
 
 // Export
-export default SqliteDatabaseTest;
+export { SqliteDatabaseTest };

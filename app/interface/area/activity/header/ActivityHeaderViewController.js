@@ -1,7 +1,7 @@
 // Dependencies
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import View from 'framework/system/interface/graphical/views/View.js';
-import ActivityHeaderView from 'interface/area/activity/header/ActivityHeaderView.js';
+import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import ActivityHeaderView from '@app/interface/area/activity/header/ActivityHeaderView.js';
 
 // Class
 class ActivityHeaderViewController extends ViewController {
@@ -15,4 +15,4 @@ class ActivityHeaderViewController extends ViewController {
 }
 
 // Export
-export default ActivityHeaderViewController;
+export { ActivityHeaderViewController };

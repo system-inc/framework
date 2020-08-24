@@ -1,5 +1,5 @@
 // Dependencies
-import Datastore from 'framework/system/datastore/Datastore.js';
+import { Datastore } from '@framework/system/datastore/Datastore.js';
 
 // Class
 class LocalStorage extends Datastore {
@@ -379,4 +379,4 @@ class LocalStorage extends Datastore {
 }
 
 // Export
-export default LocalStorage;
+export { LocalStorage };

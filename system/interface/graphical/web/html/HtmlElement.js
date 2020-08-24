@@ -1,7 +1,7 @@
 // Dependencies
-import HtmlNode from 'framework/system/interface/graphical/web/html/HtmlNode.js';
-import XmlElement from 'framework/system/xml/XmlElement.js';
-import HtmlElementEventEmitter from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEventEmitter.js';
+import { HtmlNode } from '@framework/system/interface/graphical/web/html/HtmlNode.js';
+import { XmlElement } from '@framework/system/xml/XmlElement.js';
+import { HtmlElementEventEmitter } from '@framework/system/interface/graphical/web/html/events/html-element/HtmlElementEventEmitter.js';
 
 // Class (implements XmlElement and HtmlElementEventEmitter)
 class HtmlElement extends HtmlNode {
@@ -436,4 +436,4 @@ Class.implement(HtmlElement, XmlElement);
 Class.implement(HtmlElement, HtmlElementEventEmitter);
 
 // Export
-export default HtmlElement;
+export { HtmlElement };

@@ -1,5 +1,5 @@
 // Dependencies
-import Version from 'framework/system/version/Version.js';
+import { Version } from '@framework/system/version/Version.js';
 
 // Class
 class OperatingSystem {
@@ -120,4 +120,4 @@ class OperatingSystem {
 }
 
 // Export
-export default OperatingSystem;
+export { OperatingSystem };

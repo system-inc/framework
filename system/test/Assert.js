@@ -1,5 +1,5 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
+import { EventEmitter } from '@framework/system/event/EventEmitter.js';
 
 // Class
 class Assert extends Node.Assert {
@@ -588,4 +588,4 @@ class Assert extends Node.Assert {
 }
 
 // Export
-export default Assert;
+export { Assert };

@@ -1,5 +1,5 @@
 // Dependencies
-import Event from 'framework/system/event/Event.js';
+import { Event } from '@framework/system/event/Event.js';
 
 // Class
 class PropagatingEvent extends Event {
@@ -80,4 +80,4 @@ class PropagatingEvent extends Event {
 }
 
 // Export
-export default PropagatingEvent;
+export { PropagatingEvent };

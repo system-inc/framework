@@ -1,6 +1,6 @@
 // Dependencies
-import Model from 'framework/system/data/Model.js';
-import ModelProperty from 'framework/system/data/ModelProperty.js';
+import { Model } from '@framework/system/data/Model.js';
+import { ModelProperty } from '@framework/system/data/ModelProperty.js';
 
 // Class
 class ModelClassManager {
@@ -46,4 +46,4 @@ class ModelClassManager {
 }
 
 // Export
-export default ModelClassManager;
+export { ModelClassManager };

@@ -1,10 +1,10 @@
 // Dependencies
-import ElectronGraphicalInterfaceTest from 'framework/modules/electron/interface/graphical/tests/ElectronGraphicalInterfaceTest.js';
-import Assert from 'framework/system/test/Assert.js';
+import { ElectronGraphicalInterfaceTest } from '@framework/modules/electron/interface/graphical/tests/ElectronGraphicalInterfaceTest.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
-import FormView from 'framework/system/interface/graphical/views/forms/FormView.js';
-import SingleLineTextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js';
-import ViewEvent from 'framework/system/interface/graphical/views/events/ViewEvent.js';
+import { FormView } from '@framework/system/interface/graphical/views/forms/FormView.js';
+import { SingleLineTextFormFieldView } from '@framework/system/interface/graphical/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js';
+import { ViewEvent } from '@framework/system/interface/graphical/views/events/ViewEvent.js';
 
 // Class
 class SingleLineTextFormFieldViewTest extends ElectronGraphicalInterfaceTest {
@@ -93,4 +93,4 @@ class SingleLineTextFormFieldViewTest extends ElectronGraphicalInterfaceTest {
 }
 
 // Export
-export default SingleLineTextFormFieldViewTest;
+export { SingleLineTextFormFieldViewTest };

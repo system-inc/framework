@@ -126,4 +126,4 @@ class CallSite {
 }
 
 // Export
-export default CallSite;
+export { CallSite };

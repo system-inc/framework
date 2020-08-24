@@ -1,7 +1,7 @@
 // Dependencies
-import PageView from 'framework/system/interface/graphical/views/navigation/pages/PageView.js';
-import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import { PageView } from '@framework/system/interface/graphical/views/navigation/pages/PageView.js';
+import { HeadingView } from '@framework/system/interface/graphical/views/text/HeadingView.js';
+import { TextView } from '@framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
 class NotFoundPageView extends PageView {
@@ -18,4 +18,4 @@ class NotFoundPageView extends PageView {
 }
 
 // Export
-export default NotFoundPageView;
+export { NotFoundPageView };

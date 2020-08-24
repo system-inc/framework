@@ -689,4 +689,4 @@ var FileFormats = {
 };
 
 // Export
-export default FileFormats;
+export { FileFormats };

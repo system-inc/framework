@@ -1,9 +1,9 @@
 // Dependencies
-import XmlNode from 'framework/system/xml/XmlNode.js';
-import HtmlNodeEventEmitter from 'framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEventEmitter.js';
-import HtmlNodeEvent from 'framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEvent.js';
-import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
-import Position from 'framework/system/interface/graphical/Position.js';
+import { XmlNode } from '@framework/system/xml/XmlNode.js';
+import { HtmlNodeEventEmitter } from '@framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEventEmitter.js';
+import { HtmlNodeEvent } from '@framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEvent.js';
+import { Dimensions } from '@framework/system/interface/graphical/Dimensions.js';
+import { Position } from '@framework/system/interface/graphical/Position.js';
 
 // Class (implements HtmlNodeEventEmitter)
 class HtmlNode extends XmlNode {
@@ -395,4 +395,4 @@ class HtmlNode extends XmlNode {
 Class.implement(HtmlNode, HtmlNodeEventEmitter);
 
 // Export
-export default HtmlNode;
+export { HtmlNode };

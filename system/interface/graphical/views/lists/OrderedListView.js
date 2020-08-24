@@ -1,5 +1,5 @@
 // Dependencies
-import ListView from 'framework/system/interface/graphical/views/lists/ListView.js';
+import { ListView } from '@framework/system/interface/graphical/views/lists/ListView.js';
 
 // Class
 class OrderedListView extends ListView {
@@ -13,4 +13,4 @@ class OrderedListView extends ListView {
 }
 
 // Export
-export default OrderedListView;
+export { OrderedListView };

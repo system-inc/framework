@@ -95,4 +95,4 @@ class Reusable {
 }
 
 // Export
-export default Reusable;
+export { Reusable };

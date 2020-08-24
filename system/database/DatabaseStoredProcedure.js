@@ -4,4 +4,4 @@ class DatabaseStoredProcedure {
 }
 
 // Export
-export default DatabaseStoredProcedure;
+export { DatabaseStoredProcedure };

@@ -75,4 +75,4 @@ class Version {
 }
 
 // Export
-export default Version;
+export { Version };

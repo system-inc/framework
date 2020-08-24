@@ -1,5 +1,5 @@
 // Dependencies
-import TextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/TextFormControlView.js';
+import { TextFormControlView } from '@framework/system/interface/graphical/views/forms/controls/text/TextFormControlView.js';
 
 // Class
 class SingleLineTextFormControlView extends TextFormControlView {
@@ -19,4 +19,4 @@ class SingleLineTextFormControlView extends TextFormControlView {
 }
 
 // Export
-export default SingleLineTextFormControlView;
+export { SingleLineTextFormControlView };

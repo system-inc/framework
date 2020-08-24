@@ -1,6 +1,6 @@
 // Dependencies
-import FormFieldView from 'framework/system/interface/graphical/views/forms/fields/FormFieldView.js';
-import OptionFormControlView from 'framework/system/interface/graphical/views/forms/controls/options/OptionFormControlView.js';
+import { FormFieldView } from '@framework/system/interface/graphical/views/forms/fields/FormFieldView.js';
+import { OptionFormControlView } from '@framework/system/interface/graphical/views/forms/controls/options/OptionFormControlView.js';
 
 // Class
 class OptionFormFieldView extends FormFieldView {
@@ -20,4 +20,4 @@ class OptionFormFieldView extends FormFieldView {
 }
 
 // Export
-export default OptionFormFieldView;
+export { OptionFormFieldView };

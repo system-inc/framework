@@ -1,11 +1,11 @@
 // Dependencies
-import ElectronHtmlTest from 'framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
-import Assert from 'framework/system/test/Assert.js';
+import { ElectronHtmlTest } from '@framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
-import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
-import Html from 'framework/system/interface/graphical/web/html/Html.js';
-import InputKeyEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputKeyEvent.js';
-import WildcardPatternMatcher from 'framework/system/search/patterns/WildcardPatternMatcher.js';
+import { HtmlDocument } from '@framework/system/interface/graphical/web/html/HtmlDocument.js';
+import { Html } from '@framework/system/interface/graphical/web/html/Html.js';
+import { InputKeyEvent } from '@framework/system/interface/graphical/web/html/events/html-element/input/InputKeyEvent.js';
+import { WildcardPatternMatcher } from '@framework/system/search/patterns/WildcardPatternMatcher.js';
 
 // Class
 class InputKeyEventTest extends ElectronHtmlTest {
@@ -1452,4 +1452,4 @@ class InputKeyEventTest extends ElectronHtmlTest {
 }
 
 // Export
-export default InputKeyEventTest;
+export { InputKeyEventTest };

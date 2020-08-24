@@ -1,6 +1,6 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { HeadingView } from '@framework/system/interface/graphical/views/text/HeadingView.js';
 
 // Class
 class ActivityHeaderView extends View {
@@ -29,4 +29,4 @@ class ActivityHeaderView extends View {
 }
 
 // Export
-export default ActivityHeaderView;
+export { ActivityHeaderView };

@@ -1,6 +1,6 @@
 // Dependencies
-import ListView from 'framework/system/interface/graphical/views/lists/ListView.js';
-import LinkListItemView from 'framework/system/interface/graphical/views/lists/LinkListItemView.js';
+import { ListView } from '@framework/system/interface/graphical/views/lists/ListView.js';
+import { LinkListItemView } from '@framework/system/interface/graphical/views/lists/LinkListItemView.js';
 
 // Class
 class LinkListView extends ListView {
@@ -16,4 +16,4 @@ class LinkListView extends ListView {
 }
 
 // Export
-export default LinkListView;
+export { LinkListView };

@@ -1,6 +1,6 @@
 // Dependencies
-import TextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
-import SingleLineTextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/single-line/SingleLineTextFormControlView.js';
+import { TextFormFieldView } from '@framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
+import { SingleLineTextFormControlView } from '@framework/system/interface/graphical/views/forms/controls/text/single-line/SingleLineTextFormControlView.js';
 
 // Class
 class SingleLineTextFormFieldView extends TextFormFieldView {
@@ -41,4 +41,4 @@ class SingleLineTextFormFieldView extends TextFormFieldView {
 }
 
 // Export
-export default SingleLineTextFormFieldView;
+export { SingleLineTextFormFieldView };

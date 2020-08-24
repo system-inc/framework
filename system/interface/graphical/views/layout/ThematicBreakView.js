@@ -1,5 +1,5 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
 // Class
 class ThematicBreakView extends View {
@@ -13,4 +13,4 @@ class ThematicBreakView extends View {
 }
 
 // Export
-export default ThematicBreakView;
+export { ThematicBreakView };

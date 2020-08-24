@@ -1,8 +1,8 @@
 // Dependencies
-import Module from 'framework/system/module/Module.js';
-import Version from 'framework/system/version/Version.js';
-import WebServer from 'framework/system/server/web/WebServer.js';
-import Settings from 'framework/system/settings/Settings.js';
+import { Module } from '@framework/system/module/Module.js';
+import { Version } from '@framework/system/version/Version.js';
+import { WebServer } from '@framework/system/server/web/WebServer.js';
+import { Settings } from '@framework/system/settings/Settings.js';
 
 // Class
 class WebServerModule extends Module {
@@ -56,4 +56,4 @@ class WebServerModule extends Module {
 }
 
 // Export
-export default WebServerModule;
+export { WebServerModule };

@@ -1,5 +1,5 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
 // Class
 class NavigationContainerView extends View {
@@ -7,4 +7,4 @@ class NavigationContainerView extends View {
 }
 
 // Export
-export default NavigationContainerView;
+export { NavigationContainerView };

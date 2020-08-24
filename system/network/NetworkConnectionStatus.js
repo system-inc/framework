@@ -1,5 +1,5 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
+import { EventEmitter } from '@framework/system/event/EventEmitter.js';
 
 // Class
 class NetworkConnectionStatus extends EventEmitter {
@@ -44,4 +44,4 @@ class NetworkConnectionStatus extends EventEmitter {
 }
 
 // Export
-export default NetworkConnectionStatus;
+export { NetworkConnectionStatus };

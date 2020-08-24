@@ -1,7 +1,6 @@
 // Dependencies
-import TestReporter from 'framework/system/test/test-reporters/TestReporter.js';
-import Terminal from 'framework/system/interface/Terminal.js';
-import AssertionError from 'framework/system/test/errors/AssertionError.js';
+import { TestReporter } from '@framework/system/test/test-reporters/TestReporter.js';
+import { AssertionError } from '@framework/system/test/errors/AssertionError.js';
 
 // Class
 class DotTestReporter extends TestReporter {
@@ -42,4 +41,4 @@ class DotTestReporter extends TestReporter {
 }
 
 // Export
-export default DotTestReporter;
+export { DotTestReporter };

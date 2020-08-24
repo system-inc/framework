@@ -1,6 +1,6 @@
 // Dependencies
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import View from 'framework/system/interface/graphical/views/View.js';
+import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
 // Class
 class ActivityContentViewController extends ViewController {
@@ -21,4 +21,4 @@ class ActivityContentViewController extends ViewController {
 }
 
 // Export
-export default ActivityContentViewController;
+export { ActivityContentViewController };

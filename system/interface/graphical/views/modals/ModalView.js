@@ -1,7 +1,7 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
-import Settings from 'framework/system/settings/Settings.js';
+import { Settings } from '@framework/system/settings/Settings.js';
 
 // Class
 class ModalView extends View {
@@ -62,4 +62,4 @@ class ModalView extends View {
 }
 
 // Export
-export default ModalView;
+export { ModalView };

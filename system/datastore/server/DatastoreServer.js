@@ -1,6 +1,6 @@
 // Dependencies
-import MultiprotocolServer from 'framework/system/server/MultiprotocolServer.js';
-import Datastore from 'framework/system/datastore/Datastore.js';
+import { MultiprotocolServer } from '@framework/system/server/MultiprotocolServer.js';
+import { Datastore } from '@framework/system/datastore/Datastore.js';
 
 // Class
 class DatastoreServer extends MultiprotocolServer {
@@ -66,4 +66,4 @@ class DatastoreServer extends MultiprotocolServer {
 }
 
 // Export
-export default DatastoreServer;
+export { DatastoreServer };

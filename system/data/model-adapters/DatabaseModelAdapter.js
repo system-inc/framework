@@ -1,5 +1,5 @@
 // Dependencies
-import ModelAdapter from 'framework/system/data/model-adapters/ModelAdapter.js';
+import { ModelAdapter } from '@framework/system/data/model-adapters/ModelAdapter.js';
 
 // Class
 class DatabaseModelAdapter extends ModelAdapter {
@@ -7,4 +7,4 @@ class DatabaseModelAdapter extends ModelAdapter {
 }
 
 // Export
-export default DatabaseModelAdapter;
+export { DatabaseModelAdapter };

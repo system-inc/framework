@@ -8,4 +8,4 @@ class Geolocation {
 }
 
 // Export
-export default Geolocation;
+export { Geolocation };

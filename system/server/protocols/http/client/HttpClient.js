@@ -1,7 +1,7 @@
 // Dependencies
-import Client from 'framework/system/server/Client.js';
-import HttpConnection from 'framework/system/server/protocols/http/HttpConnection.js';
-import Url from 'framework/system/web/Url.js';
+import { Client } from '@framework/system/server/Client.js';
+import { HttpConnection } from '@framework/system/server/protocols/http/HttpConnection.js';
+import { Url } from '@framework/system/web/Url.js';
 
 // Class
 class HttpClient extends Client {
@@ -55,4 +55,4 @@ class HttpClient extends Client {
 }
 
 // Export
-export default HttpClient;
+export { HttpClient };

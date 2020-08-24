@@ -1,12 +1,12 @@
 // Dependencies
-import ElectronHtmlTest from 'framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
-import Assert from 'framework/system/test/Assert.js';
+import { ElectronHtmlTest } from '@framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
-import HtmlNode from 'framework/system/interface/graphical/web/html/HtmlNode.js';
-import XmlNode from 'framework/system/xml/XmlNode.js';
-import EventEmitter from 'framework/system/event/EventEmitter.js';
-import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
-import Html from 'framework/system/interface/graphical/web/html/Html.js';
+import { HtmlNode } from '@framework/system/interface/graphical/web/html/HtmlNode.js';
+import { XmlNode } from '@framework/system/xml/XmlNode.js';
+import { EventEmitter } from '@framework/system/event/EventEmitter.js';
+import { HtmlDocument } from '@framework/system/interface/graphical/web/html/HtmlDocument.js';
+import { Html } from '@framework/system/interface/graphical/web/html/Html.js';
 
 // Class
 class HtmlNodeTest extends ElectronHtmlTest {
@@ -46,4 +46,4 @@ class HtmlNodeTest extends ElectronHtmlTest {
 }
 
 // Export
-export default HtmlNodeTest;
+export { HtmlNodeTest };

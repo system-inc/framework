@@ -4,4 +4,4 @@ class DatabaseEvent {
 }
 
 // Export
-export default DatabaseEvent;
+export { DatabaseEvent };

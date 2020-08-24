@@ -155,4 +155,4 @@ class Position {
 }
 
 // Export
-export default Position;
+export { Position };

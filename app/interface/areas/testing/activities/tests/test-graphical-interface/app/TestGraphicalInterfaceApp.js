@@ -2,8 +2,8 @@
 import 'framework/globals/Globals.js';
 
 // Dependencies
-import App from 'framework/system/app/App.js';
-import Proctor from 'framework/system/test/Proctor.js';
+import { App } from '@framework/system/app/App.js';
+import { Proctor } from '@framework/system/test/Proctor.js';
 
 // Class
 class TestGraphicalInterfaceApp extends App {

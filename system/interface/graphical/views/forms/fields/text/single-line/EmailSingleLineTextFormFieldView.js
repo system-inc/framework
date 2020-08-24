@@ -1,6 +1,6 @@
 // Dependencies
-import TextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
-import EmailSingleLineTextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/single-line/EmailSingleLineTextFormControlView.js';
+import { TextFormFieldView } from '@framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
+import { EmailSingleLineTextFormControlView } from '@framework/system/interface/graphical/views/forms/controls/text/single-line/EmailSingleLineTextFormControlView.js';
 
 // Class
 class EmailSingleLineTextFormFieldView extends TextFormFieldView {
@@ -18,4 +18,4 @@ class EmailSingleLineTextFormFieldView extends TextFormFieldView {
 }
 
 // Export
-export default EmailSingleLineTextFormFieldView;
+export { EmailSingleLineTextFormFieldView };

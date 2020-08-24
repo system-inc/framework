@@ -15,4 +15,4 @@ class EventListener {
 }
 
 // Export
-export default EventListener;
+export { EventListener };

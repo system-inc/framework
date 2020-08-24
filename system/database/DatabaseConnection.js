@@ -19,4 +19,4 @@ class DatabaseConnection {
 }
 
 // Export
-export default DatabaseConnection;
+export { DatabaseConnection };

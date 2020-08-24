@@ -1,6 +1,5 @@
 // Dependencies
-//import File from 'framework/system/file-system/File.js';
-import Datastore from 'framework/system/datastore/Datastore.js';
+import { Datastore } from '@framework/system/datastore/Datastore.js';
 
 // Class
 class Settings {
@@ -17,7 +16,9 @@ class Settings {
 		this.setDefaults(defaults);
 
 		// Set the initial data for the data store
-		this.merge(data);
+		if(data) {
+			this.merge(data);
+		}
 	}
 
 	setDefaults(defaults) {
@@ -88,6 +89,8 @@ class Settings {
 		//app.log('integrateFromFile', dataFilePath);
 
 		try {
+			const { File } = await import('@framework/system/file-system/File.js');
+
 			// Read the data from the file
 			var data = await File.readAndDecodeJson(dataFilePath);
 			//console.log('Settings from', dataFilePath, 'to integrate:', data);
@@ -95,7 +98,8 @@ class Settings {
 			this.integrate(data);
 		}
 		catch(error) {
-			//console.error('No file at '+dataFilePath);
+			console.error('No file at '+dataFilePath);
+			console.error(error);
 		}
 	}
 
@@ -113,6 +117,7 @@ class Settings {
 
 	static async constructFromFile(defaults, dataFilePath, datastore) {
 		//console.log('dataFilePath', dataFilePath);
+		const { File } = await import('@framework/system/file-system/File.js');
 
 		// Read the data from the file
 		var data = await File.readAndDecodeJson(dataFilePath);
@@ -133,4 +138,4 @@ class Settings {
 }
 
 // Export
-export default Settings;
+export { Settings };

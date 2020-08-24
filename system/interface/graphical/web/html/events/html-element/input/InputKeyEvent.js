@@ -1,5 +1,5 @@
 // Dependencies
-import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
+import { HtmlElementEvent } from '@framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
 
 // Class
 class InputKeyEvent extends HtmlElementEvent {
@@ -516,4 +516,4 @@ class InputKeyEvent extends HtmlElementEvent {
 }
 
 // Export
-export default InputKeyEvent;
+export { InputKeyEvent };

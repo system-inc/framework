@@ -1,7 +1,7 @@
 // Dependencies
-import File from 'framework/system/file-system/File.js';
-import SevenZip from 'framework/system/archive//libraries/7-zip/SevenZip.js';
-import ArchivedFileSystemObject from 'framework/system/archive/file-system-objects/ArchivedFileSystemObject.js';
+import { File } from '@framework/system/file-system/File.js';
+import { SevenZip } from '@framework/system/archive//libraries/7-zip/SevenZip.js';
+import { ArchivedFileSystemObject } from '@framework/system/archive/file-system-objects/ArchivedFileSystemObject.js';
 
 // Class
 class ArchiveFile extends File {
@@ -50,4 +50,4 @@ class ArchiveFile extends File {
 }
 
 // Export
-export default ArchiveFile;
+export { ArchiveFile };

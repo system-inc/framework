@@ -1,7 +1,7 @@
 // Dependencies
-import ViewController from 'framework/system/interface/graphical/view-controllers/ViewController.js';
-import View from 'framework/system/interface/graphical/views/View.js';
-import NavigationView from 'interface/navigation/NavigationView.js';
+import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import NavigationView from '@app/interface/navigation/NavigationView.js';
 
 // Class
 class NavigationViewController extends ViewController {
@@ -15,4 +15,4 @@ class NavigationViewController extends ViewController {
 }
 
 // Export
-export default NavigationViewController;
+export { NavigationViewController };

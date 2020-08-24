@@ -1,6 +1,6 @@
 // Dependencies
-import Sqlite from 'framework/system/database/sqlite/libraries/sql.js/sql.js';
-import File from 'framework/system/file-system/File.js';
+import { Sqlite } from '@framework/system/database/sqlite/libraries/sql.js/sql.js';
+import { File } from '@framework/system/file-system/File.js';
 
 // Class
 class SqliteDatabase {
@@ -62,4 +62,4 @@ class SqliteDatabase {
 }
 
 // Export
-export default SqliteDatabase;
+export { SqliteDatabase };

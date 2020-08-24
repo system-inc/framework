@@ -6,4 +6,4 @@ class ModelList {
 }
 
 // Export
-export default ModelList;
+export { ModelList };

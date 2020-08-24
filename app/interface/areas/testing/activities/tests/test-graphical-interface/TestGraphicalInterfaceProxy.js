@@ -1,5 +1,5 @@
 // Dependencies
-import Reusable from 'framework/system/pool/Reusable.js';
+import { Reusable } from '@framework/system/pool/Reusable.js';
 
 // Class
 class TestGraphicalInterfaceProxy extends Reusable {
@@ -95,4 +95,4 @@ class TestGraphicalInterfaceProxy extends Reusable {
 }
 
 // Export
-export default TestGraphicalInterfaceProxy;
+export { TestGraphicalInterfaceProxy };

@@ -6,4 +6,4 @@ class DatabaseConnectionPool {
 }
 
 // Export
-export default DatabaseConnectionPool;
+export { DatabaseConnectionPool };

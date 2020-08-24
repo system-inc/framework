@@ -1,10 +1,10 @@
 // Dependencies
-import Module from 'framework/system/module/Module.js';
-import Version from 'framework/system/version/Version.js';
-import Directory from 'framework/system/file-system/Directory.js';
-import ElectronGraphicalInterfaceAdapter from 'framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js';
-import Display from 'framework/system/interface/graphical/Display.js';
-import Url from 'framework/system/web/Url.js';
+import { Module } from '@framework/system/module/Module.js';
+import { Version } from '@framework/system/version/Version.js';
+import { Directory } from '@framework/system/file-system/Directory.js';
+import { ElectronGraphicalInterfaceAdapter } from '@framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js';
+import { Display } from '@framework/system/interface/graphical/Display.js';
+import { Url } from '@framework/system/web/Url.js';
 
 // Class
 class ElectronModule extends Module {
@@ -27,7 +27,7 @@ class ElectronModule extends Module {
 		// If in the Electron context
 		if(this.inElectronContext()) {
 			//console.warn('In Electron, configuring ElectronModule');
-			this.electron = (await import('electron'));
+			this.electron = await import('electron');
 			//console.log('this.electron', this.electron);
 
 			// If in the Electron main process
@@ -87,7 +87,7 @@ class ElectronModule extends Module {
 		//app.info('pathToElectronModule', pathToElectronModule);
 
 		if(pathToElectronModule) {
-			pathToElectronExecutable = (await import(pathToElectronModule)).default;
+			pathToElectronExecutable = await import(pathToElectronModule);
 			//app.log('pathToElectronExecutable', pathToElectronExecutable);
 		}
 
@@ -336,9 +336,9 @@ class ElectronModule extends Module {
 		}
 
 		// Create a JavaScript string to start the app, this is the same as index.js in framework/app/index.js
-		var transpilerPath = Node.Path.join(app.framework.directory.toString(), 'globals', 'Transpiler.js');
+		var transpilerPath = Node.Path.join(app.settings.get('framework.path').toString(), 'globals', 'Transpiler.js');
 		//app.log('transpilerPath', transpilerPath);
-		var directoryContainingFramework = Node.Path.join(app.framework.directory.toString(), '../');
+		var directoryContainingFramework = Node.Path.join(app.settings.get('framework.path').toString(), '../');
 		//app.log('directoryContainingFramework', directoryContainingFramework);
 
 		// Escape backslashes
@@ -624,4 +624,4 @@ class ElectronModule extends Module {
 }
 
 // Export
-export default ElectronModule;
+export { ElectronModule };

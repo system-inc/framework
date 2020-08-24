@@ -1,11 +1,11 @@
 // Dependencies
-import Headers from 'framework/system/web/headers/Headers.js';
-import Cookies from 'framework/system/web/headers/Cookies.js';
-import Url from 'framework/system/web/Url.js';
-import Version from 'framework/system/version/Version.js';
-import Stopwatch from 'framework/system/time/Stopwatch.js';
-import IpAddress from 'framework/system/network/IpAddress.js';
-import Data from 'framework/system/data/Data.js';
+import { Headers } from '@framework/system/web/headers/Headers.js';
+import { Cookies } from '@framework/system/web/headers/Cookies.js';
+import { Url } from '@framework/system/web/Url.js';
+import { Version } from '@framework/system/version/Version.js';
+import { Stopwatch } from '@framework/system/time/Stopwatch.js';
+import { IpAddress } from '@framework/system/network/IpAddress.js';
+import { Data } from '@framework/system/data/Data.js';
 
 // Class
 class WebRequest {
@@ -307,4 +307,4 @@ class WebRequest {
 }
 
 // Export
-export default WebRequest;
+export { WebRequest };

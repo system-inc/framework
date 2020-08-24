@@ -1,5 +1,5 @@
 // Dependencies
-import CallSite from 'framework/globals/standard/errors/CallSite.js';
+import { CallSite } from '@framework/globals/standard/errors/CallSite.js';
 
 // Class
 class StackTrace {
@@ -146,4 +146,4 @@ class StackTrace {
 }
 
 // Export
-export default StackTrace;
+export { StackTrace };

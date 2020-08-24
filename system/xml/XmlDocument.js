@@ -49,4 +49,4 @@ class XmlDocument {
 }
 
 // Export
-export default XmlDocument;
+export { XmlDocument };

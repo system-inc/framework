@@ -1,14 +1,14 @@
 // Dependencies
-import ElectronHtmlTest from 'framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
-import Assert from 'framework/system/test/Assert.js';
+import { ElectronHtmlTest } from '@framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
-import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
-import Html from 'framework/system/interface/graphical/web/html/Html.js';
-import HtmlEvent from 'framework/system/interface/graphical/web/html/events/html-event/HtmlEvent.js';
-import HtmlNodeEvent from 'framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEvent.js';
-import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
-import InputPressEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
-import InputScrollEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputScrollEvent.js';
+import { HtmlDocument } from '@framework/system/interface/graphical/web/html/HtmlDocument.js';
+import { Html } from '@framework/system/interface/graphical/web/html/Html.js';
+import { HtmlEvent } from '@framework/system/interface/graphical/web/html/events/html-event/HtmlEvent.js';
+import { HtmlNodeEvent } from '@framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEvent.js';
+import { HtmlElementEvent } from '@framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
+import { InputPressEvent } from '@framework/system/interface/graphical/web/html/events/html-element/input/InputPressEvent.js';
+import { InputScrollEvent } from '@framework/system/interface/graphical/web/html/events/html-element/input/InputScrollEvent.js';
 
 // Class
 class InputScrollEventTest extends ElectronHtmlTest {
@@ -91,4 +91,4 @@ class InputScrollEventTest extends ElectronHtmlTest {
 }
 
 // Export
-export default InputScrollEventTest;
+export { InputScrollEventTest };

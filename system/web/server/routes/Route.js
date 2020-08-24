@@ -261,22 +261,22 @@ class Route {
 
 		// RedirectRoute
 		if(settings.type == 'redirect') {
-			const RedirectRoute = (await import('framework/system/server/web/routes/RedirectRoute.js')).default;
+			const { RedirectRoute } = await import('@framework/system/server/web/routes/RedirectRoute.js');
 			route = new RedirectRoute(settings, parent);
 		}
 		// FileRoute
 		else if(settings.type == 'file') {
-			const FileRoute = (await import('framework/system/server/web/routes/FileRoute.js')).default;
+			const { FileRoute } = await import('@framework/system/server/web/routes/FileRoute.js');
 			route = new FileRoute(settings, parent);
 		}
 		// ProxyRoute
 		else if(settings.type == 'proxy') {
-			const ProxyRoute = (await import('framework/system/server/web/routes/ProxyRoute.js')).default;
+			const { ProxyRoute } = await import('@framework/system/server/web/routes/ProxyRoute.js');
 			route = new ProxyRoute(settings, parent);
 		}
 		// ControllerRoute is the default subclass
 		else {
-			const ControllerRoute = (await import('framework/system/server/web/routes/ControllerRoute.js')).default;
+			const { ControllerRoute } = await import('@framework/system/server/web/routes/ControllerRoute.js');
 			route = new ControllerRoute(settings, parent);
 		}
 
@@ -289,4 +289,4 @@ class Route {
 }
 
 // Export
-export default Route;
+export { Route };

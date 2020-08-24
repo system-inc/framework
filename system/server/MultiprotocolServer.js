@@ -1,5 +1,5 @@
 // Dependencies
-import Server from 'framework/system/server/Server.js';
+import { Server } from '@framework/system/server/Server.js';
 
 // Class
 class MultiprotocolServer extends Server {
@@ -75,4 +75,4 @@ class MultiprotocolServer extends Server {
 }
 
 // Export
-export default MultiprotocolServer;
+export { MultiprotocolServer };

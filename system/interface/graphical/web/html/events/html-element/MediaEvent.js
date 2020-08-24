@@ -1,5 +1,5 @@
 // Dependencies
-import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/html-element/HtmlElementEvent.js';
+import { HtmlElementEvent } from '@framework/system/interface/graphical/web/html/events/html-element/html-element/HtmlElementEvent.js';
 
 // Class
 class MediaEvent extends HtmlElementEvent{
@@ -11,4 +11,4 @@ class MediaEvent extends HtmlElementEvent{
 }
 
 // Export
-export default MediaEvent;
+export { MediaEvent };

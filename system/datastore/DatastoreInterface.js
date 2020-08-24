@@ -1,5 +1,5 @@
 // Dependencies
-import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
+import { PropagatingEventEmitter } from '@framework/system/event/PropagatingEventEmitter.js';
 
 // Class
 class DatastoreInterface extends PropagatingEventEmitter {
@@ -39,4 +39,4 @@ class DatastoreInterface extends PropagatingEventEmitter {
 }
 
 // Export
-export default DatastoreInterface;
+export { DatastoreInterface };

@@ -1,5 +1,5 @@
 // Dependencies
-import XmlNode from 'framework/system/xml/XmlNode.js';
+import { XmlNode } from '@framework/system/xml/XmlNode.js';
 
 // Class
 class XmlElement extends XmlNode {
@@ -304,4 +304,4 @@ class XmlElement extends XmlNode {
 }
 
 // Export
-export default XmlElement;
+export { XmlElement };

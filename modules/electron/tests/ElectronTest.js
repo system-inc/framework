@@ -1,7 +1,7 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
+import { Test } from '@framework/system/test/Test.js';
 
-import ElectronGraphicalInterfaceAdapter from 'framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js';
+import { ElectronGraphicalInterfaceAdapter } from '@framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js';
 
 // Class
 class ElectronTest extends Test {
@@ -27,4 +27,4 @@ class ElectronTest extends Test {
 }
 
 // Export
-export default ElectronTest;
+export { ElectronTest };

@@ -1,10 +1,10 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
-import LinkView from 'framework/system/interface/graphical/views/links/LinkView.js';
-import FormView from 'framework/system/interface/graphical/views/forms/FormView.js';
-import SingleLineTextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js';
-import LinkListView from 'framework/system/interface/graphical/views/lists/LinkListView.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { HeadingView } from '@framework/system/interface/graphical/views/text/HeadingView.js';
+import { LinkView } from '@framework/system/interface/graphical/views/links/LinkView.js';
+import { FormView } from '@framework/system/interface/graphical/views/forms/FormView.js';
+import { SingleLineTextFormFieldView } from '@framework/system/interface/graphical/views/forms/fields/text/single-line/SingleLineTextFormFieldView.js';
+import { LinkListView } from '@framework/system/interface/graphical/views/lists/LinkListView.js';
 
 // Class
 class HeaderView extends View {
@@ -99,4 +99,4 @@ class HeaderView extends View {
 }
 
 // Export
-export default HeaderView;
+export { HeaderView };

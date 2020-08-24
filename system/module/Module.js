@@ -1,5 +1,5 @@
 // Dependencies
-import Settings from 'framework/system/settings/Settings.js';
+import { Settings } from '@framework/system/settings/Settings.js';
 
 // Class
 class Module {
@@ -25,7 +25,7 @@ class Module {
 		this.title = moduleTitle;
 
 		// Load the modules this module depends on
-		Module.require(this.dependencies);
+		Module.import(this.dependencies);
 	}
 
 	async initialize(settings) {
@@ -36,35 +36,35 @@ class Module {
 		this.settings = new Settings(this.defaultSettings, settings);
 	}
 
-	static async require(moduleTitles) {
+	static async import(moduleTitles) {
 		//app.log('moduleTitles', moduleTitles);
+		var frameworkPath = app.settings.get('framework.path');
 
 		// Load each module
 		await moduleTitles.toArray().each(async function(moduleTitleIndex, moduleTitle) {
 			var modulePropertyTitle = moduleTitle.lowercaseFirstCharacter();
 
-			// Only require modules once
+			// Only import modules once
 			if(app.modules[modulePropertyTitle]) {
-				//console.log('Already called Module.require for '+moduleTitle+'.');
+				//console.log('Already called Module.import for '+moduleTitle+'.');
 			}
 			// Require the module
 			else {
 				// Require the module
-				var modulePath = Node.Path.join(app.framework.directory, 'modules', moduleTitle.replaceLast('Module', '').toDashes(), moduleTitle+'.js');
+				var modulePath = Node.Path.join(frameworkPath, 'modules', moduleTitle.replaceLast('Module', '').toDashes(), moduleTitle+'.js');
 				//console.log('modulePath', modulePath);	
 
 				try {
 					//console.log('modulePath', modulePath);
-					//var moduleClass = (await import(modulePath)).default; // TODO: Not sure why this is breaking things
-					var moduleClass = (require(modulePath)).default;
-					//console.log('moduleClass', moduleClass);
-					var moduleInstance = new (moduleClass)(moduleTitle);
+					const moduleImports = await import(modulePath);
+					//console.log('moduleImports', moduleImports);
+					var moduleInstance = new (moduleImports[moduleTitle])(moduleTitle);
 					//console.log('moduleInstance', moduleInstance);
 
 					app.modules[modulePropertyTitle] = moduleInstance;	
 				}
 				catch(error) {
-					app.error('Failed to load '+moduleTitle+' from '+modulePath+'.', "\n\n", error);
+					//app.error('Failed to load '+moduleTitle+' from '+modulePath+'.', "\n\n", error);
 					throw error;
 				}
 			}
@@ -74,7 +74,7 @@ class Module {
 	static async initialize(moduleTitles) {
 		//app.log('moduleTitles', moduleTitles);
 
-		// Initializing is necessary to do separate of .require because module code may be interdependent and require other code to be required first
+		// Initializing is necessary to do separate of .import because module code may be interdependent and import other code to be importd first
 		var moduleTitlesArray = moduleTitles.toArray();
 
 		await moduleTitlesArray.each(async function(moduleTitleIndex, moduleTitle) {
@@ -83,7 +83,7 @@ class Module {
 			var modulePropertyTitle = moduleTitle.lowercaseFirstCharacter();
 
 			var moduleInstance = app.modules[modulePropertyTitle];
-
+			//console.log('app.modules', app.modules);
 			//console.log('moduleTitle', moduleTitle, 'moduleInstance', moduleInstance);
 
 			// Only initialize modules once
@@ -110,4 +110,4 @@ class Module {
 }
 
 // Export
-export default Module;
+export { Module };

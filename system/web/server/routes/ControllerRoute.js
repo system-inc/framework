@@ -1,7 +1,7 @@
 // Dependencies
-import Route from 'framework/system/server/web/routes/Route.js';
-import NotFoundError from 'framework/system/server/web/errors/NotFoundError.js';
-import WebServerController from 'framework/system/server/web/WebServerController.js';
+import { Route } from '@framework/system/server/web/routes/Route.js';
+import { NotFoundError } from '@framework/system/server/web/errors/NotFoundError.js';
+import { WebServerController } from '@framework/system/server/web/WebServerController.js';
 
 // Class
 class ControllerRoute extends Route {
@@ -59,4 +59,4 @@ class ControllerRoute extends Route {
 }
 
 // Export
-export default ControllerRoute;
+export { ControllerRoute };

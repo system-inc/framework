@@ -4,4 +4,4 @@ class DatabaseView {
 }
 
 // Export
-export default DatabaseView;
+export { DatabaseView };

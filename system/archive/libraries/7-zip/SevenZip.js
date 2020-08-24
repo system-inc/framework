@@ -240,4 +240,4 @@ class SevenZip {
 }
 
 // Export
-export default SevenZip;
+export { SevenZip };

@@ -1,14 +1,13 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
-import Test from 'framework/system/test/Test.js';
-import Stopwatch from 'framework/system/time/Stopwatch.js';
-import Terminal from 'framework/system/interface/Terminal.js';
-import StandardTestReporter from 'framework/system/test/test-reporters/StandardTestReporter.js';
-import DotTestReporter from 'framework/system/test/test-reporters/DotTestReporter.js';
-import ConciseTestReporter from 'framework/system/test/test-reporters/ConciseTestReporter.js';
-import ElectronTestReporter from 'framework/system/test/test-reporters/ElectronTestReporter.js';
-import FileSystemObject from 'framework/system/file-system/FileSystemObject.js';
-import AsciiArt from 'framework/system/ascii-art/AsciiArt.js';
+import { EventEmitter } from '@framework/system/event/EventEmitter.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Stopwatch } from '@framework/system/time/Stopwatch.js';
+import { StandardTestReporter } from '@framework/system/test/test-reporters/StandardTestReporter.js';
+import { DotTestReporter } from '@framework/system/test/test-reporters/DotTestReporter.js';
+import { ConciseTestReporter } from '@framework/system/test/test-reporters/ConciseTestReporter.js';
+import { ElectronTestReporter } from '@framework/system/test/test-reporters/ElectronTestReporter.js';
+import { FileSystemObject } from '@framework/system/file-system/FileSystemObject.js';
+import { AsciiArt } from '@framework/system/ascii-art/AsciiArt.js';
 
 // Class
 class Proctor extends EventEmitter {
@@ -79,7 +78,7 @@ class Proctor extends EventEmitter {
 		};
 		
 		// Watch the app and framework directories
-		var watchedFileSystemObjects = await FileSystemObject.watch([app.directory, app.framework.directory], function(fileSystemObject, currentStatus, previousStatus) {
+		var watchedFileSystemObjects = await FileSystemObject.watch([app.directory, app.settings.get('framework.path')], function(fileSystemObject, currentStatus, previousStatus) {
 			//app.log(fileSystemObject.path, 'updated.');
 
 			if(fileSystemObject.path.endsWith('Test.js')) {
@@ -783,11 +782,11 @@ class Proctor extends EventEmitter {
 	static resolvePath(path) {
 		// If the path does not exist, we are in the default Framework tests directory
 		if(!path) {
-			path = app.framework.directory;
+			path = app.settings.get('framework.path');
 		}
 		// If the path is not absolute, we are in the default Framework tests directory
 		else if(!Node.Path.isAbsolute(path)) {
-			path = Node.Path.join(app.framework.directory, 'tests', path);
+			path = Node.Path.join(app.settings.get('framework.path'), 'tests', path);
 		}
 
 		return path;
@@ -880,8 +879,9 @@ class Proctor extends EventEmitter {
 
 						// Require the test class file
 						try {
-							var testClass = (await import(fileSystemObject.file)).default;
-							//app.log('testClass', testClass);
+							const moduleImports = await import(fileSystemObject.file);
+							const testClass = moduleImports[testClassName];
+							app.log('testClass', testClass);
 
 							// Check to see if the testClass is a class
 							if(!testClass || !Class.is(testClass)) {
@@ -962,4 +962,4 @@ class Proctor extends EventEmitter {
 }
 
 // Export
-export default Proctor;
+export { Proctor };

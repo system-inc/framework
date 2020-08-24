@@ -1,8 +1,8 @@
 // Dependencies
-import GraphicalInterfaceAdapter from 'framework/system/interface/graphical/adapters/GraphicalInterfaceAdapter.js';
-import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
-import WebViewAdapter from 'framework/system/interface/graphical/views/adapters/web/WebViewAdapter.js';
-import Display from 'framework/system/interface/graphical/Display.js';
+import { GraphicalInterfaceAdapter } from '@framework/system/interface/graphical/adapters/GraphicalInterfaceAdapter.js';
+import { HtmlDocument } from '@framework/system/interface/graphical/web/html/HtmlDocument.js';
+import { WebViewAdapter } from '@framework/system/interface/graphical/views/adapters/web/WebViewAdapter.js';
+import { Display } from '@framework/system/interface/graphical/Display.js';
 
 // Class
 class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
@@ -119,4 +119,4 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 }
 
 // Export
-export default WebGraphicalInterfaceAdapter;
+export { WebGraphicalInterfaceAdapter };

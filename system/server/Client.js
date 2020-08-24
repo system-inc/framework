@@ -1,5 +1,5 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
+import { EventEmitter } from '@framework/system/event/EventEmitter.js';
 
 // Class
 class Client extends EventEmitter {
@@ -55,4 +55,4 @@ class Client extends EventEmitter {
 }
 
 // Export
-export default Client;
+export { Client };

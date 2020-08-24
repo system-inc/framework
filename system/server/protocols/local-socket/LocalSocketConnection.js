@@ -1,7 +1,7 @@
 // Dependencies
-import Connection from 'framework/system/server/Connection.js';
-import LocalSocketPacketGenerator from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacketGenerator.js';
-import LocalSocketMessage from 'framework/system/server/protocols/local-socket/messages/LocalSocketMessage.js';
+import { Connection } from '@framework/system/server/Connection.js';
+import { LocalSocketPacketGenerator } from '@framework/system/server/protocols/local-socket/packets/LocalSocketPacketGenerator.js';
+import { LocalSocketMessage } from '@framework/system/server/protocols/local-socket/messages/LocalSocketMessage.js';
 
 // Class
 class LocalSocketProtocolConnection extends Connection {
@@ -105,4 +105,4 @@ class LocalSocketProtocolConnection extends Connection {
 }
 
 // Export
-export default LocalSocketProtocolConnection;
+export { LocalSocketProtocolConnection };

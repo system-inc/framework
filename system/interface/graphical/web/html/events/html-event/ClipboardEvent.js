@@ -1,5 +1,5 @@
 // Dependencies
-import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
+import { HtmlElementEvent } from '@framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
 
 // Class
 class ClipboardEvent extends HtmlElementEvent {
@@ -53,4 +53,4 @@ class ClipboardEvent extends HtmlElementEvent {
 }
 
 // Export
-export default ClipboardEvent;
+export { ClipboardEvent };

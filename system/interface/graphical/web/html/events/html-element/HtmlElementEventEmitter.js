@@ -1,6 +1,6 @@
 // Dependencies
-import HtmlNodeEventEmitter from 'framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEventEmitter.js';
-import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
+import { HtmlNodeEventEmitter } from '@framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEventEmitter.js';
+import { HtmlElementEvent } from '@framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
 
 // Class
 class HtmlElementEventEmitter extends HtmlNodeEventEmitter {
@@ -14,4 +14,4 @@ class HtmlElementEventEmitter extends HtmlNodeEventEmitter {
 }
 
 // Export
-export default HtmlElementEventEmitter;
+export { HtmlElementEventEmitter };

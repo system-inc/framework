@@ -1,7 +1,7 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import CyclicRedundancyCheck from 'framework/system/data/CyclicRedundancyCheck.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { CyclicRedundancyCheck } from '@framework/system/data/CyclicRedundancyCheck.js';
 
 // Class
 class CyclicRedundancyCheckTest extends Test {
@@ -113,4 +113,4 @@ class CyclicRedundancyCheckTest extends Test {
 }
 
 // Export
-export default CyclicRedundancyCheckTest;
+export { CyclicRedundancyCheckTest };

@@ -1,7 +1,7 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import HeadingView from 'framework/system/interface/graphical/views/text/HeadingView.js';
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { HeadingView } from '@framework/system/interface/graphical/views/text/HeadingView.js';
+import { TextView } from '@framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
 class NavigationView extends View {
@@ -17,4 +17,4 @@ class NavigationView extends View {
 }
 
 // Export
-export default NavigationView;
+export { NavigationView };

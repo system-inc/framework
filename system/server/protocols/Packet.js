@@ -37,4 +37,4 @@ class Packet {
 }
 
 // Export
-export default Packet;
+export { Packet };

@@ -1,5 +1,5 @@
 // Dependencies
-import ServerController from 'framework/system/server/ServerController.js';
+import { ServerController } from '@framework/system/server/ServerController.js';
 
 // Class
 class WebServerController extends ServerController {
@@ -28,7 +28,8 @@ class WebServerController extends ServerController {
 		// Load the controller class
 		var controllerPath = Node.Path.join(directory, 'controllers', controllerName+'.js');
 		//app.info('controllerPath', controllerPath);
-		var controllerClass = (await import(controllerPath)).default;
+		const moduleImports = await import(controllerPath);
+		const controllerClass = moduleImports[controllerName];
 		//app.info('controllerClass', controllerClass);
 
 		// Instantiate the controller
@@ -82,7 +83,7 @@ class WebServerController extends ServerController {
 			//app.log('response', response);
 		}
 		else {
-			response = (await import(viewFile.path));
+			response = await import(viewFile.path);
 			//app.log('response', response)
 		}
 
@@ -92,4 +93,4 @@ class WebServerController extends ServerController {
 }
 
 // Export
-export default WebServerController;
+export { WebServerController };

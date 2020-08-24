@@ -1,9 +1,9 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import Model from 'framework/system/data/Model.js';
-import ModelProperty from 'framework/system/data/ModelProperty.js';
-import ModelClassManager from 'framework/system/data/ModelClassManager.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { Model } from '@framework/system/data/Model.js';
+import { ModelProperty } from '@framework/system/data/ModelProperty.js';
+import { ModelClassManager } from '@framework/system/data/ModelClassManager.js';
 
 // Class
 class ModelClassManagerTest extends Test {
@@ -38,4 +38,4 @@ class ModelClassManagerTest extends Test {
 }
 
 // Export
-export default ModelClassManagerTest;
+export { ModelClassManagerTest };

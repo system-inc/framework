@@ -1,5 +1,5 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
+import { EventEmitter } from '@framework/system/event/EventEmitter.js';
 
 // Class
 class PacketGenerator extends EventEmitter {
@@ -158,4 +158,4 @@ class PacketGenerator extends EventEmitter {
 }
 
 // Export
-export default PacketGenerator;
+export { PacketGenerator };

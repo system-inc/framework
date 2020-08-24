@@ -71,4 +71,4 @@ class XmlNode {
 }
 
 // Export
-export default XmlNode;
+export { XmlNode };

@@ -1,6 +1,6 @@
 // Dependencies
-import Url from 'framework/system/web/Url.js';
-import WebRequest from 'framework/system/web/WebRequest.js';
+import { Url } from '@framework/system/web/Url.js';
+import { WebRequest } from '@framework/system/web/WebRequest.js';
 
 // Class
 class WebApi {
@@ -58,4 +58,4 @@ class WebApi {
 }
 
 // Export
-export default WebApi;
+export { WebApi };

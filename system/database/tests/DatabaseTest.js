@@ -1,7 +1,7 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import Database from 'framework/system/database/Database.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { Database } from '@framework/system/database/Database.js';
 
 // Class
 class DatabaseTest extends Test {
@@ -61,4 +61,4 @@ class DatabaseTest extends Test {
 }
 
 // Export
-export default DatabaseTest;
+export { DatabaseTest };

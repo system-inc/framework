@@ -1,5 +1,5 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
 // Class
 class ViewAdapter {
@@ -193,4 +193,4 @@ class ViewAdapter {
 }
 
 // Export
-export default ViewAdapter;
+export { ViewAdapter };

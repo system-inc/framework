@@ -1,6 +1,6 @@
 // Dependencies
-import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
-import Position from 'framework/system/interface/graphical/Position.js';
+import { Dimensions } from '@framework/system/interface/graphical/Dimensions.js';
+import { Position } from '@framework/system/interface/graphical/Position.js';
 
 // Class
 class Display {
@@ -22,4 +22,4 @@ class Display {
 }
 
 // Export
-export default Display;
+export { Display };

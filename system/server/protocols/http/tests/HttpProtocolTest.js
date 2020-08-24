@@ -1,10 +1,10 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import HttpServer from 'framework/system/server/protocols/http/server/HttpServer.js';
-import HttpClient from 'framework/system/server/protocols/http/client/HttpClient.js';
-import HttpRequestMessage from 'framework/system/server/protocols/http/messages/HttpRequestMessage.js';
-import HttpResponseMessage from 'framework/system/server/protocols/http/messages/HttpResponseMessage.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { HttpServer } from '@framework/system/server/protocols/http/server/HttpServer.js';
+import { HttpClient } from '@framework/system/server/protocols/http/client/HttpClient.js';
+import { HttpRequestMessage } from '@framework/system/server/protocols/http/messages/HttpRequestMessage.js';
+import { HttpResponseMessage } from '@framework/system/server/protocols/http/messages/HttpResponseMessage.js';
 
 // Class
 class HttpProtocolTest extends Test {
@@ -172,4 +172,4 @@ class HttpProtocolTest extends Test {
 }
 
 // Export
-export default HttpProtocolTest;
+export { HttpProtocolTest };

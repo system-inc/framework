@@ -96,4 +96,4 @@ class ModelProperty {
 }
 
 // Export
-export default ModelProperty;
+export { ModelProperty };

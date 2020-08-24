@@ -1,6 +1,6 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
 // Class
 class RegularExpressionTest extends Test {
@@ -13,4 +13,4 @@ class RegularExpressionTest extends Test {
 }
 
 // Export
-export default RegularExpressionTest;
+export { RegularExpressionTest };

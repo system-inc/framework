@@ -1,5 +1,5 @@
 // Dependencies
-import Database from 'framework/system/database/Database.js';
+import { Database } from '@framework/system/database/Database.js';
 
 // Class
 class DatabaseManager {
@@ -19,4 +19,4 @@ class DatabaseManager {
 }
 
 // Export
-export default DatabaseManager;
+export { DatabaseManager };

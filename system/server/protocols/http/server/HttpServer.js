@@ -1,6 +1,6 @@
 // Dependencies
-import Server from 'framework/system/server/Server.js';
-import HttpServerConnection from 'framework/system/server/protocols/http/server/HttpServerConnection.js';
+import { Server } from '@framework/system/server/Server.js';
+import { HttpServerConnection } from '@framework/system/server/protocols/http/server/HttpServerConnection.js';
 
 // Class
 class HttpServer extends Server {
@@ -101,4 +101,4 @@ class HttpServer extends Server {
 }
 
 // Export
-export default HttpServer;
+export { HttpServer };

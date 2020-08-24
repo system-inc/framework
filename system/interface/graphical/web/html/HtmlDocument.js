@@ -1,11 +1,11 @@
 // Dependencies
-import XmlDocument from 'framework/system/xml/XmlDocument.js';
-import Url from 'framework/system/web/Url.js';
-import Html from 'framework/system/interface/graphical/web/html/Html.js';
-import HtmlDocumentEventEmitter from 'framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEventEmitter.js';
-import HtmlDocumentEvent from 'framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEvent.js';
-import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
-import Position from 'framework/system/interface/graphical/Position.js';
+import { XmlDocument } from '@framework/system/xml/XmlDocument.js';
+import { Url } from '@framework/system/web/Url.js';
+import { Html } from '@framework/system/interface/graphical/web/html/Html.js';
+import { HtmlDocumentEventEmitter } from '@framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEventEmitter.js';
+import { HtmlDocumentEvent } from '@framework/system/interface/graphical/web/html/events/html-document/HtmlDocumentEvent.js';
+import { Dimensions } from '@framework/system/interface/graphical/Dimensions.js';
+import { Position } from '@framework/system/interface/graphical/Position.js';
 
 // Class
 class HtmlDocument extends XmlDocument {
@@ -351,4 +351,4 @@ class HtmlDocument extends XmlDocument {
 Class.implement(HtmlDocument, HtmlDocumentEventEmitter);
 
 // Export
-export default HtmlDocument;
+export { HtmlDocument };

@@ -1,7 +1,7 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import Cryptography from 'framework/system/cryptography/Cryptography.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { Cryptography } from '@framework/system/cryptography/Cryptography.js';
 
 // Class
 class CryptographyTest extends Test {
@@ -15,4 +15,4 @@ class CryptographyTest extends Test {
 }
 
 // Export
-export default CryptographyTest;
+export { CryptographyTest };

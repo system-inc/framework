@@ -1,7 +1,7 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import WildcardPatternMatcher from 'framework/system/search/patterns/WildcardPatternMatcher.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { WildcardPatternMatcher } from '@framework/system/search/patterns/WildcardPatternMatcher.js';
 
 // Class
 class WildcardPatternMatcherTest extends Test {
@@ -159,4 +159,4 @@ class WildcardPatternMatcherTest extends Test {
 }
 
 // Export
-export default WildcardPatternMatcherTest;
+export { WildcardPatternMatcherTest };

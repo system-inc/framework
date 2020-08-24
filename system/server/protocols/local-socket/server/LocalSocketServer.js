@@ -1,7 +1,7 @@
 // Dependencies
-import Server from 'framework/system/server/Server.js';
-import File from 'framework/system/file-system/File.js';
-import LocalSocketConnection from 'framework/system/server/protocols/local-socket/LocalSocketConnection.js';
+import { Server } from '@framework/system/server/Server.js';
+import { File } from '@framework/system/file-system/File.js';
+import { LocalSocketConnection } from '@framework/system/server/protocols/local-socket/LocalSocketConnection.js';
 
 // Class
 class LocalSocketServer extends Server {
@@ -119,4 +119,4 @@ class LocalSocketServer extends Server {
 }
 
 // Export
-export default LocalSocketServer;
+export { LocalSocketServer };

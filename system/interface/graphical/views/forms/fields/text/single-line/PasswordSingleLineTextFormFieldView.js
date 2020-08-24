@@ -1,6 +1,6 @@
 // Dependencies
-import TextFormFieldView from 'framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
-import PasswordSingleLineTextFormControlView from 'framework/system/interface/graphical/views/forms/controls/text/single-line/PasswordSingleLineTextFormControlView.js';
+import { TextFormFieldView } from '@framework/system/interface/graphical/views/forms/fields/text/TextFormFieldView.js';
+import { PasswordSingleLineTextFormControlView } from '@framework/system/interface/graphical/views/forms/controls/text/single-line/PasswordSingleLineTextFormControlView.js';
 
 // Class
 class PasswordSingleLineTextFormFieldView extends TextFormFieldView {
@@ -18,4 +18,4 @@ class PasswordSingleLineTextFormFieldView extends TextFormFieldView {
 }
 
 // Export
-export default PasswordSingleLineTextFormFieldView;
+export { PasswordSingleLineTextFormFieldView };

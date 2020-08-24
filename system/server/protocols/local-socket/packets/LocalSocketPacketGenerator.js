@@ -1,6 +1,6 @@
 // Dependencies
-import PacketGenerator from 'framework/system/server/protocols/PacketGenerator.js';
-import LocalSocketPacket from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacket.js';
+import { PacketGenerator } from '@framework/system/server/protocols/PacketGenerator.js';
+import { LocalSocketPacket } from '@framework/system/server/protocols/local-socket/packets/LocalSocketPacket.js';
 
 // Class
 class LocalSocketPacketGenerator extends PacketGenerator {
@@ -26,4 +26,4 @@ class LocalSocketPacketGenerator extends PacketGenerator {
 }
 
 // Export
-export default LocalSocketPacketGenerator;
+export { LocalSocketPacketGenerator };

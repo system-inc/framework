@@ -1,7 +1,7 @@
 // Dependencies
-import Event from 'framework/system/event/Event.js';
-import EventListener from 'framework/system/event/EventListener.js';
-import WildcardPatternMatcher from 'framework/system/search/patterns/WildcardPatternMatcher.js';
+import { Event } from '@framework/system/event/Event.js';
+import { EventListener } from '@framework/system/event/EventListener.js';
+import { WildcardPatternMatcher } from '@framework/system/search/patterns/WildcardPatternMatcher.js';
 
 // Class
 class EventEmitter {
@@ -273,4 +273,4 @@ class EventEmitter {
 }
 
 // Export
-export default EventEmitter;
+export { EventEmitter };

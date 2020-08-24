@@ -1,6 +1,6 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
 // Class
 class TimeTest extends Test {
@@ -16,4 +16,4 @@ class TimeTest extends Test {
 }
 
 // Export
-export default TimeTest;
+export { TimeTest };

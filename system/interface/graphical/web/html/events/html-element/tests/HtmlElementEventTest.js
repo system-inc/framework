@@ -1,10 +1,10 @@
 // Dependencies
-import ElectronHtmlTest from 'framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
-import Assert from 'framework/system/test/Assert.js';
+import { ElectronHtmlTest } from '@framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
-import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
-import Html from 'framework/system/interface/graphical/web/html/Html.js';
-import HtmlElementEvent from 'framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
+import { HtmlDocument } from '@framework/system/interface/graphical/web/html/HtmlDocument.js';
+import { Html } from '@framework/system/interface/graphical/web/html/Html.js';
+import { HtmlElementEvent } from '@framework/system/interface/graphical/web/html/events/html-element/HtmlElementEvent.js';
 
 // Class
 class HtmlElementEventTest extends ElectronHtmlTest {
@@ -186,7 +186,7 @@ class HtmlElementEventTest extends ElectronHtmlTest {
 
         // An image element
         var imgElement = Html.img({
-            src: 'file://'+Node.Path.join(app.framework.directory, 'tests', 'assets', 'media', 'images', 'poring.png'),
+            src: 'file://'+Node.Path.join(app.settings.get('framework.path'), 'tests', 'assets', 'media', 'images', 'poring.png'),
         });
         htmlDocument.body.append(imgElement);
 
@@ -218,7 +218,7 @@ class HtmlElementEventTest extends ElectronHtmlTest {
 
         // An image element
         var imgElement = Html.img({
-            src: 'file://'+Node.Path.join(app.framework.directory, 'tests', 'assets', 'media', 'images', 'does-not-exist-will-cause-error.png'),
+            src: 'file://'+Node.Path.join(app.settings.get('framework.path'), 'tests', 'assets', 'media', 'images', 'does-not-exist-will-cause-error.png'),
         });
         htmlDocument.body.append(imgElement);
 
@@ -247,4 +247,4 @@ class HtmlElementEventTest extends ElectronHtmlTest {
 }
 
 // Export
-export default HtmlElementEventTest;
+export { HtmlElementEventTest };

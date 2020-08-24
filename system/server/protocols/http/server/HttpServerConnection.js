@@ -1,6 +1,6 @@
 // Dependencies
-import HttpConnection from 'framework/system/server/protocols/http/HttpConnection.js';
-import HttpRequestMessage from 'framework/system/server/protocols/http/messages/HttpRequestMessage.js';
+import { HttpConnection } from '@framework/system/server/protocols/http/HttpConnection.js';
+import { HttpRequestMessage } from '@framework/system/server/protocols/http/messages/HttpRequestMessage.js';
 
 // Class
 class HttpServerConnection extends HttpConnection {
@@ -38,4 +38,4 @@ class HttpServerConnection extends HttpConnection {
 }
 
 // Export
-export default HttpServerConnection;
+export { HttpServerConnection };

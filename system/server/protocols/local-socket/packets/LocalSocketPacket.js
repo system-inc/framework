@@ -1,6 +1,6 @@
 // Dependencies
-import Packet from 'framework/system/server/protocols/Packet.js';
-import CyclicRedundancyCheck from 'framework/system/data/CyclicRedundancyCheck.js';
+import { Packet } from '@framework/system/server/protocols/Packet.js';
+import { CyclicRedundancyCheck } from '@framework/system/data/CyclicRedundancyCheck.js';
 
 // Class
 class LocalSocketPacket extends Packet {
@@ -183,4 +183,4 @@ class LocalSocketPacket extends Packet {
 }
 
 // Export
-export default LocalSocketPacket;
+export { LocalSocketPacket };

@@ -4,4 +4,4 @@ var AssertionError = Node.Assert.AssertionError;
 //}
 
 // Export
-export default AssertionError;
+export { AssertionError };

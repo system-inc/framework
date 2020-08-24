@@ -1,9 +1,9 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
-import LocalSocketServer from 'framework/system/server/protocols/local-socket/server/LocalSocketServer.js';
-import LocalSocketClient from 'framework/system/server/protocols/local-socket/client/LocalSocketClient.js';
-import File from 'framework/system/file-system/File.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { LocalSocketServer } from '@framework/system/server/protocols/local-socket/server/LocalSocketServer.js';
+import { LocalSocketClient } from '@framework/system/server/protocols/local-socket/client/LocalSocketClient.js';
+import { File } from '@framework/system/file-system/File.js';
 
 // Class
 class LocalSocketTest extends Test {
@@ -132,4 +132,4 @@ class LocalSocketTest extends Test {
 }
 
 // Export
-export default LocalSocketTest;
+export { LocalSocketTest };

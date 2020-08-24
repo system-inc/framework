@@ -1,5 +1,5 @@
 // Dependencies
-import HttpError from 'framework/system/server/web/errors/HttpError.js';
+import { HttpError } from '@framework/system/server/web/errors/HttpError.js';
 
 // Class
 class NotFoundError extends HttpError {
@@ -22,4 +22,4 @@ class NotFoundError extends HttpError {
 }
 
 // Export
-export default NotFoundError;
+export { NotFoundError };

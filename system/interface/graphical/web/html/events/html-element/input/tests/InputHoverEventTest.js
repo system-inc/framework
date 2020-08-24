@@ -1,10 +1,10 @@
 // Dependencies
-import ElectronHtmlTest from 'framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
-import Assert from 'framework/system/test/Assert.js';
+import { ElectronHtmlTest } from '@framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
-import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
-import Html from 'framework/system/interface/graphical/web/html/Html.js';
-import InputHoverEvent from 'framework/system/interface/graphical/web/html/events/html-element/input/InputHoverEvent.js';
+import { HtmlDocument } from '@framework/system/interface/graphical/web/html/HtmlDocument.js';
+import { Html } from '@framework/system/interface/graphical/web/html/Html.js';
+import { InputHoverEvent } from '@framework/system/interface/graphical/web/html/events/html-element/input/InputHoverEvent.js';
 
 // Class
 class InputHoverEventTest extends ElectronHtmlTest {
@@ -74,4 +74,4 @@ class InputHoverEventTest extends ElectronHtmlTest {
 }
 
 // Export
-export default InputHoverEventTest;
+export { InputHoverEventTest };

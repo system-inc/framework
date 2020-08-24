@@ -1,6 +1,6 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import PrimitiveView from 'framework/system/interface/graphical/views/PrimitiveView.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { PrimitiveView } from '@framework/system/interface/graphical/views/PrimitiveView.js';
 
 // Class
 class TextView extends View {
@@ -26,4 +26,4 @@ class TextView extends View {
 }
 
 // Export
-export default TextView;
+export { TextView };

@@ -1,7 +1,6 @@
 // Dependencies
-import Terminal from 'framework/system/interface/Terminal.js';
-import Assert from 'framework/system/test/Assert.js';
-import AssertionError from 'framework/system/test/errors/AssertionError.js';
+import { Assert } from '@framework/system/test/Assert.js';
+import { AssertionError } from '@framework/system/test/errors/AssertionError.js';
 
 // Class
 class TestReporter {
@@ -209,4 +208,4 @@ class TestReporter {
 }
 
 // Export
-export default TestReporter;
+export { TestReporter };

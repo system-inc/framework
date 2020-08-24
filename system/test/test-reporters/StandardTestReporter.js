@@ -1,8 +1,7 @@
 // Dependencies
-import TestReporter from 'framework/system/test/test-reporters/TestReporter.js';
-import ConciseTestReporter from 'framework/system/test/test-reporters/ConciseTestReporter.js';
-import Terminal from 'framework/system/interface/Terminal.js';
-import AssertionError from 'framework/system/test/errors/AssertionError.js';
+import { TestReporter } from '@framework/system/test/test-reporters/TestReporter.js';
+import { ConciseTestReporter } from '@framework/system/test/test-reporters/ConciseTestReporter.js';
+import { AssertionError } from '@framework/system/test/errors/AssertionError.js';
 
 // Class
 class StandardTestReporter extends TestReporter {
@@ -45,4 +44,4 @@ class StandardTestReporter extends TestReporter {
 }
 
 // Export
-export default StandardTestReporter;
+export { StandardTestReporter };

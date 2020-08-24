@@ -1,5 +1,5 @@
 // Dependencies
-import ElectronTest from 'framework/modules/electron/tests/ElectronTest.js';
+import { ElectronTest } from '@framework/modules/electron/tests/ElectronTest.js';
 
 // Class
 class ElectronHtmlTest extends ElectronTest {
@@ -37,4 +37,4 @@ class ElectronHtmlTest extends ElectronTest {
 }
 
 // Export
-export default ElectronHtmlTest;
+export { ElectronHtmlTest };

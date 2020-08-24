@@ -93,4 +93,4 @@ class Stopwatch {
 }
 
 // Export
-export default Stopwatch;
+export { Stopwatch };

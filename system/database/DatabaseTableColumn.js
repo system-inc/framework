@@ -96,4 +96,4 @@ class DatabaseTableColumn {
 }
 
 // Export
-export default DatabaseTableColumn;
+export { DatabaseTableColumn };

@@ -1,9 +1,9 @@
 // Dependencies
-import Settings from 'framework/system/settings/Settings.js';
+import { Settings } from '@framework/system/settings/Settings.js';
 import MySql from 'mysql';
-import MySqlDatabaseAdapter from 'framework/system/database/adapters/mysql/MySqlDatabaseAdapter.js';
-import DatabaseTable from 'framework/system/database/DatabaseTable.js';
-import Stopwatch from 'framework/system/time/Stopwatch.js';
+import { MySqlDatabaseAdapter } from '@framework/system/database/adapters/mysql/MySqlDatabaseAdapter.js';
+import { DatabaseTable } from '@framework/system/database/DatabaseTable.js';
+import { Stopwatch } from '@framework/system/time/Stopwatch.js';
 
 // Class
 class Database {
@@ -118,7 +118,7 @@ class Database {
 			var reformedRow = {};
 
 			row.each(function(key, value) {
-				reformedRow[key.toCamelcase()] = value;
+				reformedRow[key.toCamelCase()] = value;
 			});
 
 			reformedRows.append(reformedRow.sort());
@@ -276,4 +276,4 @@ class Database {
 }
 
 // Export
-export default Database;
+export { Database };

@@ -1,5 +1,5 @@
 // Dependencies
-import TableCellView from 'framework/system/interface/graphical/views/tables/TableCellView.js';
+import { TableCellView } from '@framework/system/interface/graphical/views/tables/TableCellView.js';
 
 // Class
 class TableHeadingCellView extends TableCellView {
@@ -13,4 +13,4 @@ class TableHeadingCellView extends TableCellView {
 }
 
 // Export
-export default TableHeadingCellView;
+export { TableHeadingCellView };

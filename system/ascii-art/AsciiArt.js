@@ -20,4 +20,4 @@ class AsciiArt {
 }
 
 // Export
-export default AsciiArt;
+export { AsciiArt };

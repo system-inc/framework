@@ -157,4 +157,4 @@ class Url {
 }
 
 // Export
-export default Url;
+export { Url };

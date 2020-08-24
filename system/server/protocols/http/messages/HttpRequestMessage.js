@@ -1,6 +1,6 @@
 // Dependencies
-import HttpMessage from 'framework/system/server/protocols/http/messages/HttpMessage.js';
-import Url from 'framework/system/web/Url.js';
+import { HttpMessage } from '@framework/system/server/protocols/http/messages/HttpMessage.js';
+import { Url } from '@framework/system/web/Url.js';
 
 // Class
 class HttpRequestMessage extends HttpMessage {
@@ -73,4 +73,4 @@ class HttpRequestMessage extends HttpMessage {
 }
 
 // Export
-export default HttpRequestMessage;
+export { HttpRequestMessage };

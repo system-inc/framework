@@ -22,4 +22,4 @@ class Dimensions {
 }
 
 // Export
-export default Dimensions;
+export { Dimensions };

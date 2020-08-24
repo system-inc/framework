@@ -1,6 +1,6 @@
 // Dependencies
-import Message from 'framework/system/server/Message.js';
-import LocalSocketPacket from 'framework/system/server/protocols/local-socket/packets/LocalSocketPacket.js';
+import { Message } from '@framework/system/server/Message.js';
+import { LocalSocketPacket } from '@framework/system/server/protocols/local-socket/packets/LocalSocketPacket.js';
 
 // Class
 class LocalSocketMessage extends Message {
@@ -55,4 +55,4 @@ class LocalSocketMessage extends Message {
 }
 
 // Export
-export default LocalSocketMessage;
+export { LocalSocketMessage };

@@ -1,5 +1,5 @@
 // Dependencies
-import TextView from 'framework/system/interface/graphical/views/text/TextView.js';
+import { TextView } from '@framework/system/interface/graphical/views/text/TextView.js';
 
 // Class
 class HeadingView extends TextView {
@@ -27,4 +27,4 @@ class HeadingView extends TextView {
 }
 
 // Export
-export default HeadingView;
+export { HeadingView };

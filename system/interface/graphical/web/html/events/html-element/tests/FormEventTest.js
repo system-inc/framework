@@ -1,10 +1,10 @@
 // Dependencies
-import ElectronHtmlTest from 'framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
-import Assert from 'framework/system/test/Assert.js';
+import { ElectronHtmlTest } from '@framework/modules/electron/interface/graphical/web/html/tests/ElectronHtmlTest.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
-import HtmlDocument from 'framework/system/interface/graphical/web/html/HtmlDocument.js';
-import Html from 'framework/system/interface/graphical/web/html/Html.js';
-import FormEvent from 'framework/system/interface/graphical/web/html/events/html-element/FormEvent.js';
+import { HtmlDocument } from '@framework/system/interface/graphical/web/html/HtmlDocument.js';
+import { Html } from '@framework/system/interface/graphical/web/html/Html.js';
+import { FormEvent } from '@framework/system/interface/graphical/web/html/events/html-element/FormEvent.js';
 
 // Class
 class FormEventTest extends ElectronHtmlTest {
@@ -84,4 +84,4 @@ class FormEventTest extends ElectronHtmlTest {
 }
 
 // Export
-export default FormEventTest;
+export { FormEventTest };

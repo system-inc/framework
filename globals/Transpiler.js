@@ -1,4 +1,20 @@
-// This file must be in ES5 for maximum compatibility
+/*
+	This file must be in ES5. It executes a Framework app as if the
+	all of the features I want to be in Node are ready.
+
+	We need to use this file as is until it is possible to customize
+	import paths. As of right now import paths cannot be aliased,
+	so I would also have to do import '../../../', instead of
+	import 'framework/Class.js' or import 'app/Class.js'
+
+	My function at Require.addRequirePath handles this, but does not work
+	with ES modules.
+
+	At some point I will be able to implement a custom loader and runtime
+	which will allow my to do these imports.
+
+	https://github.com/nodejs/help/issues/2831
+*/
 
 // Class
 var Transpiler = {};
@@ -28,30 +44,27 @@ Transpiler.execute = function(appFile, appDirectory, directoryContainingFramewor
 	// Disable the Babel cache for debugging
 	//process.env.BABEL_DISABLE_CACHE = 1;
 
-	// Include the Babel polyfill when generator support is not available
-	//require('babel-polyfill');
-
 	// Integrate transpilation with import statements
-	require('babel-register')({
-		presets: [
-		],
+	require('@babel/register')({
 		plugins: [
-			'transform-class-properties',
-			'transform-es2015-modules-commonjs',
-			'dynamic-import-node',
+			'@babel/plugin-proposal-class-properties',
+			'@babel/plugin-transform-modules-commonjs',
+			'@babel/plugin-syntax-dynamic-import',
 		],
 		sourceMaps: 'both',
-		ignore: function(fileName) {
-			//console.log('fileName', fileName);
+		ignore: [
+			function(fileName) {
+				//console.log('fileName', fileName);
 
-			// Ignore node_modules and sql.js
-			if(fileName.match('node_modules') !== null || fileName.match('sql.js') !== null) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		},
+				// Ignore node_modules and sql.js
+				if(fileName.match('node_modules') !== null || fileName.match('sql.js') !== null) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			},
+		],
 	});
 
 	// Require the app file

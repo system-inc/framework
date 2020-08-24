@@ -1,6 +1,6 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import Settings from 'framework/system/settings/Settings.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { Settings } from '@framework/system/settings/Settings.js';
 
 // Class
 class FormControlView extends View {
@@ -67,4 +67,4 @@ class FormControlView extends View {
 }
 
 // Export
-export default FormControlView;
+export { FormControlView };

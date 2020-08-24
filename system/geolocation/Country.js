@@ -7,4 +7,4 @@ class Country {
 }
 
 // Export
-export default Country;
+export { Country };

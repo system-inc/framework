@@ -1,5 +1,5 @@
 // Dependencies
-import HtmlNodeEvent from 'framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEvent.js';
+import { HtmlNodeEvent } from '@framework/system/interface/graphical/web/html/events/html-node/HtmlNodeEvent.js';
 
 // Class
 class HtmlElementEvent extends HtmlNodeEvent {
@@ -126,4 +126,4 @@ class HtmlElementEvent extends HtmlNodeEvent {
 
 
 // Export
-export default HtmlElementEvent;
+export { HtmlElementEvent };

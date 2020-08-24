@@ -24,4 +24,4 @@ class Test {
 }
 
 // Export
-export default Test;
+export { Test };

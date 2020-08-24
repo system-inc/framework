@@ -7,4 +7,4 @@ class Fixture {
 }
 
 // Export
-export default Fixture;
+export { Fixture };

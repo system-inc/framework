@@ -1,5 +1,5 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
+import { EventEmitter } from '@framework/system/event/EventEmitter.js';
 
 // Class
 class StandardStream extends EventEmitter {
@@ -9,4 +9,4 @@ class StandardStream extends EventEmitter {
 }
 
 // Export
-export default StandardStream;
+export { StandardStream };

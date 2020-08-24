@@ -24,4 +24,4 @@ class DatabaseField {
 }
 
 // Export
-export default DatabaseField;
+export { DatabaseField };

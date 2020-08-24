@@ -1,5 +1,5 @@
 // Dependencies
-import IpAddress from 'framework/system/network/IpAddress.js';
+import { IpAddress } from '@framework/system/network/IpAddress.js';
 
 // Class
 class IpV4Address extends IpAddress {
@@ -17,4 +17,4 @@ class IpV4Address extends IpAddress {
 }
 
 // Export
-export default IpV4Address;
+export { IpV4Address };

@@ -1,6 +1,6 @@
 // Dependencies
-import View from 'framework/system/interface/graphical/views/View.js';
-import LinkListView from 'framework/system/interface/graphical/views/lists/LinkListView.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
+import { LinkListView } from '@framework/system/interface/graphical/views/lists/LinkListView.js';
 
 // Class
 class NavigationView extends View {
@@ -88,4 +88,4 @@ class NavigationView extends View {
 }
 
 // Export
-export default NavigationView;
+export { NavigationView };

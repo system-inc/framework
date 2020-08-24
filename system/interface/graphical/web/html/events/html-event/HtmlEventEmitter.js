@@ -1,7 +1,7 @@
 // Dependencies
-import PropagatingEventEmitter from 'framework/system/event/PropagatingEventEmitter.js';
-import HtmlEvent from 'framework/system/interface/graphical/web/html/events/html-event/HtmlEvent.js';
-import HtmlEventProxy from 'framework/system/interface/graphical/web/html/events/HtmlEventProxy.js';
+import { PropagatingEventEmitter } from '@framework/system/event/PropagatingEventEmitter.js';
+import { HtmlEvent } from '@framework/system/interface/graphical/web/html/events/html-event/HtmlEvent.js';
+import { HtmlEventProxy } from '@framework/system/interface/graphical/web/html/events/HtmlEventProxy.js';
 
 // Class
 class HtmlEventEmitter extends PropagatingEventEmitter {
@@ -33,4 +33,4 @@ class HtmlEventEmitter extends PropagatingEventEmitter {
 }
 
 // Export
-export default HtmlEventEmitter;
+export { HtmlEventEmitter };

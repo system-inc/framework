@@ -1,6 +1,6 @@
 // Dependencies
-import Test from 'framework/system/test/Test.js';
-import Assert from 'framework/system/test/Assert.js';
+import { Test } from '@framework/system/test/Test.js';
+import { Assert } from '@framework/system/test/Assert.js';
 
 // Class
 class StringTest extends Test {
@@ -189,4 +189,4 @@ class StringTest extends Test {
 }
 
 // Export
-export default StringTest;
+export { StringTest };

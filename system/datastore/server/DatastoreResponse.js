@@ -1,5 +1,5 @@
 // Dependencies
-import Response from 'framework/system/server/Response.js';
+import { Response } from '@framework/system/server/Response.js';
 
 // Class
 class DatastoreResponse extends Response {
@@ -9,4 +9,4 @@ class DatastoreResponse extends Response {
 }
 
 // Export
-export default DatastoreResponse;
+export { DatastoreResponse };

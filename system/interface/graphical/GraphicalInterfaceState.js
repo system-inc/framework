@@ -1,7 +1,7 @@
 // Dependencies
-import EventEmitter from 'framework/system/event/EventEmitter.js';
-import Dimensions from 'framework/system/interface/graphical/Dimensions.js';
-import Position from 'framework/system/interface/graphical/Position.js';
+import { EventEmitter } from '@framework/system/event/EventEmitter.js';
+import { Dimensions } from '@framework/system/interface/graphical/Dimensions.js';
+import { Position } from '@framework/system/interface/graphical/Position.js';
 
 // Class
 class GraphicalInterfaceState extends EventEmitter {
@@ -189,4 +189,4 @@ class GraphicalInterfaceState extends EventEmitter {
 }
 
 // Export
-export default GraphicalInterfaceState;
+export { GraphicalInterfaceState };

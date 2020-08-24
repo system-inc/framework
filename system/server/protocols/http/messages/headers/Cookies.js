@@ -1,5 +1,5 @@
 // Dependencies
-import Cookie from 'framework/system/server/protocols/http/messages/headers/Cookie.js';
+import { Cookie } from '@framework/system/server/protocols/http/messages/headers/Cookie.js';
 
 // Class
 class Cookies {
@@ -120,4 +120,4 @@ class Cookies {
 }
 
 // Export
-export default Cookies;
+export { Cookies };

@@ -1,5 +1,5 @@
 // Dependencies
-import Version from 'framework/system/version/Version.js';
+import { Version } from '@framework/system/version/Version.js';
 
 // Class
 class Browser {
@@ -82,4 +82,4 @@ class Browser {
 }
 
 // Export
-export default Browser;
+export { Browser };
