@@ -96,10 +96,11 @@ class Settings {
 			//console.log('Settings from', dataFilePath, 'to integrate:', data);
 			
 			this.integrate(data);
+			//console.log('Settings .integrateFromFile', this);
 		}
 		catch(error) {
-			console.error('No file at '+dataFilePath);
-			console.error(error);
+			//console.error('No file at '+dataFilePath);
+			//console.error(error);
 		}
 	}
 

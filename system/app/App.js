@@ -18,7 +18,7 @@ class App extends EventEmitter {
 		return this.settings.get('title');
 	};
 	get version() {
-		return this.settings.get('version');
+		return new Version(this.settings.get('version'));
 	};
 	get environment() {
 		return this.settings.get('environment');
@@ -51,7 +51,7 @@ class App extends EventEmitter {
 		// Create the settings
 		this.settings = new Settings({
 			title: 'App',
-			version: new Version('1.0.0'),
+			version: '1.0.0',
 			headline: null,
 			description: null,
 			environment: 'development',
