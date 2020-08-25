@@ -201,6 +201,7 @@ Object.defineProperty(Object.prototype, 'each', {
 });
 
 Object.defineProperty(Object.prototype, 'clone', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function() {
         return Object.clone(this);

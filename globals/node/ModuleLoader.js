@@ -1,5 +1,5 @@
 // Dependencies
-import Path from 'path';
+import NodePath from 'path';
 
 // Class
 class ModuleLoader {
@@ -10,16 +10,21 @@ class ModuleLoader {
         // The ModuleLoader is in the Framework directory        
         var moduleLoaderClassPath = import.meta.url; // file://.../framework/globals/node/ModuleLoader.js
         moduleLoaderClassPath = moduleLoaderClassPath.replace('file://', ''); // .../framework/globals/node/ModuleLoader.js
-        moduleLoaderClassPath = Path.dirname(moduleLoaderClassPath); // .../framework/globals/node
+        moduleLoaderClassPath = NodePath.dirname(moduleLoaderClassPath); // .../framework/globals/node
         //console.log('moduleLoaderClassPath', moduleLoaderClassPath);
 
         // Set the Framework path alias
-        var frameworkPath = Path.resolve(moduleLoaderClassPath, '../../'); // Derive the Framework directory from the ModuleLoader.js directory
+        var frameworkPath = NodePath.resolve(moduleLoaderClassPath, '../../'); // Derive the Framework directory from the ModuleLoader.js directory
         //console.log('frameworkPath', frameworkPath);
         this.moduleAliases['@framework'] = frameworkPath;
 
+        // Get the app script path from the process command line arguments
+        //console.log('process.argv', process.argv);
+        var appScriptPath = process.argv[1]; // Argument 0 is the path to node, argument 1 is the path to the script
+        //console.log('appScriptPath', appScriptPath);
+        
         // The App directory is the current working directory of the process
-        var appPath = Path.resolve('.');
+        var appPath = NodePath.dirname(appScriptPath);
         //console.log('appPath', appPath);
         this.moduleAliases['@app'] = appPath;
     }

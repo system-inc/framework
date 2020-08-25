@@ -25,6 +25,10 @@ class App extends EventEmitter {
 		return this.settings.get('environment');
 	};
 
+	framework = {
+		version: new Version('1.0.0'), // This is not a setting, but framework.path is
+	};
+
 	// Datastore
 	datastore = null;
 	sessionDatastore = null;
@@ -53,13 +57,13 @@ class App extends EventEmitter {
 		this.settings = new Settings({
 			title: 'App',
 			version: '1.0.0',
+			framework: {
+				path: null,
+			},
 			headline: null,
 			description: null,
 			environment: 'development',
 			modules: {},
-			framework: {
-				version: new Version('1.0.0'),
-			},
 		}, settings);
 
 		// Create the state
@@ -107,7 +111,8 @@ class App extends EventEmitter {
 		this.settings.set('framework.path', frameworkPath);
 
 		// Set the App path
-		this.settings.set('path', Node.Path.resolve('.'));
+		var appScriptPath = process.argv[1]; // Argument 0 is the path to node, argument 1 is the path to the script        
+		this.settings.set('path', Node.Path.dirname(appScriptPath));
 
 		// Set the default settings
 		this.settings.mergeDefaults({

@@ -2,7 +2,6 @@
 import { App } from '@framework/system/app/App.js';
 import { AsciiArt } from '@framework/system/ascii-art/AsciiArt.js';
 import { Proctor } from '@framework/system/test/Proctor.js';
-import { Url } from '@framework/system/web/Url.js';
 
 // Class
 class FrameworkApp extends App {
@@ -89,6 +88,6 @@ class FrameworkApp extends App {
 
 }
 
-// Global app instance
+// Instatiate and initialize a global instance of the app
 global.app = new FrameworkApp();
 global.app.initialize();
