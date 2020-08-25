@@ -1,41 +1,38 @@
 // Dependencies
-import NodePath from 'path';
+import Path from 'path';
 import RollupPluginAlias from '@rollup/plugin-alias';
 import RollupPluginJson from '@rollup/plugin-json';
 import RollupPluginDynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import RollupPluginBabel from '@rollup/plugin-babel';
+import MagicString from 'magic-string';
+import EsTreeWalker from 'estree-walker';
 
 // Class
 class RollupWebTranspiler {
 
-    filesToProcess = [
-        'framework/system/app/App.js',
-        'framework/system/settings/Settings.js',
-    ];
-
-    // These methods are not useful for the web
-    methodDefinitionsToRemove = {
-        // framework/system/app/App.js
-        'initializeNodeEnvironmentSettings': true,
-        'initializeNodeEnvironment': true,
-        'initializeProcess': true,
-        'configureStandardStreams': true,
-        'configureStandardStreamsFileLog': true,
-        'configureCommandLineInterface': true,
-        'configureInteractiveCommandLineInterface': true,
-        'importAndInitializeModules': true,
-        'initializeMainProcessEnvironment': true,
-        'initializeChildProcessEnvironment': true,
-        'getUserPath': true,
-        'getUserDesktopPath': true,
-
-        // framework/system/settings/Settings.js
-        'integrateFromFile': true,
-        'constructFromFile': true,
+    frameworkClassesToStripMethodsFrom = {
+        'framework/system/app/App.js': {
+            'initializeNodeEnvironmentSettings': true,
+            'initializeNodeEnvironment': true,
+            'initializeProcess': true,
+            'configureStandardStreams': true,
+            'configureStandardStreamsFileLog': true,
+            'configureCommandLineInterface': true,
+            'configureInteractiveCommandLineInterface': true,
+            'importAndInitializeModules': true,
+            'initializeMainProcessEnvironment': true,
+            'initializeChildProcessEnvironment': true,
+            'getUserPath': true,
+            'getUserDesktopPath': true,
+        },
+        'framework/system/settings/Settings.js': {
+            'integrateFromFile': true,
+            'constructFromFile': true,
+        },
     };
 
     // External modules which will not be included
-    externalModules = [
+    importSpecifiersToIgnore = [
         // Framework
         '@framework/globals/NodeGlobals.js',
 
@@ -44,51 +41,53 @@ class RollupWebTranspiler {
         'firebase-functions',
         'firebase-admin',
 
-        // Firebase Functions
-        'express',
-        'busboy',
-        'bent',
+        // Google Cloud
         '@google-cloud/storage',
         '@google-cloud/text-to-speech',
 
-        // Firebase Hosting
+        // Various NPM Modules
+        'express',
+        'busboy',
+        'bent',
         'moment',
     ];
 
-    globalVariables = {};
-
-    // Paths
-    appPath = null;
-    frameworkPath = null;
+    importSpecifiersToIgnoreGlobalVariables = {};
 
     // Rollup plugins
     rollupPluginJson = null;
     rollupPluginDynamicImportVars = null;
     rollupPluginAlias = null;
+    rollupPluginBabel = null;
+    rollupPluginFramework = null;
 
-    // Development Rollup plugins
-    developmentRollupPluginBabel = null;
-    developmentRollupPluginFramework = null;
-
-    // Production Rollup plugins
-    productionRollupPluginBabel = null;
-    productionRollupPluginFramework = null;
+    // Paths
+    appPath = null;
+    frameworkPath = null;
 
     constructor() {
-        this.appPath = NodePath.resolve('./../');
-        console.log('this.appPath', this.appPath);
-        this.frameworkPath = NodePath.resolve('./../', 'libraries', 'framework');
-        console.log('frameworkPath', this.frameworkPath);
+        // We assume the current working directory is ..../(app directory)/scripts/
+        this.appPath = Path.resolve('./../'); // Jump back one directory to the app path
+        //console.log('this.appPath', this.appPath);
+
+        // Derive the Framework path from this file's path
+        this.frameworkPath = import.meta.url; // file://.../framework/system/interface/graphical/web/transpiler/RollupWebTranspiler.js
+        this.frameworkPath = this.frameworkPath.replace('file://', ''); // .../framework/system/interface/graphical/web/transpiler/RollupWebTranspiler.js
+        this.frameworkPath = Path.dirname(this.frameworkPath); // .../framework/system/interface/graphical/web/transpiler
+        this.frameworkPath = Path.resolve(this.frameworkPath, '../../../../../'); // .../framework
+        //console.log('this.frameworkPath', this.frameworkPath);
 
         this.initializeRollupPlugins();
 
         // Hacky way to have the browser ignore server-side modules by pointing them at an empty object
-        for(var i = 0; i < this.externalModules.length; i++) {
-            this.globalVariables[this.externalModules[i]] = 'new Object()';
+        for(var i = 0; i < this.importSpecifiersToIgnore.length; i++) {
+            this.importSpecifiersToIgnoreGlobalVariables[this.importSpecifiersToIgnore[i]] = 'new Object()';
         }
     }
 
     initializeRollupPlugins() {
+        //console.log('this', this);
+
         // Aliases for @framework and @app
         this.rollupPluginAlias = RollupPluginAlias({
             entries: [
@@ -108,51 +107,66 @@ class RollupWebTranspiler {
 
         // import(variable) support
         this.rollupPluginDynamicImportVars = RollupPluginDynamicImportVars();
-
-        // Babel
-        this.developmentRollupPluginBabel = RollupPluginBabel({
-            babelHelpers: 'bundled',
-            plugins: [
-                '@babel/plugin-proposal-class-properties',
-            ],
-            sourceMaps: 'both',
-            comments: false, // Remove comments
-            compact: true, // Remove whitespace
-            minified: true, // Remove whitespace and any unneccessary code
-        });
     }
 
-    getRollupPluginFramework(options) {
+    initializeDevelopmentRollupPlugins() {
+        // Babel
+        this.rollupPluginBabel = RollupPluginBabel({
+            babelHelpers: 'bundled',
+            plugins: [
+                '@babel/plugin-proposal-class-properties', // Need this for mobile Safari and Chrome
+            ],
+            sourceMaps: 'both', // Generate source maps
+            comments: true, // Keep comments
+            compact: false, // Keep whitespace
+            minified: false, // Do not minify
+        });
+
+        // Framework
+        this.rollupPluginFramework = this.createRollupPluginFramework(true); // Include source map
+    }
+
+    initializeProductionRollupPlugins() {
+        // Babel
+        this.rollupPluginBabel = RollupPluginBabel({
+            babelHelpers: 'bundled',
+            plugins: [
+                '@babel/plugin-proposal-class-properties', // Need this for mobile Safari and Chrome
+            ],
+            sourceMaps: false, // No source maps
+            comments: false, // Remove comments
+            compact: true, // Remove whitespace
+            minified: true, // Minify
+        });
+
+        // Framework
+        this.rollupPluginFramework = this.createRollupPluginFramework(false); // Include source map
+    }
+
+    createRollupPluginFramework(includeSourceMap = false) {
+        var rollupWebTranspilerContext = this;
+
         return {
-            name: 'framework', // this name will show up in warnings and errors
-            transform(code, id) {        
-                // Only run the transformation on the files to process
-                var transform = false;
-                for(let i = 0; i < filesToProcess.length; i++) {
-                    let fileToProcess = filesToProcess[i];
-                    if(id.endsWith(fileToProcess)) {
-                        transform = true;
+            name: 'framework', // This name will show up in warnings and errors
+            transform(code, id) {
+                // For performance, only run transformation specific files
+                var currentFrameworkClassToStripMethodsFrom = null;
+                for(let frameworkClassToStripMethodsFrom in rollupWebTranspilerContext.frameworkClassesToStripMethodsFrom) {
+                    if(id.endsWith(frameworkClassToStripMethodsFrom)) {
+                        currentFrameworkClassToStripMethodsFrom = frameworkClassToStripMethodsFrom;
                         break;
                     }
                 }
-                if(!transform) {
+                if(currentFrameworkClassToStripMethodsFrom == null) {
                     //console.log('Skipping', id);
                     return null;
                 }
         
-                console.log('Transforming', id);
+                //console.log('Rollup Plugin Framework - Transforming:', id);
         
                 // Keep track if we changed any code
-                var changed = false;
-        
-                // If we are using source maps
-                var sourceMap = false;
-        
-                // Create a magic string from the code
-                const magicString = new MagicString(code);
-        
+                var codeChanged = false;
                 
-        
                 // Create an AST
                 let ast = null;
                 try {
@@ -162,6 +176,9 @@ class RollupWebTranspiler {
                     error.message += ` in ${id}`;
                     throw err;
                 }
+
+                // Create a magic string from the code
+                const magicString = new MagicString(code);
         
                 function getName(node) {
                     if(node.type === 'Identifier') {
@@ -207,7 +224,7 @@ class RollupWebTranspiler {
         
                 function removeMethodDefinition(node) {
                     remove(node.start, node.end);
-                    changed = true;
+                    codeChanged = true;
                 }
         
                 function removeStatement(node) {
@@ -218,7 +235,7 @@ class RollupWebTranspiler {
                     else {
                         magicString.overwrite(node.start, node.end, '(void 0);');
                     }
-                    changed = true;
+                    codeChanged = true;
                 }
         
                 function removeCallExpression(node) {
@@ -229,69 +246,76 @@ class RollupWebTranspiler {
                     else {
                         magicString.overwrite(node.start, node.end, '(void 0)');
                     }
-                    changed = true;
+                    codeChanged = true;
                 }
         
+                // Walk the AST tree
+                // Use this tool to see what's going on: https://astexplorer.net/
                 EsTreeWalker.walk(
                     ast,
                     {
-                        // Define the parent on entry
                         enter(node, parent) {
-                            Object.defineProperty(node, 'parent', {
-                                value: parent,
-                                enumerable: false,
-                                configurable: true
-                        });
+                            // Define the parent on entry
+                            Object.defineProperty(
+                                node,
+                                'parent',
+                                {
+                                    value: parent,
+                                    enumerable: false,
+                                    configurable: true,
+                                },
+                            );
         
-                        // If source maps are used update them
-                        if(sourceMap) {
-                            magicString.addSourcemapLocation(node.start);
-                            magicString.addSourcemapLocation(node.end);
-                        }
-                        
-                        //console.log('node.type', node.type);
-                        
-                        // Remove Node specific ClassMethods
-                        if(node.type === 'MethodDefinition') {
-                            var methodName = node.key.name;
-                            //console.log('MethodDefinition', node.key.name);
-                            
-                            // If we should remove the method definition
-                            if(methodName !== 'constructor' && methodDefinitionsToRemove[methodName]) {
-                                console.log('Removing method definition', methodName, 'from', id);
-                                removeMethodDefinition(node);
-                                this.skip();
+                            // If source maps are used update them
+                            if(includeSourceMap) {
+                                magicString.addSourcemapLocation(node.start);
+                                magicString.addSourcemapLocation(node.end);
                             }
+                            
+                            //console.log('node.type', node.type);
+                            
+                            // Remove Node specific ClassMethods
+                            if(node.type === 'MethodDefinition') {
+                                var methodName = node.key.name;
+                                //console.log('MethodDefinition', node.key.name);
+                                
+                                // If we should remove the method definition
+                                if(methodName !== 'constructor' && rollupWebTranspilerContext.frameworkClassesToStripMethodsFrom[currentFrameworkClassToStripMethodsFrom][methodName]) {
+                                    //console.log('Removing method definition', methodName, 'from', id);
+                                    removeMethodDefinition(node);
+                                    this.skip();
+                                }
+                            }
+                            // // Remove logging (console.log, etc.)
+                            // else if(node.type === 'CallExpression') {
+                            //     const keyPath = flatten(node.callee);
+                            //     //console.log('CallExpression', keyPath);
+            
+                            //     // If we should remove the call expression
+                            //     if(callExpressionsToRemove[keyPath]) {
+                            //         console.log('Removing call expression', keyPath, 'from', id);
+                            //         removeCallExpression(node);
+                            //         this.skip();
+                            //     }
+                            // }
+                            // // Remove debugger statements
+                            // // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/debugger
+                            // else if(node.type === 'DebuggerStatement') {
+                            //     removeStatement(node);
+                            //     this.skip();
+                            // }
                         }
-                        // // Remove logging (console.log, etc.)
-                        // else if(node.type === 'CallExpression') {
-                        //     const keyPath = flatten(node.callee);
-                        //     //console.log('CallExpression', keyPath);
-        
-                        //     // If we should remove the call expression
-                        //     if(callExpressionsToRemove[keyPath]) {
-                        //         console.log('Removing call expression', keyPath, 'from', id);
-                        //         removeCallExpression(node);
-                        //         this.skip();
-                        //     }
-                        // }
-                        // // Remove debugger statements
-                        // // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/debugger
-                        // else if(node.type === 'DebuggerStatement') {
-                        //     removeStatement(node);
-                        //     this.skip();
-                        // }
                     },
-                });
+                );
         
                 // If no change has happened
-                if(!changed) {
+                if(!codeChanged) {
                     return null;
                 }
         
                 // If we changed the code, return the change
                 code = magicString.toString();
-                const map = sourceMap ? magicString.generateMap() : null;
+                const map = includeSourceMap ? magicString.generateMap() : null;
                 return {
                     code,
                     map,
@@ -304,9 +328,10 @@ class RollupWebTranspiler {
         // Production configuration
         if(commandLineArguments.configurationProduction) {
             console.log('Rollup.js: Using production configuration.');
+            this.initializeProductionRollupPlugins();
 
             return [
-                // Functions
+                // Functions - Production
                 {
                     input: './../builds/firebase/functions/index.js',
                     output: {
@@ -315,15 +340,16 @@ class RollupWebTranspiler {
                         //sourcemap: 'inline', // No source maps in production
                         inlineDynamicImports: true,
                     },
-                    external: this.externalModules,
+                    external: this.importSpecifiersToIgnore,
                     plugins: [
                         this.rollupPluginJson,
                         this.rollupPluginDynamicImportVars,
                         this.rollupPluginAlias,
+                        this.rollupPluginBabel,
                     ],
                     onwarn: RollupWebTranspiler.onRollupWarning,
                 },
-                // Hosting - Development
+                // Hosting - Production
                 {
                     input: './../FacesApp.js',
                     output: {
@@ -331,23 +357,24 @@ class RollupWebTranspiler {
                         format: 'iife',
                         //sourcemap: 'inline', // No source maps in production
                         inlineDynamicImports: true,
-                        globals: this.globalVariables,
+                        globals: this.importSpecifiersToIgnoreGlobalVariables,
                     },
-                    external: this.externalModules,
+                    external: this.importSpecifiersToIgnore,
                     plugins: [
-                        this.rollupPluginFramework, // My Framework plugin
+                        this.rollupPluginFramework,
                         this.rollupPluginJson,
                         this.rollupPluginDynamicImportVars,
                         this.rollupPluginAlias,
-                        this.rollupPluginBabelForHosting,
+                        this.rollupPluginBabel,
                     ],
                     onwarn: RollupWebTranspiler.onRollupWarning,
                 },
             ];
         }
-        // Development configuratio
+        // Development configuration
         else {
             console.log('Rollup.js: Using development configuration.');
+            this.initializeDevelopmentRollupPlugins();
 
             return [
                 // Functions
@@ -359,11 +386,12 @@ class RollupWebTranspiler {
                         sourcemap: 'inline',
                         inlineDynamicImports: true,
                     },
-                    external: this.externalModules,
+                    external: this.importSpecifiersToIgnore,
                     plugins: [
                         this.rollupPluginJson,
                         this.rollupPluginDynamicImportVars,
                         this.rollupPluginAlias,
+                        //this.rollupPluginBabel,
                     ],
                     onwarn: RollupWebTranspiler.onRollupWarning,
                 },
@@ -375,15 +403,15 @@ class RollupWebTranspiler {
                         format: 'iife',
                         sourcemap: 'inline',
                         inlineDynamicImports: true,
-                        globals: this.globalVariables,
+                        globals: this.importSpecifiersToIgnoreGlobalVariables,
                     },
-                    external: this.externalModules,
+                    external: this.importSpecifiersToIgnore,
                     plugins: [
-                        this.rollupPluginFramework, // My Framework plugin
+                        this.rollupPluginFramework,
                         this.rollupPluginJson,
                         this.rollupPluginDynamicImportVars,
                         this.rollupPluginAlias,
-                        this.rollupPluginBabelForHosting,
+                        this.rollupPluginBabel,
                     ],
                     onwarn: RollupWebTranspiler.onRollupWarning,
                 },

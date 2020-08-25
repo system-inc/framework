@@ -399,18 +399,12 @@ class App extends EventEmitter {
 	async configureGraphicalInterface() {
 		//app.log('App configureGraphicalInterface');
 
-		if(this.inGraphicalInterfaceEnvironment()) {
-			//app.log('inGraphicalInterfaceEnvironment', true);
+		//app.log('inGraphicalInterfaceEnvironment', true);
 
-			// Create the graphical interface
-
-			const { GraphicalInterface } = await import('@framework/system/interface/graphical/GraphicalInterface.js');
-			this.interfaces.graphical = new GraphicalInterface();
-			await this.interfaces.graphical.initialize();
-		}
-		else {
-			//app.log('inGraphicalInterfaceEnvironment', false);
-		}
+		// Create the graphical interface
+		const { GraphicalInterface } = await import('@framework/system/interface/graphical/GraphicalInterface.js');
+		this.interfaces.graphical = new GraphicalInterface();
+		await this.interfaces.graphical.initialize();
 	}
 
 	getUserPath() {
