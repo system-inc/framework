@@ -27,6 +27,9 @@ class App extends EventEmitter {
 	get path() {
 		return this.settings.get('path');
 	};
+	get script() {
+		return this.settings.get('script');
+	};
 
 	framework = {
 		get version() {
@@ -66,7 +69,7 @@ class App extends EventEmitter {
 			title: 'App',
 			version: '1.0.0',
 			framework: {
-				path: null,
+				version: '1.0.0',
 			},
 			headline: null,
 			description: null,
@@ -113,20 +116,16 @@ class App extends EventEmitter {
 	}
 
 	async initializeNodeEnvironmentSettings() {
-		// Set the App path
-		var appScriptPath = process.argv[1]; // Argument 0 is the path to node, argument 1 is the path to the script        
-		this.settings.set('path', Node.Path.dirname(appScriptPath));
-
-		// Set the Framework path
-		var frameworkPath = Node.Path.dirname(import.meta.url.replace('file://', '')); //  .../framework/system/app
-		frameworkPath = Node.Path.resolve(frameworkPath, '../../'); // .../framework
-		this.settings.set('framework.path', frameworkPath);
-
-		// Set the default settings
+		// Merge in more default settings
 		this.settings.mergeDefaults({
+			path: null,
+			script: null,
+			framework: {
+				path: null,
+			},
 			standardStreamsFileLog: {
 				enabled: true,
-				directory: Node.Path.join(this.path, 'logs'),
+				directory: null,
 				nameWithoutExtension: 'app',
 			},
 			interfaces: {
@@ -167,7 +166,7 @@ class App extends EventEmitter {
 					enabled: true,
 					history: {
 						enabled: true,
-						directory: Node.Path.join(this.path, 'logs'),
+						directory: null,
 						nameWithoutExtension: 'history',
 					},
 				},
@@ -176,6 +175,26 @@ class App extends EventEmitter {
 				archive: {}, // Archive is a default module which is enabled for all apps in Node environments
 			},
 		});
+
+		// Set the App path and script
+		var appScriptPath = process.argv[1]; // Argument 0 is the path to node, argument 1 is the path to the script
+		var appPath = Node.Path.dirname(appScriptPath);
+		this.settings.set('path', appPath);
+		this.settings.set('script', appScriptPath);
+
+		// Set the Framework path
+		var frameworkPath = Node.Path.dirname(import.meta.url.replace('file://', '')); //  .../framework/system/app
+		frameworkPath = Node.Path.resolve(frameworkPath, '../../'); // .../framework
+		this.settings.set('framework.path', frameworkPath);
+
+		// Set the logs path
+		var logsPath = Node.Path.join(this.path, 'logs');
+
+		// Set the standard streams file log path
+		this.settings.set('standardStreamsFileLog.directory', logsPath);
+
+		// Set the interactive command line file path
+		this.settings.set('interfaces.interactiveCommandLine.history.directory', logsPath);
 
 		//console.log('this.settings', this.settings);
 

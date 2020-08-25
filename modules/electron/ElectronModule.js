@@ -17,7 +17,7 @@ class ElectronModule extends Module {
 
 	defaultSettings = {
 		automaticallyStartElectronIfNotInElectronContext: true,
-		pathToStartingJavaScriptFile: Node.Path.join(app.path, 'index.js'),
+		pathToStartingJavaScriptFile: app.script,
 		quitWhenAllWindowsClosedOnMacOs: false,
 	};
 
@@ -111,7 +111,7 @@ class ElectronModule extends Module {
 
 		// Get the path to the Electron executable
 		var pathToElectronExecutable = await this.getPathToElectronExecutable();
-		//app.log('pathToElectronExecutable', pathToElectronExecutable);
+		app.log('pathToElectronExecutable', pathToElectronExecutable);
 
 		// Get the path to the Electron starting JavaScript file from settings
 		var pathToStartingJavaScriptFile = this.settings.get('pathToStartingJavaScriptFile');
@@ -121,14 +121,14 @@ class ElectronModule extends Module {
 			pathToStartingJavaScriptFile = pathToStartingJavaScriptFile.replaceFirst('/mnt/c/', 'c:/');
 		}
 
-		//app.log('pathToStartingJavaScriptFile', pathToStartingJavaScriptFile);
+		app.log('pathToStartingJavaScriptFile', pathToStartingJavaScriptFile);
 
 		// Pass arguments from node to the Electron main process
 		var electronMainProcessArguments = ['--js-flags=--harmony', pathToStartingJavaScriptFile];
 		electronMainProcessArguments.merge(Node.Process.argv.slice(2));
-		//console.log('Node.Process.argv', Node.Process.argv);
-		//console.log('electronMainProcessArguments', electronMainProcessArguments);
-		//Node.exit();
+		console.log('Node.Process.argv', Node.Process.argv);
+		console.log('electronMainProcessArguments', electronMainProcessArguments);
+		Node.exit();
 
 		// Run Electron as a child process, providing a .js file runs the file in the Electron main process, providing a .html file runs it in a renderer process
 		// We want to run in the main process to take advantage of shared standard streams, so we provide a .js file by default
