@@ -1,5 +1,5 @@
 // Dependencies
-import { View } from '@framework/system/interface/graphical/views/text/View.js';
+import { View } from '@framework/system/interface/graphical/views/View.js';
 
 // Class
 class FormLabelView extends View {

@@ -1,6 +1,7 @@
 // Dependencies
-import { Sqlite } from '@framework/system/database/sqlite/libraries/sql.js/sql.js';
 import { File } from '@framework/system/file-system/File.js';
+import Sqlite from 'sql.js';
+
 
 // Class
 class SqliteDatabase {

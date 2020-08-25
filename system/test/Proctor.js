@@ -504,10 +504,6 @@ class Proctor extends EventEmitter {
 
 	static globals = {
 		expected: [
-			// sql.js
-			// TODO: This should not leak but I am importing it and not having Babel transpile it so it is causing it to leak. When I no longer need Babel it should not leak anymore.
-			'SQL', 
-
 			// Framework
 			'Node',
 			'Class',
@@ -516,6 +512,7 @@ class Proctor extends EventEmitter {
 			'Buffer',
 			'RegularExpression',
 			'Stream',
+			'Terminal',
 			'Time',
 			'Transpiler',
 			'app',
@@ -881,7 +878,7 @@ class Proctor extends EventEmitter {
 						try {
 							const moduleImports = await import(fileSystemObject.file);
 							const testClass = moduleImports[testClassName];
-							app.log('testClass', testClass);
+							//app.log('testClass', testClass);
 
 							// Check to see if the testClass is a class
 							if(!testClass || !Class.is(testClass)) {

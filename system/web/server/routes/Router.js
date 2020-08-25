@@ -1,6 +1,6 @@
 // Dependencies
-import { Route } from '@framework/system/server/web/routes/Route.js';
-import { NotFoundError } from '@framework/system/server/web/errors/NotFoundError.js';
+import { Route } from '@framework/system/web/server/routes/Route.js';
+import { NotFoundError } from '@framework/system/web/server/errors/NotFoundError.js';
 
 // Class
 class Router {

@@ -3,7 +3,7 @@ app/logs/*
 app/interface/areas/testing/activities/tests/test-graphical-interface/app/logs/*
 
 # Test Web Server
-system/server/web/tests/logs/*
+system/web/server/tests/logs/*
 
 # NPM
 npm-debug.log

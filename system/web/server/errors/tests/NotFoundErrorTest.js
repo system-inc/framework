@@ -1,8 +1,8 @@
 // Dependencies
 import { Test } from '@framework/system/test/Test.js';
 import { Assert } from '@framework/system/test/Assert.js';
-import { HttpError } from '@framework/system/server/web/errors/HttpError.js';
-import { NotFoundError } from '@framework/system/server/web/errors/NotFoundError.js';
+import { HttpError } from '@framework/system/web/server/errors/HttpError.js';
+import { NotFoundError } from '@framework/system/web/server/errors/NotFoundError.js';
 
 // Class
 class NotFoundErrorTest extends Test {

@@ -1,5 +1,5 @@
 // Dependencies
-import { Route } from '@framework/system/server/web/routes/Route.js';
+import { Route } from '@framework/system/web/server/routes/Route.js';
 import { Url } from '@framework/system/web/Url.js';
 import { WebRequest } from '@framework/system/web/WebRequest.js';
 

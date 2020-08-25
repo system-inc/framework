@@ -1,3 +1,7 @@
+// Run this script from the command line using index.js or scripts/run.sh
+// (until Node no longer needs an experimental loader passed into the command line arguments)
+// https://github.com/nodejs/help/issues/2831
+
 // Dependencies
 import { App } from '@framework/system/app/App.js';
 import { AsciiArt } from '@framework/system/ascii-art/AsciiArt.js';

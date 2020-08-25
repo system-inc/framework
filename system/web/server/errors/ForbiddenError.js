@@ -1,5 +1,5 @@
 // Dependencies
-import { HttpError } from '@framework/system/server/web/errors/HttpError.js';
+import { HttpError } from '@framework/system/web/server/errors/HttpError.js';
 
 // Class
 class ForbiddenError extends HttpError {

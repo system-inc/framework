@@ -2,10 +2,10 @@
 import { Server } from '@framework/system/server/Server.js';
 import { Settings } from '@framework/system/settings/Settings.js';
 import { FileLog } from '@framework/system/log/FileLog.js';
-import { Router } from '@framework/system/server/web/routes/Router.js';
-import { Request } from '@framework/system/server/web/Request.js';
-import { Response } from '@framework/system/server/web/Response.js';
-import { InternalServerError } from '@framework/system/server/web/errors/InternalServerError.js';
+import { Router } from '@framework/system/web/server/routes/Router.js';
+import { Request } from '@framework/system/web/server/Request.js';
+import { Response } from '@framework/system/web/server/Response.js';
+import { InternalServerError } from '@framework/system/web/server/errors/InternalServerError.js';
 import { File } from '@framework/system/file-system/File.js';
 
 // Class

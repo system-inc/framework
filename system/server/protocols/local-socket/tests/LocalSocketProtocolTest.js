@@ -6,7 +6,7 @@ import { LocalSocketClient } from '@framework/system/server/protocols/local-sock
 import { File } from '@framework/system/file-system/File.js';
 
 // Class
-class LocalSocketTest extends Test {
+class LocalSocketProtocolTest extends Test {
 
 	async testLocalSocket() {
         var response = null;
@@ -132,4 +132,4 @@ class LocalSocketTest extends Test {
 }
 
 // Export
-export { LocalSocketTest };
+export { LocalSocketProtocolTest };

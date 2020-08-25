@@ -4,7 +4,7 @@ import { LocalSocketPacketGenerator } from '@framework/system/server/protocols/l
 import { LocalSocketMessage } from '@framework/system/server/protocols/local-socket/messages/LocalSocketMessage.js';
 
 // Class
-class LocalSocketProtocolConnection extends Connection {
+class LocalSocketConnection extends Connection {
 
     packetGenerator = null;
 
@@ -105,4 +105,4 @@ class LocalSocketProtocolConnection extends Connection {
 }
 
 // Export
-export { LocalSocketProtocolConnection };
+export { LocalSocketConnection };

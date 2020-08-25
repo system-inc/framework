@@ -1,11 +1,11 @@
 // Dependencies
-import { WebServerController } from '@framework/system/server/web/WebServerController.js';
-import { InternalServerError } from '@framework/system/server/web/errors/InternalServerError.js';
-import { BadRequestError } from '@framework/system/server/web/errors/BadRequestError.js';
-import { ForbiddenError } from '@framework/system/server/web/errors/ForbiddenError.js';
-import { RequestedRangeNotSatisfiableError } from '@framework/system/server/web/errors/RequestedRangeNotSatisfiableError.js';
-import { RequestEntityTooLargeError } from '@framework/system/server/web/errors/RequestEntityTooLargeError.js';
-import { UnauthorizedError } from '@framework/system/server/web/errors/UnauthorizedError.js';
+import { WebServerController } from '@framework/system/web/server/WebServerController.js';
+import { InternalServerError } from '@framework/system/web/server/errors/InternalServerError.js';
+import { BadRequestError } from '@framework/system/web/server/errors/BadRequestError.js';
+import { ForbiddenError } from '@framework/system/web/server/errors/ForbiddenError.js';
+import { RequestedRangeNotSatisfiableError } from '@framework/system/web/server/errors/RequestedRangeNotSatisfiableError.js';
+import { RequestEntityTooLargeError } from '@framework/system/web/server/errors/RequestEntityTooLargeError.js';
+import { UnauthorizedError } from '@framework/system/web/server/errors/UnauthorizedError.js';
 import { ArchiveFile } from '@framework/system/archive/ArchiveFile.js';
 import { File } from '@framework/system/file-system/File.js';
 import { Html } from '@framework/system/interface/graphical/web/html/Html.js';

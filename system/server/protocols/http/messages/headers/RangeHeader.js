@@ -1,3 +1,5 @@
+// Dependencies
+
 // Class
 class RangeHeader {
 
@@ -121,4 +123,4 @@ class RangeHeader {
 }
 
 // Exports
-export default RangeHeader;
+export { RangeHeader };

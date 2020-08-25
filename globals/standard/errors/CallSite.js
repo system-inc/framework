@@ -1,5 +1,5 @@
 // Dependencies
-import * as SourceMapSupport from 'source-map-support';
+import SourceMapSupport from 'source-map-support';
 
 // Class
 class CallSite {

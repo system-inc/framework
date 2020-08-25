@@ -2,7 +2,7 @@
 import { Test } from '@framework/system/test/Test.js';
 import { Assert } from '@framework/system/test/Assert.js';
 import { ExtendableError } from '@framework/globals/standard/errors/ExtendableError.js';
-import { HttpError } from '@framework/system/server/web/errors/HttpError.js';
+import { HttpError } from '@framework/system/web/server/errors/HttpError.js';
 
 // Class
 class HttpErrorTest extends Test {

@@ -1,6 +1,6 @@
 // Dependencies
-import { Headers } from '@framework/system/web/headers/Headers.js';
-import { Cookies } from '@framework/system/web/headers/Cookies.js';
+import { Headers } from '@framework/system/server/protocols/http/messages/headers/Headers.js';
+import { Cookies } from '@framework/system/server/protocols/http/messages/headers/Cookies.js';
 import { Url } from '@framework/system/web/Url.js';
 import { IpAddress } from '@framework/system/network/IpAddress.js';
 import { Browser } from '@framework/system/web/Browser.js';
@@ -9,7 +9,7 @@ import { OperatingSystem } from '@framework/system/operating-system/OperatingSys
 import { Geolocation } from '@framework/system/geolocation/Geolocation.js';
 import { Country } from '@framework/system/geolocation/Country.js';
 import { Version } from '@framework/system/version/Version.js';
-import { RequestEntityTooLargeError } from '@framework/system/server/web/errors/RequestEntityTooLargeError.js';
+import { RequestEntityTooLargeError } from '@framework/system/web/server/errors/RequestEntityTooLargeError.js';
 
 // Class
 class Request {

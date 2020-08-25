@@ -2,7 +2,7 @@
 import { Test } from '@framework/system/test/Test.js';
 import { Assert } from '@framework/system/test/Assert.js';
 import { File } from '@framework/system/file-system/File.js';
-import { WebServer } from '@framework/system/server/web/WebServer.js';
+import { WebServer } from '@framework/system/web/server/WebServer.js';
 import { WebRequest } from '@framework/system/web/WebRequest.js';
 import { Url } from '@framework/system/web/Url.js';
 
@@ -16,7 +16,7 @@ class WebServerTest extends Test {
 	webServer = null;
 
 	async before() {
-		var webServerSettings = await File.readAndDecodeJson(app.settings.get('framework.path')+'/system/server/web/tests/settings/settings.json');
+		var webServerSettings = await File.readAndDecodeJson(app.settings.get('framework.path')+'/system/web/server/tests/settings/settings.json');
 
 		this.port = webServerSettings.modules.webServer.webServers[0].protocols.http.ports[0];
 
@@ -27,7 +27,7 @@ class WebServerTest extends Test {
 		webServerSettings.modules.webServer.webServers[0].verbose = false;
 
 		// Set the web server directory
-		webServerSettings.modules.webServer.webServers[0].directory = Node.Path.normalize(app.settings.get('framework.path')+'/system/server/web/tests/');
+		webServerSettings.modules.webServer.webServers[0].directory = Node.Path.normalize(app.settings.get('framework.path')+'/system/web/server/tests/');
 
 		this.webServer = new WebServer('test', webServerSettings.modules.webServer.webServers[0]);
 		await this.webServer.initialize();

@@ -13,12 +13,12 @@ class HttpRequestMessage extends HttpMessage {
     }
 
     toBuffer() {
-        console.log(this);
+        //console.log(this);
 
         var string = this.method+' '+this.url.toString()+' '+this.protocol.uppercase()+'/1.1'+"\r\n";
         string += "\r\n\r\n";
 
-        console.log('HttpRequestMessage toBuffer string', string);
+        //console.log('HttpRequestMessage toBuffer string', string);
         return Buffer.from(string);
     }
 

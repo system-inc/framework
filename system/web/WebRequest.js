@@ -1,6 +1,6 @@
 // Dependencies
-import { Headers } from '@framework/system/web/headers/Headers.js';
-import { Cookies } from '@framework/system/web/headers/Cookies.js';
+import { Headers } from '@framework/system/server/protocols/http/messages/headers/Headers.js';
+import { Cookies } from '@framework/system/server/protocols/http/messages/headers/Cookies.js';
 import { Url } from '@framework/system/web/Url.js';
 import { Version } from '@framework/system/version/Version.js';
 import { Stopwatch } from '@framework/system/time/Stopwatch.js';
