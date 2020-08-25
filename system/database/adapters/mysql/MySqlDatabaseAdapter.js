@@ -2,7 +2,7 @@
 import { DatabaseField } from '@framework/system/database/DatabaseField.js';
 
 // Class
-class MySqlAdapter {
+class MySqlDatabaseAdapter {
 
 	static reformFields(fields) {
 		var reformedFields = {};
@@ -47,7 +47,7 @@ class MySqlAdapter {
 						sql: queryResults.sql,
 						//values: queryResults.values,
 						rows: rows,
-						fields: MySqlAdapter.reformFields(fields),
+						fields: MySqlDatabaseAdapter.reformFields(fields),
 					};
 
 					resolve(result);
@@ -61,4 +61,4 @@ class MySqlAdapter {
 }
 
 // Export
-export { MySqlAdapter };
+export { MySqlDatabaseAdapter };

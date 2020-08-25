@@ -94,9 +94,13 @@ class Node {
 Node.Path.separator = Node.Path.sep;
 
 Node.Path.argumentsToStringArguments = function(passedArguments) {
+	console.log('passedArguments', passedArguments);
+
 	var stringArguments = [];
 	for(var i = 0; i < passedArguments.length; i++) {
-		stringArguments.push(passedArguments[i].toString());
+		if(passedArguments[i]) {
+			stringArguments.push(passedArguments[i].toString());
+		}
 	}
 	return stringArguments;
 };

@@ -190,7 +190,7 @@ class App extends EventEmitter {
 	async loadAppSettings() {
 		//this.log('Loading app settings...');
 		await this.settings.integrateFromFile(Node.Path.join(this.settings.get('path'), 'settings', 'settings.json'));
-		//console.log('loadAppSettings settings.json path', Node.Path.join(this.settings.get('path'), 'settings', 'settings.json'));
+		// console.log('loadAppSettings settings.json path', Node.Path.join(this.settings.get('path'), 'settings', 'settings.json'));
 
 		// Merge the environment settings
 		//this.log('Integrating environment settings...')

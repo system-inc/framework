@@ -90,5 +90,5 @@ class FrameworkApp extends App {
 }
 
 // Global app instance
-global.app = new FrameworkApp(__dirname);
+global.app = new FrameworkApp();
 global.app.initialize();

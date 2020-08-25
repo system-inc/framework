@@ -382,8 +382,9 @@ class Command {
 
 		var title = app.title+' '+(app.version ? app.version : '(unknown version)');
 
-		if(app.headline) {
-			title += ' - '+app.headline;
+		var headline = app.settings.get('headline');
+		if(headline) {
+			title += ' - '+headline;
 		}
 
 		app.standardStreams.output.writeLine(Terminal.style(title, 'bold'));

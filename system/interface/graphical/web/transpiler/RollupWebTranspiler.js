@@ -1,5 +1,4 @@
 // Dependencies
-import Path from 'path';
 import RollupPluginAlias from '@rollup/plugin-alias';
 import RollupPluginJson from '@rollup/plugin-json';
 import RollupPluginDynamicImportVars from '@rollup/plugin-dynamic-import-vars';
@@ -61,27 +60,36 @@ class RollupWebTranspiler {
     rollupPluginBabel = null;
     rollupPluginFramework = null;
 
+    // Build options
+    buildTarget = null; // node or web
+    environment = null; // development or production
+
     // Paths
     appPath = null;
     frameworkPath = null;
 
-    constructor() {
-        // We assume the current working directory is ..../(app directory)/scripts/
-        this.appPath = Path.resolve('./../'); // Jump back one directory to the app path
-        //console.log('this.appPath', this.appPath);
+    initialize(buildTarget = 'node', environment = 'development', frameworkPath, appPath) {
+        this.buildTarget = buildTarget;
+        this.environment = environment;
+        this.frameworkPath = frameworkPath;
+        this.appPath = appPath;
+        
+        // // We assume the current working directory is ..../(app directory)/scripts/
+        // this.appPath = Path.resolve('./../'); // Jump back one directory to the app path
+        // //console.log('this.appPath', this.appPath);
 
-        // Derive the Framework path from this file's path
-        this.frameworkPath = import.meta.url; // file://.../framework/system/interface/graphical/web/transpiler/RollupWebTranspiler.js
-        this.frameworkPath = this.frameworkPath.replace('file://', ''); // .../framework/system/interface/graphical/web/transpiler/RollupWebTranspiler.js
-        this.frameworkPath = Path.dirname(this.frameworkPath); // .../framework/system/interface/graphical/web/transpiler
-        this.frameworkPath = Path.resolve(this.frameworkPath, '../../../../../'); // .../framework
-        //console.log('this.frameworkPath', this.frameworkPath);
+        // // Derive the Framework path from this file's path
+        // this.frameworkPath = import.meta.url; // file://.../framework/system/interface/graphical/web/transpiler/RollupWebTranspiler.js
+        // this.frameworkPath = this.frameworkPath.replace('file://', ''); // .../framework/system/interface/graphical/web/transpiler/RollupWebTranspiler.js
+        // this.frameworkPath = Path.dirname(this.frameworkPath); // .../framework/system/interface/graphical/web/transpiler
+        // this.frameworkPath = Path.resolve(this.frameworkPath, '../../../../../'); // .../framework
+        // //console.log('this.frameworkPath', this.frameworkPath);
 
         this.initializeRollupPlugins();
 
         // Hacky way to have the browser ignore server-side modules by pointing them at an empty object
         for(var i = 0; i < this.importSpecifiersToIgnore.length; i++) {
-            this.importSpecifiersToIgnoreGlobalVariables[this.importSpecifiersToIgnore[i]] = 'new Object()';
+            this.importSpecifiersToIgnoreGlobalVariables[this.importSpecifiersToIgnore[i]] = '{}';
         }
     }
 
@@ -107,9 +115,7 @@ class RollupWebTranspiler {
 
         // import(variable) support
         this.rollupPluginDynamicImportVars = RollupPluginDynamicImportVars();
-    }
 
-    initializeDevelopmentRollupPlugins() {
         // Babel
         this.rollupPluginBabel = RollupPluginBabel({
             babelHelpers: 'bundled',
@@ -117,34 +123,26 @@ class RollupWebTranspiler {
                 '@babel/plugin-proposal-class-properties', // Need this for mobile Safari and Chrome
             ],
             sourceMaps: 'both', // Generate source maps
-            comments: true, // Keep comments
-            compact: false, // Keep whitespace
-            minified: false, // Do not minify
+            comments: (this.environment == 'development'),
+            compact: (this.environment == 'production'),
+            minified: (this.environment == 'production'),
         });
 
-        // Framework
-        this.rollupPluginFramework = this.createRollupPluginFramework(true); // Include source map
+        // Web build target
+        if(this.buildTarget == 'web') {
+            // Framework
+            this.rollupPluginFramework = this.createRollupPluginFramework();
+        }
     }
 
-    initializeProductionRollupPlugins() {
-        // Babel
-        this.rollupPluginBabel = RollupPluginBabel({
-            babelHelpers: 'bundled',
-            plugins: [
-                '@babel/plugin-proposal-class-properties', // Need this for mobile Safari and Chrome
-            ],
-            sourceMaps: false, // No source maps
-            comments: false, // Remove comments
-            compact: true, // Remove whitespace
-            minified: true, // Minify
-        });
-
-        // Framework
-        this.rollupPluginFramework = this.createRollupPluginFramework(false); // Include source map
-    }
-
-    createRollupPluginFramework(includeSourceMap = false) {
+    createRollupPluginFramework() {
         var rollupWebTranspilerContext = this;
+
+        // A source map is included if we are in development environment
+        var includeSourceMap = false;
+        if(this.environment == 'development') {
+            includeSourceMap = true;
+        }
 
         return {
             name: 'framework', // This name will show up in warnings and errors
@@ -325,98 +323,47 @@ class RollupWebTranspiler {
     }
 
     getRollupConfiguration(commandLineArguments) {
-        // Production configuration
-        if(commandLineArguments.configurationProduction) {
-            console.log('Rollup.js: Using production configuration.');
-            this.initializeProductionRollupPlugins();
+        // console.log('commandLineArguments', commandLineArguments);
+        // process.exit();
 
-            return [
-                // Functions - Production
-                {
-                    input: './../builds/firebase/functions/index.js',
-                    output: {
-                        file: './../builds/firebase/functions/index.cjs',
-                        format: 'cjs',
-                        //sourcemap: 'inline', // No source maps in production
-                        inlineDynamicImports: true,
-                    },
-                    external: this.importSpecifiersToIgnore,
-                    plugins: [
-                        this.rollupPluginJson,
-                        this.rollupPluginDynamicImportVars,
-                        this.rollupPluginAlias,
-                        this.rollupPluginBabel,
-                    ],
-                    onwarn: RollupWebTranspiler.onRollupWarning,
-                },
-                // Hosting - Production
-                {
-                    input: './../FacesApp.js',
-                    output: {
-                        file: './../builds/firebase/hosting/scripts/app.js',
-                        format: 'iife',
-                        //sourcemap: 'inline', // No source maps in production
-                        inlineDynamicImports: true,
-                        globals: this.importSpecifiersToIgnoreGlobalVariables,
-                    },
-                    external: this.importSpecifiersToIgnore,
-                    plugins: [
-                        this.rollupPluginFramework,
-                        this.rollupPluginJson,
-                        this.rollupPluginDynamicImportVars,
-                        this.rollupPluginAlias,
-                        this.rollupPluginBabel,
-                    ],
-                    onwarn: RollupWebTranspiler.onRollupWarning,
-                },
-            ];
-        }
-        // Development configuration
-        else {
-            console.log('Rollup.js: Using development configuration.');
-            this.initializeDevelopmentRollupPlugins();
+        this.initialize(
+            commandLineArguments.configurationBuildTarget,
+            commandLineArguments.configurationEnvironment,
+            commandLineArguments.configurationFrameworkPath,
+            commandLineArguments.configurationAppPath,
+        );
+        //console.log(this); process.exit();
 
-            return [
-                // Functions
-                {
-                    input: './../builds/firebase/functions/index.js',
-                    output: {
-                        file: './../builds/firebase/functions/index.cjs',
-                        format: 'cjs',
-                        sourcemap: 'inline',
-                        inlineDynamicImports: true,
-                    },
-                    external: this.importSpecifiersToIgnore,
-                    plugins: [
-                        this.rollupPluginJson,
-                        this.rollupPluginDynamicImportVars,
-                        this.rollupPluginAlias,
-                        //this.rollupPluginBabel,
-                    ],
-                    onwarn: RollupWebTranspiler.onRollupWarning,
-                },
-                // Hosting - Development
-                {
-                    input: './../FacesApp.js',
-                    output: {
-                        file: './../builds/firebase/hosting/scripts/app.js',
-                        format: 'iife',
-                        sourcemap: 'inline',
-                        inlineDynamicImports: true,
-                        globals: this.importSpecifiersToIgnoreGlobalVariables,
-                    },
-                    external: this.importSpecifiersToIgnore,
-                    plugins: [
-                        this.rollupPluginFramework,
-                        this.rollupPluginJson,
-                        this.rollupPluginDynamicImportVars,
-                        this.rollupPluginAlias,
-                        this.rollupPluginBabel,
-                    ],
-                    onwarn: RollupWebTranspiler.onRollupWarning,
-                },
-            ];
+        var format = 'cjs';
+        var globals = null;
+        var plugins = [
+            this.rollupPluginJson,
+            this.rollupPluginDynamicImportVars,
+            this.rollupPluginAlias,
+            this.rollupPluginBabel,
+        ];
+
+        if(this.buildTarget == 'web') {
+            format = 'iife';
+            globals = this.importSpecifiersToIgnoreGlobalVariables;
+            plugins.unshift(this.rollupPluginFramework);
         }
+
+        var rollupConfiguration = {
+            input: commandLineArguments.i,
+            output: {
+                file: commandLineArguments.o,
+                format: format,
+                sourcemap: (this.environment == 'development' ? 'inline' : false),
+                inlineDynamicImports: true,
+                globals: globals,
+            },
+            external: this.importSpecifiersToIgnore,
+            plugins: plugins,
+            onwarn: RollupWebTranspiler.onRollupWarning,
+        };
+
+        return rollupConfiguration;
     }
 
     static onRollupWarning(warning, warn) {
