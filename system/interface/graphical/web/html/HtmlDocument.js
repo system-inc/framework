@@ -79,6 +79,14 @@ class HtmlDocument extends XmlDocument {
 		// Create the head and body tags
 		this.head = Html.head();
 		this.body = Html.body();
+
+		// Manually set the children (do not use .append as this will cause unnecessary renders)
+		this.head.setParent(this.view);
+		this.body.setParent(this.view);
+		this.view.children = [
+			this.head,
+			this.body,
+		];
 	}
 
 	// Called by WebGraphicalInterfaceAdapter.initialize
@@ -114,19 +122,7 @@ class HtmlDocument extends XmlDocument {
 
 			// Set the URL
 			this.url = new Url(this.domDocument.location.toString());
-		}
 
-		// Manually set the children (do not use .append as this will cause unnecessary renders)
-		this.head.setParent(this.view);
-		this.body.setParent(this.view);
-		this.view.children = [
-			this.head,
-			this.body,
-		];
-
-		// If the DOM is present
-		if(this.domDocument) {
-			// At this point the HtmlDocument has been added to the DOM
 			this.mountedToDom();
 		}
 	}

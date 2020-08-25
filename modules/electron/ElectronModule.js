@@ -17,7 +17,7 @@ class ElectronModule extends Module {
 
 	defaultSettings = {
 		automaticallyStartElectronIfNotInElectronContext: true,
-		pathToStartingJavaScriptFile: Node.Path.join(app.directory, 'index.js'),
+		pathToStartingJavaScriptFile: Node.Path.join(app.path, 'index.js'),
 		quitWhenAllWindowsClosedOnMacOs: false,
 	};
 
@@ -336,9 +336,9 @@ class ElectronModule extends Module {
 		}
 
 		// Create a JavaScript string to start the app, this is the same as index.js in framework/app/index.js
-		var transpilerPath = Node.Path.join(app.settings.get('framework.path').toString(), 'globals', 'Transpiler.js');
+		var transpilerPath = Node.Path.join(app.framework.path.toString(), 'globals', 'Transpiler.js');
 		//app.log('transpilerPath', transpilerPath);
-		var directoryContainingFramework = Node.Path.join(app.settings.get('framework.path').toString(), '../');
+		var directoryContainingFramework = Node.Path.join(app.framework.path.toString(), '../');
 		//app.log('directoryContainingFramework', directoryContainingFramework);
 
 		// Escape backslashes
@@ -354,7 +354,7 @@ class ElectronModule extends Module {
 		//console.log('htmlString', htmlString);
 		
 		// Base url (with trailing path separator) for files to be loaded by the data url. This is needed only if the specified url is a data url and needs to load other files.
-		var baseUrlForDataUrl = new Url(app.directory.toString()).toString();
+		var baseUrlForDataUrl = new Url(app.path).toString();
 		//console.log('baseURLForDataURL', baseUrlForDataUrl);
 
 		// Load the HTML string

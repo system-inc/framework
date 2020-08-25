@@ -38,7 +38,7 @@ class Module {
 
 	static async import(moduleTitles) {
 		//app.log('moduleTitles', moduleTitles);
-		var frameworkPath = app.settings.get('framework.path');
+		var frameworkPath = app.framework.path;
 
 		// Load each module
 		await moduleTitles.toArray().each(async function(moduleTitleIndex, moduleTitle) {

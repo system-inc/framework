@@ -67,15 +67,15 @@ class WebServer extends Server {
 		this.settings.mergeDefaults({
 			logs: {
 				general: {
-					directory: Node.Path.join(app.directory, 'logs'),
+					directory: Node.Path.join(app.path, 'logs'),
 					nameWithoutExtension: 'web-server-'+this.identifier.toDashes(),
 				},
 				requests: {
-					directory: Node.Path.join(app.directory, 'logs'),
+					directory: Node.Path.join(app.path, 'logs'),
 					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-requests',
 				},
 				responses: {
-					directory: Node.Path.join(app.directory, 'logs'),
+					directory: Node.Path.join(app.path, 'logs'),
 					nameWithoutExtension: 'web-server-'+this.identifier.toDashes()+'-responses',
 				},
 			},
@@ -92,7 +92,7 @@ class WebServer extends Server {
 			this.directory = Node.Path.normalize(settingsDirectory);
 		}
 		else {
-			this.directory = app.directory;
+			this.directory = app.path;
 		}
 		// Update the settings with this.directory
 		this.settings.set('directory', this.directory);
@@ -133,7 +133,7 @@ class WebServer extends Server {
 		if(!Object.isEmpty(httpsSettings.keyFile)) {
 			httpsSettings.keyFile = Node.Path.normalize(httpsSettings.keyFile);
 			if(!Node.Path.isAbsolute(httpsSettings.keyFile)) {
-				httpsSettings.keyFile = Node.Path.join(app.directory, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.keyFile);
+				httpsSettings.keyFile = Node.Path.join(app.path, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.keyFile);
 			}
 		}
 
@@ -141,7 +141,7 @@ class WebServer extends Server {
 		if(!Object.isEmpty(httpsSettings.certificateFile)) {
 			httpsSettings.certificateFile = Node.Path.normalize(httpsSettings.certificateFile);
 			if(!Node.Path.isAbsolute(httpsSettings.certificateFile)) {
-				httpsSettings.certificateFile = Node.Path.join(app.directory, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.certificateFile);
+				httpsSettings.certificateFile = Node.Path.join(app.path, 'settings', 'environment', 'modules', 'web-server', 'https', httpsSettings.certificateFile);
 			}
 		}
 

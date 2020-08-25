@@ -24,9 +24,17 @@ class App extends EventEmitter {
 	get environment() {
 		return this.settings.get('environment');
 	};
+	get path() {
+		return this.settings.get('path');
+	};
 
 	framework = {
-		version: new Version('1.0.0'), // This is not a setting, but framework.path is
+		get version() {
+			return new Version(app.settings.get('framework.version'));
+		},
+		get path() {
+			return app.settings.get('framework.path');
+		},
 	};
 
 	// Datastore
@@ -105,20 +113,20 @@ class App extends EventEmitter {
 	}
 
 	async initializeNodeEnvironmentSettings() {
+		// Set the App path
+		var appScriptPath = process.argv[1]; // Argument 0 is the path to node, argument 1 is the path to the script        
+		this.settings.set('path', Node.Path.dirname(appScriptPath));
+
 		// Set the Framework path
 		var frameworkPath = Node.Path.dirname(import.meta.url.replace('file://', '')); //  .../framework/system/app
 		frameworkPath = Node.Path.resolve(frameworkPath, '../../'); // .../framework
 		this.settings.set('framework.path', frameworkPath);
 
-		// Set the App path
-		var appScriptPath = process.argv[1]; // Argument 0 is the path to node, argument 1 is the path to the script        
-		this.settings.set('path', Node.Path.dirname(appScriptPath));
-
 		// Set the default settings
 		this.settings.mergeDefaults({
 			standardStreamsFileLog: {
 				enabled: true,
-				directory: Node.Path.join(this.settings.get('path'), 'logs'),
+				directory: Node.Path.join(this.path, 'logs'),
 				nameWithoutExtension: 'app',
 			},
 			interfaces: {
@@ -159,7 +167,7 @@ class App extends EventEmitter {
 					enabled: true,
 					history: {
 						enabled: true,
-						directory: Node.Path.join(this.settings.get('path'), 'logs'),
+						directory: Node.Path.join(this.path, 'logs'),
 						nameWithoutExtension: 'history',
 					},
 				},
@@ -194,12 +202,12 @@ class App extends EventEmitter {
 
 	async loadAppSettings() {
 		//this.log('Loading app settings...');
-		await this.settings.integrateFromFile(Node.Path.join(this.settings.get('path'), 'settings', 'settings.json'));
-		// console.log('loadAppSettings settings.json path', Node.Path.join(this.settings.get('path'), 'settings', 'settings.json'));
+		await this.settings.integrateFromFile(Node.Path.join(this.path, 'settings', 'settings.json'));
+		// console.log('loadAppSettings settings.json path', Node.Path.join(this.path, 'settings', 'settings.json'));
 
 		// Merge the environment settings
 		//this.log('Integrating environment settings...')
-		await this.settings.integrateFromFile(Node.Path.join(this.settings.get('path'), 'settings', 'environment.json'));
+		await this.settings.integrateFromFile(Node.Path.join(this.path, 'settings', 'environment.json'));
 		//this.log('app.settings', this.settings);
 	}
 

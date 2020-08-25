@@ -16,7 +16,7 @@ class XmlElement extends XmlNode {
 	constructor(tag, options, unary = false, parent = null) {
 		// XmlNode
 		// Do not pass parent into this, will use initialize to set the parent
-		super(this.children);
+		super();
 
 		// Initialize the XmlElement
 		this.initialize(tag, options, unary, parent);

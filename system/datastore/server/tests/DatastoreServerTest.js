@@ -23,7 +23,7 @@ class DatastoreServerTest extends Test {
         Assert.equal(actual, expected, 'Directly accessing the datastore through DatastoreServer');
     }
 
-    async testDatastoreServerClient() {
+    async SKIPtestDatastoreServerClient() {
         var actual = null;
         var expected = null;
 

@@ -6,7 +6,7 @@ import { Assert } from '@framework/system/test/Assert.js';
 class FfmpegTest extends Test {
 
 	//testResizeImage: function*() {
-	//	var testFilePath = Node.Path.join(app.settings.get('framework.path'), 'modules', 'media', 'tests', 'files', 'images', 'test-1.jpg');
+	//	var testFilePath = Node.Path.join(app.framework.path, 'modules', 'media', 'tests', 'files', 'images', 'test-1.jpg');
 	//	var testFile = new File(testFilePath);
 
 	//	var actual = yield FfmpegWrapper.resizeImage(testFile, 50);

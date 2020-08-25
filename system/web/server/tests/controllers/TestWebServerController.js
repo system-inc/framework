@@ -88,7 +88,7 @@ class TestWebServerController extends WebServerController {
 	}
 
 	async contentArchivedFile() {
-		var archiveFile = new ArchiveFile(Node.Path.join(app.settings.get('framework.path'), 'system', 'server', 'web', 'tests', 'views', 'files', 'archives', 'archive-text.zip'));
+		var archiveFile = new ArchiveFile(Node.Path.join(app.framework.path, 'system', 'web', 'server', 'tests', 'views', 'files', 'archives', 'archive-text.zip'));
 		//app.log('archiveFile', archiveFile);
 
 		var archivedFileSystemObjects = await archiveFile.list();
@@ -100,7 +100,7 @@ class TestWebServerController extends WebServerController {
 	}
 
 	contentFile() {
-		var file = new File(Node.Path.join(app.settings.get('framework.path'), 'system', 'server', 'web', 'tests', 'views', 'files', 'text', 'data.txt'));
+		var file = new File(Node.Path.join(app.framework.path, 'system', 'web', 'server', 'tests', 'views', 'files', 'text', 'data.txt'));
 
 		return file;
 	}
@@ -109,6 +109,7 @@ class TestWebServerController extends WebServerController {
 		var htmlDocument = new HtmlDocument();
 
 		htmlDocument.body.append(Html.p('Test HTML document.'));
+		//console.log('htmlDocument', htmlDocument.toString());
 
 		return htmlDocument;
 	}

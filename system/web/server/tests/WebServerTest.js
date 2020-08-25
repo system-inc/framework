@@ -16,7 +16,7 @@ class WebServerTest extends Test {
 	webServer = null;
 
 	async before() {
-		var webServerSettings = await File.readAndDecodeJson(app.settings.get('framework.path')+'/system/web/server/tests/settings/settings.json');
+		var webServerSettings = await File.readAndDecodeJson(app.framework.path+'/system/web/server/tests/settings/settings.json');
 
 		this.port = webServerSettings.modules.webServer.webServers[0].protocols.http.ports[0];
 
@@ -27,7 +27,7 @@ class WebServerTest extends Test {
 		webServerSettings.modules.webServer.webServers[0].verbose = false;
 
 		// Set the web server directory
-		webServerSettings.modules.webServer.webServers[0].directory = Node.Path.normalize(app.settings.get('framework.path')+'/system/web/server/tests/');
+		webServerSettings.modules.webServer.webServers[0].directory = Node.Path.normalize(app.framework.path+'/system/web/server/tests/');
 
 		this.webServer = new WebServer('test', webServerSettings.modules.webServer.webServers[0]);
 		await this.webServer.initialize();
@@ -132,9 +132,9 @@ class WebServerTest extends Test {
 
 	async testControllerRouteWithCookies() {
 		var webRequest = new WebRequest(this.baseUrl+'cookies', {});
-		//app.log('webRequest', webRequest);
+		// app.log('webRequest', webRequest);
 		var webRequestResponse = await webRequest.execute();
-		//app.info('webRequestResponse', webRequestResponse);
+		// app.info('webRequestResponse', webRequestResponse);
 
 		Assert.equal(webRequestResponse.cookies.get('testCookie1'), 'testCookie1Value', 'First "Set-Cookie" header is correct');
 		var expectedTestCookie2 = {

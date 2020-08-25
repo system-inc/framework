@@ -10,7 +10,7 @@ class WebServerTestApp extends App {
 }
 
 // Global instance
-global.app = new WebServerTestApp(__dirname);
+global.app = new WebServerTestApp(Node.Path.dirname(import.meta.url.replace('file://', '')));
 
 // Initialize
 global.app.initialize();

@@ -186,7 +186,7 @@ class HtmlElementEventTest extends ElectronHtmlTest {
 
         // An image element
         var imgElement = Html.img({
-            src: 'file://'+Node.Path.join(app.settings.get('framework.path'), 'tests', 'assets', 'media', 'images', 'poring.png'),
+            src: 'file://'+Node.Path.join(app.framework.path, 'tests', 'assets', 'media', 'images', 'poring.png'),
         });
         htmlDocument.body.append(imgElement);
 
@@ -218,7 +218,7 @@ class HtmlElementEventTest extends ElectronHtmlTest {
 
         // An image element
         var imgElement = Html.img({
-            src: 'file://'+Node.Path.join(app.settings.get('framework.path'), 'tests', 'assets', 'media', 'images', 'does-not-exist-will-cause-error.png'),
+            src: 'file://'+Node.Path.join(app.framework.path, 'tests', 'assets', 'media', 'images', 'does-not-exist-will-cause-error.png'),
         });
         htmlDocument.body.append(imgElement);
 

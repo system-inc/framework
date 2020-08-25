@@ -9,9 +9,9 @@ class FfmpegModule extends Module {
 
 	defaultSettings = {
 		executable:
-			app.onWindows() ? Node.Path.join(app.directory, 'libraries', 'ffmpeg', 'windows', 'ffmpeg.exe') :
-			app.onMacOs() ? Node.Path.join(app.directory, 'libraries', 'ffmpeg', 'macos', 'ffmpeg') :
-			app.onLinux() ? Node.Path.join(app.directory, 'libraries', 'ffmpeg', 'linux', 'ffmpeg') : null,
+			app.onWindows() ? Node.Path.join(app.path, 'libraries', 'ffmpeg', 'windows', 'ffmpeg.exe') :
+			app.onMacOs() ? Node.Path.join(app.path, 'libraries', 'ffmpeg', 'macos', 'ffmpeg') :
+			app.onLinux() ? Node.Path.join(app.path, 'libraries', 'ffmpeg', 'linux', 'ffmpeg') : null,
 	};
 	
 }

@@ -78,7 +78,7 @@ class Proctor extends EventEmitter {
 		};
 		
 		// Watch the app and framework directories
-		var watchedFileSystemObjects = await FileSystemObject.watch([app.directory, app.settings.get('framework.path')], function(fileSystemObject, currentStatus, previousStatus) {
+		var watchedFileSystemObjects = await FileSystemObject.watch([app.path, app.framework.path], function(fileSystemObject, currentStatus, previousStatus) {
 			//app.log(fileSystemObject.path, 'updated.');
 
 			if(fileSystemObject.path.endsWith('Test.js')) {
@@ -779,11 +779,11 @@ class Proctor extends EventEmitter {
 	static resolvePath(path) {
 		// If the path does not exist, we are in the default Framework tests directory
 		if(!path) {
-			path = app.settings.get('framework.path');
+			path = app.framework.path;
 		}
 		// If the path is not absolute, we are in the default Framework tests directory
 		else if(!Node.Path.isAbsolute(path)) {
-			path = Node.Path.join(app.settings.get('framework.path'), 'tests', path);
+			path = Node.Path.join(app.framework.path, 'tests', path);
 		}
 
 		return path;

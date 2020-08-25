@@ -1,15 +1,18 @@
 // Dependencies
-import { ServerController } from '@framework/system/server/ServerController.js';
+
 
 // Class
-class WebServerController extends ServerController {
+class WebServerController  {
+
+	request = null;
+	response = null;
 	
 	route = null;
 	data = null;
 
 	constructor(request, response, route) {
-		super(...arguments);
-
+		this.request = request;
+		this.response = response;		
 		this.route = route;
 		this.data = this.route.collectData(request);
 	}
@@ -19,7 +22,7 @@ class WebServerController extends ServerController {
 		//app.highlight(arguments);
 
 		// Set the directory containing the controllers folder
-		var directory = app.directory;
+		var directory = app.path;
 		if(request.webServer) {
 			directory = request.webServer.directory;
 		}
@@ -63,7 +66,7 @@ class WebServerController extends ServerController {
 		}
 
 		// Create a file to reference the view
-		var viewFile = new File(Node.Path.join(app.directory, 'views', viewPath));
+		var viewFile = new File(Node.Path.join(app.path, 'views', viewPath));
 		//app.log('viewFile', viewFile);
 
 		var viewFileExists = await viewFile.exists();

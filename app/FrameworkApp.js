@@ -52,7 +52,7 @@ class FrameworkApp extends App {
 		else {
 			// If there is no path set the path to the framework directory
 			if(!this.interfaces.commandLine.command.subcommands.proctor.options.path) {
-				this.interfaces.commandLine.command.subcommands.proctor.options.path = app.settings.get('framework.path');
+				this.interfaces.commandLine.command.subcommands.proctor.options.path = app.framework.path;
 			}
 
 			//proctor.getAndRunTests(this.interfaces.commandLine.command.subcommands.proctor.options.path, this.interfaces.commandLine.command.subcommands.proctor.options.filePattern, this.interfaces.commandLine.command.subcommands.proctor.options.methodPattern);
@@ -62,7 +62,7 @@ class FrameworkApp extends App {
 			var filePattern = this.interfaces.commandLine.command.subcommands.proctor.options.filePattern;
 			var methodPattern = this.interfaces.commandLine.command.subcommands.proctor.options.methodPattern;
 			
-			//path = Node.Path.join(app.settings.get('framework.path'), 'globals');
+			//path = Node.Path.join(app.framework.path, 'globals');
 			//filePattern = 'Command';
 			//methodPattern = '';			
 			//this.log('path', path, 'filePattern', filePattern, 'methodPattern', methodPattern);

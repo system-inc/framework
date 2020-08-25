@@ -1,6 +1,6 @@
 // Dependencies
 import { MultiprotocolServer } from '@framework/system/server/MultiprotocolServer.js';
-import { Datastore } from '@framework/system/datastore/Datastore.js';
+import { LocalSocketServer } from '@framework/system/server/protocols/local-socket/server/LocalSocketServer.js';
 
 // Class
 class DatastoreServer extends MultiprotocolServer {
@@ -18,11 +18,11 @@ class DatastoreServer extends MultiprotocolServer {
 		// This is all temporary code to figure this shit out
 
 		// Create a local socket protocol server
-		var localSocketProtocolServer = new LocalSocketProtocolServer();
-		await localSocketProtocolServer.initialize();
+		var localSocketServer = new LocalSocketServer();
+		await localSocketServer.initialize();
 
 		// When the local socket protocol server gets data
-		localSocketProtocolServer.on('data', function(event) {
+		localSocketServer.on('data', function(event) {
 			console.log('got data from server', event.data);
 		});
 
