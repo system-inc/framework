@@ -11,6 +11,10 @@ Number.prototype.toInteger = function() {
 	return Number.toInteger(this);
 };
 
+Number.prototype.addCommas = function() {
+	return Number.addCommas(this);
+};
+
 // Static methods
 
 Number.is = function(value) {

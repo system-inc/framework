@@ -345,6 +345,21 @@ class ArrayTest extends Test {
 		Assert.equal(string, '0a1b2c', 'index and element are passed in the correct order');
 	}
 
+	testEachDescending() {
+		var array = [
+			'a',
+			'b',
+			'c',
+		];
+
+		var string = '';
+		array.each(function(index, element) {
+			string += index+element;
+		}, 'descending');
+
+		Assert.equal(string, '2c1b0a', 'index and element are passed in the correct order');
+	}
+
 	async testEachWithGenerator() {
 		var array = [
 			'a',

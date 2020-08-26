@@ -98,12 +98,22 @@ class Proctor extends EventEmitter {
 					app.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
 				}
 				else {
-					// Spawn the child process
-				    var nodeChildProcess = exports.child = Node.ChildProcess.spawn('node', ['--harmony', Node.Path.join('tests', 'app.js'), '-f', activeTest.class], {
-				    	stdio: 'inherit',
-				    });
+					// Spawn the child process, which runes framework/app/FrameworkApp.js and sends in the arguments test --filePattern class
+					var childProcessArguments = [
+						'test',
+						'--filePattern',
+						activeTest.class,
+					];
+					//console.log('childProcessArguments', childProcessArguments);
+				    var childProcess = Node.ChildProcess.spawn(
+						Node.Path.join(app.framework.path, 'app/scripts/run.sh'), // Can use either framework/app/index.js or the framework/app/scripts/run.sh script
+						childProcessArguments,
+						{
+				    		stdio: 'inherit',
+						},
+					);
 
-					nodeChildProcess.on('close', function(code) {
+					childProcess.on('close', function(code) {
 						app.log(Terminal.style(AsciiArt.weapons.swords.samurai.pointingLeft, 'blue'));
 						app.log('Tests finished. Child process exited with code '+code+'. Will run tests on next file update...'+String.newline);
 					});
@@ -112,7 +122,7 @@ class Proctor extends EventEmitter {
 		});
 
 		// Tell the user how many objects we are watching
-		app.log('Watching', watchedFileSystemObjects.length, 'file system objects for updates...');
+		app.log('Watching', watchedFileSystemObjects.length.addCommas(), 'file system objects for updates...');
 	}
 
 	async getAndRunTests(path, filePattern, methodPattern) {
