@@ -5,7 +5,7 @@ import { Version } from '@framework/system/version/Version.js';
 // Class
 class FfmpegModule extends Module {
 
-	version = new Version('0.1.0');
+	version = new Version('1.0.0');
 
 	defaultSettings = {
 		executable:

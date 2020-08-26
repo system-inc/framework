@@ -20,8 +20,8 @@
 var Transpiler = {};
 
 // Static methods
-Transpiler.execute = function(appFile, appDirectory, directoryContainingFramework) {
-	//console.log('appFile', appFile, 'appDirectory', appDirectory, 'directoryContainingFramework', directoryContainingFramework);
+Transpiler.execute = function(appFile, appPath, frameworkPath) {
+	//console.log('appFile', appFile, 'appPath', appPath, 'frameworkPath', frameworkPath);
 
 	// Use Node's Path class
 	var Path = require('path');
@@ -30,16 +30,16 @@ Transpiler.execute = function(appFile, appDirectory, directoryContainingFramewor
 	var Require = require('./node/Require.js');
 
 	// Make import and require statements check the app directory
-	Require.addRequirePath(appDirectory);
+	Require.addRequirePath(appPath);
 
 	// Make import and require statements check the directory containing Framework
-	Require.addRequirePath(directoryContainingFramework);
+	Require.addRequirePath(frameworkPath);
 
 	// Make import and require statements check the app's library directory
-	Require.addRequirePath(Path.join(appDirectory, 'libraries/')); // Make require() check the libraries directory
+	Require.addRequirePath(Path.join(appPath, 'libraries/')); // Make require() check the libraries directory
 
 	// Make import and require statements check the Framework's node_modules directory
-	Require.addRequirePath(Path.join(directoryContainingFramework, 'framework/node_modules/'));
+	Require.addRequirePath(Path.join(frameworkPath, 'framework/node_modules/'));
 
 	// Disable the Babel cache for debugging
 	//process.env.BABEL_DISABLE_CACHE = 1;

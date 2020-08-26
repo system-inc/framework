@@ -13,11 +13,11 @@ class ElectronModule extends Module {
 
 	firstBrowserWindow = null;
 
-	version = new Version('0.1.0');
+	version = new Version('1.0.0');
 
 	defaultSettings = {
 		automaticallyStartElectronIfNotInElectronContext: true,
-		pathToStartingJavaScriptFile: app.script,
+		appScriptPath: app.script,
 		quitWhenAllWindowsClosedOnMacOs: false,
 	};
 
@@ -51,8 +51,8 @@ class ElectronModule extends Module {
 		}
 	}
 
-	async getPathToElectronExecutable() {
-		var pathToElectronExecutable = null;
+	async getElectronExecutablePath() {
+		var electronExecutablePath = null;
 
 		// Get the electron
 		var nodeModuleLookupPaths = Node.Module._resolveLookupPaths('electron')[1];
@@ -63,7 +63,7 @@ class ElectronModule extends Module {
 
 		//app.log('nodeModuleLookupPaths', nodeModuleLookupPaths);
 
-		var pathToElectronModule = null;
+		var electronModulePath = null;
 
 		await nodeModuleLookupPaths.each(async function(index, lookupPath) {
 			var reformedLookupPath = lookupPath;
@@ -79,62 +79,66 @@ class ElectronModule extends Module {
 			reformedLookupPath = Node.Path.join(reformedLookupPath, 'electron');
 
 			if(await Directory.exists(reformedLookupPath)) {
-				pathToElectronModule = reformedLookupPath;
+				electronModulePath = reformedLookupPath;
 				return false; // break
 			}
 		});
 
-		//app.info('pathToElectronModule', pathToElectronModule);
+		//app.info('electronModulePath', electronModulePath);
 
-		if(pathToElectronModule) {
-			pathToElectronExecutable = await import(pathToElectronModule);
-			//app.log('pathToElectronExecutable', pathToElectronExecutable);
+		if(electronModulePath) {
+			electronExecutablePath = await import(electronModulePath);
+			//app.log('electronExecutablePath', electronExecutablePath);
 		}
 
 		// Check for Windows Subsystem for Linux
-		if(!pathToElectronExecutable) {
+		if(!electronExecutablePath) {
 			if(await Directory.exists('/mnt/c/Program Files/Electron/')) {
-				pathToElectronExecutable = '/mnt/c/Program Files/Electron/electron.exe';	
+				electronExecutablePath = '/mnt/c/Program Files/Electron/electron.exe';	
 			}
 		}
 
 		// Just use electron as the default if we don't have anything
-		if(!pathToElectronExecutable) {
-			pathToElectronExecutable = 'electron';
+		if(!electronExecutablePath) {
+			electronExecutablePath = 'electron';
 		}
 
-		return pathToElectronExecutable;
+		return electronExecutablePath;
 	}
 
 	async startElectron() {
 		//console.log('ElectronModule', 'startElectron');
 
 		// Get the path to the Electron executable
-		var pathToElectronExecutable = await this.getPathToElectronExecutable();
-		app.log('pathToElectronExecutable', pathToElectronExecutable);
+		var electronExecutablePath = await this.getElectronExecutablePath();
+		app.log('electronExecutablePath', electronExecutablePath);
 
 		// Get the path to the Electron starting JavaScript file from settings
-		var pathToStartingJavaScriptFile = this.settings.get('pathToStartingJavaScriptFile');
+		var appScriptPath = this.settings.get('appScriptPath');
 		
 		// Check for Windows Subsystem for Linux
-		if(pathToStartingJavaScriptFile.startsWith('/mnt/c/')) {
-			pathToStartingJavaScriptFile = pathToStartingJavaScriptFile.replaceFirst('/mnt/c/', 'c:/');
+		if(appScriptPath.startsWith('/mnt/c/')) {
+			appScriptPath = appScriptPath.replaceFirst('/mnt/c/', 'c:/');
 		}
 
-		app.log('pathToStartingJavaScriptFile', pathToStartingJavaScriptFile);
+		app.log('appScriptPath', appScriptPath);
 
 		// Pass arguments from node to the Electron main process
-		var electronMainProcessArguments = ['--js-flags=--harmony', pathToStartingJavaScriptFile];
+		var electronMainProcessArguments = [
+			'--js-flags=--experimental-loader '+Node.Path.join(app.framework.path, 'globals/node/ModuleLoader.js'),
+			//appScriptPath,
+			'index.cjs',
+		];
 		electronMainProcessArguments.merge(Node.Process.argv.slice(2));
 		console.log('Node.Process.argv', Node.Process.argv);
 		console.log('electronMainProcessArguments', electronMainProcessArguments);
-		Node.exit();
+		//Node.exit();
 
 		// Run Electron as a child process, providing a .js file runs the file in the Electron main process, providing a .html file runs it in a renderer process
 		// We want to run in the main process to take advantage of shared standard streams, so we provide a .js file by default
-		//console.log('pathToElectronExecutable', pathToElectronExecutable);
+		//console.log('electronExecutablePath', electronExecutablePath);
 		//console.log('electronMainProcessArguments', electronMainProcessArguments);
-		var childProcessElectronMainProcess = Node.spawnChildProcess(pathToElectronExecutable, electronMainProcessArguments, {});
+		var childProcessElectronMainProcess = Node.spawnChildProcess(electronExecutablePath, electronMainProcessArguments, {});
 
 		// The parent process I am in now exists to just to as a bridge for standard streams to the child process which is the Electron main process
 
@@ -242,12 +246,12 @@ class ElectronModule extends Module {
 	}
 
 	async createFirstBrowserWindow() {
-		var pathToStartingJavaScriptFile = this.settings.get('pathToStartingJavaScriptFile');
-		//console.log('Creating first Electron BrowserWindow', 'pathToStartingJavaScriptFile', pathToStartingJavaScriptFile);
+		var appScriptPath = this.settings.get('appScriptPath');
+		//console.log('Creating first Electron BrowserWindow', 'appScriptPath', appScriptPath);
 
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
 		this.firstBrowserWindow = await this.newBrowserWindow({
-			path: pathToStartingJavaScriptFile,
+			path: appScriptPath,
 		});
 
 		// When graphical interface is closed
@@ -338,16 +342,17 @@ class ElectronModule extends Module {
 		// Create a JavaScript string to start the app, this is the same as index.js in framework/app/index.js
 		var transpilerPath = Node.Path.join(app.framework.path.toString(), 'globals', 'Transpiler.js');
 		//app.log('transpilerPath', transpilerPath);
-		var directoryContainingFramework = Node.Path.join(app.framework.path.toString(), '../');
-		//app.log('directoryContainingFramework', directoryContainingFramework);
+		var frameworkPath = Node.Path.join(app.framework.path.toString(), '../');
+		//app.log('frameworkPath', frameworkPath);
 
 		// Escape backslashes
 		path = path.replace('\\', '\\\\');
 		transpilerPath = transpilerPath.replace('\\', '\\\\');
-		directoryContainingFramework = directoryContainingFramework.replace('\\', '\\\\');
+		frameworkPath = frameworkPath.replace('\\', '\\\\');
 
 		// The script string
-		var script = "require('"+transpilerPath+"').execute('"+path+"', __dirname, '"+directoryContainingFramework+"');";
+		var script = 'console.log("hi");';
+		//var script = "require('"+transpilerPath+"').execute('"+path+"', __dirname, '"+frameworkPath+"');";
 		//app.log('script', script);
 
 		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';

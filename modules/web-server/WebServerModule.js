@@ -7,7 +7,7 @@ import { Settings } from '@framework/system/settings/Settings.js';
 // Class
 class WebServerModule extends Module {
 
-	version = new Version('0.1.0');
+	version = new Version('1.0.0');
 
 	webServers = {};
 
