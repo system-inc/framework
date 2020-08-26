@@ -36,31 +36,16 @@ class XmlElement extends XmlNode {
 		if(options !== null) {
 			//app.log('XmlElement initialize options', options);
 
-			// Options may be a string (or any primitive) or XmlNodes which will be appended
-			if(Primitive.is(options) || XmlNode.is(options)) {
+			// Options may be a string (or any primitive), an XmlNode which will be appended, or an array of primitives or XmlNodes
+			if(Primitive.is(options) || XmlNode.is(options) || Array.is(options)) {
 				this.append(options);
-			}
-			// Options may be an array of primitives or XmlNodes which will be appended
-			else if(Array.is(options)) {
-				options.each(function(primitiveOrXmlNodeIndex, primitiveOrXmlNode) {
-					this.append(primitiveOrXmlNode);
-				}.bind(this));
 			}
 			// Options may be an object with content or children, or attributes
 			else {
 				options.each(function(optionName, optionValue) {
 					// Handle content/children
 					if(optionName == 'content' || optionName == 'children') {
-						// Allow arrays of children
-						if(Array.is(optionValue)) {
-							optionValue.each(function(primitiveOrXmlNodeIndex, primitiveOrXmlNode) {
-								this.append(primitiveOrXmlNode);
-							}.bind(this));
-						}
-						// A single child
-						else {
-							this.append(optionValue);
-						}
+						this.append(optionValue);
 					}
 					// All other option keys and values are attributes
 					else {
@@ -87,24 +72,33 @@ class XmlElement extends XmlNode {
 		}.bind(this));
 	}
 
-	prepend(primitiveOrXmlNode) {
-		return this.addChild(primitiveOrXmlNode, 'prepend');
+	prepend(primitiveOrXmlNodeOrArray) {
+		return this.addChild(primitiveOrXmlNodeOrArray, 'prepend');
 	}
 
-	append(primitiveOrXmlNode) {
-		return this.addChild(primitiveOrXmlNode, 'append');
+	append(primitiveOrXmlNodeOrArray) {
+		return this.addChild(primitiveOrXmlNodeOrArray, 'append');
 	}
 
-	addChild(primitiveOrXmlNode, arrayMethod = 'append') {
+	addChild(primitiveOrXmlNodeOrArray, arrayMethod = 'append') {
+		// Handle arrays or primitives or XmlNodes
+		if(Array.is(primitiveOrXmlNodeOrArray)) {
+			primitiveOrXmlNodeOrArray.each(function(index, primitiveOrXmlNode) {
+				this.addChild(primitiveOrXmlNode, arrayMethod);
+			}.bind(this), (arrayMethod == 'prepend' ? 'descending' : arrayMethod)); // If prepending descend through the array
+
+			return this;
+		}
+
 		var xmlNode = null;
 
 		// If the child is an XmlNode (or XmlElement)
-		if(XmlNode.is(primitiveOrXmlNode)) {
-			xmlNode = primitiveOrXmlNode;
+		if(XmlNode.is(primitiveOrXmlNodeOrArray)) {
+			xmlNode = primitiveOrXmlNodeOrArray;
 		}
 		// Content is allowed to be a primitive such a string or a number, convert it into an XmlNode
 		else {
-			xmlNode = XmlNode.makeXmlNode(primitiveOrXmlNode);
+			xmlNode = XmlNode.makeXmlNode(primitiveOrXmlNodeOrArray);
 		}
 
 		// Throw an error if the child already has a parent

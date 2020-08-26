@@ -39,7 +39,7 @@ class NavigationViewController extends ViewController {
         this.navigationView = new NavigationView();
 
         // Catch all link clicks for the single page app
-        console.log('move this somewhere else - to the adapter?');
+        console.log('move this document click binding somewhere else - to the adapter?');
         document.body.addEventListener('click', function(event) {
             //event.preventDefault();
 
@@ -71,7 +71,7 @@ class NavigationViewController extends ViewController {
         }.bind(this));
 
         // Handle state changes
-        console.log('move this somewhere else - to the adapter?');
+        console.log('move window.onpop state somewhere else - to the adapter?');
         window.onpopstate = function(event) {
             this.stateChange(event);
         }.bind(this);

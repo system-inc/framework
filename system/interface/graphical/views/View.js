@@ -25,31 +25,16 @@ class View extends PrimitiveView {
 		if(options !== null) {
 			//app.log('View constructor options', options);
 
-			// Options may be a string (or any primitive) or PrimitiveViews which will be appended
-			if(Primitive.is(options) || PrimitiveView.is(options)) {
+			// Options may be a string (or any primitive), a PrimitiveViews which will be appended, or an array of primitives or PrimitiveViews
+			if(Primitive.is(options) || PrimitiveView.is(options) || Array.is(options)) {
 				this.append(options);
-			}
-			// Options may be an array of primitives or PrimitiveViews which will be appended
-			else if(Array.is(options)) {
-				options.each(function(primitiveOrPrimitiveViewIndex, primitiveOrPrimitiveView) {
-					this.append(primitiveOrPrimitiveView);
-				}.bind(this));
 			}
 			// Options may be an object with content or children, or attributes
 			else {
 				options.each(function(optionName, optionValue) {
 					// Handle content/children
 					if(optionName == 'content' || optionName == 'children') {
-						// Allow arrays of children
-						if(Array.is(optionValue)) {
-							optionValue.each(function(primitiveOrPrimitiveViewIndex, primitiveOrPrimitiveView) {
-								this.append(primitiveOrPrimitiveView);
-							}.bind(this));
-						}
-						// A single child
-						else {
-							this.append(optionValue);
-						}
+						this.append(optionValue);
 					}
 					// All other option keys and values are attributes
 					else {
@@ -90,21 +75,30 @@ class View extends PrimitiveView {
 	append = XmlElement.prototype.append;
 
 	// See HtmlElement .addChild() and XmlElement .addChild()
-	addChild(primitiveOrPrimitiveView, arrayMethod = 'append') {
+	addChild(primitiveOrPrimitiveViewOrArray, arrayMethod = 'append') {
+		// Handle arrays or primitives or PrimitiveViews
+		if(Array.is(primitiveOrPrimitiveViewOrArray)) {
+			primitiveOrPrimitiveViewOrArray.each(function(index, primitiveOrPrimitiveView) {
+				this.addChild(primitiveOrPrimitiveView, arrayMethod);
+			}.bind(this), (arrayMethod == 'prepend' ? 'descending' : arrayMethod)); // If prepending descend through the array
+
+			return this;
+		}
+
 		// Do not allow view controllers to be appended to views
-		if(ViewController.is(primitiveOrPrimitiveView)) {
+		if(ViewController.is(primitiveOrPrimitiveViewOrArray)) {
 			throw new Error('ViewControllers may not be appended to Views. You can however append ViewControllers to other ViewControllers and child ViewController\'s view will be appended to the parent\'s view.');
 		}
 
 		var primitiveView = null;
 
 		// If the child is a PrimitiveView (or View)
-		if(PrimitiveView.is(primitiveOrPrimitiveView)) {
-			primitiveView = primitiveOrPrimitiveView;
+		if(PrimitiveView.is(primitiveOrPrimitiveViewOrArray)) {
+			primitiveView = primitiveOrPrimitiveViewOrArray;
 		}
 		// Content is allowed to be a primitive such a string or a number, convert it into a PrimitiveView
 		else {
-			primitiveView = new PrimitiveView(primitiveOrPrimitiveView);
+			primitiveView = new PrimitiveView(primitiveOrPrimitiveViewOrArray);
 		}
 
 		// Throw an error if the child already has a parent

@@ -51,16 +51,25 @@ class HtmlElement extends HtmlNode {
 	append = XmlElement.prototype.append;
 
 	// See XmlElement .addChild()
-	addChild(primitiveOrHtmlNode, arrayMethod = 'append') {
+	addChild(primitiveOrHtmlNodeOrArray, arrayMethod = 'append') {
+		// Handle arrays
+		if(Array.is(primitiveOrHtmlNodeOrArray)) {
+			primitiveOrHtmlNodeOrArray.each(function(index, primitiveOrHtmlNode) {
+				this.addChild(primitiveOrHtmlNode, arrayMethod);
+			}.bind(this), (arrayMethod == 'prepend' ? 'descending' : arrayMethod)); // If prepending descend through the array
+
+			return this;
+		}
+
 		var htmlNode = null;
 
 		// If the child is an HtmlNode (or HtmlElement)
-		if(HtmlNode.is(primitiveOrHtmlNode)) {
-			htmlNode = primitiveOrHtmlNode;
+		if(HtmlNode.is(primitiveOrHtmlNodeOrArray)) {
+			htmlNode = primitiveOrHtmlNodeOrArray;
 		}
 		// Content is allowed to be a primitive such a string or a number, convert it into an HtmlNode
 		else {
-			htmlNode = HtmlNode.makeHtmlNode(primitiveOrHtmlNode);
+			htmlNode = HtmlNode.makeHtmlNode(primitiveOrHtmlNodeOrArray);
 		}
 
 		// Throw an error if the child already has a parent

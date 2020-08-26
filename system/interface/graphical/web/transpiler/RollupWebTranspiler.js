@@ -10,30 +10,35 @@ import EsTreeWalker from 'estree-walker';
 class RollupWebTranspiler {
 
     frameworkClassesToStripMethodsFrom = {
-        'framework/system/app/App.js': {
-            'initializeNodeEnvironmentSettings': true,
-            'initializeNodeEnvironment': true,
-            'initializeProcess': true,
-            'configureStandardStreams': true,
-            'configureStandardStreamsFileLog': true,
-            'configureCommandLineInterface': true,
-            'configureInteractiveCommandLineInterface': true,
-            'importAndInitializeModules': true,
-            'initializeMainProcessEnvironment': true,
-            'initializeChildProcessEnvironment': true,
-            'getUserPath': true,
-            'getUserDesktopPath': true,
-        },
-        'framework/system/settings/Settings.js': {
-            'integrateFromFile': true,
-            'constructFromFile': true,
-        },
+        'framework/globals/standard/errors/Error.js': [
+            'prepareStackTrace',
+        ],
+        'framework/system/app/App.js': [
+            'initializeNodeEnvironmentSettings',
+            'initializeNodeEnvironment',
+            'initializeProcess',
+            'configureStandardStreams',
+            'configureStandardStreamsFileLog',
+            'configureCommandLineInterface',
+            'configureInteractiveCommandLineInterface',
+            'importAndInitializeModules',
+            'initializeMainProcessEnvironment',
+            'initializeChildProcessEnvironment',
+            'getUserPath',
+            'getUserDesktopPath',
+        ],
+        'framework/system/settings/Settings.js': [
+            'integrateFromFile',
+            'constructFromFile',
+        ],
     };
 
     // External modules which will not be included
     importSpecifiersToIgnore = [
         // Framework
         '@framework/globals/NodeGlobals.js',
+        '@framework/globals/standard/errors/StackTrace.js',
+        //'source-map-support', // Used for stack traces at framework/globals/standard/errors/CallSite.js
 
         // Firebase
         'source-map-support/register', // Used for source maps for Firebase Functions
@@ -270,7 +275,7 @@ class RollupWebTranspiler {
                                 magicString.addSourcemapLocation(node.end);
                             }
                             
-                            //console.log('node.type', node.type);
+                            //console.log('node.type', node.type, 'node.key.name', node.key);
                             
                             // Remove Node specific ClassMethods
                             if(node.type === 'MethodDefinition') {
@@ -278,8 +283,23 @@ class RollupWebTranspiler {
                                 //console.log('MethodDefinition', node.key.name);
                                 
                                 // If we should remove the method definition
-                                if(methodName !== 'constructor' && rollupWebTranspilerContext.frameworkClassesToStripMethodsFrom[currentFrameworkClassToStripMethodsFrom][methodName]) {
+                                if(
+                                    methodName !== 'constructor' &&
+                                    methodName !== 'toString' &&
+                                    rollupWebTranspilerContext.frameworkClassesToStripMethodsFrom[currentFrameworkClassToStripMethodsFrom].includes(methodName)) {
                                     //console.log('Removing method definition', methodName, 'from', id);
+                                    removeMethodDefinition(node);
+                                    this.skip();
+                                }
+                            }
+                            // Catch assignments outside of classes, such as Error.prepareStackTrace = function()
+                            else if(node.type === 'ExpressionStatement') {
+                                if(
+                                    node.expression.type == 'AssignmentExpression' &&
+                                    node.expression.left.type == 'MemberExpression' &&
+                                    rollupWebTranspilerContext.frameworkClassesToStripMethodsFrom[currentFrameworkClassToStripMethodsFrom].includes(node.expression.left.property.name)
+                                ) {
+                                    //console.log('Removing method definition', node.expression.left.property.name, 'from', id);
                                     removeMethodDefinition(node);
                                     this.skip();
                                 }
@@ -322,6 +342,24 @@ class RollupWebTranspiler {
         };
     }
 
+    onRollupWarning(warning, warn) {
+        var skipRollupWarning = false;
+
+        // Skip eval warnings on Json.js
+        if(warning.code === 'EVAL' && warning.id.endsWith('Json.js')) {
+            skipRollupWarning = true;
+        }
+        // Skip warnings on imports which we know we don't want to use
+        else if(warning.code === 'UNUSED_EXTERNAL_IMPORT' && this.importSpecifiersToIgnore.includes(warning.source)) {
+            skipRollupWarning = true;            
+        }
+    
+        // Use default for everything else
+        if(!skipRollupWarning) {
+            warn(warning);
+        }
+    }
+
     getRollupConfiguration(commandLineArguments) {
         // console.log('commandLineArguments', commandLineArguments);
         // process.exit();
@@ -360,20 +398,10 @@ class RollupWebTranspiler {
             },
             external: this.importSpecifiersToIgnore,
             plugins: plugins,
-            onwarn: RollupWebTranspiler.onRollupWarning,
+            onwarn: this.onRollupWarning.bind(this),
         };
 
         return rollupConfiguration;
-    }
-
-    static onRollupWarning(warning, warn) {
-        // Skip eval warnings
-        if(warning.code === 'EVAL') {
-            return;
-        }
-    
-        // Use default for everything else
-        warn(warning);
     }
 
 }
