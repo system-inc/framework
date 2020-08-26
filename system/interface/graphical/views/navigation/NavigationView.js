@@ -12,8 +12,6 @@ class NavigationView extends View {
         super();
 
         this.linkListView = new LinkListView();
-        this.linkListView.addItem('Home', '/');
-        this.linkListView.addItem('About', '/about/');
 
         this.append(this.linkListView);
 

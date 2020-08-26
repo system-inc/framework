@@ -99,6 +99,14 @@ class HtmlEventProxy {
 			},
 		},
 
+		// animation.*
+		transitioned: {
+			eventClass: HtmlElementEvent,
+			eventPatterns: {
+				'animation.transitioned': true,
+			},
+		},
+
 		// clipboard.*
 		copy: {
 			eventClass: ClipboardEvent,
@@ -262,8 +270,6 @@ class HtmlEventProxy {
 	static htmlEventPatternToDomEventIdentifiers(htmlEventPattern) {
 		var domEventIdentifiers = [];
 
-		//app.log('HtmlEventProxy.htmlEventPatternToDomEventIdentifiers', htmlEventPattern);
-
 		HtmlEventProxy.domEventIdentifierMap.each(function(domEventIdentifier, domEventIdentifierObject) {
 			domEventIdentifierObject.eventPatterns.each(function(eventPattern) {
 				if(WildcardPatternMatcher.match(htmlEventPattern, eventPattern)) {
@@ -274,6 +280,7 @@ class HtmlEventProxy {
 
 		// Get rid of duplicates
 		domEventIdentifiers = domEventIdentifiers.unique();
+		//app.log('HtmlEventProxy.htmlEventPatternToDomEventIdentifiers', htmlEventPattern, domEventIdentifiers);
 
 		return domEventIdentifiers;
 	}
