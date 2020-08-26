@@ -1,5 +1,6 @@
 // Dependencies
 import { EventEmitter } from '@framework/system/event/EventEmitter.js';
+import { AssertionError } from '@framework/system/test/errors/AssertionError.js';
 
 // Class
 class Assert extends Node.Assert {
@@ -10,13 +11,21 @@ class Assert extends Node.Assert {
 		//console.log('actual', actual, 'expected', expected, 'message', message, 'operator', operator, 'startingStackFunction', startingStackFunction);
 		var failMessage = message+' '+actual+' '+operator+' '+expected;
 
-		return Node.Assert.fail(failMessage);
+		var assertionError = new AssertionError({
+			message: failMessage,
+			actual: actual,
+			expected: expected,
+			operator: operator,
+			stackStartFn: startingStackFunction,
+		});
+
+		throw assertionError;
 	}
 
 	static true(value, message) {
 		try {
 			if(!value) {
-				Assert.fail(value, 'truthy', message, '==');
+				Assert.fail(value, 'truthy', message, '==', Assert.true);
 			}
 
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -40,7 +49,7 @@ class Assert extends Node.Assert {
 	static false(value, message) {
 		try {
 			if(value) {
-				Assert.fail(value, 'falsey', message, '==');
+				Assert.fail(value, 'falsey', message, '==', Assert.false);
 			}
 
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -64,7 +73,7 @@ class Assert extends Node.Assert {
 	static equal(actual, expected, message) {
 		try {
 			if(actual != expected) {
-				Assert.fail(actual, expected, message, '==');
+				Assert.fail(actual, expected, message, '==', Assert.equal);
 			}
 			
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -88,7 +97,7 @@ class Assert extends Node.Assert {
 	static notEqual(actual, expected, message) {
 		try {
 			if(actual == expected) {
-				Assert.fail(actual, expected, message, '!=');
+				Assert.fail(actual, expected, message, '!=', Assert.notEqual);
 			}
 			
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -225,7 +234,7 @@ class Assert extends Node.Assert {
 	static deepEqual(actual, expected, message) {
 		try {
 			if(!Assert.isDeepEqual(actual, expected)) {
-				Assert.fail(actual, expected, message, 'deepEqual');
+				Assert.fail(actual, expected, message, 'deepEqual', Assert.deepEqual);
 			}
 			
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -249,7 +258,7 @@ class Assert extends Node.Assert {
 	static notDeepEqual(actual, expected, message) {
 		try {
 			if(Assert.isDeepEqual(actual, expected)) {
-				Assert.fail(actual, expected, message, 'notDeepEqual');
+				Assert.fail(actual, expected, message, 'notDeepEqual', Assert.notDeepEqual);
 			}
 			
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -273,7 +282,7 @@ class Assert extends Node.Assert {
 	static strictEqual(actual, expected, message) {
 		try {
 			if(actual !== expected) {
-				Assert.fail(actual, expected, message, '===');
+				Assert.fail(actual, expected, message, '===', Assert.strictEqual);
 			}
 			
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -297,7 +306,7 @@ class Assert extends Node.Assert {
 	static notStrictEqual(actual, expected, message) {
 		try {
 			if(actual === expected) {
-				Assert.fail(actual, expected, message, '!==');
+				Assert.fail(actual, expected, message, '!==', Assert.notStrictEqual);
 			}
 			
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -321,7 +330,7 @@ class Assert extends Node.Assert {
 	static greaterThan(actual, minimum, message) {
 		try {
 			if(actual <= minimum) {
-				Assert.fail(actual, minimum, message, '>');
+				Assert.fail(actual, minimum, message, '>', Assert.greaterThan);
 			}
 			
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -345,7 +354,7 @@ class Assert extends Node.Assert {
 	static greaterThanOrEqualTo(actual, minimum, message) {
 		try {
 			if(actual < minimum) {
-				Assert.fail(actual, minimum, message, '>=');
+				Assert.fail(actual, minimum, message, '>=', Assert.greaterThanOrEqualTo);
 			}
 			
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -369,7 +378,7 @@ class Assert extends Node.Assert {
 	static lessThan(actual, maximum, message) {
 		try {
 			if(actual >= maximum) {
-				Assert.fail(actual, maximum, message, '<');
+				Assert.fail(actual, maximum, message, '<', Assert.lessThan);
 			}
 			
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -393,7 +402,7 @@ class Assert extends Node.Assert {
 	static lessThanOrEqualTo(actual, maximum, message) {
 		try {
 			if(actual > maximum) {
-				Assert.fail(actual, maximum, message, '<=');
+				Assert.fail(actual, maximum, message, '<=', Assert.lessThanOrEqualTo);
 			}
 			
 			Assert.eventEmitter.emit('Assert.finished', {
@@ -432,11 +441,11 @@ class Assert extends Node.Assert {
 		message = (expected && expected.name ? ' (' + expected.name + ').' : '.') + (message ? ' ' + message : '.');
 
 		if(shouldThrow && !actual) {
-			Assert.fail(actual, expected, 'Missing expected exception' + message);
+			Assert.fail(actual, expected, 'Missing expected exception' + message, Assert.doesThrow);
 		}
 
 		if(!shouldThrow && Assert.expectedError(actual, expected)) {
-			Assert.fail(actual, expected, 'Got unwanted exception' + message);
+			Assert.fail(actual, expected, 'Got unwanted exception' + message, Assert.doesThrow);
 		}
 
 		if((shouldThrow && actual && expected && !Assert.expectedError(actual, expected)) || (!shouldThrow && actual)) {
@@ -512,15 +521,15 @@ class Assert extends Node.Assert {
 
 					// Failure case - if we should not throw but there is an error
 					if(!shouldThrow && error) {
-						Assert.fail('Thrown error', 'should not throw', message, 'when');
+						Assert.fail('Thrown error', 'should not throw', message, 'when', Assert.doesThrowAsynchronously);
 					}
 					// Failure case - if we should throw but there was no error
 					else if(shouldThrow && !error) {
-						Assert.fail('No thrown error', 'should throw', message, 'when');
+						Assert.fail('No thrown error', 'should throw', message, 'when', Assert.doesThrowAsynchronously);
 					}
 					// Failure case - if we should throw and got an error but the expected exception does not match
 					else if(shouldThrow && error &&  expectedError && !Assert.expectedError(error, expectedError)) {
-						Assert.fail('Thrown error', 'thrown error', message, 'does not match the expected');
+						Assert.fail('Thrown error', 'thrown error', message, 'does not match the expected', Assert.doesThrowAsynchronously);
 					}
 					// Success case
 					else {

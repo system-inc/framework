@@ -156,16 +156,22 @@ class TestReporter {
 				if(!errorIdentifier) {
 					errorIdentifier = Json.encode(failedTest.error);
 				}
-				app.standardStreams.output.writeLine("\n"+'('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+errorIdentifier);	
+				app.standardStreams.output.writeLine("\n"+Terminal.style('('+(index + 1)+') '+ failedTest.test.name+'.'+failedTest.method+'() threw '+errorIdentifier, 'bold'));	
 
 				// Show the location of the failed test
 				if(Error.is(failedTest.error)) {
 					var firstCallSiteData = failedTest.error.stack.getCallSite(0);
-					app.standardStreams.output.writeLine(Terminal.style('    ('+firstCallSiteData.file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));	
+
+					// Format the file name
+					var filePath = firstCallSiteData.file.replace('file://', '');
+					var filePath = filePath.replace(app.framework.path, 'framework');
+					var file = Node.Path.basename(filePath);
+
+					app.standardStreams.output.writeLine('    '+file+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+' '+Terminal.style('('+filePath+':'+firstCallSiteData.lineNumber+':'+firstCallSiteData.columnNumber+')', 'gray'));
 				}
 				else {
 					app.standardStreams.output.writeLine(Terminal.style('    (unknown location)', 'gray'));
-				}				
+				}
 
 				// If we have AssertionError data (Node's AssertionError has the properties 'actual', 'operator', and 'expected')
 				if(Class.isInstance(failedTest.error, AssertionError)) {
