@@ -11,6 +11,9 @@ class CarouselView extends View {
 
     controlsContainerView = null;
     controlsView = null;
+    previousButtonView = null;
+    saveButtonView = null;
+    nextButtonView = null;
 
     currentIndex = 0;
 
@@ -26,6 +29,9 @@ class CarouselView extends View {
 
         // Create the controls view
         this.createControlsContainerView();
+
+        // Create keyboard controls
+        this.createKeyboardControls();
     }
 
     createItemViewsContainerView(viewsForItemViews) {
@@ -51,27 +57,47 @@ class CarouselView extends View {
         this.controlsContainerView.append(this.controlsView);
         
         // Previous
-        var previousButtonView = new View('Previous').addClass('button previous');
-        previousButtonView.on('input.press', function() {
+        this.previousButtonView = new View('⬅').addClass('button previous');
+        this.previousButtonView.on('input.press', function() {
             this.previous();
         }.bind(this));
-        this.controlsView.append(previousButtonView);
+        this.controlsView.append(this.previousButtonView);
 
         // Save
-        var saveButtonView = new View('Save').addClass('button save');
-        saveButtonView.on('input.press', function() {
-            console.log('save!');
+        this.saveButtonView = new View('♡').addClass('button save');
+        this.saveButtonView.on('input.press', function() {
+            this.save();
         }.bind(this));
-        this.controlsView.append(saveButtonView);
+        this.controlsView.append(this.saveButtonView);
 
         // Next
-        var nextButtonView = new View('Next').addClass('button next');
-        nextButtonView.on('input.press', function() {
+        this.nextButtonView = new View('⮕').addClass('button next');
+        this.nextButtonView.on('input.press', function() {
             this.next();
         }.bind(this));
-        this.controlsView.append(nextButtonView);
+        this.controlsView.append(this.nextButtonView);
 
         this.append(this.controlsContainerView);
+    }
+
+    createKeyboardControls() {
+        // Add keyboard controls
+        this.setAttribute('tabindex', '0'); // This is required to make divs emit key events
+
+        this.on('input.key.left', function(event) {
+            this.previous();
+        }.bind(this));
+
+        this.on('input.key.right', function(event) {
+            this.next();
+        }.bind(this));
+
+        this.on('input.key.up', function(event) {
+            this.save();
+        }.bind(this));
+
+        // Focus on the element for keyboard events
+        this.focus();
     }
     
     showCurrentItem() {
@@ -83,6 +109,12 @@ class CarouselView extends View {
     }
 
     previous() {
+        this.saveButtonView.removeClass('active');
+
+        this.previousButtonView.addClass('activated');
+        Function.delay(62, function() {
+            this.previousButtonView.removeClass('activated');
+        }.bind(this));
         console.log('Carousel previous!');
 
         // Increment the current index
@@ -97,6 +129,12 @@ class CarouselView extends View {
 	}
 
 	next() {
+        this.saveButtonView.removeClass('active');
+
+        this.nextButtonView.addClass('activated');
+        Function.delay(62, function() {
+            this.nextButtonView.removeClass('activated');
+        }.bind(this));
         console.log('Carousel next!');
 
         // Increment the current index
@@ -108,6 +146,15 @@ class CarouselView extends View {
         }
 
         this.showCurrentItem();
+    }
+
+    save() {
+        this.saveButtonView.addClass('active');
+        this.saveButtonView.addClass('activated');
+        Function.delay(62, function() {
+            this.saveButtonView.removeClass('activated');
+        }.bind(this));
+        console.log('save!');
     }
 
 }

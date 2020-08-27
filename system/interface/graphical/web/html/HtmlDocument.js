@@ -23,7 +23,7 @@ class HtmlDocument extends XmlDocument {
 
 	domDocument = null;
 	domWindow = null;
-	//shouldScheduleDomUpdates = false; // Testing
+	// shouldScheduleDomUpdates = false; // Testing
 	shouldScheduleDomUpdates = true;
 	domUpdatesScheduled = false;
 	domUpdates = {};
