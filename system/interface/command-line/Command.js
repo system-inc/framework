@@ -27,11 +27,19 @@ class Command {
 	constructor(settings, argumentsArray = []) {
 		this.settings.merge(settings);
 
-		// We will loop through all of the settings and reform them as well as set the default values for the options for the root command
-		var settings = this.settings.get();
+		// Make sure we are working with an array
+		if(String.is(argumentsArray)) {
+			argumentsArray = argumentsArray.split(' ');
+		}
+		this.arguments = argumentsArray;
 
-		// Loop through all of the options
-		settings.options.each(function(optionKey, option) {
+		// After construction you need to manually call .initialize() in order to finish construction
+	}
+
+	async initialize() {
+		// We will loop through all of the settings and reform them as well as set the default values for the options for the root command
+			// Loop through all of the options
+		this.settings.get('options').each(function(optionKey, option) {
 			// Reform the options settings
 			this.reformOptionSettings(option, optionKey);
 			
@@ -39,20 +47,33 @@ class Command {
 			this.setDefaultValueForOption(option, this.options, optionKey);
 		}.bind(this));
 
-		// Loop through all of the commands
-		settings.subcommands.each(function(subcommandKey, subcommand) {
+		// Initialize the subcommands
+		this.initializeSubcommands();
+
+		// Parse the command, will cause the app to exit if the command is malformed
+		await this.parse();
+	}
+
+	initializeSubcommands() {
+		// Loop through all of the subcommands
+		this.settings.get('subcommands').each(function(subcommandKey, subcommand) {
 			// Reform the subcommand settings
 			this.reformSubcommandSettings(subcommand, subcommandKey);
 		}.bind(this));
+	}
 
-		// Make sure we are working with an array
-		if(String.is(argumentsArray)) {
-			argumentsArray = argumentsArray.split(' ');
-		}
-		this.arguments = argumentsArray;
+	addSubcommands(subcommandsSettings) {
+		//app.log('command settings', this.settings);
 
-		// Parse the arguments array
-		this.parse(this.arguments);
+		// Merge in the new subcommand
+		this.settings.merge({
+			subcommands: subcommandsSettings,
+		});
+		//app.log('command settings', this.settings);
+
+		// Reinitialize the subcommands
+		this.initializeSubcommands();
+		//app.log(this);
 	}
 
 	reformOptionSettings(optionSettings, optionSettingsKey) {
@@ -104,7 +125,12 @@ class Command {
 		subcommandSettings.aliases.prepend(subcommandSettingsKey);
 	}
 
-	parse(argumentsArray = []) {
+	async parse(argumentsArray = null) {
+		// Use saved arguments from Command construction if no manual arguments are passed
+		if(argumentsArray == null) {
+			argumentsArray = this.arguments;
+		}
+
 		// Make sure we are working with an array
 		if(String.is(argumentsArray)) {
 			argumentsArray = argumentsArray.split(' ');
@@ -166,12 +192,12 @@ class Command {
 				this.setDefaultValuesForCommandOptions(possibleSubcommandSettings.options, this.subcommands[possibleSubcommandSettings.identifier].options);
 
 				// Read in the options for the current subcommand
-				currentArgumentIndex = this.parseOptions(possibleSubcommandSettings.options, this.subcommands[possibleSubcommandSettings.identifier].options, currentArgumentIndex + 1, argumentsToProcess);
+				currentArgumentIndex = await this.parseOptions(possibleSubcommandSettings.options, this.subcommands[possibleSubcommandSettings.identifier].options, currentArgumentIndex + 1, argumentsToProcess);
 			}
 			// If the current argument is not a subcommand
 			else {
 				// Read in the options
-				currentArgumentIndex = this.parseOptions(currentCommandSettings.options, this.options, currentArgumentIndex, argumentsToProcess);
+				currentArgumentIndex = await this.parseOptions(currentCommandSettings.options, this.options, currentArgumentIndex, argumentsToProcess);
 			}
 
 			//app.log('currentArgumentIndex', currentArgumentIndex, 'argumentsToProcess.length', argumentsToProcess.length);
@@ -179,23 +205,26 @@ class Command {
 
 		//app.info('command', this);
 
+		// Debug command
+		if(this.options.debugCommand) {
+			await this.showDebugCommand();
+		}
+
 		// Version
 		if(this.options.version) {
-			this.showVersion();
+			await this.showVersion();
+			await this.exit();
 		}
 		// Help
 		else if(this.options.help) {
-			this.showHelp();
-		}
-		// Debug command
-		else if(this.options.debugCommand) {
-			this.showDebugCommand();
+			await this.showHelp();
+			await this.exit();
 		}
 
 		return this;
 	}
 
-	parseOptions(optionsSettings, optionsNode, currentArgumentIndex, argumentsToProcess) {
+	async parseOptions(optionsSettings, optionsNode, currentArgumentIndex, argumentsToProcess) {
 		// Get the current argument
 		var currentArgument = argumentsToProcess[currentArgumentIndex];
 		//app.log('parseOptions currentArgument', currentArgument);
@@ -224,7 +253,7 @@ class Command {
 					}
 
 					// Move to the next argument
-					currentArgumentIndex = this.parseOptions(optionsSettings, optionsNode, nextArgumentIndex, argumentsToProcess);
+					currentArgumentIndex = await this.parseOptions(optionsSettings, optionsNode, nextArgumentIndex, argumentsToProcess);
 				}
 				// If the next argument is a subcommand or subsubcommand
 				else if(this.argumentIsSubcommandAlias(nextArgument)) {
@@ -244,7 +273,7 @@ class Command {
 						currentArgumentOptionSettings.type == 'boolean' &&
 						(nextArgument != 'true' || nextArgument != 'false')
 					) {
-						this.exit(Terminal.style('Invalid value "'+nextArgument+'" for option "'+optionIdentifier+'".', 'red'));
+						await this.exit(Terminal.style('Invalid value "'+nextArgument+'" for option "'+optionIdentifier+'".', 'red'));
 					}
 					//app.log('nextArgument', nextArgument, 'is option value');
 					optionsNode[optionIdentifier] = nextArgument;
@@ -252,7 +281,7 @@ class Command {
 					// Move to the next next argument if it exists
 					var nextNextArgumentIndex = nextArgumentIndex + 1;
 					if(nextNextArgumentIndex < argumentsToProcess.length) {
-						currentArgumentIndex = this.parseOptions(optionsSettings, optionsNode, nextNextArgumentIndex, argumentsToProcess);
+						currentArgumentIndex = await this.parseOptions(optionsSettings, optionsNode, nextNextArgumentIndex, argumentsToProcess);
 					}
 					// If the next next argument doesn't exist, we are finished
 					else {
@@ -277,7 +306,7 @@ class Command {
 				invalidCommandString += ' Did you mean '+recommendedCommandAliases.toConjunctionString('or', '"')+'?';
 			}
 			
-			this.exit(Terminal.style(invalidCommandString, 'red'));
+			await this.exit(Terminal.style(invalidCommandString, 'red'));
 		}
 
 		return currentArgumentIndex;
@@ -371,13 +400,11 @@ class Command {
 		return argumentIsPossibleOptionAlias;
 	}
 
-	showVersion() {
+	async showVersion() {
 		app.standardStreams.output.writeLine(app.title+' '+(app.version ? app.version : '(unknown version)'));
-
-		this.exit();
 	}
 
-	showHelp() {
+	async showHelp() {
 		//this.exit(this);
 
 		var title = app.title+' '+(app.version ? app.version : '(unknown version)');
@@ -452,7 +479,7 @@ class Command {
 		}
 	}
 
-	showDebugCommand() {
+	async showDebugCommand() {
 		var debugCommand = "\n"+'============================================='+"\n\n";
 		debugCommand += Terminal.style('Command Configuration', 'bold');
 		debugCommand += "\n\n";
@@ -492,14 +519,14 @@ class Command {
 		app.standardStreams.output.writeLine(debugCommand);
 	}
 
-	exit(message) {
+	async exit(message = null) {
 		// Only exit if the app is in a terminal context
 		if(app.inTerminalEnvironment()) {
 			if(message) {
 				app.standardStreams.output.writeLine(message);
 			}
 
-			app.exit();
+			await app.exit();
 		}
 	}
 

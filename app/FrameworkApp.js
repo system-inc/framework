@@ -10,27 +10,28 @@ import { Proctor } from '@framework/system/test/Proctor.js';
 // Class
 class FrameworkApp extends App {
 
-	async initialize() {
-		await super.initialize(...arguments);
+	async initializeCommandLineInterface() {
+		// Parse the command line arguments
+		var command = await super.initializeCommandLineInterface();
 
 		// Graphical interface command
-		if(this.interfaces.commandLine.command.subcommands.graphicalInterface) {
-			//console.log('this.interfaces.commandLine.command.subcommands.graphicalInterface');
-			this.processCommandGraphicalInterface();
+		if(command.subcommands.graphicalInterface) {
+			//console.log('command.subcommands.graphicalInterface');
+			this.executeSubcommandGraphicalInterface(command.subcommands.graphicalInterface);
 		}
 		// Proctor command
-		else if(this.interfaces.commandLine.command.subcommands.proctor) {
-			this.processCommandProctor();
+		else if(command.subcommands.proctor) {
+			this.executeSubcommandProctor(command.subcommands.proctor);
 		}
 		// Interactive command line interface command
-		else if(this.interfaces.commandLine.command.subcommands.interactiveCommandLineInterface) {
+		else if(command.subcommands.interactiveCommandLineInterface) {
 			// Do nothing, this will leave the user in the interactive command line interface
 		}
 		// Show help by default
 		else if(this.inTerminalEnvironment()) {
 			// Fun with ASCII art
 			this.standardStreams.output.writeLine("\n"+AsciiArt.framework.version[this.framework.version.toString()]+"\n");
-			this.interfaces.commandLine.command.showHelp();
+			command.showHelp();
 			this.exit();
 		}
 		else {
@@ -38,29 +39,29 @@ class FrameworkApp extends App {
 		}
 	}
 
-	async processCommandProctor() {
+	async executeSubcommandProctor(proctorSubcommand) {
 		// Create a Proctor to oversee all of the tests as they run
-		var proctor = new Proctor(this.interfaces.commandLine.command.subcommands.proctor.options.reporter, this.interfaces.commandLine.command.subcommands.proctor.options.breakOnError);
+		var proctor = new Proctor(proctorSubcommand.options.reporter, proctorSubcommand.options.breakOnError);
 		//this.log('Proctor created', proctor);
 		//return; // Debug
 
 		// If test supervising is enabled
-		if(this.interfaces.commandLine.command.subcommands.proctor.options.supervise) {
+		if(proctorSubcommand.options.supervise) {
 			proctor.supervise();
 		}
 		// Get and run the tests
 		else {
 			// If there is no path set the path to the framework directory
-			if(!this.interfaces.commandLine.command.subcommands.proctor.options.path) {
-				this.interfaces.commandLine.command.subcommands.proctor.options.path = app.framework.path;
+			if(!proctorSubcommand.options.path) {
+				proctorSubcommand.options.path = app.framework.path;
 			}
 
-			//proctor.getAndRunTests(this.interfaces.commandLine.command.subcommands.proctor.options.path, this.interfaces.commandLine.command.subcommands.proctor.options.filePattern, this.interfaces.commandLine.command.subcommands.proctor.options.methodPattern);
+			//proctor.getAndRunTests(proctorSubcommand.options.path, proctorSubcommand.options.filePattern, proctorSubcommand.options.methodPattern);
 
 			// Debug
-			var path = this.interfaces.commandLine.command.subcommands.proctor.options.path;
-			var filePattern = this.interfaces.commandLine.command.subcommands.proctor.options.filePattern;
-			var methodPattern = this.interfaces.commandLine.command.subcommands.proctor.options.methodPattern;
+			var path = proctorSubcommand.options.path;
+			var filePattern = proctorSubcommand.options.filePattern;
+			var methodPattern = proctorSubcommand.options.methodPattern;
 			
 			//path = Node.Path.join(app.framework.path, 'globals');
 			//filePattern = 'Command';
@@ -71,8 +72,8 @@ class FrameworkApp extends App {
 		}
 	}
 
-	async processCommandGraphicalInterface() {
-		//console.log('processCommandGraphicalInterface');
+	async executeSubcommandGraphicalInterface() {
+		//console.log('executeSubcommandGraphicalInterface');
 
 		// If we aren't in an Electron context start Electron
 		if(!this.modules.electronModule.inElectronEnvironment()) {

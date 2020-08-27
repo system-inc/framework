@@ -13,10 +13,10 @@ class CommandLineInterface extends Interface {
 		super();
 		this.settings.merge(settings);
 
-		this.initializeCommand();
+		this.createCommand();
 	}
 
-	initializeCommand(processArguments = null) {
+	createCommand(processArguments = null) {
 		var commandSettings = this.settings.get('command');
 
 		if(!processArguments) {

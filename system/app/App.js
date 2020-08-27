@@ -105,9 +105,20 @@ class App extends EventEmitter {
 			await this.importAndInitializeModules();
 		}
 
+		// Initialize for the terminal environment
+		if(this.inTerminalEnvironment()) {
+			// Initialize the command line interface which will show command line help text in the terminal
+			// Implement this method in your app to create custom commands
+			await this.initializeCommandLineInterface();
+		}
+
 		// Initialize for the web environment
 		if(this.inGraphicalInterfaceEnvironment()) {
+			// Wait for the DOM to be loaded
 			await this.initializeGraphicalInterfaceEnvironment();
+
+			// Implement this method in your app to set the view controller
+			await this.initializeGraphicalInterface();
 		}
 
 		//this.log('Framework initialization complete.');
@@ -206,7 +217,7 @@ class App extends EventEmitter {
 		// Initialize the app process
 		await this.initializeProcess();
 
-		// Configure the standard streams
+		// // Configure the standard streams
 		await this.configureStandardStreams();
 
 		// Configure the standard streams file log
@@ -329,6 +340,18 @@ class App extends EventEmitter {
 
 		const { CommandLineInterface } = await import('@framework/system/interface/command-line/CommandLineInterface.js');
 		this.interfaces.commandLine = new CommandLineInterface(commandLineInterfaceSettings);
+
+		return this.interfaces.commandLine;
+	}
+
+	// Implement this function in a child with:
+	// await super.initializeCommandLineInterface();
+	// And then run your command functions based on the command interface
+	async initializeCommandLineInterface() {
+		await this.interfaces.commandLine.command.initialize();
+
+		// Return the command
+		return this.interfaces.commandLine.command;
 	}
 
 	async configureInteractiveCommandLineInterface() {
@@ -420,10 +443,14 @@ class App extends EventEmitter {
 			},
 		});
 
-		// Configure the graphical interface when the DOM has loaded
-		// TODO: Change how do I do this to make it not web specific
-		document.addEventListener('DOMContentLoaded', function(event) {
-			this.configureGraphicalInterface();
+		// Wait for the DOM to be loaded
+		return new Promise(function(resolve, reject) {
+			// Configure the graphical interface when the DOM has loaded
+			// TODO: Change how do I do this to make it not web specific
+			document.addEventListener('DOMContentLoaded', async function(event) {
+				await this.configureGraphicalInterface();
+				return resolve(true);
+			}.bind(this));
 		}.bind(this));
 	}
 
@@ -436,6 +463,13 @@ class App extends EventEmitter {
 		// Create the graphical interface
 		const { GraphicalInterface } = await import('@framework/system/interface/graphical/GraphicalInterface.js');
 		this.interfaces.graphical = new GraphicalInterface();
+	}
+
+	// Implement this function in a child with:
+	// await super.initializeGraphicalInterface();
+	// this.interfaces.graphical.setViewController(new YourViewController());
+	// To set a view controller for your app
+	async initializeGraphicalInterface() {
 		await this.interfaces.graphical.initialize();
 	}
 
@@ -569,12 +603,12 @@ class App extends EventEmitter {
 		var formattedLogData = this.formatLogDataWithoutMetaDataPrefix(...arguments);
 
 		// Create a new error
-		//var error = new Error('Error manually created to get stack trace.');
+		var error = new Error('Error manually created to get stack trace.');
 
 	    // Get the location data of the first call site
-	    //var callSiteData = error.stack.getCallSite(3);
+	    var callSiteData = error.stack.getCallSite(3);
 
-    	//formattedLogData = '['+new Time().dateTime+'] ('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+formattedLogData;
+    	formattedLogData = '['+new Time().dateTime+'] ('+callSiteData.fileName+':'+callSiteData.lineNumber+') '+formattedLogData;
 
 		return formattedLogData;
 	}
@@ -698,7 +732,7 @@ class App extends EventEmitter {
 		return inElectronEnvironment;
 	}
 
-	exit = async function() {
+	async exit() {
 		await this.emit('app.beforeExit');
 
 		Node.exit(...arguments);

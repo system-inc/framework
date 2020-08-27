@@ -12,6 +12,7 @@ class CommandTest extends Test {
 		var commandString = 'node app proctor -r dot -b -f command -m method';
 
 		var actual = new Command(commandSettings, commandString);
+		await actual.initialize();
 		//console.info(actual);
 
 		Assert.strictEqual(actual.subcommands.proctor.options.path, null, 'proctor command path option is set correctly');
