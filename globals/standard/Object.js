@@ -1,6 +1,7 @@
 // Instance methods
 
 Object.defineProperty(Object.prototype, 'getKeys', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function() {
         return Object.keys(this);
@@ -8,6 +9,7 @@ Object.defineProperty(Object.prototype, 'getKeys', {
 });
 
 Object.defineProperty(Object.prototype, 'getSize', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function() {
         return Object.keys(this).length;
@@ -15,6 +17,7 @@ Object.defineProperty(Object.prototype, 'getSize', {
 });
 
 Object.defineProperty(Object.prototype, 'isEmpty', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function() {
         return Object.isEmpty(this);
@@ -22,13 +25,23 @@ Object.defineProperty(Object.prototype, 'isEmpty', {
 });
 
 Object.defineProperty(Object.prototype, 'hasKey', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(key) {
         return Object.hasKey(this, key);
     },
 });
 
+Object.defineProperty(Object.prototype, 'random', {
+    writable: true, // Let other libraries replace this method
+    enumerable: false,
+    value: function(key) {
+        return this[Object.keys(this).random()];
+    },
+});
+
 Object.defineProperty(Object.prototype, 'getValueForKey', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(key, caseSensitive) {
         caseSensitive = caseSensitive === false ? false : true;
@@ -53,6 +66,7 @@ Object.defineProperty(Object.prototype, 'getValueForKey', {
 });
 
 Object.defineProperty(Object.prototype, 'getValueByPath', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(path) {
         var keys = path.split('.');
@@ -84,6 +98,7 @@ Object.defineProperty(Object.prototype, 'getValueByPath', {
 });
 
 Object.defineProperty(Object.prototype, 'setValueByPath', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(path, value) {
         var keys = path.split('.');
@@ -111,6 +126,7 @@ Object.defineProperty(Object.prototype, 'setValueByPath', {
 });
 
 Object.defineProperty(Object.prototype, 'deleteValueByPath', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(path) {
         var keys = path.split('.');
@@ -139,6 +155,7 @@ Object.defineProperty(Object.prototype, 'deleteValueByPath', {
 });
 
 Object.defineProperty(Object.prototype, 'each', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(callback) {
         var context = this;
@@ -209,6 +226,7 @@ Object.defineProperty(Object.prototype, 'clone', {
 });
 
 Object.defineProperty(Object.prototype, 'merge', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function() {
         var objectsToMerge = [];
@@ -251,6 +269,7 @@ Object.defineProperty(Object.prototype, 'merge', {
 // Integrate on the other hand, looks are objects in the array to be merged and merges those
 // objects with the corresponding object on the same array index.
 Object.defineProperty(Object.prototype, 'integrate', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function() {
         var objectsToIntegrate = [];
@@ -310,6 +329,7 @@ Object.defineProperty(Object.prototype, 'integrate', {
 });
 
 Object.defineProperty(Object.prototype, 'sort', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function() {
         var sorted = {};
@@ -323,6 +343,7 @@ Object.defineProperty(Object.prototype, 'sort', {
 });
 
 Object.defineProperty(Object.prototype, 'toJson', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function() {
         return Json.encode(this);
@@ -330,6 +351,7 @@ Object.defineProperty(Object.prototype, 'toJson', {
 });
 
 Object.defineProperty(Object.prototype, 'toArray', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function() {
         return Object.toArray(this);
@@ -339,6 +361,7 @@ Object.defineProperty(Object.prototype, 'toArray', {
 // Static methods
 
 Object.defineProperty(Object, 'is', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(value) {
         return Object.prototype.toString.call(value) == '[object Object]';
@@ -346,6 +369,7 @@ Object.defineProperty(Object, 'is', {
 });
 
 Object.defineProperty(Object, 'isEmpty', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(object) {
         if(object === null) {
@@ -366,6 +390,7 @@ Object.defineProperty(Object, 'isEmpty', {
 });
 
 Object.defineProperty(Object, 'hasKey', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(object, key) {
         return key in object;
@@ -374,6 +399,7 @@ Object.defineProperty(Object, 'hasKey', {
 });
 
 Object.defineProperty(Object, 'containsClassInstance', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(object) {
         throw new Error('this needs to be fixed for my es6 changes');
@@ -394,6 +420,7 @@ Object.defineProperty(Object, 'containsClassInstance', {
 });
 
 Object.defineProperty(Object, 'clone', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(value) {
         var clone;
@@ -435,6 +462,7 @@ Object.defineProperty(Object, 'clone', {
 });
 
 Object.defineProperty(Object, 'toArray', {
+    writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(value) {
         // Wrap anything not in an array in an array
@@ -449,5 +477,36 @@ Object.defineProperty(Object, 'toArray', {
         else {
             return value;
         }
+    },
+});
+
+// Turn any key_like_this to keyLikeThis
+Object.defineProperty(Object, 'keysToCamelCase', {
+    writable: true, // Let other libraries replace this method
+    enumerable: false,
+    value: function(object) {
+        var objectWithCamelCaseKeys = {};
+
+        for(let key in object) {
+            // Recurse through children
+            let value = object[key];
+
+            // Handle objects
+            if(Object.is(value)) {
+                value = Object.keysToCamelCase(value);
+            }
+            // Handle arrays of objects
+            else if(Array.is(value)) {
+                for(let i = 0; i < value.length; i++) {
+                    if(Object.is(value[i])) {
+                        value[i] = Object.keysToCamelCase(value[i]);
+                    }
+                }
+            }
+
+            objectWithCamelCaseKeys[key.toCamelCase()] = value;
+        }
+
+        return objectWithCamelCaseKeys;
     },
 });

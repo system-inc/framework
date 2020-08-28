@@ -576,3 +576,79 @@ Array.toObject = function(array) {
 
 	return object;
 };
+
+Array.fromCsvString = function(csvString, delimiter = ',', returnRowsAsArrays = false) {        
+	// Regular expression to parse the CSV values
+	var pattern = new RegExp( 
+		(
+			// Delimiters
+			"(\\"+delimiter+"|\\r?\\n|\\r|^)"+
+			// Quoted fields
+			"(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|"+
+			// Standard fields
+			"([^\"\\"+delimiter+"\\r\\n]*))"
+		), 'gi'
+	);
+
+	// Array for data, first row is column headers
+	var rows = [[]];
+
+	// Array to hold individual pattern matching groups
+	var matches = false; // false if we don't find any matches
+	
+	// Loop until we no longer find a regular expression match
+	while(matches = pattern.exec(csvString)) {
+		var matchedDelimiter = matches[1]; // Get the matched delimiter
+		// Check if the delimiter has a length (and is not the start of string) and if it matches field delimiter. If not, it is a row delimiter
+		if(matchedDelimiter.length && matchedDelimiter !== delimiter) {
+			// Since this is a new row of data, add an empty row to the array.
+			rows.push([]);
+		}
+		var matchedValue;
+		// Once we have eliminated the delimiter, check to see what kind of value was captured (quoted or unquoted):
+		if(matches[2]) {
+			// Found a quoted value, unescape any double quotes
+			matchedValue = matches[2].replace(
+				new RegExp( "\"\"", "g" ), "\""
+			);
+		}
+		// Found a non-quoted value
+		else {
+			matchedValue = matches[3];
+		}
+		
+		// Now that we have our value string, let's add it to the data array
+		rows[rows.length - 1].push(matchedValue);
+	}
+
+	// If we want to return an array with rows as arrays
+	if(returnRowsAsArrays) {
+		return rows;
+	}
+	// If not, we will return an array with rows as objects
+	else {
+		let array = [];
+
+        // The first row has the fields
+		let fieldsArray = rows.shift();
+		
+		// Rename the fields to camel case
+		fieldsArray.each(function(index, field) {
+			fieldsArray[index] = field.toCamelCase();
+		});
+
+        rows.each(function(rowIndex, row) {
+            // Create the new entry
+            let entry = {};
+
+            // Set the fields
+            fieldsArray.each(function(fieldIndex, field) {
+                entry[field] = row[fieldIndex];
+            });
+
+            array.push(entry);
+        });
+
+        return array;
+	}
+};

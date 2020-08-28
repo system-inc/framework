@@ -22,6 +22,7 @@ NodeChildProcess.spawn(
     'node',
     [
         '--no-warnings', // Do not show warnings
+        '--experimental-json-modules', // Enable importing JSON
         '--experimental-loader', // Use a module loader
         moduleLoaderScriptPath,
         appScriptPath,

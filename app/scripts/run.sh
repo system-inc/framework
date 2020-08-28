@@ -14,6 +14,7 @@ cd ../
 # Run the app
 node \
   --no-warnings \
+  --experimental-json-modules \
   --experimental-loader \
   ./../globals/node/ModuleLoader.js \
   $appScript \

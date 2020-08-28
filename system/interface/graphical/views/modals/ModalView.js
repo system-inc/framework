@@ -1,6 +1,5 @@
 // Dependencies
 import { View } from '@framework/system/interface/graphical/views/View.js';
-
 import { Settings } from '@framework/system/settings/Settings.js';
 
 // Class
