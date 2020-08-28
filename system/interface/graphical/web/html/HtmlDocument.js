@@ -227,8 +227,12 @@ class HtmlDocument extends XmlDocument {
 			this.titleHtmlElement = Html.title(title);
 			this.head.append(this.titleHtmlElement);
 		}
+		else{
+			this.titleHtmlElement.setContent(title);
+		}
+
 		// If it title tag does exist, use domDocument to change it
-		else if(this.domDocument) {
+		if(this.domDocument) {
 			this.domDocument.title = title;
 		}
 	}

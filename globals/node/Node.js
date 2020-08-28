@@ -77,11 +77,11 @@ class Node {
 
 	static exit() {
 		if(arguments.length) {
-			if(app.log) {
-				app.log(...arguments);
+			if(typeof app !== 'undefined') {
+				app.log('Node.exit():', ...arguments);
 			}
 			else {
-				console.log(...arguments);
+				console.log('Node.exit():', ...arguments);
 			}
 		}
 

@@ -1,15 +1,21 @@
 // Dependencies
 import RollupPluginAlias from '@rollup/plugin-alias';
 import RollupPluginJson from '@rollup/plugin-json';
-import RollupPluginDynamicImportVars from '@rollup/plugin-dynamic-import-vars';
-import RollupPluginBabel from '@rollup/plugin-babel';
+import RollupPluginDynamicImportVarsImport from '@rollup/plugin-dynamic-import-vars';
+import RollupPluginBabelImport from '@rollup/plugin-babel';
 import MagicString from 'magic-string';
 import EsTreeWalker from 'estree-walker';
+import NodePath from 'path';
+import NodeFileSystem from 'fs';
+
+// Handle plugins exporting default and not being compatible with the latest modules
+const RollupPluginDynamicImportVars = RollupPluginDynamicImportVarsImport.default;
+const RollupPluginBabel = RollupPluginBabelImport.default;
 
 // Class
 class RollupWebTranspiler {
 
-    frameworkClassesToStripMethodsFrom = {
+    scriptsToStripMethodsFrom = {
         'framework/globals/standard/errors/Error.js': [
             'prepareStackTrace',
         ],
@@ -39,21 +45,42 @@ class RollupWebTranspiler {
 
     // External modules which will not be included
     importSpecifiersToIgnore = [
-        // Framework
+        // Framework imports which are node specific and not for the web
         '@framework/globals/NodeGlobals.js',
         '@framework/globals/standard/errors/StackTrace.js',
         //'source-map-support', // Used for stack traces at framework/globals/standard/errors/CallSite.js
 
-        // Firebase
+        // Node
+        'assert',
+        'child_process',
+        'cluster',
+        'crypto',
+        'events',
+        'fs',
+        'http',
+        'https',
+        'http2',
+        'module',
+        'net',
+        'os',
+        'path',
+        'readline',
+        'stream',
+        'url',
+        'util',
+        'zlib',
+
+        // node_modules - Firebase
+        'source-map-support',
         'source-map-support/register', // Used for source maps for Firebase Functions
         'firebase-functions',
         'firebase-admin',
 
-        // Google Cloud
+        // node_modules - Google Cloud
         '@google-cloud/storage',
         '@google-cloud/text-to-speech',
 
-        // Various NPM Modules
+        // node_modules
         'express',
         'busboy',
         'bent',
@@ -158,7 +185,7 @@ class RollupWebTranspiler {
             transform(code, id) {
                 // For performance, only run transformation specific files
                 var currentFrameworkClassToStripMethodsFrom = null;
-                for(let frameworkClassToStripMethodsFrom in rollupWebTranspilerContext.frameworkClassesToStripMethodsFrom) {
+                for(let frameworkClassToStripMethodsFrom in rollupWebTranspilerContext.scriptsToStripMethodsFrom) {
                     if(id.endsWith(frameworkClassToStripMethodsFrom)) {
                         currentFrameworkClassToStripMethodsFrom = frameworkClassToStripMethodsFrom;
                         break;
@@ -290,7 +317,7 @@ class RollupWebTranspiler {
                                 if(
                                     methodName !== 'constructor' &&
                                     methodName !== 'toString' &&
-                                    rollupWebTranspilerContext.frameworkClassesToStripMethodsFrom[currentFrameworkClassToStripMethodsFrom].includes(methodName)) {
+                                    rollupWebTranspilerContext.scriptsToStripMethodsFrom[currentFrameworkClassToStripMethodsFrom].includes(methodName)) {
                                     //console.log('Removing method definition', methodName, 'from', id);
                                     removeMethodDefinition(node);
                                     this.skip();
@@ -301,7 +328,7 @@ class RollupWebTranspiler {
                                 if(
                                     node.expression.type == 'AssignmentExpression' &&
                                     node.expression.left.type == 'MemberExpression' &&
-                                    rollupWebTranspilerContext.frameworkClassesToStripMethodsFrom[currentFrameworkClassToStripMethodsFrom].includes(node.expression.left.property.name)
+                                    rollupWebTranspilerContext.scriptsToStripMethodsFrom[currentFrameworkClassToStripMethodsFrom].includes(node.expression.left.property.name)
                                 ) {
                                     //console.log('Removing method definition', node.expression.left.property.name, 'from', id);
                                     removeMethodDefinition(node);
@@ -364,9 +391,25 @@ class RollupWebTranspiler {
         }
     }
 
-    getRollupConfiguration(commandLineArguments) {
-        // console.log('commandLineArguments', commandLineArguments);
-        // process.exit();
+    async getRollupConfiguration(commandLineArguments) {
+        //console.log('commandLineArguments', commandLineArguments);
+        //process.exit();
+
+        // Check the app path for rollup-web-transpiler
+        var appSpecificSettingsPath = NodePath.resolve(commandLineArguments.configurationAppPath, 'settings', 'rollup-web-transpiler.js');
+        //console.log('appSpecificSettingsPath', appSpecificSettingsPath);
+
+        // If the app specific settings exist, import them
+        if(NodeFileSystem.existsSync(appSpecificSettingsPath)) {
+            let { settings } = await import(appSpecificSettingsPath);
+
+            // Merge scriptsToStripMethodsFrom
+            if(settings.scriptsToStripMethodsFrom) {
+                this.scriptsToStripMethodsFrom = {...this.scriptsToStripMethodsFrom, ...settings.scriptsToStripMethodsFrom }
+            }
+            //console.log('this', this);
+        }
+        //process.exit();
 
         this.initialize(
             commandLineArguments.configurationBuildTarget,
@@ -376,8 +419,10 @@ class RollupWebTranspiler {
         );
         //console.log(this); process.exit();
 
+        // Default node build target
         var format = 'cjs';
         var globals = null;
+        var external = this.importSpecifiersToIgnore;
         var plugins = [
             this.rollupPluginJson,
             this.rollupPluginDynamicImportVars,
@@ -385,10 +430,24 @@ class RollupWebTranspiler {
             this.rollupPluginBabel,
         ];
 
+        // If the build target is for the web
         if(this.buildTarget == 'web') {
             format = 'iife';
+
+            // We ignore node specific import() calls
             globals = this.importSpecifiersToIgnoreGlobalVariables;
             plugins.unshift(this.rollupPluginFramework);
+        }
+        // If the build target is for  node
+        else {
+            // We ignore node specific imports, but allow Framework node specific imports
+            let newExternal = [];
+            for(let i = 0; i < external.length; i++) {
+                if(!external[i].startsWith('@framework')) {
+                    newExternal.push(external[i]);
+                }
+            }
+            external = newExternal;
         }
 
         var rollupConfiguration = {
@@ -400,10 +459,12 @@ class RollupWebTranspiler {
                 inlineDynamicImports: true,
                 globals: globals,
             },
-            external: this.importSpecifiersToIgnore,
+            external: external,
             plugins: plugins,
             onwarn: this.onRollupWarning.bind(this),
         };
+
+        //console.log('rollupConfiguration', rollupConfiguration);
 
         return rollupConfiguration;
     }
@@ -414,4 +475,4 @@ class RollupWebTranspiler {
 var rollupWebTranspiler = new RollupWebTranspiler();
 
 // Export
-export default rollupWebTranspiler.getRollupConfiguration.bind(rollupWebTranspiler);
+export default await rollupWebTranspiler.getRollupConfiguration.bind(rollupWebTranspiler);

@@ -335,7 +335,27 @@ Object.defineProperty(Object.prototype, 'sort', {
         var sorted = {};
 
         Object.keys(this).sort().each(function(index, key) {
-            sorted[key] = this[key];
+            // Recursively sort objects
+            if(Object.is(this[key])) {
+                sorted[key] = this[key].sort();
+            }
+            // Recursively sort objects in arrays
+            else if(Array.is(this[key])) {
+                var arrayWithSortedObjects = [];
+                for(let i = 0; i < this[key].length; i++) {
+                    if(Object.is(this[key][i])) {
+                        arrayWithSortedObjects.push(this[key][i].sort());
+                    }
+                    else {
+                        arrayWithSortedObjects.push(this[key][i]);
+                    }
+                }
+                sorted[key] = arrayWithSortedObjects;
+            }
+            // Set the key which will be in the right order
+            else {
+                sorted[key] = this[key];
+            }
         }.bind(this));
 
         return sorted;
