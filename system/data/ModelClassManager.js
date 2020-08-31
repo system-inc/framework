@@ -34,7 +34,7 @@ class ModelClassManager {
 		// Generate all of the the ModelProperty objects
 		var modelProperties = [];
 		schemaModel.properties.each(function(schemaModelPropertyIndex, schemaModelProperty) {
-			modelProperties.append(ModelProperty.constructFromSchema(schemaModelProperty));
+			modelProperties.append(ModelProperty.fromSchema(schemaModelProperty));
 		});
 
 		// Add the ModelProperty objects to the modelClass

@@ -39,7 +39,7 @@ class RollupWebTranspiler {
         ],
         'framework/system/settings/Settings.js': [
             'integrateFromFile',
-            'constructFromFile',
+            'fromFile',
         ],
     };
 

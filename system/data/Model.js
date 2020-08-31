@@ -12,7 +12,7 @@ class Model {
 
 	constructor(values) {
 		// Construct the model from the schema (e.g., MyModel.schema)
-		this.constructFromSchema(this.constructor.schema); // this.constructor references the model class definition
+		this.fromSchema(this.constructor.schema); // this.constructor references the model class definition
 
 		if(values) {
 			values.each(function(propertyName, propertyValue) {
@@ -21,13 +21,13 @@ class Model {
 		}
 	}
 
-	constructFromSchema(schema) {
+	fromSchema(schema) {
 		this.name = schema.name;
 
 		// Create properties on the instance
 		schema.properties.each(function(index, modelPropertySchema) {
 			// Set the property on this.properties
-			this.properties[modelPropertySchema.name] = ModelProperty.constructFromSchema(modelPropertySchema);
+			this.properties[modelPropertySchema.name] = ModelProperty.fromSchema(modelPropertySchema);
 
 			// Add the getter
 			this['get'+modelPropertySchema.name.capitalize()] = function() {

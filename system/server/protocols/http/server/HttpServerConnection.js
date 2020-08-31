@@ -26,11 +26,10 @@ class HttpServerConnection extends HttpConnection {
 
     onNodeRequestEnd() {
         console.log('onNodeRequestEnd');
-
         this.nodeRequestData = Buffer.concat(this.nodeRequestData).toString();
 
         // Create a message
-        var message = HttpRequestMessage.constructFromNodeRequest(this, this.nodeRequest, this.nodeRequestData);
+        var message = HttpRequestMessage.fromNodeRequest(this, this.nodeRequest, this.nodeRequestData);
 
         this.onMessage(message);
     }

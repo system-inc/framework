@@ -63,7 +63,7 @@ class ModelProperty {
 		return schema;
 	}
 
-	static constructFromSchema(schemaModelProperty) {
+	static fromSchema(schemaModelProperty) {
 		var modelProperty = new ModelProperty(schemaModelProperty.name);
 
 		if(schemaModelProperty.description) {

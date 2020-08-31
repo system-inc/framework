@@ -71,7 +71,7 @@ class Browser {
 		},
 	];
 
-	static constructFromUserAgent(userAgent) {
+	static fromUserAgent(userAgent) {
 		var browser = new Browser();
 
 		browser.parseUserAgent(userAgent);

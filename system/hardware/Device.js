@@ -55,7 +55,7 @@ class Device {
 		return this;
 	}
 
-	static constructFromUserAgent(userAgent) {
+	static fromUserAgent(userAgent) {
 		var device = new Device();
 
 		device.parseUserAgent(userAgent);

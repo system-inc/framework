@@ -26,7 +26,7 @@ class LocalSocketMessage extends Message {
     }
 
     createPacket() {
-        this.packet = LocalSocketPacket.constructFromData(this.data, this.correlationIdentifier);
+        this.packet = LocalSocketPacket.fromData(this.data, this.correlationIdentifier);
 
         // Set our correlation identifier created from the packet if we didn't already have one
         if(this.correlationIdentifier === null) {
@@ -42,7 +42,7 @@ class LocalSocketMessage extends Message {
         return this.packet;
     }
 
-    static async constructFromData(connection, data, correlationIdentifier = null) {
+    static async fromData(connection, data, correlationIdentifier = null) {
         var localSocketMessage = new LocalSocketMessage(connection, data);
         
         if(correlationIdentifier !== null) {

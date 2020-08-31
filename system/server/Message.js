@@ -7,7 +7,7 @@ class Message {
     identifier = null;
     connection = null;
 
-    constructor(connection) {
+    constructor(connection = null) {
         this.connection = connection;
         this.identifier = String.uniqueIdentifier();
     }

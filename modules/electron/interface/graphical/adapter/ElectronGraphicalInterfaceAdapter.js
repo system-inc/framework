@@ -224,7 +224,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		//console.info('graphicalInterfaceStateSettings', graphicalInterfaceStateSettings);
 
 		// Construct the state for the graphical interface
-		var graphicalInterfaceState = GraphicalInterfaceState.constructFromSettingsWithDisplays(graphicalInterfaceStateSettings, displays, type);
+		var graphicalInterfaceState = GraphicalInterfaceState.fromSettingsWithDisplays(graphicalInterfaceStateSettings, displays, type);
 		//console.info('graphicalInterfaceState', graphicalInterfaceState);
 
 		return graphicalInterfaceState;

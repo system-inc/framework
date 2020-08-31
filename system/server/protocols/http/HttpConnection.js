@@ -53,11 +53,11 @@ class HttpConnection extends Connection {
 
         // If the request is a string, assume it is a URL path and the method is GET
         if(String.is(request)) {
-            httpRequestMessage = HttpRequestMessage.constructFromUrlPath(this, request);
+            httpRequestMessage = HttpRequestMessage.fromUrlPath(this, request);
         }
         // If the request is an object, build an HttpRequestMessage with the properties
         else if(Object.is(request)) {
-            httpRequestMessage = HttpRequestMessage.constructFromObject(request);
+            httpRequestMessage = HttpRequestMessage.fromObject(request);
         }
         else {
             httpRequestMessage = request;

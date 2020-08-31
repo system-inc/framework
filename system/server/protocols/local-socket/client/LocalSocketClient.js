@@ -14,6 +14,7 @@ class LocalSocketClient extends Client {
         if(localSocketFilePath === null) {
             throw new Error('Path must be specified when constructing a LocalSocketClient.');
         }
+        
         this.localSocketFilePath = localSocketFilePath;
     }
 

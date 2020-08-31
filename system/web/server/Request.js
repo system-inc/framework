@@ -56,13 +56,13 @@ class Request {
 		this.time = new Time();
 
 		// URL
-		this.url = Url.constructFromNodeRequest(nodeRequest);
+		this.url = Url.fromNodeRequest(nodeRequest);
 
 		// Method
 		this.method = nodeRequest.method.uppercase();
 
 		// Headers
-		this.headers = Headers.constructFromNodeHeaders(nodeRequest.headers);
+		this.headers = Headers.fromNodeHeaders(nodeRequest.headers);
 
 		// Cookies
 		this.cookies = new Cookies(this.headers.get('cookie'));
@@ -92,13 +92,13 @@ class Request {
 		}
 
 		// Browser identification from user agent
-		this.browser = Browser.constructFromUserAgent(userAgent);
+		this.browser = Browser.fromUserAgent(userAgent);
 
 		// Device identification from user agent
-		this.device = Device.constructFromUserAgent(userAgent);
+		this.device = Device.fromUserAgent(userAgent);
 
 		// Operating system identification from user agent
-		this.operatingSystem = OperatingSystem.constructFromUserAgent(userAgent);
+		this.operatingSystem = OperatingSystem.fromUserAgent(userAgent);
 
 		// Geolocation (optionally provided by Cloudflare)
 		this.geolocation = new Geolocation();

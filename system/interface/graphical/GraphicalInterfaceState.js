@@ -105,8 +105,8 @@ class GraphicalInterfaceState extends EventEmitter {
 		return settings;
 	}
 
-	static constructFromSettingsWithDisplays(settings, displays, type = null) {
-		//console.info('constructFromSettingsWithDisplays', 'settings', settings, 'displays', displays, 'type', type);
+	static fromSettingsWithDisplays(settings, displays, type = null) {
+		//console.info('fromSettingsWithDisplays', 'settings', settings, 'displays', displays, 'type', type);
 
 		var graphicalInterfaceState = new GraphicalInterfaceState(settings);
 
@@ -172,7 +172,7 @@ class GraphicalInterfaceState extends EventEmitter {
 		return graphicalInterfaceState;
 	}
 
-	static constructFromElectronBrowserWindow(electronBrowserWindow) {
+	static fromElectronBrowserWindow(electronBrowserWindow) {
 		var graphicalInterfaceState = new GraphicalInterfaceState();
 
 		var bounds = electronBrowserWindow.getBounds();

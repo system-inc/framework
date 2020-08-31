@@ -6,13 +6,14 @@ import { HttpServerConnection } from '@framework/system/server/protocols/http/se
 class HttpServer extends Server {
 
     nodeServer = null;
-    protocol = 'HTTP';
+    protocol = null;
     port = null;
     host = null;
 
     constructor(port = 8080, host = null) {
         super();
 
+        this.protocol = HttpServer.protocols.http;
         this.port = port;
         this.host = host;
     }
@@ -97,6 +98,11 @@ class HttpServer extends Server {
             return true;
         }
     }
+
+    static protocols = {
+        http: 'HTTP',
+        https: 'HTTPS',
+    };
 
 }
 

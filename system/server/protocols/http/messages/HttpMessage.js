@@ -33,22 +33,25 @@ class HttpMessage extends Message {
     
     time = null;
 
-    constructor(connection) {
+    constructor(connection = null) {
         super(connection);
 
         this.time = new Time();
 
-        this.protocol = connection.protocol;
+        if(this.connection) {
+            this.protocol = connection.protocol;
+        }
+        
         // this.protocolVersion = new Version({
         //     'major': this.connection.nodeRequest.httpVersionMajor,
         //     'minor': this.connection.nodeRequest.httpVersionMinor,
         // });
-        //this.headers = Headers.constructFromNodeHeaders(this.connection.nodeRequest.headers);
+        //this.headers = Headers.fromNodeHeaders(this.connection.nodeRequest.headers);
         this.headers = new Headers();
         //this.cookies = new Cookies(this.headers.get('cookie'));
         this.cookies = new Cookies();
         //this.body = body;
-        //this.trailers = Headers.constructFromNodeHeaders(this.connection.nodeRequest.trailers);
+        //this.trailers = Headers.fromNodeHeaders(this.connection.nodeRequest.trailers);
         this.trailers = new Headers();
 
         //this.referrer = new Url(this.headers.get('referer'));
@@ -69,13 +72,13 @@ class HttpMessage extends Message {
         // }
 
         // Browser identification from user agent
-        //this.browser = Browser.constructFromUserAgent(userAgent);
+        //this.browser = Browser.fromUserAgent(userAgent);
 
         // Device identification from user agent
-        //this.device = Device.constructFromUserAgent(userAgent);
+        //this.device = Device.fromUserAgent(userAgent);
 
         // Operating system identification from user agent
-        //this.operatingSystem = OperatingSystem.constructFromUserAgent(userAgent);
+        //this.operatingSystem = OperatingSystem.fromUserAgent(userAgent);
 
         // Geolocation (optionally provided by Cloudflare)
         //this.geolocation = new Geolocation();
@@ -83,7 +86,7 @@ class HttpMessage extends Message {
         //this.geolocation.country.code = this.headers.get('cf-ipcountry');
     }
 
-    static constructFromNodeRequest() {
+    static fromNodeRequest() {
 
     }
 

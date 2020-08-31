@@ -38,7 +38,7 @@ class Cookie {
 		return headerString;
 	}
 
-	static constructFromHeaderString(headerString) {
+	static fromHeaderString(headerString) {
 		var headerStringArray = headerString.split('=');
 		var key = headerStringArray.first();
 

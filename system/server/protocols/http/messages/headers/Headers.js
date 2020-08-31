@@ -8,7 +8,25 @@ class Headers {
 
 	headers = [];
 
-	constructor(string) {
+	constructor(headersString = null) {
+		if(headersString !== null) {
+			// Split the string into lines
+			let headersLines = headersString.split("\n");
+
+			// Loop through each line
+			headersLines.each(function(index, headerLine) {
+				// Split each line into key: value
+				let splitHeaderLine = headerLine.split(': ');
+
+				let key = splitHeaderLine[0];
+				let value = splitHeaderLine[1];
+
+				// Create the header
+				if(key) {
+					this.create(key, value);
+				}
+			}.bind(this));
+		}
 	}
 
 	get(key, caseSensitive) {
@@ -116,7 +134,7 @@ class Headers {
 
 		this.headers.each(function(index, header) {
 			if(header.key.lowercase() == 'set-cookie' || header.key.lowercase() == 'cookie') {
-				cookies.add(Cookie.constructFromHeaderString(header.value));
+				cookies.add(Cookie.fromHeaderString(header.value));
 			}
 		});
 
@@ -165,7 +183,7 @@ class Headers {
 		return object;
 	}
 
-	static constructFromNodeHeaders(nodeHeaders) {
+	static fromNodeHeaders(nodeHeaders) {
 		//app.highlight(nodeHeaders); app.exit();
 
 		var headers = new Headers();

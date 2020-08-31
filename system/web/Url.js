@@ -31,7 +31,7 @@ class Url {
 			string = 'file://'+string;
 		}
 
-		// TODO: Haven't test this
+		// TODO: Haven't tested this
 		var whatwgUrl = new URL(string);
 
 		// Fix URL parser
@@ -139,13 +139,23 @@ class Url {
 		return Class.isInstance(value, Url);
 	}
 
-	static constructFromNodeRequest(nodeRequest) {
-		var protocol = 'http';
-		if(nodeRequest.connection.encrypted) {
-			protocol = 'https';
-		}
+	static fromNodeRequest(nodeRequest) {
+		//app.highlight('nodeRequest.url', nodeRequest.url, 'nodeRequest', nodeRequest); app.exit();
 
-		var urlString = protocol+'://'+nodeRequest.headers.host+nodeRequest.url;
+		var urlString = null;
+
+		// If the URL in the Node request is a full URL
+		if(nodeRequest.url.startsWith('http')) {
+			urlString = nodeRequest.url;
+		}
+		// If the URL in the node request is a relative URL, construct a full URL
+		else {
+			let protocol = 'http';
+			if(nodeRequest.connection.encrypted) {
+				protocol = 'https';
+			}
+			urlString = protocol+'://'+nodeRequest.headers.host+nodeRequest.url;
+		}
 
 		return new Url(urlString);
 	}

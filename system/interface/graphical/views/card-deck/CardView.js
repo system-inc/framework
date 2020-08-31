@@ -17,7 +17,7 @@ class CardView extends View {
 
     data = null;
     
-	constructor(imageUrl, titleString, titleDescriptorString, titleDescriptorString, descriptionString, url) {
+	constructor(imageUrl, titleString, titleDescriptorString, descriptionString, url) {
         super();
 
         // Set the background image

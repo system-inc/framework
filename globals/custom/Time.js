@@ -331,7 +331,7 @@ class Time {
 	static nowInMilliseconds = Time.prototype.nowInMilliseconds;
 	static nowInMicroseconds = Time.prototype.nowInMicroseconds;
 
-	static constructFromDosDateTime(date, time) {
+	static fromDosDateTime(date, time) {
 		var day = date & 0x1f; // 1-31
 		var month = (date >> 5 & 0xf) - 1; // 1-12, 0-11
 		var year = (date >> 9 & 0x7f) + 1980; // 0-128, 1980-2108

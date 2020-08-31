@@ -109,7 +109,7 @@ class OperatingSystem {
 		},
 	];
 
-	static constructFromUserAgent(userAgent) {
+	static fromUserAgent(userAgent) {
 		var operatingSystem = new OperatingSystem();
 
 		operatingSystem.parseUserAgent(userAgent);

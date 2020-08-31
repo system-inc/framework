@@ -9,7 +9,7 @@ class Schema {
 	description = '';
 	models = [];
 	
-	static constructFromDatabaseSchema(databaseSchema) {
+	static fromDatabaseSchema(databaseSchema) {
 		var schema = new Schema();
 
 		schema.name = databaseSchema.name.toCamelCase(true);

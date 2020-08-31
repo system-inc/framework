@@ -24,6 +24,7 @@ class HttpClient extends Client {
         else if(String.is(url)) {
             this.url = new Url(url);
         }
+        // app.log('this.url', this.url);
     }
 
     async connect(timeoutInMilliseconds = 1 * 1000) {

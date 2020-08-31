@@ -9,7 +9,7 @@ import { HttpResponseMessage } from '@framework/system/server/protocols/http/mes
 // Class
 class HttpProtocolTest extends Test {
 
-	async SKIPtestHttpProtocol() {
+	async testHttpProtocol() {
         var response = null;
         var actual = null;
         var expected = null;
@@ -21,7 +21,7 @@ class HttpProtocolTest extends Test {
         // Have the server listen for specific data
         httpServer.on('message', function(event) {
             var httpRequestMessage = event.data;
-            //console.log('httpServer.on message event message:', httpRequestMessage);
+            console.log('httpServer.on message event message:', httpRequestMessage);
 
             app.error('TO DO');
             // [ ] responding with just data respond(string) just writes a 200 OK with response body
@@ -29,6 +29,7 @@ class HttpProtocolTest extends Test {
             // [ ] respond(httpresponsemessage) just sends the message
 
             if(httpRequestMessage.url.path == '/tests/string-response') {
+                app.log('Responding with just a string!');
                 httpRequestMessage.respond('Responding with just a string.');
             }
 
@@ -37,15 +38,16 @@ class HttpProtocolTest extends Test {
             // httpRequestMessage.respond(httpResponseMessage);
         });
 
-        // Create a HTTP protocol client
+        // Create an HTTP protocol client
         var httpClient = new HttpClient('http://127.0.0.1:8181');
         await httpClient.initialize();
         Assert.true(httpClient.connected, 'Client is connected');
+        //app.log('httpClient', httpClient);
 
         // Have the client listen for specific data
         httpClient.on('message', function(event) {
             var httpResponseMessage = event.data;
-            console.log('httpClient.on message event message:', message);
+            console.log('httpClient.on message event message:', httpResponseMessage);
         });
 
         app.error('TO DO');
@@ -55,6 +57,8 @@ class HttpProtocolTest extends Test {
         // [ ] request(httprequestmessage) just sends the message
 
         await httpClient.request('/tests/string-response');
+
+        return;
         //await httpClient.request("POST /2 HTTP/1.1\r\nHost: localhost\r\n\r\nBody");
 
         //var response = await httpClient.request("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");

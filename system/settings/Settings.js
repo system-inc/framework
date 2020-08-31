@@ -116,7 +116,7 @@ class Settings {
 		return this.datastore.delete(path);
 	}
 
-	static async constructFromFile(defaults, dataFilePath, datastore) {
+	static async fromFile(defaults, dataFilePath, datastore) {
 		//console.log('dataFilePath', dataFilePath);
 		const { File } = await import('@framework/system/file-system/File.js');
 

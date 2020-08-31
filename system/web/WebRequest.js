@@ -191,7 +191,7 @@ class WebRequest {
 					url: url,
 					statusCode: response.statusCode,
 					statusMessage: response.statusMessage,
-					headers: Headers.constructFromNodeHeaders(response.headers),
+					headers: Headers.fromNodeHeaders(response.headers),
 					rawHeaders: response.rawHeaders,
 					cookies: null, // This is set further down
 					body: '',

@@ -146,7 +146,7 @@ class LocalSocketPacket extends Packet {
         return payloadTypeBuffer;
     }
 
-    static constructFromData(data, correlationIdentifierString = null) {
+    static fromData(data, correlationIdentifierString = null) {
         var localSocketPacket = new LocalSocketPacket();
 
         // Create the major version
