@@ -116,6 +116,10 @@ class Cookies {
 
 		return headersArray;
 	}
+
+	static is(value) {
+		return Class.isInstance(value, Cookies);
+    }
 	
 }
 

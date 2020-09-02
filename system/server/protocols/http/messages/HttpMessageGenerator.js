@@ -73,6 +73,11 @@ class HttpMessageGenerator extends EventEmitter {
         if(this.incomingMessageCurrentStructureProperty == 'body') {
             // app.log('at the body dataToProcessSizeInBytes', this.dataToProcessSizeInBytes, 'dataToProcess', this.dataToProcess);
 
+            // Set the body as an empty string which we will append to
+            if(this.incomingMessage.body === null) {
+                this.incomingMessage.body = '';
+            }
+
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length
             let contentLength = this.incomingMessage.headers.get('content-length');
 
@@ -84,16 +89,12 @@ class HttpMessageGenerator extends EventEmitter {
             
             // If a content length was specified and we have enough bytes to read it
             if(contentLength !== null && this.dataToProcessSizeInBytes >= contentLength) {
-                this.incomingMessage.body = this.readFromDataToProcess(contentLength);
+                // Appending the read buffer to the empty string will convert the buffer to a string, which is what we want
+                this.incomingMessage.body += this.readFromDataToProcess(contentLength);
                 this.nextStructureIndex(); // Move to the trailers
             }
             // If we are using chunked transfer encoding
-            else if(transferEncoding !== null && transferEncoding.lowercase() == 'chunked') {
-                // Set the body as an empty string which we will append to
-                if(this.incomingMessage.body === null) {
-                    this.incomingMessage.body = '';
-                }
-                
+            else if(transferEncoding !== null && transferEncoding.lowercase() == 'chunked') {                
                 // Read the chunk size from the dataToProcess if we have not already read it
                 if(this.incomingBodyChunkSizeInBytes === null) {
                     // The data until the next boundary will be the chunk size in bytes in hexadecimal
@@ -174,6 +175,12 @@ class HttpMessageGenerator extends EventEmitter {
                 }
                 // HttpMessage .url
                 else if(this.incomingMessageCurrentStructureProperty == 'url') {
+                    // If the URL is relative and we have a connection
+                    if(!dataUpToBoundary.lowercase().startsWith('http') && this.connection !== null) {
+                        // Turn the URL into an absolute URL
+                        dataUpToBoundary = this.connection.protocol.lowercase()+'://'+this.connection.host+':'+this.connection.port+dataUpToBoundary;
+                    }
+
                     propertyValue = new Url(dataUpToBoundary);
                 }
                 // HttpMessage .headers
@@ -348,6 +355,9 @@ class HttpMessageGenerator extends EventEmitter {
         // If the body is JSON, decode it and save it to the .data property
         if(Json.is(this.incomingMessage.body)) {
             this.incomingMessage.data = Json.decode(this.incomingMessage.body);
+        }
+        else {
+            //console.log('HttpMessageGenerator .emitMessage() this.incomingMessage.body', this.incomingMessage.body, 'is not JSON');
         }
 
         // Set the message properties using the headers

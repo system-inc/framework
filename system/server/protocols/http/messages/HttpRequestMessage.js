@@ -36,6 +36,12 @@ class HttpRequestMessage extends HttpMessage {
         }
         this.headers.set('Host', hostString);
 
+        // If the method is POST we need to set the Content-Length header
+        if(this.method == HttpRequestMessage.methods.post) {
+            // console.log('this.body', this.body);
+            this.headers.set('Content-Length', this.body.sizeInBytes());
+        }
+
         // Headers
         string += this.headers.toString();
 
@@ -68,6 +74,9 @@ class HttpRequestMessage extends HttpMessage {
         // Create the HttpRequestMessage
         let httpRequestMessage = new HttpRequestMessage(connection);
 
+        // Apply common options
+        httpRequestMessage = HttpMessage.applyOptions(httpRequestMessage, options);
+
         // Method
         if(options.method) {
             httpRequestMessage.method = options.method.uppercase();
@@ -79,74 +88,6 @@ class HttpRequestMessage extends HttpMessage {
         }
         else {
             httpRequestMessage.url = new Url(url);
-        }
-
-        // Protocol
-        if(options.protocol) {
-            httpRequestMessage.protocol = options.protocol;
-        }
-        // Set protocol version from the connection if it exists
-        else if(connection && connection.protocol) {
-            httpRequestMessage.protocol = connection.protocol;
-        }
-
-        // Protocol version
-        if(options.protocolVersion) {
-            // The protocol version is a Version object
-            if(Version.is(options.protocolVersion)) {
-                httpRequestMessage.protocolVersion = options.protocolVersion;
-            }
-            // The protocol version is a string
-            else {
-                httpRequestMessage.protocolVersion = new Version(options.protocolVersion);
-            }
-        }
-        // Set protocol version from the connection if it exists
-        else if(connection && connection.protocolVersion) {
-            httpRequestMessage.protocolVersion = connection.protocolVersion;
-        }
-
-        // Headers
-        if(options.headers) {
-            if(Headers.is(options.headers)) {
-                httpRequestMessage.headers = options.headers;
-            }
-            else {
-                httpRequestMessage.headers = new Headers(options.headers);
-            }
-
-            // Set other HttpResponseMessage properties from the headers
-            httpRequestMessage.setPropertiesUsingHeaders();
-        }
-
-        // Body
-        if(options.body) {
-            httpRequestMessage.body = options.body;
-
-            // If no data is set and the body is JSON
-            if(!httpMessage.data && Json.is(httpMessage.body)) {
-                httpMessage.data = Json.encode(httpMessage.body);
-            }
-        }
-
-        // Data
-        if(options.data) {
-            httpRequestMessage.data = options.data;
-
-            // If no body is set, create it from the data
-            if(!httpRequestMessage.body) {
-                httpRequestMessage.body = Json.encode(httpRequestMessage.data);
-            }
-        }
-
-        // Trailers
-        if(options.trailers) {
-            if(Headers.is(options.trailers)) {
-                httpRequestMessage.trailers = options.trailers;
-            }
-            else {
-                httpRequestMessage.trailers = new Headers(options.trailers);
-            }
         }
 
         return httpRequestMessage;

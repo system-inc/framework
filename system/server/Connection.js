@@ -28,7 +28,7 @@ class Connection extends EventEmitter {
     }
 
     onNodeSocketClosed() {
-        app.log('Connection.onNodeSocketClosed');
+        // app.log('Connection.onNodeSocketClosed');
         this.disconnect();
     }
 

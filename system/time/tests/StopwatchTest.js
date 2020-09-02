@@ -7,10 +7,10 @@ import { Stopwatch } from '@framework/system/time/Stopwatch.js';
 class StopwatchTest extends Test {
 
 	async testGetHighResolutionElapsedTime() {
-		var action = new Stopwatch();
-		action.stop();
+		let actual = new Stopwatch();
+		actual.stop();
 
-		Assert.true(Number.is(action.getHighResolutionElapsedTime()), 'getHighResolutionElapsedTime()');
+		Assert.true(Number.is(actual.getHighResolutionElapsedTime()), 'getHighResolutionElapsedTime()');
 	}
 
 }

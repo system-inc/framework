@@ -14,7 +14,7 @@ class Headers {
 
 	constructor(headersString = null) {
 		if(headersString !== null) {
-			// console.log('headersString', headersString);
+			// app.log('headersString', headersString);
 
 			// Replace all \r\n to just \n
 			headersString = headersString.replace("\r\n", "\n");
@@ -202,6 +202,10 @@ class Headers {
 
 		return string;
 	}
+
+	static is(value) {
+		return Class.isInstance(value, Headers);
+    }
 
 	static fromNodeHeaders(nodeHeaders) {
 		//app.highlight(nodeHeaders); app.exit();

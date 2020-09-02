@@ -60,9 +60,10 @@ class HttpConnection extends Connection {
     }
 
     async respond(optionsOrBodyOrHttpResponseMessage) {
-        app.log('HttpConnection respond()', optionsOrBodyOrHttpResponseMessage);
+        // app.log('HttpConnection respond()', optionsOrBodyOrHttpResponseMessage);
 
         let sentHttpMessage = await this.send(HttpResponseMessage.fromOptions(optionsOrBodyOrHttpResponseMessage, this));
+        // app.log('sentHttpMessage', sentHttpMessage);
 
         return sentHttpMessage;
     }

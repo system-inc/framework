@@ -4,6 +4,20 @@ import { HttpConnection } from '@framework/system/server/protocols/http/HttpConn
 import { Url } from '@framework/system/web/Url.js';
 import { Version } from '@framework/system/version/Version.js';
 
+/*
+    Notes - see HttpServer.js
+    This is a simple implementation of an HTTP 1.1 client using plain sockets.
+    As I want to learn more about the different features of the HTTP protocol, I can implement them
+    and test them with HttpProtocolTest.js
+
+    Some things I can work on next:
+    gzipping content
+    HttpServer
+    HTTP 2.0
+
+    Using this client will give me 100% control over HTTP requests.
+*/
+
 // Class
 class HttpClient extends Client {
 

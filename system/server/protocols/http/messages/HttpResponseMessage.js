@@ -70,73 +70,8 @@ class HttpResponseMessage extends HttpMessage {
         // Create the HttpResponseMessage
         let httpResponseMessage = new HttpResponseMessage(connection);
 
-        // Protocol
-        if(options.protocol) {
-            httpResponseMessage.protocol = options.protocol;
-        }
-        // Set protocol version from the connection if it exists
-        else if(connection && connection.protocol) {
-            httpResponseMessage.protocol = connection.protocol;
-        }
-
-        // Protocol version
-        if(options.protocolVersion) {
-            // The protocol version is a Version object
-            if(Version.is(options.protocolVersion)) {
-                httpResponseMessage.protocolVersion = options.protocolVersion;
-            }
-            // The protocol version is a string
-            else {
-                httpResponseMessage.protocolVersion = new Version(options.protocolVersion);
-            }
-        }
-        // Set protocol version from the connection if it exists
-        else if(connection && connection.protocolVersion) {
-            httpResponseMessage.protocolVersion = connection.protocolVersion;
-        }
-
-        // Headers
-        if(options.headers) {
-            if(Headers.is(options.headers)) {
-                httpResponseMessage.headers = options.headers;
-            }
-            else {
-                httpResponseMessage.headers = new Headers(options.headers);
-            }
-
-            // Set other HttpResponseMessage properties from the headers
-            httpResponseMessage.setPropertiesUsingHeaders();
-        }
-
-        // Body
-        if(options.body) {
-            httpResponseMessage.body = options.body;
-
-            // If no data is set and the body is JSON
-            if(!httpResponseMessage.data && Json.is(httpResponseMessage.body)) {
-                httpResponseMessage.data = Json.encode(httpResponseMessage.body);
-            }
-        }
-
-        // Data
-        if(options.data) {
-            httpResponseMessage.data = options.data;
-
-            // If no body is set, create it from the data
-            if(!httpResponseMessage.body) {
-                httpResponseMessage.body = Json.encode(httpResponseMessage.data);
-            }
-        }
-
-        // Trailers
-        if(options.trailers) {
-            if(Headers.is(options.trailers)) {
-                httpResponseMessage.trailers = options.trailers;
-            }
-            else {
-                httpResponseMessage.trailers = new Headers(options.trailers);
-            }
-        }
+        // Apply common options
+        httpResponseMessage = HttpMessage.applyOptions(httpResponseMessage, options);
 
         return httpResponseMessage;
     }

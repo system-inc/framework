@@ -13,6 +13,7 @@ class JsonTest extends Test {
 		Assert.false(Json.is({}), 'object literal []');
 		Assert.false(Json.is(10), 'number');
 		Assert.false(Json.is(true), 'boolean');
+		Assert.true(Json.is('{"text":"hello"}'), 'string');
 	}
 
 	testEncode() {

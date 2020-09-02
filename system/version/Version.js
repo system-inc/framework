@@ -71,6 +71,10 @@ class Version {
 
 		return version;
 	}
+
+	static is(value) {
+		return Class.isInstance(value, Version);
+    }
 	
 }
 

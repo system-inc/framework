@@ -102,6 +102,94 @@ class HttpMessage extends Message {
     static is(value) {
 		return Class.isInstance(value, HttpMessage);
     }
+
+    // Set common properties on HttpRequestMessage and HttpResponseMessage
+    static applyOptions(httpMessage, options) {
+        // Protocol
+        if(options.protocol) {
+            httpMessage.protocol = options.protocol;
+        }
+        // Set protocol version from the connection if it exists
+        else if(httpMessage.connection && httpMessage.connection.protocol) {
+            httpMessage.protocol = httpMessage.connection.protocol;
+        }
+
+        // Protocol version
+        if(options.protocolVersion) {
+            // The protocol version is a Version object
+            if(Version.is(options.protocolVersion)) {
+                httpMessage.protocolVersion = options.protocolVersion;
+            }
+            // The protocol version is a string
+            else {
+                httpMessage.protocolVersion = new Version(options.protocolVersion);
+            }
+        }
+        // Set protocol version from the connection if it exists
+        else if(httpMessage.connection && httpMessage.connection.protocolVersion) {
+            httpMessage.protocolVersion = httpMessage.connection.protocolVersion;
+        }
+
+        // Headers
+        if(options.headers) {
+            if(Headers.is(options.headers)) {
+                httpMessage.headers = options.headers;
+            }
+            else {
+                httpMessage.headers = new Headers(options.headers);
+            }
+        }
+
+        // Cookies
+        if(options.cookies) {
+            // Create the headers if we need to
+            if(!Headers.is(httpMessage.headers)) {
+                httpMessage.headers = new Headers();
+            }
+
+            if(Cookies.is(options.cookies)) {
+                httpMessage.headers.addCookies(options.cookies);
+            }
+            else {
+                throw new Error('Cookies option must be an instance of class Cookies.');
+            }
+        }
+
+        // Set other HttpResponseMessage properties from the headers
+        httpMessage.setPropertiesUsingHeaders();
+
+        // Body
+        if(options.body) {
+            httpMessage.body = options.body;
+
+            // If no data is set and the body is JSON
+            if(!httpMessage.data && Json.is(httpMessage.body)) {
+                httpMessage.data = Json.encode(httpMessage.body);
+            }
+        }
+
+        // Data
+        if(options.data) {
+            httpMessage.data = options.data;
+
+            // If no body is set, create it from the data
+            if(!httpMessage.body) {
+                httpMessage.body = Json.encode(httpMessage.data);
+            }
+        }
+
+        // Trailers
+        if(options.trailers) {
+            if(Headers.is(options.trailers)) {
+                httpMessage.trailers = options.trailers;
+            }
+            else {
+                httpMessage.trailers = new Headers(options.trailers);
+            }
+        }
+
+        return httpMessage;
+    }
     
 }
 
