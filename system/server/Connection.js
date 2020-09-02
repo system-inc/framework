@@ -23,19 +23,22 @@ class Connection extends EventEmitter {
 
     // When the Node socket gets data
     onNodeSocketData(data) {
+        //app.log('Connection.onNodeSocketData', data);
         this.onData(data);
     }
 
     onNodeSocketClosed() {
-        //console.log('Connection.onNodeSocketClosed');
+        app.log('Connection.onNodeSocketClosed');
         this.disconnect();
     }
 
     onData(data) {
+        //app.log('Connection.onData', data);
         this.emit('data', data);
     }
 
     onMessage(message) {
+        // app.log('Connection.onMessage', message);
         this.emit('message', message);
     }
 
@@ -49,8 +52,9 @@ class Connection extends EventEmitter {
         throw new Error('This method must be implemented by a child class.');
     }
 
+    // Respond by default just proxies to request
     async respond() {
-        throw new Error('This method must be implemented by a child class.');
+        return await this.request(...arguments);
     }
 
     async disconnect() {

@@ -27,73 +27,72 @@ class LocalSocketConnection extends Connection {
     // When the packet generator generates a packet
     onPacket(event) {
         //console.log('Got a packet event from the socket packet generator', event);
-        var packet = event.data;
+        let packet = event.data;
         
         // Emit a LocalSocketMessage
-        var data = packet.readPayload();
+        let data = packet.readPayload();
         //console.log('LocalSocketConnection onPacket data', data);
-        var correlationIdentifier = packet.readCorrelationIdentifier();
+        let correlationIdentifier = packet.readCorrelationIdentifier();
         //console.log('LocalSocketConnection onPacket correlationIdentifier', correlationIdentifier);
-        var message = new LocalSocketMessage(this, data, correlationIdentifier, packet);
+        let message = new LocalSocketMessage(this, data, correlationIdentifier, packet);
         //console.log('LocalSocketConnection onPacket message', message);
 
         this.onMessage(message);
     }
 
-    async send(messageOrData, correlatingMessage = null) {
-        //console.log('LocalSocketConnection send', 'messageOrData', messageOrData, 'correlatingMessage', correlatingMessage);
+    async send(localSocketMessageOrData, correlatingLocalSocketMessage = null) {
+        //app.log('LocalSocketConnection send', 'localSocketMessageOrData', localSocketMessageOrData, 'correlatingLocalSocketMessage', correlatingLocalSocketMessage);
 
-        var message = null;
+        let localSocketMessage = null;
 
         // If we are sending an existing message
-        if(LocalSocketMessage.is(messageOrData)) {
-            message = messageOrData;
+        if(LocalSocketMessage.is(localSocketMessageOrData)) {
+            localSocketMessage = localSocketMessageOrData;
         }
         // If we need to create the message
         else {
-            message = new LocalSocketMessage(this, messageOrData);
+            localSocketMessage = new LocalSocketMessage(this, localSocketMessageOrData);
         }
 
         // If there is a correlating message, set the correlation identifier
-        if(correlatingMessage !== null) {
-            message.correlationIdentifier = correlatingMessage.correlationIdentifier;
+        if(correlatingLocalSocketMessage !== null) {
+            localSocketMessage.correlationIdentifier = correlatingLocalSocketMessage.correlationIdentifier;
         }
 
         // Send the message's packet over the Node socket
-        message.sendPacket(this.nodeSocket);
+        localSocketMessage.sendPacket(this.nodeSocket);
 
         // Return the message
-        return message;
+        return localSocketMessage;
     }
 
-    async request(messageOrData, correlatingMessage = null, timeoutInMilliseconds = 1 * 1000) {
-        var sentMessage = await this.send(messageOrData, correlatingMessage);
+    async request(localSocketMessageOrData, correlatingLocalSocketMessage = null, timeoutInMilliseconds = 1 * 1000) {
+        let sentLocalSocketMessage = await this.send(localSocketMessageOrData, correlatingLocalSocketMessage);
 
         return new Promise(function(resolve, reject) {
-            var timeoutFunction = Function.schedule(timeoutInMilliseconds, function() {
-                //resolve(new Error('Request failed, timed out after '+timeoutInMilliseconds+' milleseconds.'));
+            let timeoutFunction = Function.schedule(timeoutInMilliseconds, function() {
                 reject('Request failed, timed out after '+timeoutInMilliseconds+' milleseconds.');
             });
 
             // A function to check the correlation identifiers of future packets until we get a match
-            var correlationIdentifierCheckFunction = function(event) {
-                var incomingMessage = event.data;
+            let correlationIdentifierCheckFunction = function(event) {
+                let incomingLocalSocketMessage = event.data;
 
                 // If the correlation identifiers match
-                if(incomingMessage.correlationIdentifier == sentMessage.correlationIdentifier) {
-                    //console.log('correlationIdentifier matches!', sentMessage.correlationIdentifier);
+                if(incomingLocalSocketMessage.correlationIdentifier == sentLocalSocketMessage.correlationIdentifier) {
+                    //console.log('correlationIdentifier matches!', sentLocalSocketMessage.correlationIdentifier);
 
                     // Cancel the timeout function
                     Function.cancel(timeoutFunction);
 
-                    // When we get the event, remove the event listener
-                    this.removeEventListener('data', correlationIdentifierCheckFunction);
+                    // When we get the matching message, remove the event listener
+                    this.removeEventListener('message', correlationIdentifierCheckFunction);
 
                     // Return the message
-                    resolve(incomingMessage);
+                    resolve(incomingLocalSocketMessage);
                 }
                 else {
-                    //console.log('correlationIdentifier does not match!', 'sentMessage.correlationIdentifier', sentMessage.correlationIdentifier, 'incomingMessage.correlationIdentifier', incomingMessage.correlationIdentifier);
+                    //console.log('correlationIdentifier does not match!', 'sentLocalSocketMessage.correlationIdentifier', sentLocalSocketMessage.correlationIdentifier, 'incomingLocalSocketMessage.correlationIdentifier', incomingLocalSocketMessage.correlationIdentifier);
                 }
             }.bind(this);
 

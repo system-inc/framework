@@ -109,17 +109,17 @@ class PacketGenerator extends EventEmitter {
         // Keep track of the bytes we are reading
         this.dataToProcessSizeInBytes -= size;
 
-        // If the bytes we want to read are the exact length of the first entry in the data to process array
+        // If the bytes we want to read are the exact length of the first entry in the dataToProcess array
         if(size === this.dataToProcess[0].length) {
             result = this.dataToProcess.shift();
         }
-        // If the bytes we want to read are less than the size of the first entry in the data to process array
+        // If the bytes we want to read are less than the size of the first entry in the dataToProcess array
         else if(size < this.dataToProcess[0].length) {
             // Cut out just the data we need from the first entry
             result = this.dataToProcess[0].slice(0, size);
             this.dataToProcess[0] = this.dataToProcess[0].slice(size);
         }
-        // If the bytes we want to read span more than one entry in the data to process array
+        // If the bytes we want to read span more than one entry in the dataToProcess array
         else {
             result = Buffer.allocUnsafe(size);
             var offset = 0;

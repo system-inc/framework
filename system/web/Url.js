@@ -33,12 +33,7 @@ class Url {
 
 		// TODO: Haven't tested this
 		var whatwgUrl = new URL(string);
-
-		// Fix URL parser
-		if(whatwgUrl.host === null && whatwgUrl.path !== null) {
-			whatwgUrl.host = whatwgUrl.hostname = whatwgUrl.path;
-			whatwgUrl.path = whatwgUrl.pathname = '';
-		}
+		//console.log('whatwgUrl', whatwgUrl);
 
 		// Set the protocol
 		if(!whatwgUrl.protocol) {
@@ -49,7 +44,7 @@ class Url {
 		}
 		
 		// Set the port
-		if(whatwgUrl.port == null) {
+		if(!whatwgUrl.port) {
 			if(this.protocol == 'http')	{
 				this.port = 80;
 			}
@@ -67,12 +62,20 @@ class Url {
 		// Set the path
 		this.path = whatwgUrl.pathname;
 
-		// Set the query
-		this.query = whatwgUrl.query;
-
 		// Set the query string
-		this.queryString = whatwgUrl.search;
-
+		if(whatwgUrl.search) {
+			this.queryString = whatwgUrl.search;
+		}
+		
+		// Set the query
+		this.query = {};
+		if(whatwgUrl.searchParams) {
+			// Log the values
+			whatwgUrl.searchParams.forEach(function(value, key) {
+				this.query[key] = value;
+			}.bind(this));
+		}
+		
 		// Set the fragment
 		if(whatwgUrl.hash) {
 			this.fragment = whatwgUrl.hash.replaceFirst('#', '');	

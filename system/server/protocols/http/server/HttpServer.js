@@ -1,36 +1,34 @@
 // Dependencies
-import { Server } from '@framework/system/server/Server.js';
-import { HttpServerConnection } from '@framework/system/server/protocols/http/server/HttpServerConnection.js';
+import { SocketServer } from '@framework/system/server/SocketServer.js';
+import { HttpConnection } from '@framework/system/server/protocols/http/HttpConnection.js';
+import { Version } from '@framework/system/version/Version.js';
 
 // Class
-class HttpServer extends Server {
+class HttpServer extends SocketServer {
 
-    nodeServer = null;
-    protocol = null;
+    protocol = HttpServer.protocols.http;
+    protocolVersion = new Version('1.1');
     port = null;
     host = null;
 
-    constructor(port = 8080, host = null) {
+    constructor(port = 8080, host = '127.0.0.1', protocol = null, protocolVersion = null) {
         super();
 
-        this.protocol = HttpServer.protocols.http;
         this.port = port;
         this.host = host;
-    }
 
-    async initialize() {
-        // Create the Node HTTP server
-        this.nodeServer = Node.Http.createServer(this.onNodeServerConnection.bind(this));
+        if(protocol) {
+            this.protocol = protocol;
+        }
 
-        // Super initialize which calls this.start()
-        await super.initialize();
+        if(protocolVersion) {
+            this.protocolVersion = protocolVersion;
+        }
     }
     
-    async onNodeServerConnection(nodeRequest, nodeResponse) {
-        console.log('HttpServer.onNodeServerConnection');
-        //console.log('HttpServer onNodeServerConnection nodeRequest', nodeRequest, 'nodeResponse', nodeResponse);
-        
-        var connection = new HttpServerConnection(nodeRequest.socket, this.protocol, this.port, this.host, nodeRequest, nodeResponse);
+    onNodeServerConnection(nodeSocket) {
+        // app.log('HttpServer.onNodeServerConnection');
+        let connection = new HttpConnection(nodeSocket, this.protocol, this.protocolVersion, this.port, this.host);
         
         // Add the connection to the server
         this.newConnection(connection);
@@ -58,40 +56,6 @@ class HttpServer extends Server {
                         resolve(true);
                     }.bind(this)
                 );
-            }.bind(this));
-        }
-        else {
-            return true;
-        }
-    }
-
-    async stop() {
-        //console.log('HttpServer stop()');
-        //console.log('HttpServer stop()', new Error().stack);
-
-        // If the server is not already stopped
-        if(!this.stopped) {
-            var superStop = super.stop.bind(this);
-
-            //console.log('Closing socket server at', this.localSocketFilePath);
-            await new Promise(function(resolve, reject) {
-                //console.log('Closing server, no longer accepting new connections...');
-                
-                // This just stops new connections from connecting
-                this.nodeServer.close(function() {
-                    //console.log('All connections closed and server stopped.');
-                    superStop();
-                    resolve(true);
-                }.bind(this));
-
-                // Loop through each connection and disconnect it
-                this.connections.each(function(identifier, connection) {
-                    //console.log('connection', connection);
-                    connection.disconnect();
-                });
-
-                // No longer listening
-                this.listening = false;
             }.bind(this));
         }
         else {

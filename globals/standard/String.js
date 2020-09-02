@@ -390,6 +390,18 @@ String.prototype.getCharacterCount = function() {
 	return this.length;
 };
 
+String.prototype.splitOnFirst = function(stringToSplitOn) {
+	let indexOfStringToSplitOn = this.indexOf(stringToSplitOn);
+
+	let firstHalf = this.substring(0, indexOfStringToSplitOn);
+	let secondHalf = this.substring(indexOfStringToSplitOn + stringToSplitOn.length);
+
+	return [
+		firstHalf,
+		secondHalf,
+	];
+};
+
 // Static methods
 
 String.is = function(value) {

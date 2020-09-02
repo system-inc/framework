@@ -10,14 +10,146 @@ class HttpRequestMessage extends HttpMessage {
     method = null;
     url = null;
 
+    constructor(connection = null) {
+        super(connection);
+
+        // Default to GET
+        this.method = HttpRequestMessage.methods.get;
+    }
+
     toBuffer() {
-        //console.log(this);
-
-        var string = this.method+' '+this.url.toString()+' '+this.protocol.uppercase()+'/1.1'+"\r\n";
-        string += "\r\n\r\n";
-
         //console.log('HttpRequestMessage toBuffer string', string);
-        return Buffer.from(string);
+        return Buffer.from(this.toString());
+    }
+
+    toString() {
+        // https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html
+        // GET url HTTP/1.1
+        let string = this.method+' '+this.url.toString()+' '+this.protocol.uppercase()+'/'+this.protocolVersion.major+'.'+this.protocolVersion.minor+"\r\n";
+
+        // A Host header field must be sent in all HTTP/1.1 request messages
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Host
+        let hostString = this.url.host;
+        // Do not add default ports 80 (HTTP) and 443 (HTTPS)
+        if(this.url.port != 80 && this.url.port != 443) {
+            hostString += ':'+this.url.port;
+        }
+        this.headers.set('Host', hostString);
+
+        // Headers
+        string += this.headers.toString();
+
+        // CRLF
+        string += "\r\n";
+
+        // Body
+        if(this.body) {
+            string += this.body;
+        }
+
+        // Trailers
+        string += this.trailers.toString();
+
+        return string;
+    }
+
+    // See HttpResponseMessage.fromOptions()
+    static fromUrlAndOptions(url, optionsOrHttpRequestMessage, connection = null) {
+        // If the passed argument is an HttpRequestMessage
+        if(HttpRequestMessage.is(optionsOrHttpRequestMessage)) {
+            // Return the HttpRequestMessage
+            return optionsOrHttpRequestMessage;
+        }
+
+        // Default options
+        let options = {
+        }.merge(optionsOrHttpRequestMessage);
+
+        // Create the HttpRequestMessage
+        let httpRequestMessage = new HttpRequestMessage(connection);
+
+        // Method
+        if(options.method) {
+            httpRequestMessage.method = options.method.uppercase();
+        }
+
+        // URL
+        if(Url.is(url)) {
+            httpRequestMessage.url = url;
+        }
+        else {
+            httpRequestMessage.url = new Url(url);
+        }
+
+        // Protocol
+        if(options.protocol) {
+            httpRequestMessage.protocol = options.protocol;
+        }
+        // Set protocol version from the connection if it exists
+        else if(connection && connection.protocol) {
+            httpRequestMessage.protocol = connection.protocol;
+        }
+
+        // Protocol version
+        if(options.protocolVersion) {
+            // The protocol version is a Version object
+            if(Version.is(options.protocolVersion)) {
+                httpRequestMessage.protocolVersion = options.protocolVersion;
+            }
+            // The protocol version is a string
+            else {
+                httpRequestMessage.protocolVersion = new Version(options.protocolVersion);
+            }
+        }
+        // Set protocol version from the connection if it exists
+        else if(connection && connection.protocolVersion) {
+            httpRequestMessage.protocolVersion = connection.protocolVersion;
+        }
+
+        // Headers
+        if(options.headers) {
+            if(Headers.is(options.headers)) {
+                httpRequestMessage.headers = options.headers;
+            }
+            else {
+                httpRequestMessage.headers = new Headers(options.headers);
+            }
+
+            // Set other HttpResponseMessage properties from the headers
+            httpRequestMessage.setPropertiesUsingHeaders();
+        }
+
+        // Body
+        if(options.body) {
+            httpRequestMessage.body = options.body;
+
+            // If no data is set and the body is JSON
+            if(!httpMessage.data && Json.is(httpMessage.body)) {
+                httpMessage.data = Json.encode(httpMessage.body);
+            }
+        }
+
+        // Data
+        if(options.data) {
+            httpRequestMessage.data = options.data;
+
+            // If no body is set, create it from the data
+            if(!httpRequestMessage.body) {
+                httpRequestMessage.body = Json.encode(httpRequestMessage.data);
+            }
+        }
+
+        // Trailers
+        if(options.trailers) {
+            if(Headers.is(options.trailers)) {
+                httpRequestMessage.trailers = options.trailers;
+            }
+            else {
+                httpRequestMessage.trailers = new Headers(options.trailers);
+            }
+        }
+
+        return httpRequestMessage;
     }
 
     static fromNodeRequest(connection, nodeRequest, nodeRequestData) {
@@ -42,84 +174,53 @@ class HttpRequestMessage extends HttpMessage {
         return httpRequestMessage;
     }
 
-    static fromUrlPath(connection, urlPath) {
-        var httpRequestMessage = new HttpRequestMessage(connection);
-
-        httpRequestMessage.method = HttpRequestMessage.methods.get;
-        httpRequestMessage.url = new Url(connection.protocol+'://'+connection.host+':'+connection.port+urlPath);
-
-        return httpRequestMessage;
+    static is(value) {
+		return Class.isInstance(value, HttpRequestMessage);
     }
-
-    static fromObject(object, url = null) {
-        var httpRequestMessage = new HttpRequestMessage();
-
-        httpRequestMessage.protocol = null;
-
-        if(object.headers) {
-            if(Headers.is(object.headers)) {
-                httpRequestMessage.headers = object.headers;
-            }
-            else {
-                httpRequestMessage.headers = new Headers(object.headers);
-            }
-        }        
-
-        if(object.body) {
-            httpRequestMessage.body = object.body;
-        }
-
-        if(object.data) {
-            httpRequestMessage.data = object.data;
-
-            // If no body is set, create it from the data
-            if(!httpRequestMessage.body) {
-                httpRequestMessage.body = Json.encode(httpRequestMessage.data);
-            }
-        }
-
-        httpRequestMessage.trailers = null;
-        
-        if(object.method) {
-            httpRequestMessage.method = object.method.uppercase();
-        }
-        else {
-            httpRequestMessage.method = HttpRequestMessage.methods.get;
-        }
-
-        // Allow URL to be passed in the options instead of the arguments
-        if(object.url) {
-            url = object.url;
-        }
-
-        if(url) {
-            if(Url.is(url)) {
-                httpRequestMessage.url = url;
-            }
-            else {
-                httpRequestMessage.url = new Url(url);
-            }
-        }
-
-        return httpRequestMessage;
-    }
-
+    
     static methods = {
         get: 'GET',
         head: 'HEAD',
         post: 'POST',
         put: 'PUT',
-        delete: 'DELET',
+        delete: 'DELETE',
         connect: 'CONNECT',
         options: 'OPTIONS',
         trace: 'TRACE',
         patch: 'PATCH',
     };
 
-    static is(value) {
-		return Class.isInstance(value, HttpRequestMessage);
-    }
-    
+    static structure = {
+        'method': {
+            type: 'string',
+            boundary: ' ',
+        },
+        'url': {
+            type: 'string',
+            boundary: ' ',
+        },
+        'protocol': {
+            type: 'string',
+            boundary: '/',
+        },
+        'protocolVersion': {
+            type: 'string',
+            boundary: "\r\n",
+        },
+        'headers': {
+            type: 'string',
+            boundary: "\r\n\r\n",
+        },
+        'body': {
+            type: 'string',
+            boundary: "\r\n\r\n",
+        },
+        'trailers': {
+            type: 'string',
+            boundary: null,
+        },
+    };
+
 }
 
 // Export

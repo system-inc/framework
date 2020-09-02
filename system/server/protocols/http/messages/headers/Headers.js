@@ -8,18 +8,32 @@ class Headers {
 
 	headers = [];
 
+	get length() {
+		return this.headers.length;
+	}
+
 	constructor(headersString = null) {
 		if(headersString !== null) {
+			// console.log('headersString', headersString);
+
+			// Replace all \r\n to just \n
+			headersString = headersString.replace("\r\n", "\n");
+
 			// Split the string into lines
 			let headersLines = headersString.split("\n");
 
 			// Loop through each line
 			headersLines.each(function(index, headerLine) {
 				// Split each line into key: value
-				let splitHeaderLine = headerLine.split(': ');
+				let splitHeaderLine = headerLine.splitOnFirst(': ');
 
 				let key = splitHeaderLine[0];
 				let value = splitHeaderLine[1];
+
+				// Convert integers to numbers
+				if(Number.isInteger(value)) {
+					value = value.toNumber();
+				}
 
 				// Create the header
 				if(key) {
@@ -159,10 +173,6 @@ class Headers {
 		this.headers = headers;
 	}
 
-	length() {
-		return this.headers.length;
-	}
-
 	toArray() {
 		var array = [];
 
@@ -181,6 +191,16 @@ class Headers {
 		}.bind(this));
 
 		return object;
+	}
+
+	toString() {
+		let string = '';
+
+		this.headers.each(function(index, header) {
+			string += header.key+': '+header.value+"\r\n";
+		}.bind(this));
+
+		return string;
 	}
 
 	static fromNodeHeaders(nodeHeaders) {

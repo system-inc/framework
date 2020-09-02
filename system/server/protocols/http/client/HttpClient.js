@@ -2,16 +2,18 @@
 import { Client } from '@framework/system/server/Client.js';
 import { HttpConnection } from '@framework/system/server/protocols/http/HttpConnection.js';
 import { Url } from '@framework/system/web/Url.js';
+import { Version } from '@framework/system/version/Version.js';
 
 // Class
 class HttpClient extends Client {
 
     url = null;
+    protocolVersion = new Version('1.1');
 
     constructor(url) {
         super();
 
-        // Set the local socket file path
+        // Set the URL
         if(url === null) {
             throw new Error('URL must be specified when constructing a HttpClient.');
         }
@@ -29,26 +31,31 @@ class HttpClient extends Client {
 
     async connect(timeoutInMilliseconds = 1 * 1000) {
         return new Promise(function(resolve, reject) {
-            //console.log('Client: Connecting...');
+            // app.log('Client: Connecting...', this.url);
             
             // Timeout the promise if we never connect
-            var timeoutFunction = Function.schedule(timeoutInMilliseconds, function() {
-                reject('Could not connect, timed out after '+timeoutInMilliseconds+' milleseconds.');
+            let timeoutFunction = Function.schedule(timeoutInMilliseconds, function() {
+                reject('Could not connect, timed out after '+timeoutInMilliseconds.addCommas()+' milleseconds.');
             });
 
             // Create the connection
-            var connection = new HttpConnection(
-                Node.Net.createConnection(this.url.port, this.url.host, function() {
-                    //console.log('HttpClient connected!');
+            let httpConnection = new HttpConnection(
+                Node.Net.createConnection(
+                    this.url.port,
+                    this.url.host,
+                    function() {
+                        //console.log('HttpClient connected!');
 
-                    // Cancel the timeout function
-                    Function.cancel(timeoutFunction);
-                
-                    resolve(connection);
-                }.bind(this)),
+                        // Cancel the timeout function
+                        Function.cancel(timeoutFunction);
+                    
+                        resolve(httpConnection);
+                    }.bind(this)
+                ),
                 this.url.protocol,
+                this.protocolVersion,
                 this.url.port,
-                this.url.host
+                this.url.host,
             );
         }.bind(this));
     }

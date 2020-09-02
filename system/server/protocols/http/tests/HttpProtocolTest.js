@@ -10,63 +10,63 @@ import { HttpResponseMessage } from '@framework/system/server/protocols/http/mes
 class HttpProtocolTest extends Test {
 
 	async testHttpProtocol() {
-        var response = null;
-        var actual = null;
-        var expected = null;
+        let testHttpClient = new HttpClient('http://www.yougetsignal.com/');
+        await testHttpClient.initialize();
+        let testResponse = await testHttpClient.request('/');
+        app.log(testResponse);
+        
+        return;
+
+        let response = null;
+        let actual = null;
+        let expected = null;
 
         // Create a HTTP protocol server
-        var httpServer = new HttpServer(8181);
+        let httpServer = new HttpServer(8181);
         await httpServer.initialize();
 
         // Have the server listen for specific data
         httpServer.on('message', function(event) {
-            var httpRequestMessage = event.data;
-            console.log('httpServer.on message event message:', httpRequestMessage);
+            let httpRequestMessage = event.data;
+            app.log('httpServer.on message event httpRequestMessage:', httpRequestMessage.method, httpRequestMessage.url.toString());
 
-            app.error('TO DO');
-            // [ ] responding with just data respond(string) just writes a 200 OK with response body
-            // [ ] respond(object) creates an httpresponsemessage and sends it
-            // [ ] respond(httpresponsemessage) just sends the message
-
+            // String
             if(httpRequestMessage.url.path == '/tests/string-response') {
-                app.log('Responding with just a string!');
                 httpRequestMessage.respond('Responding with just a string.');
             }
-
-            // var httpResponseMessage = new HttpResponseMessage();
-            // httpResponseMessage.statusCode = 404;
-            // httpRequestMessage.respond(httpResponseMessage);
         });
 
         // Create an HTTP protocol client
-        var httpClient = new HttpClient('http://127.0.0.1:8181');
+        let httpClient = new HttpClient('http://127.0.0.1:8181');
         await httpClient.initialize();
         Assert.true(httpClient.connected, 'Client is connected');
         //app.log('httpClient', httpClient);
 
         // Have the client listen for specific data
         httpClient.on('message', function(event) {
-            var httpResponseMessage = event.data;
-            console.log('httpClient.on message event message:', httpResponseMessage);
+            let httpResponseMessage = event.data;
+            app.log('httpClient.on message event httpResponseMessage.body', httpResponseMessage.body);
+
+            // String
+            // if(httpResponseMessage.body == 'Responding with just a string.') {
+            //     httpResponseMessage.respond('Hi Server. I received the bytes you sent.');
+            // }
         });
 
-        app.error('TO DO');
-        // define how we send requests
-        // [ ] requesting with just data request(string) assumes string is a URL and method is GET
-        // [ ] request(object) creates an httprequestmessage and sends it
-        // [ ] request(httprequestmessage) just sends the message
-
-        await httpClient.request('/tests/string-response');
-
-        return;
-        //await httpClient.request("POST /2 HTTP/1.1\r\nHost: localhost\r\n\r\nBody");
-
-        //var response = await httpClient.request("GET / HTTP/1.1\r\nHost: localhost\r\n\r\n");
-        //console.log('response', response);
-        //response = await httpClient.request('Stinky');
+        response = await httpClient.request('/tests/string-response');
+        // app.log('response', response);
 
         // Keep the test server open for debugging
         await Function.delay(60 * 60 * 1000);
+
+
+        
+        // [ ] responding with just data respond(string) just writes a 200 OK with response body
+        // [ ] respond(object) creates an httpresponsemessage and sends it
+        // [ ] respond(httpresponsemessage) just sends the message
+
+        // TEST HEADERS
+        // TEST TRAILERS
 
         // LOCAL SOCKET TEST
 

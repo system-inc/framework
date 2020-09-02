@@ -186,6 +186,21 @@ class StringTest extends Test {
 		Assert.equal('\uD800\uDC00'.characterCodeAt(0), 65536, 'correct character code');
 	}
 
+	testSplitOnFirst() {
+		let string = 'Key: Value : Test1 : Test2: : ';
+		let actual = string.splitOnFirst(': ');
+		// app.log('actual', actual);
+
+		Assert.deepEqual(
+			actual,
+			[
+				'Key',
+				'Value : Test1 : Test2: : ',
+			],
+			'array only includes two values'
+		);
+	}
+
 }
 
 // Export

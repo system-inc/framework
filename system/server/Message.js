@@ -13,7 +13,8 @@ class Message {
     }
 
     async respond(messageOrData) {
-        return this.connection.request(messageOrData, this);
+        //app.log('Message.respond this.connecton', this.connection); app.exit();
+        return this.connection.respond(messageOrData, this);
     }
 
     static is(value) {

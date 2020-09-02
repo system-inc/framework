@@ -14,7 +14,7 @@ class WebClient {
         }
 
         // Create the HttpRequestMessage
-        let httpRequestMessage = HttpRequestMessage.fromObject(options, url);
+        let httpRequestMessage = HttpRequestMessage.fromUrlAndOptions(url, options);
 
         // Use XMLHTTPRequest on the web
         return new Promise(function(resolve, reject) {

@@ -1,12 +1,11 @@
 // Dependencies
-import { Server } from '@framework/system/server/Server.js';
+import { SocketServer } from '@framework/system/server/SocketServer.js';
 import { File } from '@framework/system/file-system/File.js';
 import { LocalSocketConnection } from '@framework/system/server/protocols/local-socket/LocalSocketConnection.js';
 
 // Class
-class LocalSocketServer extends Server {
+class LocalSocketServer extends SocketServer {
 
-    nodeServer = null;
     localSocketFilePath = null;
 
     constructor(localSocketFilePath = null) {
@@ -18,17 +17,8 @@ class LocalSocketServer extends Server {
     async initialize() {
         // Establish the domain socket file
         await this.establishDomainSocketFile();
-        
-        // Create the Node server
-        this.nodeServer = Node.Net.createServer(
-            {
-                allowHalfOpen: false, // Indicates whether half-opened TCP connections are allowed. Default: false
-                pauseOnConnect: false, // Indicates whether the socket should be paused on incoming connections. Default: false
-            },
-            this.onNodeServerConnection.bind(this)
-        );
 
-        // Super initialize which calls this.start()
+        // Super initialize which creates the nodeServer and calls this.start()
         await super.initialize();
     }
 
@@ -58,8 +48,10 @@ class LocalSocketServer extends Server {
     }
     
     onNodeServerConnection(nodeSocket) {
-        //console.log('nodeSocket', nodeSocket);
-        var connection = new LocalSocketConnection(nodeSocket);
+        // app.log('LocalSocketServer.onNodeServerConnection');
+        let connection = new LocalSocketConnection(nodeSocket);
+
+        // Add the connection to the server
         return this.newConnection(connection);
     }
 
@@ -75,40 +67,6 @@ class LocalSocketServer extends Server {
                     superStart();
                     resolve(true);
                 }.bind(this));
-            }.bind(this));
-        }
-        else {
-            return true;
-        }
-    }
-
-    async stop() {
-        //console.log('LocalSocketServer stop()');
-        //console.log('LocalSocketServer stop()', new Error().stack);
-
-        // If the server is not already stopped
-        if(!this.stopped) {
-            var superStop = super.stop.bind(this);
-
-            //console.log('Closing socket server at', this.localSocketFilePath);
-            await new Promise(function(resolve, reject) {
-                //console.log('Closing server, no longer accepting new connections...');
-                
-                // This just stops new connections from connecting
-                this.nodeServer.close(function() {
-                    //console.log('All connections closed and server stopped.');
-                    superStop();
-                    resolve(true);
-                }.bind(this));
-
-                // Loop through each connection and disconnect it
-                this.connections.each(function(identifier, connection) {
-                    //console.log('connection', connection);
-                    connection.disconnect();
-                });
-
-                // No longer listening
-                this.listening = false;
             }.bind(this));
         }
         else {

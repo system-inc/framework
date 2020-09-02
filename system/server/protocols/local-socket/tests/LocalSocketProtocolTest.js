@@ -9,56 +9,56 @@ import { File } from '@framework/system/file-system/File.js';
 class LocalSocketProtocolTest extends Test {
 
 	async testLocalSocket() {
-        var response = null;
-        var actual = null;
-        var expected = null;
+        let response = null;
+        let actual = null;
+        let expected = null;
 
         // Create a local socket protocol server
-        var localSocketServer = new LocalSocketServer();
+        let localSocketServer = new LocalSocketServer();
         await localSocketServer.initialize();
 
         // Make sure the socket file has been created
-        var localSocketFilePathExists = await File.exists(localSocketServer.localSocketFilePath);
+        let localSocketFilePathExists = await File.exists(localSocketServer.localSocketFilePath);
         Assert.true(localSocketFilePathExists, 'Server local socket file has been created');
 
         // Have the server listen for specific messages
         localSocketServer.on('message', async function(event) {
-            var message = event.data;
-            //console.log('localSocketServer.on message event message:', message);
-            //console.log('localSocketServer.on message event message.data:', message.data);
+            let localSocketMessage = event.data;
+            //console.log('localSocketServer.on localSocketMessage event localSocketMessage:', localSocketMessage);
+            //console.log('localSocketServer.on localSocketMessage event localSocketMessage.data:', localSocketMessage.data);
 
             // String
-            if(message.data == 'Hi Server. Can you tell me you got these bytes?') {
-                message.respond('Hi Client. I received the bytes you sent.');
+            if(localSocketMessage.data == 'Hi Server. Can you tell me you got these bytes?') {
+                localSocketMessage.respond('Hi Client. I received the bytes you sent.');
             }
             // JSON
-            else if(Object.is(message.data) && message.data.hasKey('question') && message.data.question == 'Do you speak JSON?') {
-                message.respond({
+            else if(Object.is(localSocketMessage.data) && localSocketMessage.data.hasKey('question') && localSocketMessage.data.question == 'Do you speak JSON?') {
+                localSocketMessage.respond({
                     answer: 'Yes I do!',
                 });
             }
-            else if(message.data == 'Server, what is your purpose?') {
-                message.respond('Client, what do you think my purpose is?');
+            else if(localSocketMessage.data == 'Server, what is your purpose?') {
+                localSocketMessage.respond('Client, what do you think my purpose is?');
             }
-            else if(message.data == 'Server, I think you live to serve.') {
-                message.respond('Client, I live to serve.');
+            else if(localSocketMessage.data == 'Server, I think you live to serve.') {
+                localSocketMessage.respond('Client, I live to serve.');
             }
         });
 
         // Create a local socket protocol client
-        var localSocketClient = new LocalSocketClient(localSocketServer.localSocketFilePath);
+        let localSocketClient = new LocalSocketClient(localSocketServer.localSocketFilePath);
         await localSocketClient.initialize();
         Assert.true(localSocketClient.connected, 'Client is connected');
 
         // Have the client listen for specific date
         localSocketClient.on('message', function(event) {
-            var message = event.data;
-            //console.log('localSocketClient.on message event message:', message);
-            //console.log('localSocketClient.on message event message.data:', message.data);
+            let localSocketMessage = event.data;
+            //console.log('localSocketClient.on localSocketMessage event localSocketMessage:', localSocketMessage);
+            //console.log('localSocketClient.on localSocketMessage event localSocketMessage.data:', localSocketMessage.data);
 
             // String
-            if(message.data == 'Hi Client. Can you tell me you got these bytes?') {
-                message.respond('Hi Server. I received the bytes you sent.');
+            if(localSocketMessage.data == 'Hi Client. Can you tell me you got these bytes?') {
+                localSocketMessage.respond('Hi Server. I received the bytes you sent.');
             }
         });
 
@@ -92,7 +92,7 @@ class LocalSocketProtocolTest extends Test {
         Assert.true(Object.is(actual), 'Client requests response is the right type (object)');
 
         // Have the server send a request to the client
-        var serverConnection = localSocketServer.connections[localSocketServer.connections.getKeys().first()];
+        let serverConnection = localSocketServer.connections[localSocketServer.connections.getKeys().first()];
         //console.log('serverConnection', serverConnection);
         response = await serverConnection.request('Hi Client. Can you tell me you got these bytes?');
         //console.log('response', response);
@@ -102,7 +102,7 @@ class LocalSocketProtocolTest extends Test {
         Assert.true(String.is(actual), 'Server requests response is the right type (string)');
 
         // Have the client send a request, get a response, send a response, and get a response
-        var serverResponse1 = await localSocketClient.request('Server, what is your purpose?');
+        let serverResponse1 = await localSocketClient.request('Server, what is your purpose?');
         if(serverResponse1.data == 'Client, what do you think my purpose is?') {
             var serverResponse2 = await serverResponse1.respond('Server, I think you live to serve.');
         }
@@ -111,7 +111,7 @@ class LocalSocketProtocolTest extends Test {
         Assert.equal(actual, expected, 'Reponses can be responded to');
 
         // Performance test
-        //for(var i = 0; i < 50000; i++) {
+        //for(let i = 0; i < 50000; i++) {
         //    await localSocketClient.request('Hi');
         //}
 
