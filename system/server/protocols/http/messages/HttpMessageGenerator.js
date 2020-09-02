@@ -19,6 +19,9 @@ class HttpMessageGenerator extends EventEmitter {
     dataToProcessSizeInBytes = 0;
     dataToProcess = [];
 
+    // Used to keep track of body chunks
+    incomingBodyChunkSizeInBytes = null;
+
     messagesEmitted = 0;
 
     constructor(connection) {
@@ -68,58 +71,81 @@ class HttpMessageGenerator extends EventEmitter {
 
         // If we are reading the body
         if(this.incomingMessageCurrentStructureProperty == 'body') {
-            // app.log('at the body');
+            // app.log('at the body dataToProcessSizeInBytes', this.dataToProcessSizeInBytes, 'dataToProcess', this.dataToProcess);
 
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Length
             let contentLength = this.incomingMessage.headers.get('content-length');
 
             // https://en.wikipedia.org/wiki/Chunked_transfer_encoding
             let transferEncoding = this.incomingMessage.headers.get('transfer-encoding');
+
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Trailer
+            let trailer = this.incomingMessage.headers.get('trailer');
             
             // If a content length was specified and we have enough bytes to read it
             if(contentLength !== null && this.dataToProcessSizeInBytes >= contentLength) {
                 this.incomingMessage.body = this.readFromDataToProcess(contentLength);
+                this.nextStructureIndex(); // Move to the trailers
             }
             // If we are using chunked transfer encoding
-            else if(transferEncoding == 'chunked') {
-                // The data until the next boundary will be the chunk size in bytes
-                let chunkSize = this.readFromDataToProcessToBoundary("\r\n");
-                app.log('chunkSize', chunkSize);
+            else if(transferEncoding !== null && transferEncoding.lowercase() == 'chunked') {
+                // Set the body as an empty string which we will append to
+                if(this.incomingMessage.body === null) {
+                    this.incomingMessage.body = '';
+                }
+                
+                // Read the chunk size from the dataToProcess if we have not already read it
+                if(this.incomingBodyChunkSizeInBytes === null) {
+                    // The data until the next boundary will be the chunk size in bytes in hexadecimal
+                    let chunkSizeInHexadecimal = this.readFromDataToProcessToBoundary("\r\n");
+                    // app.log('chunkSizeInHexadecimal', chunkSizeInHexadecimal);
+
+                    // Convert it from hex to an integer and store it
+                    this.incomingBodyChunkSizeInBytes = Number.hexadecimalToInteger(chunkSizeInHexadecimal.toString()); // Remember to convert from a buffer to string
+                }
+                // app.log('this.incomingBodyChunkSizeInBytes', this.incomingBodyChunkSizeInBytes);
+
+                // If the chunk size is 0, we are at the end of the body
+                if(this.incomingBodyChunkSizeInBytes === 0) {
+                    this.incomingBodyChunkSizeInBytes = null; // Reset to null
+                    this.readFromDataToProcessToBoundary("\r\n"); // All chunks end in "\r\n", so we will read it to remove it
+
+                    // app.log('No more chunks, this.dataToProcess', this.dataToProcess);
+                    return this.nextStructureIndex(); // Move to the trailers
+                }
+                // If we have all of the chunk data, read the chunk and append it to the body
+                else if(this.incomingBodyChunkSizeInBytes <= this.dataToProcessSizeInBytes) {
+                    this.incomingMessage.body += this.readFromDataToProcess(this.incomingBodyChunkSizeInBytes);
+                    this.incomingBodyChunkSizeInBytes = null; // Reset to null
+                    this.readFromDataToProcessToBoundary("\r\n"); // All chunks end in "\r\n", so we will read it to remove it
+                    return this.processMoreData(); // Process more data if we have it
+                }
+                // Wait for the rest of the chunk to come through
+                else {
+                    // app.log('Waiting for the rest of the chunk from the socket, only have this.dataToProcessSizeInBytes', this.dataToProcessSizeInBytes, 'and need this.incomingBodyChunkSizeInBytes', this.incomingBodyChunkSizeInBytes);
+                }
             }
-            // If the content length is null, read until the body boundary (\r\n\r\n)
+            // There is no content length, there is no transfer encoding, and there are no trailers
+            else if(contentLength === null && transferEncoding === null && trailer === null) {
+                // The body is the rest of the data
+                this.incomingMessage.body = this.readFromDataToProcess(this.dataToProcessSizeInBytes);
+                app.log('No content length set, the rest of the body is', this.incomingMessage.body);
+            }
             else {
-                this.incomingMessage.body = this.readFromDataToProcessToBoundary(this.incomingMessageClassDefinition.structure.body.boundary);
-                app.log('No content length set, body is', this.incomingMessage.body);
-            }
-
-            // If the body is not null
-            if(this.incomingMessage.body !== null) {
-                // If the body is JSON, decode it and save it to the .data property
-                if(Json.is(this.incomingMessage.body)) {
-                    this.incomingMessage.data = Json.decode(this.incomingMessage.body);
-                }
-
-                // If there are no trailers, emit the message
-                let trailer = this.incomingMessage.headers.get('trailer');
-                if(!trailer) {
-                    return this.emitMessage();
-                }
+                throw new Error('need to implement this scenario')
             }
         }
         // If we are reading the trailers
         else if(this.incomingMessageCurrentStructureProperty == 'trailers') {
+            app.log('At the trailers');
+
             let trailer = this.incomingMessage.headers.get('trailer');
+            app.log('trailer', trailer);
 
             // If there are no trailers to read
             if(!trailer) {
-                // Emit the message
-                return this.emitMessage();
+                return this.nextStructureIndex();
             }
-        }
-        // If we are reading the headers and there are no headers then the request is over
-        else if(this.incomingMessageCurrentStructureProperty == 'headers' && this.dataToProcessSizeInBytes == 2 && this.dataToProcess[0].toString() == "\r\n") {
-            // Emit the message
-            return this.emitMessage();
         }
         // Read everything else
         else {
@@ -133,7 +159,7 @@ class HttpMessageGenerator extends EventEmitter {
     
                 // Conditionally convert data to a number if the structure type is number
                 if(this.incomingMessageClassDefinition.structure[this.incomingMessageCurrentStructureProperty].type == 'number') {
-                    dataUpToBoundary = Number(dataUpToBoundary);
+                    dataUpToBoundary = Number.from(dataUpToBoundary);
                 }
                 // Everything else is a string
                 else {
@@ -153,13 +179,6 @@ class HttpMessageGenerator extends EventEmitter {
                 // HttpMessage .headers
                 else if(this.incomingMessageCurrentStructureProperty == 'headers') {
                     propertyValue = new Headers(dataUpToBoundary);
-                    this.incomingMessage.setPropertiesUsingHeaders();
-
-                    // If there are no more bytes to process, then the request is over
-                    if(this.dataToProcessSizeInBytes === 0) {
-                        // Emit the message
-                        return this.emitMessage();
-                    }
                 }
                 // HttpMessage .trailers
                 else if(this.incomingMessageCurrentStructureProperty == 'trailers') {
@@ -177,11 +196,6 @@ class HttpMessageGenerator extends EventEmitter {
                 
                 // Move to the next structure index
                 this.nextStructureIndex();
-    
-                // Recurse if there are more bytes to process
-                if(this.dataToProcessSizeInBytes > 0) {
-                    return this.processData();
-                }
             }
         }
 
@@ -189,8 +203,33 @@ class HttpMessageGenerator extends EventEmitter {
     }
 
     nextStructureIndex() {
+        let structureKeys = this.incomingMessageClassDefinition.structure.getKeys();
         this.incomingMessageCurrentStructureIndex++;
-        this.incomingMessageCurrentStructureProperty = this.incomingMessageClassDefinition.structure.getKeys().nth(this.incomingMessageCurrentStructureIndex);
+
+        // If we have processed all of the structures
+        if(this.incomingMessageCurrentStructureIndex == structureKeys.length) {
+            return this.emitMessage();
+        }
+
+        this.incomingMessageCurrentStructureProperty = structureKeys[this.incomingMessageCurrentStructureIndex];
+
+        return this.processMoreData();
+    }
+
+    processMoreData() {
+        // Recurse if there are more bytes to process
+        if(this.dataToProcessSizeInBytes > 0) {
+            return this.processData();
+        }
+        // Conditions for being done with the message
+        else if(
+            // If we just moved to the body after the headers are there is no more data, we are done
+            (this.incomingMessageCurrentStructureProperty == 'body' && this.dataToProcessSizeInBytes === 0) ||
+            // If we are at the trailers and there are no trailer headers, we are done
+            (this.incomingMessageCurrentStructureProperty == 'trailers' && this.incomingMessage.headers.get('trailer') === null)
+        ) {
+            return this.emitMessage();
+        }
     }
 
     readFromDataToProcessToBoundary(boundaryString) {
@@ -306,6 +345,14 @@ class HttpMessageGenerator extends EventEmitter {
     }
 
     emitMessage() {
+        // If the body is JSON, decode it and save it to the .data property
+        if(Json.is(this.incomingMessage.body)) {
+            this.incomingMessage.data = Json.decode(this.incomingMessage.body);
+        }
+
+        // Set the message properties using the headers
+        this.incomingMessage.setPropertiesUsingHeaders();
+
         // app.log('emitMessage!', this.incomingMessage);
         this.emit('message', this.incomingMessage);
 

@@ -92,7 +92,7 @@ class CyclicRedundancyCheck {
         }
         // If it is a string (assume hexadecimal)
         else if(String.is(crc32)) {
-            crc32AsSignedInteger = Number.hexadecimalToInteger(crc32);
+            crc32AsSignedInteger = Number.hexadecimalStringToSignedInteger(crc32);
         }
 
         return crc32AsSignedInteger;

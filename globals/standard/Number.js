@@ -21,6 +21,19 @@ Number.is = function(value) {
 	return typeof(value) == 'number' || value instanceof Number;
 };
 
+Number.isHexadecimalString = function(value) {
+    var integer = parseInt(value, 16);
+    return (integer.toString(16) === value.toLowerCase());
+};
+
+Number.from = function(value) {
+    let number = null;
+
+    number = Number(value);
+
+    return number;
+};
+
 Number.isInteger = function(value) {
 	return /^\+?-?(0|[1-9]\d*)$/.test(value);
 };
@@ -85,14 +98,33 @@ Number.addCommas = function(number = null) {
 };
 
 Number.hexadecimalToInteger = function(hexadecimal) {
-    if(hexadecimal.length % 2 != 0) {
-        hexadecimal = '0' + hexadecimal;
+    let integer = null;
+
+    // If the value is a string
+    if(String.is(hexadecimal)) {
+        integer = parseInt(hexadecimal, 16);
     }
-    var integer = parseInt(hexadecimal, 16);
-    var maximumValue = Math.pow(2, hexadecimal.length / 2 * 8);
+    // If the value is actually hexadecimal
+    else {
+        integer = parseInt(hexadecimal, 10);
+    }
+
+    return integer;
+}
+
+Number.hexadecimalStringToSignedInteger = function(hexadecimalString) {
+    if(hexadecimalString.length % 2 != 0) {
+        hexadecimalString = '0' + hexadecimalString;
+    }
+
+    let integer = Number.hexadecimalToInteger(hexadecimalString);
+    
+    let maximumValue = Math.pow(2, hexadecimalString.length / 2 * 8);
+
     if(integer > maximumValue / 2 - 1) {
         integer = integer - maximumValue
     }
+
     return integer;
 }
 

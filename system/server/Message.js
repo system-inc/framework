@@ -12,6 +12,11 @@ class Message {
         this.identifier = String.uniqueIdentifier();
     }
 
+    async request(messageOrData) {
+        //app.log('Message.respond this.connecton', this.connection); app.exit();
+        return this.connection.request(messageOrData, this);
+    }
+
     async respond(messageOrData) {
         //app.log('Message.respond this.connecton', this.connection); app.exit();
         return this.connection.respond(messageOrData, this);

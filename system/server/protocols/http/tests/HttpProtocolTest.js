@@ -10,12 +10,11 @@ import { HttpResponseMessage } from '@framework/system/server/protocols/http/mes
 class HttpProtocolTest extends Test {
 
 	async testHttpProtocol() {
-        let testHttpClient = new HttpClient('http://www.yougetsignal.com/');
-        await testHttpClient.initialize();
-        let testResponse = await testHttpClient.request('/');
-        app.log(testResponse);
-        
-        return;
+        // let testHttpClient = new HttpClient('http://www.google.com/');
+        // await testHttpClient.initialize();
+        // let testResponse = await testHttpClient.request('/');
+        // app.log(testResponse);
+        // return;
 
         let response = null;
         let actual = null;

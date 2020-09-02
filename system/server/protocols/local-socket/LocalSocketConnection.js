@@ -69,36 +69,22 @@ class LocalSocketConnection extends Connection {
     async request(localSocketMessageOrData, correlatingLocalSocketMessage = null, timeoutInMilliseconds = 1 * 1000) {
         let sentLocalSocketMessage = await this.send(localSocketMessageOrData, correlatingLocalSocketMessage);
 
-        return new Promise(function(resolve, reject) {
-            let timeoutFunction = Function.schedule(timeoutInMilliseconds, function() {
-                reject('Request failed, timed out after '+timeoutInMilliseconds+' milleseconds.');
-            });
+        let responseMessageIsForRequestFunction = function(incomingLocalSocketMessage) {
+            let responseMessageIsForRequest = false;
 
-            // A function to check the correlation identifiers of future packets until we get a match
-            let correlationIdentifierCheckFunction = function(event) {
-                let incomingLocalSocketMessage = event.data;
+            // app.log('comparing incomingLocalSocketMessage.correlationIdentifier', incomingLocalSocketMessage.correlationIdentifier);
+            // app.log('to sentLocalSocketMessage.correlationIdentifier', sentLocalSocketMessage.correlationIdentifier);
 
-                // If the correlation identifiers match
-                if(incomingLocalSocketMessage.correlationIdentifier == sentLocalSocketMessage.correlationIdentifier) {
-                    //console.log('correlationIdentifier matches!', sentLocalSocketMessage.correlationIdentifier);
+            if(incomingLocalSocketMessage.correlationIdentifier == sentLocalSocketMessage.correlationIdentifier) {
+                responseMessageIsForRequest = true;
+            }
 
-                    // Cancel the timeout function
-                    Function.cancel(timeoutFunction);
+            // app.log('responseMessageIsForRequest', responseMessageIsForRequest);
 
-                    // When we get the matching message, remove the event listener
-                    this.removeEventListener('message', correlationIdentifierCheckFunction);
+            return responseMessageIsForRequest;
+        };
 
-                    // Return the message
-                    resolve(incomingLocalSocketMessage);
-                }
-                else {
-                    //console.log('correlationIdentifier does not match!', 'sentLocalSocketMessage.correlationIdentifier', sentLocalSocketMessage.correlationIdentifier, 'incomingLocalSocketMessage.correlationIdentifier', incomingLocalSocketMessage.correlationIdentifier);
-                }
-            }.bind(this);
-
-            // Listen to messages until we get a response to our request
-            this.on('message', correlationIdentifierCheckFunction);
-        }.bind(this));
+        return await super.request(timeoutInMilliseconds, responseMessageIsForRequestFunction);
     }
 
 }

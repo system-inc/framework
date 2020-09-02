@@ -102,6 +102,11 @@ class NumberTest extends Test {
 		Assert.equal(Number.addCommas(1000000000.123456), '1,000,000,000.123456', '10000000000.123456 goes to 1,000,000,000.123456');
 	}
 
+	testHexadecmial() {
+		Assert.equal(Number.hexadecimalToInteger('ff'), 255, 'hexadecimal strings');
+		Assert.equal(Number.hexadecimalToInteger(0xff), 255, 'hexadecimal values');
+	}
+
 	testRandom() {
 		var randomNumber = Number.random(0, 1);
 		Assert.greaterThanOrEqualTo(randomNumber, 0, '0, 1 returns a number greater than or equal to 0');

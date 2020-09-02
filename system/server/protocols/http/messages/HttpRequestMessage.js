@@ -213,7 +213,7 @@ class HttpRequestMessage extends HttpMessage {
         },
         'body': {
             type: 'string',
-            boundary: "\r\n\r\n",
+            boundary: null,
         },
         'trailers': {
             type: 'string',

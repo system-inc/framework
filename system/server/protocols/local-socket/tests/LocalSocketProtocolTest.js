@@ -38,7 +38,7 @@ class LocalSocketProtocolTest extends Test {
                 });
             }
             else if(localSocketMessage.data == 'Server, what is your purpose?') {
-                localSocketMessage.respond('Client, what do you think my purpose is?');
+                localSocketMessage.request('Client, what do you think my purpose is?');
             }
             else if(localSocketMessage.data == 'Server, I think you live to serve.') {
                 localSocketMessage.respond('Client, I live to serve.');
@@ -104,7 +104,7 @@ class LocalSocketProtocolTest extends Test {
         // Have the client send a request, get a response, send a response, and get a response
         let serverResponse1 = await localSocketClient.request('Server, what is your purpose?');
         if(serverResponse1.data == 'Client, what do you think my purpose is?') {
-            var serverResponse2 = await serverResponse1.respond('Server, I think you live to serve.');
+            var serverResponse2 = await serverResponse1.request('Server, I think you live to serve.');
         }
         actual = serverResponse2.data;
         expected = 'Client, I live to serve.';

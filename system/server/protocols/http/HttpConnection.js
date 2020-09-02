@@ -48,7 +48,7 @@ class HttpConnection extends Connection {
         return httpMessage;
     }
 
-    async request(url, options, timeoutInMilliseconds = 1 * 1000) {
+    async request(url, options, timeoutInMilliseconds = 1 * 20000) {
         // Hande relative URL paths
         if(!url.startsWith('http')) {
             url = new Url(this.protocol.lowercase()+'://'+this.host+':'+this.port+url);
@@ -56,27 +56,7 @@ class HttpConnection extends Connection {
 
         let sentHttpMessage = await this.send(HttpRequestMessage.fromUrlAndOptions(url, options, this));
 
-        return new Promise(function(resolve, reject) {
-            var timeoutFunction = Function.schedule(timeoutInMilliseconds, function() {
-                reject('Request failed, timed out after '+timeoutInMilliseconds+' milleseconds.');
-            });
-
-            var receiveResponse = function(event) {
-                let incomingHttpMessage = event.data;
-
-                // Cancel the timeout function
-                Function.cancel(timeoutFunction);
-
-                // When we get the response, remove the event listener
-                this.removeEventListener('message', receiveResponse);
-
-                // Return the HttpMessage
-                resolve(incomingHttpMessage);
-            }.bind(this)
-
-            // Wait until we get a response to our request, the next message will be the response
-            this.on('message', receiveResponse);
-        }.bind(this));
+        return await super.request(timeoutInMilliseconds);
     }
 
     async respond(optionsOrBodyOrHttpResponseMessage) {

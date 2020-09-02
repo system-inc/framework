@@ -48,24 +48,15 @@ class HttpMessage extends Message {
             this.protocolVersion = this.connection.protocolVersion;    
         }
         
-        // If a Node request exists on the connection
-        if(this.connection && this.connection.nodeRequest) {
-            this.headers = Headers.fromNodeHeaders(this.connection.nodeRequest.headers);
-            this.trailers = Headers.fromNodeHeaders(this.connection.nodeRequest.trailers);
-        }
-        // If no Node connection is set or there is no nodeRequest property on the connection
-        else {
-            this.headers = new Headers();
-            this.trailers = new Headers();
-        }
-
-        // Set other HttpMessage properties from the headers
-        this.setPropertiesUsingHeaders();
+        // Initialize the headers, cookies, and trailers
+        this.headers = new Headers();
+        this.cookies = new Cookies();
+        this.trailers = new Headers();
     }
 
     setPropertiesUsingHeaders() {
         this.cookies = this.headers.getCookies();
-        app.highlight(this.cookies);
+        // app.highlight(this.cookies);
 
         // Referrer
         let referrerHeader = this.headers.get('referer');
