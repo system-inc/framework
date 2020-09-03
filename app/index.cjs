@@ -4,25 +4,25 @@
 // Electron, which does not support ESM modules and will not for quite awhile:
 // https://github.com/electron/electron/issues/21457#issuecomment-680600164
 // See framework/app/index.js to see how the app runs without transpilation
-var appScript = 'FrameworkApp.js';
+let appScript = 'FrameworkApp.js';
 
 // Dependencies
 const NodePath = require('path');
 
 // Set the paths
-var appPath = __dirname;
+let appPath = __dirname;
 // console.log('appPath', appPath);
-var appScriptPath = NodePath.resolve(appPath, appScript);
+let appScriptPath = NodePath.resolve(appPath, appScript);
 // console.log('appScriptPath', appScriptPath);
-var frameworkPath = NodePath.resolve(appPath, '../');
+let frameworkPath = NodePath.resolve(appPath, '../');
 // console.log('frameworkPath', frameworkPath);
 
 // Transpiler
-var transpilerPath = NodePath.join(frameworkPath, 'globals/Transpiler.cjs');
+let transpilerPath = NodePath.join(frameworkPath, 'globals/Transpiler.cjs');
 // console.log('transpilerPath', transpilerPath);
 const Transpiler = require(transpilerPath);
 // console.log('Transpiler', Transpiler);
 
 // Create the transpiler, which will run the app script
-global.Transpiler = new Transpiler(appScript, appPath, frameworkPath);
+let transpiler = new Transpiler(appScript, appPath, frameworkPath);
 // console.log('transpiler', transpiler);

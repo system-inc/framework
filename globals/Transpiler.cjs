@@ -18,16 +18,18 @@ class Transpiler {
 		this.appScriptPath = NodePath.join(this.appPath, this.appScript);
 		this.frameworkPath = frameworkPath;
 
+		// Can use this to see the transpiled source code for any of the scripts
 		// this.logCachedTranspiledSourceForPath(NodePath.join(this.frameworkPath, 'system/app/App.js'));
 
-		this.enableRequireAliases();
-		this.hookRequireCalls();
+		this.monkeyPatchRequire();
+		this.transpileRequiresAtRuntime();
 		this.requireAppScript();
 	}
 
-	enableRequireAliases() {
-		// Ignore the fact that the files we are requiring are ESM modules
-		// This is super hacky, I am basically just ignoring the ESM check by redefining the function here:
+	monkeyPatchRequire() {
+		// We need to ignore the fact that the files we are requiring are ESM modules and
+		// that package.json has type="module" set.
+		// This is super hacky, I am ignoring the ESM check by redefining the function here:
 		// https://github.com/nodejs/node/blob/master/lib/internal/modules/cjs/loader.js#L1099
 		var standardModuleExtensionsJs = NodeModule._extensions['.js'];
 		NodeModule._extensions['.js'] = function(module, filename) {
@@ -35,9 +37,11 @@ class Transpiler {
 			module._compile(content, filename);
 		};
 
-		// Rewrite @framework and @app require paths
+		// My imports use @framework and @app and a custom module loader
+		// We can make this work with CJS by monkey patching _resolveFilename
 		var standardResolveFilename = NodeModule._resolveFilename;
 		NodeModule._resolveFilename = function(request, parentModule, isMain, options) {
+			// Rewrite @framework and @app require paths
 			if(request.startsWith('@framework')) {
 				// console.log('incoming request', request);
 				request = request.replace('@framework', this.frameworkPath);
@@ -53,7 +57,7 @@ class Transpiler {
 		}.bind(this);
 	}
 
-	hookRequireCalls() {
+	transpileRequiresAtRuntime() {
 		// Integrate transpilation with require statements
 		BabelRegister({
 			plugins: [
@@ -88,9 +92,7 @@ class Transpiler {
 	}
 
 	requireAppScript() {
-		// Transpiler.logCachedTranspiledSourceForPath(this.appScriptPath);
-
-		// Require the app file
+		// Require the app script
 		require(this.appScriptPath);
 	}
 
@@ -98,12 +100,14 @@ class Transpiler {
 		const TranspilerCache = require('@babel/register/lib/cache').get();
 		// console.log('TranspilerCache', TranspilerCache);
 
+		// Look through the cache for the transpiled script
 		for(let key in TranspilerCache) {
+			// The last 7 characters are not part of the JSON
 			var keyObject = JSON.parse(key.substring(0, key.length - 7));
 			
 			if(keyObject.filename == path) {
 				console.log(TranspilerCache[key].code);
-				return false; // break
+				break;
 			}
 		}
 	}

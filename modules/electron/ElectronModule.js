@@ -125,7 +125,6 @@ class ElectronModule extends Module {
 
 		// Pass arguments from node to the Electron main process
 		var electronMainProcessArguments = [
-			'--js-flags=--experimental-loader '+Node.Path.join(app.framework.path, 'globals/node/ModuleLoader.js'),
 			//appScriptPath,
 			'index.cjs',
 		];
