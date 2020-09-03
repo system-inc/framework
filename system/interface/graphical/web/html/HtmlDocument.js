@@ -246,6 +246,7 @@ class HtmlDocument extends XmlDocument {
 	addStyleSheet(path) {
 		this.head.append(Html.link({
 			rel: 'stylesheet',
+			type: 'text/css',
 			href: path,
 		}));
 	}

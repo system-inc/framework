@@ -114,8 +114,11 @@ class App extends EventEmitter {
 
 		// Initialize for the web environment
 		if(this.inGraphicalInterfaceEnvironment()) {
-			// Wait for the DOM to be loaded
+			// app.log('inGraphicalInterfaceEnvironment');
+
+			// Stop here until the DOM is loaded
 			await this.initializeGraphicalInterfaceEnvironment();
+			// app.log('DOM loaded');
 
 			// Implement this method in your app to set the view controller
 			await this.initializeGraphicalInterface();
@@ -397,6 +400,8 @@ class App extends EventEmitter {
 	}
 
 	async initializeGraphicalInterfaceEnvironment() {
+		// app.log('initializeGraphicalInterfaceEnvironment');
+
 		this.settings.mergeDefaults({
 			interfaces: {
 				graphical: {
@@ -447,10 +452,20 @@ class App extends EventEmitter {
 		return new Promise(function(resolve, reject) {
 			// Configure the graphical interface when the DOM has loaded
 			// TODO: Change how do I do this to make it not web specific
-			document.addEventListener('DOMContentLoaded', async function(event) {
+			var domIsReadyFunction = async function() {
 				await this.configureGraphicalInterface();
 				return resolve(true);
-			}.bind(this));
+			}.bind(this);
+
+			// If the DOM is ready
+			// console.log('document', document.readyState);
+			if(document.readyState == 'complete') {
+				domIsReadyFunction.apply(this);
+			}
+			// If the dom is not ready, what for it to be ready
+			else {
+				document.addEventListener('DOMContentLoaded', domIsReadyFunction.bind(this));
+			}
 		}.bind(this));
 	}
 

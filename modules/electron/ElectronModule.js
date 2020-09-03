@@ -16,8 +16,13 @@ class ElectronModule extends Module {
 	version = new Version('1.0.0');
 
 	defaultSettings = {
+		// We hard code script path to .../index.cjs for now for a few reasons:
+		// 1. Electron does not support ESM modules
+		// 2. We need to Transpile all of our code using Babel via Transpiler.js
+		// 3. index.cjs is the only entry point which will handle Transpilation
+		// In the future we can switch to just including the app script file when we no longer need to transpile
+		script: Node.Path.join(app.path, '/index.cjs').replaceFirst('/mnt/c/', 'c:/'), // Handle Window Subsystem for Linux
 		automaticallyStartElectronIfNotInElectronContext: true,
-		appScriptPath: app.script,
 		quitWhenAllWindowsClosedOnMacOs: false,
 	};
 
@@ -26,7 +31,7 @@ class ElectronModule extends Module {
 
 		// If in the Electron context
 		if(this.inElectronEnvironment()) {
-			//console.warn('In Electron, configuring ElectronModule');
+			// app.log('In Electron, configuring ElectronModule');
 			this.electron = await import('electron');
 			//console.log('this.electron', this.electron);
 
@@ -34,19 +39,18 @@ class ElectronModule extends Module {
 			if(this.inElectronMainProcess()) {
 				// The Electron main process is responsible for starting the first web browser window when there are no other windows
 				// The Electron main process does not communicate between windows
-				//console.log('Now in Electron Main Process');
-				//console.warn('In Electron Main Process, configureElectronMainProcess');
+				// app.log('In Electron Main Process, configureElectronMainProcess');
 				this.configureElectronMainProcess();
 			}
 			// If in the Electron renderer process
 			else if(this.inElectronRendererProcess()) {
-				//console.log('In Electron Renderer Process, configureElectronRendererProcess');
+				// console.log('In Electron Renderer Process, configureElectronRendererProcess');
 				this.configureElectronRendererProcess();
 			}
 		}
 		// Start Electron if the settings have it set to start automatically if not in the Electron context
 		else if(this.settings.get('automaticallyStartElectronIfNotInElectronContext')) {
-			//console.warn('Not in Electron, starting this.electron...');
+			console.log('Not in Electron, starting this.electron...');
 			this.startElectron();
 		}
 	}
@@ -111,33 +115,21 @@ class ElectronModule extends Module {
 
 		// Get the path to the Electron executable
 		var electronExecutablePath = await this.getElectronExecutablePath();
-		app.log('electronExecutablePath', electronExecutablePath);
-
-		// Get the path to the Electron starting JavaScript file from settings
-		var appScriptPath = this.settings.get('appScriptPath');
-		
-		// Check for Windows Subsystem for Linux
-		if(appScriptPath.startsWith('/mnt/c/')) {
-			appScriptPath = appScriptPath.replaceFirst('/mnt/c/', 'c:/');
-		}
-
-		app.log('appScriptPath', appScriptPath);
+		// app.log('electronExecutablePath', electronExecutablePath);
 
 		// Pass arguments from node to the Electron main process
 		var electronMainProcessArguments = [
-			//appScriptPath,
-			'index.cjs',
-		];
-		electronMainProcessArguments.merge(Node.Process.argv.slice(2));
-		console.log('Node.Process.argv', Node.Process.argv);
-		console.log('electronMainProcessArguments', electronMainProcessArguments);
+			this.settings.get('script'),
+		].merge(Node.Process.argv.slice(2));
+		// console.log('Node.Process.argv', Node.Process.argv);
+		// console.log('electronMainProcessArguments', electronMainProcessArguments);
 		//Node.exit();
 
-		// Run Electron as a child process, providing a .js file runs the file in the Electron main process, providing a .html file runs it in a renderer process
-		// We want to run in the main process to take advantage of shared standard streams, so we provide a .js file by default
-		//console.log('electronExecutablePath', electronExecutablePath);
-		//console.log('electronMainProcessArguments', electronMainProcessArguments);
-		var childProcessElectronMainProcess = Node.spawnChildProcess(electronExecutablePath, electronMainProcessArguments, {});
+		// Run Electron as a child process, providing a .cjs file runs the file in the Electron main process, providing a .html file runs it in a renderer process
+		// We want to run in the main process to take advantage of shared standard streams, so we provide a .cjs file by default
+		// console.log('electronExecutablePath', electronExecutablePath);
+		// console.log('electronMainProcessArguments', electronMainProcessArguments);
+		var childProcessElectronMainProcess = Node.spawnChildProcess(electronExecutablePath, electronMainProcessArguments);
 
 		// The parent process I am in now exists to just to as a bridge for standard streams to the child process which is the Electron main process
 
@@ -151,19 +143,19 @@ class ElectronModule extends Module {
 
 		// Standard out from the child process is bridged to the parent process
 		childProcessElectronMainProcess.stdout.on('data', function(data) {
-			//app.standardStreams.output.write('(Child Process - Electron Main Process - Standard Out) '+data.toString());
+			// app.standardStreams.output.write('(Child Process - Electron Main Process - Standard Out) '+data.toString());
 			app.standardStreams.output.write(data);
 		});
 
 		// Standard error from the child process is bridged to the parent process
 		childProcessElectronMainProcess.stderr.on('data', function(data) {
-			//app.standardStreams.error.write('(Child Process - Electron Main Process - Standard Error) '+data.toString());
+			// app.standardStreams.error.write('(Child Process - Electron Main Process - Standard Error) '+data.toString());
 			app.standardStreams.error.write(data);
 		});
 
 		// Kill the parent process when the child process exits
 		childProcessElectronMainProcess.on('close', function(code) {
-			app.standardStreams.output.writeLine('Child Process - Electron Main Process exited with code '+code+'.');
+			app.standardStreams.output.writeLine('Electron main process exited with code '+code+'.');
 			app.exit();
 		});
 	}
@@ -171,20 +163,19 @@ class ElectronModule extends Module {
 	async configureElectronMainProcess() {
 		//app.log('ElectronModule', 'configureElectronMainProcess');
 
-		// Enable Harmony for any Electron renderer processes we create, will eventually not need to do this
-		this.electron.app.commandLine.appendSwitch('--js-flags', '--harmony');
+		// Disable security warnings in Electron
+		process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 		// Before app.exit() exits the application, quit the Electron app
 		app.on('app.beforeExit', function() {
-			//app.log('app.beforeQuit');
+			// app.log('app.beforeExit');
 
 			this.electron.app.quit();
 		}.bind(this));
 		
 		// When the app is activated from the macOS dock
 		this.electron.app.on('activate', function () {
-			//app.log('electron app activate');
-			//app.log('this', this);
+			// app.log('electron app event activate');
 
 			if(this.firstBrowserWindow === null) {
 				//app.log('this.firstBrowserWindow proxy is null');
@@ -194,8 +185,8 @@ class ElectronModule extends Module {
 
 		// Quit when all windows are closed if not on macOS
 		this.electron.app.on('window-all-closed', function () {
-			//app.log('electron app window-all-closed');
-			//app.log('quitWhenAllWindowsClosedOnMacOs', this.settings.get('quitWhenAllWindowsClosedOnMacOs'));
+			// app.log('electron app window-all-closed');
+			// app.log('quitWhenAllWindowsClosedOnMacOs', this.settings.get('quitWhenAllWindowsClosedOnMacOs'));
 
 			if(!app.onMacOs() || this.settings.get('quitWhenAllWindowsClosedOnMacOs')) {
 				this.electron.app.quit()
@@ -204,12 +195,12 @@ class ElectronModule extends Module {
 
 		// Create the first browser window when the app is ready
 		if(this.electron.app.isReady()) {
-			//console.log('app is ready');
+			// console.log('app is ready');
 			this.createFirstBrowserWindow();
 		}
 		// If the app is not ready, wait for the ready event
 		else {
-			//console.log('app is not ready');
+			// console.log('app is not ready');
 			this.electron.app.on('ready', function () {
 				this.createFirstBrowserWindow();
 			}.bind(this));
@@ -217,6 +208,8 @@ class ElectronModule extends Module {
 	}
 
 	configureElectronRendererProcess() {
+		// app.log('ElectronModule .configureElectronRendererProcess()');
+
 		// Catch unhandled rejections in Electron renderer windows
 		window.addEventListener('unhandledrejection', function(error, promise) {
 			//console.log(this.electron.remote.getCurrentWindow());
@@ -234,28 +227,21 @@ class ElectronModule extends Module {
 			console.error(error.reason.stack.toString());
 		}.bind(this));
 
-		// Update the command with the command from the Electron main process
-		var electronMainProcessArguments = this.electron.remote.getGlobal('process').argv;
-		//console.info('electronMainProcessArguments', electronMainProcessArguments);
-		app.interfaces.commandLine.initializeCommand(electronMainProcessArguments);
-		//console.info('app.interfaces.commandLine', app.interfaces.commandLine);
-
 		// Clear the default application menu and all of its shortcuts / accelerators
         this.electron.remote.Menu.setApplicationMenu(null);
 	}
 
 	async createFirstBrowserWindow() {
-		var appScriptPath = this.settings.get('appScriptPath');
-		//console.log('Creating first Electron BrowserWindow', 'appScriptPath', appScriptPath);
+		// app.log('Creating first Electron BrowserWindow', 'script', this.settings.get('script'));
 
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
 		this.firstBrowserWindow = await this.newBrowserWindow({
-			path: appScriptPath,
+			path: this.settings.get('script'),
 		});
 
 		// When graphical interface is closed
 		this.firstBrowserWindow.on('closed', function(event) {
-			//console.log('this.firstBrowserWindow.on closed');
+			// app.log('this.firstBrowserWindow.on close');
 
 			// Dereference the object so it will be recreated on activation (when the user presses the icon on the macOS dock)
 			this.firstBrowserWindow = null;
@@ -270,8 +256,8 @@ class ElectronModule extends Module {
 			path: null,
 			graphicalInterfaceState: {
 				dimensions: {
-					width: null,
-					height: null,
+					width: 1920,
+					height: 1080,
 				},
 				position: {
 					relativeToAllDisplays: {
@@ -296,75 +282,52 @@ class ElectronModule extends Module {
 			//console.log('inElectronRendererProcess');
 			ElectronBrowserWindow = this.electron.remote.BrowserWindow;
 		}
-
-		// Disable security warnings in Electron
-		Node.Process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+		// app.log('ElectronBrowserWindow', ElectronBrowserWindow);
 		
 		// Create the Electron browser window
 		var electronBrowserWindow = new ElectronBrowserWindow({
 			title: app.title,
-			//parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null, // this always makes the brower window show
+			// //parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null, // this always makes the brower window show
 			width: options.graphicalInterfaceState.dimensions.width,
 			height: options.graphicalInterfaceState.dimensions.height,
 			x: options.graphicalInterfaceState.position.relativeToAllDisplays.x,
 			y: options.graphicalInterfaceState.position.relativeToAllDisplays.y,
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
-			show: options.graphicalInterfaceState.show,
+			// show: options.graphicalInterfaceState.show,
 			webPreferences: {
-				webSecurity: false,
+				devTools: true,
 				nodeIntegration: true, // Must have this on as it is off by default
+				nodeIntegrationInWorker: true,
+				nodeIntegrationInSubFrames: true,
+				preload: this.settings.get('script'),
+				enableRemoteModule: true, // Make sure electron.remote is available
+				webSecurity: false, // Allow the loading of local resources
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
 			},
 		});
 
 		// For testing - open dev tools every time
-		//electronBrowserWindow.webContents.openDevTools();
+		electronBrowserWindow.webContents.openDevTools();
 
 		// Remove the default menu
 		electronBrowserWindow.setMenu(null);
 
-		// Optionally load the path
-		if(options.path !== null) {
-			this.navigateBrowserWindowToPath(electronBrowserWindow, options.path)
-		}
+		// Load an empty page which will trigger the running of the preload script which is index.cjs
+		var appElectronHtmlPath = Node.Path.join(app.path, 'electron.html')
+		// app.log('appElectronHtmlPath', appElectronHtmlPath);
+		electronBrowserWindow.loadFile(appElectronHtmlPath);
 
-		return electronBrowserWindow;
-	}
-
-	async navigateBrowserWindowToPath(electronBrowserWindow, path = null) {
-		//console.log('Navigating to path...');
-
-		if(path === null) {
-			throw new Error('Must specify a path to a JavaScript file to load.');
-		}
-
-		// Create a JavaScript string to start the app, this is the same as index.js in framework/app/index.js
-		var transpilerPath = Node.Path.join(app.framework.path.toString(), 'globals', 'Transpiler.js');
-		//app.log('transpilerPath', transpilerPath);
-		var frameworkPath = Node.Path.join(app.framework.path.toString(), '../');
-		//app.log('frameworkPath', frameworkPath);
-
-		// Escape backslashes
-		path = path.replace('\\', '\\\\');
-		transpilerPath = transpilerPath.replace('\\', '\\\\');
-		frameworkPath = frameworkPath.replace('\\', '\\\\');
-
-		// The script string
-		var script = 'console.log("hi");';
-		//var script = "require('"+transpilerPath+"').execute('"+path+"', __dirname, '"+frameworkPath+"');";
-		//app.log('script', script);
-
-		var htmlString = 'data:text/html,<!DOCTYPE html><html><head><script>'+script+'</script></head><body></body></html>';
-		//console.log('htmlString', htmlString);
-		
-		// Base url (with trailing path separator) for files to be loaded by the data url. This is needed only if the specified url is a data url and needs to load other files.
-		var baseUrlForDataUrl = new Url(app.path).toString();
-		//console.log('baseURLForDataURL', baseUrlForDataUrl);
-
-		// Load the HTML string
-		electronBrowserWindow.loadURL(htmlString, {
-			//baseURLForDataURL: baseUrlForDataUrl, // TODO: baseURLForDataURL broken and crashes Electron, need to use base tag to pass all tests? https://github.com/electron/electron/issues/18472
-		});
+		// Using data URLs with baseURLForDataURL causes Electron to crash:
+		// https://github.com/electron/electron/issues/20700
+		// Will use an empty index.html while we wait for this to get fixed
+		// var baseURLForDataURL = 'file://'+app.path+'/';
+		// app.log('baseURLForDataURL', baseURLForDataURL);
+		// electronBrowserWindow.loadURL(
+		// 	'data:text/html,<!DOCTYPE html><html><head></head><body></body></html>',
+		// 	{
+		// 		baseURLForDataURL: baseURLForDataURL,
+		// 	}
+		// );
 
 		return electronBrowserWindow;
 	}

@@ -34,9 +34,6 @@ class FrameworkApp extends App {
 			command.showHelp();
 			this.exit();
 		}
-		else {
-			console.info('No command was issued.');
-		}
 	}
 
 	async executeSubcommandProctor(proctorSubcommand) {
@@ -62,7 +59,6 @@ class FrameworkApp extends App {
 			var path = proctorSubcommand.options.path;
 			var filePattern = proctorSubcommand.options.filePattern;
 			var methodPattern = proctorSubcommand.options.methodPattern;
-			
 			//path = Node.Path.join(app.framework.path, 'globals');
 			//filePattern = 'Command';
 			//methodPattern = '';			
@@ -73,22 +69,19 @@ class FrameworkApp extends App {
 	}
 
 	async executeSubcommandGraphicalInterface() {
-		//console.log('executeSubcommandGraphicalInterface');
-
 		// If we aren't in an Electron context start Electron
 		if(!this.modules.electronModule.inElectronEnvironment()) {
 			// We must manually start Electron as it will not start automatically as FrameworkApp can be a command line interface or a graphical interface app
 			this.modules.electronModule.startElectron();
 		}
-		// If we are in an Electron renderer process, initialize the graphical interface manager
-		else if(this.modules.electronModule.inElectronRendererProcess()) {
-			// Load the view controller
-			const FrameworkViewController = (await import('interface/FrameworkViewController.js')).default;
-			app.interfaces.graphical.setViewController(new FrameworkViewController());
-		}
-		else {
-			//app.info('In the Electron main process, do nothing here as the main process is just used to launch the first renderer process where the app really lives');
-		}
+	}
+
+	async initializeGraphicalInterface() {
+		await super.initializeGraphicalInterface();
+
+		// Load the view controller
+		const { FrameworkViewController } = await import('@app/interface/FrameworkViewController.js');
+		this.interfaces.graphical.setViewController(new FrameworkViewController());
 	}
 
 }

@@ -38,27 +38,31 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	listenToElectronEvents() {
-		// Listen to closed events
-		this.electronBrowserWindow.on('closed', function(event) {
-			console.log('electronBrowserWindow closed', this.graphicalInterface);
+		// When the Electron BrowserWindow will close
+		this.electronBrowserWindow.on('close', function(event) {
+			// console.log('electronBrowserWindow close', this.graphicalInterface);
 			this.graphicalInterface.state.closed = true;
 			this.graphicalInterface.emit('graphicalInterface.closed', event);
 		});
 
+		// Get the Electron screen 
+		let ElectronScreen = app.modules.electronModule.electron.remote.screen;
+		// app.log('ElectronScreen', ElectronScreen);
+
 		// Display added
-		app.modules.electronModule.electron.remote.screen.on('display-added', function(event, newDisplay) {
+		ElectronScreen.on('display-added', function(event, newDisplay) {
 			console.info('display-added', event);
 			this.graphicalInterface.emit('display.added', arguments);
 		}.bind(this));
 
 		// Display removed
-		app.modules.electronModule.electron.remote.screen.on('display-removed', function(event, oldDisplay) {
+		ElectronScreen.on('display-removed', function(event, oldDisplay) {
 			console.info('display-removed', event);
 			this.graphicalInterface.emit('display.removed', arguments);
 		}.bind(this));
 
 		// Display metrics changed
-		app.modules.electronModule.electron.remote.screen.on('display-metrics-changed', function(event, display, changedMetrics) {
+		ElectronScreen.on('display-metrics-changed', function(event, display, changedMetrics) {
 			console.info('display-metrics-changed', event);
 			this.graphicalInterface.emit('display.changed', arguments);
 		}.bind(this));

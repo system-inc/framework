@@ -1,6 +1,6 @@
 // Dependencies
 import { Pool } from '@framework/system/pool/Pool.js';
-import TestGraphicalInterfaceProxy from '@app/interface/areas/testing/activities/tests/test-graphical-interface/TestGraphicalInterfaceProxy.js';
+import { TestGraphicalInterfaceProxy } from '@app/interface/areas/testing/activities/tests/test-graphical-interface/TestGraphicalInterfaceProxy.js';
 
 // Class
 class TestGraphicalInterfaceProxyPool extends Pool {

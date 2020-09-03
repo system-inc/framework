@@ -7,7 +7,7 @@ class LinkView extends View {
 	destination = null;
 	openInNewGraphicalInterface = false;
 
-	constructor(childViewOrText, destination, openInNewGraphicalInterface = false) {
+	constructor(childViewOrText, destination = null, openInNewGraphicalInterface = false) {
 		super(childViewOrText);
 
 		this.destination = destination;
