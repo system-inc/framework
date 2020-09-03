@@ -8,6 +8,5 @@ ehthumbs.db
 Thumbs.db
 
 # Logs and Caches
-*logs/*
 *.log
 *.cache
