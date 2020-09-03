@@ -193,8 +193,8 @@ class App extends EventEmitter {
 		this.settings.set('path', appPath);
 		this.settings.set('script', appScriptPath);
 
-		// Set the Framework path
-		var frameworkPath = Node.Path.dirname(import.meta.url.replace('file://', '')); //  .../framework/system/app
+		// Set the Framework path (using .toString() on import.meta.url to make it compatible with Babel 7 import meta plugin 
+		var frameworkPath = Node.Path.dirname(import.meta.url.toString().replace('file://', '')); //  .../framework/system/app
 		frameworkPath = Node.Path.resolve(frameworkPath, '../../'); // .../framework
 		this.settings.set('framework.path', frameworkPath);
 

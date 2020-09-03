@@ -1,13 +1,3 @@
-# Apps
-app/logs/*
-app/interface/areas/testing/activities/tests/test-graphical-interface/app/logs/*
-
-# Test Web Server
-system/web/server/tests/logs/*
-
-# NPM
-npm-debug.log
-
 # Operating System
 .DS_Store
 .DS_Store?
@@ -16,3 +6,8 @@ npm-debug.log
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Logs and Caches
+*logs/*
+*.log
+*.cache

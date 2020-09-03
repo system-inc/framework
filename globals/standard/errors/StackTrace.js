@@ -143,6 +143,11 @@ class StackTrace {
 		return this.toString().slice(...arguments);
 	}
 
+	// Allow calls to error.stack.split (because error.stack is not a string)
+	split() {
+		return this.toString().split(...arguments);
+	}
+
 }
 
 // Export

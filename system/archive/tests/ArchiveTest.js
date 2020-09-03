@@ -7,7 +7,7 @@ import { ArchiveFile } from '@framework/system/archive/ArchiveFile.js';
 class ArchiveTest extends Test {
 
 	async testZipWithComment() {
-		var archiveFilePath = Node.Path.join(Node.Path.dirname(import.meta.url.replace('file://', '')), 'files', 'zip-with-comment.zip');
+		var archiveFilePath = Node.Path.join(Node.Path.dirname(import.meta.url.toString().replace('file://', '')), 'files', 'zip-with-comment.zip');
 		//app.log('archiveFilePath', archiveFilePath);
 
 		var archiveFile = new ArchiveFile(archiveFilePath);
@@ -28,7 +28,7 @@ class ArchiveTest extends Test {
 	}
 
 	async testRarWithComment() {
-		var archiveFilePath = Node.Path.join(Node.Path.dirname(import.meta.url.replace('file://', '')), 'files', 'rar-with-comment.rar');
+		var archiveFilePath = Node.Path.join(Node.Path.dirname(import.meta.url.toString().replace('file://', '')), 'files', 'rar-with-comment.rar');
 		//app.log('archiveFilePath', archiveFilePath);
 
 		var archiveFile = new ArchiveFile(archiveFilePath);
@@ -49,7 +49,7 @@ class ArchiveTest extends Test {
 	}
 
 	async testRar5WithComment() {
-		var archiveFilePath = Node.Path.join(Node.Path.dirname(import.meta.url.replace('file://', '')), 'files', 'rar5-with-comment.rar');
+		var archiveFilePath = Node.Path.join(Node.Path.dirname(import.meta.url.toString().replace('file://', '')), 'files', 'rar5-with-comment.rar');
 		//app.log('archiveFilePath', archiveFilePath);
 
 		var archiveFile = new ArchiveFile(archiveFilePath);
