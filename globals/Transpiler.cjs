@@ -19,7 +19,7 @@ class Transpiler {
 		this.frameworkPath = frameworkPath;
 
 		// Can use this to see the transpiled source code for any of the scripts
-		// this.logCachedTranspiledSourceForPath(NodePath.join(this.frameworkPath, 'system/app/App.js'));
+		// this.logCachedTranspiledSourceForScript(NodePath.join(this.frameworkPath, 'system/app/App.js'));
 
 		this.monkeyPatchRequire();
 		this.transpileRequiresAtRuntime();
@@ -65,24 +65,21 @@ class Transpiler {
 				'@babel/plugin-transform-modules-commonjs',
 				// Allow class properties outside of the constructor
 				'@babel/plugin-proposal-class-properties',
-				// Support import.meta syntax
-				'@babel/plugin-syntax-import-meta',
-				// Transform import.meta for CJS
+				// Transform ESM import.meta for CJS
 				'babel-plugin-transform-import-meta',
-				// Allow import()
-				'@babel/plugin-syntax-dynamic-import',
+				// Allow import() calls
 				'dynamic-import-node',
 			],
 			sourceMaps: 'both',
 			ignore: [
-				function(fileName) {
-					// Ignore node_modules and sql.js
-					if(fileName.match('node_modules') !== null || fileName.match('sql.js') !== null) {
-						// console.log('Skipping transpilation on', fileName);
+				function(specifier) {
+					// Ignore node_modules
+					if(specifier.match('node_modules') !== null) {
+						// console.log('Skipping transpilation on', specifier);
 						return true;
 					}
 					else {
-						// console.log('Transpiling', fileName);
+						// console.log('Transpiling', specifier);
 						return false;
 					}
 				},
@@ -96,7 +93,7 @@ class Transpiler {
 		require(this.appScriptPath);
 	}
 
-	logCachedTranspiledSourceForPath(path) {
+	logCachedTranspiledSourceForScript(path) {
 		const TranspilerCache = require('@babel/register/lib/cache').get();
 		// console.log('TranspilerCache', TranspilerCache);
 
