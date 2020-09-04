@@ -83,8 +83,8 @@ class WebServer extends Server {
 
 		// Merge in the provided settings
 		this.settings.merge(settings);
-		//app.log('settings', settings);
-		//app.log('this.settings', this.settings);
+		// app.log('settings', settings);
+		// app.log('this.settings', this.settings);
 
 		// Set the web server directory
 		var settingsDirectory = this.settings.get('directory');

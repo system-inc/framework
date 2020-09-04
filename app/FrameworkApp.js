@@ -71,8 +71,9 @@ class FrameworkApp extends App {
 	async executeSubcommandGraphicalInterface() {
 		// If we aren't in an Electron context start Electron
 		if(!this.modules.electronModule.inElectronEnvironment()) {
-			// We must manually start Electron as it will not start automatically as FrameworkApp can be a command line interface or a graphical interface app
-			this.modules.electronModule.startElectron();
+			// We must manually start Electron as it will not start automatically
+			// as FrameworkApp can be a command line interface or a graphical interface app
+			this.modules.electronModule.spawnElectronMainProcess();
 		}
 	}
 

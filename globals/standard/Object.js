@@ -225,6 +225,40 @@ Object.defineProperty(Object.prototype, 'clone', {
     },
 });
 
+// Similar to class inheritance, a inherit adds data and but does not overwrite existing data
+// on the object with data from another object. Important: This method will overwrite null values.
+Object.defineProperty(Object.prototype, 'inherit', {
+    writable: true, // Let other libraries replace this method
+    enumerable: false,
+    value: function() {
+        var objectsToInherit = [];
+
+        // Gather the objects to merge
+        for(var i = 0; i < arguments.length; i++) {
+            if(arguments[i]) {
+                objectsToInherit.append(arguments[i]);
+            }
+        }
+
+        // "this" inherits any properties from the objects to inherit that it does not already have
+        objectsToInherit.each(function(objectToInheritIndex, objectToInherit) {
+            objectToInherit.each(function(objectToInheritKey, objectToInheritValue) {
+                // Recursively inherit non-primitives
+                if(this[objectToInheritKey] !== undefined && !Primitive.is(this[objectToInheritKey])) {
+                    this[objectToInheritKey] = this[objectToInheritKey].inherit(objectToInheritValue);
+                }
+                // Add any new keys not existing on "this", replace ones which are null
+                else if(this[objectToInheritKey] === undefined || this[objectToInheritKey] === null) {
+                    this[objectToInheritKey] = objectToInheritValue;
+                }
+            }.bind(this));
+        }.bind(this));
+
+        return this;
+    },
+});
+
+// Merge adds new data and overwrites existing data on the object with data from another object
 Object.defineProperty(Object.prototype, 'merge', {
     writable: true, // Let other libraries replace this method
     enumerable: false,
@@ -244,9 +278,6 @@ Object.defineProperty(Object.prototype, 'merge', {
                 // Overwrite any primitives
                 if(this[objectToMergeKey] !== undefined && Primitive.is(this[objectToMergeKey])) {
                     this[objectToMergeKey] = objectToMergeValue;
-                }
-                else if(this[objectToMergeKey] !== undefined && !Primitive.is(this[objectToMergeKey])) {
-                    this[objectToMergeKey] = this[objectToMergeKey].merge(objectToMergeValue);
                 }
                 // Recursively merge non-primitives
                 else if(this[objectToMergeKey] !== undefined && !Primitive.is(this[objectToMergeKey])) {

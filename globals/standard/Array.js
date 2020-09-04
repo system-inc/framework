@@ -151,6 +151,8 @@ Array.prototype.merge = function() {
     return this;
 };
 
+Array.prototype.inherit = Array.prototype.merge;
+
 // Regular expression location can be:
 // null (no regular expression will be used)
 // 'search' (the search term is a regular expression)

@@ -68,6 +68,7 @@ class GraphicalInterfaceState extends EventEmitter {
 	static getSettingsWithDisplays(type = null, displays) {
 		var settings = null;
 		var defaultSettings = app.settings.get('interfaces.graphical.defaults');
+		// app.log('defaultSettings', defaultSettings);
 
 		// If the user specified a type for the interface
 		if(type) {
@@ -80,13 +81,13 @@ class GraphicalInterfaceState extends EventEmitter {
 			// If a numbered display key is set that matches the number of monitors
 			var displaysLength = Object.keys(displays).length;
 			var displaysLengthInEnglish = Number.toEnglish(displaysLength);
-			//console.log('displaysLengthInEnglish', displaysLengthInEnglish);
+			// console.log('displaysLengthInEnglish', displaysLengthInEnglish);
 
 			var numberedDisplaySettingsKey = displaysLengthInEnglish + 'Display';
 			if(displaysLength > 1) {
 				numberedDisplaySettingsKey += 's';
 			}
-			//console.log('numberedDisplaySettingsKey', numberedDisplaySettingsKey);
+			// console.log('numberedDisplaySettingsKey', numberedDisplaySettingsKey);
 
 			var numberedDisplaySettings = app.settings.get('interfaces.graphical.'+numberedDisplaySettingsKey);
 
@@ -100,7 +101,7 @@ class GraphicalInterfaceState extends EventEmitter {
 			}
 		}
 
-		//console.info('GraphicalInterfaceState settings', settings);
+		// console.info('GraphicalInterfaceState settings', settings);
 
 		return settings;
 	}

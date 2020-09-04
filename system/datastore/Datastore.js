@@ -50,6 +50,10 @@ class Datastore extends DatastoreInterface {
 		return this.data;
 	}
 
+	inherit(data) {
+		return this.data.inherit(data);
+	}
+
 	merge(data) {
 		return this.data.merge(data);
 	}

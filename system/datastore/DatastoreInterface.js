@@ -28,6 +28,10 @@ class DatastoreInterface extends PropagatingEventEmitter {
 		throw new Error('This method must be implemented by a child class.');
 	}
 
+	inherit(data) {
+		throw new Error('This method must be implemented by a child class.');
+	}
+
 	merge(data) {
 		throw new Error('This method must be implemented by a child class.');
 	}

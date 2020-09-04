@@ -51,14 +51,14 @@ class ElectronModule extends Module {
 		// Start Electron if the settings have it set to start automatically if not in the Electron context
 		else if(this.settings.get('automaticallyStartElectronIfNotInElectronContext')) {
 			console.log('Not in Electron, starting this.electron...');
-			this.startElectron();
+			this.spawnElectronMainProcess();
 		}
 	}
 
 	async getElectronExecutablePath() {
 		var electronExecutablePath = null;
 
-		// Get the electron
+		// Get the electron path
 		var nodeModuleLookupPaths = Node.Module._resolveLookupPaths('electron')[1];
 		
 		// Add the node exec path
@@ -110,8 +110,8 @@ class ElectronModule extends Module {
 		return electronExecutablePath;
 	}
 
-	async startElectron() {
-		//console.log('ElectronModule', 'startElectron');
+	async spawnElectronMainProcess() {
+		//console.log('ElectronModule', 'spawnElectronMainProcess');
 
 		// Get the path to the Electron executable
 		var electronExecutablePath = await this.getElectronExecutablePath();
@@ -125,7 +125,7 @@ class ElectronModule extends Module {
 		// console.log('electronMainProcessArguments', electronMainProcessArguments);
 		//Node.exit();
 
-		// Run Electron as a child process, providing a .cjs file runs the file in the Electron main process, providing a .html file runs it in a renderer process
+		// Run Electron as a child process, providing a .cjs file to run the file in the Electron main process (providing a .html file runs it in a renderer process)
 		// We want to run in the main process to take advantage of shared standard streams, so we provide a .cjs file by default
 		// console.log('electronExecutablePath', electronExecutablePath);
 		// console.log('electronMainProcessArguments', electronMainProcessArguments);
@@ -177,6 +177,7 @@ class ElectronModule extends Module {
 		this.electron.app.on('activate', function () {
 			// app.log('electron app event activate');
 
+			// Create the first browser window if it does not exist
 			if(this.firstBrowserWindow === null) {
 				//app.log('this.firstBrowserWindow proxy is null');
 				this.createFirstBrowserWindow();
@@ -256,8 +257,8 @@ class ElectronModule extends Module {
 			path: null,
 			graphicalInterfaceState: {
 				dimensions: {
-					width: 1920,
-					height: 1080,
+					width: null,
+					height: null,
 				},
 				position: {
 					relativeToAllDisplays: {
@@ -287,7 +288,7 @@ class ElectronModule extends Module {
 		// Create the Electron browser window
 		var electronBrowserWindow = new ElectronBrowserWindow({
 			title: app.title,
-			// //parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null, // this always makes the brower window show
+			// parent: (app.interfaces.graphical) ? app.interfaces.graphical.adapter.electronBrowserWindow : null, // this always makes the brower window show
 			width: options.graphicalInterfaceState.dimensions.width,
 			height: options.graphicalInterfaceState.dimensions.height,
 			x: options.graphicalInterfaceState.position.relativeToAllDisplays.x,
@@ -333,6 +334,8 @@ class ElectronModule extends Module {
 	}
 
 	setBrowserWindowState(electronBrowserWindow, graphicalInterfaceState, updateDimensionsAndPosition = true) {
+		// app.log('setBrowserWindowState', graphicalInterfaceState);
+
 		if(graphicalInterfaceState.title) {
 			electronBrowserWindow.setTitle(graphicalInterfaceState.title);
 		}

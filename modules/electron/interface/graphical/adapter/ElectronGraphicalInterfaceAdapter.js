@@ -69,10 +69,12 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	async initializeState() {
+		// app.log('initializeState');
+
 		await this.initializeDisplays();
 
 		this.graphicalInterface.state = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(this.graphicalInterface.type, this.graphicalInterface.displays);
-		//console.info('this.graphicalInterface.state', this.graphicalInterface.state);
+		// console.info('this.graphicalInterface.state', this.graphicalInterface.state);
 
 		// Store a reference to the graphical interface on the state
 		this.graphicalInterface.state.graphicalInterface = this.graphicalInterface;
@@ -216,7 +218,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	static constructGraphicalInterfaceState(type = null, displays = null) {
-		//console.log('constructGraphicalInterfaceState', type, displays);
+		// console.log('constructGraphicalInterfaceState', type, displays);
 
 		// Get the displays
 		if(displays === null) {
@@ -225,11 +227,11 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		//app.info('displays', displays);
 
 		var graphicalInterfaceStateSettings = GraphicalInterfaceState.getSettingsWithDisplays(type, displays);
-		//console.info('graphicalInterfaceStateSettings', graphicalInterfaceStateSettings);
+		// console.info('graphicalInterfaceStateSettings', graphicalInterfaceStateSettings);
 
 		// Construct the state for the graphical interface
 		var graphicalInterfaceState = GraphicalInterfaceState.fromSettingsWithDisplays(graphicalInterfaceStateSettings, displays, type);
-		//console.info('graphicalInterfaceState', graphicalInterfaceState);
+		// console.info('graphicalInterfaceState', graphicalInterfaceState);
 
 		return graphicalInterfaceState;
 	}

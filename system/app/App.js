@@ -400,8 +400,6 @@ class App extends EventEmitter {
 	}
 
 	async initializeGraphicalInterfaceEnvironment() {
-		// app.log('initializeGraphicalInterfaceEnvironment');
-
 		this.settings.mergeDefaults({
 			interfaces: {
 				graphical: {
@@ -423,8 +421,8 @@ class App extends EventEmitter {
 						// Default settings for any number of displays, overridden by a type or by a numbered display key, e.g., "oneDisplay", "twoDisplays", "threeDisplays", etc.
 						display: 1, // The display the graphical interface will appear on
 						mode: 'normal', // minimized, normal, maximized, full screen
-						width: .5,
-						height: .5,
+						width: .75,
+						height: .75,
 						x: 'center',
 						y: 'center',
 					},

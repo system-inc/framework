@@ -186,6 +186,65 @@ class ObjectTest extends Test {
 		Assert.notStrictEqual(object, clone, 'simple object should not point to same reference');
 	}
 
+	testInherit() {
+		var a = {
+		    'firstLevelA': {
+		    	'secondLevel': {
+		    		'thirdLevel': [
+		    			'a',
+		    			'b',
+					],
+					'thirdLevelA': 'original',
+		    	},
+		        'secondLevelA': 'original',
+			},
+			'firstLevelB': true,
+			'firstLevelC': 'original',
+			'firstLevelD': null,
+		};
+
+		var b = {
+		    'firstLevelA': {
+		    	'secondLevel': {
+		    		'thirdLevel': [
+		    			'c',
+					],
+					'thirdLevelA': 'should not be inherited',
+		    		'thirdLevelB': 'new',
+		    	},
+		        'secondLevelA': 'should not be inherited',
+		        'secondLevelB': 'new',
+			},
+			'firstLevelB': false,
+			'firstLevelC': 'should not be inherited',
+			'firstLevelD': 'null replaced with this string',
+		};
+
+		a.inherit(b);
+		// app.log('a', a);
+
+		var expected = {
+		    'firstLevelA': {
+		        'secondLevel': {
+		            'thirdLevel': [
+		                'a',
+		                'b',
+		                'c',
+		            ],
+		            'thirdLevelA': 'original',
+		            'thirdLevelB': 'new',
+		        },
+		        'secondLevelA': 'original',
+		        'secondLevelB': 'new',
+			},
+			'firstLevelB': true,
+			'firstLevelC': 'original',
+			'firstLevelD': 'null replaced with this string',
+		};
+
+		Assert.deepEqual(a, expected, 'Inherit is recursive and does not overwrite exisitng properties');
+	}
+
 	testMerge() {
 		var a = {
 		    'firstLevelA': {

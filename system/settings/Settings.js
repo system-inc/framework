@@ -7,70 +7,85 @@ class Settings {
 	datastore = null;
 	defaults = null;
 
-	constructor(defaults = {}, data = {}, datastore = new Datastore()) {
+	constructor(defaults = null, data = null, datastore = null) {
+		// Create the datastore if one is not passed in
+		if(datastore === null) {
+			datastore = new Datastore();
+		}
+
 		// Set the data store
 		this.datastore = datastore;
 		//console.log('this.datastore', this.datastore);
 
 		// Set the defaults
-		this.setDefaults(defaults);
-
+		if(defaults !== null) {
+			this.setDefaults(defaults);
+		}
+		// If no defaults were provided, set the defaults to an empty object
+		else {
+			this.defaults = {};
+		}
+		
 		// Set the initial data for the data store
-		if(data) {
+		if(data !== null) {
 			this.merge(data);
 		}
 	}
 
-	setDefaults(defaults) {
-		if(defaults) {
+	setDefaults(defaults = null) {
+		if(defaults !== null) {
 			// Set the defaults to a clone of defaults
+			// Make sure we never store references to outside objects
 			this.defaults = defaults.clone();
 
 			// Apply the defaults to the current data store
 			this.applyDefaults();
-		}
+		}		
 
 		return this;
 	}
 
-	mergeDefaults(defaultsToMerge) {
-		// Merge in the new defaults to the existing defaults
-		this.defaults.merge(defaultsToMerge);
+	mergeDefaults(defaultsToMerge = null) {
+		if(defaultsToMerge !== null) {
+			// Make sure we never store references to outside objects
+			defaultsToMerge = defaultsToMerge.clone();
 
-		// Apply the defaults to the current data store
-		this.applyDefaults();
+			// Merge in the new defaults to the existing defaults
+			this.defaults.merge(defaultsToMerge);
+
+			// Apply the defaults to the current data store
+			this.applyDefaults();
+		}		
 
 		return this;
 	}
 
 	applyDefaults() {
-		// Get the current data
-		var data = this.datastore.getData();
-		//console.log('data', data);
+		// Clone to make sure we do not inherit references
+		var defaults = this.defaults.clone();
 
-		// Set the data to the default data
-		this.datastore.setData(this.defaults);
-
-		// Merge the current data on top of the defaults
-		this.datastore.merge(data);
+		// Inherit adds new data but does not overwrite existing data (but it will replace null values)
+		this.datastore.inherit(defaults);
 
 		return this;
 	}
 
-	reset() {
-		this.delete();
-		this.applyDefaults();
-	}
+	merge(settingsOrData = null) {
+		if(settingsOrData !== null) {
+			var dataToMerge = settingsOrData;
 
-	merge(settingsOrData) {
-		var dataToMerge = settingsOrData;
+			// Handle if settingsOrData is an instance of Settings
+			if(Settings.is(settingsOrData)) {
+				dataToMerge = settingsOrData.getData();
+			}
 
-		// Handle if settingsOrData is an instance of Settings
-		if(Settings.is(settingsOrData)) {
-			dataToMerge = settingsOrData.getData();
+			// Make sure we never store outside references
+			dataToMerge = dataToMerge.clone();
+
+			this.datastore.merge(dataToMerge);
 		}
 
-		return this.datastore.merge(dataToMerge);
+		return this;
 	}
 
 	async mergeFromFile(dataFilePath) {
@@ -81,8 +96,22 @@ class Settings {
 		return this.merge(data);
 	}
 
-	integrate(data) {
-		return this.datastore.integrate(data);
+	integrate(settingsOrData) {
+		if(settingsOrData !== null) {
+			var dataToIntegrate = settingsOrData;
+
+			// Handle if settingsOrData is an instance of Settings
+			if(Settings.is(settingsOrData)) {
+				dataToIntegrate = settingsOrData.getData();
+			}
+
+			// Make sure we never store outside references
+			dataToIntegrate = dataToIntegrate.clone();
+
+			this.datastore.integrate(dataToIntegrate);
+		}
+
+		return this;
 	}
 
 	async integrateFromFile(dataFilePath) {
@@ -116,6 +145,17 @@ class Settings {
 		return this.datastore.delete(path);
 	}
 
+	reset() {
+		this.delete();
+		this.applyDefaults();
+
+		return this;
+	}
+
+	static is = function(value) {
+		return Class.isInstance(value, Settings);
+	}
+
 	static async fromFile(defaults, dataFilePath, datastore) {
 		//console.log('dataFilePath', dataFilePath);
 		const { File } = await import('@framework/system/file-system/File.js');
@@ -130,10 +170,6 @@ class Settings {
 		var settings = new Settings(defaults, data, datastore);
 
 		return settings;
-	}
-
-	static is = function(value) {
-		return Class.isInstance(value, Settings);
 	}
 
 }
