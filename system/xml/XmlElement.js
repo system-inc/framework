@@ -125,13 +125,6 @@ class XmlElement extends XmlNode {
 		return this;
 	}
 
-	remove() {
-		// Remove this element from the parent's children
-		this.parent.removeChild(this);
-
-		return this;
-	}
-
 	empty() {
 		// Loop through the children and remove each one
 		this.children.each(function(childIndex, child) {

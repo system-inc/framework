@@ -47,6 +47,19 @@ class XmlNode {
 		this.nodeIdentifierCounter = 0;
 	}
 
+	remove() {
+		// Remove this element from the parent's children
+		this.parent.removeChild(this);
+
+		return this;
+	}
+
+	setContent(content) {
+		this.content = content;
+
+		return this;
+	}
+
 	toString() {
 		return this.content;
 	}

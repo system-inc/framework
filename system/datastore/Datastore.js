@@ -21,11 +21,15 @@ class Datastore extends DatastoreInterface {
 	}
 
 	set(path, value) {
-		return this.data.setValueByPath(path, value);
+		this.data.setValueByPath(path, value);
+
+		return value;
 	}
 
 	delete(path) {
-		return this.data.deleteValueByPath(path);
+		this.data.deleteValueByPath(path);
+
+		return true;
 	}
 
 	getData() {

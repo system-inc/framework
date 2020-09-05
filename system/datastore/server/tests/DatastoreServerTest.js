@@ -1,83 +1,77 @@
 // Dependencies
 import { Test } from '@framework/system/test/Test.js';
 import { Assert } from '@framework/system/test/Assert.js';
-import { Datastore } from '@framework/system/datastore/Datastore.js';
 import { DatastoreServer } from '@framework/system/datastore/server/DatastoreServer.js';
 import { DatastoreClient } from '@framework/system/datastore/server/DatastoreClient.js';
+import { LocalSocketClient } from '@framework/system/server/protocols/local-socket/client/LocalSocketClient.js';
+import { LocalSocketServer } from '@framework/system/server/protocols/local-socket/server/LocalSocketServer.js';
 
 // Class
 class DatastoreServerTest extends Test {
 
-	async testDatastoreServerDirectAccess() {
+    datastoreServer = null;
+    localSocketServer = null;
+
+    async before() {
         // Create a datastore server
-        var datastoreServer = new DatastoreServer(new Datastore());
-        
+        this.datastoreServer = new DatastoreServer();
+
+        // Create a LocalSocketServer to power the DatastoreServer
+        this.localSocketServer = new LocalSocketServer();
+
+        // Add the LocalSocketServer to the DatastoreServer
+        await this.datastoreServer.addProtocolServer(this.localSocketServer);
+
+        // Initialize the DatastoreServer
+        await this.datastoreServer.initialize();
+    }
+
+    async after() {
+        await this.datastoreServer.stop();
+    }
+
+	async testDatastoreServerDirectAccess() {
         // Set a value using the DatastoreServer direct access methods
-        await datastoreServer.set('testKey1', 'testKey1Value');
+        await this.datastoreServer.set('testKey1', 'testKey1Value');
 
         // Get a value using the DatastoreServer direct access methods
         var expected = 'testKey1Value';
-        var actual = await datastoreServer.get('testKey1');
+        var actual = await this.datastoreServer.get('testKey1');
 
         // Make sure the value is correct
         Assert.equal(actual, expected, 'Directly accessing the datastore through DatastoreServer');
     }
 
-    async SKIPtestDatastoreServerClient() {
+    async testDatastoreClient() {
         var actual = null;
         var expected = null;
 
-        // Write the syntax below how I want the final syntax to be
-
-        // Create a datastore server with an empty in-memory datastore
-
-        // TODO: The datastore server needs protocols to listen to
-
-        /*
-            A datastore server needs 2 things
-             1. A datastore object it uses
-             2. Protocol server(s)
-
-            There are two types of servers
-            1. Protocol servers - base level servers that handle just the data passing back and forth
-            2. Servers - these servers listen to one or more protocol servers and do work
-                can listen to 0+ protocol servers
-                dont worry about how the underlying data is transferred
-                
-        */
-
-        var datastoreServer = new DatastoreServer(new Datastore());
-        await datastoreServer.initialize();
+        // Set a value on the server
+        await this.datastoreServer.set('testKey2', 'testKey2Value');
 
         // Create a datastore client
-
-        // TODO: The datastore client needs to know which protocol to connect with and the path to that protocol
-
-        var datastoreClient = new DatastoreClient();
+        var localSocketProtocolClient = new LocalSocketClient(this.localSocketServer.localSocketFilePath);
+        var datastoreClient = new DatastoreClient(localSocketProtocolClient);
         await datastoreClient.initialize();
-        
-        // Set a value using the DatastoreServer direct access methods
-        await datastoreClient.set('testKey1', 'testKey1Value');
+        // app.log('datastoreClient', datastoreClient);
 
-        // Get a value using the DatastoreServer direct access methods
-        expected = 'testKey1Value';
+        // Read the server value with the client
         actual = await datastoreClient.get('testKey1');
+        // app.log('actual', actual);
+        Assert.equal(actual, 'testKey1Value', 'DatastoreClient get()');
 
-        // Make sure the value is correct
-        Assert.equal(actual, expected, 'Accessing the datastore through DatastoreClient');
+        // Set a value using the client
+        await datastoreClient.set('testKey1', 'newTestKey1Value');
+
+        // Read the server value with the client
+        actual = await datastoreClient.get('testKey1');
+        Assert.equal(actual, 'newTestKey1Value', 'DatastoreClient set() and then get()');
 
         // Listen to a key to become notified of changes
-        await datastoreClient.onChange('testKey1', function(event) {
-            console.log('testKey1 value changed on server', event);
-            actual = event.data;
-        });
-
-        // Change the value on the server
-        await datastoreServer.set('testKey1', 'updatedTestKey1Value');
-
-        // Make sure the value was updated
-        expected = 'updatedTestKey1Value';
-        Assert.equal(actual, expected, 'onChange works');
+        // await datastoreClient.onChange('testKey1', function(event) {
+        //     console.log('testKey1 value changed on server', event);
+        //     actual = event.data;
+        // });
     }
 
 }

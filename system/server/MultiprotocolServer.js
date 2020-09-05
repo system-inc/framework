@@ -42,6 +42,8 @@ class MultiprotocolServer extends Server {
     }
 
     async addProtocolServer(protocolServer) {
+        // app.log('protocolServer', protocolServer);
+
         // Keep track of the protocol server
         this.protocolServers[protocolServer.identifier] = protocolServer;
 

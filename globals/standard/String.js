@@ -402,6 +402,16 @@ String.prototype.splitOnFirst = function(stringToSplitOn) {
 	];
 };
 
+String.prototype.pluralize = function(count, suffix = 's') {
+	var pluralizedString = this;
+
+	if(count !== 1) {
+		pluralizedString += suffix;
+	}
+
+	return pluralizedString;
+};
+
 // Static methods
 
 String.is = function(value) {

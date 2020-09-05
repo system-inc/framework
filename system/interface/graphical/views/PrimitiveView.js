@@ -82,6 +82,9 @@ class PrimitiveView extends PropagatingEventEmitter {
 		this.graphicalInterface = null; // This indicates the view is no longer part of the graphical interface's view heirarchy
 	}
 
+	// Use logic from XmlNode
+	remove = XmlNode.prototype.remove;
+
 	// See HtmlNode .setContent()
 	setContent(content) {
 		this.content = content;

@@ -63,10 +63,10 @@ class TestsActivityContentViewController extends ViewController {
         });
 
         // Summary
-        var summary = new TextView(this.tests.methods.length+' test methods in '+this.tests.classes.length+' tests');
+        var summary = new TextView(this.tests.methods.length.addCommas()+' test '+'method'.pluralize(this.tests.methods.length)+' in '+this.tests.classes.length.addCommas()+' '+'test'.pluralize(this.tests.classes.length));
         testsFormView.append(summary);
 
-        var status = new TextView('');
+        var status = new TextView();
         testsFormView.append(status);
         this.testGraphicalInterfaceProxyPool.on('pool.*', function(event) {
             status.setContent('Pool - Size: '+this.testGraphicalInterfaceProxyPool.size+' &bull; Available: '+this.testGraphicalInterfaceProxyPool.availableReusables.getSize()+' &bull; Busy: '+this.testGraphicalInterfaceProxyPool.busyReusables.getSize()+' &bull; Waiting: '+this.testGraphicalInterfaceProxyPool.waitingForAvailableReusableCount);
@@ -123,7 +123,7 @@ class TestsActivityContentViewController extends ViewController {
 
          // Get a test browser window from the pool
         var testGraphicalInterfaceProxy = await this.testGraphicalInterfaceProxyPool.getReusable();
-        //console.log('runTestMethod testGraphicalInterfaceProxy', testGraphicalInterfaceProxy.identifier, testGraphicalInterfaceProxy);
+        console.log('runTestMethod testGraphicalInterfaceProxy', testGraphicalInterfaceProxy.identifier, testGraphicalInterfaceProxy);
 
         // Listen to proctor events
         testGraphicalInterfaceProxy.on('testGraphicalInterfaceApp.proctor.*', function(event) {
@@ -154,7 +154,7 @@ class TestsActivityContentViewController extends ViewController {
     runNextTestMethod() {
         // Start case
         if(this.currentTestMethodIndex === null) {
-            this.currentTestMethodIndex = -1;
+            this.previousTestMethodIndex = -1;
             this.currentTestMethodIndex = 0;
             this.nextTestMethodIndex = 1;
         }

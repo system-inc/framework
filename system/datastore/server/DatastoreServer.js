@@ -1,66 +1,101 @@
 // Dependencies
 import { MultiprotocolServer } from '@framework/system/server/MultiprotocolServer.js';
-import { LocalSocketServer } from '@framework/system/server/protocols/local-socket/server/LocalSocketServer.js';
+import { Datastore } from '@framework/system/datastore/Datastore.js';
 
 // Class
 class DatastoreServer extends MultiprotocolServer {
 
 	datastore = null;
-    protocolServers = [];
 
-    constructor(datastore) {
+    constructor(datastore = null) {
 		super();
+
+		// Create an in memory datastore if one is not provided
+		if(datastore === null) {
+			datastore = new Datastore();
+		}
 
         this.datastore = datastore;
 	}
-	
+
 	async initialize() {
-		// This is all temporary code to figure this shit out
-
-		// Create a local socket protocol server
-		var localSocketServer = new LocalSocketServer();
-		await localSocketServer.initialize();
-
-		// When the local socket protocol server gets data
-		localSocketServer.on('data', function(event) {
-			console.log('got data from server', event.data);
-		});
+		// Need to add a protocol server using addProtocolServer() before calling initialize()
+		if(this.protocolServers.getSize() == 0) {
+			throw new Error('Must provide a protocol server using await addProtocolServer() before calling initialize().');
+		}
 
 		await super.initialize();
+
+		// Have the protocol servers listen for requests
+        this.protocolServers.each(function(protocolServerIdentifier, protocolServer) {
+            protocolServer.on('message', async function(event) {
+				let message = event.data;
+				// app.log('message', message);
+
+				// If the request is valid
+				if(message.data && message.data.method && typeof(this.datastore[message.data.method]) !== 'undefined') {
+					// console.log('message.data', message.data);
+					
+					// Query the datastore
+					let datastoreResponse =  await this.datastore[message.data.method].apply(this.datastore, message.data.arguments);
+					// app.log('datastoreResponse', datastoreResponse);
+
+					// Respond to the request
+					message.respond({
+						statusCode: 200,
+						statusMessage: 'OK',
+						data: datastoreResponse,
+					});
+				}
+				// If the request is malformed
+				else {
+					message.respond({
+						statusCode: 400,
+						statusMessage: 'Bad Request',
+						request: message.data,
+					});
+				}
+			}.bind(this));
+        }.bind(this));
 	}
 
-	// Allow direct access to the datastore from the DatastoreServer so that DatastoreClients do not need to be created
+	// Datastore methods
+	// Allow direct access to the datastore from the DatastoreServer
 
     async get(path = null) {
-		return this.datastore.get.apply(this.datastore, arguments);
+		return await this.datastore.get.apply(this.datastore, arguments);
 	}
 
 	async set(path, value) {
-		return this.datastore.set.apply(this.datastore, arguments);
+		return await this.datastore.set.apply(this.datastore, arguments);
 	}
 
 	async delete(path) {
-		return this.datastore.delete.apply(this.datastore, arguments);
+		return await this.datastore.delete.apply(this.datastore, arguments);
 	}
 
 	async getData() {
-		return this.datastore.getData.apply(this.datastore, arguments);
+		return await this.datastore.getData.apply(this.datastore, arguments);
 	}
 
 	async setData(data) {
-		return this.datastore.setData.apply(this.datastore, arguments);
+		return await this.datastore.setData.apply(this.datastore, arguments);
 	}
 
 	async empty() {
-		return this.datastore.empty.apply(this.datastore, arguments);
+		return await this.datastore.empty.apply(this.datastore, arguments);
+	}
+
+	async inherit(data) {
+		return await this.datastore.inherit.apply(this.datastore, arguments);
 	}
 
 	async merge(data) {
-		return this.datastore.merge.apply(this.datastore, arguments);
+		return await this.datastore.merge.apply(this.datastore, arguments);
 	}
 
 	async integrate(data) {
-		return this.datastore.integrate.apply(this.datastore, arguments);
+		return await this.datastore.integrate.apply(this.datastore, arguments);
 	}
 
 }

@@ -58,9 +58,6 @@ class App extends EventEmitter {
 	// Settings
 	settings = null;
 
-	// State
-	state = null;
-
 	constructor(settings) {
 		super(); // EventEmitter
 
@@ -76,9 +73,6 @@ class App extends EventEmitter {
 			environment: 'development',
 			modules: {},
 		}, settings);
-
-		// Create the state
-		this.state = new Datastore();
 	}
 
 	async initialize() {
@@ -95,6 +89,9 @@ class App extends EventEmitter {
 
 		// Use app settings to configure the environment
 		await this.configureEnvironment();
+
+		// Initialize the datastores
+		await this.initializeDatastores();
 
 		// Initialize for the Node environment
 		if(this.inNodeEnvironment()) {
@@ -127,6 +124,12 @@ class App extends EventEmitter {
 		//this.log('Framework initialization complete.');
 		//this.log('Initialized "'+this.title+'" in '+this.environment+' environment.');
 		//this.log('Modules:', app.modules);
+	}
+
+	async initializeDatastores() {
+		// TODO: Make this persist in local storage on the web or as a file in Node
+		this.datastore = new Datastore();
+		this.sessionDatastore = new Datastore();
 	}
 
 	async initializeNodeEnvironmentSettings() {
@@ -217,9 +220,6 @@ class App extends EventEmitter {
 	}
 
 	async initializeNodeEnvironment() {
-		// Initialize the app process
-		await this.initializeProcess();
-
 		// // Configure the standard streams
 		await this.configureStandardStreams();
 
@@ -257,46 +257,6 @@ class App extends EventEmitter {
 
 	async configureEnvironment() {
 		//this.log('Configuring environment ('+this.environment+')...');
-	}
-
-	async initializeProcess() {
-		//console.log('initializeProcess - Uncomment when ready');
-
-		if(this.inMainProcessEnvironment()) {
-			await this.initializeMainProcessEnvironment();
-		}
-		else {
-			await this.initializeChildProcessEnvironment();
-		}
-	}
-
-	async initializeMainProcessEnvironment() {
-		//console.log('In main process!');
-
-		// const { Datastore } = await import('@framework/system/datastore/Datastore.js');
-		// const { DatastoreServer } = await import('@framework/system/datastore/server/DatastoreServer.js');
-
-		// // Setup app.datastore server
-		// this.datastore = new DatastoreServer(new Datastore());
-		// await this.datastore.initialize();
-
-		// // Setup app.sessionDatastore server
-		// this.sessionDatastore = new DatastoreServer(new Datastore());
-		// await this.sessionDatastore.initialize();
-	}
-
-	async initializeChildProcessEnvironment() {
-		//console.log('In child process!');
-
-		// const { DatastoreClient } = await import('@framework/system/datastore/server/DatastoreClient.js');
-
-		// // Setup app.datastore client
-		// this.datastore = new DatastoreClient();
-		// await this.datastore.initialize();
-
-		// // Setup app.sessionDatastore client
-		// this.sessionDatastore = new DatastoreClient();
-		// await this.sessionDatastore.initialize();
 	}
 
 	async configureStandardStreams() {

@@ -225,7 +225,7 @@ Object.defineProperty(Object.prototype, 'clone', {
     },
 });
 
-// Similar to class inheritance, a inherit adds data and but does not overwrite existing data
+// Inherit recursively adds properties and but does not overwrite existing non-null properties
 // on the object with data from another object. Important: This method will overwrite null values.
 Object.defineProperty(Object.prototype, 'inherit', {
     writable: true, // Let other libraries replace this method

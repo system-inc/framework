@@ -133,9 +133,6 @@ class View extends PrimitiveView {
 	}
 
 	// Use logic from XmlElement
-	remove = XmlElement.prototype.remove;
-
-	// Use logic from XmlElement
 	empty = XmlElement.prototype.empty;
 
 	// Use logic from XmlElement
