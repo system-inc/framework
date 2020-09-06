@@ -6,7 +6,8 @@ import '@framework/globals/Globals.js';
 import { EventEmitter } from '@framework/system/event/EventEmitter.js';
 import { Version } from '@framework/system/version/Version.js';
 import { Settings } from '@framework/system/settings/Settings.js';
-import { Datastore } from '@framework/system/datastore/Datastore.js';
+import { AppDatastore } from '@framework/system/app/AppDatastore.js';
+import { AppSessionDatastore } from '@framework/system/app/AppSessionDatastore.js';
 
 // Class
 class App extends EventEmitter {
@@ -113,9 +114,9 @@ class App extends EventEmitter {
 		if(this.inGraphicalInterfaceEnvironment()) {
 			// app.log('inGraphicalInterfaceEnvironment');
 
-			// Stop here until the DOM is loaded
+			// Will wait on this line until the GraphicalInterface emits the ready event
 			await this.initializeGraphicalInterfaceEnvironment();
-			// app.log('DOM loaded');
+			// app.log('The GraphicalInterface is now ready to be initialized');
 
 			// Implement this method in your app to set the view controller
 			await this.initializeGraphicalInterface();
@@ -127,9 +128,8 @@ class App extends EventEmitter {
 	}
 
 	async initializeDatastores() {
-		// TODO: Make this persist in local storage on the web or as a file in Node
-		this.datastore = new Datastore();
-		this.sessionDatastore = new Datastore();
+		this.datastore = new AppDatastore();
+		this.sessionDatastore = new AppSessionDatastore();
 	}
 
 	async initializeNodeEnvironmentSettings() {
@@ -406,36 +406,12 @@ class App extends EventEmitter {
 			},
 		});
 
-		// Wait for the DOM to be loaded
-		return new Promise(function(resolve, reject) {
-			// Configure the graphical interface when the DOM has loaded
-			// TODO: Change how do I do this to make it not web specific
-			var domIsReadyFunction = async function() {
-				await this.configureGraphicalInterface();
-				return resolve(true);
-			}.bind(this);
-
-			// If the DOM is ready
-			// console.log('document', document.readyState);
-			if(document.readyState == 'complete') {
-				domIsReadyFunction.apply(this);
-			}
-			// If the dom is not ready, what for it to be ready
-			else {
-				document.addEventListener('DOMContentLoaded', domIsReadyFunction.bind(this));
-			}
-		}.bind(this));
-	}
-
-	// Graphical interfaces are treated as a decentralized system. This works well in web browsers, where each browser window is it's own instance of the app.
-	async configureGraphicalInterface() {
-		//app.log('App configureGraphicalInterface');
-
-		//app.log('inGraphicalInterfaceEnvironment', true);
-
 		// Create the graphical interface
 		const { GraphicalInterface } = await import('@framework/system/interface/graphical/GraphicalInterface.js');
 		this.interfaces.graphical = new GraphicalInterface();
+
+		// Create the graphical interface adapter
+		await this.interfaces.graphical.createGraphicalInterfaceAdapter();
 	}
 
 	// Implement this function in a child with:

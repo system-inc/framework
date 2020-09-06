@@ -59,7 +59,20 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		this.graphicalInterface.dimensions = this.htmlDocument.dimensions;
 		//console.info('this.htmlDocument.dimensions', this.htmlDocument.dimensions);
 
-		return this;
+		// Not initialized until the DOM is ready
+		return new Promise(function(resolve, reject) {
+			// Emit the ready event when the DOM is ready
+			// console.log('this.htmlDocument.domDocument', this.htmlDocument.domDocument.readyState);
+			if(this.htmlDocument.domDocument.readyState == 'complete') {
+				resolve(this);
+			}
+			// If the DOM is not ready, wait for it to be ready
+			else {
+				this.htmlDocument.domDocument.addEventListener('DOMContentLoaded', function(event) {
+					resolve(this);
+				}.bind(this));
+			}
+		}.bind(this));
 	}
 
 	createViewAdapter(view) {

@@ -235,10 +235,18 @@ class ElectronModule extends Module {
 	async createFirstBrowserWindow() {
 		// app.log('Creating first Electron BrowserWindow', 'script', this.settings.get('script'));
 
+		// The script which will run in the BrowserWindow
+		let script = this.settings.get('script');
+
+		// Load an empty page which will trigger the running of the preload script which is index.cjs
+		let path = Node.Path.join(app.path, 'electron.html');
+		// app.log('path', path);
+
 		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
 		this.firstBrowserWindow = await this.newBrowserWindow({
-			path: this.settings.get('script'),
-		});
+			script: script,
+			path: path,
+		});		
 
 		// When graphical interface is closed
 		this.firstBrowserWindow.on('closed', function(event) {
@@ -254,6 +262,7 @@ class ElectronModule extends Module {
 	async newBrowserWindow(options) {
 		// Set the default options
 		options = {
+			script: null,
 			path: null,
 			graphicalInterfaceState: {
 				dimensions: {
@@ -300,7 +309,7 @@ class ElectronModule extends Module {
 				nodeIntegration: true, // Must have this on as it is off by default
 				nodeIntegrationInWorker: true,
 				nodeIntegrationInSubFrames: true,
-				preload: this.settings.get('script'),
+				preload: options.script,
 				enableRemoteModule: true, // Make sure electron.remote is available
 				webSecurity: false, // Allow the loading of local resources
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
@@ -313,10 +322,10 @@ class ElectronModule extends Module {
 		// Remove the default menu
 		electronBrowserWindow.setMenu(null);
 
-		// Load an empty page which will trigger the running of the preload script which is index.cjs
-		var appElectronHtmlPath = Node.Path.join(app.path, 'electron.html')
-		// app.log('appElectronHtmlPath', appElectronHtmlPath);
-		electronBrowserWindow.loadFile(appElectronHtmlPath);
+		// Navigate to the path
+		if(options.path) {
+			electronBrowserWindow.loadFile(options.path);
+		}
 
 		// Using data URLs with baseURLForDataURL causes Electron to crash:
 		// https://github.com/electron/electron/issues/20700

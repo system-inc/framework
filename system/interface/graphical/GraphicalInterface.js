@@ -1,9 +1,6 @@
 // Dependencies
 import { Interface } from '@framework/system/interface/Interface.js';
-import { GraphicalInterfaceManager } from '@framework/system/interface/graphical/GraphicalInterfaceManager.js';
 import { View } from '@framework/system/interface/graphical/views/View.js';
-//import { AppSessionDatastore } from '@framework/system/app/datastore/AppSessionDatastore.js';
-import { WebGraphicalInterfaceAdapter  } from '@framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js';
 
 // TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
 
@@ -12,8 +9,6 @@ class GraphicalInterface extends Interface {
 
 	// Whether or not the graphical interface was initialized into an existing adapter
 	usesPreexistingAdapter = null;
-
-	manager = null; // GraphicalInterfaceManager
 
 	adapter = null;
 
@@ -30,7 +25,7 @@ class GraphicalInterface extends Interface {
 	state = null;
 
 	constructor(type, parent) {
-		super(parent);
+		super(parent); // PropagatingEventEmitter
 
 		// If the graphical interface has a parent, then we need to create a new graphical interface adapter and not initialize into the existing one
 		if(this.parent !== null) {
@@ -50,31 +45,36 @@ class GraphicalInterface extends Interface {
 		this.identifier = String.uniqueIdentifier();
 	}
 
-	async initialize() {
-		if(this.usesPreexistingAdapter) {
-			// Create a manager to handle orchestration between interfaces
-			this.manager = new GraphicalInterfaceManager();
-			await this.manager.initialize();
-
-			// Initialize the graphical interface
-			await this.manager.initializeGraphicalInterface(this);
+	async createGraphicalInterfaceAdapter() {
+		// If in Electron
+		if(app.modules.electronModule && app.modules.electronModule.inElectronEnvironment()) {
+			//console.log('createGraphicalInterfaceAdapter - inElectronEnvironment');
+			const { ElectronGraphicalInterfaceAdapter } = await import('@framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js');
+			this.adapter = new ElectronGraphicalInterfaceAdapter(this);
+		}
+		// If in a normal web browser
+		else if(app.inWebEnvironment()) {
+			//console.log('createGraphicalInterfaceAdapter - inWebEnvironment');
+			const { WebGraphicalInterfaceAdapter  } = await import('@framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js');
+			this.adapter = new WebGraphicalInterfaceAdapter(this);
 		}
 		else {
-			// Reference the already created manager
-			this.manager = this.parent.manager;
-
-			// Register the graphical interface
-			await this.manager.registerGraphicalInterface(this);
+			throw new Error('No suitable GraphicalInterfaceAdapter found.');
 		}
 
-		// Create the adapter for the graphical interface
-		this.adapter = await this.createGraphicalInterfaceAdapter();
+		// Initialize the graphical interface adapter
+		//console.info('Initializing graphical interface adapter');
+		await this.adapter.initialize();
 
+		// Listen to display events
+		this.listenToDisplayEvents();
+
+		return this.adapter;
+	}
+
+	async initialize() {
 		// Create the root view now that we have a graphical interface adapter
 		this.view = await this.createRootView();
-		
-		// Handle display events
-		this.handleDisplayEvents();
 	}
 
 	createViewAdapter(view) {
@@ -85,33 +85,7 @@ class GraphicalInterface extends Interface {
 		return viewAdapter;
 	}
 
-	async createGraphicalInterfaceAdapter() {
-		var graphicalInterfaceAdapter = null;
-
-		// If in Electron
-		if(app.modules.electronModule && app.modules.electronModule.inElectronEnvironment()) {
-			//console.log('createGraphicalInterfaceAdapter - inElectronEnvironment');
-			const { ElectronGraphicalInterfaceAdapter } = await import('@framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js');
-			graphicalInterfaceAdapter = new ElectronGraphicalInterfaceAdapter(this);
-		}
-		// If in a normal web browser
-		else if(app.inWebEnvironment()) {
-			//console.log('createGraphicalInterfaceAdapter - inWebEnvironment');
-			//var WebGraphicalInterfaceAdapter = require('framework/system/interface/graphical/managers/adapters/web/WebGraphicalInterfaceAdapter.js').default;
-			graphicalInterfaceAdapter = new WebGraphicalInterfaceAdapter(this);
-		}
-		else {
-			throw new Error('No suitable GraphicalInterfaceAdapter found.');
-		}
-
-		// Initialize the graphical interface adapter
-		//console.info('Initializing graphical interface adapter');
-		await graphicalInterfaceAdapter.initialize();
-
-		return graphicalInterfaceAdapter;
-	}
-
-	handleDisplayEvents() {
+	listenToDisplayEvents() {
 		// Display added
 		this.on('display.added', function(event) {
 			console.log('display.added', event);
@@ -141,6 +115,38 @@ class GraphicalInterface extends Interface {
 				this.applyDefaultState();
 			}
 		}.bind(this));
+	}
+
+	listenToControlEvents() {
+		//	appGraphicalInterface.on('graphicalInterface.reload', function() {
+		//		//console.log('reload');
+		//		appGraphicalInterface.reload();
+		//	});
+
+		//	appGraphicalInterface.on('graphicalInterface.close', function() {
+		//		//console.log('close');
+		//		appGraphicalInterface.close();
+		//	});
+
+		//	appGraphicalInterface.on('graphicalInterface.show', function() {
+		//		//console.log('show');
+		//		appGraphicalInterface.show();
+		//	});
+
+		//	appGraphicalInterface.on('graphicalInterface.openDeveloperTools', function() {
+		//		//console.log('openDeveloperTools');
+		//		appGraphicalInterface.openDeveloperTools();
+		//	});
+
+		//	appGraphicalInterface.on('graphicalInterface.closeDeveloperTools', function() {
+		//		//console.log('closeDeveloperTools');
+		//		appGraphicalInterface.closeDeveloperTools();
+		//	});
+
+		//	appGraphicalInterface.on('graphicalInterface.toggleDeveloperTools', function() {
+		//		//console.log('toggleDeveloperTools');
+		//		appGraphicalInterface.toggleDeveloperTools();
+		//	});
 	}
 
 	async createRootView() {

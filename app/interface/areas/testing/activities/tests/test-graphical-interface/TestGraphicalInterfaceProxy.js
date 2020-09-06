@@ -17,10 +17,10 @@ class TestGraphicalInterfaceProxy extends Reusable {
 
 		// Navigate to the starting path, directly access the Electron Module to do this, meaning these tests can only work in Electron (for now)
 		var path = Node.Path.join(app.path, 'interface', 'areas', 'testing', 'activities', 'tests', 'test-graphical-interface', 'app', 'TestGraphicalInterfaceApp.js');
-		app.modules.electronModule.navigateBrowserWindowToPath(this.graphicalInterface.adapter.electronBrowserWindow, path);
+		// app.modules.electronModule.navigateBrowserWindowToPath(this.graphicalInterface.adapter.electronBrowserWindow, path);
 
 		this.graphicalInterface.on('*', function(event) {
-			console.warn('this.graphicalInterface.on event', event.identifier, event);
+			console.info('this.graphicalInterface.on event', event.identifier, event);
 		});
 
 		// When the graphical interface is ready, release the reusable into the pool

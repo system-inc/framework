@@ -1,6 +1,3 @@
-// Globals
-import 'framework/globals/Globals.js';
-
 // Dependencies
 import { App } from '@framework/system/app/App.js';
 import { Proctor } from '@framework/system/test/Proctor.js';
@@ -8,8 +5,8 @@ import { Proctor } from '@framework/system/test/Proctor.js';
 // Class
 class TestGraphicalInterfaceApp extends App {
 
-	async initialize() {
-		await super.initialize(...arguments);
+	async initializeGraphicalInterface() {
+		await super.initializeGraphicalInterface();
 
 		console.info('Ready for command...');
 
@@ -66,8 +63,6 @@ class TestGraphicalInterfaceApp extends App {
 
 }
 
-// Global instance
-global.app = new TestGraphicalInterfaceApp(__dirname);
-
-// Initialize
+// Instatiate and initialize a global instance of the app
+global.app = new TestGraphicalInterfaceApp();
 global.app.initialize();
