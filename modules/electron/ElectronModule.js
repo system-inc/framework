@@ -65,7 +65,7 @@ class ElectronModule extends Module {
 		//app.log('process.execPath', process.execPath);
 		nodeModuleLookupPaths.append(process.execPath);
 
-		//app.log('nodeModuleLookupPaths', nodeModuleLookupPaths);
+		// app.log('nodeModuleLookupPaths', nodeModuleLookupPaths);
 
 		var electronModulePath = null;
 
@@ -88,7 +88,7 @@ class ElectronModule extends Module {
 			}
 		});
 
-		//app.info('electronModulePath', electronModulePath);
+		// app.info('electronModulePath', electronModulePath);
 
 		if(electronModulePath) {
 			electronExecutablePath = await import(electronModulePath);
@@ -98,7 +98,8 @@ class ElectronModule extends Module {
 		// Check for Windows Subsystem for Linux
 		if(!electronExecutablePath) {
 			if(await Directory.exists('/mnt/c/Program Files/Electron/')) {
-				electronExecutablePath = '/mnt/c/Program Files/Electron/electron.exe';	
+				// app.log('/mnt/c/Program Files/Electron/ exists')
+				electronExecutablePath = '/mnt/c/Program Files/Electron/electron.exe';
 			}
 		}
 
@@ -143,14 +144,14 @@ class ElectronModule extends Module {
 
 		// Standard out from the child process is bridged to the parent process
 		childProcessElectronMainProcess.stdout.on('data', function(data) {
-			// app.standardStreams.output.write('(Child Process - Electron Main Process - Standard Out) '+data.toString());
-			app.standardStreams.output.write(data);
+			app.standardStreams.output.write('(Electron Main - Standard Out) '+data.toString());
+			// app.standardStreams.output.write(data);
 		});
 
 		// Standard error from the child process is bridged to the parent process
 		childProcessElectronMainProcess.stderr.on('data', function(data) {
-			// app.standardStreams.error.write('(Child Process - Electron Main Process - Standard Error) '+data.toString());
-			app.standardStreams.error.write(data);
+			app.standardStreams.error.write('(Electron Main - Standard Error) '+data.toString());
+			// app.standardStreams.error.write(data);
 		});
 
 		// Kill the parent process when the child process exits

@@ -39,6 +39,7 @@ class Module {
 	static async import(moduleTitles) {
 		//app.log('moduleTitles', moduleTitles);
 		var frameworkPath = app.framework.path;
+		// console.log('frameworkPath', frameworkPath);
 
 		// Load each module
 		await moduleTitles.toArray().each(async function(moduleTitleIndex, moduleTitle) {
@@ -52,7 +53,7 @@ class Module {
 			else {
 				// Require the module
 				var modulePath = Node.Path.join(frameworkPath, 'modules', moduleTitle.replaceLast('Module', '').toDashes(), moduleTitle+'.js');
-				//console.log('modulePath', modulePath);	
+				// console.log('modulePath', modulePath);	
 
 				try {
 					//console.log('modulePath', modulePath);

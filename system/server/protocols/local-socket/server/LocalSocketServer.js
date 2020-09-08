@@ -32,7 +32,7 @@ class LocalSocketServer extends SocketServer {
         // Handle local domain sockets on Windows using this special path (https://nodejs.org/api/net.html#net_identifying_paths_for_ipc_connections)
         if(app.onWindows()) {
             // TODO: This is not tested
-            console.error('This is not tested, if this works on Windows we can delete this console.error line');
+            // console.error('This is not tested, if this works on Windows we can delete this console.error line');
             this.localSocketFilePath = Node.Path.join('\\\\?\\pipe', this.localSocketFilePath);
         }
         // Socket files need to be managed on platforms other than Windows

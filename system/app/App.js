@@ -78,7 +78,7 @@ class App extends EventEmitter {
 
 	async initialize() {
 		// Announce starting
-		//this.log('Initializing Framework '+this.framework.version+'...');
+		// console.log('Initializing Framework '+this.framework.version+'...');
 
 		// Initialize settings for the Node environment
 		if(this.inNodeEnvironment()) {
@@ -194,15 +194,26 @@ class App extends EventEmitter {
 		});
 
 		// Set the App path and script
-		var appScriptPath = process.argv[1]; // Argument 0 is the path to node, argument 1 is the path to the script
-		var appPath = Node.Path.dirname(appScriptPath);
-		this.settings.set('path', appPath);
+		// console.log('process.argv', process.argv);
+		// console.log('process.cwd()', process.cwd());
+		// console.log('import.meta', import.meta);
+		var appScriptPath = Node.Path.resolve(process.argv[1]); // Argument 0 is the path to node, argument 1 is the path to the script
+		// console.log('appScriptPath', appScriptPath);
 		this.settings.set('script', appScriptPath);
 
+		var appPath = Node.Path.dirname(appScriptPath);
+		// console.log('appPath', appPath);
+		this.settings.set('path', appPath);
+
 		// Set the Framework path (using .toString() on import.meta.url to make it compatible with Babel 7 import meta plugin 
-		var frameworkPath = Node.Path.dirname(import.meta.url.toString().replace('file://', '')); //  .../framework/system/app
-		frameworkPath = Node.Path.resolve(frameworkPath, '../../'); // .../framework
+		var frameworkPath = import.meta.url.toString();
+		frameworkPath = frameworkPath.replace('file://', ''); //  .../framework/system/app/App.js
+		frameworkPath = Node.Path.resolve(frameworkPath); // Resolve the URL path, changing from URL format to system format
+		frameworkPath = frameworkPath.replace('C:\\C:\\', 'C:\\'); //Windows Subsystem for Linux - resolve adds two C:\
+		frameworkPath = Node.Path.dirname(frameworkPath); // Just get the directory name, removing /App.js fromt he end
+		frameworkPath = Node.Path.resolve(frameworkPath, '../../'); // Jump back two directories to get the Framework path
 		this.settings.set('framework.path', frameworkPath);
+		// console.log('frameworkPath', frameworkPath);
 
 		// Set the logs path
 		var logsPath = Node.Path.join(this.path, 'logs');
