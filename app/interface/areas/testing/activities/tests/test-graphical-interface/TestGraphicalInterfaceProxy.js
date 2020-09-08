@@ -10,14 +10,14 @@ class TestGraphicalInterfaceProxy extends Reusable {
 	resetWhenFinishedRunningTests = true;
 
 	async initialize() {
+		let url = Node.Url.pathToFileURL(Node.Path.join(app.path, 'interface/areas/testing/activities/tests/test-graphical-interface/app/electron.html')).toString();
+
 		// Create a new graphical interface
 		//console.log('TestGraphicalInterfaceProxy - creating new graphical interface...');
-		this.graphicalInterface = await app.interfaces.graphical.newGraphicalInterface('test');
+		this.graphicalInterface = await app.interfaces.graphical.newGraphicalInterface('test', {
+			url: url,
+		});
 		console.log('this.graphicalInterface', this.graphicalInterface);
-
-		// Navigate to the starting path, directly access the Electron Module to do this, meaning these tests can only work in Electron (for now)
-		var path = Node.Path.join(app.path, 'interface', 'areas', 'testing', 'activities', 'tests', 'test-graphical-interface', 'app', 'TestGraphicalInterfaceApp.js');
-		// app.modules.electronModule.navigateBrowserWindowToPath(this.graphicalInterface.adapter.electronBrowserWindow, path);
 
 		this.graphicalInterface.on('*', function(event) {
 			console.info('this.graphicalInterface.on event', event.identifier, event);

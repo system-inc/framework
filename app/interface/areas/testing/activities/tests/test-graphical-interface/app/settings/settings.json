@@ -3,6 +3,7 @@
 	interfaces: {
 		graphical: {
 			defaults: {
+				display: 1,
 				width: .5,
 				height: 1,
 				x: 'right',

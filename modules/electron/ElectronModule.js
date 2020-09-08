@@ -4,7 +4,6 @@ import { Version } from '@framework/system/version/Version.js';
 import { Directory } from '@framework/system/file-system/Directory.js';
 import { ElectronGraphicalInterfaceAdapter } from '@framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js';
 import { Display } from '@framework/system/interface/graphical/Display.js';
-import { Url } from '@framework/system/web/Url.js';
 
 // Class
 class ElectronModule extends Module {
@@ -12,6 +11,7 @@ class ElectronModule extends Module {
 	electron = null;
 
 	firstBrowserWindow = null;
+	browserWindows = [];
 
 	version = new Version('1.0.0');
 
@@ -236,18 +236,15 @@ class ElectronModule extends Module {
 	async createFirstBrowserWindow() {
 		// app.log('Creating first Electron BrowserWindow', 'script', this.settings.get('script'));
 
-		// The script which will run in the BrowserWindow
-		let script = this.settings.get('script');
+		// Load the file URL, electron.html which includes the script index.cjs
+		let url = Node.Url.pathToFileURL(Node.Path.join(app.path, 'electron.html')).toString();
+		// app.log('url', url);
 
-		// Load an empty page which will trigger the running of the preload script which is index.cjs
-		let path = Node.Path.join(app.path, 'electron.html');
-		// app.log('path', path);
-
-		// Use the ElectronGraphicalInterfaceAdapter to create a new graphical interface
-		this.firstBrowserWindow = await this.newBrowserWindow({
-			script: script,
-			path: path,
-		});		
+		// Create the new browser window
+		// The first browser window always opens the main app
+		this.firstBrowserWindow = await this.newBrowserWindow('default', {
+			url: url,
+		});
 
 		// When graphical interface is closed
 		this.firstBrowserWindow.on('closed', function(event) {
@@ -260,37 +257,28 @@ class ElectronModule extends Module {
 		return this.firstBrowserWindow;
 	}
 
-	async newBrowserWindow(options) {
-		// Set the default options
+	async newBrowserWindow(type = null, options = null, parent = null) {
+		// Get the state of the graphical interface from settings
+		let graphicalInterfaceState = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(type);
+		// app.log('graphicalInterfaceState', graphicalInterfaceState);
+
+		// Set the default options - specific graphical interface state settings may be overwritten by the provided options
 		options = {
-			script: null,
-			path: null,
-			graphicalInterfaceState: {
-				dimensions: {
-					width: null,
-					height: null,
-				},
-				position: {
-					relativeToAllDisplays: {
-						x: null,
-						y: null,
-					},
-				},
-				show: false, // Do not show the window at first, wait for it to be set to the right dimensions and position
-			},
+			url: null,
+			graphicalInterfaceState: graphicalInterfaceState,
 		}.merge(options);
-		//console.log('newBrowserWindow', 'options', options);
+		// app.log('newBrowserWindow', 'options', options);
 
 		// Get the right reference for ElectronBrowserWindow based on whether or not we are in the Electron main process or in a renderer process
 		var ElectronBrowserWindow = null;
 		// Electron main process
 		if(this.inElectronMainProcess()) {
-			//console.log('inElectronMainProcess');
+			//app.log('inElectronMainProcess');
 			ElectronBrowserWindow = this.electron.BrowserWindow;
 		}
 		// Electron renderer process
 		else if(this.inElectronRendererProcess()) {
-			//console.log('inElectronRendererProcess');
+			//app.log('inElectronRendererProcess');
 			ElectronBrowserWindow = this.electron.remote.BrowserWindow;
 		}
 		// app.log('ElectronBrowserWindow', ElectronBrowserWindow);
@@ -310,12 +298,20 @@ class ElectronModule extends Module {
 				nodeIntegration: true, // Must have this on as it is off by default
 				nodeIntegrationInWorker: true,
 				nodeIntegrationInSubFrames: true,
-				preload: options.script,
 				enableRemoteModule: true, // Make sure electron.remote is available
 				webSecurity: false, // Allow the loading of local resources
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
 			},
 		});
+
+		// Keep track of all of the BrowserWindows we create
+		this.browserWindows.push(electronBrowserWindow);
+
+		// When graphical interface is closed
+		electronBrowserWindow.on('closed', function(event) {
+			// Remove the browser window from the browserWindows array
+			this.browserWindows.deleteValue(this.firstBrowserWindow);
+		}.bind(this));
 
 		// For testing - open dev tools every time
 		electronBrowserWindow.webContents.openDevTools();
@@ -323,9 +319,9 @@ class ElectronModule extends Module {
 		// Remove the default menu
 		electronBrowserWindow.setMenu(null);
 
-		// Navigate to the path
-		if(options.path) {
-			electronBrowserWindow.loadFile(options.path);
+		// Navigate to the url (for files this must be a file URL starting with file://)
+		if(options.url) {
+			electronBrowserWindow.loadURL(options.url.toString());
 		}
 
 		// Using data URLs with baseURLForDataURL causes Electron to crash:

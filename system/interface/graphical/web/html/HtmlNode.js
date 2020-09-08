@@ -310,7 +310,7 @@ class HtmlNode extends XmlNode {
 	replaceDomNode(indexOfChildDomNodeToReplace) {
 		var domNode = this.createDomNode(this);
 
-		app.log('HtmlNode.replaceDomNode replacing', this.parent.domNode.childNodes[indexOfChildDomNodeToReplace], 'with', domNode);
+		// app.log('HtmlNode.replaceDomNode replacing', this.parent.domNode.childNodes[indexOfChildDomNodeToReplace], 'with', domNode);
 
 		// Replace the DOM node with the replacement fragment
 		this.parent.domNode.replaceChild(domNode, this.parent.domNode.childNodes[indexOfChildDomNodeToReplace]);

@@ -99,9 +99,13 @@
 			},
 			types: {
 				test: {
+					display: 1,
+					width: .5,
+					height: 1,
 					x: 'right',
-					show: false,
-					openDeveloperTools: false,
+					y: 'top',
+					show: true,
+					openDeveloperTools: true,
 				},
 			},
 		},

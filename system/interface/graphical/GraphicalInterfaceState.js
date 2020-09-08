@@ -71,7 +71,7 @@ class GraphicalInterfaceState extends EventEmitter {
 		// app.log('defaultSettings', defaultSettings);
 
 		// If the user specified a type for the interface
-		if(type) {
+		if(type && type !== 'default') {
 			// Merge the type settings with the default settings
 			var typeSettings = app.settings.get('interfaces.graphical.types.'+type);
 			settings = defaultSettings.merge(typeSettings);
@@ -112,7 +112,7 @@ class GraphicalInterfaceState extends EventEmitter {
 		var graphicalInterfaceState = new GraphicalInterfaceState(settings);
 
 		var desiredDisplay = displays[settings.display];
-		//console.log('desiredDisplay', desiredDisplay);
+		// console.log('desiredDisplay', desiredDisplay);
 
 		graphicalInterfaceState.title = app.title;
 

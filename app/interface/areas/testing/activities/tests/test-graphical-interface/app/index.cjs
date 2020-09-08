@@ -1,3 +1,6 @@
+// See framework/app/index.cjs - this should be copy of that file
+// with the appScript variable changed to TestGraphicalInterfaceApp.js
+
 // This script runs the app script by using Babel to transpile the app
 // at runtime to an older version of JavaScript which uses Common JS (CJS)
 // requires and other transformations. This is necessary to run the app in
@@ -15,7 +18,7 @@ let appPath = __dirname;
 let appScriptPath = NodePath.resolve(appPath, appScript);
 // console.log('appScriptPath', appScriptPath);
 let frameworkPath = NodePath.resolve(appPath, '../../../../../../../../');
-console.log('frameworkPath', frameworkPath);
+// console.log('frameworkPath', frameworkPath);
 
 // Transpiler
 let transpilerPath = NodePath.join(frameworkPath, 'globals/Transpiler.cjs');

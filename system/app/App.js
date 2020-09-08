@@ -193,19 +193,30 @@ class App extends EventEmitter {
 			},
 		});
 
-		// Set the App path and script
 		// console.log('process.argv', process.argv);
 		// console.log('process.cwd()', process.cwd());
 		// console.log('import.meta', import.meta);
-		var appScriptPath = Node.Path.resolve(process.argv[1]); // Argument 0 is the path to node, argument 1 is the path to the script
+
+		// Set the App path and script
+		var appScriptPath = null;
+
+		// If we are in an Electron Renderer we need to use the document location instead of the command line arguments
+		if(this.inElectronEnvironment() && this.inWebEnvironment()) {
+			appScriptPath = Node.Url.fileURLToPath(document.location.href).replace('electron.html', 'index.cjs');
+		}
+		// If we are in node, we use the command line arguments
+		else {
+			appScriptPath = Node.Path.resolve(process.argv[1]); // Argument 0 is the path to node, argument 1 is the path to the script
+		}		
 		// console.log('appScriptPath', appScriptPath);
 		this.settings.set('script', appScriptPath);
 
+		// The app path is the directory of the app script
 		var appPath = Node.Path.dirname(appScriptPath);
 		// console.log('appPath', appPath);
 		this.settings.set('path', appPath);
 
-		// Set the Framework path (using .toString() on import.meta.url to make it compatible with Babel 7 import meta plugin 
+		// Set the Framework path (using .toString() on import.meta.url to make it compatible with Babel 7 import meta plugin)
 		var frameworkPath = import.meta.url.toString();
 		frameworkPath = frameworkPath.replace('file://', ''); //  .../framework/system/app/App.js
 		frameworkPath = Node.Path.resolve(frameworkPath); // Resolve the URL path, changing from URL format to system format
@@ -421,9 +432,6 @@ class App extends EventEmitter {
 		// Create the graphical interface
 		const { GraphicalInterface } = await import('@framework/system/interface/graphical/GraphicalInterface.js');
 		this.interfaces.graphical = new GraphicalInterface();
-
-		// Create the graphical interface adapter
-		await this.interfaces.graphical.createGraphicalInterfaceAdapter();
 	}
 
 	// Implement this function in a child with:
@@ -627,20 +635,6 @@ class App extends EventEmitter {
 		return formattedLogData;
 	}
 
-	inMainProcessEnvironment() {
-		//console.error('Implement inMainProcessEnvironment');
-		var inMainProcessEnvironment = true;
-
-		return inMainProcessEnvironment;
-	}
-
-	inChildProcessEnvironment() {
-		console.error('Implement inChildProcessEnvironment');
-		var inChildProcessEnvironment = false;
-
-		return inChildProcessEnvironment;
-	}
-
 	inTerminalEnvironment() {
 		var inTerminalEnvironment = false;
 
@@ -686,7 +680,7 @@ class App extends EventEmitter {
 	inElectronEnvironment() {
 		var inElectronEnvironment = false;
 
-		if(process.versions.electron !== undefined) {
+		if(Node.Process.versions && Node.Process.versions.electron) {
 			inElectronEnvironment = true;
 		}
 

@@ -1,6 +1,7 @@
 // Dependencies
 import { Interface } from '@framework/system/interface/Interface.js';
 import { View } from '@framework/system/interface/graphical/views/View.js';
+import { Url } from '@framework/system/web/Url.js';
 
 // TODO: GraphicalInterfaces handle orientation changes and send messages to view controllers
 
@@ -24,13 +25,21 @@ class GraphicalInterface extends Interface {
 
 	state = null;
 
-	constructor(type, parent) {
+	url = null;
+
+	children = [];
+
+	constructor(type = null, options = null, parent = null) {
 		super(parent); // PropagatingEventEmitter
 
 		// If the graphical interface has a parent, then we need to create a new graphical interface adapter and not initialize into the existing one
 		if(this.parent !== null) {
 			this.usesPreexistingAdapter = false;
+
+			// Add the child to the parent
+			this.parent.children.append(this);
 		}
+		// A parent graphical interface does not exist so we will initialize into the existing source graphical interface
 		else {
 			//console.info('A parent graphical interface does not exist so we will initialize into the existing source graphical interface.');
 			this.usesPreexistingAdapter = true;
@@ -41,8 +50,26 @@ class GraphicalInterface extends Interface {
 			this.type = type;
 		}
 
+		// Set the URL
+		if(options && options.url) {
+			if(Url.is(options.url)) {
+				this.url = options.url;
+			}
+			else {
+				this.url = new Url(options.url);
+			}
+		}
+
 		// Generate a unique identifier
 		this.identifier = String.uniqueIdentifier();
+	}
+
+	async initialize() {
+		// Create the graphical interface adapter
+		await this.createGraphicalInterfaceAdapter();
+
+		// Create the root view now that we have a graphical interface adapter
+		this.view = await this.createRootView();
 	}
 
 	async createGraphicalInterfaceAdapter() {
@@ -70,11 +97,6 @@ class GraphicalInterface extends Interface {
 		this.listenToDisplayEvents();
 
 		return this.adapter;
-	}
-
-	async initialize() {
-		// Create the root view now that we have a graphical interface adapter
-		this.view = await this.createRootView();
 	}
 
 	createViewAdapter(view) {
@@ -174,17 +196,17 @@ class GraphicalInterface extends Interface {
 		this.view.append(this.viewController.view);
 	}
 
-	async newGraphicalInterface(type = null, isChild = true) {
+	async newGraphicalInterface(type = null, options = null, isChild = true) {
 		//console.info('A new graphical interface is being created...');
 
 		// For children graphical interfaces
-		var parent = null;
+		let parent = null;
 		if(isChild) {
 			parent = this;
 		}
 
 		// Create and initialize the graphical interface
-		var graphicalInterface = new GraphicalInterface(type, parent);
+		let graphicalInterface = new GraphicalInterface(type, options, parent);
 		await graphicalInterface.initialize();
 
 		return graphicalInterface;

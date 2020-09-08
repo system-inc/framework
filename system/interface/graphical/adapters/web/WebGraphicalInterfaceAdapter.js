@@ -59,6 +59,9 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		this.graphicalInterface.dimensions = this.htmlDocument.dimensions;
 		//console.info('this.htmlDocument.dimensions', this.htmlDocument.dimensions);
 
+		// Set the URL
+		this.graphicalInterface.url = this.htmlDocument.url;
+
 		// Not initialized until the DOM is ready
 		return new Promise(function(resolve, reject) {
 			// Emit the ready event when the DOM is ready

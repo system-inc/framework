@@ -12,7 +12,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	async initialize() {
 		// If initializing with the existing Electron BrowserWindow
 		if(this.graphicalInterface.usesPreexistingAdapter) {
-			//console.log('Using preexisting adapter');
+			// app.log('Using preexisting adapter');
 
 			// Initialize the WebGraphicalInterfaceAdapter
 			await super.initialize();
@@ -30,8 +30,10 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		else {
 			// Create a new Electron BrowserWindow
 			// This new browser window will listen to Electron events and initialize it's own state
-			//console.info('Creating a new source graphical interface (Electron BrowserWindow)...');
-			this.electronBrowserWindow = await app.modules.electronModule.newBrowserWindow();
+			// app.info('Creating a new source graphical interface (Electron BrowserWindow)...');
+			this.electronBrowserWindow = await app.modules.electronModule.newBrowserWindow(this.graphicalInterface.type, {
+				url: this.graphicalInterface.url,
+			});
 		}
 
 		return this;
@@ -69,8 +71,6 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	async initializeState() {
-		// app.log('initializeState');
-
 		await this.initializeDisplays();
 
 		this.graphicalInterface.state = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(this.graphicalInterface.type, this.graphicalInterface.displays);
@@ -224,7 +224,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		if(displays === null) {
 			displays = app.modules.electronModule.getDisplays();
 		}
-		//app.info('displays', displays);
+		// app.info('displays', displays);
 
 		var graphicalInterfaceStateSettings = GraphicalInterfaceState.getSettingsWithDisplays(type, displays);
 		// console.info('graphicalInterfaceStateSettings', graphicalInterfaceStateSettings);
