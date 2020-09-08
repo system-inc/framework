@@ -18,6 +18,10 @@ class GraphicalInterfaceAdapter {
 		throw new Error('This method must be implemented by a child class.');
 	}
 
+	emit() {
+		throw new Error('This method must be implemented by a child class.');
+	}
+
 	getSelection() {
 		throw new Error('This method must be implemented by a child class.');	
 	}

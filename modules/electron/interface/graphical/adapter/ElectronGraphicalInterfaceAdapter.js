@@ -10,9 +10,16 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	macOsApplicationMenu = null;
 
 	async initialize() {
-		// If initializing with the existing Electron BrowserWindow
+		// If initializing into an existing Electron BrowserWindow
 		if(this.graphicalInterface.usesPreexistingAdapter) {
 			// app.log('Using preexisting adapter');
+
+			// Set the GraphicalInterface identifier if it was passed in the URL
+			// console.log('document.location.search', document.location.search);
+			if(document.location.search.startsWith('?graphicalInterfaceIdentifier=')) {
+				this.graphicalInterface.identifier = document.location.search.replace('?graphicalInterfaceIdentifier=', '');
+				// console.log('GraphicalInterface identifier provided, updated to:', this.graphicalInterface.identifier);
+			}
 
 			// Initialize the WebGraphicalInterfaceAdapter
 			await super.initialize();
@@ -26,14 +33,16 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			// Initialize the state
 			await this.initializeState();
 		}
-		// If not initializing into an existing interface
+		// Create a new Electron BrowserWindow if not initializing into an existing one
 		else {
 			// Create a new Electron BrowserWindow
-			// This new browser window will listen to Electron events and initialize it's own state
-			// app.info('Creating a new source graphical interface (Electron BrowserWindow)...');
 			this.electronBrowserWindow = await app.modules.electronModule.newBrowserWindow(this.graphicalInterface.type, {
+				graphicalInterfaceIdentifier: this.graphicalInterface.identifier,
 				url: this.graphicalInterface.url,
 			});
+
+			// Establish the broadcast channel to listen to events from the BrowserWindow
+			this.establishBroadcastChannel();
 		}
 
 		return this;

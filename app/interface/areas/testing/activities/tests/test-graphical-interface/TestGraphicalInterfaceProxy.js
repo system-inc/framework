@@ -10,10 +10,9 @@ class TestGraphicalInterfaceProxy extends Reusable {
 	resetWhenFinishedRunningTests = true;
 
 	async initialize() {
-		let url = Node.Url.pathToFileURL(Node.Path.join(app.path, 'interface/areas/testing/activities/tests/test-graphical-interface/app/electron.html')).toString();
-
 		// Create a new graphical interface
 		//console.log('TestGraphicalInterfaceProxy - creating new graphical interface...');
+		let url = Node.Url.pathToFileURL(Node.Path.join(app.path, 'interface/areas/testing/activities/tests/test-graphical-interface/app/electron.html')).toString();
 		this.graphicalInterface = await app.interfaces.graphical.newGraphicalInterface('test', {
 			url: url,
 		});

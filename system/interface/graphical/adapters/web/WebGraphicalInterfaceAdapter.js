@@ -8,6 +8,7 @@ import { Display } from '@framework/system/interface/graphical/Display.js';
 class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 
 	htmlDocument = null;
+	broadcastChannel = null;
 
 	async initialize() {
 		//console.log('creating HtmlDocument');
@@ -16,7 +17,10 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		// Set the root view
 		this.view = this.htmlDocument.body;
 
-		// Hook the HtmlDocument's emit function
+		// Establish a BroadcastChannel which will allow us to send events to other graphical interfaces
+		this.establishBroadcastChannel();
+
+		// Hook the HtmlDocument's emit function to re-emit events on the GraphicalInterface
 		var standardHtmlDocumentEmit = this.htmlDocument.emit;
 		this.htmlDocument.emit = async function(eventIdentifier, data, eventOptions) {
 			//console.log('candidate for GraphicalInterface emit', ...arguments);
@@ -101,6 +105,28 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 
 	addStyleSheet() {
 		this.htmlDocument.addStyleSheet(...arguments);
+	}
+
+	establishBroadcastChannel() {
+		// Setup a BroadcastChannel for GraphicalInterface events
+		this.broadcastChannel = new BroadcastChannel('graphicalInterface.'+this.graphicalInterface.identifier);
+		
+		app.log('Listening to BroadcastChannel', 'graphicalInterface.'+this.graphicalInterface.identifier);
+		app.log('Move this code, we do not need to listen to our own events');
+		this.broadcastChannel.onmessage = function(event) {
+			console.log('broadcastChannel event', event);
+			// Emit BroadcastChannel events on the GraphicalInterface
+			//this.graphicalInterface.emit('graphicalInterface.'+this.interfaces.graphical.identifier, event);
+		}.bind(this);
+	}
+
+	emit(eventIdentifier, data) {
+		// Use the broadcast channel to emit events
+		this.broadcastChannel.postMessage({
+			identifier: this.graphicalInterface.identifier,
+			eventIdentifier: eventIdentifier,
+			data: data,
+		});
 	}
 
 	addEventListener(eventPattern, functionToBind, timesToRun) {

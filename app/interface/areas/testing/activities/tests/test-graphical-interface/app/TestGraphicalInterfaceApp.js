@@ -14,10 +14,11 @@ class TestGraphicalInterfaceApp extends App {
 		console.error('Need to tell the parent we are ready');
 		this.interfaces.graphical.emit('testGraphicalInterfaceApp.ready');
 
-		//this.interfaces.graphical.on('*', function(event) {
-		//	console.info('graphical interface event', event.identifier, event);
-		//});
+		this.interfaces.graphical.on('*', function(event) {
+			console.info('graphical interface event', event.identifier, event);
+		});
 
+		// Listen for the command to run test methods
 		this.interfaces.graphical.on('testGraphicalInterfaceApp.runTestMethod', function(event) {
 			//console.info('graphical interface event', event.identifier, event);
 			this.runTestMethod(event.data.testClassFilePath, event.data.testClassName, event.data.testMethodName);

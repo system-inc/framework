@@ -59,9 +59,16 @@ class GraphicalInterface extends Interface {
 				this.url = new Url(options.url);
 			}
 		}
-
-		// Generate a unique identifier
-		this.identifier = String.uniqueIdentifier();
+		
+		// Set the identifier
+		if(options && options.identifier) {
+			// Use the identifier from options
+			this.identifier = options.identifier;
+		}
+		else {
+			// Generate a unique identifier
+			this.identifier = String.uniqueIdentifier();
+		}
 	}
 
 	async initialize() {
@@ -75,13 +82,13 @@ class GraphicalInterface extends Interface {
 	async createGraphicalInterfaceAdapter() {
 		// If in Electron
 		if(app.modules.electronModule && app.modules.electronModule.inElectronEnvironment()) {
-			//console.log('createGraphicalInterfaceAdapter - inElectronEnvironment');
+			// console.log('createGraphicalInterfaceAdapter - inElectronEnvironment');
 			const { ElectronGraphicalInterfaceAdapter } = await import('@framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js');
 			this.adapter = new ElectronGraphicalInterfaceAdapter(this);
 		}
 		// If in a normal web browser
 		else if(app.inWebEnvironment()) {
-			//console.log('createGraphicalInterfaceAdapter - inWebEnvironment');
+			// console.log('createGraphicalInterfaceAdapter - inWebEnvironment');
 			const { WebGraphicalInterfaceAdapter  } = await import('@framework/system/interface/graphical/adapters/web/WebGraphicalInterfaceAdapter.js');
 			this.adapter = new WebGraphicalInterfaceAdapter(this);
 		}
@@ -230,8 +237,16 @@ class GraphicalInterface extends Interface {
 		//console.info('GraphicalInterface applyDefaultState');
 		return this.state.applyDefault();
 	}
+	
+	// Bind emit to the adapter as well
+	emit() {
+		console.log('emit', arguments);
+		this.adapter.emit(...arguments);
 
-	// Bind addEventListener to the adapter
+		return super.emit(...arguments);
+	}
+
+	// Bind addEventListener to the adapter as well
 	addEventListener(eventPattern, functionToBind, timesToRun) {
 		//console.log('add event listener!');
 		this.adapter.addEventListener(...arguments);
@@ -239,14 +254,14 @@ class GraphicalInterface extends Interface {
 		return super.addEventListener(...arguments);
 	}
 
-	// Bind removeEventListener to the adapter
+	// Bind removeEventListener to the adapter as well
 	removeEventListener() {
 		this.adapter.removeEventListener(...arguments);
 
 		return super.removeEventListener(...arguments);
 	}
 
-	// Bind removeAllEventListeners to the adapter
+	// Bind removeAllEventListeners to the adapter as well
 	removeAllEventListeners() {
 		this.adapter.removeAllEventListeners(...arguments);
 

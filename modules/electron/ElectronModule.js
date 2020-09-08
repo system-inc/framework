@@ -264,6 +264,7 @@ class ElectronModule extends Module {
 
 		// Set the default options - specific graphical interface state settings may be overwritten by the provided options
 		options = {
+			graphicalInterfaceIdentifier: null,
 			url: null,
 			graphicalInterfaceState: graphicalInterfaceState,
 		}.merge(options);
@@ -321,7 +322,14 @@ class ElectronModule extends Module {
 
 		// Navigate to the url (for files this must be a file URL starting with file://)
 		if(options.url) {
-			electronBrowserWindow.loadURL(options.url.toString());
+			let url = options.url.toString();
+
+			// Add the graphical interface graphicalInterfaceIdentifier
+			if(options.graphicalInterfaceIdentifier) {
+				url += '?graphicalInterfaceIdentifier='+options.graphicalInterfaceIdentifier;
+			}
+
+			electronBrowserWindow.loadURL(url);
 		}
 
 		// Using data URLs with baseURLForDataURL causes Electron to crash:
