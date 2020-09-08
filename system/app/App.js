@@ -210,6 +210,7 @@ class App extends EventEmitter {
 		frameworkPath = frameworkPath.replace('file://', ''); //  .../framework/system/app/App.js
 		frameworkPath = Node.Path.resolve(frameworkPath); // Resolve the URL path, changing from URL format to system format
 		frameworkPath = frameworkPath.replace('C:\\C:\\', 'C:\\'); //Windows Subsystem for Linux - resolve adds two C:\
+		frameworkPath = frameworkPath.replace('C:\\c:\\', 'c:\\'); //Windows Subsystem for Linux - resolve adds two C:\
 		frameworkPath = Node.Path.dirname(frameworkPath); // Just get the directory name, removing /App.js fromt he end
 		frameworkPath = Node.Path.resolve(frameworkPath, '../../'); // Jump back two directories to get the Framework path
 		this.settings.set('framework.path', frameworkPath);
