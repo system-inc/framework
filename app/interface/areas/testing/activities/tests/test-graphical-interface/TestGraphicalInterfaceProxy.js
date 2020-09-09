@@ -24,12 +24,12 @@ class TestGraphicalInterfaceProxy extends Reusable {
 
 		// When the graphical interface is ready, release the reusable into the pool
 		this.graphicalInterface.on('testGraphicalInterfaceApp.ready', function() {
-			console.log('TestGraphicalInterfaceProxy is ready, releasing into the pool!');
+			// console.log('TestGraphicalInterfaceProxy is ready, releasing into the pool!');
 			this.release();
 		}.bind(this));
 
-		this.graphicalInterface.on('graphicalInterface.close', function() {
-			console.log('TestGraphicalInterfaceProxy will close, retiring...');
+		this.graphicalInterface.on('graphicalInterface.closed', function() {
+			console.log('TestGraphicalInterfaceProxy closed, retiring...');
 			this.retire();
 		}.bind(this));
 	}
@@ -53,9 +53,11 @@ class TestGraphicalInterfaceProxy extends Reusable {
 
 		// If the graphical interface is already closed
 		if(this.graphicalInterface.state.closed) {
+			console.log('Retiring - test graphical interface is already closed');
 			retire = this.closed();
 		}
 		else {
+			console.log('Retiring - test graphical interface needs to close');
 			retire = this.close();
 		}
 
@@ -71,16 +73,21 @@ class TestGraphicalInterfaceProxy extends Reusable {
 	}
 
 	runTestMethod(testMethod) {
-		app.log('runTestMethod', testMethod);
+		// app.log('runTestMethod', testMethod);
 
 		this.testMethod = testMethod;
 
 		// Command the testGraphicalInterface to run the test method
-		this.graphicalInterface.emit('testGraphicalInterfaceApp.runTestMethod', {
-			testClassFilePath: this.testMethod.class.file.path,
-            testClassName: this.testMethod.class.name,
-            testMethodName: this.testMethod.name,
-		});
+		this.graphicalInterface.emit(
+			'testGraphicalInterfaceApp.runTestMethod', {
+				testClassFilePath: this.testMethod.class.file.path,
+            	testClassName: this.testMethod.class.name,
+            	testMethodName: this.testMethod.name,
+			},
+			{
+				propagationStopped: true,
+			}
+		);
 	}
 
 	openDeveloperTools() {

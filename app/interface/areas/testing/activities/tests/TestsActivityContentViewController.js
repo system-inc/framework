@@ -41,11 +41,11 @@ class TestsActivityContentViewController extends ViewController {
         //var tests = await Proctor.getTests(null, 'Database');
         //var tests = await Proctor.getTests(null, 'SingleLine');
         //var tests = await Proctor.getTests(null, 'Class');
-        //var tests = await Proctor.getTests(null, 'String');
+        var tests = await Proctor.getTests(null, 'String');
         //var tests = await Proctor.getTests(null, 'interface');
         // var tests = await Proctor.getTests(null, 'Graphical');
         // var tests = await Proctor.getTests(null, 'WebServer');
-        var tests = await Proctor.getTests(null, 'Html');
+        // var tests = await Proctor.getTests(null, 'Html');
         // var tests = await Proctor.getTests(null, 'Input');
         //console.log('tests', tests);
 
@@ -123,7 +123,7 @@ class TestsActivityContentViewController extends ViewController {
 
          // Get a test browser window from the pool
         var testGraphicalInterfaceProxy = await this.testGraphicalInterfaceProxyPool.getReusable();
-        console.log('runTestMethod testGraphicalInterfaceProxy', testGraphicalInterfaceProxy.identifier, testGraphicalInterfaceProxy);
+        // console.log('runTestMethod testGraphicalInterfaceProxy', testGraphicalInterfaceProxy.identifier, testGraphicalInterfaceProxy);
 
         // Listen to proctor events
         testGraphicalInterfaceProxy.on('testGraphicalInterfaceApp.proctor.*', function(event) {
@@ -212,7 +212,7 @@ class TestsActivityContentViewController extends ViewController {
             }
             // If no tests failed and we want to reset when finished running tests
             else if(testGraphicalInterfaceProxy.resetWhenFinishedRunningTests) {
-                //console.error('time to reset the test interface');
+                console.error('time to reset the test interface');
                 testGraphicalInterfaceProxy.reset();
             }
             else {

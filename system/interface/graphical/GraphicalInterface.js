@@ -322,13 +322,13 @@ class GraphicalInterface extends Interface {
 	// Bind reload to the adapter
 	reload() {
 		console.log('GraphicalInterface .reload()');
-		// return this.adapter.reload(...arguments);
+		return this.adapter.reload(...arguments);
 	}
 
 	// Bind reset to the adapter
 	reset() {
 		console.log('GraphicalInterface .reset()');
-		// return this.adapter.reset(...arguments);
+		return this.adapter.reset(...arguments);
 	}
 
 }

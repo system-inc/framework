@@ -26,6 +26,9 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			
 			// Reference the current window
 			this.electronBrowserWindow = app.modules.electronModule.getCurrentWindow();
+
+			// Listen to Electron display events
+			this.listenToElectronDisplayEvents();
 		}
 		// Create a new Electron BrowserWindow if not initializing into an existing one
 		else {
@@ -36,7 +39,19 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 				graphicalInterfaceIdentifier: this.graphicalInterface.identifier,
 				url: this.graphicalInterface.url,
 			});
+
+			// Listen to close events
+			this.listenToElectronBrowserWindowCloseEvents();
 		}
+
+		// Debug
+		if(this.graphicalInterface.parent !== null) {
+			console.log('Child graphical interface identifier:', this.graphicalInterface.identifier);
+		}
+		else {
+			console.log('This graphical interface identifier:', this.graphicalInterface.identifier);
+		}
+		
 
 		// Establish the broadcast channel to listen to events from the BrowserWindow
 		this.establishBroadcastChannel();
@@ -44,23 +59,10 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		// Initialize the state
 		await this.initializeState();
 
-		// Listen to Electron events
-		this.listenToElectronEvents();
-
 		return this;
 	}
 
-	listenToElectronEvents() {
-		console.log('listening to close event', this.electronBrowserWindow);
-
-		// When the Electron BrowserWindow will close
-		this.electronBrowserWindow.on('close', function(event) {
-			event.preventDefault();
-			console.log('electronBrowserWindow close', this.graphicalInterface);
-			this.graphicalInterface.emit('graphicalInterface.close', event);
-			this.graphicalInterface.state.closed = true;
-		}.bind(this));
-
+	listenToElectronDisplayEvents() {
 		// Get the Electron screen 
 		let ElectronScreen = app.modules.electronModule.electron.remote.screen;
 		// app.log('ElectronScreen', ElectronScreen);
@@ -68,19 +70,48 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		// Display added
 		ElectronScreen.on('display-added', function(event, newDisplay) {
 			console.info('display-added', event);
-			this.graphicalInterface.emit('display.added', arguments);
+			this.graphicalInterface.emit('display.added', arguments, {
+				// Do not bubble this event as the parent will get notified by it's own event listener
+				propagationStopped: true,
+			});
 		}.bind(this));
 
 		// Display removed
 		ElectronScreen.on('display-removed', function(event, oldDisplay) {
 			console.info('display-removed', event);
-			this.graphicalInterface.emit('display.removed', arguments);
+			this.graphicalInterface.emit('display.removed', arguments, {
+				// Do not bubble this event as the parent will get notified by it's own event listener
+				propagationStopped: true,
+			});
 		}.bind(this));
 
 		// Display metrics changed
 		ElectronScreen.on('display-metrics-changed', function(event, display, changedMetrics) {
 			console.info('display-metrics-changed', event);
-			this.graphicalInterface.emit('display.changed', arguments);
+			this.graphicalInterface.emit('display.changed', arguments, {
+				// Do not bubble this event as the parent will get notified by it's own event listener
+				propagationStopped: true,
+			});
+		}.bind(this));
+	}
+
+	listenToElectronBrowserWindowCloseEvents() {
+		// When the Electron BrowserWindow will close
+		this.electronBrowserWindow.on('close', function(event) {
+			console.log('electronBrowserWindow close', this.graphicalInterface);
+			this.graphicalInterface.emit('graphicalInterface.close', event, {
+				propagationStopped: true, // Do not bubble this event
+			});
+		}.bind(this));
+
+		// When the Electron BrowserWindow is closed
+		this.electronBrowserWindow.on('closed', function(event) {
+			console.log('electronBrowserWindow closed', this.graphicalInterface);
+			this.graphicalInterface.state.closed = true;
+			this.graphicalInterface.emit('graphicalInterface.closed', event, {
+				propagationStopped: true, // Do not bubble this event
+			});
+			
 		}.bind(this));
 	}
 
@@ -140,12 +171,12 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	reload() {
-		document.title = '';
-		document.location.reload(true);
+		this.electronBrowserWindow.reload();
 	}
 
 	reset() {
-		app.modules.electronModule.getCurrentWebContents().session.clearStorageData(
+		console.warn('Clearing all storage data...');
+		this.electronBrowserWindow.webContents.session.clearStorageData(
 			{
 				storages: [
 					'appcache',

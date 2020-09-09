@@ -48,13 +48,17 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 
 		// Capture before unload
 		this.htmlDocument.on('htmlDocument.unload.before', async function(event) {
-			var emittedEvent = await this.graphicalInterface.emit('graphicalInterface.unload.before', event);
+			var emittedEvent = await this.graphicalInterface.emit('graphicalInterface.unload.before', event, {
+				propagationStopped: true, // Do not bubble this event
+			});
 			return emittedEvent.previousReturnValue;
 		}.bind(this));
 
 		// Capture resize events
 		this.htmlDocument.on('htmlDocument.resize', function(event) {
-			this.graphicalInterface.emit('graphicalInterface.resize', event);
+			this.graphicalInterface.emit('graphicalInterface.resize', event, {
+				propagationStopped: true, // Do not bubble this event
+			});
 			this.graphicalInterface.dimensions = this.htmlDocument.dimensions;
 		}.bind(this));
 
@@ -116,10 +120,10 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		this.broadcastChannel.onmessage = function(event) {
 			// Check if the source of the BroadcastChannel message is the current GraphicalInterface
 			if(event.data.senderIdentifier == this.broadcastChannelSenderIdentifier) {
-				console.log('BroadcastChannel message sent by this GraphicalInterface, not emitting again from this.graphicalInterface', event.data.eventIdentifier, event);
+				// console.log('BroadcastChannel message sent by this GraphicalInterface, not emitting again from this.graphicalInterface', event.data.eventIdentifier, event);
 			}
 			else {
-				console.log('BroadcastChannel message received by other GraphicalInterface, emitting again from this.graphicalInterface', event.data.eventIdentifier, event);
+				// console.log('BroadcastChannel message received by other GraphicalInterface, emitting again from this.graphicalInterface', event.data.eventIdentifier, event);
 				this.graphicalInterface.emit(
 					event.data.eventIdentifier,
 					event.data.data,
@@ -146,13 +150,13 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 			// Catch native untyped events by checking if the sender property is set
 			// Do not use an else if here as we may have started out with an Event whose data is
 			// still a complex object which cannot be sent over BroadcastChannel
-			if(data.hasOwnProperty('sender')) {
+			if(data !== null && data.hasOwnProperty('sender')) {
 				// console.log('A sender is set, setting data to null');
 				data = null;
 			}
 		}
 		
-		console.log('Posting event message to BroadcastChannel', eventIdentifier);
+		console.log('Posting event message to BroadcastChannel for', (this.graphicalInterface.parent === null ? 'self' : 'child'), this.graphicalInterface.identifier, eventIdentifier);
 
 		// Use the broadcast channel to emit events
 		this.broadcastChannel.postMessage({

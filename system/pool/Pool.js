@@ -37,7 +37,7 @@ class Pool extends EventEmitter {
 	}
 
 	createReusable() {
-		//console.log('pool.createReusable()');
+		console.log('pool.createReusable()');
 
 		// Increment the size
 		this.size++;
@@ -54,7 +54,7 @@ class Pool extends EventEmitter {
 	}
 
 	getReusable() {
-		//console.log('Pool.getReusable()');
+		console.log('Pool.getReusable()');
 
 		this.waitingForAvailableReusableCount++;
 
@@ -67,11 +67,11 @@ class Pool extends EventEmitter {
 			}
 			// If we don't have any free reusables
 			else {
-				//app.log('Waiting for reusable...');
+				app.log('Waiting for reusable...');
 
 				// If we can start the process of creating a new reusable
 				if(this.size < this.maximumSize) {
-					//app.log(this.size, 'is less than', this.maximumSize, 'creating new reusable...');
+					app.log(this.size, 'is less than', this.maximumSize, 'creating new reusable...');
 
 					// Create a new reusable
 					this.createReusable();
@@ -79,7 +79,7 @@ class Pool extends EventEmitter {
 
 				// Register to get the next available reusable
 				this.once('pool.availableReusable', function(event) {
-					//console.log('pool.availableReusable event', event);
+					console.log('pool.availableReusable event', event);
 
 					// We must stop the event otherwise others waiting for available reusables will receive the event
 					event.stop();
@@ -105,7 +105,7 @@ class Pool extends EventEmitter {
 	}
 
 	takeAvailableReusable(reusable) {
-		//console.log('taking available reusable', reusable);
+		console.log('taking available reusable', reusable);
 
 		// Remove the reusable from the available list
 		delete this.availableReusables[reusable.identifier];
@@ -123,7 +123,7 @@ class Pool extends EventEmitter {
 	}
 
 	releaseReusable(reusable) {
-		//console.log('Pool.releaseReusable', reusable);
+		console.log('Pool.releaseReusable', reusable);
 
 		// Remove the reusable from the busy list
 		delete this.busyReusables[reusable.identifier];
@@ -156,9 +156,14 @@ class Pool extends EventEmitter {
 		this.size--;
 		this.emit('pool.size', this.size);
 
+		console.log('Pool size', this.size);
+		console.log('Pool minimum size', this.minimumSize);
+		console.log('Pool waiting for resuable', this.waitingForAvailableReusableCount);
+
 		// Create a new reusable if we are below the minimum size or if there is someone waiting for an available reusable
 		if((this.size < this.minimumSize) || (this.waitingForAvailableReusableCount > 0)) {
-			this.createReusable();
+			console.log('Creating a new resusable...');
+			// this.createReusable();
 		}
 	}
 

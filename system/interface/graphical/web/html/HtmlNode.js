@@ -63,6 +63,7 @@ class HtmlNode extends XmlNode {
 		}
 		else {
 			console.log('Why would I not have a domNode here?');
+			// console.log(this.content);
 		}
 		this.unmountedFromDom();
 
