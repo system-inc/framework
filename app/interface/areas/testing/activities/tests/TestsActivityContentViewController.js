@@ -43,10 +43,10 @@ class TestsActivityContentViewController extends ViewController {
         //var tests = await Proctor.getTests(null, 'Class');
         //var tests = await Proctor.getTests(null, 'String');
         //var tests = await Proctor.getTests(null, 'interface');
-        //var tests = await Proctor.getTests(null, 'Graphical');
-        var tests = await Proctor.getTests(null, 'WebServer');
-        //var tests = await Proctor.getTests(null, 'Html');
-        //var tests = await Proctor.getTests(null, 'Input');
+        // var tests = await Proctor.getTests(null, 'Graphical');
+        // var tests = await Proctor.getTests(null, 'WebServer');
+        var tests = await Proctor.getTests(null, 'Html');
+        // var tests = await Proctor.getTests(null, 'Input');
         //console.log('tests', tests);
 
         return tests;

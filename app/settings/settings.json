@@ -2,11 +2,11 @@
 	title: 'Framework',
 	version: '1.0.0',
 	headline: 'Build your dreams.',
-	description: 'A system designed to make it easy to prototype, productionalize, and scale apps.',
+	description: 'A system designed to make it easy to prototype, productionalize, and grow apps.',
 	interfaces: {
 		commandLine: {
 			command: {
-				description: 'Visit https://www.system.inc/framework to learn more about Framework.',
+				description: 'Visit https://www.framework.app/ to learn more about Framework.',
 				subcommands: {
 					graphicalInterface: {
 						description: 'Display the Framework graphical interface powered by Electron.',
