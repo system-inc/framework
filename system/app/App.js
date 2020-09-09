@@ -59,7 +59,7 @@ class App extends EventEmitter {
 	// Settings
 	settings = null;
 
-	constructor(settings) {
+	constructor(settings = null) {
 		super(); // EventEmitter
 
 		// Create the settings

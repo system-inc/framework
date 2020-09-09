@@ -103,6 +103,9 @@ class GraphicalInterface extends Interface {
 		// Listen to display events
 		this.listenToDisplayEvents();
 
+		// Listen to command events
+		this.listenToCommandEvents();
+
 		return this.adapter;
 	}
 
@@ -146,36 +149,36 @@ class GraphicalInterface extends Interface {
 		}.bind(this));
 	}
 
-	listenToControlEvents() {
-		//	appGraphicalInterface.on('graphicalInterface.reload', function() {
-		//		//console.log('reload');
-		//		appGraphicalInterface.reload();
-		//	});
+	listenToCommandEvents() {
+		this.on('graphicalInterface.command.reload', function() {
+			console.log('graphicalInterface.command.reload');
+			this.reload();
+		}.bind(this));
 
-		//	appGraphicalInterface.on('graphicalInterface.close', function() {
-		//		//console.log('close');
-		//		appGraphicalInterface.close();
-		//	});
+		this.on('graphicalInterface.command.close', function() {
+			console.log('graphicalInterface.command.close');
+			this.close();
+		}.bind(this));
 
-		//	appGraphicalInterface.on('graphicalInterface.show', function() {
-		//		//console.log('show');
-		//		appGraphicalInterface.show();
-		//	});
+		this.on('graphicalInterface.command.show', function() {
+			console.log('graphicalInterface.command.show');
+			this.show();
+		}.bind(this));
 
-		//	appGraphicalInterface.on('graphicalInterface.openDeveloperTools', function() {
-		//		//console.log('openDeveloperTools');
-		//		appGraphicalInterface.openDeveloperTools();
-		//	});
+		this.on('graphicalInterface.command.openDeveloperTools', function() {
+			console.log('graphicalInterface.command.openDeveloperTools');
+			this.openDeveloperTools();
+		}.bind(this));
 
-		//	appGraphicalInterface.on('graphicalInterface.closeDeveloperTools', function() {
-		//		//console.log('closeDeveloperTools');
-		//		appGraphicalInterface.closeDeveloperTools();
-		//	});
+		this.on('graphicalInterface.command.closeDeveloperTools', function() {
+			console.log('graphicalInterface.command.closeDeveloperTools');
+			this.closeDeveloperTools();
+		}.bind(this));
 
-		//	appGraphicalInterface.on('graphicalInterface.toggleDeveloperTools', function() {
-		//		//console.log('toggleDeveloperTools');
-		//		appGraphicalInterface.toggleDeveloperTools();
-		//	});
+		this.on('graphicalInterface.command.toggleDeveloperTools', function() {
+			console.log('graphicalInterface.command.toggleDeveloperTools');
+			this.toggleDeveloperTools();
+		}.bind(this));
 	}
 
 	async createRootView() {
@@ -318,12 +321,14 @@ class GraphicalInterface extends Interface {
 
 	// Bind reload to the adapter
 	reload() {
-		return this.adapter.reload(...arguments);
+		console.log('GraphicalInterface .reload()');
+		// return this.adapter.reload(...arguments);
 	}
 
 	// Bind reset to the adapter
 	reset() {
-		return this.adapter.reset(...arguments);
+		console.log('GraphicalInterface .reset()');
+		// return this.adapter.reset(...arguments);
 	}
 
 }

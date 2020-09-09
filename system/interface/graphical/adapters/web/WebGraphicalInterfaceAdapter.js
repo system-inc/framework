@@ -3,12 +3,14 @@ import { GraphicalInterfaceAdapter } from '@framework/system/interface/graphical
 import { HtmlDocument } from '@framework/system/interface/graphical/web/html/HtmlDocument.js';
 import { WebViewAdapter } from '@framework/system/interface/graphical/views/adapters/web/WebViewAdapter.js';
 import { Display } from '@framework/system/interface/graphical/Display.js';
+import { Event } from '@framework/system/event/Event.js';
 
 // Class
 class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 
 	htmlDocument = null;
 	broadcastChannel = null;
+	broadcastChannelSenderIdentifier = String.uniqueIdentifier();
 
 	async initialize() {
 		//console.log('creating HtmlDocument');
@@ -16,9 +18,6 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 
 		// Set the root view
 		this.view = this.htmlDocument.body;
-
-		// Establish a BroadcastChannel which will allow us to send events to other graphical interfaces
-		this.establishBroadcastChannel();
 
 		// Hook the HtmlDocument's emit function to re-emit events on the GraphicalInterface
 		var standardHtmlDocumentEmit = this.htmlDocument.emit;
@@ -107,14 +106,20 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		this.htmlDocument.addStyleSheet(...arguments);
 	}
 
-	establishBroadcastChannel(emitEventsFromGraphicalInterface = false) {
-		// Setup a BroadcastChannel for GraphicalInterface events
-		this.broadcastChannel = new BroadcastChannel('graphicalInterface.'+this.graphicalInterface.identifier);
+	establishBroadcastChannel() {
+		var broadcastChannelName = 'graphicalInterface.'+this.graphicalInterface.identifier;
 
-		if(emitEventsFromGraphicalInterface) {
-			// app.log('Listening to BroadcastChannel', 'graphicalInterface.'+this.graphicalInterface.identifier);
-			this.broadcastChannel.onmessage = function(event) {
-				// console.log('BroadcastChannel event', event);
+		// Setup a BroadcastChannel for GraphicalInterface events
+		this.broadcastChannel = new BroadcastChannel(broadcastChannelName);
+
+		// app.log('Listening to BroadcastChannel', 'graphicalInterface.'+this.graphicalInterface.identifier);
+		this.broadcastChannel.onmessage = function(event) {
+			// Check if the source of the BroadcastChannel message is the current GraphicalInterface
+			if(event.data.senderIdentifier == this.broadcastChannelSenderIdentifier) {
+				console.log('BroadcastChannel message sent by this GraphicalInterface, not emitting again from this.graphicalInterface', event.data.eventIdentifier, event);
+			}
+			else {
+				console.log('BroadcastChannel message received by other GraphicalInterface, emitting again from this.graphicalInterface', event.data.eventIdentifier, event);
 				this.graphicalInterface.emit(
 					event.data.eventIdentifier,
 					event.data.data,
@@ -123,19 +128,38 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 					},
 					false
 				);
-			}.bind(this);
-		}
+			}
+		}.bind(this);
 	}
 
-	emit(eventIdentifier, data, eventOptions) {
+	emit(eventIdentifier, data = null, eventOptions = null) {
 		// app.log('WebGraphicalInterfaceAdapter .emit()', eventIdentifier, data, eventOptions);
+
+		// If we have data for the event
+		if(data !== null) {
+			// Do not send Events over the broadcast channel, instead send their data
+			if(Event.is(data)) {
+				// console.log('Using event data instead of Event', data);
+				data = data.data;
+			}
+
+			// Catch native untyped events by checking if the sender property is set
+			// Do not use an else if here as we may have started out with an Event whose data is
+			// still a complex object which cannot be sent over BroadcastChannel
+			if(data.hasOwnProperty('sender')) {
+				// console.log('A sender is set, setting data to null');
+				data = null;
+			}
+		}
+		
+		console.log('Posting event message to BroadcastChannel', eventIdentifier);
 
 		// Use the broadcast channel to emit events
 		this.broadcastChannel.postMessage({
+			senderIdentifier: this.broadcastChannelSenderIdentifier,
 			graphicalInterfaceIdentifier: this.graphicalInterface.identifier,
 			eventIdentifier: eventIdentifier,
-			data: null,
-			// data: data, // TODO: Passing complex data objects over BroadcastChannel is not supported
+			data: data,
 			eventOptions: eventOptions,
 		});
 	}

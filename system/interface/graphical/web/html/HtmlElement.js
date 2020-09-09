@@ -154,7 +154,7 @@ class HtmlElement extends HtmlNode {
 		return this;
 	}
 
-	setStyle(propertyOrObject, value) {
+	setStyle(propertyOrObject, value = null) {
 		if(!this.attributes.style) {
 			this.attributes.style = {};
 		}

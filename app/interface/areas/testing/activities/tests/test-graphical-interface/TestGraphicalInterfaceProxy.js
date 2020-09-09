@@ -19,18 +19,18 @@ class TestGraphicalInterfaceProxy extends Reusable {
 		// console.log('this.graphicalInterface', this.graphicalInterface);
 
 		this.graphicalInterface.on('*', function(event) {
-			console.info('this.graphicalInterface.on event', event.identifier, event);
+			console.info('TestGraphicalInterfaceProxy event', event.identifier, event);
 		});
 
 		// When the graphical interface is ready, release the reusable into the pool
 		this.graphicalInterface.on('testGraphicalInterfaceApp.ready', function() {
-			console.log('child graphical interface proxy is ready, releasing into the pool!');
+			console.log('TestGraphicalInterfaceProxy is ready, releasing into the pool!');
 			this.release();
 		}.bind(this));
 
 		this.graphicalInterface.on('graphicalInterface.close', function() {
-			console.log('child graphical interface proxy will close, retiring');
-			// this.retire();
+			console.log('TestGraphicalInterfaceProxy will close, retiring...');
+			this.retire();
 		}.bind(this));
 	}
 
@@ -43,7 +43,7 @@ class TestGraphicalInterfaceProxy extends Reusable {
 	}
 
 	reset() {
-		this.graphicalInterface.removeEventListener('testGraphicalInterfaceApp.proctor.*');
+		// this.graphicalInterface.removeEventListener('testGraphicalInterfaceApp.proctor.*');
 		this.graphicalInterface.reload();
 		return this;
 	}
@@ -52,7 +52,7 @@ class TestGraphicalInterfaceProxy extends Reusable {
 		var retire = null;
 
 		// If the graphical interface is already closed
-		if(this.graphicalInterface.closed) {
+		if(this.graphicalInterface.state.closed) {
 			retire = this.closed();
 		}
 		else {

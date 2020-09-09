@@ -15,12 +15,12 @@ class TestGraphicalInterfaceApp extends App {
 
 		// Debug
 		this.interfaces.graphical.on('*', function(event) {
-			console.info('graphical interface event', event.identifier, event);
+			console.info('graphical interface * (any) event', event.identifier, event);
 		});
 
 		// Listen for the command to run test methods
 		this.interfaces.graphical.on('testGraphicalInterfaceApp.runTestMethod', function(event) {
-			console.info('graphical interface event', event.identifier, event);
+			console.info('testGraphicalInterfaceApp.runTestMethod event', event.identifier, event);
 			this.runTestMethod(event.data.testClassFilePath, event.data.testClassName, event.data.testMethodName);
 		}.bind(this));
 	}

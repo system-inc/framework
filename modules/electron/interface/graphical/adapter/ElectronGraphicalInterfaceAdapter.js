@@ -12,7 +12,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	async initialize() {
 		// If initializing into an existing Electron BrowserWindow
 		if(this.graphicalInterface.usesPreexistingAdapter) {
-			// app.log('Using preexisting adapter');
+			// console.log('Using an existing Electron BrowserWindow...');
 
 			// Set the GraphicalInterface identifier if it was passed in the URL
 			// console.log('document.location.search', document.location.search);
@@ -26,35 +26,40 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			
 			// Reference the current window
 			this.electronBrowserWindow = app.modules.electronModule.getCurrentWindow();
-
-			// Listen to Electron events
-			this.listenToElectronEvents();
-
-			// Initialize the state
-			await this.initializeState();
 		}
 		// Create a new Electron BrowserWindow if not initializing into an existing one
 		else {
+			// console.log('Creating a new Electron BrowserWindow...');
+
 			// Create a new Electron BrowserWindow
 			this.electronBrowserWindow = await app.modules.electronModule.newBrowserWindow(this.graphicalInterface.type, {
 				graphicalInterfaceIdentifier: this.graphicalInterface.identifier,
 				url: this.graphicalInterface.url,
 			});
-
-			// Establish the broadcast channel to listen to events from the BrowserWindow
-			this.establishBroadcastChannel(true);
 		}
+
+		// Establish the broadcast channel to listen to events from the BrowserWindow
+		this.establishBroadcastChannel();
+
+		// Initialize the state
+		await this.initializeState();
+
+		// Listen to Electron events
+		this.listenToElectronEvents();
 
 		return this;
 	}
 
 	listenToElectronEvents() {
+		console.log('listening to close event', this.electronBrowserWindow);
+
 		// When the Electron BrowserWindow will close
 		this.electronBrowserWindow.on('close', function(event) {
+			event.preventDefault();
 			console.log('electronBrowserWindow close', this.graphicalInterface);
 			this.graphicalInterface.emit('graphicalInterface.close', event);
 			this.graphicalInterface.state.closed = true;
-		});
+		}.bind(this));
 
 		// Get the Electron screen 
 		let ElectronScreen = app.modules.electronModule.electron.remote.screen;
@@ -79,7 +84,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		}.bind(this));
 	}
 
-	async initializeState() {
+	async initializeState(setBrowserWindowState = true) {
 		await this.initializeDisplays();
 
 		this.graphicalInterface.state = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(this.graphicalInterface.type, this.graphicalInterface.displays);
@@ -90,7 +95,9 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 
 		// TODO: The last argument here should be false because we don't need to initialize state because we already set the x, y, width, and height
 		// but for some reason there are issues with the height that are fixed when calling it afterwards
-		app.modules.electronModule.setBrowserWindowState(this.electronBrowserWindow, this.graphicalInterface.state, true);
+		if(setBrowserWindowState) {
+			// app.modules.electronModule.setBrowserWindowState(this.electronBrowserWindow, this.graphicalInterface.state, true);
+		}
 
 		return this.graphicalInterface.state;
 	}

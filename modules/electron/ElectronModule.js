@@ -310,6 +310,8 @@ class ElectronModule extends Module {
 
 		// When graphical interface is closed
 		electronBrowserWindow.on('closed', function(event) {
+			// console.log('ElectronBrowserWindow closed event');
+
 			// Remove the browser window from the browserWindows array
 			this.browserWindows.deleteValue(this.firstBrowserWindow);
 		}.bind(this));
