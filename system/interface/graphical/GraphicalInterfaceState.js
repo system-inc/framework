@@ -107,7 +107,7 @@ class GraphicalInterfaceState extends EventEmitter {
 	}
 
 	static fromSettingsWithDisplays(settings, displays, type = null) {
-		//console.info('fromSettingsWithDisplays', 'settings', settings, 'displays', displays, 'type', type);
+		// app.info('fromSettingsWithDisplays', 'settings', settings, 'displays', displays, 'type', type);
 
 		var graphicalInterfaceState = new GraphicalInterfaceState(settings);
 

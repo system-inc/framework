@@ -239,11 +239,14 @@ class GraphicalInterface extends Interface {
 	}
 	
 	// Bind emit to the adapter as well
-	emit() {
-		console.log('emit', arguments);
-		this.adapter.emit(...arguments);
+	emit(eventIdentifier, data, eventOptions, emitFromAdapter = true) {
+		// console.log('GraphicalInterface .emit()', eventIdentifier, data, eventOptions, emitFromAdapter);
 
-		return super.emit(...arguments);
+		if(emitFromAdapter) {
+			this.adapter.emit(eventIdentifier, data, eventOptions);
+		}
+
+		return super.emit(eventIdentifier, data, eventOptions);
 	}
 
 	// Bind addEventListener to the adapter as well

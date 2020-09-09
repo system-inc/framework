@@ -16,7 +16,7 @@ class TestGraphicalInterfaceProxy extends Reusable {
 		this.graphicalInterface = await app.interfaces.graphical.newGraphicalInterface('test', {
 			url: url,
 		});
-		console.log('this.graphicalInterface', this.graphicalInterface);
+		// console.log('this.graphicalInterface', this.graphicalInterface);
 
 		this.graphicalInterface.on('*', function(event) {
 			console.info('this.graphicalInterface.on event', event.identifier, event);
@@ -28,9 +28,9 @@ class TestGraphicalInterfaceProxy extends Reusable {
 			this.release();
 		}.bind(this));
 
-		this.graphicalInterface.on('graphicalInterface.closed', function() {
-			console.log('child graphical interface proxy is closed, retiring');
-			this.retire();
+		this.graphicalInterface.on('graphicalInterface.close', function() {
+			console.log('child graphical interface proxy will close, retiring');
+			// this.retire();
 		}.bind(this));
 	}
 
@@ -71,7 +71,7 @@ class TestGraphicalInterfaceProxy extends Reusable {
 	}
 
 	runTestMethod(testMethod) {
-		//console.log('runTestMethod', testMethod);
+		app.log('runTestMethod', testMethod);
 
 		this.testMethod = testMethod;
 

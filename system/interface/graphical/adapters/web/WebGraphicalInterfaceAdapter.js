@@ -107,25 +107,36 @@ class WebGraphicalInterfaceAdapter extends GraphicalInterfaceAdapter {
 		this.htmlDocument.addStyleSheet(...arguments);
 	}
 
-	establishBroadcastChannel() {
+	establishBroadcastChannel(emitEventsFromGraphicalInterface = false) {
 		// Setup a BroadcastChannel for GraphicalInterface events
 		this.broadcastChannel = new BroadcastChannel('graphicalInterface.'+this.graphicalInterface.identifier);
-		
-		app.log('Listening to BroadcastChannel', 'graphicalInterface.'+this.graphicalInterface.identifier);
-		app.log('Move this code, we do not need to listen to our own events');
-		this.broadcastChannel.onmessage = function(event) {
-			console.log('broadcastChannel event', event);
-			// Emit BroadcastChannel events on the GraphicalInterface
-			//this.graphicalInterface.emit('graphicalInterface.'+this.interfaces.graphical.identifier, event);
-		}.bind(this);
+
+		if(emitEventsFromGraphicalInterface) {
+			// app.log('Listening to BroadcastChannel', 'graphicalInterface.'+this.graphicalInterface.identifier);
+			this.broadcastChannel.onmessage = function(event) {
+				// console.log('BroadcastChannel event', event);
+				this.graphicalInterface.emit(
+					event.data.eventIdentifier,
+					event.data.data,
+					{
+						propagationStopped: true, // Do not bubble events
+					},
+					false
+				);
+			}.bind(this);
+		}
 	}
 
-	emit(eventIdentifier, data) {
+	emit(eventIdentifier, data, eventOptions) {
+		// app.log('WebGraphicalInterfaceAdapter .emit()', eventIdentifier, data, eventOptions);
+
 		// Use the broadcast channel to emit events
 		this.broadcastChannel.postMessage({
-			identifier: this.graphicalInterface.identifier,
+			graphicalInterfaceIdentifier: this.graphicalInterface.identifier,
 			eventIdentifier: eventIdentifier,
-			data: data,
+			data: null,
+			// data: data, // TODO: Passing complex data objects over BroadcastChannel is not supported
+			eventOptions: eventOptions,
 		});
 	}
 

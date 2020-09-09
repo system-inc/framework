@@ -58,7 +58,12 @@ class HtmlNode extends XmlNode {
 
 	detach() {
 		// Detach from the dom
-		this.domNode.remove();
+		if(this.domNode) {
+			this.domNode.remove();
+		}
+		else {
+			console.log('Why would I not have a domNode here?');
+		}
 		this.unmountedFromDom();
 
 		return this;

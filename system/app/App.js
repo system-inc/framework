@@ -94,10 +94,20 @@ class App extends EventEmitter {
 		// Initialize the datastores
 		await this.initializeDatastores();
 
-		// Initialize for the Node environment
+		// If in the Node environment
 		if(this.inNodeEnvironment()) {
+			// Initialize the Node environment
 			await this.initializeNodeEnvironment();
+		}
 
+		// If in Electron main process or graphical interface environment
+		if(this.inElectronEnvironment() || this.inGraphicalInterfaceEnvironment()) {
+			// Initialize the graphical interface environmnet
+			await this.initializeGraphicalInterfaceEnvironment();
+		}
+
+		// If in the Node environment
+		if(this.inNodeEnvironment()) {
 			// Load all of the modules for the app indicated in the app settings
 			// TODO: Allow this to be run in graphical interface environments
 			await this.importAndInitializeModules();
@@ -115,7 +125,7 @@ class App extends EventEmitter {
 			// app.log('inGraphicalInterfaceEnvironment');
 
 			// Will wait on this line until the GraphicalInterface emits the ready event
-			await this.initializeGraphicalInterfaceEnvironment();
+			
 			// app.log('The GraphicalInterface is now ready to be initialized');
 
 			// Implement this method in your app to set the view controller
@@ -428,6 +438,7 @@ class App extends EventEmitter {
 				},
 			},
 		});
+		// app.log('this.settings', this.settings);
 
 		// Create the graphical interface
 		const { GraphicalInterface } = await import('@framework/system/interface/graphical/GraphicalInterface.js');

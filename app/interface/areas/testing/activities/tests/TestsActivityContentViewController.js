@@ -69,7 +69,7 @@ class TestsActivityContentViewController extends ViewController {
         var status = new TextView();
         testsFormView.append(status);
         this.testGraphicalInterfaceProxyPool.on('pool.*', function(event) {
-            status.setContent('Pool - Size: '+this.testGraphicalInterfaceProxyPool.size+' &bull; Available: '+this.testGraphicalInterfaceProxyPool.availableReusables.getSize()+' &bull; Busy: '+this.testGraphicalInterfaceProxyPool.busyReusables.getSize()+' &bull; Waiting: '+this.testGraphicalInterfaceProxyPool.waitingForAvailableReusableCount);
+            status.setContent('Pool - Size: '+this.testGraphicalInterfaceProxyPool.size+' • Available: '+this.testGraphicalInterfaceProxyPool.availableReusables.getSize()+' • Busy: '+this.testGraphicalInterfaceProxyPool.busyReusables.getSize()+' • Waiting: '+this.testGraphicalInterfaceProxyPool.waitingForAvailableReusableCount);
         }.bind(this));
         
         // Table

@@ -42,7 +42,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			});
 
 			// Establish the broadcast channel to listen to events from the BrowserWindow
-			this.establishBroadcastChannel();
+			this.establishBroadcastChannel(true);
 		}
 
 		return this;
@@ -51,9 +51,9 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	listenToElectronEvents() {
 		// When the Electron BrowserWindow will close
 		this.electronBrowserWindow.on('close', function(event) {
-			// console.log('electronBrowserWindow close', this.graphicalInterface);
+			console.log('electronBrowserWindow close', this.graphicalInterface);
+			this.graphicalInterface.emit('graphicalInterface.close', event);
 			this.graphicalInterface.state.closed = true;
-			this.graphicalInterface.emit('graphicalInterface.closed', event);
 		});
 
 		// Get the Electron screen 
