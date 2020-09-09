@@ -29,7 +29,7 @@ class TestGraphicalInterfaceApp extends App {
         // Set the page title - must use document. as we do not have an HtmlDocument object
         document.title = testClassName+'.'+testMethodName+' \u2022 Tests \u2022 Testing \u2022 Framework';
 
-        var proctor = new Proctor('electron', true);
+		var proctor = new Proctor('electron', true);
 
         var proctorEvents = [
             //'proctor.startedRunningTests',

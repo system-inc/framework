@@ -11,7 +11,7 @@ class EventEmitter {
 	emitAddedEventListenerEvents = false;
 	recommendedMaximumEventListenersPerEventIdentifier = null;
 
-	async on(eventPattern, functionToBind, timesToRun) {
+	async on(eventPattern, functionToBind, timesToRun = null) {
 		//console.log('EventEmitter on', eventPattern, this.tag, Json.encode(this.attributes));
 
 		var on = await this.addEventListener(eventPattern, functionToBind, timesToRun);

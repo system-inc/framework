@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "module": "esnext",
+        "target": "esnext",
+        "baseUrl": ".",
+        "paths": {
+            "@app/*": ["./app/*"],
+            "@framework/*": ["./*"]
+        }
+    },
+    "exclude": ["node_modules", "**/node_modules/*"]
+}
