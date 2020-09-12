@@ -1,12 +1,12 @@
 // Dependencies
-import { ElectronGraphicalInterfaceTest } from '@framework/modules/electron/interface/graphical/tests/ElectronGraphicalInterfaceTest.js';
+import { GraphicalInterfaceElectronTest } from '@framework/modules/electron/interface/graphical/tests/GraphicalInterfaceElectronTest.js';
 import { Assert } from '@framework/system/test/Assert.js';
 
 import { View } from '@framework/system/interface/graphical/views/View.js';
 import { PropagatingEventEmitter } from '@framework/system/event/PropagatingEventEmitter.js';
 
 // Class
-class ViewTest extends ElectronGraphicalInterfaceTest {
+class ViewTest extends GraphicalInterfaceElectronTest {
 
 	async testView() {
 		// Create a new view

@@ -6,8 +6,16 @@ class DatastoreClient extends Client {
 
 	protocolClient = null;
 
+	// Return the connection from the protocol client
 	get connection() {
 		return this.protocolClient.connection;
+	}
+
+	// Set the connection on the protocol client
+	set connection(connection) {
+		if(connection !== null && this.protocolClient !== null) {
+			this.protocolClient.connection = connection;
+		}
 	}
 
 	constructor(protocolClient = null) {

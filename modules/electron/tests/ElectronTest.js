@@ -1,6 +1,5 @@
 // Dependencies
 import { Test } from '@framework/system/test/Test.js';
-
 import { ElectronGraphicalInterfaceAdapter } from '@framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js';
 
 // Class

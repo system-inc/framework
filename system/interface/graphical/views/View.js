@@ -4,8 +4,15 @@ import { XmlElement } from '@framework/system/xml/XmlElement.js';
 import { HtmlElement } from '@framework/system/interface/graphical/web/html/HtmlElement.js';
 import { ViewController } from '@framework/system/interface/graphical/view-controllers/ViewController.js';
 
+// TODO: Implement this decorator from @tracked in https://github.com/tc39/proposal-decorators
+function state(target) {
+	return target;
+}
+
 // Class
 class View extends PrimitiveView {
+
+	@state test = null;
 
 	// From XmlElement
 	attributes = {};

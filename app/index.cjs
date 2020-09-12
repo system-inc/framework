@@ -24,5 +24,5 @@ const Transpiler = require(transpilerPath);
 // console.log('Transpiler', Transpiler);
 
 // Create the transpiler, which will run the app script
-let transpiler = new Transpiler(appScript, appPath, frameworkPath);
+global.transpiler = new Transpiler(appScript, appPath, frameworkPath);
 // console.log('transpiler', transpiler);

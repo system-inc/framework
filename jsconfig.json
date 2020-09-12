@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         // "checkJs": true,
+        "experimentalDecorators": true,
         "moduleResolution": "node",
         "module": "esnext",
         "target": "esnext",

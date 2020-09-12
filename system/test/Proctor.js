@@ -512,6 +512,210 @@ class Proctor extends EventEmitter {
 		return leakedGlobals;
 	}
 
+	static resolvePath(path) {
+		// If the path does not exist, we are in the default Framework tests directory
+		if(!path) {
+			path = app.framework.path;
+		}
+		// If the path is not absolute, we are in the default Framework tests directory
+		else if(!Node.Path.isAbsolute(path)) {
+			path = Node.Path.join(app.framework.path, 'tests', path);
+		}
+
+		return path;
+	}
+
+	static async getTestMethod(testClassFilePath, testClassName, testMethodName) {
+		var tests = await Proctor.getTests(testClassFilePath, testClassName, testMethodName, true);
+
+		return tests;
+	}
+
+	static async getTests(path, filePattern, methodPattern, matchStringMethodPatternExactly) {
+		//app.log('proctor.getTests', ...arguments);
+
+		var tests = {
+			classes: [],
+			methods: [],
+		};
+
+		// Resolve the path
+		path = Proctor.resolvePath(path);
+		//app.log(path);
+		//app.exit(path);
+
+		// If patterns are set and are strings, lowercase them for later matching
+		if(filePattern && String.is(filePattern)) {
+			filePattern = filePattern.lowercase();
+		}
+		if(methodPattern && String.is(methodPattern)) {
+			methodPattern = methodPattern.lowercase();	
+		}
+
+		// Create a file or directory object from the path
+		var fileSystemObjectFromPath = await FileSystemObject.createFromPath(path);
+		//app.log('fileSystemObjectFromPath', fileSystemObjectFromPath);
+
+		// Store all of the file system objects
+		var fileSystemObjects = [];
+		
+		// If we are working with a directory of tests
+		if(fileSystemObjectFromPath.isDirectory()) {
+			//app.log('fileSystemObjectFromPath.isDirectory');
+
+			// Recursively get all of the file system objects in the path
+			//app.log('proctor getting all file system objects');
+			fileSystemObjects = await fileSystemObjectFromPath.list(true, function(path) {
+				var passesFilter = true;
+
+				// Ignore node_modules
+				if(path.contains('node_modules')) {
+					passesFilter = false;
+				}
+				// Ignore any file system objects with a . in them
+				else if(path.contains('.')) {
+					passesFilter = false;
+
+					// Unless they end in Test.js
+					if(path.endsWith('Test.js')) {
+						passesFilter = true;
+					}
+				}
+
+				if(passesFilter) {
+					//console.log('path', path);	
+				}				
+
+				return passesFilter;
+			});
+			//console.info('fileSystemObjects length', fileSystemObjects.length);
+		}
+		// If we are working with a single test file
+		else {
+			fileSystemObjects.append(fileSystemObjectFromPath);
+		}
+		//app.log('fileSystemObjects', fileSystemObjects);
+
+
+		// If not using Transpiler.cjs skip tests using decorators which are not in JavaScript yet
+		if(typeof(global.transpiler) === 'undefined') {
+			let removedViewTestsCount = 0;
+			fileSystemObjects.each(function(index, fileSystemObject) {
+				if(fileSystemObject.isFile()) {
+					if(filePattern == null || fileSystemObject.path.lowercase().match(filePattern)) {
+						if(
+							fileSystemObject.nameWithoutExtension.endsWith('ElectronTest') ||
+							fileSystemObject.nameWithoutExtension.endsWith('ViewTest')
+						) {
+							removedViewTestsCount++;
+							fileSystemObjects.delete(index);
+						}
+					}
+				}
+			}, 'descending');
+
+			if(removedViewTestsCount > 0) {
+				console.log('Removed', removedViewTestsCount, 'tests which depend on views while we wait for official decorator support in Node.');
+				console.log('When https://github.com/tc39/proposal-decorators is in Node this notice will be removed.');
+			}
+		}
+
+		// Loop through each of the file system objects
+		await fileSystemObjects.each(async function(index, fileSystemObject) {
+			//app.log(fileSystemObject.path);
+
+			// If we have a file
+			if(fileSystemObject.isFile()) {
+				// We need to see if this is a test class file, if the file is not "Test.js" but ends with "Test.js" it should be
+				if(fileSystemObject.name != 'Test.js' && fileSystemObject.name.endsWith('Test.js')) {
+					// Filter the tests if there is a filePattern
+					if(filePattern == null || fileSystemObject.path.lowercase().match(filePattern)) {
+						//app.info(fileSystemObject.path.lowercase(), 'matched against', filePattern);
+						
+						var testClassName = fileSystemObject.nameWithoutExtension;
+
+						// Require the test class file
+						try {
+							const moduleImports = await import(fileSystemObject.file);
+							const testClass = moduleImports[testClassName];
+							//app.log('testClass', testClass);
+
+							// Check to see if the testClass is a class
+							if(!testClass || !Class.is(testClass)) {
+								throw new Error(fileSystemObject.file+' did not export a Test class.');
+							}
+							// If testClass is a class that can be instantiated
+							else {
+								// Instantiate the test class
+								var instantiatedTestClass = new testClass();
+								//app.log('instantiatedTestClass', instantiatedTestClass);
+
+								// Make sure the instantiated class is an instance of Test
+								if(Class.isInstance(instantiatedTestClass, Test)) {
+									//app.log('Adding test:', testClassName);
+
+									// Add the test class to tests
+									var testClassObject = {
+										name: testClassName,
+										instance: instantiatedTestClass,
+										class: testClass,
+										file: fileSystemObject,
+									};
+									tests.classes.append(testClassObject);
+
+									// Loop through all of the class properties
+									var testClassInstanceMethodNames = Class.getInstanceMethodNames(testClass);
+									testClassInstanceMethodNames.each(function(testClassInstanceMethodNamesIndex, testClassInstanceMethodName) {
+										// All tests must start with "test" and be a function
+										if(testClassInstanceMethodName.startsWith('test')) {
+											//app.log('Test method name:', testClassInstanceMethodName);
+
+											var appendTestMethod = false;
+
+											// Filter test methods
+											if(matchStringMethodPatternExactly) {
+												if(testClassInstanceMethodName.lowercase() == methodPattern) {
+													appendTestMethod = true;
+												}
+											}
+											else if(methodPattern == null || testClassInstanceMethodName.lowercase().match(methodPattern)) {
+												//app.log(testClassInstanceMethodName.lowercase(), 'matched against', methodPattern);
+												appendTestMethod = true;
+											}
+											else {
+												//app.log(testClassInstanceMethodName.lowercase(), 'did not match against', methodPattern);
+											}
+
+											if(appendTestMethod) {
+												tests.methods.append({
+													name: testClassInstanceMethodName,
+													method: instantiatedTestClass[testClassInstanceMethodName],
+													class: testClassObject,
+												});
+											}
+										}
+									});
+								}
+								else {
+									throw new Error(fileSystemObject.file+' did not export a Test class.');
+								}
+							}
+						}
+						catch(error) {
+							app.log('Caught an error while loading test.', testClassName, error.stack.toString());
+							app.exit();
+						}
+					}
+					else {
+						//app.log(fileSystemObject.path.lowercase(), 'did not match against', filePattern);
+					}
+				}
+			}
+		});
+
+		return tests;
+	}
+
 	static globals = {
 		expected: [
 			// Framework
@@ -524,7 +728,7 @@ class Proctor extends EventEmitter {
 			'Stream',
 			'Terminal',
 			'Time',
-			'Transpiler',
+			'transpiler',
 			'app',
 
 			// Framework - Object
@@ -798,186 +1002,6 @@ class Proctor extends EventEmitter {
 		],
 		leaked: [],
 	};
-
-	static resolvePath(path) {
-		// If the path does not exist, we are in the default Framework tests directory
-		if(!path) {
-			path = app.framework.path;
-		}
-		// If the path is not absolute, we are in the default Framework tests directory
-		else if(!Node.Path.isAbsolute(path)) {
-			path = Node.Path.join(app.framework.path, 'tests', path);
-		}
-
-		return path;
-	}
-
-	static async getTestMethod(testClassFilePath, testClassName, testMethodName) {
-		var tests = await Proctor.getTests(testClassFilePath, testClassName, testMethodName, true);
-
-		return tests;
-	}
-
-	static async getTests(path, filePattern, methodPattern, matchStringMethodPatternExactly) {
-		//app.log('proctor.getTests', ...arguments);
-
-		var tests = {
-			classes: [],
-			methods: [],
-		};
-
-		// Resolve the path
-		path = Proctor.resolvePath(path);
-		//app.log(path);
-		//app.exit(path);
-
-		// If patterns are set and are strings, lowercase them for later matching
-		if(filePattern && String.is(filePattern)) {
-			filePattern = filePattern.lowercase();
-		}
-		if(methodPattern && String.is(methodPattern)) {
-			methodPattern = methodPattern.lowercase();	
-		}
-
-		// Create a file or directory object from the path
-		var fileSystemObjectFromPath = await FileSystemObject.createFromPath(path);
-		//app.log('fileSystemObjectFromPath', fileSystemObjectFromPath);
-
-		// Store all of the file system objects
-		var fileSystemObjects = [];
-		
-		// If we are working with a directory of tests
-		if(fileSystemObjectFromPath.isDirectory()) {
-			//app.log('fileSystemObjectFromPath.isDirectory');
-
-			// Recursively get all of the file system objects in the path
-			//app.log('proctor getting all file system objects');
-			fileSystemObjects = await fileSystemObjectFromPath.list(true, function(path) {
-				var passesFilter = true;
-
-				// Ignore node_modules
-				if(path.contains('node_modules')) {
-					passesFilter = false;
-				}
-				// Ignore any file system objects with a . in them
-				else if(path.contains('.')) {
-					passesFilter = false;
-
-					// Unless they end in Test.js
-					if(path.endsWith('Test.js')) {
-						passesFilter = true;
-					}
-				}
-
-				if(passesFilter) {
-					//console.log('path', path);	
-				}				
-
-				return passesFilter;
-			});
-			//console.info('fileSystemObjects length', fileSystemObjects.length);
-		}
-		// If we are working with a single test file
-		else {
-			fileSystemObjects.append(fileSystemObjectFromPath);
-		}
-		//app.log('fileSystemObjects', fileSystemObjects);
-
-		// Loop through each of the file system objects
-		await fileSystemObjects.each(async function(index, fileSystemObject) {
-			//app.log(fileSystemObject.path);
-
-			// If we have a file
-			if(fileSystemObject.isFile()) {
-				// We need to see if this is a test class file, if the file is not "Test.js" but ends with "Test.js" it should be
-				if(fileSystemObject.name != 'Test.js' && fileSystemObject.name.endsWith('Test.js')) {
-					// Filter the tests if there is a filePattern
-					if(filePattern == null || fileSystemObject.path.lowercase().match(filePattern)) {
-						//app.info(fileSystemObject.path.lowercase(), 'matched against', filePattern);
-						
-						var testClassName = fileSystemObject.nameWithoutExtension;
-
-						// Require the test class file
-						try {
-							const moduleImports = await import(fileSystemObject.file);
-							const testClass = moduleImports[testClassName];
-							//app.log('testClass', testClass);
-
-							// Check to see if the testClass is a class
-							if(!testClass || !Class.is(testClass)) {
-								throw new Error(fileSystemObject.file+' did not export a Test class.');
-							}
-							// If testClass is a class that can be instantiated
-							else {
-								// Instantiate the test class
-								var instantiatedTestClass = new testClass();
-								//app.log('instantiatedTestClass', instantiatedTestClass);
-
-								// Make sure the instantiated class is an instance of Test
-								if(Class.isInstance(instantiatedTestClass, Test)) {
-									//app.log('Adding test:', testClassName);
-
-									// Add the test class to tests
-									var testClassObject = {
-										name: testClassName,
-										instance: instantiatedTestClass,
-										class: testClass,
-										file: fileSystemObject,
-									};
-									tests.classes.append(testClassObject);
-
-									// Loop through all of the class properties
-									var testClassInstanceMethodNames = Class.getInstanceMethodNames(testClass);
-									testClassInstanceMethodNames.each(function(testClassInstanceMethodNamesIndex, testClassInstanceMethodName) {
-										// All tests must start with "test" and be a function
-										if(testClassInstanceMethodName.startsWith('test')) {
-											//app.log('Test method name:', testClassInstanceMethodName);
-
-											var appendTestMethod = false;
-
-											// Filter test methods
-											if(matchStringMethodPatternExactly) {
-												if(testClassInstanceMethodName.lowercase() == methodPattern) {
-													appendTestMethod = true;
-												}
-											}
-											else if(methodPattern == null || testClassInstanceMethodName.lowercase().match(methodPattern)) {
-												//app.log(testClassInstanceMethodName.lowercase(), 'matched against', methodPattern);
-												appendTestMethod = true;
-											}
-											else {
-												//app.log(testClassInstanceMethodName.lowercase(), 'did not match against', methodPattern);
-											}
-
-											if(appendTestMethod) {
-												tests.methods.append({
-													name: testClassInstanceMethodName,
-													method: instantiatedTestClass[testClassInstanceMethodName],
-													class: testClassObject,
-												});
-											}
-										}
-									});
-								}
-								else {
-									throw new Error(fileSystemObject.file+' did not export a Test class.');
-								}
-							}
-						}
-						catch(error) {
-							app.log('Caught an error while loading test.', testClassName, error.stack.toString());
-							app.exit();
-						}
-					}
-					else {
-						//app.log(fileSystemObject.path.lowercase(), 'did not match against', filePattern);
-					}
-				}
-			}
-		});
-
-		return tests;
-	}
 
 }
 

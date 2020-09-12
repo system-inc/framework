@@ -2,7 +2,6 @@
 import { Module } from '@framework/system/module/Module.js';
 import { Version } from '@framework/system/version/Version.js';
 import { Directory } from '@framework/system/file-system/Directory.js';
-import { ElectronGraphicalInterfaceAdapter } from '@framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js';
 import { Display } from '@framework/system/interface/graphical/Display.js';
 
 // Class
@@ -258,6 +257,8 @@ class ElectronModule extends Module {
 	}
 
 	async newBrowserWindow(type = null, options = null, parent = null) {
+		const { ElectronGraphicalInterfaceAdapter } = await import('@framework/modules/electron/interface/graphical/adapter/ElectronGraphicalInterfaceAdapter.js');
+
 		// Get the state of the graphical interface from settings
 		let graphicalInterfaceState = ElectronGraphicalInterfaceAdapter.constructGraphicalInterfaceState(type);
 		// app.log('graphicalInterfaceState', graphicalInterfaceState);

@@ -63,8 +63,10 @@ class Transpiler {
 			plugins: [
 				// Transform import to require
 				'@babel/plugin-transform-modules-commonjs',
+				// Allow decorators - this must comke before class properties plugin
+				['@babel/plugin-proposal-decorators', { legacy: true }],
 				// Allow class properties outside of the constructor
-				'@babel/plugin-proposal-class-properties',
+				['@babel/plugin-proposal-class-properties', { loose: true }],
 				// Transform ESM import.meta for CJS
 				'babel-plugin-transform-import-meta',
 				// Allow import() calls
