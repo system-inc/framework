@@ -14,3 +14,4 @@ import '@framework/globals/custom/Class.js';
 import '@framework/globals/custom/Json.js';
 import '@framework/globals/custom/Primitive.js';
 import '@framework/globals/custom/Time.js';
+import '@framework/globals/custom/Decorators.js';

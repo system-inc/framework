@@ -731,6 +731,9 @@ class Proctor extends EventEmitter {
 			'transpiler',
 			'app',
 
+			// Framework - Decorators
+			'state',
+
 			// Framework - Object
 			'clone',
 			'deleteValueByPath',
