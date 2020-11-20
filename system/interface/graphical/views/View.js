@@ -7,7 +7,7 @@ import { ViewController } from '@framework/system/interface/graphical/view-contr
 // Class
 class View extends PrimitiveView {
 
-	@state test = 123;
+	// @state test = 123;
 
 	// From XmlElement
 	attributes = {};
