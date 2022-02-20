@@ -128,15 +128,21 @@ Number.hexadecimalStringToSignedInteger = function(hexadecimalString) {
     return integer;
 }
 
-Number.toMoney = function(number, precision = 2) {
-	number = Number.toFloat(number);
+Number.toMoney = function(number, precision = 2, showPositiveDelta = false) {
+    number = Number.toFloat(number);
 
 	var formatted;
 	if(number < 0) {
-		formatted = '-$'+Math.abs(Number.addCommas(number.toFixed(precision)));
+        number = Math.abs(number);
+
+		formatted = '-$'+Number.addCommas(number.toFixed(precision));
 	}
 	else {
 		formatted = '$'+Number.addCommas(number.toFixed(precision));
+
+        if(showPositiveDelta) {
+            formatted = '+'+formatted;
+        }
 	}
 
 	return formatted;

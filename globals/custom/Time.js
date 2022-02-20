@@ -4,12 +4,12 @@ class Time {
 	dateObject = null;
 	precision = 'milliseconds';
 
-	constructor(stringOrDateObject = new Date()) {
-		if(String.is(stringOrDateObject)) {
-			this.dateObject = new Date(stringOrDateObject);
+	constructor(stringOrUnixTimeInMilliSecondsOrDateObject = new Date()) {
+		if(String.is(stringOrUnixTimeInMilliSecondsOrDateObject) || Number.is(stringOrUnixTimeInMilliSecondsOrDateObject)) {
+			this.dateObject = new Date(stringOrUnixTimeInMilliSecondsOrDateObject);
 		}
 		else {
-			this.dateObject = stringOrDateObject;
+			this.dateObject = stringOrUnixTimeInMilliSecondsOrDateObject;
 		}
 	}
 
@@ -243,13 +243,13 @@ class Time {
 	}
 
 	// The number of seconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
-	get unixTime() {
-		return this.nowInSeconds.toFixed(0);
+	get unixTimeInSeconds() {
+		return this.unixTimeInMilliseconds / 1000;
 	}
 
 	// The number of milliseconds that have elapsed since 00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970
 	get unixTimeInMilliseconds() {
-		return this.nowInMilliseconds.toFixed(0);
+		return this.dateObject.getTime().toFixed(0);
 	}
 
 	get timePosted() {
@@ -278,8 +278,8 @@ class Time {
             timePosted = hours+':'+minutes+' '+period;
         }
         else {
-            timeDifference = (((new Date(now.getFullYear(), now.getMonth(), now.getDate())).getTime() - new Date(this.dateObject.getFullYear(), this.dateObject.getMonth(), this.dateObject.getDate()).getTime()) / 1000),
-            dayDifference = Math.floor(timeDifference / 86400);
+            var timeDifference = (((new Date(now.getFullYear(), now.getMonth(), now.getDate())).getTime() - new Date(this.dateObject.getFullYear(), this.dateObject.getMonth(), this.dateObject.getDate()).getTime()) / 1000);
+            var dayDifference = Math.floor(timeDifference / 86400);
 
             if(dayDifference == 1) {
                 timePosted = 'Yesterday';

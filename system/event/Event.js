@@ -28,7 +28,7 @@ class Event {
 		this.identifier = identifier;
 		if(data) {
 			this.data = data;	
-		}		
+		}
 
 		if(!options.defaultCanBePrevented) {
 			this.defaultCanBePrevented = false;
