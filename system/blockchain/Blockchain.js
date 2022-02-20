@@ -74,7 +74,7 @@ class Blockchain {
         fantom: {
             displayTitle: 'Fantom',
             explorerUrl: new Url('https://ftmscan.com/'),
-            rpcUrl: new Url('ws://45.79.76.188/9c27f0a6-ws/'),
+            rpcUrl: new Url('wss://wsapi.fantom.network/'),
             averageBlockTimeInMilliseconds: 1000,
         },
         bnb: {
