@@ -53,6 +53,20 @@ class Blockchain {
         return explorerUrl;
     }
 
+    // Split log data into an array to be used to identify parameters
+    static splitHexData(hexData) {
+		const splitHexData = [];
+
+		hexData = hexData.substring(2);
+
+		while(hexData.length > 0) {
+			splitHexData.push('0x'+hexData.substring(0, 64));
+			hexData = hexData.substring(64);
+		}
+
+		return splitHexData;
+	}
+
     static constructFromIdentifier(blockchainIdentifier) {
         let blockchain = null;
         let blockchainParameters = Blockchain.blockchains[blockchainIdentifier];

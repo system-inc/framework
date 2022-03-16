@@ -18,14 +18,14 @@ Array.prototype.unique = function() {
 	return Array.unique(this);
 };
 
-Array.prototype.sortObjectsByKeyValue = function(keyName, direction = 'ascending') {
+Array.prototype.sortObjectsByKeyValue = function(key, direction = 'ascending') {
 	// Ascending, smallest to largest (default)
 	if(direction == 'ascending') {
 		this.sort(function(a, b) {
-			if(a[keyName] > b[keyName]) {
+			if(a[key] > b[key]) {
 				return 1;
 			}
-			else if(a[keyName] < b[keyName]) {
+			else if(a[key] < b[key]) {
 				return -1;
 			}
 			else {
@@ -36,10 +36,10 @@ Array.prototype.sortObjectsByKeyValue = function(keyName, direction = 'ascending
 	// Descending, largest to smallest
 	else if(direction == 'descending') {
 		this.sort(function(a, b) {
-			if(a[keyName] < b[keyName]) {
+			if(a[key] < b[key]) {
 				return 1;
 			}
-			else if(a[keyName] > b[keyName]) {
+			else if(a[key] > b[key]) {
 				return -1;
 			}
 			else {
@@ -55,11 +55,11 @@ Array.prototype.sortObjectsByKeyValue = function(keyName, direction = 'ascending
 /*
 	[
 		{
-			'key': 'keyName', // sort by this first
+			'key': 'key', // sort by this first
 			'direction': 'descending',
 		},
 		{
-			'key': 'keyName', // then by this
+			'key': 'key', // then by this
 			'direction': 'ascending',
 		},
 		...

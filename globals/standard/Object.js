@@ -516,18 +516,30 @@ Object.defineProperty(Object, 'toArray', {
     writable: true, // Let other libraries replace this method
     enumerable: false,
     value: function(value) {
+        var result = null;
+
         // Wrap anything not in an array in an array
         if(!Array.is(value)) {
+            // Handle string
             if(String.is(value)) {
-                return [value.toString()]; // Do this to make sure we are working with string literals and not "String" objects
+                result = [value.toString()]; // Do this to make sure we are working with string literals and not "String" objects
+            }
+            // Objects are converted into arrays and their keys are replaced by array indexes
+            else if(Object.is(value)) {
+                result = [];
+                value.each(function(objectKey, objectValue) {
+                    result.push(objectValue);
+                });
             }
             else {
-                return [value];
+                result = [value];
             }
         }
         else {
-            return value;
+            result = value;
         }
+
+        return result;
     },
 });
 

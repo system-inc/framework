@@ -18,6 +18,10 @@ Number.prototype.addCommas = function() {
 // Static methods
 
 Number.is = function(value) {
+    if(isNaN(value)) {
+        return false;
+    }
+
 	return typeof(value) == 'number' || value instanceof Number;
 };
 

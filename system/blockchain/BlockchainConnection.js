@@ -25,20 +25,6 @@ class BlockchainConnection extends EventEmitter {
         );
     }
 
-    // Split log data into an array to be used to identify parameters
-    splitLogData(logData) {
-		const splitLogData = [];
-
-		logData = logData.substring(2);
-
-		while(logData.length > 0) {
-			splitLogData.push('0x'+logData.substring(0, 64));
-			logData = logData.substring(64);
-		}
-
-		return splitLogData;
-	}
-
     subscribeToBlocks() {
         // console.log('Subscribing to block headers...');
 
