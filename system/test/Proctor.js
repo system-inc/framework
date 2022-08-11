@@ -1002,6 +1002,8 @@ class Proctor extends EventEmitter {
 			'onlostpointercapture',
 
 			'queueMicrotask',
+
+			'structuredClone',
 		],
 		leaked: [],
 	};
