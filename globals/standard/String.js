@@ -502,7 +502,7 @@ String.random = function(length = 32, characters = 'abcdefghijklmnopqrstuvwxyzAB
 	var string = '';
 
 	for(var i = 0; i < length; i++) {
-		string += characters[Number.random(0, maxIndex)];
+		string += characters[Number.random(0, maxIndex, 0)];
 	}
 
 	return string;

@@ -262,7 +262,7 @@ Number.toEnglish = function(number) {
 };
 
 // Minimum and maximum are both inclusive
-Number.random = function(minimum = 0, maximum = 9007199254740992, precision = 0) {
+Number.random = function(minimum = 0, maximum = 1, precision = 16) {
 	// toFixed digits argument must be between 0 and 20
 	if(precision > 20) {
 		precision = 20;

@@ -13,11 +13,11 @@ class Cryptography {
 		});
 	}
 
-	static hash(algorithm, string, encoding) {
+	static hash(string, algorithm = 'sha256', encoding = 'hex') {
 		return Node.Cryptography
-	        .createHash(algorithm || 'md5')
+	        .createHash(algorithm)
 	        .update(string, 'utf8')
-	        .digest(encoding || 'hex');
+	        .digest(encoding);
 	}
 
 }
