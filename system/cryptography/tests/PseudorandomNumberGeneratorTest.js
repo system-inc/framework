@@ -143,8 +143,8 @@ class PseudorandomNumberGeneratorTest extends Test {
 			occurrences[value]++;
 		}
 
-		console.table(occurrences);
-		AsciiChart.draw(occurrences);
+		// console.table(occurrences);
+		// AsciiChart.draw(occurrences);
 
 		Assert.equal(occurrences[2], 2, 'Occurrences of 2 is 2');
 		Assert.equal(occurrences[3], 4, 'Occurrences of 3 is 4');

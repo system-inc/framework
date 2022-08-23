@@ -20,13 +20,13 @@ class AsciiChartTest extends Test {
 		// 	points.push([i, Math.sin(i)]);
 		// }
 
-		AsciiChart.draw(points, {
-			// color: 'ascii',
-			caption: 'My Caption',
-			gridColor: 'gray',
-			width: 200,
-			height: 50,
-		});
+		// AsciiChart.draw(points, {
+		// 	// color: 'ascii',
+		// 	caption: 'My Caption',
+		// 	gridColor: 'gray',
+		// 	width: 200,
+		// 	height: 50,
+		// });
 	}
 
 }
