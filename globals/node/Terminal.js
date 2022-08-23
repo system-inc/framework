@@ -5,12 +5,15 @@ class Terminal {
     	return Terminal.style(string, colorName);
     }
 
-    static style(string, stylesString) {
-    	// Get all of the styles from the stylesString
-    	var styles = [];
-    	stylesString.split(',').each(function(index, style) {
-    		styles.append(style.trim());
-    	});
+    static style(string, styles) {
+        // Handle if styles are passed in as a comma-separated string
+        if(String.is(styles)) {
+            let stylesString = styles.split(',');
+            styles = [];
+            stylesString.each(function(index, style) {
+                styles.append(style.trim());
+            });
+        }
 
     	// Wrap the string in the styles
     	styles.each(function(index, style) {

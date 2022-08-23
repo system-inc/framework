@@ -515,7 +515,11 @@ Object.defineProperty(Object, 'clone', {
 Object.defineProperty(Object, 'toArray', {
     writable: true, // Let other libraries replace this method
     enumerable: false,
-    value: function(value) {
+    value: function(value, options = {}) {
+        options = {
+            keepObjectKeys: true,
+        }.merge(options)
+
         var result = null;
 
         // Wrap anything not in an array in an array
@@ -524,12 +528,22 @@ Object.defineProperty(Object, 'toArray', {
             if(String.is(value)) {
                 result = [value.toString()]; // Do this to make sure we are working with string literals and not "String" objects
             }
-            // Objects are converted into arrays and their keys are replaced by array indexes
+            // Objects are converted into arrays and their keys are optionally included
             else if(Object.is(value)) {
                 result = [];
-                value.each(function(objectKey, objectValue) {
-                    result.push(objectValue);
-                });
+
+                // If we want to keep object keys
+                if(options.keepObjectKeys) {
+                    value.each(function(objectKey, objectValue) {
+                        result.push([objectKey, objectValue]);
+                    });
+                }
+                // If we want to remove object keys
+                else {
+                    value.each(function(objectKey, objectValue) {
+                        result.push(objectValue);
+                    });
+                }
             }
             else {
                 result = [value];

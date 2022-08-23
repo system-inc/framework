@@ -369,6 +369,15 @@ String.prototype.reflect = function() {
 	return reflectedString;
 };
 
+// Repeat a string count times
+String.prototype.repeat = function(count) {
+	var string = '';
+	for(var i = 0; i < count; i++) {
+		string += this;
+	}
+	return string;
+}
+
 String.prototype.toStream = function() {
 	// Create a new stream
 	var stream = new Node.Stream.Readable();

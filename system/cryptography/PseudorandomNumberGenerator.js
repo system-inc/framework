@@ -14,7 +14,7 @@ class PseudorandomNumberGenerator {
     static multiplier = 6364136223846793005n;
     static increment = 1442695040888963407n;
 
-	constructor(seed = 'seed', distribution = 'linear') {
+	constructor(seed = 'seed') {
         this.setSeed(seed);
     }
 

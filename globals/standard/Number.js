@@ -292,3 +292,8 @@ Number.cryptographicRandom = async function(minimum = 0, maximum = 9007199254740
 
     return Number(random.toFixed(precision));
 };
+
+// Constrain a number to a range
+Number.constrain = function(number, minimum, maximum) {
+    return Math.max(minimum, Math.min(maximum, number));
+}

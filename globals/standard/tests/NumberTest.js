@@ -135,6 +135,14 @@ class NumberTest extends Test {
 		Assert.lessThanOrEqualTo(randomNumber, 100000, '10000, 100000 returns a number less than or equal to 100000');
 	}
 
+	testConstrain() {
+		Assert.equal(Number.constrain(-1, 1, 10), 1, 'Constrain -1 to 1 to 10 is 1');
+		Assert.equal(Number.constrain(11, 1, 10), 10, 'Constrain 11 to 1 to 10 is 10');
+		Assert.equal(Number.constrain(1, 1, 10), 1, 'Constrain 1 to 1 to 10 is 1');
+		Assert.equal(Number.constrain(5, 1, 10), 5, 'Constrain 5 to 1 to 10 is 5');
+		Assert.equal(Number.constrain(10, 1, 10), 10, 'Constrain 10 to 1 to 10 is 10');
+	}
+
 }
 
 // Export
