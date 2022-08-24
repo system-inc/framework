@@ -22,10 +22,13 @@ class AsciiChartTest extends Test {
 
 		// AsciiChart.draw(points, {
 		// 	// color: 'ascii',
-		// 	caption: 'My Caption',
+		// 	caption: 'HEY THERE',
 		// 	gridColor: 'gray',
-		// 	width: 200,
-		// 	height: 50,
+		// 	width: 40,
+		// 	height: 30,
+		// 	// yLabelPrecision: 2,
+		// 	// minimumY: 1,
+		// 	// maximumY: 5,
 		// });
 	}
 

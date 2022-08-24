@@ -34,21 +34,23 @@ class AsciiChart {
         // Variables we will use for drawing the chart
         const minimumX = (options.minimumX !== null) ? options.minimumX : rangeMeta.minimumX;
         const maximumX = (options.maximumX !== null) ? options.maximumX : rangeMeta.maximumX;
-        const xWidth = maximumX - minimumX;
+        const xDelta = maximumX - minimumX;
         const minimumY = (options.minimumY !== null) ? options.minimumY : rangeMeta.minimumY;
         const maximumY = (options.maximumY !== null) ? options.maximumY : rangeMeta.maximumY;
-        const yHeight = maximumY - minimumY;
+        const yDelta = maximumY - minimumY;
         const uniqueXValues = rangeMeta.uniqueXValues;
 
         // Adjust the height if a caption is used
         let height = options.height;
-        height -= 1 + !!options.caption;
+        if(!options.caption) {
+            height -= 1;
+        }
 
         // Set the y precision
         let yLabelPrecision = options.yLabelPrecision;
         if(yLabelPrecision == null) {
             // Constrain the number between 0 and 8
-            yLabelPrecision = Math.floor(Number.constrain(Math.log((height / yHeight) * 5) / Math.LN10, 0, 8));
+            yLabelPrecision = Math.floor(Number.constrain(Math.log((height / yDelta) * 5) / Math.LN10, 0, 8));
         }
         // console.log('yLabelPrecision', yLabelPrecision);
 
@@ -67,32 +69,24 @@ class AsciiChart {
         let xLabelPrecision = options.xLabelPrecision;
         if(xLabelPrecision == null) {
             // Constrain the number between 0 and 8
-            xLabelPrecision = Math.floor(Number.constrain(Math.log((barCount / xWidth) * 5) / Math.LN10, 0, 8));
+            xLabelPrecision = Math.floor(Number.constrain(Math.log((barCount / xDelta) * 5) / Math.LN10, 0, 8));
         }
 
         // Group the points by x value
-        const groupedPoints = AsciiChart.groupPoints(points, barCount, minimumX, xWidth, minimumY, maximumY, height);
+        const groupedPoints = AsciiChart.groupPoints(points, barCount, minimumX, xDelta, minimumY, maximumY, height);
         // console.log('groupedPoints', groupedPoints);
 
         // Prerender y labels
         const yLabels = [];
         for(let currentRow = height - 1; currentRow >= 0; currentRow--) {
             const currentYLabel = (groupedPoints.minimum + ((groupedPoints.delta * currentRow) / (height - 1))).toFixed(yLabelPrecision);
-
-            // Do not put duplicate labels in
-            if(currentYLabel != yLabels[0]) {
-                yLabels.unshift(currentYLabel);
-            }
-            // If we have a duplicate label, decrement our height
-            else {
-                height -= 1;
-            }
+            yLabels.unshift(currentYLabel);
         }
 
         // Find the longest x label length
         let xLabelWidth = 0;
         for(let currentBar = 0; currentBar < barCount; currentBar++) {
-            const label = (minimumX + ((currentBar * xWidth) / (barCount - 1))).toFixed(xLabelPrecision);
+            const label = (minimumX + ((currentBar * xDelta) / (barCount - 1))).toFixed(xLabelPrecision);
             xLabelWidth = Math.max(xLabelWidth, label.length);
         }
 
@@ -121,7 +115,7 @@ class AsciiChart {
         // Draw x labels
         for(let currentXLabelIndex = 0; currentXLabelIndex < xLabelDisplayCount; currentXLabelIndex++) {
             const xLabelOffset = currentXLabelIndex * xLabelIterator;
-            const currentXLabel = (minimumX + ((xLabelOffset * xWidth) / (barCount - 1))).toFixed(xLabelPrecision);
+            const currentXLabel = (minimumX + ((xLabelOffset * xDelta) / (barCount - 1))).toFixed(xLabelPrecision);
             chartString += currentXLabel;
             chartString += ' '.repeat((barWidth * xLabelIterator) - currentXLabel.length);
         }
@@ -151,7 +145,7 @@ class AsciiChart {
     }
 
     static drawRowLabel(row, yLabels, yLabelWidth) {
-        const label = (row === 0) || (yLabels[row] !== yLabels[row - 1]) ? yLabels[row] : '';
+        const label = yLabels[row];
 
         return `${' '.repeat(yLabelWidth - label.length - 1)}${label}`;
     }
@@ -188,6 +182,8 @@ class AsciiChart {
                     break;
                 // Row is less than half into the bar
                 case 3:
+                    console.log('row', row, 'bar', bar);
+
                     if(color === 'ascii') {
                         result.push(' '.repeat(barWidth));
                     }
@@ -274,6 +270,7 @@ class AsciiChart {
         
         // Normalize groups
         const normalizeGroups = function(groups, minimum, delta, height) {
+
             return groups.map(function(group) {
                 return ((group - minimum) / delta) * height;
             });
