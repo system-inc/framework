@@ -7,10 +7,15 @@ import { Blockchain } from '@framework/system/blockchain/Blockchain.js';
 class BlockchainBrowserWallet extends EventEmitter {
 
     blockchainAddress = null;
-    chainId = null;
+    blockchain = null;
 
     constructor() {
         super();
+
+        if(window.ethereum === undefined) {
+            // console.warn('Injected ethereum object not detected.');
+            return;
+        }
 
         // Listen for account changes
         ethereum.on('accountsChanged', async function(accounts) {
@@ -22,14 +27,15 @@ class BlockchainBrowserWallet extends EventEmitter {
                 this.blockchainAddress = null;
             }
             
-            this.emit('accountChanged', this.blockchainAddress);
+            this.emit('blockchainAddressChanged', this.blockchainAddress);
         }.bind(this));
 
         // Listen for blockchain Changes
-        ethereum.on('chainChanged', async function(chainId) {
+        ethereum.on('chainChanged', async function(blockchainId) {
             // console.log('chainChanged', chainId);
-            this.chainId = chainId;
-            this.emit('chainChanged', this.chainId);
+
+            this.blockchain = Blockchain.constructFromId(blockchainId);
+            this.emit('blockchainChanged', this.blockchain);
         }.bind(this));
     }
 
@@ -43,7 +49,8 @@ class BlockchainBrowserWallet extends EventEmitter {
             });
             // console.log(accounts);
 
-            this.chainId = ethereum.chainId;
+            // Update the blockchain
+            this.blockchain = Blockchain.constructFromId(ethereum.chainId);
 
             if(accounts[0]) {
                 this.blockchainAddress = new BlockchainAddress(accounts[0]);
@@ -55,7 +62,7 @@ class BlockchainBrowserWallet extends EventEmitter {
     async disconnect() {
         // console.log('BlockchainBrowserWallet disconnect');
         this.blockchainAddress = null;
-        this.emit('accountChanged', this.blockchainAddress);
+        this.emit('blockchainAddressChanged', this.blockchainAddress);
     }
 
     isConnected() {
@@ -63,8 +70,8 @@ class BlockchainBrowserWallet extends EventEmitter {
     }
 
     isConnectedToPolygon() {
-        // return this.chainId == '0x53b'; // Testing
-        return this.chainId == '0x89'; // Polygon
+        // return this.blockchain.id == '0x53b'; // Testing
+        return this.blockchain.id == '0x89'; // Polygon
     }
 
     async getBalance(blockNumber) {
