@@ -279,9 +279,16 @@ Object.defineProperty(Object.prototype, 'merge', {
                 if(this[objectToMergeKey] !== undefined && Primitive.is(this[objectToMergeKey])) {
                     this[objectToMergeKey] = objectToMergeValue;
                 }
-                // Recursively merge non-primitives
+                // Handle non-primitives
                 else if(this[objectToMergeKey] !== undefined && !Primitive.is(this[objectToMergeKey])) {
-                    this[objectToMergeKey] = this[objectToMergeKey].merge(objectToMergeValue);
+                    // Primitives overwrite non-primitives
+                    if(Primitive.is(objectToMergeValue)) {
+                        this[objectToMergeKey] = objectToMergeValue;
+                    }
+                    // Non-primitives recursively merge with non-primitives
+                    else {
+                        this[objectToMergeKey] = this[objectToMergeKey].merge(objectToMergeValue);
+                    }
                 }
                 // Add any new keys not existing on "this"
                 else if(this[objectToMergeKey] === undefined) {
@@ -344,9 +351,16 @@ Object.defineProperty(Object.prototype, 'integrate', {
 
                     this[objectToIntegrateKey] = integratedArray;
                 }
-                // Recursively merge other non-primitives
+                // Handle non-primitives
                 else if(this[objectToIntegrateKey] !== undefined && !Primitive.is(this[objectToIntegrateKey])) {
-                    this[objectToIntegrateKey] = this[objectToIntegrateKey].integrate(objectToIntegrateValue);
+                    // Primitives overwrite non-primitives
+                    if(Primitive.is(objectToIntegrateValue)) {
+                        this[objectToIntegrateKey] = objectToIntegrateValue;
+                    }
+                    // Non-primitives recursively integrate with non-primitives
+                    else {
+                        this[objectToIntegrateKey] = this[objectToIntegrateKey].integrate(objectToIntegrateValue);
+                    }
                 }
                 // Add any new keys not existing on "this"
                 else if(this[objectToIntegrateKey] === undefined) {

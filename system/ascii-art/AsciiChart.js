@@ -13,10 +13,10 @@ class AsciiChart {
         
         // Merge the chosen options on top of the default options
         options = {
-            caption: null, // A caption to display above the chart
+            title: null, // A caption to display above the chart
             color: 'cyan', // The color of the chart
             gridColor: 'gray', // The color of the grid
-            width: 100, 
+            width: 100,
             height: 24,
             minimumX: null, 
             maximumX: null,
@@ -25,11 +25,11 @@ class AsciiChart {
             xLabelPrecision: null, // Number of decimals for x labels
             yLabelPrecision: null, // Number of decimals for y labels
         }.merge(options);
-        console.log('options', options);
+        // console.log('options', options);
         
         // Get the range meta data
         const rangeMeta = AsciiChart.rangeMetaFromPoints(points);
-        console.log('rangeMeta', rangeMeta);
+        // console.log('rangeMeta', rangeMeta);
 
         // Variables we will use for drawing the chart
         const minimumX = (options.minimumX !== null) ? options.minimumX : rangeMeta.minimumX;
@@ -42,7 +42,7 @@ class AsciiChart {
 
         // Adjust the height if a caption is used
         let height = options.height;
-        if(!options.caption) {
+        if(!options.title) {
             height -= 1;
         }
 
@@ -101,13 +101,6 @@ class AsciiChart {
         // Build the chart string
         let chartString = '';
 
-        // Add the caption
-        if(options.caption != null) {
-            chartString += ' '.repeat(yLabelWidth);
-            chartString += options.color === 'ascii' ? options.caption : Terminal.style(options.caption, 'bold');
-            chartString += '\n';
-        }
-
         // Draw chart
         chartString += AsciiChart.drawChartWithoutXLabels(height, yLabels, yLabelWidth, groupedPoints.groups, barWidth, options.color, options.gridColor) + '\n';
         chartString += ' '.repeat(yLabelWidth);
@@ -120,7 +113,17 @@ class AsciiChart {
             chartString += ' '.repeat((barWidth * xLabelIterator) - currentXLabel.length);
         }
 
-        console.log(chartString);
+        Terminal.box(chartString, {
+            title: options.title,
+            padding: {
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+            },
+            borderColor: options.borderColor,
+        });
+        // console.log(chartString);
     };
 
     // draw chart minus x labels
@@ -182,8 +185,6 @@ class AsciiChart {
                     break;
                 // Row is less than half into the bar
                 case 3:
-                    console.log('row', row, 'bar', bar);
-
                     if(color === 'ascii') {
                         result.push(' '.repeat(barWidth));
                     }

@@ -127,29 +127,54 @@ class PseudorandomNumberGeneratorTest extends Test {
 	}
 
 	async testNormalDistribution() {
-		// Create the psuedorandom number generator
-		let psuedoRandomNumberGenerator = new PseudorandomNumberGenerator('seed3');
-		
-		let samples = 100;
-		let occurrences = {};
+		// A convenience method to get occurences of values
+		let getOccurrences = function(psuedoRandomNumberGenerator, samples = 100, minimum = 0, maximum = 10) {
+			let occurrences = {};
 
-		// Gather the samples
-		for(let i = 0; i < samples; i++) {
-			let value = psuedoRandomNumberGenerator.randomNumberWithNormalDistribution(0, 10);
-			if(occurrences[value] === undefined) {
-				occurrences[value] = 0;
+			// Gather the samples
+			for(let i = 0; i < samples; i++) {
+				let value = psuedoRandomNumberGenerator.randomNumberWithNormalDistribution(minimum, maximum);
+				if(occurrences[value] === undefined) {
+					occurrences[value] = 0;
+				}
+
+				occurrences[value]++;
 			}
 
-			occurrences[value]++;
+			return occurrences;
 		}
 
-		// console.table(occurrences);
-		// AsciiChart.draw(occurrences);
-
+		let occurrences = getOccurrences(new PseudorandomNumberGenerator('seed3'), 100, 0, 10);
 		Assert.equal(occurrences[2], 2, 'Occurrences of 2 is 2');
 		Assert.equal(occurrences[3], 4, 'Occurrences of 3 is 4');
 		Assert.equal(occurrences[4], 23, 'Occurrences of 4 is 23');
 		Assert.equal(occurrences[5], 44, 'Occurrences of 5 is 44');
+
+		// // Test graphs
+		// occurrences = getOccurrences(new PseudorandomNumberGenerator('Seed A'), 10000, 0, 100);
+		// // console.table(occurrences);
+		// AsciiChart.draw(occurrences, {
+		// 	title: 'Seed A',
+		// 	height: 14,
+		// });
+
+		// occurrences = getOccurrences(new PseudorandomNumberGenerator('Seed B'), 10000, 0, 100);
+		// AsciiChart.draw(occurrences, {
+		// 	title: 'Seed B',
+		// 	height: 14,
+		// });
+
+		// occurrences = getOccurrences(new PseudorandomNumberGenerator('Seed C'), 10000, 0, 100);
+		// AsciiChart.draw(occurrences, {
+		// 	title: 'Seed C',
+		// 	height: 14,
+		// });
+
+		// occurrences = getOccurrences(new PseudorandomNumberGenerator('Seed D'), 10000, 0, 100);
+		// AsciiChart.draw(occurrences, {
+		// 	title: 'Seed D',
+		// 	height: 14,
+		// });
 	}
 
 }

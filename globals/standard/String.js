@@ -391,12 +391,23 @@ String.prototype.toStream = function() {
 	return stream;
 };
 
+String.prototype.toLines = function() {
+	return this.split(/\r|\r\n|\n/g);
+};
+
 String.prototype.getLineCount = function() {
 	return this.split(/\r|\r\n|\n/g).length;
 };
 
-String.prototype.getCharacterCount = function() {
-	return this.length;
+String.prototype.getCharacterCount = function(stripAnsiEscapeSequences = true) {
+	// Strip ANSI escape sequences
+	if(stripAnsiEscapeSequences) {
+		let stripped = this.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+		return stripped.length;
+	}
+	else {
+		return this.length;
+	}
 };
 
 String.prototype.splitOnFirst = function(stringToSplitOn) {
