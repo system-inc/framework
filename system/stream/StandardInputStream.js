@@ -4,6 +4,7 @@ import { StandardInputEventManager } from '@framework/system/stream/events/Stand
 import { StandardInputKeyEvent } from '@framework/system/stream/events/StandardInputKeyEvent.js';
 import { StandardInputPressEvent } from '@framework/system/stream/events/StandardInputPressEvent.js';
 import { StandardInputHoverEvent } from '@framework/system/stream/events/StandardInputHoverEvent.js';
+import { StandardInputDragEvent } from '@framework/system/stream/events/StandardInputDragEvent.js';
 import { StandardInputScrollEvent } from '@framework/system/stream/events/StandardInputScrollEvent.js';
 
 // Class
@@ -136,8 +137,11 @@ class StandardInputStream extends StandardStream {
 
 		// Scrolling
 		if(mouseInputEventCodeParts.scroll) {
-			// Use a scroll event
 			event = new StandardInputScrollEvent();
+		}
+		// Dragging
+		else if(mouseInputEventCodeParts.move && mouseInputEventCodeParts.button !== 3) {
+			event = new StandardInputDragEvent();
 		}
 		// Moving
 		else if(mouseInputEventCodeParts.move) {
@@ -180,43 +184,29 @@ class StandardInputStream extends StandardStream {
 			// Clear event.button
 			event.button = null;
 		}
-		// Move
+		// Drag events
+		else if(mouseInputEventCodeParts.move && mouseInputEventCodeParts.button !== 3) {
+			event.identifier = 'input.drag';
+		}
+		// Move events
 		else if(mouseInputEventCodeParts.move) {
 			event.identifier = 'input.hover';
-
-			// TO DO: Implement drag
-			// if(event.button) {
-			// 	event.identifier = 'mouseDrag';
-			// }
 		}
-		// Press
+		// Press events
 		else {
-			// Primary button
-			if(event.button == 1) {
-				if(mouseInputEventCodeParts.boolean) {
-					event.identifier = 'input.press.down';
-				}
-				else {
-					event.identifier = 'input.press.up';
-				}
+			event.identifier = 'input.press';
+
+			// Handle button presses which aren't the first button on the mouse
+			if(event.button !== 1) {
+				event.identifier += '.'+StandardInputPressEvent.buttonMap[event.button];
 			}
-			// Secondary button
-			else if(event.button == 2) {
-				if(mouseInputEventCodeParts.boolean) {
-					event.identifier = 'input.press.secondary.down';
-				}
-				else {
-					event.identifier = 'input.press.secondary.up';
-				}
+
+			// Handle down and up states
+			if(mouseInputEventCodeParts.boolean) {
+				event.identifier += '.down';
 			}
-			// Tertiary button
-			else if(event.button == 3) {
-				if(mouseInputEventCodeParts.boolean) {
-					event.identifier = 'input.press.tertiary.down';
-				}
-				else {
-					event.identifier = 'input.press.tertiary.up';
-				}
+			else {
+				event.identifier += '.up';
 			}
 		}
 		

@@ -39,6 +39,7 @@ class Terminal {
 
     static eraseDisplay() {
         app.standardStreams.output.write('\x1b[2J\x1b[0f');
+        // app.standardStreams.output.write('\x1b[2J');
     }
 
     static write() {
@@ -50,6 +51,17 @@ class Terminal {
     }
 
     static clear = Terminal.reset = Terminal.eraseDisplay;
+
+    static manualClear() {
+        let height = Terminal.getHeight();
+        let width = Terminal.getWidth();
+        for(let i = 0; i < height; i++) {
+            for(let j = 0; j < width; j++) {
+                Terminal.moveCursorTo(j, i);
+                Terminal.write(' ');
+            }
+        }
+    }
 
     static clearLine() {
         app.standardStreams.output.write('\x1b[2K');

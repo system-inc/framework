@@ -4,8 +4,6 @@ import { StandardInputPressEvent } from '@framework/system/stream/events/Standar
 // Class
 class StandardInputHoverEvent extends StandardInputPressEvent {
 
-	direction = null;
-
 	static is(value) {
 		return Class.isInstance(value, StandardInputHoverEvent);
 	}

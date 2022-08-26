@@ -298,6 +298,10 @@ class Time {
         return timePosted;
 	}
 
+	differenceInMilliseconds(time) {
+		return Time.differenceInMilliseconds(this, time);
+	}
+
 	// TODO: Make this do awesome shit
 	format(string) {
 		var formattedString = '';
@@ -330,6 +334,10 @@ class Time {
 	static nowInMilliseconds = Time.prototype.nowInSeconds;
 	static nowInMilliseconds = Time.prototype.nowInMilliseconds;
 	static nowInMicroseconds = Time.prototype.nowInMicroseconds;
+
+	static differenceInMilliseconds(timeA, timeB) {
+		return timeA.dateObject.getTime() - timeB.dateObject.getTime();
+	}
 
 	static fromDosDateTime(date, time) {
 		var day = date & 0x1f; // 1-31

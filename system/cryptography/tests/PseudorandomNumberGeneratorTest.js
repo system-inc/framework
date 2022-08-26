@@ -141,7 +141,9 @@ class PseudorandomNumberGeneratorTest extends Test {
 		}
 
 		// Graph
-		AsciiChart.draw(data);
+		AsciiChart.draw(data, {
+			title: 'Float Randomness',
+		});
 	}
 
 	async testNormalDistribution() {
