@@ -17,11 +17,9 @@ class StandardInputEventManager {
 
         this.listen();
 
-        console.log('draw a line on the screen');
-        console.log('draw a box on the screen');
-        console.log('draw a circle on the screen');
-        console.log('test all keys like ! and fix 1 2 3 keys');
         console.log('move a player anywhere on the map');
+        console.log('implement a render stack');
+        console.log('implement control z');
     }
 
     listen() {
@@ -31,28 +29,21 @@ class StandardInputEventManager {
     }
 
     processInputEvent(event) {
-        // TODO: I think we need to clone the events here
-
         // Handle special cases for press events
         if(event.identifier.startsWith('input.press')) {
             // On press up events
             if(event.identifier.endsWith('.up')) {
-                // Emit input.press events when input.press.up happens
-                if(event.identifier == 'input.press.up') {
-                    this.activeInputPressDownEvent = null;
+                // We no longer have a down event
+                this.activeInputPressDownEvent = null;
 
-                    let clonedEvent = event.clone();
-                    clonedEvent.identifier = 'input.press';
-                    this.stream.emit(clonedEvent.identifier, clonedEvent);
+                // Fire press events, input.press, input.press.secondary, input.press.tertiary, input.press.buttonMap
+                let clonedEvent = event.clone();
+                let button = '';
+                if(clonedEvent.button > 1) {
+                    button = '.'+StandardInputPressEvent.buttonMap[clonedEvent.button];
                 }
-                // Emit input.press.secondary events when input.press.secondary.up happens
-                else if(event.identifier == 'input.press.secondary.up') {
-                    this.activeInputPressDownEvent = null;
-
-                    let clonedEvent = event.clone();
-                    clonedEvent.identifier = 'input.press.secondary';
-                    this.stream.emit(clonedEvent.identifier, clonedEvent);
-                }
+                clonedEvent.identifier = 'input.press'+button;
+                this.stream.emit(clonedEvent.identifier, clonedEvent);
 
                 // If we are dragging
                 if(this.activeInputDragStartEvent) {

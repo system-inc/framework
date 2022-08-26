@@ -117,7 +117,6 @@ class InputKeyEvent extends HtmlElementEvent {
 		shift: true,
 	};
 
-
 	static keyTitleMap = {
 		'~': 'tilde',
 		'`': 'graveAccent',

@@ -6,6 +6,7 @@ import { StandardInputPressEvent } from '@framework/system/stream/events/Standar
 import { StandardInputHoverEvent } from '@framework/system/stream/events/StandardInputHoverEvent.js';
 import { StandardInputDragEvent } from '@framework/system/stream/events/StandardInputDragEvent.js';
 import { StandardInputScrollEvent } from '@framework/system/stream/events/StandardInputScrollEvent.js';
+import { InputKeyEvent } from '@framework/system/interface/graphical/web/html/events/html-element/input/InputKeyEvent.js';
 
 // Class
 class StandardInputStream extends StandardStream {
@@ -14,6 +15,7 @@ class StandardInputStream extends StandardStream {
 	nodeStreamStandardWrite = Node.Process.stdin.write;
 	eventManager = new StandardInputEventManager(this);
 	mouseInputEventsEnabled = false;
+	emitDataOnStandardOutputStream = true;
 
 	constructor() {
 		super();
@@ -48,6 +50,14 @@ class StandardInputStream extends StandardStream {
 		return set;
 	}
 
+	enableEmittingDataOnStandardOutputStream() {
+		this.emitDataOnStandardOutputStream = true;
+	}
+
+	disableEmittingDataOnStandardOutputStream() {
+		this.emitDataOnStandardOutputStream = false;
+	}
+
 	enableMouseInputEvents() {
 		this.mouseInputEventsEnabled = true;
 
@@ -80,29 +90,33 @@ class StandardInputStream extends StandardStream {
 			
 			// Loop through each mouse input code and handle it
 			mouseInputEventCodes.each(function(mouseInputEventCodeIndex, mouseInputEventCode) {
+				// console.log(mouseInputEventCode);
+
 				// Make sure we are working with a mouse specific code
 				if(
 					mouseInputEventCode !== '' && // Make sure the code is not an empty string
 					(mouseInputEventCode.endsWith('M') || mouseInputEventCode.endsWith('m')) // And the code ends with an M or m
 				) {
 					let mouseInputEventCodeParts = this.handleMouseInputEventCode(mouseInputEventCode);
-					let event = this.createMouseInputEventFromCodeParts(mouseInputEventCodeParts);
-					this.emit(event.identifier, event);
-
-					// Terminal.moveCursorTo(1, 1);
-					// Terminal.clearLine();
-					// Terminal.writeLine(Json.encode(event));
+					let mouseInputEvent = this.createMouseInputEventFromCodeParts(mouseInputEventCodeParts);
+					this.emit(mouseInputEvent.identifier, mouseInputEvent);
 				}
 			}.bind(this));
 		}
 		// Handle key input events
 		else {
-			// let keyInputEvent = this.handleKeyInputEvent(data);
-			// this.emit(keyInputEvent.identifier, keyInputEvent);
+			// Emit input.key.* events
+			this.emitKeyboardInputEventFromData(data);
 
-			// Emit a data event
-			this.emit('data', data);
-		}		
+			// Emit a data event on standard out if enabled
+			if(this.emitDataOnStandardOutputStream) {
+				this.emit('data', data);
+			}
+			// If we are blocking data events on standard out, we still need to allow ctrl+c (SIGINT)
+			else if(data === '\x03') {
+				this.emit('data', data);
+			}
+		}
 	}
 
 	handleMouseInputEventCode(mouseInputEventCode) {
@@ -128,103 +142,101 @@ class StandardInputStream extends StandardStream {
 			y: Number.toInteger(mouseInputEventCodePartsArray[2]),
 		};
 
+		// console.log(mouseInputEventCodeParts);
+
 		return mouseInputEventCodeParts;
 	}
 
 	createMouseInputEventFromCodeParts(mouseInputEventCodeParts) {
 		// Determine which event we are going to fire
-		let event = null;
+		let mouseInputEvent = null;
 
 		// Scrolling
 		if(mouseInputEventCodeParts.scroll) {
-			event = new StandardInputScrollEvent();
+			mouseInputEvent = new StandardInputScrollEvent();
 		}
 		// Dragging
 		else if(mouseInputEventCodeParts.move && mouseInputEventCodeParts.button !== 3) {
-			event = new StandardInputDragEvent();
+			mouseInputEvent = new StandardInputDragEvent();
 		}
 		// Moving
 		else if(mouseInputEventCodeParts.move) {
-			event = new StandardInputHoverEvent();
+			mouseInputEvent = new StandardInputHoverEvent();
 		}
 		// Pressing
 		else {
 			// Use a press event
-			event = new StandardInputPressEvent();
+			mouseInputEvent = new StandardInputPressEvent();
 		}
 
 		// Modifier keys down
-		event.modifierKeysDown.alt = mouseInputEventCodeParts.altDown, // true if the alt key was down when the mouse event was emitted
-		event.modifierKeysDown.control = mouseInputEventCodeParts.controlDown, // true if the control key was down when the mouse event was emitted
-		event.modifierKeysDown.shift = mouseInputEventCodeParts.shiftDown, // true if the shift key was down when the mouse event was emitted
+		mouseInputEvent.modifierKeysDown.alt = mouseInputEventCodeParts.altDown, // true if the alt key was down when the mouse event was emitted
+		mouseInputEvent.modifierKeysDown.control = mouseInputEventCodeParts.controlDown, // true if the control key was down when the mouse event was emitted
+		mouseInputEvent.modifierKeysDown.shift = mouseInputEventCodeParts.shiftDown, // true if the shift key was down when the mouse event was emitted
 
 		// Position
-		event.position.x = mouseInputEventCodeParts.x;
-		event.position.y = mouseInputEventCodeParts.y;
+		mouseInputEvent.position.x = mouseInputEventCodeParts.x;
+		mouseInputEvent.position.y = mouseInputEventCodeParts.y;
 
 		// Parse which button is involved in the event
 		if(mouseInputEventCodeParts.button == 0x0) {
-			event.button = 1;
+			mouseInputEvent.button = 1;
+		}
+		else if(mouseInputEventCodeParts.button == 0x1) {
+			mouseInputEvent.button = 3;
 		}
 		else if(mouseInputEventCodeParts.button == 0x2) {
-			event.button = 2;
+			mouseInputEvent.button = 2;
 		}
 
 		// Scroll events
 		if(mouseInputEventCodeParts.scroll) {
 			if(mouseInputEventCodeParts.button == 0x0) {
-				event.direction = 'up';
-				event.identifier = 'input.scroll.up';
+				mouseInputEvent.direction = 'up';
+				mouseInputEvent.identifier = 'input.scroll.up';
 			}
 			else {
-				event.direction = 'down';
-				event.identifier = 'input.scroll.down';
+				mouseInputEvent.direction = 'down';
+				mouseInputEvent.identifier = 'input.scroll.down';
 			}
 
 			// Clear event.button
-			event.button = null;
+			mouseInputEvent.button = null;
 		}
 		// Drag events
 		else if(mouseInputEventCodeParts.move && mouseInputEventCodeParts.button !== 3) {
-			event.identifier = 'input.drag';
+			mouseInputEvent.identifier = 'input.drag';
 		}
 		// Move events
 		else if(mouseInputEventCodeParts.move) {
-			event.identifier = 'input.hover';
+			mouseInputEvent.identifier = 'input.hover';
 		}
 		// Press events
 		else {
-			event.identifier = 'input.press';
+			mouseInputEvent.identifier = 'input.press';
 
 			// Handle button presses which aren't the first button on the mouse
-			if(event.button !== 1) {
-				event.identifier += '.'+StandardInputPressEvent.buttonMap[event.button];
+			if(mouseInputEvent.button !== 1) {
+				mouseInputEvent.identifier += '.'+StandardInputPressEvent.buttonMap[mouseInputEvent.button];
 			}
 
 			// Handle down and up states
 			if(mouseInputEventCodeParts.boolean) {
-				event.identifier += '.down';
+				mouseInputEvent.identifier += '.down';
 			}
 			else {
-				event.identifier += '.up';
+				mouseInputEvent.identifier += '.up';
 			}
 		}
 		
-		return event;
+		return mouseInputEvent;
 	}
 
-	handleKeyInputEvent(data) {
-		let inputEvent = {
-			key: null,
-			code: null,
-			modifierKeysDown: {
-				alt: null, // true if the alt key was down
-				control: null, // true if the control key was down
-				meta: null, // true if the windows key or command key was down 
-				shift: null, // true if the shift key was down
-			},
-			sequence: data,
-		};
+	emitKeyboardInputEventFromData(data) {
+		console.log('data', data);
+
+		let keyboardInputEvent = new StandardInputKeyEvent();
+		keyboardInputEvent.identifier = 'input.key';
 		let parts = null;
 
 		// // If the data is a buffer, convert it to a string
@@ -240,50 +252,59 @@ class StandardInputStream extends StandardStream {
 
 		// Carriage return
 		if(data === '\r') {
-    		inputEvent.key = 'return';
+    		keyboardInputEvent.key = 'enter';
   		}
 		// Enter, should have been called linefeed
   		else if(data === '\n') {
-    		inputEvent.key = 'enter';
+    		keyboardInputEvent.key = 'enter';
   		}
 		// Tab
   		else if(data === '\t') {
-    		inputEvent.key = 'tab';
+    		keyboardInputEvent.key = 'tab';
   		}
 		// Backspace or ctrl+h
   		else if(data === '\b' || data === '\x7f' || data === '\x1b\x7f' || data === '\x1b\b') {
-    		inputEvent.key = 'backspace';
-    		inputEvent.modifierKeysDown.meta = (data.charAt(0) === '\x1b');
+    		keyboardInputEvent.key = 'backspace';
+    		keyboardInputEvent.modifierKeysDown.meta = (data.charAt(0) === '\x1b');
   		}
 		// Escape
 		else if(data === '\x1b' || data === '\x1b\x1b') {
-    		inputEvent.key = 'escape';
-    		inputEvent.modifierKeysDown.meta = (data.length === 2);
+    		keyboardInputEvent.key = 'escape';
+    		keyboardInputEvent.modifierKeysDown.meta = (data.length === 2);
 		}
 		// Space
 		else if(data === ' ' || data === '\x1b ') {
-			inputEvent.key = 'space';
-			inputEvent.modifierKeysDown.meta = (data.length === 2);
+			keyboardInputEvent.key = 'space';
+			keyboardInputEvent.modifierKeysDown.meta = (data.length === 2);
 		}
 		// Ctrl + character
 		else if(data <= '\x1a') {
-			inputEvent.key = String.fromCharCode(data.charCodeAt(0) + 'a'.charCodeAt(0) - 1);
-			inputEvent.modifierKeysDown.control = true;
-		}
-		// Lowercase character
-		else if(data.length === 1 && data >= 'a' && data <= 'z') {
-			inputEvent.key = data;
+			keyboardInputEvent.key = String.fromCharCode(data.charCodeAt(0) + 'a'.charCodeAt(0) - 1);
+			keyboardInputEvent.modifierKeysDown.control = true;
 		}
 		// Shift + character
 		else if(data.length === 1 && data >= 'A' && data <= 'Z') {
-			inputEvent.key = data.toLowerCase();
-			inputEvent.modifierKeysDown.shift = true;
+			keyboardInputEvent.key = data;
+			keyboardInputEvent.modifierKeysDown.shift = true;
+		}
+		// Lowercase character
+		else if(data.length === 1 && data >= 'a' && data <= 'z') {
+			keyboardInputEvent.key = data;
+		}
+		else if(data.length === 1) {
+			let keyTitle = InputKeyEvent.keyTitleMap[data];
+			if(keyTitle) {
+				keyboardInputEvent.key = keyTitle;
+			}
+			else {
+				keyboardInputEvent.key = data;
+			}
 		}
 		// Meta + character 
 		else if(parts = StandardInputStream.metaKeyCodeRegularExpression.exec(data)) {
-			inputEvent.key = parts[1].toLowerCase();
-			inputEvent.modifierKeysDown.meta = true;
-			inputEvent.modifierKeysDown.shift = /^[A-Z]$/.test(parts[1]);
+			keyboardInputEvent.key = parts[1].toLowerCase();
+			keyboardInputEvent.modifierKeysDown.meta = true;
+			keyboardInputEvent.modifierKeysDown.shift = /^[A-Z]$/.test(parts[1]);
 		}
 		// ANSI escape sequence
 		else if(parts = StandardInputStream.functionKeyCodeRegularExpression.exec(data)) {
@@ -292,116 +313,121 @@ class StandardInputStream extends StandardStream {
 			let modifier = (parts[3] || parts[5] || 1) - 1;
 
 			// Parse the key modifier
-			inputEvent.modifierKeysDown.control = !!(modifier & 4);
-			inputEvent.modifierKeysDown.meta = !!(modifier & 10);
-			inputEvent.modifierKeysDown.shift = !!(modifier & 1);
-			inputEvent.code = code;
+			keyboardInputEvent.modifierKeysDown.control = !!(modifier & 4);
+			keyboardInputEvent.modifierKeysDown.meta = !!(modifier & 10);
+			keyboardInputEvent.modifierKeysDown.shift = !!(modifier & 1);
+			keyboardInputEvent.code = code;
 
 			// Parse the key itself
 			switch(code) {
 				/* xterm/gnome ESC O letter */
-				case 'OP': inputEvent.key = 'f1'; break;
-				case 'OQ': inputEvent.key = 'f2'; break;
-				case 'OR': inputEvent.key = 'f3'; break;
-				case 'OS': inputEvent.key = 'f4'; break;
+				case 'OP': keyboardInputEvent.key = 'f1'; break;
+				case 'OQ': keyboardInputEvent.key = 'f2'; break;
+				case 'OR': keyboardInputEvent.key = 'f3'; break;
+				case 'OS': keyboardInputEvent.key = 'f4'; break;
 
 				/* xterm/rxvt ESC [ number ~ */
-				case '[11~': inputEvent.key = 'f1'; break;
-				case '[12~': inputEvent.key = 'f2'; break;
-				case '[13~': inputEvent.key = 'f3'; break;
-				case '[14~': inputEvent.key = 'f4'; break;
+				case '[11~': keyboardInputEvent.key = 'f1'; break;
+				case '[12~': keyboardInputEvent.key = 'f2'; break;
+				case '[13~': keyboardInputEvent.key = 'f3'; break;
+				case '[14~': keyboardInputEvent.key = 'f4'; break;
 
 				/* from Cygwin and used in libuv */
-				case '[[A': inputEvent.key = 'f1'; break;
-				case '[[B': inputEvent.key = 'f2'; break;
-				case '[[C': inputEvent.key = 'f3'; break;
-				case '[[D': inputEvent.key = 'f4'; break;
-				case '[[E': inputEvent.key = 'f5'; break;
+				case '[[A': keyboardInputEvent.key = 'f1'; break;
+				case '[[B': keyboardInputEvent.key = 'f2'; break;
+				case '[[C': keyboardInputEvent.key = 'f3'; break;
+				case '[[D': keyboardInputEvent.key = 'f4'; break;
+				case '[[E': keyboardInputEvent.key = 'f5'; break;
 
 				/* common */
-				case '[15~': inputEvent.key = 'f5'; break;
-				case '[17~': inputEvent.key = 'f6'; break;
-				case '[18~': inputEvent.key = 'f7'; break;
-				case '[19~': inputEvent.key = 'f8'; break;
-				case '[20~': inputEvent.key = 'f9'; break;
-				case '[21~': inputEvent.key = 'f10'; break;
-				case '[23~': inputEvent.key = 'f11'; break;
-				case '[24~': inputEvent.key = 'f12'; break;
+				case '[15~': keyboardInputEvent.key = 'f5'; break;
+				case '[17~': keyboardInputEvent.key = 'f6'; break;
+				case '[18~': keyboardInputEvent.key = 'f7'; break;
+				case '[19~': keyboardInputEvent.key = 'f8'; break;
+				case '[20~': keyboardInputEvent.key = 'f9'; break;
+				case '[21~': keyboardInputEvent.key = 'f10'; break;
+				case '[23~': keyboardInputEvent.key = 'f11'; break;
+				case '[24~': keyboardInputEvent.key = 'f12'; break;
 
 				/* xterm ESC [ letter */
-				case '[A': inputEvent.key = 'up'; break;
-				case '[B': inputEvent.key = 'down'; break;
-				case '[C': inputEvent.key = 'right'; break;
-				case '[D': inputEvent.key = 'left'; break;
-				case '[E': inputEvent.key = 'clear'; break;
-				case '[F': inputEvent.key = 'end'; break;
-				case '[H': inputEvent.key = 'home'; break;
+				case '[A': keyboardInputEvent.key = 'up'; break;
+				case '[B': keyboardInputEvent.key = 'down'; break;
+				case '[C': keyboardInputEvent.key = 'right'; break;
+				case '[D': keyboardInputEvent.key = 'left'; break;
+				case '[E': keyboardInputEvent.key = 'clear'; break;
+				case '[F': keyboardInputEvent.key = 'end'; break;
+				case '[H': keyboardInputEvent.key = 'home'; break;
 
 				/* xterm/gnome ESC O letter */
-				case 'OA': inputEvent.key = 'up'; break;
-				case 'OB': inputEvent.key = 'down'; break;
-				case 'OC': inputEvent.key = 'right'; break;
-				case 'OD': inputEvent.key = 'left'; break;
-				case 'OE': inputEvent.key = 'clear'; break;
-				case 'OF': inputEvent.key = 'end'; break;
-				case 'OH': inputEvent.key = 'home'; break;
+				case 'OA': keyboardInputEvent.key = 'up'; break;
+				case 'OB': keyboardInputEvent.key = 'down'; break;
+				case 'OC': keyboardInputEvent.key = 'right'; break;
+				case 'OD': keyboardInputEvent.key = 'left'; break;
+				case 'OE': keyboardInputEvent.key = 'clear'; break;
+				case 'OF': keyboardInputEvent.key = 'end'; break;
+				case 'OH': keyboardInputEvent.key = 'home'; break;
 
 				/* xterm/rxvt ESC [ number ~ */
-				case '[1~': inputEvent.key = 'home'; break;
-				case '[2~': inputEvent.key = 'insert'; break;
-				case '[3~': inputEvent.key = 'delete'; break;
-				case '[4~': inputEvent.key = 'end'; break;
-				case '[5~': inputEvent.key = 'pageUp'; break;
-				case '[6~': inputEvent.key = 'pageDown'; break;
+				case '[1~': keyboardInputEvent.key = 'home'; break;
+				case '[2~': keyboardInputEvent.key = 'insert'; break;
+				case '[3~': keyboardInputEvent.key = 'delete'; break;
+				case '[4~': keyboardInputEvent.key = 'end'; break;
+				case '[5~': keyboardInputEvent.key = 'pageUp'; break;
+				case '[6~': keyboardInputEvent.key = 'pageDown'; break;
 
 				/* putty */
-				case '[[5~': inputEvent.key = 'pageUp'; break;
-				case '[[6~': inputEvent.key = 'pageDown'; break;
+				case '[[5~': keyboardInputEvent.key = 'pageUp'; break;
+				case '[[6~': keyboardInputEvent.key = 'pageDown'; break;
 
 				/* rxvt */
-				case '[7~': inputEvent.key = 'home'; break;
-				case '[8~': inputEvent.key = 'end'; break;
+				case '[7~': keyboardInputEvent.key = 'home'; break;
+				case '[8~': keyboardInputEvent.key = 'end'; break;
 
 				/* rxvt keys with modifiers */
-				case '[a': inputEvent.key = 'up'; inputEvent.modifierKeysDown.shift = true; break;
-				case '[b': inputEvent.key = 'down'; inputEvent.modifierKeysDown.shift = true; break;
-				case '[c': inputEvent.key = 'right'; inputEvent.modifierKeysDown.shift = true; break;
-				case '[d': inputEvent.key = 'left'; inputEvent.modifierKeysDown.shift = true; break;
-				case '[e': inputEvent.key = 'clear'; inputEvent.modifierKeysDown.shift = true; break;
+				case '[a': keyboardInputEvent.key = 'up'; keyboardInputEvent.modifierKeysDown.shift = true; break;
+				case '[b': keyboardInputEvent.key = 'down'; keyboardInputEvent.modifierKeysDown.shift = true; break;
+				case '[c': keyboardInputEvent.key = 'right'; keyboardInputEvent.modifierKeysDown.shift = true; break;
+				case '[d': keyboardInputEvent.key = 'left'; keyboardInputEvent.modifierKeysDown.shift = true; break;
+				case '[e': keyboardInputEvent.key = 'clear'; keyboardInputEvent.modifierKeysDown.shift = true; break;
 
-				case '[2$': inputEvent.key = 'insert'; inputEvent.modifierKeysDown.shift = true; break;
-				case '[3$': inputEvent.key = 'delete'; inputEvent.modifierKeysDown.shift = true; break;
-				case '[5$': inputEvent.key = 'pageUp'; inputEvent.modifierKeysDown.shift = true; break;
-				case '[6$': inputEvent.key = 'pageDown'; inputEvent.modifierKeysDown.shift = true; break;
-				case '[7$': inputEvent.key = 'home'; inputEvent.modifierKeysDown.shift = true; break;
-				case '[8$': inputEvent.key = 'end'; inputEvent.modifierKeysDown.shift = true; break;
+				case '[2$': keyboardInputEvent.key = 'insert'; keyboardInputEvent.modifierKeysDown.shift = true; break;
+				case '[3$': keyboardInputEvent.key = 'delete'; keyboardInputEvent.modifierKeysDown.shift = true; break;
+				case '[5$': keyboardInputEvent.key = 'pageUp'; keyboardInputEvent.modifierKeysDown.shift = true; break;
+				case '[6$': keyboardInputEvent.key = 'pageDown'; keyboardInputEvent.modifierKeysDown.shift = true; break;
+				case '[7$': keyboardInputEvent.key = 'home'; keyboardInputEvent.modifierKeysDown.shift = true; break;
+				case '[8$': keyboardInputEvent.key = 'end'; keyboardInputEvent.modifierKeysDown.shift = true; break;
 
-				case 'Oa': inputEvent.key = 'up'; inputEvent.modifierKeysDown.control = true; break;
-				case 'Ob': inputEvent.key = 'down'; inputEvent.modifierKeysDown.control = true; break;
-				case 'Oc': inputEvent.key = 'right'; inputEvent.modifierKeysDown.control = true; break;
-				case 'Od': inputEvent.key = 'left'; inputEvent.modifierKeysDown.control = true; break;
-				case 'Oe': inputEvent.key = 'clear'; inputEvent.modifierKeysDown.control = true; break;
+				case 'Oa': keyboardInputEvent.key = 'up'; keyboardInputEvent.modifierKeysDown.control = true; break;
+				case 'Ob': keyboardInputEvent.key = 'down'; keyboardInputEvent.modifierKeysDown.control = true; break;
+				case 'Oc': keyboardInputEvent.key = 'right'; keyboardInputEvent.modifierKeysDown.control = true; break;
+				case 'Od': keyboardInputEvent.key = 'left'; keyboardInputEvent.modifierKeysDown.control = true; break;
+				case 'Oe': keyboardInputEvent.key = 'clear'; keyboardInputEvent.modifierKeysDown.control = true; break;
 
-				case '[2^': inputEvent.key = 'insert'; inputEvent.modifierKeysDown.control = true; break;
-				case '[3^': inputEvent.key = 'delete'; inputEvent.modifierKeysDown.control = true; break;
-				case '[5^': inputEvent.key = 'pageUp'; inputEvent.modifierKeysDown.control = true; break;
-				case '[6^': inputEvent.key = 'pageDown'; inputEvent.modifierKeysDown.control = true; break;
-				case '[7^': inputEvent.key = 'home'; inputEvent.modifierKeysDown.control = true; break;
-				case '[8^': inputEvent.key = 'end'; inputEvent.modifierKeysDown.control = true; break;
+				case '[2^': keyboardInputEvent.key = 'insert'; keyboardInputEvent.modifierKeysDown.control = true; break;
+				case '[3^': keyboardInputEvent.key = 'delete'; keyboardInputEvent.modifierKeysDown.control = true; break;
+				case '[5^': keyboardInputEvent.key = 'pageUp'; keyboardInputEvent.modifierKeysDown.control = true; break;
+				case '[6^': keyboardInputEvent.key = 'pageDown'; keyboardInputEvent.modifierKeysDown.control = true; break;
+				case '[7^': keyboardInputEvent.key = 'home'; keyboardInputEvent.modifierKeysDown.control = true; break;
+				case '[8^': keyboardInputEvent.key = 'end'; keyboardInputEvent.modifierKeysDown.control = true; break;
 
-				/* misc. */
-				case '[Z': inputEvent.key = 'tab'; inputEvent.modifierKeysDown.shift = true; break;
-				default: inputEvent.key = 'undefined'; break;
+				case '[Z': keyboardInputEvent.key = 'tab'; keyboardInputEvent.modifierKeysDown.shift = true; break;
+				default: keyboardInputEvent.key = 'undefined'; break;
 			}
 		}
 		// Got a longer-than-one string of characters. Probably a paste, since it wasn't a control sequence.
 		else if(data.length > 1 && data[0] !== '\x1b') {
 			Array.prototype.forEach.call(data, function(subData) {
-				this.handleKeyInputEvent(subData);
+				console.log('got multiple keys in a single data event!');
+				this.emitKeyboardInputEventFromData(subData);
 			}.bind(this));
 
 			return;
-		}		
+		}
+
+		// Update the event identifier
+		keyboardInputEvent.identifier += '.'+keyboardInputEvent.key;
+
+		this.emit(keyboardInputEvent.identifier, keyboardInputEvent);
 	}
 
 	/*

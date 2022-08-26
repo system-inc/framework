@@ -38,8 +38,10 @@ class Terminal {
     }
 
     static eraseDisplay() {
-        app.standardStreams.output.write('\x1b[2J\x1b[0f');
-        // app.standardStreams.output.write('\x1b[2J');
+        app.standardStreams.output.write('\x1b[2J');
+        // app.standardStreams.output.write('\x1b[3J'); // Clear the screen and the scroll-back buffer
+        // app.standardStreams.output.write('\x1b[2J\x1b[0f');
+        // app.standardStreams.output.write('\x1bc');
     }
 
     static write() {
@@ -51,17 +53,6 @@ class Terminal {
     }
 
     static clear = Terminal.reset = Terminal.eraseDisplay;
-
-    static manualClear() {
-        let height = Terminal.getHeight();
-        let width = Terminal.getWidth();
-        for(let i = 0; i < height; i++) {
-            for(let j = 0; j < width; j++) {
-                Terminal.moveCursorTo(j, i);
-                Terminal.write(' ');
-            }
-        }
-    }
 
     static clearLine() {
         app.standardStreams.output.write('\x1b[2K');
@@ -117,6 +108,14 @@ class Terminal {
 
     static scrollUp(distance = 1) {
     	app.standardStreams.output.write('\x1b['+distance+'S');
+    }
+
+    static enableAlternateScreenBuffer() {
+    	app.standardStreams.output.write('\x1b[?47h');
+    }
+
+    static disableAlternateScreenBuffer() {
+    	app.standardStreams.output.write('\x1b[?47l');
     }
 
     // Relative cursor move
