@@ -315,12 +315,12 @@ class App extends EventEmitter {
 			this.standardStreamsFileLog = new FileLog(standardStreamsFileLogSettings.directory, standardStreamsFileLogSettings.nameWithoutExtension);
 
 			// Hook up standard output to the file log
-			this.standardStreams.output.on('stream.data', function(event) {
+			this.standardStreams.output.on('data', function(event) {
 				this.standardStreamsFileLog.log(event.data);
 			}.bind(this));
 
 			// Hook up standard error to the file log
-			this.standardStreams.error.on('stream.data', function(event) {
+			this.standardStreams.error.on('data', function(event) {
 				this.standardStreamsFileLog.error(event.data);
 			}.bind(this));
 

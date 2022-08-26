@@ -13,7 +13,7 @@ class InputKeyEvent extends HtmlElementEvent {
 	// If the key is being held down
 	keyHeldDown = null;
 
-	// InputKey keys down when the mouse event was emitted
+	// InputKey keys down when the event was emitted
 	modifierKeysDown = {
 		alt: null, // true if the alt key was down
 		control: null, // true if the control key was down

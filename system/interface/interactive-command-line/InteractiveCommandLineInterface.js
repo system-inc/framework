@@ -34,7 +34,7 @@ class InteractiveCommandLineInterface extends Interface {
 		}
 
 		// Capture the standard stream input data
-		app.standardStreams.input.on('stream.data', function(event) {
+		app.standardStreams.input.on('data', function(event) {
 			//app.log('standard input stream data event', event.data);
 			this.handleStandardInputStreamData(event.data);
 		}.bind(this));

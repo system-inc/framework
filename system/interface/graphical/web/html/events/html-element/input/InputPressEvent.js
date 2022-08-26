@@ -12,6 +12,14 @@ class InputPressEvent extends HtmlElementEvent {
 		meta: null, // true if the meta key was down when the mouse event was emitted
 		shift: null, // true if the shift key was down when the mouse event was emitted
 	};
+	
+	// The button number that was pressed when the mouse event was emitted
+	// 1: Main button pressed, usually the left button or the un-initialized state
+	// 2: Secondary button pressed, usually the right button
+	// 3: Auxiliary button pressed, usually the wheel button or the middle button (if present)
+	// 4: Fourth button, typically the Browser Back button
+	// 5: Fifth button, typically the Browser Forward button
+	button = null;
 
 	// InputPress buttons down when the mouse event was emitted
 	buttonsDown = {
@@ -21,14 +29,6 @@ class InputPressEvent extends HtmlElementEvent {
 		4: null,
 		5: null,
 	};
-
-	// The button number that was pressed when the mouse event was emitted
-	// 1: Main button pressed, usually the left button or the un-initialized state
-	// 2: Secondary button pressed, usually the right button
-	// 3: Auxiliary button pressed, usually the wheel button or the middle button (if present)
-	// 4: Fourth button, typically the Browser Back button
-	// 5: Fifth button, typically the Browser Forward button
-	button = null;
 
 	position = {
 		relativeToEmitter: {

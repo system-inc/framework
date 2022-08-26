@@ -14,6 +14,7 @@ import OperatingSystem from 'os';
 import Path from 'path';
 import Readline from 'readline';
 import Stream from 'stream';
+import StringDecoder from 'string_decoder'
 import Url from 'url';
 import Utility from 'util';
 import Zlib from 'zlib';
@@ -43,6 +44,7 @@ class Node {
 	static StandardIn = process.stdin;
 	static StandardOut = process.stdout;
 	static Stream = Stream;
+	static StringDecoder = StringDecoder.StringDecoder;
 	static Url = Url;
 	static Utility = Utility;
 	static Zlib = Zlib;

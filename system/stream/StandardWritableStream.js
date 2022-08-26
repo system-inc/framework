@@ -15,8 +15,8 @@ class StandardWritableStream extends StandardStream {
 
 		// Hook the stream's write method
 		this.nodeStream.write = function(chunk, encoding, callback) {
-			// Emit the stream.data event
-			this.emit('stream.data', chunk);
+			// Emit the data event
+			this.emit('data', chunk);
 
 			// Call the standard write method
 			this.nodeStreamStandardWrite.call(this.nodeStream, chunk, encoding, callback);

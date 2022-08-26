@@ -28,13 +28,13 @@ class PseudorandomNumberGeneratorTest extends Test {
 		Assert.equal(randomNumber5, 977643, 'Fifth random number for seed seed1');
 
 		let randomNumber6 = psuedoRandomNumberGenerator.randomNumber(0, 0, 16);
-		Assert.equal(randomNumber6, '0.6721336717853889', 'Sixth random number for seed seed1');
+		Assert.equal(randomNumber6, '0.0364364393575188', 'Sixth random number for seed seed1');
 
 		let randomNumber7 = psuedoRandomNumberGenerator.randomNumber(0, 1000000, 16);
-		Assert.equal(randomNumber7, '9408.983177450142', 'Sixth random number for seed seed1');
+		Assert.equal(randomNumber7, '9408.53298156369', 'Sixth random number for seed seed1');
 
 		let randomNumber8 = psuedoRandomNumberGenerator.randomNumber(1, 10, 1);
-		Assert.equal(randomNumber8, '4.1', 'Seventh random number for seed seed1');
+		Assert.equal(randomNumber8, '4.9', 'Seventh random number for seed seed1');
 	}
 
 	async testMultipleSeeds() {
@@ -52,9 +52,9 @@ class PseudorandomNumberGeneratorTest extends Test {
 
 		// Create the third psuedorandom number generator with a different seed
 		let psuedoRandomNumberGenerator3 = new PseudorandomNumberGenerator('Seed B');
-		let randomNumber3a = psuedoRandomNumberGenerator2.randomNumber(0, 1000000);
-		let randomNumber3b = psuedoRandomNumberGenerator2.randomNumber(0, 1000000);
-		let randomNumber3c = psuedoRandomNumberGenerator2.randomNumber(0, 1000000);
+		let randomNumber3a = psuedoRandomNumberGenerator3.randomNumber(0, 1000000);
+		let randomNumber3b = psuedoRandomNumberGenerator3.randomNumber(0, 1000000);
+		let randomNumber3c = psuedoRandomNumberGenerator3.randomNumber(0, 1000000);
 
 		// Make sure numbers are the same
 		Assert.equal(randomNumber1a, randomNumber2a, 'First random number matches for same seed');
@@ -126,6 +126,24 @@ class PseudorandomNumberGeneratorTest extends Test {
 		Assert.equal(trueCount / samples, 0.5, 'True count is close to 50%');
 	}
 
+	async testFloatRandomness() {
+		// Create the psuedorandom number generator
+		const pseudorandomNumberGenerator = new PseudorandomNumberGenerator('starseed3');
+		let samples = 100000;
+		let data = [];
+
+		// Gather the samples
+		for(let i = 0; i < samples; i++) {
+			data.push([
+				pseudorandomNumberGenerator.randomNumber(0, 0, 16),
+				pseudorandomNumberGenerator.randomNumber(0, 0, 16),
+			]);
+		}
+
+		// Graph
+		AsciiChart.draw(data);
+	}
+
 	async testNormalDistribution() {
 		// A convenience method to get occurences of values
 		let getOccurrences = function(psuedoRandomNumberGenerator, samples = 100, minimum = 0, maximum = 10) {
@@ -150,7 +168,7 @@ class PseudorandomNumberGeneratorTest extends Test {
 		Assert.equal(occurrences[4], 23, 'Occurrences of 4 is 23');
 		Assert.equal(occurrences[5], 44, 'Occurrences of 5 is 44');
 
-		// // Test graphs
+		// Test graphs
 		// occurrences = getOccurrences(new PseudorandomNumberGenerator('Seed A'), 10000, 0, 100);
 		// // console.table(occurrences);
 		// AsciiChart.draw(occurrences, {

@@ -25,28 +25,28 @@ class Terminal {
     	return string;
     }
 
-    static width() {
-    	var width;
-
-    	if(app.standardStreams.output.getWindowSize) {
-    		width = app.standardStreams.output.getWindowSize()[0];
-    	}
-
-    	return width;
+    static getWidth() {
+    	return app.standardStreams.output.getWindowDimensions().width;
     }
 
-    static height() {
-    	var height;
+    static getHeight() {
+        return app.standardStreams.output.getWindowDimensions().height;
+    }
 
-    	if(app.standardStreams.output.getWindowSize) {
-    		height = app.standardStreams.output.getWindowSize()[1];
-    	}
-
-    	return height;
+    static getDimensions() {
+        return app.standardStreams.output.getWindowDimensions();
     }
 
     static eraseDisplay() {
         app.standardStreams.output.write('\x1b[2J\x1b[0f');
+    }
+
+    static write() {
+        app.standardStreams.output.write(...arguments);
+    }
+
+    static writeLine() {
+        app.standardStreams.output.writeLine(...arguments);
     }
 
     static clear = Terminal.reset = Terminal.eraseDisplay;
@@ -73,7 +73,6 @@ class Terminal {
         if(distance) {
             app.standardStreams.output.write('\x1b['+distance+'B');
         }
-    	
     }
 
     static cursorLeft(distance = 1) {
@@ -108,6 +107,7 @@ class Terminal {
     	app.standardStreams.output.write('\x1b['+distance+'S');
     }
 
+    // Relative cursor move
     static moveCursor(x, y) {
     	// Move left or right
     	if(x > 0) {
@@ -126,6 +126,7 @@ class Terminal {
     	}
     }
 
+    // Absolute cursor move
     static moveCursorTo(x, y) {
     	app.standardStreams.output.write('\x1b[' + y + ';' + x + 'H');
     }

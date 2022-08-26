@@ -62,8 +62,8 @@ class PseudorandomNumberGenerator {
 
         // If we need precision, we need another random number (we do not steal randomness from the previous random number)
         if(precision > 0) {
-            let randomDecimals = this.random().toString().substring(0, precision);
-            randomNumber = Number(randomNumber.toString() + '.' + randomDecimals);
+            let randomDecimals = Number(this.random()) / Number(PseudorandomNumberGenerator.modulus);
+            randomNumber = Number(randomNumber.toString() + '.' + randomDecimals.toString().substring(2, precision+2));
         }
 
         return randomNumber;
