@@ -57,13 +57,19 @@ class PseudorandomNumberGenerator {
         // Divide the random number by the modulus to get a percentage
         randomNumber = Number(randomNumber) / Number(PseudorandomNumberGenerator.modulus);
 
-        // Apply the percentage to the range to get a number between the minimum and maximum (inclusive)
+        // Apply the range to get a number between the minimum and maximum (inclusive)
         randomNumber = Math.floor((maximum + 1 - minimum) * randomNumber) + minimum;
 
         // If we need precision, we need another random number (we do not steal randomness from the previous random number)
         if(precision > 0) {
-            let randomDecimals = Number(this.random()) / Number(PseudorandomNumberGenerator.modulus);
-            randomNumber = Number(randomNumber.toString() + '.' + randomDecimals.toString().substring(2, precision+2));
+            let randomForDecimals = this.random();
+            let randomDecimals = Number(randomForDecimals) / Number(PseudorandomNumberGenerator.modulus);
+
+            let leftOfDecimal = randomNumber.toString();
+            let rightOfDecimal = randomDecimals.toFixed(precision);
+            rightOfDecimal = rightOfDecimal.substring(2);
+
+            randomNumber = Number(leftOfDecimal+'.'+rightOfDecimal);
         }
 
         return randomNumber;

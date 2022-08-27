@@ -1,53 +1,62 @@
 // Dependencies
-import { Statistics } from '@framework/system/statistics/Statistics.js';
+import { AsciiBox } from '@framework/system/ascii/AsciiBox.js';
 
 // Class
 class AsciiChart {
 
-    static draw(points, options = {}, chartType = 'bar') {
-        // Convert an object of points into an array
-        if(Object.is(points)) {
-            points = points.toArray();
-        }
-        // console.log('points', points);
-        
-        // Merge the chosen options on top of the default options
-        options = {
-            title: null, // A caption to display above the chart
-            color: 'cyan', // The color of the chart
-            gridColor: 'gray', // The color of the grid
-            width: 100,
-            height: 24,
-            minimumX: null, 
-            maximumX: null,
-            minimumY: null, // The minimum y value for the chart (negative values not supported)
-            maximumY: null,
-            xLabelPrecision: null, // Number of decimals for x labels
-            yLabelPrecision: null, // Number of decimals for y labels
-        }.merge(options);
-        // console.log('options', options);
-        
+    data = null;
+    title = null; // A caption to display above the chart
+    titleAlignment = 'center';
+    color = 'cyan'; // The color of the chart
+    gridColor = 'gray'; // The color of the grid
+    width = 100;
+    height = 24;
+    minimumX = null; 
+    maximumX = null;
+    minimumY = null; // The minimum y value for the chart (negative values not supported)
+    maximumY = null;
+    xLabelPrecision = null; // Number of decimals for x labels
+    yLabelPrecision = null; // Number of decimals for y labels
+
+    constructor(data, options = {}) {
+        this.setData(data);
+
+        if(options.title) { this.title = options.title; }
+        if(options.titleAlignment) { this.titleAlignment = options.titleAlignment; }
+        if(options.color) { this.color = options.color; }
+        if(options.gridColor) { this.gridColor = options.gridColor; }
+        if(options.width) { this.width = options.width; }
+        if(options.height) { this.height = options.height; }
+        if(options.minimumX) { this.minimumX = options.minimumX; }
+        if(options.maximumX) { this.maximumX = options.maximumX; }
+        if(options.minimumY) { this.minimumY = options.minimumY; }
+        if(options.maximumY) { this.maximumY = options.maximumY; }
+        if(options.xLabelPrecision) { this.xLabelPrecision = options.xLabelPrecision; }
+        if(options.yLabelPrecision) { this.yLabelPrecision = options.yLabelPrecision; }
+    }
+
+    draw() {
         // Get the range meta data
-        const rangeMeta = AsciiChart.rangeMetaFromPoints(points);
+        const rangeMeta = AsciiChart.rangeMetaFromPoints(this.data);
         // console.log('rangeMeta', rangeMeta);
 
         // Variables we will use for drawing the chart
-        const minimumX = (options.minimumX !== null) ? options.minimumX : rangeMeta.minimumX;
-        const maximumX = (options.maximumX !== null) ? options.maximumX : rangeMeta.maximumX;
+        const minimumX = (this.minimumX !== null) ? this.minimumX : rangeMeta.minimumX;
+        const maximumX = (this.maximumX !== null) ? this.maximumX : rangeMeta.maximumX;
         const xDelta = maximumX - minimumX;
-        const minimumY = (options.minimumY !== null) ? options.minimumY : rangeMeta.minimumY;
-        const maximumY = (options.maximumY !== null) ? options.maximumY : rangeMeta.maximumY;
+        const minimumY = (this.minimumY !== null) ? this.minimumY : rangeMeta.minimumY;
+        const maximumY = (this.maximumY !== null) ? this.maximumY : rangeMeta.maximumY;
         const yDelta = maximumY - minimumY;
         const uniqueXValues = rangeMeta.uniqueXValues;
 
         // Adjust the height if a caption is used
-        let height = options.height;
-        if(!options.title) {
+        let height = this.height;
+        if(!this.title) {
             height -= 1;
         }
 
         // Set the y precision
-        let yLabelPrecision = options.yLabelPrecision;
+        let yLabelPrecision = this.yLabelPrecision;
         if(yLabelPrecision == null) {
             // Constrain the number between 0 and 8
             yLabelPrecision = Math.floor(Number.constrain(Math.log((height / yDelta) * 5) / Math.LN10, 0, 8));
@@ -58,7 +67,7 @@ class AsciiChart {
         const yLabelWidth = 1 + Math.max(minimumY.toFixed(yLabelPrecision).length, maximumY.toFixed(yLabelPrecision).length);
 
         // Set the width of the graph accounting for labels
-        let width = options.width;
+        let width = this.width;
         width -= yLabelWidth;
 
         // Determine how many bars we will display
@@ -66,14 +75,14 @@ class AsciiChart {
         const barWidth = Math.floor(width / barCount);
 
         // Set the x precision
-        let xLabelPrecision = options.xLabelPrecision;
+        let xLabelPrecision = this.xLabelPrecision;
         if(xLabelPrecision == null) {
             // Constrain the number between 0 and 8
             xLabelPrecision = Math.floor(Number.constrain(Math.log((barCount / xDelta) * 5) / Math.LN10, 0, 8));
         }
 
         // Group the points by x value
-        const groupedPoints = AsciiChart.groupPoints(points, barCount, minimumX, xDelta, minimumY, maximumY, height);
+        const groupedPoints = AsciiChart.groupPoints(this.data, barCount, minimumX, xDelta, minimumY, maximumY, height);
         // console.log('groupedPoints', groupedPoints);
 
         // Prerender y labels
@@ -102,7 +111,7 @@ class AsciiChart {
         let chartString = '';
 
         // Draw chart
-        chartString += AsciiChart.drawChartWithoutXLabels(height, yLabels, yLabelWidth, groupedPoints.groups, barWidth, options.color, options.gridColor) + '\n';
+        chartString += this.drawChartWithoutXLabels(height, yLabels, yLabelWidth, groupedPoints.groups, barWidth, this.color, this.gridColor) + '\n';
         chartString += ' '.repeat(yLabelWidth);
 
         // Draw x labels
@@ -113,27 +122,30 @@ class AsciiChart {
             chartString += ' '.repeat((barWidth * xLabelIterator) - currentXLabel.length);
         }
 
-        Terminal.box(chartString, {
-            title: options.title,
+        // console.log(chartString);
+
+        let box = new AsciiBox(chartString, {
+            title: this.title,
+            titleAlignment: this.titleAlignment,
             padding: {
                 top: 0,
                 right: 0,
                 bottom: 0,
                 left: 0,
             },
-            borderColor: options.borderColor,
         });
-        // console.log(chartString);
+        
+        console.log(box.toString());
     };
 
     // draw chart minus x labels
-    static drawChartWithoutXLabels(height, yLabels, yLabelWidth, group, barWidth, color, gridColor) {
+    drawChartWithoutXLabels(height, yLabels, yLabelWidth, group, barWidth, color, gridColor) {
         // console.log('yLabels', yLabels)
 
         const output = [];
 
         for(let currentRow = height - 1; currentRow >= 0; currentRow--) {
-            let rowString = AsciiChart.drawRow(currentRow, yLabels, yLabelWidth, group, barWidth, color, gridColor, height);
+            let rowString = this.drawRow(currentRow, yLabels, yLabelWidth, group, barWidth, color, gridColor, height);
 
             if(rowString) {
                 output.push(rowString);
@@ -143,17 +155,17 @@ class AsciiChart {
         return output.join('\n');
     }
 
-    static drawRow(row, yLabels, yLabelWidth, group, barWidth, color, gridColor, height) {
-        return `${AsciiChart.drawRowLabel(row, yLabels, yLabelWidth)} ${AsciiChart.drawRowChart(row, group, barWidth, color, gridColor, height)}`;
+    drawRow(row, yLabels, yLabelWidth, group, barWidth, color, gridColor, height) {
+        return `${this.drawRowLabel(row, yLabels, yLabelWidth)} ${this.drawRowChart(row, group, barWidth, color, gridColor, height)}`;
     }
 
-    static drawRowLabel(row, yLabels, yLabelWidth) {
+    drawRowLabel(row, yLabels, yLabelWidth) {
         const label = yLabels[row];
 
         return `${' '.repeat(yLabelWidth - label.length - 1)}${label}`;
     }
 
-    static drawRowChart(row, bar, barWidth, color, gridColor, height) {
+    drawRowChart(row, bar, barWidth, color, gridColor, height) {
         const result = [];
         
         for(const barHeight of bar) {
@@ -211,6 +223,14 @@ class AsciiChart {
         }
 
         return result.join('');
+    }
+
+    setData(data) {
+        this.data = data;
+
+        if(Object.is(this.data)) {
+            this.data = this.data.toArray();
+        }
     }
 
     // Group points

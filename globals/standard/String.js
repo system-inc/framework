@@ -396,18 +396,21 @@ String.prototype.toLines = function() {
 };
 
 String.prototype.getLineCount = function() {
-	return this.split(/\r|\r\n|\n/g).length;
+	return (this.match(/\r|\r\n|\n/g) || '').length + 1;
 };
 
 String.prototype.getCharacterCount = function(stripAnsiEscapeSequences = true) {
 	// Strip ANSI escape sequences
 	if(stripAnsiEscapeSequences) {
-		let stripped = this.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
-		return stripped.length;
+		return this.stripAnsiEscapeSequences().length;
 	}
 	else {
 		return this.length;
 	}
+};
+
+String.prototype.stripAnsiEscapeSequences = function stripAnsiEscapeSequences() {
+	return this.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 };
 
 String.prototype.splitOnFirst = function(stringToSplitOn) {

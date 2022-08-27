@@ -4,7 +4,7 @@
 
 // Dependencies
 import { App } from '@framework/system/app/App.js';
-import { AsciiArt } from '@framework/system/ascii-art/AsciiArt.js';
+import { AsciiArt } from '@framework/system/ascii/AsciiArt.js';
 import { Proctor } from '@framework/system/test/Proctor.js';
 
 // Class

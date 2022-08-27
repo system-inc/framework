@@ -7,7 +7,7 @@ import { DotTestReporter } from '@framework/system/test/test-reporters/DotTestRe
 import { ConciseTestReporter } from '@framework/system/test/test-reporters/ConciseTestReporter.js';
 import { ElectronTestReporter } from '@framework/system/test/test-reporters/ElectronTestReporter.js';
 import { FileSystemObject } from '@framework/system/file-system/FileSystemObject.js';
-import { AsciiArt } from '@framework/system/ascii-art/AsciiArt.js';
+import { AsciiArt } from '@framework/system/ascii/AsciiArt.js';
 
 // Class
 class Proctor extends EventEmitter {

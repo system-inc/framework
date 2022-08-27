@@ -233,7 +233,7 @@ class StandardInputStream extends StandardStream {
 	}
 
 	emitKeyboardInputEventFromData(data) {
-		console.log('data', data);
+		// console.log('data', data);
 
 		let keyboardInputEvent = new StandardInputKeyEvent();
 		keyboardInputEvent.identifier = 'input.key';
@@ -417,7 +417,7 @@ class StandardInputStream extends StandardStream {
 		// Got a longer-than-one string of characters. Probably a paste, since it wasn't a control sequence.
 		else if(data.length > 1 && data[0] !== '\x1b') {
 			Array.prototype.forEach.call(data, function(subData) {
-				console.log('got multiple keys in a single data event!');
+				// console.log('got multiple keys in a single data event!');
 				this.emitKeyboardInputEventFromData(subData);
 			}.bind(this));
 

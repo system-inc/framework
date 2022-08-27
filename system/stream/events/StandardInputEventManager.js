@@ -16,10 +16,6 @@ class StandardInputEventManager {
         this.stream = stream;
 
         this.listen();
-
-        console.log('move a player anywhere on the map');
-        console.log('implement a render stack');
-        console.log('implement control z');
     }
 
     listen() {
