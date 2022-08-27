@@ -31,10 +31,13 @@ class PseudorandomNumberGeneratorTest extends Test {
 		Assert.equal(randomNumber6, '0.0364364393575189', 'Sixth random number for seed seed1');
 
 		let randomNumber7 = psuedoRandomNumberGenerator.randomNumber(0, 1000000, 16);
-		Assert.equal(randomNumber7, '9408.53298156369', 'Sixth random number for seed seed1');
+		Assert.equal(randomNumber7, '9408.53298156369', 'Seventh random number for seed seed1');
 
 		let randomNumber8 = psuedoRandomNumberGenerator.randomNumber(1, 10, 1);
-		Assert.equal(randomNumber8, '4.9', 'Seventh random number for seed seed1');
+		Assert.equal(randomNumber8, '4', 'Eigth random number for seed seed1');
+
+		let randomNumber9 = psuedoRandomNumberGenerator.randomNumber(1, 10, 1);
+		Assert.equal(randomNumber9, '6.3', 'Ninth random number for seed seed1');
 	}
 
 	async testMultipleSeeds() {
