@@ -306,6 +306,8 @@ String.prototype.sizeInBytes = function() {
 	return bytes;
 };
 
+String.prototype.characterAt = String.prototype.charAt;
+
 String.prototype.characterCodeAt = function(index) {
 	// '\uD800\uDC00'.characterCodeAt(0); // 65536
 	// '\uD800\uDC00'.characterCodeAt(1); // false
