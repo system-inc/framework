@@ -1,5 +1,5 @@
 // Dependencies
-
+import { Color } from '@framework/system/interface/Color.js';
 
 // Class
 class TerminalCanvasCell {
@@ -124,12 +124,20 @@ class TerminalCanvasCell {
 
         // Set the background color
         if(this.backgroundColor.red !== null) {
-            string += TerminalCanvasCell.encodeToVt100(`[48;2;${this.backgroundColor.red};${this.backgroundColor.green};${this.backgroundColor.blue}m`);
+            // This is for terminals which have 24-bit colors
+            // string += TerminalCanvasCell.encodeToVt100(`[48;2;${this.backgroundColor.red};${this.backgroundColor.green};${this.backgroundColor.blue}m`);
+
+            // This is for terminals which have have 256 pre-defined colors
+            string += TerminalCanvasCell.encodeToVt100(`[48;5;${Color.rgbToTerminalPaletteValue(this.backgroundColor.red, this.backgroundColor.green, this.backgroundColor.blue)}m`);
         }
         
         // Set the foreground color
         if(this.foregroundColor.red !== null) {
-            string += TerminalCanvasCell.encodeToVt100(`[38;2;${this.foregroundColor.red};${this.foregroundColor.green};${this.foregroundColor.blue}m`);
+            // This is for terminals which have 24-bit colors
+            // string += TerminalCanvasCell.encodeToVt100(`[38;2;${this.foregroundColor.red};${this.foregroundColor.green};${this.foregroundColor.blue}m`);
+
+            // This is for terminals which have have 256 pre-defined colors
+            string += TerminalCanvasCell.encodeToVt100(`[38;5;${Color.rgbToTerminalPaletteValue(this.foregroundColor.red, this.foregroundColor.green, this.foregroundColor.blue)}m`);
         }
 
         // Set bold

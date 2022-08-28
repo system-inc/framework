@@ -74,8 +74,18 @@ class TerminalCanvas {
             // If the cursor is in bounds
             if(this.cursorColumnIndex >= 1 && this.cursorColumnIndex <= this.width && this.cursorRowIndex >= 1 && this.cursorRowIndex <= this.height) {
                 let cell = this.cells[this.cursorRowIndex][this.cursorColumnIndex];
-                let character = string.characterAt(i);
-                cell.setCharacter(character);
+                // let character = string.characterAt(i);
+
+                // Handle emoji
+                if(string.charCodeAt(i) >= 0xD800 && string.charCodeAt(i) <= 0xDBFF) {
+                    // console.log('emoji');
+                    let emoji = string.substring(i, i + 2);
+                    cell.setCharacter(emoji);
+                    i++;
+                }
+                else {
+                    cell.setCharacter(string.charAt(i));
+                }
                 // console.log('writing', character, 'to', this.cursorColumnIndex, this.cursorRowIndex, cell);
 
                 // Colors
@@ -160,8 +170,24 @@ class TerminalCanvas {
     setCursorPosition(columnIndex, rowIndex) {
         // console.log('setCursorPosition', columnIndex, rowIndex);
 
-        this.cursorColumnIndex = Math.floor(columnIndex);
-        this.cursorRowIndex = Math.floor(rowIndex);
+        this.cursorColumnIndex = Math.round(columnIndex);
+        this.cursorRowIndex = Math.round(rowIndex);
+    }
+
+    setCursorBackgroundColor(red = 0, green = 0, blue = 0) {
+        this.cursorBackgroundColor.red = red;
+        this.cursorBackgroundColor.green = green;
+        this.cursorBackgroundColor.blue = blue;
+    }
+
+    setCursorForegroundColor(red = 0, green = 0, blue = 0) {
+        this.cursorForegroundColor.red = red;
+        this.cursorForegroundColor.green = green;
+        this.cursorForegroundColor.blue = blue;
+    }
+
+    beginPath() {
+
     }
 
 }
