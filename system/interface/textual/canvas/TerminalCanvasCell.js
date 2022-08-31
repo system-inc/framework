@@ -124,20 +124,20 @@ class TerminalCanvasCell {
 
         // Set the background color
         if(this.backgroundColor.red !== null) {
-            // This is for terminals which have 24-bit colors
-            // string += TerminalCanvasCell.encodeToVt100(`[48;2;${this.backgroundColor.red};${this.backgroundColor.green};${this.backgroundColor.blue}m`);
-
             // This is for terminals which have have 256 pre-defined colors
             string += TerminalCanvasCell.encodeToVt100(`[48;5;${Color.rgbToTerminalPaletteValue(this.backgroundColor.red, this.backgroundColor.green, this.backgroundColor.blue)}m`);
+
+            // This is for terminals which have 24-bit colors
+            // string += TerminalCanvasCell.encodeToVt100(`[48;2;${this.backgroundColor.red};${this.backgroundColor.green};${this.backgroundColor.blue}m`);
         }
         
         // Set the foreground color
         if(this.foregroundColor.red !== null) {
-            // This is for terminals which have 24-bit colors
-            // string += TerminalCanvasCell.encodeToVt100(`[38;2;${this.foregroundColor.red};${this.foregroundColor.green};${this.foregroundColor.blue}m`);
-
             // This is for terminals which have have 256 pre-defined colors
             string += TerminalCanvasCell.encodeToVt100(`[38;5;${Color.rgbToTerminalPaletteValue(this.foregroundColor.red, this.foregroundColor.green, this.foregroundColor.blue)}m`);
+
+            // This is for terminals which have 24-bit colors
+            // string += TerminalCanvasCell.encodeToVt100(`[38;2;${this.foregroundColor.red};${this.foregroundColor.green};${this.foregroundColor.blue}m`);
         }
 
         // Set bold
@@ -174,6 +174,11 @@ class TerminalCanvasCell {
         if(this.character) {
             string += this.character;
         }
+
+        // If string contains NaN
+        // if(string.indexOf('NaN') !== -1) {
+        //     Node.Process.exit();
+        // }
 
         // Reset the display modes
         string += TerminalCanvasCell.encodeToVt100(`[${TerminalCanvasCell.displayModes.resetAll}m`);

@@ -18,7 +18,7 @@ class Color {
         // If we are in grayscale, use values 232 (dark) through 255 (light)
         if(red === green && green === blue) {
             // Reindex red range 0 to 255 into a range between 0 to 23
-            terminalPaletteValue = 232 + (red / 255 * 23);
+            terminalPaletteValue = 232 + Math.round(red / 255 * 23);
         }
         // If we are in color, use values 16 through 231
         else {
@@ -68,11 +68,17 @@ class Color {
             case 5: red = brightness, green = lowestColorBrightness, blue = middleColorBrightness; break;
         }
 
-        return {
+        let color = {
             red: Math.round(red * 255),
             green: Math.round(green * 255),
             blue: Math.round(blue * 255)
         };
+
+        if(isNaN(color.red) || isNaN(color.green) || isNaN(color.blue)) {
+            throw new Error('hsbToRgb: invalid color');
+        }
+
+        return color;
     }
 
 }

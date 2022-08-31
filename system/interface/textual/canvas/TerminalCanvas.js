@@ -130,7 +130,7 @@ class TerminalCanvas {
                     // console.log('rendering', cellString);
 
                     // If the cell string is different from the last frame
-                    if(cellString !== this.lastFrame[rowIndex][columnIndex]) {
+                    if(cellString != this.lastFrame[rowIndex][columnIndex]) {
                         // console.log('cell string is different from last frame');
 
                         // Update the last frame
@@ -139,6 +139,9 @@ class TerminalCanvas {
                         // Add the cell string to the render string
                         renderString += cellString;
                     }
+                    // else {
+                    //     // console.log('cell string is the same as last frame');
+                    // }
                 }
             }
         }

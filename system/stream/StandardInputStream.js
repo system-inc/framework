@@ -237,6 +237,7 @@ class StandardInputStream extends StandardStream {
 
 		let keyboardInputEvent = new StandardInputKeyEvent();
 		keyboardInputEvent.identifier = 'input.key';
+		keyboardInputEvent.data = data;
 		let parts = null;
 
 		// // If the data is a buffer, convert it to a string
