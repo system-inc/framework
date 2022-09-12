@@ -23,11 +23,15 @@ class Datastore extends DatastoreInterface {
 	set(path, value) {
 		this.data.setValueByPath(path, value);
 
+		this.emit('set:'+path, value);
+
 		return value;
 	}
 
 	delete(path) {
 		this.data.deleteValueByPath(path);
+
+		this.emit('delete:'+path);
 
 		return true;
 	}
@@ -64,6 +68,10 @@ class Datastore extends DatastoreInterface {
 
 	integrate(data) {
 		return this.data.integrate(data);
+	}
+
+	toJson() {
+		return Json.encode(this.data);
 	}
 
 }

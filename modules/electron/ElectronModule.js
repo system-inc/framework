@@ -8,6 +8,7 @@ import { Display } from '@framework/system/interface/graphical/Display.js';
 class ElectronModule extends Module {
 
 	electron = null;
+	electronMainProcessBridge = null; // This is used by Electron Renderers to communicate with the Electron Main Process
 
 	firstBrowserWindow = null;
 	browserWindows = [];
@@ -30,10 +31,6 @@ class ElectronModule extends Module {
 
 		// If in the Electron context
 		if(this.inElectronEnvironment()) {
-			// app.log('In Electron, configuring ElectronModule');
-			this.electron = await import('electron');
-			//console.log('this.electron', this.electron);
-
 			// If in the Electron main process
 			if(this.inElectronMainProcess()) {
 				// The Electron main process is responsible for starting the first web browser window when there are no other windows
@@ -161,10 +158,14 @@ class ElectronModule extends Module {
 	}
 
 	async configureElectronMainProcess() {
-		//app.log('ElectronModule', 'configureElectronMainProcess');
+		app.log('ElectronModule', 'configureElectronMainProcess');
+
+		// Import electron
+		this.electron = await import('electron');
+		// console.log('this.electron', this.electron);
 
 		// Disable security warnings in Electron
-		process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+		// process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
 		// Before app.exit() exits the application, quit the Electron app
 		app.on('app.beforeExit', function() {
@@ -196,12 +197,12 @@ class ElectronModule extends Module {
 
 		// Create the first browser window when the app is ready
 		if(this.electron.app.isReady()) {
-			// console.log('app is ready');
+			console.log('app is ready, creating first browser window');
 			this.createFirstBrowserWindow();
 		}
 		// If the app is not ready, wait for the ready event
 		else {
-			// console.log('app is not ready');
+			console.log('app is not ready');
 			this.electron.app.on('ready', function () {
 				this.createFirstBrowserWindow();
 			}.bind(this));
@@ -209,6 +210,9 @@ class ElectronModule extends Module {
 	}
 
 	configureElectronRendererProcess() {
+		app.log('time to create an electronmainprocessapi');
+		app.log('this.electron', this.electron);
+
 		// app.log('ElectronModule .configureElectronRendererProcess()');
 
 		// Catch unhandled rejections in Electron renderer windows
@@ -216,24 +220,25 @@ class ElectronModule extends Module {
 			//console.log(this.electron.remote.getCurrentWindow());
 
 			// Show the window
-			this.electron.remote.getCurrentWindow().show();
+			// this.electron.remote.getCurrentWindow().show();
 
 			// Maximize the window
-			this.electron.remote.getCurrentWindow().maximize();
+			// this.electron.remote.getCurrentWindow().maximize();
 
 			// Open the developer tools
-			this.electron.remote.getCurrentWindow().openDevTools();
+			// this.electron.remote.getCurrentWindow().openDevTools();
 
 			// Log the error
 			console.error(error.reason.stack.toString());
 		}.bind(this));
 
 		// Clear the default application menu and all of its shortcuts / accelerators
-        this.electron.remote.Menu.setApplicationMenu(null);
+		// console.log('this.electron.remote', this.electron.remote);
+        // this.electron.remote.Menu.setApplicationMenu(null);
 	}
 
 	async createFirstBrowserWindow() {
-		// app.log('Creating first Electron BrowserWindow', 'script', this.settings.get('script'));
+		app.log('Creating first Electron BrowserWindow', 'script', this.settings.get('script'));
 
 		// Load the file URL, electron.html which includes the script index.cjs
 		let url = Node.Url.pathToFileURL(Node.Path.join(app.path, 'electron.html')).toString();
@@ -296,6 +301,7 @@ class ElectronModule extends Module {
 			//icon: __dirname+'/views/images/icons/icon-tray.png', // This only applies to Windows
 			// show: options.graphicalInterfaceState.show,
 			webPreferences: {
+				preload: Node.Path.join(app.framework.path, '/modules/electron/ElectronRendererPreload.js'),
 				devTools: true,
 				nodeIntegration: true, // Must have this on as it is off by default
 				nodeIntegrationInWorker: true,
@@ -303,6 +309,7 @@ class ElectronModule extends Module {
 				enableRemoteModule: true, // Make sure electron.remote is available
 				webSecurity: false, // Allow the loading of local resources
 				scrollBounce: true, // Enables scroll bounce (rubber banding) effect on macOS, default is false
+				contextIsolation: false,
 			},
 		});
 
@@ -381,11 +388,11 @@ class ElectronModule extends Module {
 	}
 
 	getCurrentWindow() {
-		return this.electron.remote.getCurrentWindow();
+		// return this.electron.remote.getCurrentWindow();
 	}
 
 	getCurrentWebContents() {
-		return this.electron.remote.getCurrentWebContents();
+		// return this.electron.remote.getCurrentWebContents();
 	}
 
 	getDisplays() {

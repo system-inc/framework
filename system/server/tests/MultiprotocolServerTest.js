@@ -8,7 +8,7 @@ import { LocalSocketClient } from '@framework/system/server/protocols/local-sock
 // Class
 class MultiprotocolServerTest extends Test {
 
-	async SKIPtestMultiprotocolServer() {
+	async TODOtestMultiprotocolServer() {
         var actual = null;
         var expected = null;
 

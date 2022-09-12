@@ -25,7 +25,7 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 			await super.initialize();
 			
 			// Reference the current window
-			this.electronBrowserWindow = app.modules.electronModule.getCurrentWindow();
+			// this.electronBrowserWindow = app.modules.electronModule.getCurrentWindow();
 
 			// Listen to Electron display events
 			this.listenToElectronDisplayEvents();
@@ -51,7 +51,6 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 		else {
 			console.log('This graphical interface identifier:', this.graphicalInterface.identifier);
 		}
-		
 
 		// Establish the broadcast channel to listen to events from the BrowserWindow
 		this.establishBroadcastChannel();
@@ -63,6 +62,8 @@ class ElectronGraphicalInterfaceAdapter extends WebGraphicalInterfaceAdapter {
 	}
 
 	listenToElectronDisplayEvents() {
+		return;
+
 		// Get the Electron screen 
 		let ElectronScreen = app.modules.electronModule.electron.remote.screen;
 		// app.log('ElectronScreen', ElectronScreen);

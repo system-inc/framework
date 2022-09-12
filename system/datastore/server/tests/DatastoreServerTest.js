@@ -5,12 +5,15 @@ import { DatastoreServer } from '@framework/system/datastore/server/DatastoreSer
 import { DatastoreClient } from '@framework/system/datastore/server/DatastoreClient.js';
 import { LocalSocketClient } from '@framework/system/server/protocols/local-socket/client/LocalSocketClient.js';
 import { LocalSocketServer } from '@framework/system/server/protocols/local-socket/server/LocalSocketServer.js';
+import { HttpServer } from '@framework/system/server/protocols/http/server/HttpServer.js';
+import { HttpClient } from '@framework/system/server/protocols/http/client/HttpClient.js';
 
 // Class
 class DatastoreServerTest extends Test {
 
     datastoreServer = null;
     localSocketServer = null;
+    httpServer = null;
 
     async before() {
         // Create a datastore server
@@ -21,6 +24,12 @@ class DatastoreServerTest extends Test {
 
         // Add the LocalSocketServer to the DatastoreServer
         await this.datastoreServer.addProtocolServer(this.localSocketServer);
+
+        // Create an HttpServer
+        this.httpServer = new HttpServer(8181);
+
+        // Add the HttpServer to the DatastoreServer
+        await this.datastoreServer.addProtocolServer(this.httpServer);
 
         // Initialize the DatastoreServer
         await this.datastoreServer.initialize();
@@ -42,7 +51,7 @@ class DatastoreServerTest extends Test {
         Assert.equal(actual, expected, 'Directly accessing the datastore through DatastoreServer');
     }
 
-    async testDatastoreClient() {
+    async testLocalSocketProtocolDatastoreClient() {
         var actual = null;
         var expected = null;
 
@@ -67,12 +76,38 @@ class DatastoreServerTest extends Test {
         actual = await datastoreClient.get('testKey1');
         Assert.equal(actual, 'newTestKey1Value', 'DatastoreClient set() and then get()');
 
-        // Listen to a key to become notified of changes
+        // TODO: Listen to a key to become notified of changes
         // await datastoreClient.onChange('testKey1', function(event) {
         //     console.log('testKey1 value changed on server', event);
         //     actual = event.data;
         // });
     }
+
+    // async testHttpProtocolDatastoreClient() {
+    //     var actual = null;
+    //     var expected = null;
+
+    //     // Set a value on the server
+    //     await this.datastoreServer.set('accessViaHttp', 'accessedViaHttp');
+
+    //     // Create a datastore client
+    //     var httpClient = new HttpClient('http://127.0.0.1:8181');
+    //     var datastoreClient = new DatastoreClient(httpClient);
+    //     await datastoreClient.initialize();
+    //     app.log('datastoreClient', datastoreClient);
+
+    //     // Read the server value with the client
+    //     actual = await datastoreClient.get('accessViaHttp');
+    //     app.log('actual', actual);
+    //     Assert.equal(actual, 'testKey1Value', 'DatastoreClient get()');
+
+    //     // Set a value using the client
+    //     await datastoreClient.set('testKey1', 'newTestKey1Value');
+
+    //     // Read the server value with the client
+    //     actual = await datastoreClient.get('testKey1');
+    //     Assert.equal(actual, 'newTestKey1Value', 'DatastoreClient set() and then get()');
+    // }
 
 }
 
