@@ -491,7 +491,7 @@ String.distance = function(a, b) {
 String.fromCharacterCode = String.fromCharCode;
 
 // Newline
-if(Node && Node.OperatingSystem) {
+if(typeof Node !== 'undefined' && Node.OperatingSystem) {
 	String.newline = Node.OperatingSystem.EOL;	
 }
 else {
