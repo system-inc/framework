@@ -459,7 +459,7 @@ class RollupWebTranspiler {
         }
         // If the build target is for Cloudflare Workers
         else if(this.buildTarget == 'cloudflareWorker') {
-            console.log('cloudflareWorker!!!!!!!!');
+            // console.log('this.buildTarget', this.buildTarget);
             format = 'es';
 
             // We ignore node specific import() calls
@@ -492,7 +492,7 @@ class RollupWebTranspiler {
             onwarn: this.onRollupWarning.bind(this),
         };
 
-        console.log('rollupConfiguration', rollupConfiguration);
+        // console.log('rollupConfiguration', rollupConfiguration);
 
         return rollupConfiguration;
     }
