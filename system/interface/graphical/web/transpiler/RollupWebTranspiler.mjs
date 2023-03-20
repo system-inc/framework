@@ -48,6 +48,7 @@ class RollupWebTranspiler {
         // Framework imports which are node specific and not for the web
         '@framework/globals/NodeGlobals.js',
         '@framework/globals/standard/errors/StackTrace.js',
+
         //'source-map-support', // Used for stack traces at framework/globals/standard/errors/CallSite.js
 
         // Node
@@ -109,6 +110,11 @@ class RollupWebTranspiler {
         this.environment = environment;
         this.frameworkPath = frameworkPath;
         this.appPath = appPath;
+
+        // console.log('this.buildTarget', this.buildTarget);
+        // console.log('this.environment', this.environment);
+        // console.log('this.frameworkPath', this.frameworkPath);
+        // console.log('this.appPath', this.appPath);
         
         // // We assume the current working directory is ..../(app directory)/scripts/
         // this.appPath = Path.resolve('./../'); // Jump back one directory to the app path
@@ -165,7 +171,7 @@ class RollupWebTranspiler {
         });
 
         // Web build target
-        if(this.buildTarget == 'web') {
+        if(this.buildTarget == 'web' || this.buildTarget == 'cloudflareWorker') {
             // Framework
             this.rollupPluginFramework = this.createRollupPluginFramework();
         }
@@ -438,7 +444,16 @@ class RollupWebTranspiler {
             globals = this.importSpecifiersToIgnoreGlobalVariables;
             plugins.unshift(this.rollupPluginFramework);
         }
-        // If the build target is for  node
+        // If the build target is for Cloudflare Workers
+        else if(this.buildTarget == 'cloudflareWorker') {
+            console.log('cloudflareWorker!!!!!!!!');
+            format = 'es';
+
+            // We ignore node specific import() calls
+            globals = this.importSpecifiersToIgnoreGlobalVariables;
+            plugins.unshift(this.rollupPluginFramework);
+        }
+        // If the build target is for node
         else {
             // We ignore node specific imports, but allow Framework node specific imports
             let newExternal = [];
@@ -464,7 +479,7 @@ class RollupWebTranspiler {
             onwarn: this.onRollupWarning.bind(this),
         };
 
-        //console.log('rollupConfiguration', rollupConfiguration);
+        console.log('rollupConfiguration', rollupConfiguration);
 
         return rollupConfiguration;
     }

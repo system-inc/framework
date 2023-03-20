@@ -12,6 +12,7 @@
         "@rollup/plugin-babel": "^5.2.0",
         "@rollup/plugin-dynamic-import-vars": "^1.1.0",
         "@rollup/plugin-json": "^4.1.0",
+        "@rollup/plugin-replace": "^5.0.2",
         "babel-plugin-dynamic-import-node": "^2.3.3",
         "babel-plugin-transform-import-meta": "^1.0.1",
         "mysql": "^2.18.1",
