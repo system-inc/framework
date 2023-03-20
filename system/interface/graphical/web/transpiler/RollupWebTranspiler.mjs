@@ -3,6 +3,7 @@ import RollupPluginAlias from '@rollup/plugin-alias';
 import RollupPluginJson from '@rollup/plugin-json';
 import RollupPluginDynamicImportVarsImport from '@rollup/plugin-dynamic-import-vars';
 import RollupPluginBabelImport from '@rollup/plugin-babel';
+import RollupPluginReplace from '@rollup/plugin-replace';
 import MagicString from 'magic-string';
 import EsTreeWalker from 'estree-walker';
 import NodePath from 'path';
@@ -91,6 +92,7 @@ class RollupWebTranspiler {
     importSpecifiersToIgnoreGlobalVariables = {};
 
     // Rollup plugins
+    rollupPluginReplace = null;
     rollupPluginJson = null;
     rollupPluginDynamicImportVars = null;
     rollupPluginAlias = null;
@@ -137,6 +139,16 @@ class RollupWebTranspiler {
 
     initializeRollupPlugins() {
         //console.log('this', this);
+
+        // Replace
+        this.rollupPluginReplace = RollupPluginReplace({
+            preventAssignment: true,
+            delimiters: ['', ''],
+            values: {
+                "import '@framework/globals/NodeGlobals.js';\n": '',
+                "import '@framework/globals/standard/errors/StackTrace.js';\n": '',
+            },
+        });
 
         // Aliases for @framework and @app
         this.rollupPluginAlias = RollupPluginAlias({
@@ -430,6 +442,7 @@ class RollupWebTranspiler {
         var globals = null;
         var external = this.importSpecifiersToIgnore;
         var plugins = [
+            this.rollupPluginReplace,
             this.rollupPluginJson,
             this.rollupPluginDynamicImportVars,
             this.rollupPluginAlias,
